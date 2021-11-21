@@ -1,0 +1,4 @@
+[alias]
+docp = "doc --document-private-items"
+doca = "doc --all-features"
+docpa = "doc --all-features --document-private-items"

@@ -1,0 +1,21 @@
+[package]
+name = "rustemo"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+doctest = false
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+regex = "1"
+num_enum = "0.5"
+indexmap = "1.8.0"
+
+[dev-dependencies]
+criterion = "0.3.5"
+
+[package.metadata.docs.rs]
+rustdoc-args = [ "--html-in-header", "docs-header.html" ]
+

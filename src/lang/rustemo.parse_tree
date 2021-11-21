@@ -1,0 +1,2673 @@
+Grammar {
+    imports: None,
+    rules: Some(
+        [
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "File",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "ProductionRules",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "Imports",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "ProductionRules",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "ProductionRules",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "terminals",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "TerminalRules",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "Imports",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "ProductionRules",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "terminals",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "TerminalRules",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "terminals",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "TerminalRules",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "imports",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "imports",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "import",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "import",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "import",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "import",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "STR_CONST",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "import",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "STR_CONST",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "as",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "NAME",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "ProductionRules",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "ProductionRules",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "ProductionRuleWithAction",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "ProductionRuleWithAction",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "ProductionRuleWithAction",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "Action",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "ProductionRule",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "ProductionRule",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "ProductionRule",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "NAME",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                ":",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "ProductionRuleRHS",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                ";",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "NAME",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "{",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "ProdMetaDatas",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "}",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                ":",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "ProductionRuleRHS",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                ";",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "ProductionRuleRHS",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "ProductionRuleRHS",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "|",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "Production",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "Production",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {
+                        "left": Bool(
+                            true,
+                        ),
+                        "priority": Int(
+                            5,
+                        ),
+                    },
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "Production",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "Assignments",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "Assignments",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "{",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "ProdMetaDatas",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "}",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "TerminalRules",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "TerminalRules",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "TerminalRuleWithAction",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "TerminalRuleWithAction",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "TerminalRuleWithAction",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "Action",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "TerminalRule",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "TerminalRule",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "TerminalRule",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "NAME",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                ":",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "Recognizer",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                ";",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "NAME",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                ":",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                ";",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "NAME",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                ":",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "Recognizer",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "{",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "TermMetaDatas",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "}",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                ";",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "NAME",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                ":",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "{",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "TermMetaDatas",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "}",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                ";",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {
+                        "left": Bool(
+                            true,
+                        ),
+                        "priority": Int(
+                            15,
+                        ),
+                    },
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "ProdMetaData",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "left",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "reduce",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "right",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "shift",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "dynamic",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "nops",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "nopse",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "INT_CONST",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "UserMetaData",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "ProdMetaDatas",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "ProdMetaDatas",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                ",",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "ProdMetaData",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "ProdMetaData",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {
+                        "left": Bool(
+                            true,
+                        ),
+                    },
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "TermMetaData",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "prefer",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "finish",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "nofinish",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "dynamic",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "INT_CONST",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "UserMetaData",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "TermMetaDatas",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "TermMetaDatas",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                ",",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "TermMetaData",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "TermMetaData",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "UserMetaData",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "NAME",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                ":",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "Const",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "Const",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "INT_CONST",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "FLOAT_CONST",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "BOOL_CONST",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "STR_CONST",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "Assignment",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "PlainAssignment",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "BoolAssignment",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "GSymbolReference",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "Assignments",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "Assignments",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "Assignment",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "Assignment",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "PlainAssignment",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "NAME",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "=",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "GSymbolReference",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "BoolAssignment",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "NAME",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "?=",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "GSymbolReference",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "ProductionGroup",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "(",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "ProductionRuleRHS",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                ")",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "GSymbolReference",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "GSymbol",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "RepetitionOperator",
+                                            ),
+                                        ),
+                                        repeat_operator: Some(
+                                            RepeatOperator {
+                                                operator: Optional,
+                                                rep_modifiers: None,
+                                            },
+                                        ),
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "ProductionGroup",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "RepetitionOperator",
+                                            ),
+                                        ),
+                                        repeat_operator: Some(
+                                            RepeatOperator {
+                                                operator: Optional,
+                                                rep_modifiers: None,
+                                            },
+                                        ),
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "RepetitionOperator",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "RepetitionOperatorOp",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "RepetitionModifiersExp",
+                                            ),
+                                        ),
+                                        repeat_operator: Some(
+                                            RepeatOperator {
+                                                operator: Optional,
+                                                rep_modifiers: None,
+                                            },
+                                        ),
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "RepetitionOperatorOp",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "*",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "*!",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "+",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "+!",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "?",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "?!",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "RepetitionModifiersExp",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "[",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "RepetitionModifiers",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "]",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "RepetitionModifiers",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "RepetitionModifiers",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                ",",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "RepetitionModifier",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "RepetitionModifier",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "RepetitionModifier",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "NAME",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "GSymbol",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "NAME",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "STR_CONST",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "Recognizer",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "STR_CONST",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "REGEX_TERM",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "Layout",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "LayoutItem",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "Layout",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "LayoutItem",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "EMPTY",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "LayoutItem",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "WS",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "Comment",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "Comment",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "/*",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "Corncs",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            StrConst(
+                                                "*/",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "comment_line",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "Corncs",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "Cornc",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "Corncs",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "Cornc",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "EMPTY",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+            ProductionRuleWithAction {
+                action: None,
+                rule: ProductionRule {
+                    name: "Cornc",
+                    rhs: [
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "Comment",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "NOTCOMMENT",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                        Production {
+                            assignments: [
+                                GSymbolReference(
+                                    GrammarSymbolReference {
+                                        gsymbol: Some(
+                                            Name(
+                                                "WS",
+                                            ),
+                                        ),
+                                        repeat_operator: None,
+                                        production_group: None,
+                                    },
+                                ),
+                            ],
+                            meta: {},
+                        },
+                    ],
+                    meta: {},
+                },
+            },
+        ],
+    ),
+    terminals: Some(
+        [
+            TerminalRuleWithAction {
+                action: None,
+                rule: TerminalRule {
+                    name: "NAME",
+                    recognizer: Some(
+                        RegExTerm(
+                            "[a-zA-Z_][a-zA-Z0-9_\\.]*",
+                        ),
+                    ),
+                    meta: {},
+                },
+            },
+            TerminalRuleWithAction {
+                action: None,
+                rule: TerminalRule {
+                    name: "REGEX_TERM",
+                    recognizer: Some(
+                        RegExTerm(
+                            "'\\/(\\\\.|[^\\/\\\\])*\\/'",
+                        ),
+                    ),
+                    meta: {},
+                },
+            },
+            TerminalRuleWithAction {
+                action: None,
+                rule: TerminalRule {
+                    name: "INT_CONST",
+                    recognizer: Some(
+                        RegExTerm(
+                            "\\d+",
+                        ),
+                    ),
+                    meta: {},
+                },
+            },
+            TerminalRuleWithAction {
+                action: None,
+                rule: TerminalRule {
+                    name: "FLOAT_CONST",
+                    recognizer: Some(
+                        RegExTerm(
+                            "[+-]?(\\d+\\.\\d*|\\.\\d+)([eE][+-]?\\d+)?(?<=[\\w\\.])(?![\\w\\.])",
+                        ),
+                    ),
+                    meta: {},
+                },
+            },
+            TerminalRuleWithAction {
+                action: None,
+                rule: TerminalRule {
+                    name: "BOOL_CONST",
+                    recognizer: Some(
+                        RegExTerm(
+                            "true|false",
+                        ),
+                    ),
+                    meta: {},
+                },
+            },
+            TerminalRuleWithAction {
+                action: None,
+                rule: TerminalRule {
+                    name: "STR_CONST",
+                    recognizer: Some(
+                        RegExTerm(
+                            "(?s)('[^'\\\\]*(?:\\\\.[^'\\\\]*)*')|(\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\")",
+                        ),
+                    ),
+                    meta: {},
+                },
+            },
+            TerminalRuleWithAction {
+                action: None,
+                rule: TerminalRule {
+                    name: "ACTION",
+                    recognizer: Some(
+                        RegExTerm(
+                            "@[a-zA-Z0-9_]+",
+                        ),
+                    ),
+                    meta: {},
+                },
+            },
+            TerminalRuleWithAction {
+                action: None,
+                rule: TerminalRule {
+                    name: "WS",
+                    recognizer: Some(
+                        RegExTerm(
+                            "\\s+",
+                        ),
+                    ),
+                    meta: {},
+                },
+            },
+            TerminalRuleWithAction {
+                action: None,
+                rule: TerminalRule {
+                    name: "COMMENTLINE",
+                    recognizer: Some(
+                        RegExTerm(
+                            "\\/\\/.*",
+                        ),
+                    ),
+                    meta: {},
+                },
+            },
+            TerminalRuleWithAction {
+                action: None,
+                rule: TerminalRule {
+                    name: "NOTCOMMENT",
+                    recognizer: Some(
+                        RegExTerm(
+                            "((\\*[^\\/])|[^\\s*\\/]|\\/[^\\*])+",
+                        ),
+                    ),
+                    meta: {},
+                },
+            },
+        ],
+    ),
+}
