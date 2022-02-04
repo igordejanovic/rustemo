@@ -1,6 +1,6 @@
 use indexmap::IndexMap;
 
-use crate::{lexer::Token, parser::{ProdIndex, NonTermIndex}};
+use crate::lexer::Token;
 
 pub type StrConst = String;
 pub fn str_const<'i>(token: Token<&'i str>) -> StrConst {

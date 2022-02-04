@@ -9,18 +9,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     0,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "GrammarRules",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "GrammarRules",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -31,29 +28,23 @@ Grammar {
                 nonterminal: NonTermIndex(
                     0,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "Imports",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "Imports",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "GrammarRules",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "GrammarRules",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -64,40 +55,31 @@ Grammar {
                 nonterminal: NonTermIndex(
                     0,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "GrammarRules",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "GrammarRules",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "terminals",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "terminals",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "TerminalRules",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "TerminalRules",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -108,51 +90,39 @@ Grammar {
                 nonterminal: NonTermIndex(
                     0,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "Imports",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "Imports",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "GrammarRules",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "GrammarRules",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "terminals",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "terminals",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "TerminalRules",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "TerminalRules",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -163,29 +133,23 @@ Grammar {
                 nonterminal: NonTermIndex(
                     0,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "terminals",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "terminals",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "TerminalRules",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "TerminalRules",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -196,29 +160,23 @@ Grammar {
                 nonterminal: NonTermIndex(
                     1,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "imports",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "imports",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "import",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "import",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -229,18 +187,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     1,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "import",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "import",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -251,29 +206,23 @@ Grammar {
                 nonterminal: NonTermIndex(
                     2,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "import",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "import",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "STR_CONST",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "STR_CONST",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -284,51 +233,39 @@ Grammar {
                 nonterminal: NonTermIndex(
                     2,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "import",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "import",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "STR_CONST",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "STR_CONST",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "as",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "as",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "NAME",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "NAME",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -339,29 +276,23 @@ Grammar {
                 nonterminal: NonTermIndex(
                     3,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "GrammarRules",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "GrammarRules",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "GrammarRule",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "GrammarRule",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -372,18 +303,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     3,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "GrammarRule",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "GrammarRule",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -394,67 +322,47 @@ Grammar {
                 nonterminal: NonTermIndex(
                     4,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "Action",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "Action",
                             ),
-                            repeat_operator: Some(
-                                RepeatOperator {
-                                    operator: Optional,
-                                    rep_modifiers: None,
-                                },
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "NAME",
                             ),
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "NAME",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                ":",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    ":",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "GrammarRuleRHS",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "GrammarRuleRHS",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                ";",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    ";",
-                                ),
-                            ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -465,100 +373,71 @@ Grammar {
                 nonterminal: NonTermIndex(
                     4,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "Action",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "Action",
                             ),
-                            repeat_operator: Some(
-                                RepeatOperator {
-                                    operator: Optional,
-                                    rep_modifiers: None,
-                                },
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "NAME",
                             ),
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "NAME",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "{",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "{",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "ProdMetaDatas",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "ProdMetaDatas",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "}",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "}",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                ":",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    ":",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "GrammarRuleRHS",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "GrammarRuleRHS",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                ";",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    ";",
-                                ),
-                            ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -569,40 +448,31 @@ Grammar {
                 nonterminal: NonTermIndex(
                     5,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "GrammarRuleRHS",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "GrammarRuleRHS",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "|",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "|",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "Production",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "Production",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -613,18 +483,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     5,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "Production",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "Production",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -635,18 +502,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     6,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "Assignments",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "Assignments",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -657,51 +521,39 @@ Grammar {
                 nonterminal: NonTermIndex(
                     6,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "Assignments",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "Assignments",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "{",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "{",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "ProdMetaDatas",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "ProdMetaDatas",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "}",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "}",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -712,29 +564,23 @@ Grammar {
                 nonterminal: NonTermIndex(
                     7,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "TerminalRules",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "TerminalRules",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "TerminalRule",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "TerminalRule",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -745,18 +591,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     7,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "TerminalRule",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "TerminalRule",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -767,67 +610,47 @@ Grammar {
                 nonterminal: NonTermIndex(
                     8,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "Action",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "Action",
                             ),
-                            repeat_operator: Some(
-                                RepeatOperator {
-                                    operator: Optional,
-                                    rep_modifiers: None,
-                                },
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "NAME",
                             ),
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "NAME",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                ":",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    ":",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "Recognizer",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "Recognizer",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                ";",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    ";",
-                                ),
-                            ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -838,56 +661,39 @@ Grammar {
                 nonterminal: NonTermIndex(
                     8,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "Action",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "Action",
                             ),
-                            repeat_operator: Some(
-                                RepeatOperator {
-                                    operator: Optional,
-                                    rep_modifiers: None,
-                                },
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "NAME",
                             ),
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "NAME",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                ":",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    ":",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                ";",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    ";",
-                                ),
-                            ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -898,100 +704,71 @@ Grammar {
                 nonterminal: NonTermIndex(
                     8,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "Action",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "Action",
                             ),
-                            repeat_operator: Some(
-                                RepeatOperator {
-                                    operator: Optional,
-                                    rep_modifiers: None,
-                                },
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "NAME",
                             ),
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "NAME",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                ":",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    ":",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "Recognizer",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "Recognizer",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "{",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "{",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "TermMetaDatas",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "TermMetaDatas",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "}",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "}",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                ";",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    ";",
-                                ),
-                            ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1002,89 +779,63 @@ Grammar {
                 nonterminal: NonTermIndex(
                     8,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "Action",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "Action",
                             ),
-                            repeat_operator: Some(
-                                RepeatOperator {
-                                    operator: Optional,
-                                    rep_modifiers: None,
-                                },
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "NAME",
                             ),
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "NAME",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                ":",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    ":",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "{",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "{",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "TermMetaDatas",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "TermMetaDatas",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "}",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "}",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                ";",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    ";",
-                                ),
-                            ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1095,18 +846,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     9,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "left",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "left",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1117,18 +865,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     9,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "reduce",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "reduce",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1139,18 +884,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     9,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "right",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "right",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1161,18 +903,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     9,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "shift",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "shift",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1183,18 +922,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     9,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "dynamic",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "dynamic",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1205,18 +941,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     9,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "nops",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "nops",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1227,18 +960,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     9,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "nopse",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "nopse",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1249,18 +979,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     9,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "INT_CONST",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "INT_CONST",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1271,18 +998,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     9,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "UserMetaData",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "UserMetaData",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1293,40 +1017,31 @@ Grammar {
                 nonterminal: NonTermIndex(
                     10,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "ProdMetaDatas",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "ProdMetaDatas",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    ",",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                ",",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "ProdMetaData",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "ProdMetaData",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1337,18 +1052,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     10,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "ProdMetaData",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "ProdMetaData",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1359,18 +1071,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     11,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "prefer",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "prefer",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1381,18 +1090,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     11,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "finish",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "finish",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1403,18 +1109,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     11,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "nofinish",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "nofinish",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1425,18 +1128,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     11,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "dynamic",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "dynamic",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1447,18 +1147,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     11,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "INT_CONST",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "INT_CONST",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1469,18 +1166,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     11,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "UserMetaData",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "UserMetaData",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1491,40 +1185,31 @@ Grammar {
                 nonterminal: NonTermIndex(
                     12,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "TermMetaDatas",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "TermMetaDatas",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    ",",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                ",",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "TermMetaData",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "TermMetaData",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1535,18 +1220,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     12,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "TermMetaData",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "TermMetaData",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1557,40 +1239,31 @@ Grammar {
                 nonterminal: NonTermIndex(
                     13,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "NAME",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "NAME",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    ":",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                ":",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "Const",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "Const",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1601,18 +1274,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     14,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "INT_CONST",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "INT_CONST",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1623,18 +1293,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     14,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "FLOAT_CONST",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "FLOAT_CONST",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1645,18 +1312,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     14,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "BOOL_CONST",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "BOOL_CONST",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1667,18 +1331,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     14,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "STR_CONST",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "STR_CONST",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1689,18 +1350,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     15,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "PlainAssignment",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "PlainAssignment",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1711,18 +1369,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     15,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "BoolAssignment",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "BoolAssignment",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1733,18 +1388,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     15,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "GSymbolReference",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "GSymbolReference",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1755,29 +1407,23 @@ Grammar {
                 nonterminal: NonTermIndex(
                     16,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "Assignments",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "Assignments",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "Assignment",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "Assignment",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1788,18 +1434,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     16,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "Assignment",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "Assignment",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1810,40 +1453,31 @@ Grammar {
                 nonterminal: NonTermIndex(
                     17,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "NAME",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "NAME",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "=",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "=",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "GSymbolReference",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "GSymbolReference",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1854,40 +1488,31 @@ Grammar {
                 nonterminal: NonTermIndex(
                     18,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "NAME",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "NAME",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "?=",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "?=",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "GSymbolReference",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "GSymbolReference",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1898,40 +1523,31 @@ Grammar {
                 nonterminal: NonTermIndex(
                     19,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "(",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "(",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "GrammarRuleRHS",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "GrammarRuleRHS",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    ")",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                ")",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1942,34 +1558,23 @@ Grammar {
                 nonterminal: NonTermIndex(
                     20,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "GSymbol",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "GSymbol",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "RepetitionOperator",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "RepetitionOperator",
                             ),
-                            repeat_operator: Some(
-                                RepeatOperator {
-                                    operator: Optional,
-                                    rep_modifiers: None,
-                                },
-                            ),
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -1980,34 +1585,23 @@ Grammar {
                 nonterminal: NonTermIndex(
                     20,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "ProductionGroup",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "ProductionGroup",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "RepetitionOperator",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "RepetitionOperator",
                             ),
-                            repeat_operator: Some(
-                                RepeatOperator {
-                                    operator: Optional,
-                                    rep_modifiers: None,
-                                },
-                            ),
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -2018,34 +1612,23 @@ Grammar {
                 nonterminal: NonTermIndex(
                     21,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "RepetitionOperatorOp",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "RepetitionOperatorOp",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "RepetitionModifiersExp",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "RepetitionModifiersExp",
                             ),
-                            repeat_operator: Some(
-                                RepeatOperator {
-                                    operator: Optional,
-                                    rep_modifiers: None,
-                                },
-                            ),
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -2056,18 +1639,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     22,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "*",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "*",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -2078,18 +1658,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     22,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "*!",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "*!",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -2100,18 +1677,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     22,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "+",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "+",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -2122,18 +1696,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     22,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "+!",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "+!",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -2144,18 +1715,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     22,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "?",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "?",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -2166,18 +1734,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     22,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "?!",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "?!",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -2188,40 +1753,31 @@ Grammar {
                 nonterminal: NonTermIndex(
                     23,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "[",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "[",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "RepetitionModifiers",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "RepetitionModifiers",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "]",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "]",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -2232,40 +1788,31 @@ Grammar {
                 nonterminal: NonTermIndex(
                     24,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "RepetitionModifiers",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "RepetitionModifiers",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    ",",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                ",",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "RepetitionModifier",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "RepetitionModifier",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -2276,18 +1823,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     24,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "RepetitionModifier",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "RepetitionModifier",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -2298,18 +1842,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     25,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "NAME",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "NAME",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -2320,18 +1861,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     26,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "NAME",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "NAME",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -2342,18 +1880,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     26,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "STR_CONST",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "STR_CONST",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -2364,18 +1899,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     27,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "STR_CONST",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "STR_CONST",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -2386,18 +1918,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     27,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "REGEX_TERM",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "REGEX_TERM",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -2408,18 +1937,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     28,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "LayoutItem",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "LayoutItem",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -2430,29 +1956,23 @@ Grammar {
                 nonterminal: NonTermIndex(
                     28,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "Layout",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "Layout",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "LayoutItem",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "LayoutItem",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -2463,18 +1983,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     28,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "EMPTY",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "EMPTY",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -2485,18 +2002,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     29,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "WS",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "WS",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -2507,18 +2021,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     29,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "Comment",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "Comment",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -2529,40 +2040,31 @@ Grammar {
                 nonterminal: NonTermIndex(
                     30,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "/*",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "/*",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "Corncs",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "Corncs",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                StrConst(
-                                    "*/",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            StrConst(
+                                "*/",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -2573,18 +2075,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     30,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "comment_line",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "comment_line",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -2595,18 +2094,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     31,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "Cornc",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "Cornc",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -2617,29 +2113,23 @@ Grammar {
                 nonterminal: NonTermIndex(
                     31,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "Corncs",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "Corncs",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "Cornc",
-                                ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "Cornc",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -2650,18 +2140,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     31,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "EMPTY",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "EMPTY",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -2672,18 +2159,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     32,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "Comment",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "Comment",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -2694,18 +2178,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     32,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "NOTCOMMENT",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "NOTCOMMENT",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },
@@ -2716,18 +2197,15 @@ Grammar {
                 nonterminal: NonTermIndex(
                     32,
                 ),
-                assignments: [
-                    GSymbolReference(
-                        GrammarSymbolReference {
-                            gsymbol: Some(
-                                Name(
-                                    "WS",
-                                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolving(
+                            Name(
+                                "WS",
                             ),
-                            repeat_operator: None,
-                            production_group: None,
-                        },
-                    ),
+                        ),
+                    },
                 ],
                 meta: {},
             },

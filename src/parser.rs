@@ -18,6 +18,12 @@ pub struct NonTermIndex(pub usize);
 #[derive(Debug, Copy, Clone)]
 pub struct SymbolIndex(pub usize);
 
+impl Default for SymbolIndex {
+    fn default() -> Self {
+        Self(usize::MAX)    // invalid value by default
+    }
+}
+
 pub trait Parser<L, B>
 where
     L: Lexer,

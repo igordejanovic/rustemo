@@ -1,8 +1,8 @@
 use indexmap::IndexMap;
 
-use crate::parser::{NonTermIndex, ProdIndex};
+use crate::parser::{NonTermIndex, ProdIndex, SymbolIndex};
 
-use super::types::{Assignments, Imports, PGFile, ProductionMetaDatas, TerminalRules};
+use super::types::{Assignments, Imports, PGFile, ProductionMetaDatas, TerminalRules, GrammarSymbol};
 
 #[derive(Debug)]
 pub(in crate::lang) struct Grammar {
@@ -27,8 +27,20 @@ pub(in crate::lang) struct NonTerminal {
 pub struct Production {
     pub idx: ProdIndex,
     pub nonterminal: NonTermIndex,
-    pub assignments: Assignments,
+    pub rhs: Vec<Assignment>,
     pub meta: ProductionMetaDatas,
+}
+
+#[derive(Debug)]
+pub enum ResolvingSymbolIndex {
+    Resolved(SymbolIndex),
+    Resolving(GrammarSymbol),
+}
+
+#[derive(Debug)]
+pub struct Assignment {
+    name: Option<String>,
+    symbol: ResolvingSymbolIndex,
 }
 
 impl Grammar {
@@ -63,7 +75,26 @@ impl Grammar {
                     let new_production = Production {
                         idx: next_prod_idx,
                         nonterminal: nonterminal.idx,
-                        assignments: production.assignments,
+                        rhs: production
+                            .assignments
+                            .into_iter()
+                            .map(|assignment| match assignment {
+                                super::types::Assignment::PlainAssignment(assign) => Assignment {
+                                    name: Some(assign.name),
+                                    symbol: ResolvingSymbolIndex::Resolving(assign.gsymref.gsymbol.unwrap()),
+                                },
+                                super::types::Assignment::BoolAssignment(assign) => Assignment {
+                                    name: Some(assign.name),
+                                    symbol: ResolvingSymbolIndex::Resolving(assign.gsymref.gsymbol.unwrap()),
+                                },
+                                super::types::Assignment::GSymbolReference(reference) => {
+                                    Assignment {
+                                        name: None,
+                                        symbol: ResolvingSymbolIndex::Resolving(reference.gsymbol.unwrap()),
+                                    }
+                                }
+                            })
+                            .collect(),
                         meta: production.meta,
                     };
                     productions.push(new_production);
