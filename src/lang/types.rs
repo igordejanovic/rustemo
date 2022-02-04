@@ -1,6 +1,6 @@
 use indexmap::IndexMap;
 
-use crate::lexer::Token;
+use crate::{lexer::Token, parser::{ProdIndex, NonTermIndex}};
 
 pub type StrConst = String;
 pub fn str_const<'i>(token: Token<&'i str>) -> StrConst {
@@ -116,8 +116,8 @@ pub fn imports_p1(import: Import) -> Imports {
 
 #[derive(Debug)]
 pub struct Import {
-    path: String,
-    name: Option<String>,
+    pub path: String,
+    pub name: Option<String>,
 }
 pub fn import_p0(path: StrConst) -> Import {
     Import { path, name: None }
@@ -144,10 +144,10 @@ pub fn production_rules_p1(rule: GrammarRule) -> GrammarRules {
 
 #[derive(Debug)]
 pub struct GrammarRule {
-    action: Option<String>,
-    name: String,
-    rhs: GrammarRuleRHS,
-    meta: ProductionMetaDatas,
+    pub action: Option<String>,
+    pub name: String,
+    pub rhs: GrammarRuleRHS,
+    pub meta: ProductionMetaDatas,
 }
 pub fn production_rule_with_action_p0(
     action: String,
@@ -190,8 +190,8 @@ pub fn production_rule_rhsp1(prod: Production) -> GrammarRuleRHS {
 
 #[derive(Debug)]
 pub struct Production {
-    assignments: Assignments,
-    meta: ProductionMetaDatas,
+    pub assignments: Assignments,
+    pub meta: ProductionMetaDatas,
 }
 pub fn production_p0(assignments: Assignments) -> Production {
     Production {
@@ -223,10 +223,10 @@ pub fn terminal_rule_with_action_p1(rule: TerminalRule) -> TerminalRule {
 
 #[derive(Debug)]
 pub struct TerminalRule {
-    name: String,
-    action: Option<String>,
-    recognizer: Option<Recognizer>,
-    meta: TerminalMetaDatas,
+    pub name: String,
+    pub action: Option<String>,
+    pub recognizer: Option<Recognizer>,
+    pub meta: TerminalMetaDatas,
 }
 pub fn terminal_rule_p0(name: String, recognizer: Recognizer) -> TerminalRule {
     TerminalRule {
@@ -401,8 +401,8 @@ pub fn assignments_p1(assign: Assignment) -> Assignments {
 
 #[derive(Debug)]
 pub struct PlainAssignment {
-    name: Name,
-    gsymref: GrammarSymbolReference,
+    pub name: Name,
+    pub gsymref: GrammarSymbolReference,
 }
 pub fn plain_assignment_p0(name: Name, gsymref: GrammarSymbolReference) -> PlainAssignment {
     PlainAssignment { name, gsymref }
@@ -410,24 +410,24 @@ pub fn plain_assignment_p0(name: Name, gsymref: GrammarSymbolReference) -> Plain
 
 #[derive(Debug)]
 pub struct BoolAssignment {
-    name: Name,
-    gsymref: GrammarSymbolReference,
+    pub name: Name,
+    pub gsymref: GrammarSymbolReference,
 }
 pub fn bool_assignment_p0(name: Name, gsymref: GrammarSymbolReference) -> BoolAssignment {
     BoolAssignment { name, gsymref }
 }
 
 #[derive(Debug)]
-pub struct ProductionGroup(GrammarRuleRHS);
+pub struct ProductionGroup(pub GrammarRuleRHS);
 pub fn production_group_p0(prod_rule_rhs: GrammarRuleRHS) -> ProductionGroup {
     ProductionGroup(prod_rule_rhs)
 }
 
 #[derive(Debug)]
 pub struct GrammarSymbolReference {
-    gsymbol: Option<GrammarSymbol>,
-    repeat_operator: OptRepeatOperator,
-    production_group: Option<ProductionGroup>,
+    pub gsymbol: Option<GrammarSymbol>,
+    pub repeat_operator: OptRepeatOperator,
+    pub production_group: Option<ProductionGroup>,
 }
 pub fn grammar_symbol_reference_p0(
     gsymbol: GrammarSymbol,
@@ -469,8 +469,8 @@ pub enum RepeatOperatorEnum {
 }
 #[derive(Debug)]
 pub struct RepeatOperator {
-    operator: RepeatOperatorEnum,
-    rep_modifiers: OptionalRepeatModifiersExpression,
+    pub operator: RepeatOperatorEnum,
+    pub rep_modifiers: OptionalRepeatModifiersExpression,
 }
 pub fn repeat_operator_p0(rep_modifiers: OptionalRepeatModifiersExpression) -> RepeatOperator {
     RepeatOperator {
@@ -532,7 +532,7 @@ pub fn optional_repeat_modifiers_p1(modifier: OptionalRepeatModifier) -> Optiona
 }
 
 #[derive(Debug)]
-pub struct OptionalRepeatModifier(Name);
+pub struct OptionalRepeatModifier(pub Name);
 pub fn optional_repeat_modifier_p0(name: Name) -> OptionalRepeatModifier {
     OptionalRepeatModifier(name)
 }

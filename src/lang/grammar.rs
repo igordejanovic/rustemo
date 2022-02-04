@@ -1,16 +1,34 @@
-use super::types::{Imports, ProductionRules, TerminalRules, PGFile, Production};
+use indexmap::IndexMap;
 
+use crate::parser::{NonTermIndex, ProdIndex};
+
+use super::types::{Assignments, Imports, PGFile, ProductionMetaDatas, TerminalRules};
 
 #[derive(Debug)]
-pub (in crate::lang) struct Grammar {
+pub(in crate::lang) struct Grammar {
     imports: Option<Imports>,
-    rules: Option<ProductionRules>,
     productions: Option<Vec<Production>>,
     terminals: Option<TerminalRules>,
+    nonterminals: Option<Vec<NonTerminal>>,
     // nonterminals: Vec<NonTerminalRules>,
     // symbol_by_name: HashMap<String, &'a Symbol<'a>>,
     // first_set: HashMap<NonTerminal<'a>, HashSet<&'a Terminal>>,
     // start_symbol: Option<&'a NonTerminal<'a>>,
+}
+
+#[derive(Debug)]
+pub(in crate::lang) struct NonTerminal {
+    idx: NonTermIndex,
+    name: String,
+    productions: Vec<ProdIndex>,
+}
+
+#[derive(Debug)]
+pub struct Production {
+    pub idx: ProdIndex,
+    pub nonterminal: NonTermIndex,
+    pub assignments: Assignments,
+    pub meta: ProductionMetaDatas,
 }
 
 impl Grammar {
@@ -20,25 +38,70 @@ impl Grammar {
         // symbol index of each term/non-term when needed. Do I need symbol
         // index? Yes from RHS of productions. SymbolIndex can be a new type to
         // allow conversion to TerminalIndex/NonTerminalIndex.
+        let mut nonterminals: IndexMap<String, NonTerminal> = IndexMap::new();
+        let mut productions = vec![];
 
+        if let Some(rules) = pgfile.rules {
+            let mut next_nonterm_idx = NonTermIndex(0);
+            let mut next_prod_idx = ProdIndex(0);
+            let mut nonterminal;
+            for rule in rules {
+                if !nonterminals.contains_key(&rule.name) {
+                    nonterminals.insert(
+                        rule.name.to_string(),
+                        NonTerminal {
+                            idx: next_nonterm_idx,
+                            name: rule.name.to_string(),
+                            productions: vec![],
+                        },
+                    );
+                    next_nonterm_idx.0 += 1;
+                }
+                nonterminal = &mut nonterminals[&rule.name];
 
-        //
-        // 2. TODO: Extract productions from rules. Production should have LHS
-        // which is a SymbolIndex. Meta should be Production Meta from the
-        // parse-tree with rule meta applied (meta inheritance). RHS should be
-        // Production assignments from the parse tree.
-        //
-        // 3. TODO: Desugaring. Related to the previous. Desugar repetitions and
-        // groups.
+                for production in rule.rhs {
+                    let new_production = Production {
+                        idx: next_prod_idx,
+                        nonterminal: nonterminal.idx,
+                        assignments: production.assignments,
+                        meta: production.meta,
+                    };
+                    productions.push(new_production);
+                    nonterminal.productions.push(next_prod_idx);
+                    next_prod_idx.0 += 1;
+                    // 3. TODO: Desugaring. Related to the previous. Desugar repetitions and
+                    // groups.
+
+                    // for production in desugar_production(production) {
+
+                    // }
+                }
+            }
+        }
 
         Grammar {
             imports: pgfile.imports,
-            rules: pgfile.rules,
-            productions: None,
-            terminals: pgfile.terminals
+            productions: Some(productions),
+            terminals: pgfile.terminals,
+            nonterminals: if nonterminals.is_empty() {
+                None
+            } else {
+                Some(nonterminals.into_values().collect())
+            },
         }
     }
 }
+
+// fn desugar_production(production: super::types::Production) -> impl Iterator<Item=Production> {
+//     production.assignments
+//               .iter()
+//               .filter(|assignment| match assignment {
+//                   super::types::Assignment::PlainAssignment(_) => todo!(),
+//                   super::types::Assignment::BoolAssignment(_) => todo!(),
+//                   super::types::Assignment::GSymbolReference(_) => todo!(),
+//               }).collect();
+//     todo!()
+// }
 
 // impl<'a> Grammar<'a> {
 //     fn new(
