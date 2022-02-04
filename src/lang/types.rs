@@ -63,7 +63,7 @@ pub fn stop<'a>(token: Token<&'a str>) -> STOP {}
 pub struct PGFile {
     pub imports: Option<Imports>,
     pub rules: Option<GrammarRules>,
-    pub terminals: Option<TerminalRules>,
+    pub terminals: Option<Terminals>,
 }
 pub fn pgfile_p0(rules: GrammarRules) -> PGFile {
     PGFile {
@@ -79,7 +79,7 @@ pub fn pgfile_p1(imports: Imports, rules: GrammarRules) -> PGFile {
         terminals: None,
     }
 }
-pub fn pgfile_p2(rules: GrammarRules, terminals: TerminalRules) -> PGFile {
+pub fn pgfile_p2(rules: GrammarRules, terminals: Terminals) -> PGFile {
     PGFile {
         imports: None,
         rules: Some(rules),
@@ -89,7 +89,7 @@ pub fn pgfile_p2(rules: GrammarRules, terminals: TerminalRules) -> PGFile {
 pub fn pgfile_p3(
     imports: Imports,
     rules: GrammarRules,
-    terminals: TerminalRules,
+    terminals: Terminals,
 ) -> PGFile {
     PGFile {
         imports: Some(imports),
@@ -97,7 +97,7 @@ pub fn pgfile_p3(
         terminals: Some(terminals),
     }
 }
-pub fn pgfile_p4(terminals: TerminalRules) -> PGFile {
+pub fn pgfile_p4(terminals: Terminals) -> PGFile {
     PGFile {
         imports: None,
         rules: None,
@@ -203,41 +203,43 @@ pub fn production_p1(assignments: Assignments, meta: ProductionMetaDatas) -> Pro
     Production { assignments, meta }
 }
 
-pub type TerminalRules = Vec<TerminalRule>;
-pub type TerminalRuleWithAction = TerminalRule;
-pub fn terminal_rules_p0(mut rules: TerminalRules, rule: TerminalRule) -> TerminalRules {
+pub type Terminals = Vec<Terminal>;
+pub type TerminalRules = Terminals;
+pub type TerminalRuleWithAction = Terminal;
+pub fn terminal_rules_p0(mut rules: Terminals, rule: Terminal) -> Terminals {
     rules.push(rule);
     rules
 }
-pub fn terminal_rules_p1(rule: TerminalRule) -> TerminalRules {
+pub fn terminal_rules_p1(rule: Terminal) -> Terminals {
     vec![rule]
 }
 
-pub fn terminal_rule_with_action_p0(action: String, mut rule: TerminalRule) -> TerminalRule {
+pub fn terminal_rule_with_action_p0(action: String, mut rule: Terminal) -> Terminal {
     rule.action = Some(action);
     rule
 }
-pub fn terminal_rule_with_action_p1(rule: TerminalRule) -> TerminalRule {
+pub fn terminal_rule_with_action_p1(rule: Terminal) -> Terminal {
     rule
 }
 
 #[derive(Debug)]
-pub struct TerminalRule {
+pub struct Terminal {
     pub name: String,
     pub action: Option<String>,
     pub recognizer: Option<Recognizer>,
     pub meta: TerminalMetaDatas,
 }
-pub fn terminal_rule_p0(name: String, recognizer: Recognizer) -> TerminalRule {
-    TerminalRule {
+pub type TerminalRule = Terminal;
+pub fn terminal_rule_p0(name: String, recognizer: Recognizer) -> Terminal {
+    Terminal {
         name,
         action: None,
         recognizer: Some(recognizer),
         meta: TerminalMetaDatas::new(),
     }
 }
-pub fn terminal_rule_p1(name: String) -> TerminalRule {
-    TerminalRule {
+pub fn terminal_rule_p1(name: String) -> Terminal {
+    Terminal {
         name,
         action: None,
         recognizer: None,
@@ -248,16 +250,16 @@ pub fn terminal_rule_p2(
     name: String,
     recognizer: Recognizer,
     meta: TerminalMetaDatas,
-) -> TerminalRule {
-    TerminalRule {
+) -> Terminal {
+    Terminal {
         name,
         action: None,
         recognizer: Some(recognizer),
         meta,
     }
 }
-pub fn terminal_rule_p3(name: String, meta: TerminalMetaDatas) -> TerminalRule {
-    TerminalRule {
+pub fn terminal_rule_p3(name: String, meta: TerminalMetaDatas) -> Terminal {
+    Terminal {
         name,
         action: None,
         recognizer: None,

@@ -12,6 +12,11 @@ pub struct TermIndex(pub usize);
 
 #[derive(Debug, Copy, Clone)]
 pub struct NonTermIndex(pub usize);
+impl NonTermIndex {
+    pub(crate) fn to_symbol_index(&self, len: usize) -> SymbolIndex {
+        SymbolIndex(self.0 + len)
+    }
+}
 
 // Symbol index for non-terminal is <max term index> + NonTermIndex.
 // For terminals symbol index is the same as TermIndex
@@ -21,6 +26,12 @@ pub struct SymbolIndex(pub usize);
 impl Default for SymbolIndex {
     fn default() -> Self {
         Self(usize::MAX)    // invalid value by default
+    }
+}
+
+impl From<TermIndex> for SymbolIndex {
+    fn from(index: TermIndex) -> Self {
+        Self(index.0)
     }
 }
 

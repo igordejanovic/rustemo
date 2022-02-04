@@ -1,14 +1,16 @@
 use indexmap::IndexMap;
 
-use crate::parser::{NonTermIndex, ProdIndex, SymbolIndex};
+use crate::parser::{NonTermIndex, ProdIndex, SymbolIndex, TermIndex};
 
-use super::types::{Assignments, Imports, PGFile, ProductionMetaDatas, TerminalRules, GrammarSymbol};
+use super::types::{
+    GrammarSymbol, Imports, PGFile, ProductionMetaDatas, Recognizer, TerminalMetaDatas,
+};
 
 #[derive(Debug)]
 pub(in crate::lang) struct Grammar {
     imports: Option<Imports>,
     productions: Option<Vec<Production>>,
-    terminals: Option<TerminalRules>,
+    terminals: Option<Vec<Terminal>>,
     nonterminals: Option<Vec<NonTerminal>>,
     // nonterminals: Vec<NonTerminalRules>,
     // symbol_by_name: HashMap<String, &'a Symbol<'a>>,
@@ -32,6 +34,15 @@ pub struct Production {
 }
 
 #[derive(Debug)]
+pub struct Terminal {
+    pub idx: TermIndex,
+    pub name: String,
+    pub action: Option<String>,
+    pub recognizer: Option<Recognizer>,
+    pub meta: TerminalMetaDatas,
+}
+
+#[derive(Debug)]
 pub enum ResolvingSymbolIndex {
     Resolved(SymbolIndex),
     Resolving(GrammarSymbol),
@@ -45,19 +56,17 @@ pub struct Assignment {
 
 impl Grammar {
     pub fn from_pgfile(pgfile: PGFile) -> Self {
-        // 1. TODO: Terminal/non-terminal indexes, symbol index? Maybe symbol
-        // index could be <max terminal index> + non-term index. Thus I can have
-        // symbol index of each term/non-term when needed. Do I need symbol
-        // index? Yes from RHS of productions. SymbolIndex can be a new type to
-        // allow conversion to TerminalIndex/NonTerminalIndex.
         let mut nonterminals: IndexMap<String, NonTerminal> = IndexMap::new();
+        let mut terminals: IndexMap<String, Terminal> = IndexMap::new();
         let mut productions = vec![];
 
         if let Some(rules) = pgfile.rules {
             let mut next_nonterm_idx = NonTermIndex(0);
             let mut next_prod_idx = ProdIndex(0);
             let mut nonterminal;
+
             for rule in rules {
+                // Crate or find non-terminal for the current rule
                 if !nonterminals.contains_key(&rule.name) {
                     nonterminals.insert(
                         rule.name.to_string(),
@@ -71,6 +80,8 @@ impl Grammar {
                 }
                 nonterminal = &mut nonterminals[&rule.name];
 
+                // Gather productions, create indexes. Transform RHS to mark
+                // resolving references.
                 for production in rule.rhs {
                     let new_production = Production {
                         idx: next_prod_idx,
@@ -81,16 +92,22 @@ impl Grammar {
                             .map(|assignment| match assignment {
                                 super::types::Assignment::PlainAssignment(assign) => Assignment {
                                     name: Some(assign.name),
-                                    symbol: ResolvingSymbolIndex::Resolving(assign.gsymref.gsymbol.unwrap()),
+                                    symbol: ResolvingSymbolIndex::Resolving(
+                                        assign.gsymref.gsymbol.unwrap(),
+                                    ),
                                 },
                                 super::types::Assignment::BoolAssignment(assign) => Assignment {
                                     name: Some(assign.name),
-                                    symbol: ResolvingSymbolIndex::Resolving(assign.gsymref.gsymbol.unwrap()),
+                                    symbol: ResolvingSymbolIndex::Resolving(
+                                        assign.gsymref.gsymbol.unwrap(),
+                                    ),
                                 },
                                 super::types::Assignment::GSymbolReference(reference) => {
                                     Assignment {
                                         name: None,
-                                        symbol: ResolvingSymbolIndex::Resolving(reference.gsymbol.unwrap()),
+                                        symbol: ResolvingSymbolIndex::Resolving(
+                                            reference.gsymbol.unwrap(),
+                                        ),
                                     }
                                 }
                             })
@@ -110,10 +127,96 @@ impl Grammar {
             }
         }
 
+        // Collect grammar terminals
+        let mut next_term_idx = TermIndex(0);
+        if let Some(grammar_terminals) = pgfile.terminals {
+            for terminal in grammar_terminals {
+                terminals.insert(
+                    terminal.name.to_string(),
+                    Terminal {
+                        idx: next_term_idx,
+                        name: terminal.name,
+                        action: terminal.action,
+                        recognizer: terminal.recognizer,
+                        meta: terminal.meta,
+                    },
+                );
+                next_term_idx.0 += 1;
+            }
+        }
+
+        // Create new terminals from str consts
+        for production in &mut productions {
+            for assign in &mut production.rhs {
+                match &assign.symbol {
+                    ResolvingSymbolIndex::Resolved(_) => {}
+                    ResolvingSymbolIndex::Resolving(symbol) => match symbol {
+                        GrammarSymbol::StrConst(name) => {
+                            if !terminals.contains_key(name) {
+                                terminals.insert(
+                                    name.to_string(),
+                                    Terminal {
+                                        idx: next_term_idx,
+                                        name: name.to_string(),
+                                        action: None,
+                                        recognizer: Some(Recognizer::StrConst(name.to_string())),
+                                        meta: TerminalMetaDatas::new(),
+                                    },
+                                );
+                                next_term_idx.0 += 1;
+                            }
+                        }
+                        GrammarSymbol::Name(_) => {}
+                    },
+                }
+            }
+        }
+
+        // Resolve references.
+        for production in &mut productions {
+            for assign in &mut production.rhs {
+                match &assign.symbol {
+                    ResolvingSymbolIndex::Resolving(symbol) => match symbol {
+                        GrammarSymbol::Name(name) => {
+                            assign.symbol = ResolvingSymbolIndex::Resolved(
+                                if let Some(terminal) = terminals.get(name) {
+                                    terminal.idx.into()
+                                } else {
+                                    nonterminals
+                                        .get(name)
+                                        .unwrap_or_else(|| {
+                                            panic!("unexisting symbol {:?}.", name)
+                                        })
+                                        .idx
+                                        .to_symbol_index(terminals.len())
+                                },
+                            )
+                        }
+                        GrammarSymbol::StrConst(name) => {
+                            assign.symbol = ResolvingSymbolIndex::Resolved(
+                                terminals
+                                    .get(name)
+                                    .unwrap_or_else(|| {
+                                        panic!("terminal {:?} not created!.", name)
+                                    })
+                                    .idx
+                                    .into(),
+                            )
+                        }
+                    },
+                    ResolvingSymbolIndex::Resolved(_) => {}
+                }
+            }
+        }
+
         Grammar {
             imports: pgfile.imports,
             productions: Some(productions),
-            terminals: pgfile.terminals,
+            terminals: if terminals.is_empty() {
+                None
+            } else {
+                Some(terminals.into_values().collect())
+            },
             nonterminals: if nonterminals.is_empty() {
                 None
             } else {

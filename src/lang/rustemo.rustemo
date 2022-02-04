@@ -4,14 +4,14 @@ File: GrammarRules
     | Imports GrammarRules 'terminals' TerminalRules
     | 'terminals' TerminalRules;
 
-imports: imports import | import;
-import: 'import' STR_CONST
+Imports: Imports Import | Import;
+Import: 'import' STR_CONST
       | 'import' STR_CONST 'as' NAME;
 
 GrammarRules: GrammarRules GrammarRule
             | GrammarRule;
-GrammarRule: Action? NAME ':' GrammarRuleRHS ';'
-           | Action? NAME '{' ProdMetaDatas '}' ':' GrammarRuleRHS ';';
+GrammarRule: ACTION? NAME ':' GrammarRuleRHS ';'
+           | ACTION? NAME '{' ProdMetaDatas '}' ':' GrammarRuleRHS ';';
 
 GrammarRuleRHS {left, 5}: GrammarRuleRHS '|' Production
                         | Production;
@@ -20,10 +20,10 @@ Production: Assignments
 
 TerminalRules: TerminalRules TerminalRule
              | TerminalRule;
-TerminalRule {left, 15}: Action? NAME ':' Recognizer ';'
-                       | Action? NAME ':' ';'
-                       | Action? NAME ':' Recognizer '{' TermMetaDatas '}' ';'
-                       | Action? NAME ':' '{' TermMetaDatas '}' ';';
+TerminalRule {left, 15}: ACTION? NAME ':' Recognizer ';'
+                       | ACTION? NAME ':' ';'
+                       | ACTION? NAME ':' Recognizer '{' TermMetaDatas '}' ';'
+                       | ACTION? NAME ':' '{' TermMetaDatas '}' ';';
 
 ProdMetaData: 'left' | 'reduce' | 'right' | 'shift' | 'dynamic' | 'nops' | 'nopse'
             | INT_CONST
