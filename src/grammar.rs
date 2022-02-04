@@ -1,4 +1,4 @@
-use crate::{common::Location, parser::Action};
+use crate::{common::Location, parser::{Action, TermIndex}};
 use std::hash::Hash;
 
 type Priority = u8;
@@ -80,7 +80,7 @@ pub type Gotos<const N: usize, const S: usize> = [[Option<usize>; N]; S];
 
 #[derive(Debug)]
 pub struct TerminalInfo {
-    pub id: usize,
+    pub id: TermIndex,
     pub name: &'static str,
     pub location: Option<Location>,
 }

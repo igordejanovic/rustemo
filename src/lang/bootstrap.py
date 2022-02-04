@@ -78,7 +78,7 @@ def generate_terminals(grammar):
     out = []
     for idx, terminal in enumerate(grammar.terminals.values()):
         out.append('    TerminalInfo{')
-        out.append(f'       id: {idx},')
+        out.append(f'       id: TermIndex({idx}),')
         out.append(f'       name: "{terminal.name}",')
         #out.append(f'       fqn: "{terminal.fqn}",')
         out.append('       location: None,')
@@ -157,13 +157,13 @@ class Action:
     def __init__(self, action):
         self.action = action.action
         if action.prod:
-            self.param = '{}, {}, {}, "{}"'.format(
+            self.param = 'ProdIndex({}), {}, NonTermIndex({}), "{}"'.format(
                 action.prod.prod_id,
                 len(action.prod.rhs),
                 non_terminals[action.prod.symbol.name],
                 action.prod)
         elif action.state:
-            self.param = '{}, {}'.format(
+            self.param = 'StateIndex({}), TermIndex({})'.format(
                 action.state.state_id,
                 terminals[action.state.symbol.name])
         else:
@@ -202,7 +202,7 @@ def generate_gotos_table(table):
         for nt, goto_state in state.gotos.items():
             nt_idx = non_terminals[nt.name]
             state_gotos[nt_idx] = goto_state.state_id
-        state_gotos = ', '.join(['Some({})'.format(g) if g is not None else 'None'
+        state_gotos = ', '.join(['Some(StateIndex({}))'.format(g) if g is not None else 'None'
                                  for g in state_gotos])
         out.append('    [{}]'.format(state_gotos))
 
@@ -232,10 +232,10 @@ if __name__ == '__main__':
         f.write('use std::convert::TryFrom;\n\n');
         f.write('use std::marker::PhantomData;\n')
         f.write('use crate::lexer::{Lexer, Token};\n')
-        f.write('use crate::parser::ParserDefinition;\n')
+        f.write('use crate::parser::{ParserDefinition, StateIndex, TermIndex, NonTermIndex, ProdIndex};\n')
+        f.write('use crate::parser::Action::{self, Shift, Reduce, Accept, Error};\n')
         f.write('use crate::builder::Builder;\n')
         f.write('use crate::grammar::{TerminalInfo, TerminalInfos, TerminalsState};\n')
-        f.write('use crate::parser::Action::{self, Shift, Reduce, Accept, Error};\n')
         f.write('use crate::debug::{log, logn};\n')
         f.write('use super::parser::GrammarLexer;\n')
         f.write('use super::rustemo_types::{TermKind, ProdKind, Terminal, NonTerminal, Symbol};\n\n')
@@ -249,7 +249,7 @@ if __name__ == '__main__':
 
         f.write('pub struct RustemoParserDefinition {\n')
         f.write('    actions: [[Action; TERMINAL_NO]; STATE_NO],\n')
-        f.write('    gotos: [[Option<usize>; NONTERMINAL_NO]; STATE_NO]\n')
+        f.write('    gotos: [[Option<StateIndex>; NONTERMINAL_NO]; STATE_NO]\n')
         f.write('}\n\n')
 
         f.write('pub(in crate::lang) static PARSER_DEFINITION: RustemoParserDefinition = RustemoParserDefinition {\n')
@@ -263,11 +263,11 @@ if __name__ == '__main__':
         f.write('};\n\n')
 
         f.write('impl ParserDefinition for RustemoParserDefinition {\n')
-        f.write('    fn action(&self, state_index: usize, term_index: usize) -> Action {\n')
-        f.write('        PARSER_DEFINITION.actions[state_index][term_index]\n')
+        f.write('    fn action(&self, state_index: StateIndex, term_index: TermIndex) -> Action {\n')
+        f.write('        PARSER_DEFINITION.actions[state_index.0][term_index.0]\n')
         f.write('    }\n')
-        f.write('    fn goto(&self, state_index: usize, nonterm_id: usize) -> usize {\n')
-        f.write('        PARSER_DEFINITION.gotos[state_index][nonterm_id].unwrap()\n')
+        f.write('    fn goto(&self, state_index: StateIndex, nonterm_id: NonTermIndex) -> StateIndex {\n')
+        f.write('        PARSER_DEFINITION.gotos[state_index.0][nonterm_id.0].unwrap()\n')
         f.write('    }\n')
         f.write('}\n\n')
 
@@ -294,10 +294,10 @@ if __name__ == '__main__':
         f.write('\n')
         f.write('impl LexerDefinition for RustemoLexerDefinition {\n')
         f.write('    type Recognizer = for<\'i> fn(&\'i str) -> Option<&\'i str>;\n\n')
-        f.write('    fn recognizers(&self, state_index: usize) -> RecognizerIterator<Self::Recognizer> {\n')
+        f.write('    fn recognizers(&self, state_index: StateIndex) -> RecognizerIterator<Self::Recognizer> {\n')
         f.write('            RecognizerIterator {\n')
         f.write('                terminals: &LEXER_DEFINITION.terminals,\n')
-        f.write('                terminals_for_state: &LEXER_DEFINITION.terminals_for_state[state_index][..],\n')
+        f.write('                terminals_for_state: &LEXER_DEFINITION.terminals_for_state[state_index.0][..],\n')
         f.write('                recognizers: &LEXER_DEFINITION.recognizers,\n')
         f.write('                index: 0\n')
         f.write('            }\n')
@@ -321,8 +321,8 @@ if __name__ == '__main__':
         f.write('        }\n')
         f.write('    }\n')
         f.write('\n')
-        f.write('    fn shift_action(&mut self, term_kind: usize, token: Token<<Self::Lexer as Lexer>::Input>) {\n')
-        f.write('        let termval = match TermKind::try_from(term_kind).unwrap() {\n')
+        f.write('    fn shift_action(&mut self, term_kind: TermIndex, token: Token<<Self::Lexer as Lexer>::Input>) {\n')
+        f.write('        let termval = match TermKind::try_from(term_kind.0).unwrap() {\n')
         for t_name, idx in terminals.items():
             term = parser.grammar.terminals[t_name]
             t_name = terminal_name(t_name)
@@ -334,8 +334,8 @@ if __name__ == '__main__':
         f.write('        };\n')
         f.write('        self.res_stack.push(Symbol::Terminal(termval));\n')
         f.write('    }\n\n')
-        f.write('    fn reduce_action(&mut self, prod_kind: usize, prod_len: usize, _prod_str: &\'static str) {\n')
-        f.write('        let prod = match ProdKind::try_from(prod_kind).unwrap() {\n')
+        f.write('    fn reduce_action(&mut self, prod_kind: ProdIndex, prod_len: usize, _prod_str: &\'static str) {\n')
+        f.write('        let prod = match ProdKind::try_from(prod_kind.0).unwrap() {\n')
         for nt_name, nt in parser.grammar.nonterminals.items():
             if nt_name == 'S\'': continue
             nt_name = camel_case(nt_name)

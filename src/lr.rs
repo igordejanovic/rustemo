@@ -5,14 +5,14 @@ use crate::parser::{Action, Context, Parser, ParserDefinition, StateIndex};
 
 #[derive(Debug)]
 pub struct LRContext {
-    pub parse_stack: Vec<usize>,
-    pub current_state: usize,
+    pub parse_stack: Vec<StateIndex>,
+    pub current_state: StateIndex,
     pub position: usize,
 }
 
 impl LRContext {
     #[inline]
-    fn to_state(&mut self, state: usize) {
+    fn to_state(&mut self, state: StateIndex) {
         self.parse_stack.push(state);
         self.current_state = state;
     }
@@ -36,7 +36,7 @@ impl Context for LRContext {
     }
 
     #[inline]
-    fn state(&self) -> usize {
+    fn state(&self) -> StateIndex {
         self.current_state
     }
 }
@@ -51,8 +51,8 @@ impl<D: ParserDefinition> LRParser<D> {
     pub fn new(definition: &'static D) -> Self {
         Self {
             context: LRContext {
-                parse_stack: vec![0],
-                current_state: 0,
+                parse_stack: vec![StateIndex(0)],
+                current_state: StateIndex(0),
                 position: 0,
             },
             definition,
@@ -101,7 +101,7 @@ where
                 }
                 Reduce(prod_kind, prod_len, nonterm_id, prod_str) => {
                     log!(
-                        "Reduce by production '{}', size {}, non-terminal {}",
+                        "Reduce by production '{:?}', size {:?}, non-terminal {:?}",
                         prod_str,
                         prod_len,
                         nonterm_id

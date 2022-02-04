@@ -1,6 +1,6 @@
 use crate::{
     lexer::{Lexer, Token},
-    tree::TreeNode,
+    tree::TreeNode, parser::{ProdIndex, TermIndex},
 };
 
 /// This trait is implemented by all types that are in charge of building output
@@ -21,7 +21,7 @@ pub trait Builder {
     ///
     /// * `term_kind` - A kind of terminal.
     /// * `token` - A token recognized in the input.
-    fn shift_action(&mut self, term_kind: usize, token: Token<<Self::Lexer as Lexer>::Input>);
+    fn shift_action(&mut self, term_kind: TermIndex, token: Token<<Self::Lexer as Lexer>::Input>);
 
     /// Called when LR reduce is taking place.
     ///
@@ -30,7 +30,7 @@ pub trait Builder {
     /// * `prod_kind` - A production kind, used to decide the action to perform.
     /// * `prod_len` - A RHS length, used to pop appropriate number of
     /// subresults from the stack
-    fn reduce_action(&mut self, prod_kind: usize, prod_len: usize, prod_str: &'static str);
+    fn reduce_action(&mut self, prod_kind: ProdIndex, prod_len: usize, prod_str: &'static str);
 
     /// Returns the product of parsing. Usually the one and only element left on
     /// the result stack.
@@ -50,11 +50,11 @@ impl<L: Lexer> Builder for TreeBuilder<L> {
         Self { res_stack: vec![] }
     }
 
-    fn shift_action(&mut self, _term_kind: usize, token: Token<L::Input>) {
+    fn shift_action(&mut self, _term_kind: TermIndex, token: Token<L::Input>) {
         self.res_stack.push(TreeNode::TermNode(token))
     }
 
-    fn reduce_action(&mut self, _prod_kind: usize, prod_len: usize, prod_str: &'static str) {
+    fn reduce_action(&mut self, _prod_kind: ProdIndex, prod_len: usize, prod_str: &'static str) {
         let children = self.res_stack.split_off(self.res_stack.len() - prod_len);
         self.res_stack.push(TreeNode::NonTermNode {
             children,

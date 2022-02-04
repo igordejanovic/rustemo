@@ -1,14 +1,22 @@
 use crate::{builder::Builder, lexer::Lexer};
 use core::fmt::Debug;
 
-pub type StateIndex = usize;
-pub type ProdIndex = usize;
-pub type TermIndex = usize;
-pub type NonTermIndex = usize;
+#[derive(Debug, Copy, Clone)]
+pub struct StateIndex(pub usize);
+
+#[derive(Debug, Copy, Clone)]
+pub struct ProdIndex(pub usize);
+
+#[derive(Debug, Copy, Clone)]
+pub struct TermIndex(pub usize);
+
+#[derive(Debug, Copy, Clone)]
+pub struct NonTermIndex(pub usize);
 
 // Symbol index for non-terminal is <max term index> + NonTermIndex.
 // For terminals symbol index is the same as TermIndex
-pub type SymbolIndex = usize;
+#[derive(Debug, Copy, Clone)]
+pub struct SymbolIndex(pub usize);
 
 pub trait Parser<L, B>
 where
@@ -35,5 +43,5 @@ pub enum Action {
 pub trait Context {
     fn position(&self) -> usize;
     fn set_position(&mut self, position: usize);
-    fn state(&self) -> usize;
+    fn state(&self) -> StateIndex;
 }

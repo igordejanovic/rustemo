@@ -9,7 +9,7 @@ use super::{
 use crate::{
     lexer::Lexer,
     lr::{LRContext, LRParser},
-    parser::Parser,
+    parser::{Parser, StateIndex},
 };
 
 pub type GrammarLexer<'i> = DefaultLexer<'i, RustemoLexerDefinition>;
@@ -34,8 +34,8 @@ impl GrammarParser {
     pub fn default() -> Self {
         Self(LRParser {
             context: LRContext {
-                parse_stack: vec![0],
-                current_state: 0,
+                parse_stack: vec![StateIndex(0)],
+                current_state: StateIndex(0),
                 position: 0,
             },
             definition: &PARSER_DEFINITION,

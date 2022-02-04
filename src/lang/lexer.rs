@@ -2,12 +2,12 @@ use crate::{
     debug::log,
     grammar::TerminalInfo,
     lexer::{Lexer, Token},
-    parser::Context,
+    parser::{Context, StateIndex},
 };
 
 pub trait LexerDefinition {
     type Recognizer;
-    fn recognizers(&self, state_index: usize) -> RecognizerIterator<Self::Recognizer>;
+    fn recognizers(&self, state_index: StateIndex) -> RecognizerIterator<Self::Recognizer>;
 }
 
 pub struct RecognizerIterator<R: 'static> {
