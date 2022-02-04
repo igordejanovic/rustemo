@@ -62,24 +62,24 @@ pub fn stop<'a>(token: Token<&'a str>) -> STOP {}
 #[derive(Debug)]
 pub struct PGFile {
     pub imports: Option<Imports>,
-    pub rules: Option<ProductionRules>,
+    pub rules: Option<GrammarRules>,
     pub terminals: Option<TerminalRules>,
 }
-pub fn pgfile_p0(rules: ProductionRules) -> PGFile {
+pub fn pgfile_p0(rules: GrammarRules) -> PGFile {
     PGFile {
         imports: None,
         rules: Some(rules),
         terminals: None,
     }
 }
-pub fn pgfile_p1(imports: Imports, rules: ProductionRules) -> PGFile {
+pub fn pgfile_p1(imports: Imports, rules: GrammarRules) -> PGFile {
     PGFile {
         imports: Some(imports),
         rules: Some(rules),
         terminals: None,
     }
 }
-pub fn pgfile_p2(rules: ProductionRules, terminals: TerminalRules) -> PGFile {
+pub fn pgfile_p2(rules: GrammarRules, terminals: TerminalRules) -> PGFile {
     PGFile {
         imports: None,
         rules: Some(rules),
@@ -88,7 +88,7 @@ pub fn pgfile_p2(rules: ProductionRules, terminals: TerminalRules) -> PGFile {
 }
 pub fn pgfile_p3(
     imports: Imports,
-    rules: ProductionRules,
+    rules: GrammarRules,
     terminals: TerminalRules,
 ) -> PGFile {
     PGFile {
@@ -129,63 +129,62 @@ pub fn import_p1(path: StrConst, name: Name) -> Import {
     }
 }
 
-pub type ProductionRules = Vec<ProductionRuleWithAction>;
+pub type GrammarRules = Vec<GrammarRule>;
+pub type ProductionRules = GrammarRules;
 pub fn production_rules_p0(
-    mut rules: ProductionRules,
-    rule: ProductionRuleWithAction,
-) -> ProductionRules {
+    mut rules: GrammarRules,
+    rule: GrammarRule,
+) -> GrammarRules {
     rules.push(rule);
     rules
 }
-pub fn production_rules_p1(rule: ProductionRuleWithAction) -> ProductionRules {
+pub fn production_rules_p1(rule: GrammarRule) -> GrammarRules {
     vec![rule]
 }
 
 #[derive(Debug)]
-pub struct ProductionRuleWithAction {
+pub struct GrammarRule {
     action: Option<String>,
-    rule: ProductionRule,
+    name: String,
+    rhs: GrammarRuleRHS,
+    meta: ProductionMetaDatas,
 }
 pub fn production_rule_with_action_p0(
     action: String,
-    rule: ProductionRule,
-) -> ProductionRuleWithAction {
-    ProductionRuleWithAction {
-        action: Some(action),
-        rule,
-    }
+    mut rule: GrammarRule,
+) -> GrammarRule {
+    rule.action = Some(action);
+    rule
 }
-pub fn production_rule_with_action_p1(rule: ProductionRule) -> ProductionRuleWithAction {
-    ProductionRuleWithAction { action: None, rule }
+pub fn production_rule_with_action_p1(rule: GrammarRule) -> GrammarRule {
+    rule
 }
 
-#[derive(Debug)]
-pub struct ProductionRule {
-    name: String,
-    rhs: ProductionRuleRHS,
-    meta: ProductionMetaDatas,
-}
-pub fn production_rule_p0(name: String, rhs: ProductionRuleRHS) -> ProductionRule {
-    ProductionRule {
+pub type ProductionRule = GrammarRule;
+pub type ProductionRuleWithAction = GrammarRule;
+pub fn production_rule_p0(name: String, rhs: GrammarRuleRHS) -> GrammarRule {
+    GrammarRule {
         name,
         rhs,
+        action: None,
         meta: ProductionMetaDatas::new(),
     }
 }
 pub fn production_rule_p1(
     name: String,
     meta: ProductionMetaDatas,
-    rhs: ProductionRuleRHS,
-) -> ProductionRule {
-    ProductionRule { name, rhs, meta }
+    rhs: GrammarRuleRHS,
+) -> GrammarRule {
+    GrammarRule { name, rhs, meta, action: None}
 }
 
-pub type ProductionRuleRHS = Vec<Production>;
-pub fn production_rule_rhsp0(mut rhs: ProductionRuleRHS, prod: Production) -> ProductionRuleRHS {
+pub type GrammarRuleRHS = Vec<Production>;
+pub type ProductionRuleRHS = GrammarRuleRHS;
+pub fn production_rule_rhsp0(mut rhs: GrammarRuleRHS, prod: Production) -> GrammarRuleRHS {
     rhs.push(prod);
     rhs
 }
-pub fn production_rule_rhsp1(prod: Production) -> ProductionRuleRHS {
+pub fn production_rule_rhsp1(prod: Production) -> GrammarRuleRHS {
     vec![prod]
 }
 
@@ -204,39 +203,35 @@ pub fn production_p1(assignments: Assignments, meta: ProductionMetaDatas) -> Pro
     Production { assignments, meta }
 }
 
-pub type TerminalRules = Vec<TerminalRuleWithAction>;
-pub fn terminal_rules_p0(mut rules: TerminalRules, rule: TerminalRuleWithAction) -> TerminalRules {
+pub type TerminalRules = Vec<TerminalRule>;
+pub type TerminalRuleWithAction = TerminalRule;
+pub fn terminal_rules_p0(mut rules: TerminalRules, rule: TerminalRule) -> TerminalRules {
     rules.push(rule);
     rules
 }
-pub fn terminal_rules_p1(rule: TerminalRuleWithAction) -> TerminalRules {
+pub fn terminal_rules_p1(rule: TerminalRule) -> TerminalRules {
     vec![rule]
 }
 
-#[derive(Debug)]
-pub struct TerminalRuleWithAction {
-    action: Option<String>,
-    rule: TerminalRule,
+pub fn terminal_rule_with_action_p0(action: String, mut rule: TerminalRule) -> TerminalRule {
+    rule.action = Some(action);
+    rule
 }
-pub fn terminal_rule_with_action_p0(action: String, rule: TerminalRule) -> TerminalRuleWithAction {
-    TerminalRuleWithAction {
-        action: Some(action),
-        rule,
-    }
-}
-pub fn terminal_rule_with_action_p1(rule: TerminalRule) -> TerminalRuleWithAction {
-    TerminalRuleWithAction { action: None, rule }
+pub fn terminal_rule_with_action_p1(rule: TerminalRule) -> TerminalRule {
+    rule
 }
 
 #[derive(Debug)]
 pub struct TerminalRule {
     name: String,
+    action: Option<String>,
     recognizer: Option<Recognizer>,
     meta: TerminalMetaDatas,
 }
 pub fn terminal_rule_p0(name: String, recognizer: Recognizer) -> TerminalRule {
     TerminalRule {
         name,
+        action: None,
         recognizer: Some(recognizer),
         meta: TerminalMetaDatas::new(),
     }
@@ -244,6 +239,7 @@ pub fn terminal_rule_p0(name: String, recognizer: Recognizer) -> TerminalRule {
 pub fn terminal_rule_p1(name: String) -> TerminalRule {
     TerminalRule {
         name,
+        action: None,
         recognizer: None,
         meta: TerminalMetaDatas::new(),
     }
@@ -255,6 +251,7 @@ pub fn terminal_rule_p2(
 ) -> TerminalRule {
     TerminalRule {
         name,
+        action: None,
         recognizer: Some(recognizer),
         meta,
     }
@@ -262,6 +259,7 @@ pub fn terminal_rule_p2(
 pub fn terminal_rule_p3(name: String, meta: TerminalMetaDatas) -> TerminalRule {
     TerminalRule {
         name,
+        action: None,
         recognizer: None,
         meta,
     }
@@ -303,7 +301,7 @@ pub fn production_meta_data_p8(user: UserMetaData) -> ProductionMetaData {
     ProductionMetaData::from([(user.name, user.value)])
 }
 
-pub type ProductionMetaDatas = IndexMap<String, Const>;
+pub type ProductionMetaDatas = ProductionMetaData;
 pub fn production_meta_datas_p0(
     mut metas: ProductionMetaDatas,
     meta: ProductionMetaData,
@@ -335,7 +333,7 @@ pub fn terminal_meta_data_p5(user: UserMetaData) -> TerminalMetaData {
     TerminalMetaData::from([(user.name, user.value)])
 }
 
-pub type TerminalMetaDatas = IndexMap<String, Const>;
+pub type TerminalMetaDatas = TerminalMetaData;
 pub fn terminal_meta_datas_p0(
     mut metas: TerminalMetaDatas,
     meta: TerminalMetaData,
@@ -420,8 +418,8 @@ pub fn bool_assignment_p0(name: Name, gsymref: GrammarSymbolReference) -> BoolAs
 }
 
 #[derive(Debug)]
-pub struct ProductionGroup(ProductionRuleRHS);
-pub fn production_group_p0(prod_rule_rhs: ProductionRuleRHS) -> ProductionGroup {
+pub struct ProductionGroup(GrammarRuleRHS);
+pub fn production_group_p0(prod_rule_rhs: GrammarRuleRHS) -> ProductionGroup {
     ProductionGroup(prod_rule_rhs)
 }
 

@@ -1,9 +1,11 @@
-use super::types::{Imports, ProductionRules, TerminalRules, PGFile};
+use super::types::{Imports, ProductionRules, TerminalRules, PGFile, Production};
+
 
 #[derive(Debug)]
 pub (in crate::lang) struct Grammar {
     imports: Option<Imports>,
     rules: Option<ProductionRules>,
+    productions: Option<Vec<Production>>,
     terminals: Option<TerminalRules>,
     // nonterminals: Vec<NonTerminalRules>,
     // symbol_by_name: HashMap<String, &'a Symbol<'a>>,
@@ -18,6 +20,8 @@ impl Grammar {
         // symbol index of each term/non-term when needed. Do I need symbol
         // index? Yes from RHS of productions. SymbolIndex can be a new type to
         // allow conversion to TerminalIndex/NonTerminalIndex.
+
+
         //
         // 2. TODO: Extract productions from rules. Production should have LHS
         // which is a SymbolIndex. Meta should be Production Meta from the
@@ -30,6 +34,7 @@ impl Grammar {
         Grammar {
             imports: pgfile.imports,
             rules: pgfile.rules,
+            productions: None,
             terminals: pgfile.terminals
         }
     }

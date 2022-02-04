@@ -1,32 +1,29 @@
-File: ProductionRules
-    | Imports ProductionRules
-    | ProductionRules 'terminals' TerminalRules
-    | Imports ProductionRules 'terminals' TerminalRules
+File: GrammarRules
+    | Imports GrammarRules
+    | GrammarRules 'terminals' TerminalRules
+    | Imports GrammarRules 'terminals' TerminalRules
     | 'terminals' TerminalRules;
 
 imports: imports import | import;
 import: 'import' STR_CONST
       | 'import' STR_CONST 'as' NAME;
 
-ProductionRules: ProductionRules ProductionRuleWithAction
-               | ProductionRuleWithAction;
-ProductionRuleWithAction: Action ProductionRule | ProductionRule;
-ProductionRule: NAME ':' ProductionRuleRHS ';'
-              | NAME '{' ProdMetaDatas '}' ':' ProductionRuleRHS ';';
+GrammarRules: GrammarRules GrammarRule
+            | GrammarRule;
+GrammarRule: Action? NAME ':' GrammarRuleRHS ';'
+           | Action? NAME '{' ProdMetaDatas '}' ':' GrammarRuleRHS ';';
 
-ProductionRuleRHS {left, 5}: ProductionRuleRHS '|' Production
-                           | Production;
+GrammarRuleRHS {left, 5}: GrammarRuleRHS '|' Production
+                        | Production;
 Production: Assignments
           | Assignments '{' ProdMetaDatas '}';
 
-TerminalRules: TerminalRules TerminalRuleWithAction
-             | TerminalRuleWithAction;
-TerminalRuleWithAction: Action TerminalRule
-                      | TerminalRule;
-TerminalRule {left, 15}: NAME ':' Recognizer ';'
-                       | NAME ':' ';'
-                       | NAME ':' Recognizer '{' TermMetaDatas '}' ';'
-                       | NAME ':' '{' TermMetaDatas '}' ';';
+TerminalRules: TerminalRules TerminalRule
+             | TerminalRule;
+TerminalRule {left, 15}: Action? NAME ':' Recognizer ';'
+                       | Action? NAME ':' ';'
+                       | Action? NAME ':' Recognizer '{' TermMetaDatas '}' ';'
+                       | Action? NAME ':' '{' TermMetaDatas '}' ';';
 
 ProdMetaData: 'left' | 'reduce' | 'right' | 'shift' | 'dynamic' | 'nops' | 'nopse'
             | INT_CONST
@@ -48,7 +45,7 @@ Assignments: Assignments Assignment | Assignment;
 PlainAssignment: NAME '=' GSymbolReference;
 BoolAssignment: NAME '?=' GSymbolReference;
 
-ProductionGroup: '(' ProductionRuleRHS ')';
+ProductionGroup: '(' GrammarRuleRHS ')';
 
 GSymbolReference: GSymbol RepetitionOperator?
                 | ProductionGroup RepetitionOperator?;
