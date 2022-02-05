@@ -410,11 +410,7 @@ pub fn plain_assignment_p0(name: Name, gsymref: GrammarSymbolReference) -> Plain
     PlainAssignment { name, gsymref }
 }
 
-#[derive(Debug)]
-pub struct BoolAssignment {
-    pub name: Name,
-    pub gsymref: GrammarSymbolReference,
-}
+pub type BoolAssignment = PlainAssignment;
 pub fn bool_assignment_p0(name: Name, gsymref: GrammarSymbolReference) -> BoolAssignment {
     BoolAssignment { name, gsymref }
 }

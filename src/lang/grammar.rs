@@ -139,13 +139,8 @@ impl Grammar {
                         .assignments
                         .into_iter()
                         .map(|assignment| match assignment {
-                            super::types::Assignment::PlainAssignment(assign) => Assignment {
-                                name: Some(assign.name),
-                                symbol: ResolvingSymbolIndex::Resolving(
-                                    assign.gsymref.gsymbol.unwrap(),
-                                ),
-                            },
-                            super::types::Assignment::BoolAssignment(assign) => Assignment {
+                            super::types::Assignment::PlainAssignment(assign)
+                            | super::types::Assignment::BoolAssignment(assign) => Assignment {
                                 name: Some(assign.name),
                                 symbol: ResolvingSymbolIndex::Resolving(
                                     assign.gsymref.gsymbol.unwrap(),
@@ -188,31 +183,27 @@ impl Grammar {
 
     fn create_terminals_from_productions(
         productions: &Vec<Production>,
-        terminals: &mut IndexMap<String, Terminal>
+        terminals: &mut IndexMap<String, Terminal>,
     ) {
         let mut next_term_idx = TermIndex(terminals.len());
         for production in productions {
             for assign in &production.rhs {
-                match &assign.symbol {
-                    ResolvingSymbolIndex::Resolved(_) => {}
-                    ResolvingSymbolIndex::Resolving(symbol) => match symbol {
-                        GrammarSymbol::StrConst(name) => {
-                            if !terminals.contains_key(name) {
-                                terminals.insert(
-                                    name.to_string(),
-                                    Terminal {
-                                        idx: next_term_idx,
-                                        name: name.to_string(),
-                                        action: None,
-                                        recognizer: Some(Recognizer::StrConst(name.to_string())),
-                                        meta: TerminalMetaDatas::new(),
-                                    },
-                                );
-                                next_term_idx.0 += 1;
-                            }
+                if let ResolvingSymbolIndex::Resolving(symbol) = &assign.symbol {
+                    if let GrammarSymbol::StrConst(name) = symbol {
+                        if !terminals.contains_key(name) {
+                            terminals.insert(
+                                name.to_string(),
+                                Terminal {
+                                    idx: next_term_idx,
+                                    name: name.to_string(),
+                                    action: None,
+                                    recognizer: Some(Recognizer::StrConst(name.to_string())),
+                                    meta: TerminalMetaDatas::new(),
+                                },
+                            );
+                            next_term_idx.0 += 1;
                         }
-                        GrammarSymbol::Name(_) => {}
-                    },
+                    }
                 }
             }
         }
@@ -221,13 +212,13 @@ impl Grammar {
     fn resolve_references(
         productions: &mut Vec<Production>,
         terminals: &IndexMap<String, Terminal>,
-        nonterminals: &IndexMap<String, NonTerminal>
+        nonterminals: &IndexMap<String, NonTerminal>,
     ) {
         // Resolve references.
         for production in productions {
             for assign in &mut production.rhs {
-                match &assign.symbol {
-                    ResolvingSymbolIndex::Resolving(symbol) => match symbol {
+                if let ResolvingSymbolIndex::Resolving(symbol) = &assign.symbol {
+                    match symbol {
                         GrammarSymbol::Name(name) => {
                             assign.symbol = ResolvingSymbolIndex::Resolved(
                                 if let Some(terminal) = terminals.get(name) {
@@ -250,8 +241,7 @@ impl Grammar {
                                     .into(),
                             )
                         }
-                    },
-                    ResolvingSymbolIndex::Resolved(_) => {}
+                    }
                 }
             }
         }
