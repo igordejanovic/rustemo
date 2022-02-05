@@ -3,7 +3,7 @@ use indexmap::IndexMap;
 use crate::parser::{NonTermIndex, ProdIndex, SymbolIndex, TermIndex};
 
 use super::types::{
-    GrammarSymbol, Imports, PGFile, ProductionMetaDatas, Recognizer, TerminalMetaDatas,
+    GrammarRule, GrammarSymbol, Imports, PGFile, ProductionMetaDatas, Recognizer, TerminalMetaDatas,
 };
 
 #[derive(Debug)]
@@ -56,98 +56,133 @@ pub struct Assignment {
 
 impl Grammar {
     pub fn from_pgfile(pgfile: PGFile) -> Self {
-        let mut nonterminals: IndexMap<String, NonTerminal> = IndexMap::new();
         let mut terminals: IndexMap<String, Terminal> = IndexMap::new();
-        let mut productions = vec![];
+        let mut nonterminals: IndexMap<String, NonTerminal> = IndexMap::new();
+        let mut productions: Vec<Production> = vec![];
 
+        // Extract productions and nonterminals from grammar rules.
         if let Some(rules) = pgfile.rules {
-            let mut next_nonterm_idx = NonTermIndex(0);
-            let mut next_prod_idx = ProdIndex(0);
-            let mut nonterminal;
-
-            for rule in rules {
-                // Crate or find non-terminal for the current rule
-                if !nonterminals.contains_key(&rule.name) {
-                    nonterminals.insert(
-                        rule.name.to_string(),
-                        NonTerminal {
-                            idx: next_nonterm_idx,
-                            name: rule.name.to_string(),
-                            productions: vec![],
-                        },
-                    );
-                    next_nonterm_idx.0 += 1;
-                }
-                nonterminal = &mut nonterminals[&rule.name];
-
-                // Gather productions, create indexes. Transform RHS to mark
-                // resolving references.
-                for production in rule.rhs {
-                    let new_production = Production {
-                        idx: next_prod_idx,
-                        nonterminal: nonterminal.idx,
-                        rhs: production
-                            .assignments
-                            .into_iter()
-                            .map(|assignment| match assignment {
-                                super::types::Assignment::PlainAssignment(assign) => Assignment {
-                                    name: Some(assign.name),
-                                    symbol: ResolvingSymbolIndex::Resolving(
-                                        assign.gsymref.gsymbol.unwrap(),
-                                    ),
-                                },
-                                super::types::Assignment::BoolAssignment(assign) => Assignment {
-                                    name: Some(assign.name),
-                                    symbol: ResolvingSymbolIndex::Resolving(
-                                        assign.gsymref.gsymbol.unwrap(),
-                                    ),
-                                },
-                                super::types::Assignment::GSymbolReference(reference) => {
-                                    Assignment {
-                                        name: None,
-                                        symbol: ResolvingSymbolIndex::Resolving(
-                                            reference.gsymbol.unwrap(),
-                                        ),
-                                    }
-                                }
-                            })
-                            .collect(),
-                        meta: production.meta,
-                    };
-                    productions.push(new_production);
-                    nonterminal.productions.push(next_prod_idx);
-                    next_prod_idx.0 += 1;
-                    // 3. TODO: Desugaring. Related to the previous. Desugar repetitions and
-                    // groups.
-
-                    // for production in desugar_production(production) {
-
-                    // }
-                }
-            }
+            Grammar::extract_productions_and_symbols(rules, &mut nonterminals, &mut productions);
         }
+
+        // TODO: Desugaring. Related to the previous. Desugar repetitions and
+        // groups.
 
         // Collect grammar terminals
-        let mut next_term_idx = TermIndex(0);
         if let Some(grammar_terminals) = pgfile.terminals {
-            for terminal in grammar_terminals {
-                terminals.insert(
-                    terminal.name.to_string(),
-                    Terminal {
-                        idx: next_term_idx,
-                        name: terminal.name,
-                        action: terminal.action,
-                        recognizer: terminal.recognizer,
-                        meta: terminal.meta,
-                    },
-                );
-                next_term_idx.0 += 1;
-            }
+            Grammar::collect_terminals(grammar_terminals, &mut terminals);
         }
 
-        // Create new terminals from str consts
-        for production in &mut productions {
-            for assign in &mut production.rhs {
+        // Create implicit terminals from string constants.
+        Grammar::create_terminals_from_productions(&productions, &mut terminals);
+
+        // Resolve references in productions.
+        Grammar::resolve_references(&mut productions, &terminals, &nonterminals);
+
+        Grammar {
+            imports: pgfile.imports,
+            productions: Some(productions),
+            terminals: if terminals.is_empty() {
+                None
+            } else {
+                Some(terminals.into_values().collect())
+            },
+            nonterminals: if nonterminals.is_empty() {
+                None
+            } else {
+                Some(nonterminals.into_values().collect())
+            },
+        }
+    }
+
+    fn extract_productions_and_symbols(
+        rules: Vec<GrammarRule>,
+        nonterminals: &mut IndexMap<String, NonTerminal>,
+        productions: &mut Vec<Production>,
+    ) {
+        let mut next_nonterm_idx = NonTermIndex(0);
+        let mut next_prod_idx = ProdIndex(0);
+        let mut nonterminal;
+
+        for rule in rules {
+            // Crate or find non-terminal for the current rule
+            if !nonterminals.contains_key(&rule.name) {
+                nonterminals.insert(
+                    rule.name.to_string(),
+                    NonTerminal {
+                        idx: next_nonterm_idx,
+                        name: rule.name.to_string(),
+                        productions: vec![],
+                    },
+                );
+                next_nonterm_idx.0 += 1;
+            }
+            nonterminal = &mut nonterminals[&rule.name];
+
+            // Gather productions, create indexes. Transform RHS to mark
+            // resolving references.
+            for production in rule.rhs {
+                let new_production = Production {
+                    idx: next_prod_idx,
+                    nonterminal: nonterminal.idx,
+                    rhs: production
+                        .assignments
+                        .into_iter()
+                        .map(|assignment| match assignment {
+                            super::types::Assignment::PlainAssignment(assign) => Assignment {
+                                name: Some(assign.name),
+                                symbol: ResolvingSymbolIndex::Resolving(
+                                    assign.gsymref.gsymbol.unwrap(),
+                                ),
+                            },
+                            super::types::Assignment::BoolAssignment(assign) => Assignment {
+                                name: Some(assign.name),
+                                symbol: ResolvingSymbolIndex::Resolving(
+                                    assign.gsymref.gsymbol.unwrap(),
+                                ),
+                            },
+                            super::types::Assignment::GSymbolReference(reference) => Assignment {
+                                name: None,
+                                symbol: ResolvingSymbolIndex::Resolving(reference.gsymbol.unwrap()),
+                            },
+                        })
+                        .collect(),
+                    meta: production.meta,
+                };
+                productions.push(new_production);
+                nonterminal.productions.push(next_prod_idx);
+                next_prod_idx.0 += 1;
+            }
+        }
+    }
+
+    fn collect_terminals(
+        grammar_terminals: Vec<super::types::Terminal>,
+        terminals: &mut IndexMap<String, Terminal>,
+    ) {
+        let mut next_term_idx = TermIndex(0);
+        for terminal in grammar_terminals {
+            terminals.insert(
+                terminal.name.to_string(),
+                Terminal {
+                    idx: next_term_idx,
+                    name: terminal.name,
+                    action: terminal.action,
+                    recognizer: terminal.recognizer,
+                    meta: terminal.meta,
+                },
+            );
+            next_term_idx.0 += 1;
+        }
+    }
+
+    fn create_terminals_from_productions(
+        productions: &Vec<Production>,
+        terminals: &mut IndexMap<String, Terminal>
+    ) {
+        let mut next_term_idx = TermIndex(terminals.len());
+        for production in productions {
+            for assign in &production.rhs {
                 match &assign.symbol {
                     ResolvingSymbolIndex::Resolved(_) => {}
                     ResolvingSymbolIndex::Resolving(symbol) => match symbol {
@@ -171,9 +206,15 @@ impl Grammar {
                 }
             }
         }
+    }
 
+    fn resolve_references(
+        productions: &mut Vec<Production>,
+        terminals: &IndexMap<String, Terminal>,
+        nonterminals: &IndexMap<String, NonTerminal>
+    ) {
         // Resolve references.
-        for production in &mut productions {
+        for production in productions {
             for assign in &mut production.rhs {
                 match &assign.symbol {
                     ResolvingSymbolIndex::Resolving(symbol) => match symbol {
@@ -184,9 +225,7 @@ impl Grammar {
                                 } else {
                                     nonterminals
                                         .get(name)
-                                        .unwrap_or_else(|| {
-                                            panic!("unexisting symbol {:?}.", name)
-                                        })
+                                        .unwrap_or_else(|| panic!("unexisting symbol {:?}.", name))
                                         .idx
                                         .to_symbol_index(terminals.len())
                                 },
@@ -196,9 +235,7 @@ impl Grammar {
                             assign.symbol = ResolvingSymbolIndex::Resolved(
                                 terminals
                                     .get(name)
-                                    .unwrap_or_else(|| {
-                                        panic!("terminal {:?} not created!.", name)
-                                    })
+                                    .unwrap_or_else(|| panic!("terminal {:?} not created!.", name))
                                     .idx
                                     .into(),
                             )
@@ -207,21 +244,6 @@ impl Grammar {
                     ResolvingSymbolIndex::Resolved(_) => {}
                 }
             }
-        }
-
-        Grammar {
-            imports: pgfile.imports,
-            productions: Some(productions),
-            terminals: if terminals.is_empty() {
-                None
-            } else {
-                Some(terminals.into_values().collect())
-            },
-            nonterminals: if nonterminals.is_empty() {
-                None
-            } else {
-                Some(nonterminals.into_values().collect())
-            },
         }
     }
 }
