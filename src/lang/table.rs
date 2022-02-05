@@ -31,6 +31,9 @@ fn first_sets(grammar: &Grammar) -> Vec<IndexSet<SymbolIndex>> {
             .for_each(|_| first_sets.push(IndexSet::new()));
     }
 
+    // EMPTY derives EMPTY
+    first_sets[grammar.empty_index.0].insert(grammar.empty_index);
+
     let mut additions = true;
     while additions {
         additions = false;
@@ -71,8 +74,14 @@ fn first_sets(grammar: &Grammar) -> Vec<IndexSet<SymbolIndex>> {
             }
         }
     }
-
+    // Remove EMPTY from all sets
     first_sets
+        .into_iter()
+        .map(|mut set| {
+            set.remove(&grammar.empty_index);
+            set
+        })
+        .collect()
 }
 
 #[cfg(test)]
