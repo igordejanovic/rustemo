@@ -60,7 +60,7 @@ Recognizer: STR_CONST | REGEX_TERM;
 
 Layout: LayoutItem | Layout LayoutItem | EMPTY;
 LayoutItem: WS | Comment;
-Comment: '/*' Corncs '*/' | comment_line;
+Comment: '/*' Corncs '*/' | COMMENTLINE;
 Corncs: Cornc | Corncs Cornc | EMPTY;
 Cornc: Comment | NOTCOMMENT | WS;
 

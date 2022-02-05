@@ -100,9 +100,19 @@ impl Grammar {
         nonterminals: &mut IndexMap<String, NonTerminal>,
         productions: &mut Vec<Production>,
     ) {
-        let mut next_nonterm_idx = NonTermIndex(0);
+        let mut next_nonterm_idx = NonTermIndex(1);
         let mut next_prod_idx = ProdIndex(0);
         let mut nonterminal;
+
+        // EMPTY rule is implicit
+        nonterminals.insert(
+            "EMPTY".to_string(),
+            NonTerminal {
+                idx: NonTermIndex(0),
+                name: "EMPTY".to_string(),
+                productions: vec![],
+            },
+        );
 
         for rule in rules {
             // Crate or find non-terminal for the current rule
