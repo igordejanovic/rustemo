@@ -1,9 +1,11 @@
 use super::{
+    grammar::Grammar,
     lexer::DefaultLexer,
     rustemo::{
         RustemoBuilder, RustemoLexerDefinition, RustemoParserDefinition, LEXER_DEFINITION,
         PARSER_DEFINITION,
-    }, types::PGFile, rustemo_types::{Symbol, NonTerminal}, grammar::Grammar,
+    },
+    rustemo_types::{NonTerminal, Symbol},
 };
 
 use crate::{
@@ -19,12 +21,16 @@ pub struct GrammarParser(LRParser<RustemoParserDefinition>);
 type RBuilder<'i> = RustemoBuilder<'i, <GrammarLexer<'i> as Lexer>::Input>;
 
 impl<'i> GrammarParser {
-    fn parse(&mut self, lexer: GrammarLexer<'i>) -> Grammar {
-        let pgfile = match <LRParser<RustemoParserDefinition> as Parser<GrammarLexer<'i>, RBuilder<'i>>>::parse(
-            &mut self.0,
-            lexer) {
+    pub(in crate::lang) fn parse(&mut self, lexer: GrammarLexer<'i>) -> Grammar {
+        let pgfile = match <LRParser<RustemoParserDefinition> as Parser<
+            GrammarLexer<'i>,
+            RBuilder<'i>,
+        >>::parse(&mut self.0, lexer)
+        {
             Symbol::NonTerminal(NonTerminal::PGFile(p)) => p,
-            _ => {panic!("Invalid return type of inner parse.")}
+            _ => {
+                panic!("Invalid return type of inner parse.")
+            }
         };
         Grammar::from_pgfile(pgfile)
     }
@@ -65,8 +71,9 @@ mod tests {
 
     use super::*;
 
+
     #[test]
-    fn test_parse1() {
+    fn type_of_return() {
         let grammar = GrammarParser::default().parse(
             r#"
              S: A B;

@@ -8,10 +8,10 @@ use super::types::{
 
 #[derive(Debug)]
 pub(in crate::lang) struct Grammar {
-    imports: Option<Imports>,
-    productions: Option<Vec<Production>>,
-    terminals: Option<Vec<Terminal>>,
-    nonterminals: Option<Vec<NonTerminal>>,
+    pub imports: Option<Imports>,
+    pub productions: Option<Vec<Production>>,
+    pub terminals: Option<Vec<Terminal>>,
+    pub nonterminals: Option<Vec<NonTerminal>>,
     // nonterminals: Vec<NonTerminalRules>,
     // symbol_by_name: HashMap<String, &'a Symbol<'a>>,
     // first_set: HashMap<NonTerminal<'a>, HashSet<&'a Terminal>>,
@@ -20,9 +20,9 @@ pub(in crate::lang) struct Grammar {
 
 #[derive(Debug)]
 pub(in crate::lang) struct NonTerminal {
-    idx: NonTermIndex,
-    name: String,
-    productions: Vec<ProdIndex>,
+    pub idx: NonTermIndex,
+    pub name: String,
+    pub productions: Vec<ProdIndex>,
 }
 
 #[derive(Debug)]
@@ -100,7 +100,7 @@ impl Grammar {
         nonterminals: &mut IndexMap<String, NonTerminal>,
         productions: &mut Vec<Production>,
     ) {
-        let mut next_nonterm_idx = NonTermIndex(1);
+        let mut next_nonterm_idx = NonTermIndex(0);
         let mut next_prod_idx = ProdIndex(0);
         let mut nonterminal;
 
@@ -116,18 +116,16 @@ impl Grammar {
 
         for rule in rules {
             // Crate or find non-terminal for the current rule
-            if !nonterminals.contains_key(&rule.name) {
-                nonterminals.insert(
-                    rule.name.to_string(),
+            nonterminal = nonterminals
+                .entry(rule.name.to_string())
+                .or_insert_with(|| {
+                    next_nonterm_idx.0 += 1;
                     NonTerminal {
                         idx: next_nonterm_idx,
                         name: rule.name.to_string(),
                         productions: vec![],
-                    },
-                );
-                next_nonterm_idx.0 += 1;
-            }
-            nonterminal = &mut nonterminals[&rule.name];
+                    }
+            });
 
             // Gather productions, create indexes. Transform RHS to mark
             // resolving references.
@@ -248,100 +246,156 @@ impl Grammar {
     }
 }
 
-// fn desugar_production(production: super::types::Production) -> impl Iterator<Item=Production> {
-//     production.assignments
-//               .iter()
-//               .filter(|assignment| match assignment {
-//                   super::types::Assignment::PlainAssignment(_) => todo!(),
-//                   super::types::Assignment::BoolAssignment(_) => todo!(),
-//                   super::types::Assignment::GSymbolReference(_) => todo!(),
-//               }).collect();
-//     todo!()
-// }
 
-// impl<'a> Grammar<'a> {
-//     fn new(
-//         productions: Vec<Production>,
-//         terminals: Vec<Terminal>,
-//         nonterminals: Vec<NonTerminal<'a>>,
-//         start_symbol: Option<&'a NonTerminal<'a>>,
-//     ) -> Grammar<'a> {
-//         return Grammar {
-//         //    productions,
-//             terminals,
-//             nonterminals,
-//             first_set: HashMap::new(),
-//             start_symbol,
-//         };
-//     }
+#[cfg(test)]
+mod tests {
+    use crate::{lang::parser::GrammarParser, parser::ProdIndex};
 
-//     fn add_terminal(&'a mut self, fqn: &str) -> &mut Self {
-//         let t = Terminal {
-//             name: fqn.split('.').last().unwrap().to_string(),
-//             fqn: fqn.to_string(),
-//             ..Terminal::default()
-//         };
-//         self.terminals.push(t);
-//         self.symbol_by_name[fqn] = &Symbol::Terminal(t);
-//         self
-//     }
 
-//     fn add_nonterminal(&'a mut self, fqn: String) -> &mut Self {
-//         self.nonterminals.push(NonTerminal {
-//             name: fqn.split('.').last().unwrap().to_string(),
-//             fqn,
-//             ..NonTerminal::default()
-//         });
-//         self
-//     }
+    #[test]
+    fn create_terminals_1() {
+        let grammar = GrammarParser::default().parse(
+            r#"
+            S: "first_term" "second_term";
+            "#
+            .into(),
+        );
+        assert_eq!(
+            grammar
+                .terminals
+                .as_ref()
+                .unwrap()
+                .iter()
+                .map(|t| &t.name)
+                .collect::<Vec<_>>(),
+            &["first_term", "second_term"]
+        );
+    }
 
-//     fn add_production(&'a mut self, nonterm_fqn: &str, rhs_names: &[&str]) -> &mut Self {
-//         let rhs: Vec<&Symbol> = Vec::new();
-//         for symbol_ref in rhs_names {
-//             rhs.push(self.symbol_by_name(symbol_ref))
-//         }
-//        self
-//     }
+    #[test]
+    fn create_terminals_2() {
+        let grammar = GrammarParser::default().parse(
+            r#"
+            S: "first_term" A "second_term";
+            A: third_term;
+            terminals
+            third_term: ;
+            "#
+            .into(),
+        );
+        assert_eq!(
+            grammar
+                .terminals
+                .as_ref()
+                .unwrap()
+                .iter()
+                .map(|t| &t.name)
+                .collect::<Vec<_>>(),
+            &["third_term", "first_term", "second_term"]
+        );
+    }
 
-//     fn symbol_by_name(&self, name: &str) -> &Symbol {
-//         self.symbol_by_name[name]
-//     }
+    #[test]
+    fn create_terminals_multiple() {
+        let grammar = GrammarParser::default().parse(
+            r#"
+            S: "first_term" A "second_term" "first_term";
+            A: third_term "third_term" "first_term" second_term;
+            terminals
+            third_term: ;
+            "#
+            .into(),
+        );
+        assert_eq!(
+            grammar
+                .terminals
+                .as_ref()
+                .unwrap()
+                .iter()
+                .map(|t| &t.name)
+                .collect::<Vec<_>>(),
+            &["third_term", "first_term", "second_term"]
+        );
+    }
 
-//     /// Calculate and update grammar first sets.
-//     ///
-//     /// The Dragon book, p 245.
-//     ///
-//     /// Define $FIRST(\alpha)$ where $\alpha$ is any string of grammar
-//     /// symbols, to be the set of terminals that begin strings derived from
-//     /// $\alpha$. If $\alpha \overset{*}{\Rightarrow} \epsilon$ then
-//     /// $\epsilon$ is also in $FIRST(\alpha)$.
-//     fn first(&mut self) -> () {
-//         // 1. Initialize firsts set for every terminal to a set with
-//         //    the terminal being its sole member.
-//         // 2. Initialize firsts set for every non-terminal to an empty set.
-//         // 3.
-//     }
-// }
+    #[test]
+    fn terminals_regex() {
+        let grammar = GrammarParser::default().parse(
+            r#"
+            S: "foo" rmatch_term A;
+            A: "some" "more_regex";
+            terminals
+            rmatch_term: /"[^"]+"/;
+            more_regex: /\d{2,5}/;
+            "#
+            .into(),
+        );
+        assert_eq!(
+            grammar
+                .terminals
+                .as_ref()
+                .unwrap()
+                .iter()
+                .map(|t| &t.name)
+                .collect::<Vec<_>>(),
+            &["rmatch_term", "more_regex", "foo", "some"]
+        );
+        for (idx, regexstr) in [r#""[^"]+""#, r#"\d{2,5}"#].iter().enumerate().into_iter() {
+            assert!(match grammar.terminals.as_ref().unwrap()[idx]
+                .recognizer
+                .as_ref()
+                .unwrap()
+            {
+                crate::lang::types::Recognizer::StrConst(_) => false,
+                crate::lang::types::Recognizer::RegExTerm(regex) => regex == regexstr,
+            });
+        }
+    }
 
-// #[cfg(test)]
-// mod tests {
-//     use crate::grammar::Grammar;
-
-//     #[test]
-//     fn test_create_grammar() {
-//         let grammar = Grammar::new(vec![], vec![], vec![], None);
-//     }
-
-//     #[test]
-//     fn test_grammar_first_sets() {
-//         let grammar = Grammar::new(vec![Production::new()], vec![], vec![], None);
-
-//         grammar.first_set();
-//     }
-
-//     #[test]
-//     fn it_works() {
-//         let result = 2 + 2;
-//         assert_eq!(result, 4);
-//     }
-// }
+    #[test]
+    fn nonterminals_productions() {
+        let grammar = GrammarParser::default().parse(
+            r#"
+            S: A "some_term" B | B;
+            A: B;
+            B: some_term;
+            "#
+            .into(),
+        );
+        assert_eq!(grammar.nonterminals.as_ref().unwrap().len(), 4);
+        assert_eq!(
+            grammar
+                .nonterminals
+                .as_ref()
+                .unwrap()
+                .iter()
+                .map(|nt| &nt.name)
+                .collect::<Vec<_>>(),
+            &["EMPTY", "S", "A", "B"]
+        );
+        assert_eq!(
+            grammar
+                .nonterminals
+                .as_ref()
+                .unwrap()
+                .iter()
+                .map(|nt| nt.productions.len())
+                .collect::<Vec<_>>(),
+            &[0, 2, 1, 1]
+        );
+        assert_eq!(
+            grammar
+                .nonterminals
+                .as_ref()
+                .unwrap()
+                .iter()
+                .flat_map(|nt| &nt.productions)
+                .map(|index| {
+                    let ProdIndex(index) = index;
+                    *index
+                })
+                .collect::<Vec<_>>(),
+            &[0, 1, 2, 3]
+        );
+    }
+}
