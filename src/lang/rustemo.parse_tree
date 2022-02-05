@@ -3539,4 +3539,7 @@ Grammar {
             42,
         ),
     },
+    empty_index: SymbolIndex(
+        43,
+    ),
 }

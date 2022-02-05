@@ -14,6 +14,7 @@ pub(crate) struct Grammar {
     pub(in crate::lang) nonterminals: Option<Vec<NonTerminal>>,
     pub(in crate::lang) nonterm_by_name: IndexMap<String, SymbolIndex>,
     pub(in crate::lang) term_by_name: IndexMap<String, SymbolIndex>,
+    pub(in crate::lang) empty_index: SymbolIndex,
     // nonterminals: Vec<NonTerminalRules>,
     // symbol_by_name: HashMap<String, &'a Symbol<'a>>,
     // first_set: HashMap<NonTerminal<'a>, HashSet<&'a Terminal>>,
@@ -28,7 +29,7 @@ pub(in crate::lang) struct NonTerminal {
 }
 
 #[derive(Debug)]
-pub struct Production {
+pub(crate) struct Production {
     pub idx: ProdIndex,
     pub nonterminal: NonTermIndex,
     pub rhs: Vec<Assignment>,
@@ -51,10 +52,21 @@ pub enum ResolvingSymbolIndex {
 }
 
 #[derive(Debug)]
-pub struct Assignment {
-    name: Option<String>,
-    symbol: ResolvingSymbolIndex,
+pub(crate) struct Assignment {
+    pub(crate) name: Option<String>,
+    pub(crate) symbol: ResolvingSymbolIndex,
 }
+
+macro_rules! res {
+    ($r:expr) => {
+        match $r {
+            ResolvingSymbolIndex::Resolved(index) => index,
+            ResolvingSymbolIndex::Resolving(_) => {panic!("reference not resolved");}
+        }
+    }
+}
+pub(crate) use res;
+
 
 impl Grammar {
     pub fn from_pgfile(pgfile: PGFile) -> Self {
@@ -85,6 +97,7 @@ impl Grammar {
         Grammar {
             imports: pgfile.imports,
             productions: Some(productions),
+            empty_index: if terminals.is_empty() { 0.into() } else { terminals.len().into() },
             term_by_name: terminals
                 .values()
                 .map(|t| (t.name.to_string(), t.idx.to_symbol_index()))
@@ -269,6 +282,10 @@ impl Grammar {
             indexes.push(self.symbol_index(name))
         }
         indexes
+    }
+
+    pub(crate) fn nonterm_to_symbol(&self, index: NonTermIndex) -> SymbolIndex {
+        index.to_symbol_index(self.terminals.as_ref().map_or(0, |t| t.len()))
     }
 }
 
