@@ -7,11 +7,13 @@ use super::types::{
 };
 
 #[derive(Debug)]
-pub(in crate::lang) struct Grammar {
-    pub imports: Option<Imports>,
-    pub productions: Option<Vec<Production>>,
-    pub terminals: Option<Vec<Terminal>>,
-    pub nonterminals: Option<Vec<NonTerminal>>,
+pub(crate) struct Grammar {
+    pub(crate) imports: Option<Imports>,
+    pub(crate) productions: Option<Vec<Production>>,
+    pub(crate) terminals: Option<Vec<Terminal>>,
+    pub(in crate::lang) nonterminals: Option<Vec<NonTerminal>>,
+    pub(in crate::lang) nonterm_by_name: IndexMap<String, SymbolIndex>,
+    pub(in crate::lang) term_by_name: IndexMap<String, SymbolIndex>,
     // nonterminals: Vec<NonTerminalRules>,
     // symbol_by_name: HashMap<String, &'a Symbol<'a>>,
     // first_set: HashMap<NonTerminal<'a>, HashSet<&'a Terminal>>,
@@ -20,9 +22,9 @@ pub(in crate::lang) struct Grammar {
 
 #[derive(Debug)]
 pub(in crate::lang) struct NonTerminal {
-    pub idx: NonTermIndex,
-    pub name: String,
-    pub productions: Vec<ProdIndex>,
+    pub(in crate::lang) idx: NonTermIndex,
+    pub(in crate::lang) name: String,
+    pub(in crate::lang) productions: Vec<ProdIndex>,
 }
 
 #[derive(Debug)]
@@ -79,14 +81,23 @@ impl Grammar {
         // Resolve references in productions.
         Grammar::resolve_references(&mut productions, &terminals, &nonterminals);
 
+        let terminals_count = terminals.len();
         Grammar {
             imports: pgfile.imports,
             productions: Some(productions),
+            term_by_name: terminals
+                .values()
+                .map(|t| (t.name.to_string(), t.idx.to_symbol_index()))
+                .collect(),
             terminals: if terminals.is_empty() {
                 None
             } else {
                 Some(terminals.into_values().collect())
             },
+            nonterm_by_name: nonterminals
+                .values()
+                .map(|nt| (nt.name.to_string(), nt.idx.to_symbol_index(terminals_count)))
+                .collect(),
             nonterminals: if nonterminals.is_empty() {
                 None
             } else {
@@ -125,7 +136,7 @@ impl Grammar {
                         name: rule.name.to_string(),
                         productions: vec![],
                     }
-            });
+                });
 
             // Gather productions, create indexes. Transform RHS to mark
             // resolving references.
@@ -220,7 +231,7 @@ impl Grammar {
                         GrammarSymbol::Name(name) => {
                             assign.symbol = ResolvingSymbolIndex::Resolved(
                                 if let Some(terminal) = terminals.get(name) {
-                                    terminal.idx.into()
+                                    terminal.idx.to_symbol_index()
                                 } else {
                                     nonterminals
                                         .get(name)
@@ -236,7 +247,7 @@ impl Grammar {
                                     .get(name)
                                     .unwrap_or_else(|| panic!("terminal {:?} not created!.", name))
                                     .idx
-                                    .into(),
+                                    .to_symbol_index(),
                             )
                         }
                     }
@@ -244,13 +255,26 @@ impl Grammar {
             }
         }
     }
-}
 
+    pub(crate) fn symbol_index(&self, name: &str) -> SymbolIndex {
+        *self.term_by_name.get(name).unwrap_or_else(|| {
+            self.nonterm_by_name.get(name).unwrap_or_else(|| {
+                panic!("No Symbol by name {:?}", name);
+            })
+        })
+    }
+    pub(crate) fn symbol_indexes(&self, names: &[&str]) -> Vec<SymbolIndex> {
+        let mut indexes = Vec::new();
+        for name in names {
+            indexes.push(self.symbol_index(name))
+        }
+        indexes
+    }
+}
 
 #[cfg(test)]
 mod tests {
     use crate::{lang::parser::GrammarParser, parser::ProdIndex};
-
 
     #[test]
     fn create_terminals_1() {

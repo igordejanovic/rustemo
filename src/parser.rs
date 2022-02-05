@@ -9,6 +9,11 @@ pub struct ProdIndex(pub usize);
 
 #[derive(Debug, Copy, Clone)]
 pub struct TermIndex(pub usize);
+impl TermIndex {
+    pub(crate) fn to_symbol_index(&self) -> SymbolIndex {
+        SymbolIndex(self.0)
+    }
+}
 
 #[derive(Debug, Copy, Clone)]
 pub struct NonTermIndex(pub usize);
@@ -20,7 +25,7 @@ impl NonTermIndex {
 
 // Symbol index for non-terminal is <max term index> + NonTermIndex.
 // For terminals symbol index is the same as TermIndex
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct SymbolIndex(pub usize);
 
 impl Default for SymbolIndex {
@@ -29,9 +34,28 @@ impl Default for SymbolIndex {
     }
 }
 
-impl From<TermIndex> for SymbolIndex {
+impl From<usize> for SymbolIndex {
+    fn from(a: usize) -> Self {
+        Self(a)
+    }
+}
+
+impl From<TermIndex> for usize {
+    #[inline]
     fn from(index: TermIndex) -> Self {
-        Self(index.0)
+        index.0
+    }
+}
+impl From<NonTermIndex> for usize {
+    #[inline]
+    fn from(index: NonTermIndex) -> Self {
+        index.0
+    }
+}
+impl From<SymbolIndex> for usize {
+    #[inline]
+    fn from(index: SymbolIndex) -> Self {
+        index.0
     }
 }
 

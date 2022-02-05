@@ -21,7 +21,7 @@ pub struct GrammarParser(LRParser<RustemoParserDefinition>);
 type RBuilder<'i> = RustemoBuilder<'i, <GrammarLexer<'i> as Lexer>::Input>;
 
 impl<'i> GrammarParser {
-    pub(in crate::lang) fn parse(&mut self, lexer: GrammarLexer<'i>) -> Grammar {
+    pub(crate) fn parse(&mut self, lexer: GrammarLexer<'i>) -> Grammar {
         let pgfile = match <LRParser<RustemoParserDefinition> as Parser<
             GrammarLexer<'i>,
             RBuilder<'i>,
@@ -49,7 +49,8 @@ impl GrammarParser {
     }
 }
 
-// Enables creating a lexer from &str using .into()
+// Enables creating a lexer from a reference to an object that can be converted
+// to a string reference.
 impl<'i, T> From<&'i T> for GrammarLexer<'i>
 where
     T: AsRef<str> + 'i + ?Sized,
@@ -62,6 +63,7 @@ where
         }
     }
 }
+
 
 #[cfg(test)]
 mod tests {
