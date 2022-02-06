@@ -1,5 +1,6 @@
 use crate::{builder::Builder, lexer::Lexer};
 use core::fmt::Debug;
+use std::{slice::{SliceIndex, Iter}, ops::{Deref, Index, IndexMut}};
 
 #[derive(Debug, Copy, Clone)]
 pub struct StateIndex(pub usize);
@@ -23,10 +24,45 @@ impl NonTermIndex {
     }
 }
 
-// Symbol index for non-terminal is <max term index> + NonTermIndex.
-// For terminals symbol index is the same as TermIndex
+/// An index for grammar symbols.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct SymbolIndex(pub usize);
+
+/// A generic vector wrapper indexed by SymbolIndex
+#[derive(Debug)]
+pub struct SymbolVec<T>(pub Vec<T>);
+
+impl<T> SymbolVec<T> {
+    pub const fn new() -> Self {
+       Self(Vec::new())
+    }
+
+    pub fn len(&self) -> usize {
+        self.0.len()
+    }
+
+    pub fn push(&mut self, value: T) {
+        self.0.push(value);
+    }
+
+    pub fn iter(&self) -> Iter<'_, T> {
+        self.0.iter()
+    }
+}
+
+impl<T> Index<SymbolIndex> for SymbolVec<T> {
+    type Output = T;
+
+    fn index(&self, index: SymbolIndex) -> &Self::Output {
+        self.0.index(index.0)
+    }
+}
+
+impl<T> IndexMut<SymbolIndex> for SymbolVec<T> {
+    fn index_mut(&mut self, index: SymbolIndex) -> &mut Self::Output {
+        self.0.index_mut(index.0)
+    }
+}
 
 impl Default for SymbolIndex {
     fn default() -> Self {
@@ -37,6 +73,14 @@ impl Default for SymbolIndex {
 impl From<usize> for SymbolIndex {
     fn from(a: usize) -> Self {
         Self(a)
+    }
+}
+
+impl Deref for SymbolIndex {
+    type Target = usize;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }
 

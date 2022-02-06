@@ -14,7 +14,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                45,
+                                46,
                             ),
                         ),
                     },
@@ -33,7 +33,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                48,
+                                49,
                             ),
                         ),
                     },
@@ -52,7 +52,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                46,
+                                47,
                             ),
                         ),
                     },
@@ -60,7 +60,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                48,
+                                49,
                             ),
                         ),
                     },
@@ -79,7 +79,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                48,
+                                49,
                             ),
                         ),
                     },
@@ -87,7 +87,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                10,
+                                11,
                             ),
                         ),
                     },
@@ -95,7 +95,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                52,
+                                53,
                             ),
                         ),
                     },
@@ -114,7 +114,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                46,
+                                47,
                             ),
                         ),
                     },
@@ -122,7 +122,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                48,
+                                49,
                             ),
                         ),
                     },
@@ -130,7 +130,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                10,
+                                11,
                             ),
                         ),
                     },
@@ -138,7 +138,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                52,
+                                53,
                             ),
                         ),
                     },
@@ -157,7 +157,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                10,
+                                11,
                             ),
                         ),
                     },
@@ -165,7 +165,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                52,
+                                53,
                             ),
                         ),
                     },
@@ -184,7 +184,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                46,
+                                47,
                             ),
                         ),
                     },
@@ -192,7 +192,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                47,
+                                48,
                             ),
                         ),
                     },
@@ -211,7 +211,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                47,
+                                48,
                             ),
                         ),
                     },
@@ -230,7 +230,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                11,
+                                12,
                             ),
                         ),
                     },
@@ -238,7 +238,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                5,
+                                6,
                             ),
                         ),
                     },
@@ -257,22 +257,6 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                11,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                5,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
                                 12,
                             ),
                         ),
@@ -281,7 +265,23 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                0,
+                                6,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                13,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                1,
                             ),
                         ),
                     },
@@ -300,7 +300,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                48,
+                                49,
                             ),
                         ),
                     },
@@ -308,7 +308,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                49,
+                                50,
                             ),
                         ),
                     },
@@ -327,7 +327,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                49,
+                                50,
                             ),
                         ),
                     },
@@ -346,7 +346,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                6,
+                                7,
                             ),
                         ),
                     },
@@ -354,23 +354,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                0,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                13,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                50,
+                                1,
                             ),
                         ),
                     },
@@ -379,6 +363,22 @@ Grammar {
                         symbol: Resolved(
                             SymbolIndex(
                                 14,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                51,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                15,
                             ),
                         ),
                     },
@@ -397,7 +397,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                6,
+                                7,
                             ),
                         ),
                     },
@@ -405,23 +405,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                0,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                15,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                55,
+                                1,
                             ),
                         ),
                     },
@@ -437,7 +421,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                13,
+                                56,
                             ),
                         ),
                     },
@@ -445,7 +429,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                50,
+                                17,
                             ),
                         ),
                     },
@@ -454,6 +438,22 @@ Grammar {
                         symbol: Resolved(
                             SymbolIndex(
                                 14,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                51,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                15,
                             ),
                         ),
                     },
@@ -472,23 +472,23 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                50,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                17,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
                                 51,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                18,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                52,
                             ),
                         ),
                     },
@@ -507,7 +507,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                51,
+                                52,
                             ),
                         ),
                     },
@@ -526,7 +526,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                61,
+                                62,
                             ),
                         ),
                     },
@@ -545,23 +545,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                61,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                15,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                55,
+                                62,
                             ),
                         ),
                     },
@@ -570,6 +554,22 @@ Grammar {
                         symbol: Resolved(
                             SymbolIndex(
                                 16,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                56,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                17,
                             ),
                         ),
                     },
@@ -588,7 +588,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                52,
+                                53,
                             ),
                         ),
                     },
@@ -596,7 +596,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                53,
+                                54,
                             ),
                         ),
                     },
@@ -615,7 +615,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                53,
+                                54,
                             ),
                         ),
                     },
@@ -634,7 +634,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                6,
+                                7,
                             ),
                         ),
                     },
@@ -642,23 +642,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                0,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                13,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                72,
+                                1,
                             ),
                         ),
                     },
@@ -667,6 +651,22 @@ Grammar {
                         symbol: Resolved(
                             SymbolIndex(
                                 14,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                73,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                15,
                             ),
                         ),
                     },
@@ -685,7 +685,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                6,
+                                7,
                             ),
                         ),
                     },
@@ -693,15 +693,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                0,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                13,
+                                1,
                             ),
                         ),
                     },
@@ -710,6 +702,14 @@ Grammar {
                         symbol: Resolved(
                             SymbolIndex(
                                 14,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                15,
                             ),
                         ),
                     },
@@ -728,7 +728,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                6,
+                                7,
                             ),
                         ),
                     },
@@ -736,7 +736,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                0,
+                                1,
                             ),
                         ),
                     },
@@ -744,7 +744,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                13,
+                                14,
                             ),
                         ),
                     },
@@ -752,23 +752,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                72,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                15,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                57,
+                                73,
                             ),
                         ),
                     },
@@ -784,7 +768,23 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                14,
+                                58,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                17,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                15,
                             ),
                         ),
                     },
@@ -803,7 +803,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                6,
+                                7,
                             ),
                         ),
                     },
@@ -811,7 +811,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                0,
+                                1,
                             ),
                         ),
                     },
@@ -819,23 +819,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                13,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                15,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                57,
+                                14,
                             ),
                         ),
                     },
@@ -851,7 +835,23 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                14,
+                                58,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                17,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                15,
                             ),
                         ),
                     },
@@ -861,25 +861,6 @@ Grammar {
             Production {
                 idx: ProdIndex(
                     24,
-                ),
-                nonterminal: NonTermIndex(
-                    11,
-                ),
-                rhs: [
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                18,
-                            ),
-                        ),
-                    },
-                ],
-                meta: {},
-            },
-            Production {
-                idx: ProdIndex(
-                    25,
                 ),
                 nonterminal: NonTermIndex(
                     11,
@@ -898,7 +879,7 @@ Grammar {
             },
             Production {
                 idx: ProdIndex(
-                    26,
+                    25,
                 ),
                 nonterminal: NonTermIndex(
                     11,
@@ -917,7 +898,7 @@ Grammar {
             },
             Production {
                 idx: ProdIndex(
-                    27,
+                    26,
                 ),
                 nonterminal: NonTermIndex(
                     11,
@@ -936,7 +917,7 @@ Grammar {
             },
             Production {
                 idx: ProdIndex(
-                    28,
+                    27,
                 ),
                 nonterminal: NonTermIndex(
                     11,
@@ -955,7 +936,7 @@ Grammar {
             },
             Production {
                 idx: ProdIndex(
-                    29,
+                    28,
                 ),
                 nonterminal: NonTermIndex(
                     11,
@@ -974,7 +955,7 @@ Grammar {
             },
             Production {
                 idx: ProdIndex(
-                    30,
+                    29,
                 ),
                 nonterminal: NonTermIndex(
                     11,
@@ -993,6 +974,25 @@ Grammar {
             },
             Production {
                 idx: ProdIndex(
+                    30,
+                ),
+                nonterminal: NonTermIndex(
+                    11,
+                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                25,
+                            ),
+                        ),
+                    },
+                ],
+                meta: {},
+            },
+            Production {
+                idx: ProdIndex(
                     31,
                 ),
                 nonterminal: NonTermIndex(
@@ -1003,7 +1003,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                2,
+                                3,
                             ),
                         ),
                     },
@@ -1022,7 +1022,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                58,
+                                59,
                             ),
                         ),
                     },
@@ -1041,23 +1041,23 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
+                                56,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                26,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
                                 55,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                25,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                54,
                             ),
                         ),
                     },
@@ -1076,7 +1076,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                54,
+                                55,
                             ),
                         ),
                     },
@@ -1086,25 +1086,6 @@ Grammar {
             Production {
                 idx: ProdIndex(
                     35,
-                ),
-                nonterminal: NonTermIndex(
-                    13,
-                ),
-                rhs: [
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                26,
-                            ),
-                        ),
-                    },
-                ],
-                meta: {},
-            },
-            Production {
-                idx: ProdIndex(
-                    36,
                 ),
                 nonterminal: NonTermIndex(
                     13,
@@ -1123,7 +1104,7 @@ Grammar {
             },
             Production {
                 idx: ProdIndex(
-                    37,
+                    36,
                 ),
                 nonterminal: NonTermIndex(
                     13,
@@ -1142,6 +1123,25 @@ Grammar {
             },
             Production {
                 idx: ProdIndex(
+                    37,
+                ),
+                nonterminal: NonTermIndex(
+                    13,
+                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                29,
+                            ),
+                        ),
+                    },
+                ],
+                meta: {},
+            },
+            Production {
+                idx: ProdIndex(
                     38,
                 ),
                 nonterminal: NonTermIndex(
@@ -1152,7 +1152,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                22,
+                                23,
                             ),
                         ),
                     },
@@ -1171,7 +1171,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                2,
+                                3,
                             ),
                         ),
                     },
@@ -1190,7 +1190,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                58,
+                                59,
                             ),
                         ),
                     },
@@ -1209,23 +1209,23 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
+                                58,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                26,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
                                 57,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                25,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                56,
                             ),
                         ),
                     },
@@ -1244,7 +1244,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                56,
+                                57,
                             ),
                         ),
                     },
@@ -1263,7 +1263,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                0,
+                                1,
                             ),
                         ),
                     },
@@ -1271,7 +1271,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                13,
+                                14,
                             ),
                         ),
                     },
@@ -1279,7 +1279,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                59,
+                                60,
                             ),
                         ),
                     },
@@ -1298,7 +1298,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                2,
+                                3,
                             ),
                         ),
                     },
@@ -1317,7 +1317,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                3,
+                                4,
                             ),
                         ),
                     },
@@ -1336,7 +1336,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                4,
+                                5,
                             ),
                         ),
                     },
@@ -1355,7 +1355,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                5,
+                                6,
                             ),
                         ),
                     },
@@ -1374,7 +1374,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                62,
+                                63,
                             ),
                         ),
                     },
@@ -1393,7 +1393,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                63,
+                                64,
                             ),
                         ),
                     },
@@ -1412,7 +1412,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                65,
+                                66,
                             ),
                         ),
                     },
@@ -1431,7 +1431,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                61,
+                                62,
                             ),
                         ),
                     },
@@ -1439,7 +1439,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                60,
+                                61,
                             ),
                         ),
                     },
@@ -1458,7 +1458,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                60,
+                                61,
                             ),
                         ),
                     },
@@ -1477,7 +1477,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                0,
+                                1,
                             ),
                         ),
                     },
@@ -1485,7 +1485,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                29,
+                                30,
                             ),
                         ),
                     },
@@ -1493,7 +1493,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                65,
+                                66,
                             ),
                         ),
                     },
@@ -1512,7 +1512,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                0,
+                                1,
                             ),
                         ),
                     },
@@ -1520,7 +1520,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                30,
+                                31,
                             ),
                         ),
                     },
@@ -1528,7 +1528,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                65,
+                                66,
                             ),
                         ),
                     },
@@ -1547,23 +1547,23 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                31,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                50,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
                                 32,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                51,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                33,
                             ),
                         ),
                     },
@@ -1582,7 +1582,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                71,
+                                72,
                             ),
                         ),
                     },
@@ -1590,7 +1590,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                66,
+                                67,
                             ),
                         ),
                     },
@@ -1609,7 +1609,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                64,
+                                65,
                             ),
                         ),
                     },
@@ -1617,7 +1617,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                66,
+                                67,
                             ),
                         ),
                     },
@@ -1636,7 +1636,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                67,
+                                68,
                             ),
                         ),
                     },
@@ -1644,7 +1644,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                68,
+                                69,
                             ),
                         ),
                     },
@@ -1663,7 +1663,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                33,
+                                34,
                             ),
                         ),
                     },
@@ -1682,7 +1682,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                34,
+                                35,
                             ),
                         ),
                     },
@@ -1701,7 +1701,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                35,
+                                36,
                             ),
                         ),
                     },
@@ -1720,7 +1720,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                36,
+                                37,
                             ),
                         ),
                     },
@@ -1739,7 +1739,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                37,
+                                38,
                             ),
                         ),
                     },
@@ -1758,7 +1758,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                38,
+                                39,
                             ),
                         ),
                     },
@@ -1777,23 +1777,23 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                39,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                69,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
                                 40,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                70,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                41,
                             ),
                         ),
                     },
@@ -1812,23 +1812,23 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                69,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                25,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
                                 70,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                26,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                71,
                             ),
                         ),
                     },
@@ -1847,7 +1847,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                70,
+                                71,
                             ),
                         ),
                     },
@@ -1866,7 +1866,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                0,
+                                1,
                             ),
                         ),
                     },
@@ -1885,7 +1885,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                0,
+                                1,
                             ),
                         ),
                     },
@@ -1904,7 +1904,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                5,
+                                6,
                             ),
                         ),
                     },
@@ -1923,7 +1923,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                5,
+                                6,
                             ),
                         ),
                     },
@@ -1942,7 +1942,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                1,
+                                2,
                             ),
                         ),
                     },
@@ -1961,7 +1961,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                74,
+                                75,
                             ),
                         ),
                     },
@@ -1980,7 +1980,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                73,
+                                74,
                             ),
                         ),
                     },
@@ -1988,7 +1988,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                74,
+                                75,
                             ),
                         ),
                     },
@@ -2007,7 +2007,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                43,
+                                44,
                             ),
                         ),
                     },
@@ -2026,7 +2026,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                7,
+                                8,
                             ),
                         ),
                     },
@@ -2045,7 +2045,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                75,
+                                76,
                             ),
                         ),
                     },
@@ -2064,23 +2064,23 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                41,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                76,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
                                 42,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                77,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                43,
                             ),
                         ),
                     },
@@ -2099,7 +2099,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                8,
+                                9,
                             ),
                         ),
                     },
@@ -2118,7 +2118,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                77,
+                                78,
                             ),
                         ),
                     },
@@ -2137,7 +2137,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                76,
+                                77,
                             ),
                         ),
                     },
@@ -2145,7 +2145,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                77,
+                                78,
                             ),
                         ),
                     },
@@ -2164,7 +2164,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                43,
+                                44,
                             ),
                         ),
                     },
@@ -2183,7 +2183,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                75,
+                                76,
                             ),
                         ),
                     },
@@ -2202,7 +2202,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                9,
+                                10,
                             ),
                         ),
                     },
@@ -2221,7 +2221,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                7,
+                                8,
                             ),
                         ),
                     },
@@ -2236,6 +2236,15 @@ Grammar {
                 idx: TermIndex(
                     0,
                 ),
+                name: "STOP",
+                action: None,
+                recognizer: None,
+                meta: {},
+            },
+            Terminal {
+                idx: TermIndex(
+                    1,
+                ),
                 name: "NAME",
                 action: None,
                 recognizer: Some(
@@ -2247,7 +2256,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    1,
+                    2,
                 ),
                 name: "REGEX_TERM",
                 action: None,
@@ -2260,7 +2269,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    2,
+                    3,
                 ),
                 name: "INT_CONST",
                 action: None,
@@ -2273,7 +2282,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    3,
+                    4,
                 ),
                 name: "FLOAT_CONST",
                 action: None,
@@ -2286,7 +2295,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    4,
+                    5,
                 ),
                 name: "BOOL_CONST",
                 action: None,
@@ -2299,7 +2308,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    5,
+                    6,
                 ),
                 name: "STR_CONST",
                 action: None,
@@ -2312,7 +2321,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    6,
+                    7,
                 ),
                 name: "ACTION",
                 action: None,
@@ -2325,7 +2334,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    7,
+                    8,
                 ),
                 name: "WS",
                 action: None,
@@ -2338,7 +2347,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    8,
+                    9,
                 ),
                 name: "COMMENTLINE",
                 action: None,
@@ -2351,7 +2360,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    9,
+                    10,
                 ),
                 name: "NOTCOMMENT",
                 action: None,
@@ -2364,7 +2373,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    10,
+                    11,
                 ),
                 name: "terminals",
                 action: None,
@@ -2377,7 +2386,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    11,
+                    12,
                 ),
                 name: "import",
                 action: None,
@@ -2390,7 +2399,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    12,
+                    13,
                 ),
                 name: "as",
                 action: None,
@@ -2403,7 +2412,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    13,
+                    14,
                 ),
                 name: ":",
                 action: None,
@@ -2416,7 +2425,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    14,
+                    15,
                 ),
                 name: ";",
                 action: None,
@@ -2429,7 +2438,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    15,
+                    16,
                 ),
                 name: "{",
                 action: None,
@@ -2442,7 +2451,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    16,
+                    17,
                 ),
                 name: "}",
                 action: None,
@@ -2455,7 +2464,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    17,
+                    18,
                 ),
                 name: "|",
                 action: None,
@@ -2468,7 +2477,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    18,
+                    19,
                 ),
                 name: "left",
                 action: None,
@@ -2481,7 +2490,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    19,
+                    20,
                 ),
                 name: "reduce",
                 action: None,
@@ -2494,7 +2503,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    20,
+                    21,
                 ),
                 name: "right",
                 action: None,
@@ -2507,7 +2516,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    21,
+                    22,
                 ),
                 name: "shift",
                 action: None,
@@ -2520,7 +2529,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    22,
+                    23,
                 ),
                 name: "dynamic",
                 action: None,
@@ -2533,7 +2542,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    23,
+                    24,
                 ),
                 name: "nops",
                 action: None,
@@ -2546,7 +2555,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    24,
+                    25,
                 ),
                 name: "nopse",
                 action: None,
@@ -2559,7 +2568,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    25,
+                    26,
                 ),
                 name: ",",
                 action: None,
@@ -2572,7 +2581,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    26,
+                    27,
                 ),
                 name: "prefer",
                 action: None,
@@ -2585,7 +2594,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    27,
+                    28,
                 ),
                 name: "finish",
                 action: None,
@@ -2598,7 +2607,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    28,
+                    29,
                 ),
                 name: "nofinish",
                 action: None,
@@ -2611,7 +2620,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    29,
+                    30,
                 ),
                 name: "=",
                 action: None,
@@ -2624,7 +2633,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    30,
+                    31,
                 ),
                 name: "?=",
                 action: None,
@@ -2637,7 +2646,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    31,
+                    32,
                 ),
                 name: "(",
                 action: None,
@@ -2650,7 +2659,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    32,
+                    33,
                 ),
                 name: ")",
                 action: None,
@@ -2663,7 +2672,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    33,
+                    34,
                 ),
                 name: "*",
                 action: None,
@@ -2676,7 +2685,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    34,
+                    35,
                 ),
                 name: "*!",
                 action: None,
@@ -2689,7 +2698,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    35,
+                    36,
                 ),
                 name: "+",
                 action: None,
@@ -2702,7 +2711,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    36,
+                    37,
                 ),
                 name: "+!",
                 action: None,
@@ -2715,7 +2724,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    37,
+                    38,
                 ),
                 name: "?",
                 action: None,
@@ -2728,7 +2737,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    38,
+                    39,
                 ),
                 name: "?!",
                 action: None,
@@ -2741,7 +2750,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    39,
+                    40,
                 ),
                 name: "[",
                 action: None,
@@ -2754,7 +2763,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    40,
+                    41,
                 ),
                 name: "]",
                 action: None,
@@ -2767,7 +2776,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    41,
+                    42,
                 ),
                 name: "/*",
                 action: None,
@@ -2780,7 +2789,7 @@ Grammar {
             },
             Terminal {
                 idx: TermIndex(
-                    42,
+                    43,
                 ),
                 name: "*/",
                 action: None,
@@ -3336,243 +3345,252 @@ Grammar {
     ),
     nonterm_by_name: {
         "EMPTY": SymbolIndex(
-            43,
-        ),
-        "S'": SymbolIndex(
             44,
         ),
-        "File": SymbolIndex(
+        "S'": SymbolIndex(
             45,
         ),
-        "Imports": SymbolIndex(
+        "File": SymbolIndex(
             46,
         ),
-        "Import": SymbolIndex(
+        "Imports": SymbolIndex(
             47,
         ),
-        "GrammarRules": SymbolIndex(
+        "Import": SymbolIndex(
             48,
         ),
-        "GrammarRule": SymbolIndex(
+        "GrammarRules": SymbolIndex(
             49,
         ),
-        "GrammarRuleRHS": SymbolIndex(
+        "GrammarRule": SymbolIndex(
             50,
         ),
-        "Production": SymbolIndex(
+        "GrammarRuleRHS": SymbolIndex(
             51,
         ),
-        "TerminalRules": SymbolIndex(
+        "Production": SymbolIndex(
             52,
         ),
-        "TerminalRule": SymbolIndex(
+        "TerminalRules": SymbolIndex(
             53,
         ),
-        "ProdMetaData": SymbolIndex(
+        "TerminalRule": SymbolIndex(
             54,
         ),
-        "ProdMetaDatas": SymbolIndex(
+        "ProdMetaData": SymbolIndex(
             55,
         ),
-        "TermMetaData": SymbolIndex(
+        "ProdMetaDatas": SymbolIndex(
             56,
         ),
-        "TermMetaDatas": SymbolIndex(
+        "TermMetaData": SymbolIndex(
             57,
         ),
-        "UserMetaData": SymbolIndex(
+        "TermMetaDatas": SymbolIndex(
             58,
         ),
-        "Const": SymbolIndex(
+        "UserMetaData": SymbolIndex(
             59,
         ),
-        "Assignment": SymbolIndex(
+        "Const": SymbolIndex(
             60,
         ),
-        "Assignments": SymbolIndex(
+        "Assignment": SymbolIndex(
             61,
         ),
-        "PlainAssignment": SymbolIndex(
+        "Assignments": SymbolIndex(
             62,
         ),
-        "BoolAssignment": SymbolIndex(
+        "PlainAssignment": SymbolIndex(
             63,
         ),
-        "ProductionGroup": SymbolIndex(
+        "BoolAssignment": SymbolIndex(
             64,
         ),
-        "GSymbolReference": SymbolIndex(
+        "ProductionGroup": SymbolIndex(
             65,
         ),
-        "RepetitionOperator": SymbolIndex(
+        "GSymbolReference": SymbolIndex(
             66,
         ),
-        "RepetitionOperatorOp": SymbolIndex(
+        "RepetitionOperator": SymbolIndex(
             67,
         ),
-        "RepetitionModifiersExp": SymbolIndex(
+        "RepetitionOperatorOp": SymbolIndex(
             68,
         ),
-        "RepetitionModifiers": SymbolIndex(
+        "RepetitionModifiersExp": SymbolIndex(
             69,
         ),
-        "RepetitionModifier": SymbolIndex(
+        "RepetitionModifiers": SymbolIndex(
             70,
         ),
-        "GSymbol": SymbolIndex(
+        "RepetitionModifier": SymbolIndex(
             71,
         ),
-        "Recognizer": SymbolIndex(
+        "GSymbol": SymbolIndex(
             72,
         ),
-        "Layout": SymbolIndex(
+        "Recognizer": SymbolIndex(
             73,
         ),
-        "LayoutItem": SymbolIndex(
+        "Layout": SymbolIndex(
             74,
         ),
-        "Comment": SymbolIndex(
+        "LayoutItem": SymbolIndex(
             75,
         ),
-        "Corncs": SymbolIndex(
+        "Comment": SymbolIndex(
             76,
         ),
-        "Cornc": SymbolIndex(
+        "Corncs": SymbolIndex(
             77,
+        ),
+        "Cornc": SymbolIndex(
+            78,
         ),
     },
     term_by_name: {
-        "NAME": SymbolIndex(
+        "STOP": SymbolIndex(
             0,
         ),
-        "REGEX_TERM": SymbolIndex(
+        "NAME": SymbolIndex(
             1,
         ),
-        "INT_CONST": SymbolIndex(
+        "REGEX_TERM": SymbolIndex(
             2,
         ),
-        "FLOAT_CONST": SymbolIndex(
+        "INT_CONST": SymbolIndex(
             3,
         ),
-        "BOOL_CONST": SymbolIndex(
+        "FLOAT_CONST": SymbolIndex(
             4,
         ),
-        "STR_CONST": SymbolIndex(
+        "BOOL_CONST": SymbolIndex(
             5,
         ),
-        "ACTION": SymbolIndex(
+        "STR_CONST": SymbolIndex(
             6,
         ),
-        "WS": SymbolIndex(
+        "ACTION": SymbolIndex(
             7,
         ),
-        "COMMENTLINE": SymbolIndex(
+        "WS": SymbolIndex(
             8,
         ),
-        "NOTCOMMENT": SymbolIndex(
+        "COMMENTLINE": SymbolIndex(
             9,
         ),
-        "terminals": SymbolIndex(
+        "NOTCOMMENT": SymbolIndex(
             10,
         ),
-        "import": SymbolIndex(
+        "terminals": SymbolIndex(
             11,
         ),
-        "as": SymbolIndex(
+        "import": SymbolIndex(
             12,
         ),
-        ":": SymbolIndex(
+        "as": SymbolIndex(
             13,
         ),
-        ";": SymbolIndex(
+        ":": SymbolIndex(
             14,
         ),
-        "{": SymbolIndex(
+        ";": SymbolIndex(
             15,
         ),
-        "}": SymbolIndex(
+        "{": SymbolIndex(
             16,
         ),
-        "|": SymbolIndex(
+        "}": SymbolIndex(
             17,
         ),
-        "left": SymbolIndex(
+        "|": SymbolIndex(
             18,
         ),
-        "reduce": SymbolIndex(
+        "left": SymbolIndex(
             19,
         ),
-        "right": SymbolIndex(
+        "reduce": SymbolIndex(
             20,
         ),
-        "shift": SymbolIndex(
+        "right": SymbolIndex(
             21,
         ),
-        "dynamic": SymbolIndex(
+        "shift": SymbolIndex(
             22,
         ),
-        "nops": SymbolIndex(
+        "dynamic": SymbolIndex(
             23,
         ),
-        "nopse": SymbolIndex(
+        "nops": SymbolIndex(
             24,
         ),
-        ",": SymbolIndex(
+        "nopse": SymbolIndex(
             25,
         ),
-        "prefer": SymbolIndex(
+        ",": SymbolIndex(
             26,
         ),
-        "finish": SymbolIndex(
+        "prefer": SymbolIndex(
             27,
         ),
-        "nofinish": SymbolIndex(
+        "finish": SymbolIndex(
             28,
         ),
-        "=": SymbolIndex(
+        "nofinish": SymbolIndex(
             29,
         ),
-        "?=": SymbolIndex(
+        "=": SymbolIndex(
             30,
         ),
-        "(": SymbolIndex(
+        "?=": SymbolIndex(
             31,
         ),
-        ")": SymbolIndex(
+        "(": SymbolIndex(
             32,
         ),
-        "*": SymbolIndex(
+        ")": SymbolIndex(
             33,
         ),
-        "*!": SymbolIndex(
+        "*": SymbolIndex(
             34,
         ),
-        "+": SymbolIndex(
+        "*!": SymbolIndex(
             35,
         ),
-        "+!": SymbolIndex(
+        "+": SymbolIndex(
             36,
         ),
-        "?": SymbolIndex(
+        "+!": SymbolIndex(
             37,
         ),
-        "?!": SymbolIndex(
+        "?": SymbolIndex(
             38,
         ),
-        "[": SymbolIndex(
+        "?!": SymbolIndex(
             39,
         ),
-        "]": SymbolIndex(
+        "[": SymbolIndex(
             40,
         ),
-        "/*": SymbolIndex(
+        "]": SymbolIndex(
             41,
         ),
-        "*/": SymbolIndex(
+        "/*": SymbolIndex(
             42,
+        ),
+        "*/": SymbolIndex(
+            43,
         ),
     },
     empty_index: SymbolIndex(
-        43,
+        44,
+    ),
+    stop_index: SymbolIndex(
+        0,
+    ),
+    start_index: SymbolIndex(
+        45,
     ),
 }

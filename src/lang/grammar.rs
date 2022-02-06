@@ -14,11 +14,12 @@ pub(crate) struct Grammar {
     pub(in crate::lang) nonterminals: Option<Vec<NonTerminal>>,
     pub(in crate::lang) nonterm_by_name: IndexMap<String, SymbolIndex>,
     pub(in crate::lang) term_by_name: IndexMap<String, SymbolIndex>,
+    // Index of EMPTY symbol
     pub(in crate::lang) empty_index: SymbolIndex,
-    // nonterminals: Vec<NonTerminalRules>,
-    // symbol_by_name: HashMap<String, &'a Symbol<'a>>,
-    // first_set: HashMap<NonTerminal<'a>, HashSet<&'a Terminal>>,
-    // start_symbol: Option<&'a NonTerminal<'a>>,
+    // Index of STOP symbol
+    pub(in crate::lang) stop_index: SymbolIndex,
+    // Index of grammar start symbol
+    pub(in crate::lang) start_index: SymbolIndex,
 }
 
 #[derive(Debug)]
@@ -57,9 +58,10 @@ pub(crate) struct Assignment {
     pub(crate) symbol: ResolvingSymbolIndex,
 }
 
-macro_rules! res {
+/// Called for Assignment to extract resolved SymbolIndex.
+macro_rules! res_symbol {
     ($r:expr) => {
-        match $r {
+        match $r.symbol {
             ResolvingSymbolIndex::Resolved(index) => index,
             ResolvingSymbolIndex::Resolving(_) => {
                 panic!("reference not resolved");
@@ -67,13 +69,25 @@ macro_rules! res {
         }
     };
 }
-pub(crate) use res;
+pub(crate) use res_symbol;
 
 impl Grammar {
     pub fn from_pgfile(pgfile: PGFile) -> Self {
         let mut terminals: IndexMap<String, Terminal> = IndexMap::new();
         let mut nonterminals: IndexMap<String, NonTerminal> = IndexMap::new();
         let mut productions: Vec<Production> = vec![];
+
+        // Create implicit STOP terminal used to signify the end of the input.
+        terminals.insert(
+            "STOP".to_string(),
+            Terminal {
+                idx: TermIndex(0),
+                name: "STOP".to_string(),
+                action: None,
+                recognizer: None,
+                meta: TerminalMetaDatas::new(),
+            },
+        );
 
         // Extract productions and nonterminals from grammar rules.
         if let Some(rules) = pgfile.rules {
@@ -94,15 +108,13 @@ impl Grammar {
         // Resolve references in productions.
         Grammar::resolve_references(&mut productions, &terminals, &nonterminals);
 
-        let terminals_count = terminals.len();
+        let term_len = terminals.len();
         Grammar {
             imports: pgfile.imports,
             productions: Some(productions),
-            empty_index: if terminals.is_empty() {
-                0.into()
-            } else {
-                terminals.len().into()
-            },
+            empty_index: terminals.len().into(),
+            start_index: (terminals.len() + 1).into(), // skip EMPTY
+            stop_index: 0.into(),
             term_by_name: terminals
                 .values()
                 .map(|t| (t.name.to_string(), t.idx.to_symbol_index()))
@@ -114,7 +126,7 @@ impl Grammar {
             },
             nonterm_by_name: nonterminals
                 .values()
-                .map(|nt| (nt.name.to_string(), nt.idx.to_symbol_index(terminals_count)))
+                .map(|nt| (nt.name.to_string(), nt.idx.to_symbol_index(term_len)))
                 .collect(),
             nonterminals: if nonterminals.is_empty() {
                 None
@@ -129,8 +141,8 @@ impl Grammar {
         nonterminals: &mut IndexMap<String, NonTerminal>,
         productions: &mut Vec<Production>,
     ) {
-        let mut next_nonterm_idx = NonTermIndex(1);
-        let mut next_prod_idx = ProdIndex(1);
+        let mut next_nonterm_idx = NonTermIndex(1); // Account for EMPTY and S'
+        let mut next_prod_idx = ProdIndex(1); // Account for S' -> S production
         let mut nonterminal;
 
         // EMPTY non-terminal is implicit
@@ -159,8 +171,9 @@ impl Grammar {
             nonterminal: NonTermIndex(1),
             rhs: vec![Assignment {
                 name: None,
-                symbol: ResolvingSymbolIndex::Resolving(
-                    GrammarSymbol::Name(rules[0].name.to_string())),
+                symbol: ResolvingSymbolIndex::Resolving(GrammarSymbol::Name(
+                    rules[0].name.to_string(),
+                )),
             }],
             meta: ProductionMetaDatas::new(),
         });
@@ -214,7 +227,7 @@ impl Grammar {
         grammar_terminals: Vec<super::types::Terminal>,
         terminals: &mut IndexMap<String, Terminal>,
     ) {
-        let mut next_term_idx = TermIndex(0);
+        let mut next_term_idx = TermIndex(1); // Account for STOP terminal
         for terminal in grammar_terminals {
             terminals.insert(
                 terminal.name.to_string(),
@@ -303,6 +316,15 @@ impl Grammar {
             })
         })
     }
+
+    pub(crate) fn symbol_name(&self, index: SymbolIndex) -> String {
+        if index.0 < self.term_len() {
+            self.terminals.as_ref().unwrap()[index.0].name.clone()
+        } else {
+            self.nonterminals.as_ref().unwrap()[index.0].name.clone()
+        }
+    }
+
     pub(crate) fn symbol_indexes(&self, names: &[&str]) -> Vec<SymbolIndex> {
         let mut indexes = Vec::new();
         for name in names {
@@ -311,8 +333,28 @@ impl Grammar {
         indexes
     }
 
+    #[inline]
     pub(crate) fn nonterm_to_symbol(&self, index: NonTermIndex) -> SymbolIndex {
         index.to_symbol_index(self.terminals.as_ref().map_or(0, |t| t.len()))
+    }
+
+    /// Number of terminals in the grammar.
+    #[inline]
+    pub(crate) fn term_len(&self) -> usize {
+        self.terminals.as_ref().map_or(0, |t| t.len())
+    }
+
+    /// Number of non-terminals in the grammar including EMPTY and S'
+    #[inline]
+    pub(crate) fn nonterm_len(&self) -> usize {
+        self.nonterminals.as_ref().map_or(0, |nt| nt.len())
+    }
+
+    /// Convert symbol index to non-terminal index. Panics if symbol index is a
+    /// terminal index.
+    #[inline]
+    pub(crate) fn symbol_to_nonterm(&self, index: NonTermIndex) -> SymbolIndex {
+        SymbolIndex(index.0 - self.term_len())
     }
 }
 
@@ -336,7 +378,7 @@ mod tests {
                 .iter()
                 .map(|t| &t.name)
                 .collect::<Vec<_>>(),
-            &["first_term", "second_term"]
+            &["STOP", "first_term", "second_term"]
         );
     }
 
@@ -359,7 +401,7 @@ mod tests {
                 .iter()
                 .map(|t| &t.name)
                 .collect::<Vec<_>>(),
-            &["third_term", "first_term", "second_term"]
+            &["STOP", "third_term", "first_term", "second_term"]
         );
     }
 
@@ -382,7 +424,7 @@ mod tests {
                 .iter()
                 .map(|t| &t.name)
                 .collect::<Vec<_>>(),
-            &["third_term", "first_term", "second_term"]
+            &["STOP", "third_term", "first_term", "second_term"]
         );
     }
 
@@ -406,17 +448,20 @@ mod tests {
                 .iter()
                 .map(|t| &t.name)
                 .collect::<Vec<_>>(),
-            &["rmatch_term", "more_regex", "foo", "some"]
+            &["STOP", "rmatch_term", "more_regex", "foo", "some"]
         );
-        for (idx, regexstr) in [r#""[^"]+""#, r#"\d{2,5}"#].iter().enumerate().into_iter() {
-            assert!(match grammar.terminals.as_ref().unwrap()[idx]
-                .recognizer
-                .as_ref()
-                .unwrap()
-            {
-                crate::lang::types::Recognizer::StrConst(_) => false,
-                crate::lang::types::Recognizer::RegExTerm(regex) => regex == regexstr,
-            });
+        for (term_name, term_regex) in [("rmatch_term", r#""[^"]+""#), ("more_regex", r#"\d{2,5}"#)]
+        {
+            assert!(
+                match grammar.terminals.as_ref().unwrap()[grammar.term_by_name[term_name].0]
+                    .recognizer
+                    .as_ref()
+                    .unwrap()
+                {
+                    crate::lang::types::Recognizer::StrConst(_) => false,
+                    crate::lang::types::Recognizer::RegExTerm(regex) => regex == term_regex,
+                }
+            );
         }
     }
 
