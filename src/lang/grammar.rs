@@ -61,12 +61,13 @@ macro_rules! res {
     ($r:expr) => {
         match $r {
             ResolvingSymbolIndex::Resolved(index) => index,
-            ResolvingSymbolIndex::Resolving(_) => {panic!("reference not resolved");}
+            ResolvingSymbolIndex::Resolving(_) => {
+                panic!("reference not resolved");
+            }
         }
-    }
+    };
 }
 pub(crate) use res;
-
 
 impl Grammar {
     pub fn from_pgfile(pgfile: PGFile) -> Self {
@@ -97,7 +98,11 @@ impl Grammar {
         Grammar {
             imports: pgfile.imports,
             productions: Some(productions),
-            empty_index: if terminals.is_empty() { 0.into() } else { terminals.len().into() },
+            empty_index: if terminals.is_empty() {
+                0.into()
+            } else {
+                terminals.len().into()
+            },
             term_by_name: terminals
                 .values()
                 .map(|t| (t.name.to_string(), t.idx.to_symbol_index()))
@@ -124,11 +129,11 @@ impl Grammar {
         nonterminals: &mut IndexMap<String, NonTerminal>,
         productions: &mut Vec<Production>,
     ) {
-        let mut next_nonterm_idx = NonTermIndex(0);
-        let mut next_prod_idx = ProdIndex(0);
+        let mut next_nonterm_idx = NonTermIndex(1);
+        let mut next_prod_idx = ProdIndex(1);
         let mut nonterminal;
 
-        // EMPTY rule is implicit
+        // EMPTY non-terminal is implicit
         nonterminals.insert(
             "EMPTY".to_string(),
             NonTerminal {
@@ -137,6 +142,28 @@ impl Grammar {
                 productions: vec![],
             },
         );
+
+        // Augmented non-terminal and production. by default first rule is
+        // starting rule.
+        nonterminals.insert(
+            "S'".to_string(),
+            NonTerminal {
+                idx: NonTermIndex(1),
+                name: "S'".to_string(),
+                productions: vec![ProdIndex(0)],
+            },
+        );
+
+        productions.push(Production {
+            idx: ProdIndex(0),
+            nonterminal: NonTermIndex(1),
+            rhs: vec![Assignment {
+                name: None,
+                symbol: ResolvingSymbolIndex::Resolving(
+                    GrammarSymbol::Name(rules[0].name.to_string())),
+            }],
+            meta: ProductionMetaDatas::new(),
+        });
 
         for rule in rules {
             // Crate or find non-terminal for the current rule
@@ -403,7 +430,7 @@ mod tests {
             "#
             .into(),
         );
-        assert_eq!(grammar.nonterminals.as_ref().unwrap().len(), 4);
+        assert_eq!(grammar.nonterminals.as_ref().unwrap().len(), 5);
         assert_eq!(
             grammar
                 .nonterminals
@@ -412,7 +439,7 @@ mod tests {
                 .iter()
                 .map(|nt| &nt.name)
                 .collect::<Vec<_>>(),
-            &["EMPTY", "S", "A", "B"]
+            &["EMPTY", "S'", "S", "A", "B"]
         );
         assert_eq!(
             grammar
@@ -422,7 +449,7 @@ mod tests {
                 .iter()
                 .map(|nt| nt.productions.len())
                 .collect::<Vec<_>>(),
-            &[0, 2, 1, 1]
+            &[0, 1, 2, 1, 1]
         );
         assert_eq!(
             grammar
@@ -436,7 +463,7 @@ mod tests {
                     *index
                 })
                 .collect::<Vec<_>>(),
-            &[0, 1, 2, 3]
+            &[0, 1, 2, 3, 4]
         );
     }
 }

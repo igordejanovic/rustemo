@@ -14,7 +14,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                47,
+                                45,
                             ),
                         ),
                     },
@@ -26,22 +26,14 @@ Grammar {
                     1,
                 ),
                 nonterminal: NonTermIndex(
-                    1,
+                    2,
                 ),
                 rhs: [
                     Assignment {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                45,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                47,
+                                48,
                             ),
                         ),
                     },
@@ -53,14 +45,14 @@ Grammar {
                     2,
                 ),
                 nonterminal: NonTermIndex(
-                    1,
+                    2,
                 ),
                 rhs: [
                     Assignment {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                47,
+                                46,
                             ),
                         ),
                     },
@@ -68,15 +60,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                10,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                51,
+                                48,
                             ),
                         ),
                     },
@@ -88,22 +72,14 @@ Grammar {
                     3,
                 ),
                 nonterminal: NonTermIndex(
-                    1,
+                    2,
                 ),
                 rhs: [
                     Assignment {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                45,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                47,
+                                48,
                             ),
                         ),
                     },
@@ -119,7 +95,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                51,
+                                52,
                             ),
                         ),
                     },
@@ -131,9 +107,25 @@ Grammar {
                     4,
                 ),
                 nonterminal: NonTermIndex(
-                    1,
+                    2,
                 ),
                 rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                46,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                48,
+                            ),
+                        ),
+                    },
                     Assignment {
                         name: None,
                         symbol: Resolved(
@@ -146,7 +138,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                51,
+                                52,
                             ),
                         ),
                     },
@@ -165,7 +157,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                45,
+                                10,
                             ),
                         ),
                     },
@@ -173,7 +165,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                46,
+                                52,
                             ),
                         ),
                     },
@@ -185,7 +177,7 @@ Grammar {
                     6,
                 ),
                 nonterminal: NonTermIndex(
-                    2,
+                    3,
                 ),
                 rhs: [
                     Assignment {
@@ -193,6 +185,14 @@ Grammar {
                         symbol: Resolved(
                             SymbolIndex(
                                 46,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                47,
                             ),
                         ),
                     },
@@ -205,6 +205,25 @@ Grammar {
                 ),
                 nonterminal: NonTermIndex(
                     3,
+                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                47,
+                            ),
+                        ),
+                    },
+                ],
+                meta: {},
+            },
+            Production {
+                idx: ProdIndex(
+                    8,
+                ),
+                nonterminal: NonTermIndex(
+                    4,
                 ),
                 rhs: [
                     Assignment {
@@ -228,10 +247,10 @@ Grammar {
             },
             Production {
                 idx: ProdIndex(
-                    8,
+                    9,
                 ),
                 nonterminal: NonTermIndex(
-                    3,
+                    4,
                 ),
                 rhs: [
                     Assignment {
@@ -271,37 +290,10 @@ Grammar {
             },
             Production {
                 idx: ProdIndex(
-                    9,
-                ),
-                nonterminal: NonTermIndex(
-                    4,
-                ),
-                rhs: [
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                47,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                48,
-                            ),
-                        ),
-                    },
-                ],
-                meta: {},
-            },
-            Production {
-                idx: ProdIndex(
                     10,
                 ),
                 nonterminal: NonTermIndex(
-                    4,
+                    5,
                 ),
                 rhs: [
                     Assignment {
@@ -309,6 +301,14 @@ Grammar {
                         symbol: Resolved(
                             SymbolIndex(
                                 48,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                49,
                             ),
                         ),
                     },
@@ -327,39 +327,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                6,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                0,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                13,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
                                 49,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                14,
                             ),
                         ),
                     },
@@ -371,7 +339,7 @@ Grammar {
                     12,
                 ),
                 nonterminal: NonTermIndex(
-                    5,
+                    6,
                 ),
                 rhs: [
                     Assignment {
@@ -394,30 +362,6 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                15,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                54,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                16,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
                                 13,
                             ),
                         ),
@@ -426,7 +370,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                49,
+                                50,
                             ),
                         ),
                     },
@@ -453,7 +397,82 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                49,
+                                6,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                0,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                15,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                55,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                16,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                13,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                50,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                14,
+                            ),
+                        ),
+                    },
+                ],
+                meta: {},
+            },
+            Production {
+                idx: ProdIndex(
+                    14,
+                ),
+                nonterminal: NonTermIndex(
+                    7,
+                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                50,
                             ),
                         ),
                     },
@@ -469,26 +488,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                50,
-                            ),
-                        ),
-                    },
-                ],
-                meta: {},
-            },
-            Production {
-                idx: ProdIndex(
-                    14,
-                ),
-                nonterminal: NonTermIndex(
-                    6,
-                ),
-                rhs: [
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                50,
+                                51,
                             ),
                         ),
                     },
@@ -507,7 +507,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                60,
+                                51,
                             ),
                         ),
                     },
@@ -519,38 +519,14 @@ Grammar {
                     16,
                 ),
                 nonterminal: NonTermIndex(
-                    7,
+                    8,
                 ),
                 rhs: [
                     Assignment {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                60,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                15,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                54,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                16,
+                                61,
                             ),
                         ),
                     },
@@ -569,7 +545,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                51,
+                                61,
                             ),
                         ),
                     },
@@ -577,7 +553,23 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                52,
+                                15,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                55,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                16,
                             ),
                         ),
                     },
@@ -589,7 +581,7 @@ Grammar {
                     18,
                 ),
                 nonterminal: NonTermIndex(
-                    8,
+                    9,
                 ),
                 rhs: [
                     Assignment {
@@ -597,6 +589,14 @@ Grammar {
                         symbol: Resolved(
                             SymbolIndex(
                                 52,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                53,
                             ),
                         ),
                     },
@@ -615,39 +615,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                6,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                0,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                13,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                71,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                14,
+                                53,
                             ),
                         ),
                     },
@@ -659,7 +627,7 @@ Grammar {
                     20,
                 ),
                 nonterminal: NonTermIndex(
-                    9,
+                    10,
                 ),
                 rhs: [
                     Assignment {
@@ -683,6 +651,14 @@ Grammar {
                         symbol: Resolved(
                             SymbolIndex(
                                 13,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                72,
                             ),
                         ),
                     },
@@ -702,7 +678,7 @@ Grammar {
                     21,
                 ),
                 nonterminal: NonTermIndex(
-                    9,
+                    10,
                 ),
                 rhs: [
                     Assignment {
@@ -726,38 +702,6 @@ Grammar {
                         symbol: Resolved(
                             SymbolIndex(
                                 13,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                71,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                15,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                56,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                16,
                             ),
                         ),
                     },
@@ -777,7 +721,7 @@ Grammar {
                     22,
                 ),
                 nonterminal: NonTermIndex(
-                    9,
+                    10,
                 ),
                 rhs: [
                     Assignment {
@@ -808,6 +752,14 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
+                                72,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
                                 15,
                             ),
                         ),
@@ -816,7 +768,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                56,
+                                57,
                             ),
                         ),
                     },
@@ -851,7 +803,55 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                18,
+                                6,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                0,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                13,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                15,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                57,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                16,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                14,
                             ),
                         ),
                     },
@@ -863,7 +863,26 @@ Grammar {
                     24,
                 ),
                 nonterminal: NonTermIndex(
-                    10,
+                    11,
+                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                18,
+                            ),
+                        ),
+                    },
+                ],
+                meta: {},
+            },
+            Production {
+                idx: ProdIndex(
+                    25,
+                ),
+                nonterminal: NonTermIndex(
+                    11,
                 ),
                 rhs: [
                     Assignment {
@@ -879,10 +898,10 @@ Grammar {
             },
             Production {
                 idx: ProdIndex(
-                    25,
+                    26,
                 ),
                 nonterminal: NonTermIndex(
-                    10,
+                    11,
                 ),
                 rhs: [
                     Assignment {
@@ -898,10 +917,10 @@ Grammar {
             },
             Production {
                 idx: ProdIndex(
-                    26,
+                    27,
                 ),
                 nonterminal: NonTermIndex(
-                    10,
+                    11,
                 ),
                 rhs: [
                     Assignment {
@@ -917,10 +936,10 @@ Grammar {
             },
             Production {
                 idx: ProdIndex(
-                    27,
+                    28,
                 ),
                 nonterminal: NonTermIndex(
-                    10,
+                    11,
                 ),
                 rhs: [
                     Assignment {
@@ -936,10 +955,10 @@ Grammar {
             },
             Production {
                 idx: ProdIndex(
-                    28,
+                    29,
                 ),
                 nonterminal: NonTermIndex(
-                    10,
+                    11,
                 ),
                 rhs: [
                     Assignment {
@@ -955,10 +974,10 @@ Grammar {
             },
             Production {
                 idx: ProdIndex(
-                    29,
+                    30,
                 ),
                 nonterminal: NonTermIndex(
-                    10,
+                    11,
                 ),
                 rhs: [
                     Assignment {
@@ -974,10 +993,10 @@ Grammar {
             },
             Production {
                 idx: ProdIndex(
-                    30,
+                    31,
                 ),
                 nonterminal: NonTermIndex(
-                    10,
+                    11,
                 ),
                 rhs: [
                     Assignment {
@@ -985,25 +1004,6 @@ Grammar {
                         symbol: Resolved(
                             SymbolIndex(
                                 2,
-                            ),
-                        ),
-                    },
-                ],
-                meta: {},
-            },
-            Production {
-                idx: ProdIndex(
-                    31,
-                ),
-                nonterminal: NonTermIndex(
-                    10,
-                ),
-                rhs: [
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                57,
                             ),
                         ),
                     },
@@ -1022,7 +1022,26 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                54,
+                                58,
+                            ),
+                        ),
+                    },
+                ],
+                meta: {},
+            },
+            Production {
+                idx: ProdIndex(
+                    33,
+                ),
+                nonterminal: NonTermIndex(
+                    12,
+                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                55,
                             ),
                         ),
                     },
@@ -1038,26 +1057,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                53,
-                            ),
-                        ),
-                    },
-                ],
-                meta: {},
-            },
-            Production {
-                idx: ProdIndex(
-                    33,
-                ),
-                nonterminal: NonTermIndex(
-                    11,
-                ),
-                rhs: [
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                53,
+                                54,
                             ),
                         ),
                     },
@@ -1076,7 +1076,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                26,
+                                54,
                             ),
                         ),
                     },
@@ -1088,7 +1088,26 @@ Grammar {
                     35,
                 ),
                 nonterminal: NonTermIndex(
-                    12,
+                    13,
+                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                26,
+                            ),
+                        ),
+                    },
+                ],
+                meta: {},
+            },
+            Production {
+                idx: ProdIndex(
+                    36,
+                ),
+                nonterminal: NonTermIndex(
+                    13,
                 ),
                 rhs: [
                     Assignment {
@@ -1104,10 +1123,10 @@ Grammar {
             },
             Production {
                 idx: ProdIndex(
-                    36,
+                    37,
                 ),
                 nonterminal: NonTermIndex(
-                    12,
+                    13,
                 ),
                 rhs: [
                     Assignment {
@@ -1123,10 +1142,10 @@ Grammar {
             },
             Production {
                 idx: ProdIndex(
-                    37,
+                    38,
                 ),
                 nonterminal: NonTermIndex(
-                    12,
+                    13,
                 ),
                 rhs: [
                     Assignment {
@@ -1142,10 +1161,10 @@ Grammar {
             },
             Production {
                 idx: ProdIndex(
-                    38,
+                    39,
                 ),
                 nonterminal: NonTermIndex(
-                    12,
+                    13,
                 ),
                 rhs: [
                     Assignment {
@@ -1153,25 +1172,6 @@ Grammar {
                         symbol: Resolved(
                             SymbolIndex(
                                 2,
-                            ),
-                        ),
-                    },
-                ],
-                meta: {},
-            },
-            Production {
-                idx: ProdIndex(
-                    39,
-                ),
-                nonterminal: NonTermIndex(
-                    12,
-                ),
-                rhs: [
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                57,
                             ),
                         ),
                     },
@@ -1190,7 +1190,26 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                56,
+                                58,
+                            ),
+                        ),
+                    },
+                ],
+                meta: {},
+            },
+            Production {
+                idx: ProdIndex(
+                    41,
+                ),
+                nonterminal: NonTermIndex(
+                    14,
+                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                57,
                             ),
                         ),
                     },
@@ -1206,26 +1225,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                55,
-                            ),
-                        ),
-                    },
-                ],
-                meta: {},
-            },
-            Production {
-                idx: ProdIndex(
-                    41,
-                ),
-                nonterminal: NonTermIndex(
-                    13,
-                ),
-                rhs: [
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                55,
+                                56,
                             ),
                         ),
                     },
@@ -1238,6 +1238,25 @@ Grammar {
                 ),
                 nonterminal: NonTermIndex(
                     14,
+                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                56,
+                            ),
+                        ),
+                    },
+                ],
+                meta: {},
+            },
+            Production {
+                idx: ProdIndex(
+                    43,
+                ),
+                nonterminal: NonTermIndex(
+                    15,
                 ),
                 rhs: [
                     Assignment {
@@ -1260,7 +1279,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                58,
+                                59,
                             ),
                         ),
                     },
@@ -1269,10 +1288,10 @@ Grammar {
             },
             Production {
                 idx: ProdIndex(
-                    43,
+                    44,
                 ),
                 nonterminal: NonTermIndex(
-                    15,
+                    16,
                 ),
                 rhs: [
                     Assignment {
@@ -1288,10 +1307,10 @@ Grammar {
             },
             Production {
                 idx: ProdIndex(
-                    44,
+                    45,
                 ),
                 nonterminal: NonTermIndex(
-                    15,
+                    16,
                 ),
                 rhs: [
                     Assignment {
@@ -1307,10 +1326,10 @@ Grammar {
             },
             Production {
                 idx: ProdIndex(
-                    45,
+                    46,
                 ),
                 nonterminal: NonTermIndex(
-                    15,
+                    16,
                 ),
                 rhs: [
                     Assignment {
@@ -1318,25 +1337,6 @@ Grammar {
                         symbol: Resolved(
                             SymbolIndex(
                                 4,
-                            ),
-                        ),
-                    },
-                ],
-                meta: {},
-            },
-            Production {
-                idx: ProdIndex(
-                    46,
-                ),
-                nonterminal: NonTermIndex(
-                    15,
-                ),
-                rhs: [
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                5,
                             ),
                         ),
                     },
@@ -1355,7 +1355,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                61,
+                                5,
                             ),
                         ),
                     },
@@ -1367,7 +1367,7 @@ Grammar {
                     48,
                 ),
                 nonterminal: NonTermIndex(
-                    16,
+                    17,
                 ),
                 rhs: [
                     Assignment {
@@ -1386,14 +1386,14 @@ Grammar {
                     49,
                 ),
                 nonterminal: NonTermIndex(
-                    16,
+                    17,
                 ),
                 rhs: [
                     Assignment {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                64,
+                                63,
                             ),
                         ),
                     },
@@ -1412,15 +1412,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                60,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                59,
+                                65,
                             ),
                         ),
                     },
@@ -1432,14 +1424,22 @@ Grammar {
                     51,
                 ),
                 nonterminal: NonTermIndex(
-                    17,
+                    18,
                 ),
                 rhs: [
                     Assignment {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                59,
+                                61,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                60,
                             ),
                         ),
                     },
@@ -1458,23 +1458,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                0,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                29,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                64,
+                                60,
                             ),
                         ),
                     },
@@ -1501,7 +1485,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                30,
+                                29,
                             ),
                         ),
                     },
@@ -1509,7 +1493,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                64,
+                                65,
                             ),
                         ),
                     },
@@ -1528,7 +1512,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                31,
+                                0,
                             ),
                         ),
                     },
@@ -1536,7 +1520,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                49,
+                                30,
                             ),
                         ),
                     },
@@ -1544,7 +1528,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                32,
+                                65,
                             ),
                         ),
                     },
@@ -1563,7 +1547,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                70,
+                                31,
                             ),
                         ),
                     },
@@ -1571,7 +1555,15 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                65,
+                                50,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                32,
                             ),
                         ),
                     },
@@ -1583,14 +1575,14 @@ Grammar {
                     56,
                 ),
                 nonterminal: NonTermIndex(
-                    21,
+                    22,
                 ),
                 rhs: [
                     Assignment {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                63,
+                                71,
                             ),
                         ),
                     },
@@ -1598,7 +1590,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                65,
+                                66,
                             ),
                         ),
                     },
@@ -1617,7 +1609,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                66,
+                                64,
                             ),
                         ),
                     },
@@ -1625,7 +1617,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                67,
+                                66,
                             ),
                         ),
                     },
@@ -1644,7 +1636,15 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                33,
+                                67,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                68,
                             ),
                         ),
                     },
@@ -1656,7 +1656,26 @@ Grammar {
                     59,
                 ),
                 nonterminal: NonTermIndex(
-                    23,
+                    24,
+                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                33,
+                            ),
+                        ),
+                    },
+                ],
+                meta: {},
+            },
+            Production {
+                idx: ProdIndex(
+                    60,
+                ),
+                nonterminal: NonTermIndex(
+                    24,
                 ),
                 rhs: [
                     Assignment {
@@ -1672,10 +1691,10 @@ Grammar {
             },
             Production {
                 idx: ProdIndex(
-                    60,
+                    61,
                 ),
                 nonterminal: NonTermIndex(
-                    23,
+                    24,
                 ),
                 rhs: [
                     Assignment {
@@ -1691,10 +1710,10 @@ Grammar {
             },
             Production {
                 idx: ProdIndex(
-                    61,
+                    62,
                 ),
                 nonterminal: NonTermIndex(
-                    23,
+                    24,
                 ),
                 rhs: [
                     Assignment {
@@ -1710,10 +1729,10 @@ Grammar {
             },
             Production {
                 idx: ProdIndex(
-                    62,
+                    63,
                 ),
                 nonterminal: NonTermIndex(
-                    23,
+                    24,
                 ),
                 rhs: [
                     Assignment {
@@ -1721,25 +1740,6 @@ Grammar {
                         symbol: Resolved(
                             SymbolIndex(
                                 37,
-                            ),
-                        ),
-                    },
-                ],
-                meta: {},
-            },
-            Production {
-                idx: ProdIndex(
-                    63,
-                ),
-                nonterminal: NonTermIndex(
-                    23,
-                ),
-                rhs: [
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                38,
                             ),
                         ),
                     },
@@ -1758,23 +1758,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                39,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                68,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                40,
+                                38,
                             ),
                         ),
                     },
@@ -1793,7 +1777,42 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                68,
+                                39,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                69,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                40,
+                            ),
+                        ),
+                    },
+                ],
+                meta: {},
+            },
+            Production {
+                idx: ProdIndex(
+                    66,
+                ),
+                nonterminal: NonTermIndex(
+                    26,
+                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                69,
                             ),
                         ),
                     },
@@ -1809,26 +1828,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                69,
-                            ),
-                        ),
-                    },
-                ],
-                meta: {},
-            },
-            Production {
-                idx: ProdIndex(
-                    66,
-                ),
-                nonterminal: NonTermIndex(
-                    25,
-                ),
-                rhs: [
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                69,
+                                70,
                             ),
                         ),
                     },
@@ -1847,7 +1847,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                0,
+                                70,
                             ),
                         ),
                     },
@@ -1878,14 +1878,14 @@ Grammar {
                     69,
                 ),
                 nonterminal: NonTermIndex(
-                    27,
+                    28,
                 ),
                 rhs: [
                     Assignment {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                5,
+                                0,
                             ),
                         ),
                     },
@@ -1916,14 +1916,14 @@ Grammar {
                     71,
                 ),
                 nonterminal: NonTermIndex(
-                    28,
+                    29,
                 ),
                 rhs: [
                     Assignment {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                1,
+                                5,
                             ),
                         ),
                     },
@@ -1942,7 +1942,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                73,
+                                1,
                             ),
                         ),
                     },
@@ -1954,22 +1954,14 @@ Grammar {
                     73,
                 ),
                 nonterminal: NonTermIndex(
-                    29,
+                    30,
                 ),
                 rhs: [
                     Assignment {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                72,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                73,
+                                74,
                             ),
                         ),
                     },
@@ -1981,14 +1973,22 @@ Grammar {
                     74,
                 ),
                 nonterminal: NonTermIndex(
-                    29,
+                    30,
                 ),
                 rhs: [
                     Assignment {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                43,
+                                73,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                74,
                             ),
                         ),
                     },
@@ -2007,7 +2007,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                7,
+                                43,
                             ),
                         ),
                     },
@@ -2019,14 +2019,14 @@ Grammar {
                     76,
                 ),
                 nonterminal: NonTermIndex(
-                    30,
+                    31,
                 ),
                 rhs: [
                     Assignment {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                74,
+                                7,
                             ),
                         ),
                     },
@@ -2045,23 +2045,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                41,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
                                 75,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                42,
                             ),
                         ),
                     },
@@ -2073,14 +2057,30 @@ Grammar {
                     78,
                 ),
                 nonterminal: NonTermIndex(
-                    31,
+                    32,
                 ),
                 rhs: [
                     Assignment {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                8,
+                                41,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                76,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                42,
                             ),
                         ),
                     },
@@ -2099,7 +2099,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                76,
+                                8,
                             ),
                         ),
                     },
@@ -2111,22 +2111,14 @@ Grammar {
                     80,
                 ),
                 nonterminal: NonTermIndex(
-                    32,
+                    33,
                 ),
                 rhs: [
                     Assignment {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                75,
-                            ),
-                        ),
-                    },
-                    Assignment {
-                        name: None,
-                        symbol: Resolved(
-                            SymbolIndex(
-                                76,
+                                77,
                             ),
                         ),
                     },
@@ -2138,14 +2130,22 @@ Grammar {
                     81,
                 ),
                 nonterminal: NonTermIndex(
-                    32,
+                    33,
                 ),
                 rhs: [
                     Assignment {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                43,
+                                76,
+                            ),
+                        ),
+                    },
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                77,
                             ),
                         ),
                     },
@@ -2164,7 +2164,7 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             SymbolIndex(
-                                74,
+                                43,
                             ),
                         ),
                     },
@@ -2176,7 +2176,26 @@ Grammar {
                     83,
                 ),
                 nonterminal: NonTermIndex(
-                    33,
+                    34,
+                ),
+                rhs: [
+                    Assignment {
+                        name: None,
+                        symbol: Resolved(
+                            SymbolIndex(
+                                75,
+                            ),
+                        ),
+                    },
+                ],
+                meta: {},
+            },
+            Production {
+                idx: ProdIndex(
+                    84,
+                ),
+                nonterminal: NonTermIndex(
+                    34,
                 ),
                 rhs: [
                     Assignment {
@@ -2192,10 +2211,10 @@ Grammar {
             },
             Production {
                 idx: ProdIndex(
-                    84,
+                    85,
                 ),
                 nonterminal: NonTermIndex(
-                    33,
+                    34,
                 ),
                 rhs: [
                     Assignment {
@@ -2787,11 +2806,19 @@ Grammar {
                 idx: NonTermIndex(
                     1,
                 ),
-                name: "File",
+                name: "S'",
                 productions: [
                     ProdIndex(
                         0,
                     ),
+                ],
+            },
+            NonTerminal {
+                idx: NonTermIndex(
+                    2,
+                ),
+                name: "File",
+                productions: [
                     ProdIndex(
                         1,
                     ),
@@ -2804,19 +2831,8 @@ Grammar {
                     ProdIndex(
                         4,
                     ),
-                ],
-            },
-            NonTerminal {
-                idx: NonTermIndex(
-                    2,
-                ),
-                name: "Imports",
-                productions: [
                     ProdIndex(
                         5,
-                    ),
-                    ProdIndex(
-                        6,
                     ),
                 ],
             },
@@ -2824,13 +2840,13 @@ Grammar {
                 idx: NonTermIndex(
                     3,
                 ),
-                name: "Import",
+                name: "Imports",
                 productions: [
                     ProdIndex(
-                        7,
+                        6,
                     ),
                     ProdIndex(
-                        8,
+                        7,
                     ),
                 ],
             },
@@ -2838,13 +2854,13 @@ Grammar {
                 idx: NonTermIndex(
                     4,
                 ),
-                name: "GrammarRules",
+                name: "Import",
                 productions: [
                     ProdIndex(
-                        9,
+                        8,
                     ),
                     ProdIndex(
-                        10,
+                        9,
                     ),
                 ],
             },
@@ -2852,13 +2868,13 @@ Grammar {
                 idx: NonTermIndex(
                     5,
                 ),
-                name: "GrammarRule",
+                name: "GrammarRules",
                 productions: [
                     ProdIndex(
-                        11,
+                        10,
                     ),
                     ProdIndex(
-                        12,
+                        11,
                     ),
                 ],
             },
@@ -2866,13 +2882,13 @@ Grammar {
                 idx: NonTermIndex(
                     6,
                 ),
-                name: "GrammarRuleRHS",
+                name: "GrammarRule",
                 productions: [
                     ProdIndex(
-                        13,
+                        12,
                     ),
                     ProdIndex(
-                        14,
+                        13,
                     ),
                 ],
             },
@@ -2880,13 +2896,13 @@ Grammar {
                 idx: NonTermIndex(
                     7,
                 ),
-                name: "Production",
+                name: "GrammarRuleRHS",
                 productions: [
                     ProdIndex(
-                        15,
+                        14,
                     ),
                     ProdIndex(
-                        16,
+                        15,
                     ),
                 ],
             },
@@ -2894,13 +2910,13 @@ Grammar {
                 idx: NonTermIndex(
                     8,
                 ),
-                name: "TerminalRules",
+                name: "Production",
                 productions: [
                     ProdIndex(
-                        17,
+                        16,
                     ),
                     ProdIndex(
-                        18,
+                        17,
                     ),
                 ],
             },
@@ -2908,11 +2924,22 @@ Grammar {
                 idx: NonTermIndex(
                     9,
                 ),
-                name: "TerminalRule",
+                name: "TerminalRules",
                 productions: [
+                    ProdIndex(
+                        18,
+                    ),
                     ProdIndex(
                         19,
                     ),
+                ],
+            },
+            NonTerminal {
+                idx: NonTermIndex(
+                    10,
+                ),
+                name: "TerminalRule",
+                productions: [
                     ProdIndex(
                         20,
                     ),
@@ -2922,17 +2949,17 @@ Grammar {
                     ProdIndex(
                         22,
                     ),
+                    ProdIndex(
+                        23,
+                    ),
                 ],
             },
             NonTerminal {
                 idx: NonTermIndex(
-                    10,
+                    11,
                 ),
                 name: "ProdMetaData",
                 productions: [
-                    ProdIndex(
-                        23,
-                    ),
                     ProdIndex(
                         24,
                     ),
@@ -2957,19 +2984,8 @@ Grammar {
                     ProdIndex(
                         31,
                     ),
-                ],
-            },
-            NonTerminal {
-                idx: NonTermIndex(
-                    11,
-                ),
-                name: "ProdMetaDatas",
-                productions: [
                     ProdIndex(
                         32,
-                    ),
-                    ProdIndex(
-                        33,
                     ),
                 ],
             },
@@ -2977,11 +2993,22 @@ Grammar {
                 idx: NonTermIndex(
                     12,
                 ),
-                name: "TermMetaData",
+                name: "ProdMetaDatas",
                 productions: [
+                    ProdIndex(
+                        33,
+                    ),
                     ProdIndex(
                         34,
                     ),
+                ],
+            },
+            NonTerminal {
+                idx: NonTermIndex(
+                    13,
+                ),
+                name: "TermMetaData",
+                productions: [
                     ProdIndex(
                         35,
                     ),
@@ -2997,19 +3024,8 @@ Grammar {
                     ProdIndex(
                         39,
                     ),
-                ],
-            },
-            NonTerminal {
-                idx: NonTermIndex(
-                    13,
-                ),
-                name: "TermMetaDatas",
-                productions: [
                     ProdIndex(
                         40,
-                    ),
-                    ProdIndex(
-                        41,
                     ),
                 ],
             },
@@ -3017,8 +3033,11 @@ Grammar {
                 idx: NonTermIndex(
                     14,
                 ),
-                name: "UserMetaData",
+                name: "TermMetaDatas",
                 productions: [
+                    ProdIndex(
+                        41,
+                    ),
                     ProdIndex(
                         42,
                     ),
@@ -3028,11 +3047,19 @@ Grammar {
                 idx: NonTermIndex(
                     15,
                 ),
-                name: "Const",
+                name: "UserMetaData",
                 productions: [
                     ProdIndex(
                         43,
                     ),
+                ],
+            },
+            NonTerminal {
+                idx: NonTermIndex(
+                    16,
+                ),
+                name: "Const",
+                productions: [
                     ProdIndex(
                         44,
                     ),
@@ -3042,22 +3069,8 @@ Grammar {
                     ProdIndex(
                         46,
                     ),
-                ],
-            },
-            NonTerminal {
-                idx: NonTermIndex(
-                    16,
-                ),
-                name: "Assignment",
-                productions: [
                     ProdIndex(
                         47,
-                    ),
-                    ProdIndex(
-                        48,
-                    ),
-                    ProdIndex(
-                        49,
                     ),
                 ],
             },
@@ -3065,13 +3078,16 @@ Grammar {
                 idx: NonTermIndex(
                     17,
                 ),
-                name: "Assignments",
+                name: "Assignment",
                 productions: [
                     ProdIndex(
-                        50,
+                        48,
                     ),
                     ProdIndex(
-                        51,
+                        49,
+                    ),
+                    ProdIndex(
+                        50,
                     ),
                 ],
             },
@@ -3079,8 +3095,11 @@ Grammar {
                 idx: NonTermIndex(
                     18,
                 ),
-                name: "PlainAssignment",
+                name: "Assignments",
                 productions: [
+                    ProdIndex(
+                        51,
+                    ),
                     ProdIndex(
                         52,
                     ),
@@ -3090,7 +3109,7 @@ Grammar {
                 idx: NonTermIndex(
                     19,
                 ),
-                name: "BoolAssignment",
+                name: "PlainAssignment",
                 productions: [
                     ProdIndex(
                         53,
@@ -3101,7 +3120,7 @@ Grammar {
                 idx: NonTermIndex(
                     20,
                 ),
-                name: "ProductionGroup",
+                name: "BoolAssignment",
                 productions: [
                     ProdIndex(
                         54,
@@ -3112,13 +3131,10 @@ Grammar {
                 idx: NonTermIndex(
                     21,
                 ),
-                name: "GSymbolReference",
+                name: "ProductionGroup",
                 productions: [
                     ProdIndex(
                         55,
-                    ),
-                    ProdIndex(
-                        56,
                     ),
                 ],
             },
@@ -3126,8 +3142,11 @@ Grammar {
                 idx: NonTermIndex(
                     22,
                 ),
-                name: "RepetitionOperator",
+                name: "GSymbolReference",
                 productions: [
+                    ProdIndex(
+                        56,
+                    ),
                     ProdIndex(
                         57,
                     ),
@@ -3137,11 +3156,19 @@ Grammar {
                 idx: NonTermIndex(
                     23,
                 ),
-                name: "RepetitionOperatorOp",
+                name: "RepetitionOperator",
                 productions: [
                     ProdIndex(
                         58,
                     ),
+                ],
+            },
+            NonTerminal {
+                idx: NonTermIndex(
+                    24,
+                ),
+                name: "RepetitionOperatorOp",
+                productions: [
                     ProdIndex(
                         59,
                     ),
@@ -3157,14 +3184,6 @@ Grammar {
                     ProdIndex(
                         63,
                     ),
-                ],
-            },
-            NonTerminal {
-                idx: NonTermIndex(
-                    24,
-                ),
-                name: "RepetitionModifiersExp",
-                productions: [
                     ProdIndex(
                         64,
                     ),
@@ -3174,13 +3193,10 @@ Grammar {
                 idx: NonTermIndex(
                     25,
                 ),
-                name: "RepetitionModifiers",
+                name: "RepetitionModifiersExp",
                 productions: [
                     ProdIndex(
                         65,
-                    ),
-                    ProdIndex(
-                        66,
                     ),
                 ],
             },
@@ -3188,8 +3204,11 @@ Grammar {
                 idx: NonTermIndex(
                     26,
                 ),
-                name: "RepetitionModifier",
+                name: "RepetitionModifiers",
                 productions: [
+                    ProdIndex(
+                        66,
+                    ),
                     ProdIndex(
                         67,
                     ),
@@ -3199,13 +3218,10 @@ Grammar {
                 idx: NonTermIndex(
                     27,
                 ),
-                name: "GSymbol",
+                name: "RepetitionModifier",
                 productions: [
                     ProdIndex(
                         68,
-                    ),
-                    ProdIndex(
-                        69,
                     ),
                 ],
             },
@@ -3213,13 +3229,13 @@ Grammar {
                 idx: NonTermIndex(
                     28,
                 ),
-                name: "Recognizer",
+                name: "GSymbol",
                 productions: [
                     ProdIndex(
-                        70,
+                        69,
                     ),
                     ProdIndex(
-                        71,
+                        70,
                     ),
                 ],
             },
@@ -3227,16 +3243,13 @@ Grammar {
                 idx: NonTermIndex(
                     29,
                 ),
-                name: "Layout",
+                name: "Recognizer",
                 productions: [
                     ProdIndex(
+                        71,
+                    ),
+                    ProdIndex(
                         72,
-                    ),
-                    ProdIndex(
-                        73,
-                    ),
-                    ProdIndex(
-                        74,
                     ),
                 ],
             },
@@ -3244,13 +3257,16 @@ Grammar {
                 idx: NonTermIndex(
                     30,
                 ),
-                name: "LayoutItem",
+                name: "Layout",
                 productions: [
                     ProdIndex(
-                        75,
+                        73,
                     ),
                     ProdIndex(
-                        76,
+                        74,
+                    ),
+                    ProdIndex(
+                        75,
                     ),
                 ],
             },
@@ -3258,13 +3274,13 @@ Grammar {
                 idx: NonTermIndex(
                     31,
                 ),
-                name: "Comment",
+                name: "LayoutItem",
                 productions: [
                     ProdIndex(
-                        77,
+                        76,
                     ),
                     ProdIndex(
-                        78,
+                        77,
                     ),
                 ],
             },
@@ -3272,16 +3288,13 @@ Grammar {
                 idx: NonTermIndex(
                     32,
                 ),
-                name: "Corncs",
+                name: "Comment",
                 productions: [
                     ProdIndex(
+                        78,
+                    ),
+                    ProdIndex(
                         79,
-                    ),
-                    ProdIndex(
-                        80,
-                    ),
-                    ProdIndex(
-                        81,
                     ),
                 ],
             },
@@ -3289,16 +3302,33 @@ Grammar {
                 idx: NonTermIndex(
                     33,
                 ),
-                name: "Cornc",
+                name: "Corncs",
                 productions: [
+                    ProdIndex(
+                        80,
+                    ),
+                    ProdIndex(
+                        81,
+                    ),
                     ProdIndex(
                         82,
                     ),
+                ],
+            },
+            NonTerminal {
+                idx: NonTermIndex(
+                    34,
+                ),
+                name: "Cornc",
+                productions: [
                     ProdIndex(
                         83,
                     ),
                     ProdIndex(
                         84,
+                    ),
+                    ProdIndex(
+                        85,
                     ),
                 ],
             },
@@ -3308,104 +3338,107 @@ Grammar {
         "EMPTY": SymbolIndex(
             43,
         ),
-        "File": SymbolIndex(
+        "S'": SymbolIndex(
             44,
         ),
-        "Imports": SymbolIndex(
+        "File": SymbolIndex(
             45,
         ),
-        "Import": SymbolIndex(
+        "Imports": SymbolIndex(
             46,
         ),
-        "GrammarRules": SymbolIndex(
+        "Import": SymbolIndex(
             47,
         ),
-        "GrammarRule": SymbolIndex(
+        "GrammarRules": SymbolIndex(
             48,
         ),
-        "GrammarRuleRHS": SymbolIndex(
+        "GrammarRule": SymbolIndex(
             49,
         ),
-        "Production": SymbolIndex(
+        "GrammarRuleRHS": SymbolIndex(
             50,
         ),
-        "TerminalRules": SymbolIndex(
+        "Production": SymbolIndex(
             51,
         ),
-        "TerminalRule": SymbolIndex(
+        "TerminalRules": SymbolIndex(
             52,
         ),
-        "ProdMetaData": SymbolIndex(
+        "TerminalRule": SymbolIndex(
             53,
         ),
-        "ProdMetaDatas": SymbolIndex(
+        "ProdMetaData": SymbolIndex(
             54,
         ),
-        "TermMetaData": SymbolIndex(
+        "ProdMetaDatas": SymbolIndex(
             55,
         ),
-        "TermMetaDatas": SymbolIndex(
+        "TermMetaData": SymbolIndex(
             56,
         ),
-        "UserMetaData": SymbolIndex(
+        "TermMetaDatas": SymbolIndex(
             57,
         ),
-        "Const": SymbolIndex(
+        "UserMetaData": SymbolIndex(
             58,
         ),
-        "Assignment": SymbolIndex(
+        "Const": SymbolIndex(
             59,
         ),
-        "Assignments": SymbolIndex(
+        "Assignment": SymbolIndex(
             60,
         ),
-        "PlainAssignment": SymbolIndex(
+        "Assignments": SymbolIndex(
             61,
         ),
-        "BoolAssignment": SymbolIndex(
+        "PlainAssignment": SymbolIndex(
             62,
         ),
-        "ProductionGroup": SymbolIndex(
+        "BoolAssignment": SymbolIndex(
             63,
         ),
-        "GSymbolReference": SymbolIndex(
+        "ProductionGroup": SymbolIndex(
             64,
         ),
-        "RepetitionOperator": SymbolIndex(
+        "GSymbolReference": SymbolIndex(
             65,
         ),
-        "RepetitionOperatorOp": SymbolIndex(
+        "RepetitionOperator": SymbolIndex(
             66,
         ),
-        "RepetitionModifiersExp": SymbolIndex(
+        "RepetitionOperatorOp": SymbolIndex(
             67,
         ),
-        "RepetitionModifiers": SymbolIndex(
+        "RepetitionModifiersExp": SymbolIndex(
             68,
         ),
-        "RepetitionModifier": SymbolIndex(
+        "RepetitionModifiers": SymbolIndex(
             69,
         ),
-        "GSymbol": SymbolIndex(
+        "RepetitionModifier": SymbolIndex(
             70,
         ),
-        "Recognizer": SymbolIndex(
+        "GSymbol": SymbolIndex(
             71,
         ),
-        "Layout": SymbolIndex(
+        "Recognizer": SymbolIndex(
             72,
         ),
-        "LayoutItem": SymbolIndex(
+        "Layout": SymbolIndex(
             73,
         ),
-        "Comment": SymbolIndex(
+        "LayoutItem": SymbolIndex(
             74,
         ),
-        "Corncs": SymbolIndex(
+        "Comment": SymbolIndex(
             75,
         ),
-        "Cornc": SymbolIndex(
+        "Corncs": SymbolIndex(
             76,
+        ),
+        "Cornc": SymbolIndex(
+            77,
         ),
     },
     term_by_name: {

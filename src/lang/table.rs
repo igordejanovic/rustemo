@@ -4,7 +4,7 @@ use std::collections::HashSet;
 
 use indexmap::IndexSet;
 
-use crate::parser::SymbolIndex;
+use crate::parser::{SymbolIndex, NonTermIndex};
 
 use super::grammar::{res, Grammar, ResolvingSymbolIndex};
 
@@ -84,6 +84,10 @@ fn first_sets(grammar: &Grammar) -> Vec<IndexSet<SymbolIndex>> {
         .collect()
 }
 
+fn follow_sets(grammar: &Grammar) -> Vec<IndexSet<NonTermIndex>> {
+    todo!()
+}
+
 #[cfg(test)]
 mod tests {
     use indexmap::IndexSet;
@@ -104,7 +108,7 @@ mod tests {
             .into(),
         );
         dbg!(super::first_sets(&grammar));
-        assert_eq!(super::first_sets(&grammar).len(), 6);
+        assert_eq!(super::first_sets(&grammar).len(), 7);
 
         // First of terminal is just a terminal itself.
         assert_eq!(
