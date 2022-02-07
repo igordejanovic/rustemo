@@ -2,11 +2,9 @@
 
 use std::{collections::HashSet, iter::Extend};
 
-use indexmap::IndexSet;
+use crate::parser::{SymbolIndex, SymbolVec};
 
-use crate::parser::{NonTermIndex, SymbolIndex, SymbolVec};
-
-use super::grammar::{res_symbol, Grammar, ResolvingSymbolIndex};
+use super::grammar::{res_symbol, Grammar};
 
 pub(in crate::lang) struct LRTable {}
 pub(in crate::lang) fn calculate_lr_tables(grammar: Grammar) {
@@ -17,7 +15,7 @@ pub(in crate::lang) fn calculate_lr_tables(grammar: Grammar) {
 
 /// Check for states with GOTO links but without SHIFT links.
 /// This is invalid as the GOTO link will never be traversed.
-fn check_empty_sets(grammar: &Grammar, first_sets: &SymbolVec<IndexSet<SymbolIndex>>) {
+fn check_empty_sets(grammar: &Grammar, first_sets: &SymbolVec<HashSet<SymbolIndex>>) {
     first_sets
         .iter()
         .enumerate()
@@ -33,12 +31,12 @@ fn check_empty_sets(grammar: &Grammar, first_sets: &SymbolVec<IndexSet<SymbolInd
 
 /// Calculates the sets of terminals that can start the sentence derived from all
 /// grammar symbols. The Dragon book p. 221.
-fn first_sets(grammar: &Grammar) -> SymbolVec<IndexSet<SymbolIndex>> {
+fn first_sets(grammar: &Grammar) -> SymbolVec<HashSet<SymbolIndex>> {
     let mut first_sets = SymbolVec::new();
 
     if let Some(ref terminals) = grammar.terminals {
         for terminal in terminals {
-            let mut new_set = IndexSet::new();
+            let mut new_set = HashSet::new();
             new_set.insert(terminal.idx.to_symbol_index());
             first_sets.push(new_set);
         }
@@ -46,7 +44,7 @@ fn first_sets(grammar: &Grammar) -> SymbolVec<IndexSet<SymbolIndex>> {
     if let Some(ref nonterminals) = grammar.nonterminals {
         nonterminals
             .iter()
-            .for_each(|_| first_sets.push(IndexSet::new()));
+            .for_each(|_| first_sets.push(HashSet::new()));
     }
 
     // EMPTY derives EMPTY
@@ -59,17 +57,29 @@ fn first_sets(grammar: &Grammar) -> SymbolVec<IndexSet<SymbolIndex>> {
             let lhs_nonterm = grammar.nonterm_to_symbol(production.nonterminal);
             let mut break_out = false;
 
-            for rhs_symbol in production.rhs.iter().map(|assgn| res_symbol!(assgn)) {
-                let mut rhs_firsts = first_sets[rhs_symbol].clone();
-                let empty = rhs_firsts.remove(&grammar.empty_index);
+            for rhs_symbol in production.rhs.iter().map(|assgn| res_symbol(assgn)) {
+                let rhs_firsts = &first_sets[rhs_symbol];
+                let mut empty = false;
 
-                let should_add = rhs_firsts
+                // Add all
+                let lhs_len = first_sets[lhs_nonterm].len();
+                let rhs_addition = rhs_firsts
                     .iter()
-                    .any(|x| !first_sets[lhs_nonterm].contains(x));
+                    .filter(|&x| {
+                        if *x == grammar.empty_index {
+                            empty = true;
+                            false
+                        } else {
+                            true
+                        }
+                    })
+                    .copied()
+                    .collect::<HashSet<_>>();
+                first_sets[lhs_nonterm].extend(rhs_addition);
 
-                if should_add {
-                    additions = true;
-                    first_sets[lhs_nonterm].extend(rhs_firsts);
+                // Check if any addition is actuall performed.
+                if lhs_len < first_sets[lhs_nonterm].len() {
+                    additions = true
                 }
 
                 // If current RHS symbol can't derive EMPTY this production
@@ -100,7 +110,7 @@ fn first_sets(grammar: &Grammar) -> SymbolVec<IndexSet<SymbolIndex>> {
 /// The dragon book p.221
 fn follow_sets(
     grammar: &Grammar,
-    first_sets: &SymbolVec<IndexSet<SymbolIndex>>,
+    first_sets: &SymbolVec<HashSet<SymbolIndex>>,
 ) -> SymbolVec<HashSet<SymbolIndex>> {
     let mut follow_sets = SymbolVec::new();
     for _ in 0..first_sets.len() {
@@ -123,11 +133,11 @@ fn follow_sets(
                 .iter()
                 .enumerate()
             {
-                let rhs_symbol = res_symbol!(assign);
+                let rhs_symbol = res_symbol(assign);
                 let elements = follow_sets[rhs_symbol].len();
                 let mut break_out = false;
                 for rassign in &production.rhs[idx + 1..] {
-                    let follow_symbols = &first_sets[res_symbol!(rassign)];
+                    let follow_symbols = &first_sets[res_symbol(rassign)];
 
                     follow_sets[rhs_symbol]
                         .extend(follow_symbols.iter().filter(|&&s| s != grammar.empty_index));
@@ -153,7 +163,7 @@ fn follow_sets(
             }
             // At the end handle situation A -> α B where FOLLOW(B) should
             // contain all from FOLLOW(A)
-            let last_symbol = res_symbol!(production.rhs[production.rhs.len()]);
+            let last_symbol = res_symbol(&production.rhs[production.rhs.len()]);
             let lhs_follows: HashSet<SymbolIndex> =
                 follow_sets[lhs_symbol].iter().copied().collect();
             follow_sets[last_symbol].extend(lhs_follows.iter());
@@ -164,7 +174,8 @@ fn follow_sets(
 
 #[cfg(test)]
 mod tests {
-    use indexmap::IndexSet;
+
+    use std::collections::HashSet;
 
     use crate::lang::parser::GrammarParser;
 
@@ -182,30 +193,30 @@ mod tests {
             .into(),
         );
         dbg!(super::first_sets(&grammar));
-        dbg!(&grammar.nonterminals);
+        dbg!(&grammar.terminals);
         assert_eq!(super::first_sets(&grammar).len(), 8);
 
         // First of terminal is just a terminal itself.
         assert_eq!(
             super::first_sets(&grammar)[grammar.symbol_index("B")],
-            IndexSet::<_>::from_iter(grammar.symbol_indexes(&["B"]).into_iter())
+            HashSet::<_>::from_iter(grammar.symbol_indexes(&["B"]).into_iter())
         );
 
         // First of S is b.
         assert_eq!(
             super::first_sets(&grammar)[grammar.symbol_index("S")],
-            IndexSet::<_>::from_iter(grammar.symbol_indexes(&["B"]).into_iter())
+            HashSet::<_>::from_iter(grammar.symbol_indexes(&["B"]).into_iter())
         );
 
         // A can derive EMPTY, thus first(C) will be added to first(D)
         assert_eq!(
             super::first_sets(&grammar)[grammar.symbol_index("D")],
-            IndexSet::<_>::from_iter(grammar.symbol_indexes(&["B", "C"]).into_iter())
+            HashSet::<_>::from_iter(grammar.symbol_indexes(&["B", "C"]).into_iter())
         );
         // A can derive EMPTY
         assert_eq!(
             super::first_sets(&grammar)[grammar.symbol_index("A")],
-            IndexSet::<_>::from_iter(grammar.symbol_indexes(&["B", "EMPTY"]).into_iter())
+            HashSet::<_>::from_iter(grammar.symbol_indexes(&["B", "EMPTY"]).into_iter())
         );
     }
 }

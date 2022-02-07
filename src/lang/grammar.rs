@@ -59,17 +59,14 @@ pub(crate) struct Assignment {
 }
 
 /// Called for Assignment to extract resolved SymbolIndex.
-macro_rules! res_symbol {
-    ($r:expr) => {
-        match $r.symbol {
-            ResolvingSymbolIndex::Resolved(index) => index,
-            ResolvingSymbolIndex::Resolving(_) => {
-                panic!("reference not resolved");
-            }
+pub(crate) fn res_symbol(assign: &Assignment) -> SymbolIndex {
+    match assign.symbol {
+        ResolvingSymbolIndex::Resolved(index) => index,
+        ResolvingSymbolIndex::Resolving(_) => {
+            panic!("reference not resolved");
         }
-    };
+    }
 }
-pub(crate) use res_symbol;
 
 impl Grammar {
     pub fn from_pgfile(pgfile: PGFile) -> Self {
