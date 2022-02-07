@@ -1,4 +1,5 @@
 use std::{ops::{IndexMut, Index}, slice::Iter};
+use core::slice;
 
 macro_rules! create_index {
     ($index:ident, $collection:ident) => {
@@ -31,8 +32,36 @@ macro_rules! create_index {
             type Item = T;
             type IntoIter = <Vec<T> as IntoIterator>::IntoIter;
 
+            #[inline]
             fn into_iter(self) -> Self::IntoIter {
                 self.0.into_iter()
+            }
+        }
+
+        impl<'a, T> IntoIterator for &'a $collection<T> {
+            type Item = &'a T;
+            type IntoIter = slice::Iter<'a, T>;
+
+            #[inline]
+            fn into_iter(self) -> slice::Iter<'a, T> {
+                self.0.iter()
+            }
+        }
+
+        impl<'a, T> IntoIterator for &'a mut $collection<T> {
+            type Item = &'a mut T;
+            type IntoIter = slice::IterMut<'a, T>;
+
+            #[inline]
+            fn into_iter(self) -> slice::IterMut<'a, T> {
+                self.0.iter_mut()
+            }
+        }
+
+        impl<T> FromIterator<T> for $collection<T> {
+            #[inline]
+            fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> $collection<T> {
+                $collection(Vec::from_iter(iter))
             }
         }
 

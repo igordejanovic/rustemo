@@ -1,6 +1,8 @@
 use indexmap::IndexMap;
 
-use crate::index::{SymbolIndex, NonTermIndex, ProdIndex, TermIndex, SymbolVec};
+use crate::index::{
+    NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, SymbolVec, TermIndex, TermVec,
+};
 
 use super::types::{
     GrammarRule, GrammarSymbol, Imports, PGFile, ProductionMetaDatas, Recognizer, TerminalMetaDatas,
@@ -9,9 +11,9 @@ use super::types::{
 #[derive(Debug)]
 pub(crate) struct Grammar {
     pub(crate) imports: Option<Imports>,
-    pub(crate) productions: Option<Vec<Production>>,
-    pub(crate) terminals: Option<Vec<Terminal>>,
-    pub(in crate::lang) nonterminals: Option<Vec<NonTerminal>>,
+    pub(crate) productions: Option<ProdVec<Production>>,
+    pub(crate) terminals: Option<TermVec<Terminal>>,
+    pub(in crate::lang) nonterminals: Option<NonTermVec<NonTerminal>>,
     pub(in crate::lang) nonterm_by_name: IndexMap<String, SymbolIndex>,
     pub(in crate::lang) term_by_name: IndexMap<String, SymbolIndex>,
     // Index of EMPTY symbol
@@ -74,7 +76,7 @@ impl Grammar {
     pub fn from_pgfile(pgfile: PGFile) -> Self {
         let mut terminals: IndexMap<String, Terminal> = IndexMap::new();
         let mut nonterminals: IndexMap<String, NonTerminal> = IndexMap::new();
-        let mut productions: Vec<Production> = vec![];
+        let mut productions: ProdVec<Production> = ProdVec::new();
 
         // Create implicit STOP terminal used to signify the end of the input.
         terminals.insert(
@@ -138,7 +140,7 @@ impl Grammar {
     fn extract_productions_and_symbols(
         rules: Vec<GrammarRule>,
         nonterminals: &mut IndexMap<String, NonTerminal>,
-        productions: &mut Vec<Production>,
+        productions: &mut ProdVec<Production>,
     ) {
         let mut next_nonterm_idx = NonTermIndex(1); // Account for EMPTY and S'
         let mut next_prod_idx = ProdIndex(1); // Account for S' -> S production
@@ -243,7 +245,7 @@ impl Grammar {
     }
 
     fn create_terminals_from_productions(
-        productions: &Vec<Production>,
+        productions: &ProdVec<Production>,
         terminals: &mut IndexMap<String, Terminal>,
     ) {
         let mut next_term_idx = TermIndex(terminals.len());
@@ -271,7 +273,7 @@ impl Grammar {
     }
 
     fn resolve_references(
-        productions: &mut Vec<Production>,
+        productions: &mut ProdVec<Production>,
         terminals: &IndexMap<String, Terminal>,
         nonterminals: &IndexMap<String, NonTerminal>,
     ) {
@@ -318,9 +320,13 @@ impl Grammar {
 
     pub(crate) fn symbol_name(&self, index: SymbolIndex) -> String {
         if index.0 < self.term_len() {
-            self.terminals.as_ref().unwrap()[index.0].name.clone()
+            self.terminals.as_ref().unwrap()[self.symbol_to_term(index)]
+                .name
+                .clone()
         } else {
-            self.nonterminals.as_ref().unwrap()[index.0].name.clone()
+            self.nonterminals.as_ref().unwrap()[self.symbol_to_nonterm(index)]
+                .name
+                .clone()
         }
     }
 
@@ -333,12 +339,34 @@ impl Grammar {
     }
 
     pub(crate) fn symbol_names(&self, indexes: &SymbolVec<SymbolIndex>) -> Vec<String> {
-        indexes.iter().copied().map(|i| self.symbol_name(i)).collect()
+        indexes
+            .iter()
+            .copied()
+            .map(|i| self.symbol_name(i))
+            .collect()
+    }
+
+    #[inline]
+    pub(crate) fn term_to_symbol(&self, index: TermIndex) -> SymbolIndex {
+        SymbolIndex(index.0)
+    }
+
+    /// Convert symbol index to terminal index.
+    #[inline]
+    pub(crate) fn symbol_to_term(&self, index: SymbolIndex) -> TermIndex {
+        TermIndex(index.0)
     }
 
     #[inline]
     pub(crate) fn nonterm_to_symbol(&self, index: NonTermIndex) -> SymbolIndex {
-        index.to_symbol_index(self.terminals.as_ref().map_or(0, |t| t.len()))
+        SymbolIndex(index.0 + self.term_len())
+    }
+
+    /// Convert symbol index to non-terminal index. Panics if symbol index is a
+    /// terminal index.
+    #[inline]
+    pub(crate) fn symbol_to_nonterm(&self, index: SymbolIndex) -> NonTermIndex {
+        NonTermIndex(index.0 - self.term_len())
     }
 
     /// Number of terminals in the grammar.
@@ -352,18 +380,11 @@ impl Grammar {
     pub(crate) fn nonterm_len(&self) -> usize {
         self.nonterminals.as_ref().map_or(0, |nt| nt.len())
     }
-
-    /// Convert symbol index to non-terminal index. Panics if symbol index is a
-    /// terminal index.
-    #[inline]
-    pub(crate) fn symbol_to_nonterm(&self, index: NonTermIndex) -> SymbolIndex {
-        SymbolIndex(index.0 - self.term_len())
-    }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{lang::parser::GrammarParser, index::ProdIndex};
+    use crate::{index::ProdIndex, lang::parser::GrammarParser};
 
     #[test]
     fn create_terminals_1() {
@@ -456,7 +477,8 @@ mod tests {
         for (term_name, term_regex) in [("rmatch_term", r#""[^"]+""#), ("more_regex", r#"\d{2,5}"#)]
         {
             assert!(
-                match grammar.terminals.as_ref().unwrap()[grammar.term_by_name[term_name].0]
+                match grammar.terminals.as_ref().unwrap()[
+                    grammar.symbol_to_term(grammar.term_by_name[term_name])]
                     .recognizer
                     .as_ref()
                     .unwrap()
