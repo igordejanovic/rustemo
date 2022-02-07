@@ -1,6 +1,6 @@
 use crate::{
     lexer::{Lexer, Token},
-    tree::TreeNode, parser::{ProdIndex, TermIndex},
+    tree::TreeNode, index::{TermIndex, ProdIndex},
 };
 
 /// This trait is implemented by all types that are in charge of building output

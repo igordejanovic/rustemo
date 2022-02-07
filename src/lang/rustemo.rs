@@ -1,11 +1,12 @@
-// Generated on 2022-02-04 22:11:44.442180 from bootstrap.py. Do not edit!
+// Generated on 2022-02-07 13:48:15.092083 from bootstrap.py. Do not edit!
 
 use regex::Regex;
 use std::convert::TryFrom;
 
 use std::marker::PhantomData;
 use crate::lexer::{Lexer, Token};
-use crate::parser::{ParserDefinition, StateIndex, TermIndex, NonTermIndex, ProdIndex};
+use crate::parser::ParserDefinition;
+use crate::index::{StateIndex, TermIndex, NonTermIndex, ProdIndex};
 use crate::parser::Action::{self, Shift, Reduce, Accept, Error};
 use crate::builder::Builder;
 use crate::grammar::{TerminalInfo, TerminalInfos, TerminalsState};

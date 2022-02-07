@@ -1,7 +1,7 @@
 use crate::{
     common::Location,
     grammar::TerminalInfo,
-    parser::{Context, TermIndex},
+    parser::Context, index::TermIndex,
 };
 use core::fmt::Debug;
 

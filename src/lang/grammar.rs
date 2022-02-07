@@ -1,6 +1,6 @@
 use indexmap::IndexMap;
 
-use crate::parser::{NonTermIndex, ProdIndex, SymbolIndex, TermIndex};
+use crate::index::{SymbolIndex, NonTermIndex, ProdIndex, TermIndex, SymbolVec};
 
 use super::types::{
     GrammarRule, GrammarSymbol, Imports, PGFile, ProductionMetaDatas, Recognizer, TerminalMetaDatas,
@@ -59,11 +59,13 @@ pub(crate) struct Assignment {
 }
 
 /// Called for Assignment to extract resolved SymbolIndex.
+#[inline]
 pub(crate) fn res_symbol(assign: &Assignment) -> SymbolIndex {
     match assign.symbol {
         ResolvingSymbolIndex::Resolved(index) => index,
         ResolvingSymbolIndex::Resolving(_) => {
-            panic!("reference not resolved");
+            // This shouldn't happen
+            panic!("reference {:?} not resolved", assign.symbol);
         }
     }
 }
@@ -322,12 +324,16 @@ impl Grammar {
         }
     }
 
-    pub(crate) fn symbol_indexes(&self, names: &[&str]) -> Vec<SymbolIndex> {
-        let mut indexes = Vec::new();
+    pub(crate) fn symbol_indexes(&self, names: &[&str]) -> SymbolVec<SymbolIndex> {
+        let mut indexes = SymbolVec::new();
         for name in names {
             indexes.push(self.symbol_index(name))
         }
         indexes
+    }
+
+    pub(crate) fn symbol_names(&self, indexes: &SymbolVec<SymbolIndex>) -> Vec<String> {
+        indexes.iter().copied().map(|i| self.symbol_name(i)).collect()
     }
 
     #[inline]
@@ -357,7 +363,7 @@ impl Grammar {
 
 #[cfg(test)]
 mod tests {
-    use crate::{lang::parser::GrammarParser, parser::ProdIndex};
+    use crate::{lang::parser::GrammarParser, index::ProdIndex};
 
     #[test]
     fn create_terminals_1() {

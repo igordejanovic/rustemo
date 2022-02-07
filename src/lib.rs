@@ -11,6 +11,7 @@ mod lexer;
 mod lr;
 pub mod parser;
 pub mod tree;
+mod index;
 
 pub(crate) mod debug;
 pub(crate) mod tests;

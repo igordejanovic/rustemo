@@ -11,7 +11,7 @@ use super::{
 use crate::{
     lexer::Lexer,
     lr::{LRContext, LRParser},
-    parser::{Parser, StateIndex},
+    parser::Parser, index::StateIndex,
 };
 
 pub type GrammarLexer<'i> = DefaultLexer<'i, RustemoLexerDefinition>;

@@ -1,4 +1,4 @@
-use crate::{common::Location, parser::{Action, TermIndex}};
+use crate::{common::Location, parser::Action, index::TermIndex};
 use std::hash::Hash;
 
 type Priority = u8;

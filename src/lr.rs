@@ -1,7 +1,8 @@
 use crate::builder::Builder;
 use crate::debug::log;
+use crate::index::StateIndex;
 use crate::lexer::{Lexer, Token};
-use crate::parser::{Action, Context, Parser, ParserDefinition, StateIndex};
+use crate::parser::{Action, Context, Parser, ParserDefinition};
 
 #[derive(Debug)]
 pub struct LRContext {

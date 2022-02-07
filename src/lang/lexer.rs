@@ -2,7 +2,7 @@ use crate::{
     debug::log,
     grammar::TerminalInfo,
     lexer::{Lexer, Token},
-    parser::{Context, StateIndex},
+    parser::{Context}, index::StateIndex,
 };
 
 pub trait LexerDefinition {
