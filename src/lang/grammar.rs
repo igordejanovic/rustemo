@@ -338,9 +338,12 @@ impl Grammar {
         indexes
     }
 
-    pub(crate) fn symbol_names(&self, indexes: &SymbolVec<SymbolIndex>) -> Vec<String> {
+    pub(crate) fn symbol_names<'a, T>(&self, indexes: T) -> Vec<String>
+    where
+        T: IntoIterator<Item = &'a SymbolIndex>,
+    {
         indexes
-            .iter()
+            .into_iter()
             .copied()
             .map(|i| self.symbol_name(i))
             .collect()
@@ -476,17 +479,15 @@ mod tests {
         );
         for (term_name, term_regex) in [("rmatch_term", r#""[^"]+""#), ("more_regex", r#"\d{2,5}"#)]
         {
-            assert!(
-                match grammar.terminals.as_ref().unwrap()[
-                    grammar.symbol_to_term(grammar.term_by_name[term_name])]
-                    .recognizer
-                    .as_ref()
-                    .unwrap()
-                {
-                    crate::lang::types::Recognizer::StrConst(_) => false,
-                    crate::lang::types::Recognizer::RegExTerm(regex) => regex == term_regex,
-                }
-            );
+            assert!(match grammar.terminals.as_ref().unwrap()
+                [grammar.symbol_to_term(grammar.term_by_name[term_name])]
+            .recognizer
+            .as_ref()
+            .unwrap()
+            {
+                crate::lang::types::Recognizer::StrConst(_) => false,
+                crate::lang::types::Recognizer::RegExTerm(regex) => regex == term_regex,
+            });
         }
     }
 

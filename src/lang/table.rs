@@ -157,19 +157,16 @@ fn follow_sets(
                     follow_sets[rhs_symbol].extend(lhs_follows.iter());
                 }
 
-                if elements > follow_sets[rhs_symbol].len() {
+                if follow_sets[rhs_symbol].len() > elements {
                     additions = true
                 }
             }
             // At the end handle situation A -> α B where FOLLOW(B) should
             // contain all from FOLLOW(A)
-            let last_symbol = res_symbol(&production.rhs[production.rhs.len()-1]);
+            let last_symbol = res_symbol(&production.rhs[production.rhs.len() - 1]);
             let lhs_follows: HashSet<SymbolIndex> =
                 follow_sets[lhs_symbol].iter().copied().collect();
-            dbg!(lhs_symbol, &lhs_follows);
-            dbg!("before", last_symbol, &follow_sets[last_symbol]);
             follow_sets[last_symbol].extend(lhs_follows.iter());
-            dbg!("after", &follow_sets[last_symbol]);
         }
     }
     follow_sets
@@ -180,7 +177,7 @@ mod tests {
 
     use std::collections::HashSet;
 
-    use crate::lang::{parser::GrammarParser, grammar::Grammar, table::first_sets};
+    use crate::lang::{grammar::Grammar, parser::GrammarParser, table::first_sets};
 
     use super::follow_sets;
 
@@ -201,8 +198,7 @@ mod tests {
     fn test_first_sets() {
         let grammar = test_grammar();
         let first_sets = first_sets(&grammar);
-        dbg!(&first_sets);
-        dbg!(&grammar.terminals);
+
         assert_eq!(first_sets.len(), 13);
 
         // First of terminal is just a terminal itself.
@@ -237,23 +233,23 @@ mod tests {
         let grammar = test_grammar();
         let follow_sets = follow_sets(&grammar, &first_sets(&grammar));
 
-        assert!(false);
-        dbg!(&grammar.terminals);
         assert_eq!(
             &follow_sets[grammar.symbol_index("E")],
             &HashSet::<_>::from_iter(grammar.symbol_indexes(&[")", "STOP"]).into_iter())
         );
-        // assert_eq!(
-        //     &follow_sets[grammar.symbol_index("Ep")],
-        //     &HashSet::<_>::from_iter(grammar.symbol_indexes(&[")", "STOP"]).into_iter())
-        // );
-        // assert_eq!(
-        //     &follow_sets[grammar.symbol_index("T")],
-        //     &HashSet::<_>::from_iter(grammar.symbol_indexes(&["+", ")", "STOP"]).into_iter())
-        // );
-        // assert_eq!(
-        //     &follow_sets[grammar.symbol_index("Tp")],
-        //     &HashSet::<_>::from_iter(grammar.symbol_indexes(&["+", ")", "STOP"]).into_iter())
-        // );
+        dbg!(grammar.symbol_names(
+            &follow_sets[grammar.symbol_index("Ep")]));
+        assert_eq!(
+            &follow_sets[grammar.symbol_index("Ep")],
+            &HashSet::<_>::from_iter(grammar.symbol_indexes(&[")", "STOP"]).into_iter())
+        );
+        assert_eq!(
+            &follow_sets[grammar.symbol_index("T")],
+            &HashSet::<_>::from_iter(grammar.symbol_indexes(&["+", ")", "STOP"]).into_iter())
+        );
+        assert_eq!(
+            &follow_sets[grammar.symbol_index("Tp")],
+            &HashSet::<_>::from_iter(grammar.symbol_indexes(&["+", ")", "STOP"]).into_iter())
+        );
     }
 }
