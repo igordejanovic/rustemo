@@ -1,7 +1,7 @@
 use crate::{common::Location, parser::Action, index::TermIndex};
 use std::hash::Hash;
 
-type Priority = u8;
+pub(crate) type Priority = u8;
 
 #[derive(Debug)]
 struct Recognizer;

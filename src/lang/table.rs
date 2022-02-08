@@ -2,15 +2,108 @@
 
 use std::collections::HashSet;
 
-use crate::index::{SymbolIndex, SymbolVec};
+use indexmap::IndexMap;
+
+use crate::{index::{SymbolIndex, SymbolVec, ProdIndex, StateIndex, TermVec, NonTermVec}, parser::Action, grammar::Priority};
 
 use super::grammar::{res_symbol, Grammar};
 
+/// LR State is a set of LR items and a dict of LR automata actions and gotos.
+struct LRState {
+    state: StateIndex,
+    symbol: SymbolIndex,
+    items: Vec<LRItem>,
+    actions: TermVec<Action>,
+    gotos: NonTermVec<Option<StateIndex>>,
+}
+
+impl LRState {
+    fn new(grammar: &Grammar, state: StateIndex, symbol: SymbolIndex) -> Self {
+        Self {
+            state,
+            symbol,
+            items: vec![],
+            actions: grammar.new_termvec(Action::Error),
+            gotos: grammar.new_nontermvec(None),
+        }
+    }
+
+    fn add_item(&mut self, item: LRItem) -> &Self {
+        self.items.push(item);
+        self
+    }
+}
+
+/// Represents an item in the items set. Item is defined by a production and a
+/// position inside production (the dot). If the item is of LR_1 type follow set
+/// is also defined. Follow set is a set of terminals that can follow symbol at
+/// the given position in the given production.
+#[derive(PartialEq, Eq)]
+struct LRItem {
+    prod: ProdIndex,
+    position: usize,
+    follow: HashSet<SymbolIndex>
+}
+
+impl LRItem {
+    fn new(prod: ProdIndex) -> Self {
+        LRItem {
+            prod,
+            position: 0,
+            follow: HashSet::new()
+        }
+    }
+
+    fn add_follow(&mut self, symbol: SymbolIndex) -> &Self {
+        self.follow.insert(symbol);
+        self
+    }
+
+    fn symbol_at_position(&self, grammar: &Grammar) -> Option<SymbolIndex> {
+        Some(res_symbol(grammar.productions?[self.prod].rhs.get(self.position)?))
+    }
+}
+
 pub(in crate::lang) struct LRTable {}
+
 pub(in crate::lang) fn calculate_lr_tables(grammar: Grammar) {
     let first_sets = first_sets(&grammar);
     check_empty_sets(&grammar, &first_sets);
     let follow_sets = follow_sets(&grammar, &first_sets);
+
+    let state = LRState::new(&grammar, StateIndex(0), grammar.start_index);
+    state.add_item(LRItem::new(ProdIndex(0)));
+
+    let mut state_queue = vec![state];
+    let mut states = vec![];
+
+    while let Some(state) = state_queue.pop() {
+        // For each state calculate its closure first, i.e. starting from a so
+        // called "kernel items" expand collection with non-kernel items. We
+        // will also calculate GOTO and ACTIONS dicts for each state. These
+        // dicts will be keyed by a grammar symbol.
+        closure(state, &first_sets);
+        states.push(state);
+
+        // To find out other states we examine following grammar symbols in the
+        // current state (symbols following current position/"dot") and group
+        // all items by a grammar symbol.
+        let per_next_symbol = IndexMap::new();
+
+        // Each production has a priority. But since productions are grouped by
+        // grammar symbol that is ahead we take the maximal priority given for
+        // all productions for the given grammar symbol.
+        let max_prior_per_symbol = IndexMap::new();
+
+        for item in &state.items {
+            let symbol = item.symbol_at_position(&grammar);
+            if let Some(symbol) = symbol {
+                per_next_symbol.entry(symbol).or_insert(vec![]).push(item);
+
+            }
+        }
+
+    }
 }
 
 /// Check for states with GOTO links but without SHIFT links.
@@ -23,7 +116,7 @@ fn check_empty_sets(grammar: &Grammar, first_sets: &SymbolVec<HashSet<SymbolInde
         .for_each(|(idx, _)| {
             panic!(
                 "First set empty for grammar symbol {:?}.\n\
-             An infinite recursion on the grammar symbol.",
+                 An infinite recursion on the grammar symbol.",
                 &grammar.symbol_name(SymbolIndex(idx))
             )
         });
@@ -237,8 +330,7 @@ mod tests {
             &follow_sets[grammar.symbol_index("E")],
             &HashSet::<_>::from_iter(grammar.symbol_indexes(&[")", "STOP"]).into_iter())
         );
-        dbg!(grammar.symbol_names(
-            &follow_sets[grammar.symbol_index("Ep")]));
+        dbg!(grammar.symbol_names(&follow_sets[grammar.symbol_index("Ep")]));
         assert_eq!(
             &follow_sets[grammar.symbol_index("Ep")],
             &HashSet::<_>::from_iter(grammar.symbol_indexes(&[")", "STOP"]).into_iter())

@@ -1,8 +1,8 @@
 use indexmap::IndexMap;
 
-use crate::index::{
+use crate::{index::{
     NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, SymbolVec, TermIndex, TermVec,
-};
+}, parser::Action};
 
 use super::types::{
     GrammarRule, GrammarSymbol, Imports, PGFile, ProductionMetaDatas, Recognizer, TerminalMetaDatas,
@@ -308,6 +308,14 @@ impl Grammar {
                 }
             }
         }
+    }
+
+    pub(crate) fn new_termvec<T: Clone>(&self, default: T) -> TermVec<T> {
+        TermVec(vec![default; self.term_len()])
+    }
+
+    pub(crate) fn new_nontermvec<T: Clone>(&self, default: T) -> NonTermVec<T> {
+        NonTermVec(vec![default; self.nonterm_len()])
     }
 
     pub(crate) fn symbol_index(&self, name: &str) -> SymbolIndex {
