@@ -4,7 +4,11 @@ use std::collections::HashSet;
 
 use indexmap::IndexMap;
 
-use crate::{index::{SymbolIndex, SymbolVec, ProdIndex, StateIndex, TermVec, NonTermVec}, parser::Action, grammar::Priority};
+use crate::{
+    grammar::Priority,
+    index::{NonTermVec, ProdIndex, StateIndex, SymbolIndex, SymbolVec, TermVec},
+    parser::Action,
+};
 
 use super::grammar::{res_symbol, Grammar};
 
@@ -42,7 +46,7 @@ impl LRState {
 struct LRItem {
     prod: ProdIndex,
     position: usize,
-    follow: HashSet<SymbolIndex>
+    follow: HashSet<SymbolIndex>,
 }
 
 impl LRItem {
@@ -50,7 +54,7 @@ impl LRItem {
         LRItem {
             prod,
             position: 0,
-            follow: HashSet::new()
+            follow: HashSet::new(),
         }
     }
 
@@ -60,7 +64,14 @@ impl LRItem {
     }
 
     fn symbol_at_position(&self, grammar: &Grammar) -> Option<SymbolIndex> {
-        Some(res_symbol(grammar.productions?[self.prod].rhs.get(self.position)?))
+        Some(res_symbol(
+            grammar
+                .productions
+                .as_ref()?
+                .get(self.prod)?
+                .rhs
+                .get(self.position)?,
+        ))
     }
 }
 
@@ -71,7 +82,7 @@ pub(in crate::lang) fn calculate_lr_tables(grammar: Grammar) {
     check_empty_sets(&grammar, &first_sets);
     let follow_sets = follow_sets(&grammar, &first_sets);
 
-    let state = LRState::new(&grammar, StateIndex(0), grammar.start_index);
+    let mut state = LRState::new(&grammar, StateIndex(0), grammar.start_index);
     state.add_item(LRItem::new(ProdIndex(0)));
 
     let mut state_queue = vec![state];
@@ -82,27 +93,26 @@ pub(in crate::lang) fn calculate_lr_tables(grammar: Grammar) {
         // called "kernel items" expand collection with non-kernel items. We
         // will also calculate GOTO and ACTIONS dicts for each state. These
         // dicts will be keyed by a grammar symbol.
-        closure(state, &first_sets);
+        //closure(state, &first_sets);
         states.push(state);
+        let state = states.last().unwrap();
 
         // To find out other states we examine following grammar symbols in the
         // current state (symbols following current position/"dot") and group
         // all items by a grammar symbol.
-        let per_next_symbol = IndexMap::new();
+        let mut per_next_symbol = IndexMap::new();
 
         // Each production has a priority. But since productions are grouped by
         // grammar symbol that is ahead we take the maximal priority given for
         // all productions for the given grammar symbol.
-        let max_prior_per_symbol = IndexMap::new();
+        let mut max_prior_per_symbol: IndexMap<SymbolIndex, Priority> = IndexMap::new();
 
         for item in &state.items {
             let symbol = item.symbol_at_position(&grammar);
             if let Some(symbol) = symbol {
                 per_next_symbol.entry(symbol).or_insert(vec![]).push(item);
-
             }
         }
-
     }
 }
 
@@ -270,7 +280,14 @@ mod tests {
 
     use std::collections::HashSet;
 
-    use crate::lang::{grammar::Grammar, parser::GrammarParser, table::first_sets};
+    use crate::{
+        index::{ProdIndex, StateIndex, SymbolIndex},
+        lang::{
+            grammar::{res_symbol, Grammar},
+            parser::GrammarParser,
+            table::{first_sets, LRItem, LRState},
+        },
+    };
 
     use super::follow_sets;
 
@@ -343,5 +360,21 @@ mod tests {
             &follow_sets[grammar.symbol_index("Tp")],
             &HashSet::<_>::from_iter(grammar.symbol_indexes(&["+", ")", "STOP"]).into_iter())
         );
+    }
+
+    #[test]
+    fn test_symbol_at_position() {
+        let grammar = test_grammar();
+
+        let prod = ProdIndex(1);
+        let mut item = LRItem::new(prod);
+        assert_eq!(&grammar.symbol_names(&grammar.productions.as_ref().unwrap()[prod].rhs_symbols()), &["T", "Ep"]);
+        assert_eq!(item.symbol_at_position(&grammar).unwrap(), grammar.symbol_index("T"));
+        item.position = 1;
+        assert_eq!(&grammar.symbol_name(item.symbol_at_position(&grammar).unwrap()), "Ep");
+        item.position = 2;
+        assert!(item.symbol_at_position(&grammar).is_none());
+        item.position = 3;
+        assert!(item.symbol_at_position(&grammar).is_none());
     }
 }

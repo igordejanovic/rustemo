@@ -14,6 +14,10 @@ macro_rules! create_index {
             Self(Vec::new())
             }
 
+            pub fn get(&self, index: $index) -> Option<&T> {
+                self.0.get(index.0)
+            }
+
             pub fn len(&self) -> usize {
                 self.0.len()
             }

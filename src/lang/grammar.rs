@@ -39,6 +39,12 @@ pub(crate) struct Production {
     pub meta: ProductionMetaDatas,
 }
 
+impl Production {
+    pub fn rhs_symbols(&self) -> Vec<SymbolIndex> {
+       self.rhs.iter().map(|a| res_symbol(a)).collect()
+    }
+}
+
 #[derive(Debug)]
 pub struct Terminal {
     pub idx: TermIndex,
