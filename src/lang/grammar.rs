@@ -9,19 +9,19 @@ use super::types::{
 };
 
 #[derive(Debug)]
-pub(crate) struct Grammar {
-    pub(crate) imports: Option<Imports>,
-    pub(crate) productions: Option<ProdVec<Production>>,
-    pub(crate) terminals: Option<TermVec<Terminal>>,
-    pub(in crate::lang) nonterminals: Option<NonTermVec<NonTerminal>>,
-    pub(in crate::lang) nonterm_by_name: IndexMap<String, SymbolIndex>,
-    pub(in crate::lang) term_by_name: IndexMap<String, SymbolIndex>,
+pub(in crate::lang) struct Grammar {
+    pub imports: Option<Imports>,
+    pub productions: Option<ProdVec<Production>>,
+    pub terminals: Option<TermVec<Terminal>>,
+    pub nonterminals: Option<NonTermVec<NonTerminal>>,
+    pub nonterm_by_name: IndexMap<String, SymbolIndex>,
+    pub term_by_name: IndexMap<String, SymbolIndex>,
     // Index of EMPTY symbol
-    pub(in crate::lang) empty_index: SymbolIndex,
+    pub empty_index: SymbolIndex,
     // Index of STOP symbol
-    pub(in crate::lang) stop_index: SymbolIndex,
+    pub stop_index: SymbolIndex,
     // Index of grammar start symbol
-    pub(in crate::lang) start_index: SymbolIndex,
+    pub start_index: SymbolIndex,
 }
 
 #[derive(Debug)]
@@ -32,7 +32,7 @@ pub(in crate::lang) struct NonTerminal {
 }
 
 #[derive(Debug)]
-pub(crate) struct Production {
+pub(in crate::lang) struct Production {
     pub idx: ProdIndex,
     pub nonterminal: NonTermIndex,
     pub rhs: Vec<Assignment>,
@@ -46,7 +46,7 @@ impl Production {
 }
 
 #[derive(Debug)]
-pub struct Terminal {
+pub(in crate::lang) struct Terminal {
     pub idx: TermIndex,
     pub name: String,
     pub action: Option<String>,
@@ -55,20 +55,20 @@ pub struct Terminal {
 }
 
 #[derive(Debug)]
-pub enum ResolvingSymbolIndex {
+pub(in crate::lang) enum ResolvingSymbolIndex {
     Resolved(SymbolIndex),
     Resolving(GrammarSymbol),
 }
 
 #[derive(Debug)]
-pub(crate) struct Assignment {
-    pub(crate) name: Option<String>,
-    pub(crate) symbol: ResolvingSymbolIndex,
+pub(in crate::lang) struct Assignment {
+    pub name: Option<String>,
+    pub symbol: ResolvingSymbolIndex,
 }
 
 /// Called for Assignment to extract resolved SymbolIndex.
 #[inline]
-pub(crate) fn res_symbol(assign: &Assignment) -> SymbolIndex {
+pub(in crate::lang) fn res_symbol(assign: &Assignment) -> SymbolIndex {
     match assign.symbol {
         ResolvingSymbolIndex::Resolved(index) => index,
         ResolvingSymbolIndex::Resolving(_) => {
@@ -386,6 +386,16 @@ impl Grammar {
         NonTermIndex(index.0 - self.term_len())
     }
 
+    #[inline]
+    pub(crate) fn is_nonterm(&self, index: SymbolIndex) -> bool {
+        index.0 >= self.term_len()
+    }
+
+    #[inline]
+    pub(crate) fn is_term(&self, index: SymbolIndex) -> bool {
+        index.0 < self.term_len()
+    }
+
     /// Number of terminals in the grammar.
     #[inline]
     pub(crate) fn term_len(&self) -> usize {
@@ -396,6 +406,21 @@ impl Grammar {
     #[inline]
     pub(crate) fn nonterm_len(&self) -> usize {
         self.nonterminals.as_ref().map_or(0, |nt| nt.len())
+    }
+
+    #[inline]
+    pub(crate) fn terminals(&self) -> &TermVec<Terminal> {
+        self.terminals.as_ref().unwrap()
+    }
+
+    #[inline]
+    pub(in crate::lang) fn nonterminals(&self) -> &NonTermVec<NonTerminal> {
+        self.nonterminals.as_ref().unwrap()
+    }
+
+    #[inline]
+    pub(crate) fn productions(&self) -> &ProdVec<Production> {
+        self.productions.as_ref().unwrap()
     }
 }
 
