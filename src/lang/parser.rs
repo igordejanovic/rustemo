@@ -21,7 +21,7 @@ pub struct GrammarParser(LRParser<RustemoParserDefinition>);
 type RBuilder<'i> = RustemoBuilder<'i, <GrammarLexer<'i> as Lexer>::Input>;
 
 impl<'i> GrammarParser {
-    pub(crate) fn parse(&mut self, lexer: GrammarLexer<'i>) -> Grammar {
+    pub(in crate::lang) fn parse(&mut self, lexer: GrammarLexer<'i>) -> Grammar {
         let pgfile = match <LRParser<RustemoParserDefinition> as Parser<
             GrammarLexer<'i>,
             RBuilder<'i>,
