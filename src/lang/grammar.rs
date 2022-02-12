@@ -422,6 +422,11 @@ impl Grammar {
     pub(crate) fn productions(&self) -> &ProdVec<Production> {
         self.productions.as_ref().unwrap()
     }
+
+    #[inline]
+    pub(crate) fn production_rhs_symbols(&self, prod: ProdIndex) -> Vec<SymbolIndex> {
+        self.productions()[prod].rhs.iter().map(|assgn| res_symbol(assgn)).collect()
+    }
 }
 
 #[cfg(test)]

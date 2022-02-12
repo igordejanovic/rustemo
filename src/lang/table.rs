@@ -1,6 +1,6 @@
 //! Calculating LR tables
 
-use std::collections::HashSet;
+use std::{collections::HashSet, ops::RangeBounds};
 
 use indexmap::IndexMap;
 
@@ -21,7 +21,7 @@ type FirstSets = SymbolVec<Firsts>;
 struct LRState {
     state: StateIndex,
     symbol: SymbolIndex,
-    items: Vec<LRItem>,
+    items: HashSet<LRItem>,
     actions: TermVec<Action>,
     gotos: NonTermVec<Option<StateIndex>>,
 }
@@ -31,14 +31,14 @@ impl LRState {
         Self {
             state,
             symbol,
-            items: vec![],
+            items: HashSet::new(),
             actions: grammar.new_termvec(Action::Error),
             gotos: grammar.new_nontermvec(None),
         }
     }
 
     fn add_item(&mut self, item: LRItem) -> &Self {
-        self.items.push(item);
+        self.items.insert(item);
         self
     }
 }
@@ -52,6 +52,13 @@ struct LRItem {
     prod: ProdIndex,
     position: usize,
     follow: Follow,
+}
+
+impl std::hash::Hash for LRItem {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.prod.hash(state);
+        self.position.hash(state);
+    }
 }
 
 impl PartialEq for LRItem {
@@ -194,7 +201,11 @@ fn first_sets(grammar: &Grammar) -> FirstSets {
             let rhs_firsts = firsts(
                 &grammar,
                 &first_sets,
-                production.rhs.iter().map(|assgn| res_symbol(assgn)).collect(),
+                production
+                    .rhs
+                    .iter()
+                    .map(|assgn| res_symbol(assgn))
+                    .collect(),
             );
 
             first_sets[lhs_nonterm].extend(rhs_firsts);
@@ -310,26 +321,45 @@ fn follow_sets(grammar: &Grammar, first_sets: &FirstSets) -> FollowSets {
 }
 
 fn closure(state: &mut LRState, grammar: &Grammar, first_sets: &FirstSets) {
-    let mut added;
     loop {
-        added = false;
+        let mut new_items: HashSet<LRItem> = HashSet::new();
+
         for item in &state.items {
             if let Some(symbol) = item.symbol_at_position(grammar) {
                 if grammar.is_nonterm(symbol) {
+                    let mut new_follow;
+                    // Find first set of substring that follow symbol at position
+                    if item.position + 1 < grammar.productions()[item.prod].rhs.len() {
+                        new_follow = firsts(
+                            &grammar,
+                            &first_sets,
+                            grammar.production_rhs_symbols(item.prod)[item.position + 1..].to_vec(),
+                        );
+                        // If the symbols that follows current nonterminal can derive EMPTY add
+                        // follows of current item.
+                        if new_follow.contains(&grammar.empty_index) {
+                            new_follow.extend(&item.follow);
+                        }
+                    } else {
+                        // If current item position is at the end add all of
+                        // its follow to the next item.
+                        new_follow = Follow::new();
+                        new_follow.extend(&item.follow);
+                    }
+
+                    // Get all productions of the current non-terminal and
+                    // create LR items with the calculated follow.
                     let nonterm = grammar.symbol_to_nonterm(symbol);
-                    for prod in &grammar.nonterminals.as_ref().unwrap()[nonterm].productions {
-                        let new_follow = Follow::new();
-                        // 1. Find first set of substring that follow symbol at position
-                        // 2. If this first set can produce EMPTY add follow of current item
-                        //
-                        // 3. Construct new items from production where LHS is
-                        // symbol, position is 0 and follow is calculated set
-                        //let new_item = LRItem::new();
-                        todo!()
+                    for prod in &grammar.nonterminals()[nonterm].productions {
+                        new_items.insert(LRItem::new_follow(*prod, new_follow.clone()));
                     }
                 }
             }
         }
+
+        // Add all new items to state.items. If item is already there update
+        // follow. If there is no change break from the loop.
+        todo!()
     }
 }
 
