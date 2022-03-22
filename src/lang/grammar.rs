@@ -148,7 +148,7 @@ impl Grammar {
         nonterminals: &mut IndexMap<String, NonTerminal>,
         productions: &mut ProdVec<Production>,
     ) {
-        let mut next_nonterm_idx = NonTermIndex(1); // Account for EMPTY and S'
+        let mut last_nonterm_idx = NonTermIndex(1); // Account for EMPTY and S'
         let mut next_prod_idx = ProdIndex(1); // Account for S' -> S production
         let mut nonterminal;
 
@@ -173,6 +173,7 @@ impl Grammar {
             },
         );
 
+        // Add augmented S' -> S production
         productions.push(Production {
             idx: ProdIndex(0),
             nonterminal: NonTermIndex(1),
@@ -190,9 +191,9 @@ impl Grammar {
             nonterminal = nonterminals
                 .entry(rule.name.to_string())
                 .or_insert_with(|| {
-                    next_nonterm_idx.0 += 1;
+                    last_nonterm_idx.0 += 1;
                     NonTerminal {
-                        idx: next_nonterm_idx,
+                        idx: last_nonterm_idx,
                         name: rule.name.to_string(),
                         productions: vec![],
                     }

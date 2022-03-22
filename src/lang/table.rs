@@ -19,7 +19,7 @@ type FirstSets = SymbolVec<Firsts>;
 
 /// LR State is a set of LR items and a dict of LR automata actions and gotos.
 struct LRState {
-    state: StateIndex,
+    index: StateIndex,
     symbol: SymbolIndex,
     items: HashSet<LRItem>,
     actions: TermVec<Action>,
@@ -27,9 +27,9 @@ struct LRState {
 }
 
 impl LRState {
-    fn new(grammar: &Grammar, state: StateIndex, symbol: SymbolIndex) -> Self {
+    fn new(grammar: &Grammar, index: StateIndex, symbol: SymbolIndex) -> Self {
         Self {
-            state,
+            index,
             symbol,
             items: HashSet::new(),
             actions: grammar.new_termvec(Action::Error),
@@ -94,9 +94,9 @@ impl LRItem {
             grammar
                 .productions
                 .as_ref()?
-                .get(self.prod)?
+                .get(self.prod).unwrap()
                 .rhs
-                .get(self.position)?,
+                .get(self.position)?
         ))
     }
 
@@ -219,8 +219,8 @@ fn first_sets(grammar: &Grammar) -> FirstSets {
     first_sets
 }
 
-/// For a given collection of symbols find a set of FIRST terminals. If all
-/// `symbols` symbols can derive EMPTY add EMPTY to the output.
+/// For the given sequence of symbols find a set of FIRST terminals. If all
+/// symbols can derive EMPTY add EMPTY to the output.
 fn firsts(grammar: &Grammar, first_sets: &FirstSets, symbols: Vec<SymbolIndex>) -> Firsts {
     let mut firsts = Firsts::new();
     let mut break_out = false;
@@ -359,6 +359,7 @@ fn closure(state: &mut LRState, grammar: &Grammar, first_sets: &FirstSets) {
 
         // Add all new items to state.items. If item is already there update
         // follow. If there is no change break from the loop.
+        // TODO: /HERE/ -- see notes on LRItem change
         todo!()
     }
 }
