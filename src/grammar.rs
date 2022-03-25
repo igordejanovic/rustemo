@@ -1,4 +1,4 @@
-use crate::{common::Location, parser::Action, index::TermIndex};
+use crate::{common::Location, index::TermIndex};
 use std::hash::Hash;
 
 pub(crate) type Priority = u8;
@@ -58,8 +58,8 @@ pub struct Terminal {
 
 #[derive(Debug, Default)]
 pub struct NonTerminal<'a> {
-    pub name: &'a str,
-    pub fqn: &'a str,
+    pub name: &'static str,
+    pub fqn: &'static str,
     pub location: Option<Location>,
 
     /// Productions which define this non-terminal rule.
@@ -75,8 +75,8 @@ pub struct Production<'a> {
 
 pub type TerminalInfos<const T: usize> = [TerminalInfo; T];
 pub type TerminalsState<const T: usize, const S: usize> = [[Option<usize>; T]; S];
-pub type Actions<const T: usize, const S: usize> = [[Action; T]; S];
-pub type Gotos<const N: usize, const S: usize> = [[Option<usize>; N]; S];
+// pub type Actions<const T: usize, const S: usize> = [[Action; T]; S];
+// pub type Gotos<const N: usize, const S: usize> = [[Option<usize>; N]; S];
 
 #[derive(Debug)]
 pub struct TerminalInfo {

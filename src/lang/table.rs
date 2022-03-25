@@ -155,8 +155,8 @@ pub(in crate::lang) fn calculate_lr_tables(grammar: Grammar) {
 }
 
 /// Check for states with GOTO links but without SHIFT links.
-/// This is invalid as the GOTO link will never be traversed.
-fn check_empty_sets(grammar: &Grammar, first_sets: &SymbolVec<HashSet<SymbolIndex>>) {
+/// This is invalid as GOTO links will never be traversed.
+fn check_empty_sets(grammar: &Grammar, first_sets: &FirstSets) {
     first_sets
         .iter()
         .enumerate()
@@ -403,27 +403,27 @@ mod tests {
         // First of terminal is just a terminal itself.
         assert_eq!(
             &first_sets[grammar.symbol_index("id")],
-            &HashSet::<_>::from_iter(grammar.symbol_indexes(&["id"]).into_iter())
+            &HashSet::from_iter(grammar.symbol_indexes(&["id"]))
         );
         assert_eq!(
             &first_sets[grammar.symbol_index("F")],
-            &HashSet::<_>::from_iter(grammar.symbol_indexes(&["(", "id"]).into_iter())
+            &HashSet::from_iter(grammar.symbol_indexes(&["(", "id"]))
         );
         assert_eq!(
             &first_sets[grammar.symbol_index("T")],
-            &HashSet::<_>::from_iter(grammar.symbol_indexes(&["(", "id"]).into_iter())
+            &HashSet::from_iter(grammar.symbol_indexes(&["(", "id"]))
         );
         assert_eq!(
             &first_sets[grammar.symbol_index("E")],
-            &HashSet::<_>::from_iter(grammar.symbol_indexes(&["(", "id"]).into_iter())
+            &HashSet::from_iter(grammar.symbol_indexes(&["(", "id"]))
         );
         assert_eq!(
             &first_sets[grammar.symbol_index("Ep")],
-            &HashSet::<_>::from_iter(grammar.symbol_indexes(&["+", "EMPTY"]).into_iter())
+            &HashSet::from_iter(grammar.symbol_indexes(&["+", "EMPTY"]))
         );
         assert_eq!(
             &first_sets[grammar.symbol_index("Tp")],
-            &HashSet::<_>::from_iter(grammar.symbol_indexes(&["*", "EMPTY"]).into_iter())
+            &HashSet::from_iter(grammar.symbol_indexes(&["*", "EMPTY"]))
         );
     }
 
@@ -434,20 +434,20 @@ mod tests {
 
         assert_eq!(
             &follow_sets[grammar.symbol_index("E")],
-            &HashSet::<_>::from_iter(grammar.symbol_indexes(&[")", "STOP"]).into_iter())
+            &HashSet::from_iter(grammar.symbol_indexes(&[")", "STOP"]))
         );
         dbg!(grammar.symbol_names(&follow_sets[grammar.symbol_index("Ep")]));
         assert_eq!(
             &follow_sets[grammar.symbol_index("Ep")],
-            &HashSet::<_>::from_iter(grammar.symbol_indexes(&[")", "STOP"]).into_iter())
+            &HashSet::from_iter(grammar.symbol_indexes(&[")", "STOP"]))
         );
         assert_eq!(
             &follow_sets[grammar.symbol_index("T")],
-            &HashSet::<_>::from_iter(grammar.symbol_indexes(&["+", ")", "STOP"]).into_iter())
+            &HashSet::from_iter(grammar.symbol_indexes(&["+", ")", "STOP"]))
         );
         assert_eq!(
             &follow_sets[grammar.symbol_index("Tp")],
-            &HashSet::<_>::from_iter(grammar.symbol_indexes(&["+", ")", "STOP"]).into_iter())
+            &HashSet::from_iter(grammar.symbol_indexes(&["+", ")", "STOP"]))
         );
     }
 
