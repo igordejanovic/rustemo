@@ -279,15 +279,12 @@ fn follow_sets(grammar: &Grammar, first_sets: &FirstSets) -> FollowSets {
 
             // Rule 2: If there is a production A -> α B β then everything in
             // FIRST(β) except EMPTY is in FOLLOW(B).
-            for (idx, assign) in production.rhs[..production.rhs.len() - 1]
-                .iter()
-                .enumerate()
-            {
-                let rhs_symbol = res_symbol(assign);
+            for idx in 0..production.rhs.len() {
+                let rhs_symbol = res_symbol(&production.rhs[idx]);
                 let elements = follow_sets[rhs_symbol].len();
                 let mut break_out = false;
-                for rassign in &production.rhs[idx + 1..] {
-                    let follow_symbols = &first_sets[res_symbol(rassign)];
+                for rnext in &production.rhs[idx + 1..] {
+                    let follow_symbols = &first_sets[res_symbol(rnext)];
 
                     follow_sets[rhs_symbol]
                         .extend(follow_symbols.iter().filter(|&&s| s != grammar.empty_index));
@@ -310,11 +307,6 @@ fn follow_sets(grammar: &Grammar, first_sets: &FirstSets) -> FollowSets {
                     additions = true
                 }
             }
-            // At the end handle situation A -> α B where FOLLOW(B) should
-            // contain all from FOLLOW(A)
-            let last_symbol = res_symbol(&production.rhs[production.rhs.len() - 1]);
-            let lhs_follows: Follow = follow_sets[lhs_symbol].iter().copied().collect();
-            follow_sets[last_symbol].extend(lhs_follows.iter());
         }
     }
     follow_sets
