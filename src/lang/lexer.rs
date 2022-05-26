@@ -7,6 +7,8 @@ use crate::{
 
 pub trait LexerDefinition {
     type Recognizer;
+    /// For the given state, returns iterator of recognizers that should be
+    /// tried in order.
     fn recognizers(&self, state_index: StateIndex) -> RecognizerIterator<Self::Recognizer>;
 }
 

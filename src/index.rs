@@ -110,7 +110,7 @@ impl TermIndex {
 }
 
 impl NonTermIndex {
-    pub(crate) fn to_symbol_index(&self, len: usize) -> SymbolIndex {
-        SymbolIndex(self.0 + len)
+    pub(crate) fn to_symbol_index(&self, term_len: usize) -> SymbolIndex {
+        SymbolIndex(self.0 + term_len)
     }
 }

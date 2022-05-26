@@ -94,9 +94,10 @@ impl LRItem {
             grammar
                 .productions
                 .as_ref()?
-                .get(self.prod).unwrap()
+                .get(self.prod)
+                .unwrap()
                 .rhs
-                .get(self.position)?
+                .get(self.position)?,
         ))
     }
 
@@ -327,14 +328,14 @@ fn closure(state: &mut LRState, grammar: &Grammar, first_sets: &FirstSets) {
                             &first_sets,
                             grammar.production_rhs_symbols(item.prod)[item.position + 1..].to_vec(),
                         );
-                        // If the symbols that follows current nonterminal can derive EMPTY add
-                        // follows of current item.
+                        // If symbols that follows the current nonterminal can
+                        // derive EMPTY add follows of current item.
                         if new_follow.contains(&grammar.empty_index) {
                             new_follow.extend(&item.follow);
                         }
                     } else {
-                        // If current item position is at the end add all of
-                        // its follow to the next item.
+                        // If current item position is at the end add all of its
+                        // follow to the next item.
                         new_follow = Follow::new();
                         new_follow.extend(&item.follow);
                     }
