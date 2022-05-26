@@ -220,8 +220,10 @@ fn first_sets(grammar: &Grammar) -> FirstSets {
     first_sets
 }
 
-/// For the given sequence of symbols find a set of FIRST terminals. If all
-/// symbols can derive EMPTY add EMPTY to the output.
+/// For the given sequence of symbols finds a set of FIRST terminals.
+///
+/// Finds all terminals which can start the given sequence of symbols. Note that
+/// if all symbols in the sequence can derive EMPTY add EMPTY to the output.
 fn firsts(grammar: &Grammar, first_sets: &FirstSets, symbols: Vec<SymbolIndex>) -> Firsts {
     let mut firsts = Firsts::new();
     let mut break_out = false;
@@ -229,19 +231,13 @@ fn firsts(grammar: &Grammar, first_sets: &FirstSets, symbols: Vec<SymbolIndex>) 
         let symbol_firsts = &first_sets[symbol];
         let mut empty = false;
 
-        let firsts_addition = symbol_firsts
-            .iter()
-            .filter(|&x| {
-                if *x == grammar.empty_index {
-                    empty = true;
-                    false
-                } else {
-                    true
-                }
-            })
-            .copied()
-            .collect::<Firsts>();
-        firsts.extend(firsts_addition);
+        for first in symbol_firsts {
+            if *first == grammar.empty_index {
+                empty = true;
+            } else {
+                firsts.insert(*first);
+            }
+        }
 
         // We should proceed to the next symbol in sequence only if the current
         // symbol can produce EMPTY.
@@ -297,9 +293,9 @@ fn follow_sets(grammar: &Grammar, first_sets: &FirstSets) -> FollowSets {
                 }
 
                 if !break_out {
-                    // All symbols right of current RHS produce EMPTY, thus,
-                    // according to Rule 3 this RHS symbol must contain all that
-                    // follows symbol at LHS.
+                    // Rule 3: If all symbols right of current RHS produce EMPTY
+                    // then this RHS symbol must contain all what follows symbol
+                    // at LHS.
                     let lhs_follows: Follow = follow_sets[lhs_symbol].iter().copied().collect();
                     follow_sets[rhs_symbol].extend(lhs_follows.iter());
                 }
