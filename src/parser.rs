@@ -1,4 +1,4 @@
-use crate::{builder::Builder, lexer::Lexer, index::{StateIndex, TermIndex, NonTermIndex, ProdIndex}};
+use crate::{builder::Builder, lexer::{Lexer, Token}, index::{StateIndex, TermIndex, NonTermIndex, ProdIndex}};
 use core::fmt::Debug;
 
 pub trait Parser<L, B>
@@ -23,8 +23,10 @@ pub enum Action {
 }
 
 /// Parser context provides necessary information to lexers and actions.
-pub trait Context {
+pub trait Context<I> {
     fn position(&self) -> usize;
     fn set_position(&mut self, position: usize);
+    fn token_ahead(&self) -> &Option<Token<I>>;
+    fn set_token_ahead(&mut self, token: Option<Token<I>>);
     fn state(&self) -> StateIndex;
 }

@@ -56,7 +56,7 @@ where
             definition,
         }
     }
-    fn skip(&mut self, context: &mut impl Context) {
+    fn skip<I>(&self, context: &mut impl Context<I>) {
         let skipped = self.input[context.position()..]
             .chars()
             .take_while(|x| x.is_whitespace())
@@ -71,13 +71,13 @@ where
     D: LexerDefinition<Recognizer = for<'a> fn(&'a str) -> Option<&'a str>>,
 {
     type Input = &'i str;
-    fn next_token(&mut self, context: &mut impl Context) -> Option<Token<Self::Input>> {
+    fn next_token(&self, context: &mut impl Context<Self::Input>) -> Option<Token<Self::Input>> {
         self.skip(context);
         log!(
             "Context: {}",
             self.input.chars().take(30).collect::<String>()
         );
-        let token: Token<&'i str> = self
+        let token: Option<Token<&'i str>> = self
             .definition
             .recognizers(context.state())
             .map(|(recognizer, terminal_info)| {
@@ -94,11 +94,19 @@ where
                 layout_location: None,
             })
             // Take the first token or return None if no tokens are found.
-            .next()?;
+            .next();
 
-        let new_pos = context.position() + token.value.len();
-        context.set_position(new_pos);
-        self.token_ahead = Some(token);
-        self.token_ahead.clone()
+        match token {
+            Some(t) => {
+                let new_pos = context.position() + t.value.len();
+                context.set_position(new_pos);
+                context.set_token_ahead(Some(t.clone()));
+                Some(t)
+            },
+            None => {
+                context.set_token_ahead(None);
+                None
+            },
+        }
     }
 }

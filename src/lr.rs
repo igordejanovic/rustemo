@@ -6,13 +6,14 @@ use crate::lexer::{Lexer, Token};
 use crate::parser::{Action, Context, Parser, ParserDefinition};
 
 #[derive(Debug)]
-pub struct LRContext {
+pub struct LRContext<I> {
     pub parse_stack: Vec<StateIndex>,
     pub current_state: StateIndex,
     pub position: usize,
+    pub token: Option<Token<I>>,
 }
 
-impl LRContext {
+impl<I> LRContext<I> {
     #[inline]
     fn to_state(&mut self, state: StateIndex) {
         self.parse_stack.push(state);
@@ -26,7 +27,7 @@ impl LRContext {
     }
 }
 
-impl Context for LRContext {
+impl<I> Context<I> for LRContext<I> {
     #[inline]
     fn position(&self) -> usize {
         self.position
@@ -37,6 +38,14 @@ impl Context for LRContext {
         self.position = position
     }
 
+    fn token_ahead(&self) -> &Option<Token<I>> {
+        &self.token
+    }
+
+    fn set_token_ahead(&mut self, token: Option<Token<I>>) {
+        self.token = token;
+    }
+
     #[inline]
     fn state(&self) -> StateIndex {
         self.current_state
@@ -44,25 +53,26 @@ impl Context for LRContext {
 }
 
 #[derive(Debug)]
-pub struct LRParser<D: ParserDefinition + 'static> {
-    pub context: LRContext,
+pub struct LRParser<I, D: ParserDefinition + 'static> {
+    pub context: LRContext<I>,
     pub definition: &'static D,
 }
 
-impl<D: ParserDefinition> LRParser<D> {
+impl<I: Debug, D: ParserDefinition> LRParser<I, D> {
     pub fn new(definition: &'static D) -> Self {
         Self {
             context: LRContext {
                 parse_stack: vec![StateIndex(0)],
                 current_state: StateIndex(0),
                 position: 0,
+                token: None,
             },
             definition,
         }
     }
 
     #[inline]
-    fn next_token<I: Debug, L: Lexer<Input=I>>(&mut self, lexer: &mut L) -> Token<L::Input> {
+    fn next_token<L: Lexer<Input=I>>(&mut self, lexer: &mut L) -> Token<L::Input> {
         match lexer.next_token(&mut self.context) {
             Some(t) => t,
             None => {
@@ -72,7 +82,7 @@ impl<D: ParserDefinition> LRParser<D> {
     }
 }
 
-impl<D, L, B, I> Parser<L, B> for LRParser<D>
+impl<D, L, B, I> Parser<L, B> for LRParser<I, D>
 where
     D: ParserDefinition,
     I: Debug,

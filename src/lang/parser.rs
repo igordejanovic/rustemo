@@ -16,13 +16,13 @@ use crate::{
 
 pub type GrammarLexer<'i> = DefaultLexer<'i, RustemoLexerDefinition>;
 
-pub struct GrammarParser(LRParser<RustemoParserDefinition>);
+pub struct GrammarParser<'i>(LRParser<&'i str, RustemoParserDefinition>);
 
 type RBuilder<'i> = RustemoBuilder<'i, <GrammarLexer<'i> as Lexer>::Input>;
 
-impl<'i> GrammarParser {
+impl<'i> GrammarParser<'i> {
     pub(in crate::lang) fn parse(&mut self, lexer: GrammarLexer<'i>) -> Grammar {
-        let pgfile = match <LRParser<RustemoParserDefinition> as Parser<
+        let pgfile = match <LRParser<&'i str, RustemoParserDefinition> as Parser<
             GrammarLexer<'i>,
             RBuilder<'i>,
         >>::parse(&mut self.0, lexer)
@@ -36,13 +36,14 @@ impl<'i> GrammarParser {
     }
 }
 
-impl GrammarParser {
+impl<'i> GrammarParser<'i> {
     pub fn default() -> Self {
         Self(LRParser {
             context: LRContext {
                 parse_stack: vec![StateIndex(0)],
                 current_state: StateIndex(0),
                 position: 0,
+                token: None,
             },
             definition: &PARSER_DEFINITION,
         })
