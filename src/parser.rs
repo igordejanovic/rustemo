@@ -1,5 +1,4 @@
-use crate::{builder::Builder, lexer::{Lexer, Token}, index::{StateIndex, TermIndex, NonTermIndex, ProdIndex}};
-use core::fmt::Debug;
+use crate::{builder::Builder, lexer::{Lexer, Token}, index::StateIndex};
 
 pub trait Parser<L, B>
 where
@@ -7,19 +6,6 @@ where
     B: Builder<Lexer = L>,
 {
     fn parse(&mut self, lexer: L) -> B::Output;
-}
-
-pub trait ParserDefinition {
-    fn action(&self, state: StateIndex, term_index: TermIndex) -> Action;
-    fn goto(&self, state: StateIndex, nonterm_id: NonTermIndex) -> StateIndex;
-}
-
-#[derive(Debug, Copy, Clone)]
-pub enum Action {
-    Shift(StateIndex, TermIndex),
-    Reduce(ProdIndex, usize, NonTermIndex, &'static str),
-    Accept,
-    Error,
 }
 
 /// Parser context provides necessary information to lexers and actions.

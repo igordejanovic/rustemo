@@ -232,9 +232,9 @@ if __name__ == '__main__':
         f.write('use std::convert::TryFrom;\n\n');
         f.write('use std::marker::PhantomData;\n')
         f.write('use crate::lexer::{Lexer, Token};\n')
-        f.write('use crate::parser::ParserDefinition;\n')
+        f.write('use crate::lr::ParserDefinition;\n')
         f.write('use crate::index::{StateIndex, TermIndex, NonTermIndex, ProdIndex};\n')
-        f.write('use crate::parser::Action::{self, Shift, Reduce, Accept, Error};\n')
+        f.write('use crate::lr::Action::{self, Shift, Reduce, Accept, Error};\n')
         f.write('use crate::builder::Builder;\n')
         f.write('use crate::grammar::{TerminalInfo, TerminalInfos, TerminalsState};\n')
         f.write('use crate::debug::{log, logn};\n')

@@ -1,9 +1,9 @@
 use core::fmt::Debug;
 use crate::builder::Builder;
 use crate::debug::log;
-use crate::index::StateIndex;
+use crate::index::{StateIndex, TermIndex, NonTermIndex, ProdIndex};
 use crate::lexer::{Lexer, Token};
-use crate::parser::{Action, Context, Parser, ParserDefinition};
+use crate::parser::{Context, Parser};
 
 #[derive(Debug)]
 pub struct LRContext<I> {
@@ -50,6 +50,19 @@ impl<I> Context<I> for LRContext<I> {
     fn state(&self) -> StateIndex {
         self.current_state
     }
+}
+
+pub trait ParserDefinition {
+    fn action(&self, state: StateIndex, term_index: TermIndex) -> Action;
+    fn goto(&self, state: StateIndex, nonterm_id: NonTermIndex) -> StateIndex;
+}
+
+#[derive(Debug, Copy, Clone)]
+pub enum Action {
+    Shift(StateIndex, TermIndex),
+    Reduce(ProdIndex, usize, NonTermIndex, &'static str),
+    Accept,
+    Error,
 }
 
 #[derive(Debug)]

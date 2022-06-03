@@ -1,8 +1,8 @@
 use indexmap::IndexMap;
 
-use crate::{index::{
+use crate::index::{
     NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, SymbolVec, TermIndex, TermVec,
-}, parser::Action};
+};
 
 use super::types::{
     GrammarRule, GrammarSymbol, Imports, PGFile, ProductionMetaDatas, Recognizer, TerminalMetaDatas,

@@ -5,9 +5,9 @@ use std::convert::TryFrom;
 
 use std::marker::PhantomData;
 use crate::lexer::{Lexer, Token};
-use crate::parser::ParserDefinition;
+use crate::lr::ParserDefinition;
 use crate::index::{StateIndex, TermIndex, NonTermIndex, ProdIndex};
-use crate::parser::Action::{self, Shift, Reduce, Accept, Error};
+use crate::lr::Action::{self, Shift, Reduce, Accept, Error};
 use crate::builder::Builder;
 use crate::grammar::{TerminalInfo, TerminalInfos, TerminalsState};
 use crate::debug::{log, logn};

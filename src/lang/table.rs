@@ -1,13 +1,13 @@
 //! Calculating LR tables
 
-use std::{collections::HashSet, ops::RangeBounds};
+use std::{collections::HashSet};
 
 use indexmap::IndexMap;
 
 use crate::{
     grammar::Priority,
     index::{NonTermVec, ProdIndex, StateIndex, SymbolIndex, SymbolVec, TermVec},
-    parser::Action,
+    lr::Action,
 };
 
 use super::grammar::{res_symbol, Grammar};
