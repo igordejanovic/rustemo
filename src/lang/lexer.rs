@@ -38,7 +38,7 @@ impl<R> Iterator for RecognizerIterator<R> {
 }
 
 /// A lexer that operates over string inputs and uses generated string and regex
-/// recognizers provided by parser table.
+/// recognizers provided by the parser table.
 pub struct DefaultLexer<'i, D: 'static> {
     pub(crate) input: &'i str,
     pub(crate) token_ahead: Option<Token<&'i str>>,

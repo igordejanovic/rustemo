@@ -1,3 +1,4 @@
+use core::fmt::Debug;
 use crate::builder::Builder;
 use crate::debug::log;
 use crate::index::StateIndex;
@@ -61,7 +62,7 @@ impl<D: ParserDefinition> LRParser<D> {
     }
 
     #[inline]
-    fn next_token<L: Lexer>(&mut self, lexer: &mut L) -> Token<L::Input> {
+    fn next_token<I: Debug, L: Lexer<Input=I>>(&mut self, lexer: &mut L) -> Token<L::Input> {
         match lexer.next_token(&mut self.context) {
             Some(t) => t,
             None => {
@@ -71,10 +72,11 @@ impl<D: ParserDefinition> LRParser<D> {
     }
 }
 
-impl<D, L, B> Parser<L, B> for LRParser<D>
+impl<D, L, B, I> Parser<L, B> for LRParser<D>
 where
     D: ParserDefinition,
-    L: Lexer,
+    I: Debug,
+    L: Lexer<Input=I>,
     B: Builder<Lexer = L>,
 {
     fn parse(&mut self, mut lexer: L) -> B::Output {

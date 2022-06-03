@@ -7,7 +7,7 @@ use core::fmt::Debug;
 
 pub trait Lexer {
     /// Content stored in a Token. The type of the input.
-    type Input: Debug + Clone;
+    type Input;
     /// Given the current context should generate next token or None if no token
     /// is found.
     fn next_token(&mut self, context: &mut impl Context) -> Option<Token<Self::Input>>;
