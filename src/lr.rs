@@ -85,7 +85,7 @@ impl<I: Debug, D: ParserDefinition> LRParser<I, D> {
     }
 
     #[inline]
-    fn next_token<L: Lexer<Input=I>>(&mut self, lexer: &mut L) -> Token<L::Input> {
+    fn next_token<L: Lexer<Input=I>>(&mut self, lexer: &L) -> Token<L::Input> {
         match lexer.next_token(&mut self.context) {
             Some(t) => t,
             None => {
@@ -102,10 +102,9 @@ where
     L: Lexer<Input=I>,
     B: Builder<Lexer = L>,
 {
-    fn parse(&mut self, mut lexer: L) -> B::Output {
+    fn parse(&mut self, lexer: L, mut builder: B) -> B::Output {
         use Action::*;
-        let mut builder = B::new();
-        let mut next_token = self.next_token(&mut lexer);
+        let mut next_token = self.next_token(&lexer);
         loop {
             let current_state = *self.context.parse_stack.last().unwrap();
             log!("Stack: {:?}", self.context.parse_stack);
@@ -123,7 +122,7 @@ where
                     );
                     self.context.to_state(state_id);
                     builder.shift_action(term_kind, next_token);
-                    next_token = self.next_token(&mut lexer);
+                    next_token = self.next_token(&lexer);
                 }
                 Reduce(prod_kind, prod_len, nonterm_id, prod_str) => {
                     log!(

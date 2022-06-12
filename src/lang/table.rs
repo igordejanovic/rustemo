@@ -1,6 +1,6 @@
 //! Calculating LR tables
 
-use std::{collections::HashSet};
+use std::collections::HashSet;
 
 use indexmap::IndexMap;
 

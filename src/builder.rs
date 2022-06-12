@@ -5,8 +5,8 @@ use crate::{
 
 /// Building output during semantic actions.
 ///
-/// This trait is implemented by all types that are in charge of building output
-/// of the parsing process (e.g. a parse tree). Builder should keep its internal
+/// This trait is implemented by types that are in charge of building output of
+/// the parsing process (e.g. a parse tree). Builder should keep its internal
 /// stack of subresults, similar to the way LR parsing operates.
 pub trait Builder {
     /// Lexer used to tokenize input

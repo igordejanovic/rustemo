@@ -5,7 +5,7 @@ where
     L: Lexer,
     B: Builder<Lexer = L>,
 {
-    fn parse(&mut self, lexer: L) -> B::Output;
+    fn parse(&mut self, lexer: L, builder: B) -> B::Output;
 }
 
 /// Parser context provides necessary information to lexers and actions.

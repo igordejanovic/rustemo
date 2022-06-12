@@ -9,9 +9,10 @@ use super::{
 };
 
 use crate::{
+    index::StateIndex,
     lexer::Lexer,
     lr::{LRContext, LRParser},
-    parser::Parser, index::StateIndex,
+    parser::Parser, builder::Builder,
 };
 
 pub type GrammarLexer<'i> = DefaultLexer<'i, RustemoLexerDefinition>;
@@ -22,11 +23,8 @@ type RBuilder<'i> = RustemoBuilder<'i, <GrammarLexer<'i> as Lexer>::Input>;
 
 impl<'i> GrammarParser<'i> {
     pub(in crate::lang) fn parse(&mut self, lexer: GrammarLexer<'i>) -> Grammar {
-        let pgfile = match <LRParser<&'i str, RustemoParserDefinition> as Parser<
-            GrammarLexer<'i>,
-            RBuilder<'i>,
-        >>::parse(&mut self.0, lexer)
-        {
+        let builder = RBuilder::new();
+        let pgfile = match self.0.parse(lexer, builder) {
             Symbol::NonTerminal(NonTerminal::PGFile(p)) => p,
             _ => {
                 panic!("Invalid return type of inner parse.")
@@ -54,7 +52,7 @@ impl<'i> GrammarParser<'i> {
 // to a string reference.
 impl<'i, T> From<&'i T> for GrammarLexer<'i>
 where
-    T: AsRef<str> + 'i + ?Sized,
+    T: AsRef<str> + ?Sized,
 {
     fn from(input: &'i T) -> Self {
         Self {
@@ -65,7 +63,6 @@ where
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use std::fmt::Write;
@@ -73,7 +70,6 @@ mod tests {
     use crate::tests::utils::{string_difference, type_of};
 
     use super::*;
-
 
     #[test]
     fn type_of_return() {
