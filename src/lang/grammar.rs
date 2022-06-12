@@ -25,6 +25,15 @@ pub(in crate::lang) struct Grammar {
 }
 
 #[derive(Debug)]
+pub(in crate::lang) struct Terminal {
+    pub idx: TermIndex,
+    pub name: String,
+    pub action: Option<String>,
+    pub recognizer: Option<Recognizer>,
+    pub meta: TerminalMetaDatas,
+}
+
+#[derive(Debug)]
 pub(in crate::lang) struct NonTerminal {
     pub(in crate::lang) idx: NonTermIndex,
     pub(in crate::lang) name: String,
@@ -43,15 +52,6 @@ impl Production {
     pub fn rhs_symbols(&self) -> Vec<SymbolIndex> {
        self.rhs.iter().map(|a| res_symbol(a)).collect()
     }
-}
-
-#[derive(Debug)]
-pub(in crate::lang) struct Terminal {
-    pub idx: TermIndex,
-    pub name: String,
-    pub action: Option<String>,
-    pub recognizer: Option<Recognizer>,
-    pub meta: TerminalMetaDatas,
 }
 
 #[derive(Debug)]

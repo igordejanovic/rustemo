@@ -9,10 +9,11 @@ use super::{
 };
 
 use crate::{
+    builder::Builder,
     index::StateIndex,
     lexer::Lexer,
     lr::{LRContext, LRParser},
-    parser::Parser, builder::Builder,
+    parser::Parser,
 };
 
 pub type GrammarLexer<'i> = DefaultLexer<'i, RustemoLexerDefinition>;
