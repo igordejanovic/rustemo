@@ -15,7 +15,7 @@ use rustemort::{
     parser::Parser,
 };
 
-pub type GrammarLexer<'i> = DefaultLexer<'i, RustemoLexerDefinition>;
+pub struct GrammarLexer<'i>(DefaultLexer<'i, RustemoLexerDefinition>);
 
 pub struct GrammarParser<'i>(LRParser<&'i str, RustemoParserDefinition>);
 
@@ -34,8 +34,8 @@ impl<'i> GrammarParser<'i> {
     }
 }
 
-impl<'i> GrammarParser<'i> {
-    pub fn default() -> Self {
+impl<'i> Default for GrammarParser<'i> {
+    fn default() -> Self {
         Self(LRParser {
             context: LRContext {
                 parse_stack: vec![StateIndex(0)],
@@ -48,6 +48,14 @@ impl<'i> GrammarParser<'i> {
     }
 }
 
+impl<'i> Lexer for GrammarLexer<'i> {
+    type Input = &'i str;
+
+    fn next_token(&self, context: &mut impl rustemort::parser::Context<Self::Input>) -> Option<rustemort::lexer::Token<Self::Input>> {
+        self.0.next_token(context)
+    }
+}
+
 // Enables creating a lexer from a reference to an object that can be converted
 // to a string reference.
 impl<'i, T> From<&'i T> for GrammarLexer<'i>
@@ -55,11 +63,7 @@ where
     T: AsRef<str> + ?Sized,
 {
     fn from(input: &'i T) -> Self {
-        Self {
-            input: input.as_ref(),
-            token_ahead: None,
-            definition: &LEXER_DEFINITION,
-        }
+        Self (DefaultLexer::new(input.as_ref(), &LEXER_DEFINITION))
     }
 }
 

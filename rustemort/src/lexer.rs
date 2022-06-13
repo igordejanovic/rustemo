@@ -53,7 +53,7 @@ impl<'i, D> DefaultLexer<'i, D>
 where
     D: LexerDefinition<Recognizer = for<'a> fn(&'a str) -> Option<&'a str>>,
 {
-    fn new(input: &'i str, definition: &'static D) -> Self {
+    pub fn new(input: &'i str, definition: &'static D) -> Self {
         Self {
             input,
             token_ahead: None,
@@ -123,10 +123,10 @@ pub trait LexerDefinition {
 }
 
 pub struct RecognizerIterator<R: 'static> {
-    pub(crate) terminals: &'static [TerminalInfo],
-    pub(crate) terminals_for_state: &'static [Option<usize>],
-    pub(crate) recognizers: &'static [R],
-    pub(crate) index: usize,
+    pub terminals: &'static [TerminalInfo],
+    pub terminals_for_state: &'static [Option<usize>],
+    pub recognizers: &'static [R],
+    pub index: usize,
 }
 
 impl<R> Iterator for RecognizerIterator<R> {
