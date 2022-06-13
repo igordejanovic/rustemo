@@ -9,7 +9,7 @@ use super::types::{
 };
 
 #[derive(Debug)]
-pub(in crate) struct Grammar {
+pub struct Grammar {
     pub imports: Option<Imports>,
     pub productions: Option<ProdVec<Production>>,
     pub terminals: Option<TermVec<Terminal>>,
@@ -25,7 +25,7 @@ pub(in crate) struct Grammar {
 }
 
 #[derive(Debug)]
-pub(in crate) struct Terminal {
+pub struct Terminal {
     pub idx: TermIndex,
     pub name: String,
     pub action: Option<String>,
@@ -34,14 +34,14 @@ pub(in crate) struct Terminal {
 }
 
 #[derive(Debug)]
-pub(in crate) struct NonTerminal {
-    pub(in crate) idx: NonTermIndex,
-    pub(in crate) name: String,
-    pub(in crate) productions: Vec<ProdIndex>,
+pub struct NonTerminal {
+    pub idx: NonTermIndex,
+    pub name: String,
+    pub productions: Vec<ProdIndex>,
 }
 
 #[derive(Debug)]
-pub(in crate) struct Production {
+pub struct Production {
     pub idx: ProdIndex,
     pub nonterminal: NonTermIndex,
     pub rhs: Vec<Assignment>,
@@ -55,13 +55,13 @@ impl Production {
 }
 
 #[derive(Debug)]
-pub(in crate) enum ResolvingSymbolIndex {
+pub enum ResolvingSymbolIndex {
     Resolved(SymbolIndex),
     Resolving(GrammarSymbol),
 }
 
 #[derive(Debug)]
-pub(in crate) struct Assignment {
+pub struct Assignment {
     pub name: Option<String>,
     pub symbol: ResolvingSymbolIndex,
 }
@@ -433,7 +433,7 @@ impl Grammar {
 #[cfg(test)]
 mod tests {
     use rustemort::index::ProdIndex;
-    use crate::parser::RustemoParser;
+    use crate::rustemo::RustemoParser;
 
     #[test]
     fn create_terminals_1() {

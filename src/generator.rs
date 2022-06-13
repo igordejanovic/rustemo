@@ -1,6 +1,6 @@
 use std::{fmt::Debug, fs, path::Path};
 
-use super::parser::RustemoParser;
+use super::rustemo::RustemoParser;
 
 pub(crate) fn generate_parser<F>(grammar_path: F)
 where

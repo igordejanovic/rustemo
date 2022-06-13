@@ -1,29 +1,16 @@
 use super::{
     grammar::Grammar,
     rustemo::{
-        RustemoBuilder, RustemoLexerDefinition, RustemoParserDefinition, LEXER_DEFINITION,
-        PARSER_DEFINITION,
+        RustemoBuilder, RustemoLexer, RustemoParser,
     },
     rustemo_types::{NonTerminal, Symbol},
 };
 
-use rustemort::{
-    builder::Builder,
-    index::StateIndex,
-    lexer::{Lexer, DefaultLexer},
-    lr::{LRContext, LRParser},
-    parser::Parser,
-};
-
-pub struct RustemoLexer<'i>(DefaultLexer<'i, RustemoLexerDefinition>);
-
-pub struct RustemoParser<'i>(LRParser<&'i str, RustemoParserDefinition>);
-
-type RBuilder<'i> = RustemoBuilder<'i, <RustemoLexer<'i> as Lexer>::Input>;
+use rustemort::{builder::Builder, parser::Parser, lexer::Lexer};
 
 impl<'i> RustemoParser<'i> {
-    pub(in crate) fn parse(&mut self, lexer: RustemoLexer<'i>) -> Grammar {
-        let builder = RBuilder::new();
+    pub fn parse(&mut self, lexer: RustemoLexer<'i>) -> Grammar {
+        let builder = RustemoBuilder::<'_, <RustemoLexer as Lexer>::Input>::new();
         let pgfile = match self.0.parse(lexer, builder) {
             Symbol::NonTerminal(NonTerminal::PGFile(p)) => p,
             _ => {
@@ -31,39 +18,6 @@ impl<'i> RustemoParser<'i> {
             }
         };
         Grammar::from_pgfile(pgfile)
-    }
-}
-
-impl<'i> Default for RustemoParser<'i> {
-    fn default() -> Self {
-        Self(LRParser {
-            context: LRContext {
-                parse_stack: vec![StateIndex(0)],
-                current_state: StateIndex(0),
-                position: 0,
-                token: None,
-            },
-            definition: &PARSER_DEFINITION,
-        })
-    }
-}
-
-impl<'i> Lexer for RustemoLexer<'i> {
-    type Input = &'i str;
-
-    fn next_token(&self, context: &mut impl rustemort::parser::Context<Self::Input>) -> Option<rustemort::lexer::Token<Self::Input>> {
-        self.0.next_token(context)
-    }
-}
-
-// Enables creating a lexer from a reference to an object that can be converted
-// to a string reference.
-impl<'i, T> From<&'i T> for RustemoLexer<'i>
-where
-    T: AsRef<str> + ?Sized,
-{
-    fn from(input: &'i T) -> Self {
-        Self (DefaultLexer::new(input.as_ref(), &LEXER_DEFINITION))
     }
 }
 

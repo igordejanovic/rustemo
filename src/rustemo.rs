@@ -1,17 +1,17 @@
-// Generated on 2022-06-13 15:35:05.020449 from bootstrap.py. Do not edit!
+// Generated on 2022-06-13 15:47:20.136838 from bootstrap.py. Do not edit!
 
 use regex::Regex;
 use std::convert::TryFrom;
 
 use std::marker::PhantomData;
-use rustemort::lexer::{Lexer, Token, LexerDefinition, RecognizerIterator};
-use rustemort::lr::ParserDefinition;
-use rustemort::index::{StateIndex, TermIndex, NonTermIndex, ProdIndex};
+use rustemort::lexer::{Lexer, DefaultLexer, Token, LexerDefinition, RecognizerIterator};
+use rustemort::lr::{LRParser, LRContext, ParserDefinition};
 use rustemort::lr::Action::{self, Shift, Reduce, Accept, Error};
+use rustemort::parser::Parser;
+use rustemort::index::{StateIndex, TermIndex, NonTermIndex, ProdIndex};
 use rustemort::builder::Builder;
 use rustemort::grammar::{TerminalInfo, TerminalInfos, TerminalsState};
 use rustemort::debug::{log, logn};
-use super::parser::RustemoLexer;
 use super::rustemo_types::{TermKind, ProdKind, Terminal, NonTerminal, Symbol};
 
 use super::types::*;
@@ -553,6 +553,22 @@ impl ParserDefinition for RustemoParserDefinition {
     }
     fn goto(&self, state_index: StateIndex, nonterm_id: NonTermIndex) -> StateIndex {
         PARSER_DEFINITION.gotos[state_index.0][nonterm_id.0].unwrap()
+    }
+}
+
+pub struct RustemoParser<'i>(pub LRParser<&'i str, RustemoParserDefinition>);
+
+impl<'i> Default for RustemoParser<'i> {
+    fn default() -> Self {
+        Self(LRParser {
+            context: LRContext {
+                parse_stack: vec![StateIndex(0)],
+                current_state: StateIndex(0),
+                position: 0,
+                token: None,
+            },
+            definition: &PARSER_DEFINITION,
+        })
     }
 }
 
@@ -1589,6 +1605,29 @@ pub(in crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefi
    ]
 };
 
+pub struct RustemoLexer<'i>(DefaultLexer<'i, RustemoLexerDefinition>);
+
+impl<'i> Lexer for RustemoLexer<'i> {
+    type Input = &'i str;
+
+    fn next_token(
+        &self,
+        context: &mut impl rustemort::parser::Context<Self::Input>,
+    ) -> Option<rustemort::lexer::Token<Self::Input>> {
+        self.0.next_token(context)
+    }
+}
+
+// Enables creating a lexer from a reference to an object that can be converted
+// to a string reference.
+impl<'i, T> From<&'i T> for RustemoLexer<'i>
+where
+    T: AsRef<str> + ?Sized,
+{
+    fn from(input: &'i T) -> Self {
+        Self(DefaultLexer::new(input.as_ref(), &LEXER_DEFINITION))
+    }
+}
 
 impl LexerDefinition for RustemoLexerDefinition {
     type Recognizer = for<'i> fn(&'i str) -> Option<&'i str>;

@@ -361,7 +361,7 @@ mod tests {
     use rustemort::index::ProdIndex;
     use crate::{
         grammar::Grammar,
-        parser::RustemoParser,
+        rustemo::RustemoParser,
         table::{first_sets, LRItem},
     };
 
