@@ -1,6 +1,5 @@
 use super::{
     grammar::Grammar,
-    lexer::DefaultLexer,
     rustemo::{
         RustemoBuilder, RustemoLexerDefinition, RustemoParserDefinition, LEXER_DEFINITION,
         PARSER_DEFINITION,
@@ -11,7 +10,7 @@ use super::{
 use rustemort::{
     builder::Builder,
     index::StateIndex,
-    lexer::Lexer,
+    lexer::{Lexer, DefaultLexer},
     lr::{LRContext, LRParser},
     parser::Parser,
 };

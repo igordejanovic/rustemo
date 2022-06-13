@@ -1,4 +1,4 @@
-// Generated on 2022-06-13 11:23:58.210261 from bootstrap.py. Do not edit!
+// Generated on 2022-06-13 11:57:52.409162 from bootstrap.py. Do not edit!
 
 use num_enum::TryFromPrimitive;
 use super::types::*;

@@ -1,10 +1,10 @@
-// Generated on 2022-06-13 11:23:58.203481 from bootstrap.py. Do not edit!
+// Generated on 2022-06-13 11:57:52.402952 from bootstrap.py. Do not edit!
 
 use regex::Regex;
 use std::convert::TryFrom;
 
 use std::marker::PhantomData;
-use rustemort::lexer::{Lexer, Token};
+use rustemort::lexer::{Lexer, Token, LexerDefinition, RecognizerIterator};
 use rustemort::lr::ParserDefinition;
 use rustemort::index::{StateIndex, TermIndex, NonTermIndex, ProdIndex};
 use rustemort::lr::Action::{self, Shift, Reduce, Accept, Error};
@@ -16,7 +16,6 @@ use super::rustemo_types::{TermKind, ProdKind, Terminal, NonTerminal, Symbol};
 
 use super::types::*;
 
-use super::lexer::{LexerDefinition, RecognizerIterator};
 const TERMINAL_NO: usize = 44;
 const NONTERMINAL_NO: usize = 36;
 const STATE_NO: usize = 128;

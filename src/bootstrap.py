@@ -231,7 +231,7 @@ if __name__ == '__main__':
         f.write('use regex::Regex;\n')
         f.write('use std::convert::TryFrom;\n\n');
         f.write('use std::marker::PhantomData;\n')
-        f.write('use rustemort::lexer::{Lexer, Token};\n')
+        f.write('use rustemort::lexer::{Lexer, Token, LexerDefinition, RecognizerIterator};\n')
         f.write('use rustemort::lr::ParserDefinition;\n')
         f.write('use rustemort::index::{StateIndex, TermIndex, NonTermIndex, ProdIndex};\n')
         f.write('use rustemort::lr::Action::{self, Shift, Reduce, Accept, Error};\n')
@@ -241,7 +241,6 @@ if __name__ == '__main__':
         f.write('use super::parser::GrammarLexer;\n')
         f.write('use super::rustemo_types::{TermKind, ProdKind, Terminal, NonTerminal, Symbol};\n\n')
         f.write('use super::types::*;\n\n')
-        f.write('use super::lexer::{LexerDefinition, RecognizerIterator};\n')
 
         f.write(f'const TERMINAL_NO: usize = {no_terminals};\n')
         f.write(f'const NONTERMINAL_NO: usize = {no_nonterminals};\n')
