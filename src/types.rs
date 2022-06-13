@@ -1,6 +1,6 @@
 use indexmap::IndexMap;
 
-use crate::lexer::Token;
+use rustemort::lexer::Token;
 
 pub type StrConst = String;
 pub fn str_const<'i>(token: Token<&'i str>) -> StrConst {

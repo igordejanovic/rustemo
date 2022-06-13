@@ -4,7 +4,7 @@ use std::collections::HashSet;
 
 use indexmap::IndexMap;
 
-use crate::{
+use rustemort::{
     grammar::Priority,
     index::{NonTermVec, ProdIndex, StateIndex, SymbolIndex, SymbolVec, TermVec},
     lr::Action,
@@ -114,9 +114,9 @@ impl LRItem {
     }
 }
 
-pub(in crate::lang) struct LRTable {}
+pub(in crate) struct LRTable {}
 
-pub(in crate::lang) fn calculate_lr_tables(grammar: Grammar) {
+pub(in crate) fn calculate_lr_tables(grammar: Grammar) {
     let first_sets = first_sets(&grammar);
     check_empty_sets(&grammar, &first_sets);
     let follow_sets = follow_sets(&grammar, &first_sets);
@@ -358,13 +358,11 @@ mod tests {
 
     use std::collections::HashSet;
 
+    use rustemort::index::ProdIndex;
     use crate::{
-        index::ProdIndex,
-        lang::{
-            grammar::Grammar,
-            parser::GrammarParser,
-            table::{first_sets, LRItem},
-        },
+        grammar::Grammar,
+        parser::GrammarParser,
+        table::{first_sets, LRItem},
     };
 
     use super::follow_sets;

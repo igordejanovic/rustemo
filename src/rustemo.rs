@@ -1,16 +1,16 @@
-// Generated on 2022-02-07 13:48:15.092083 from bootstrap.py. Do not edit!
+// Generated on 2022-06-13 11:23:58.203481 from bootstrap.py. Do not edit!
 
 use regex::Regex;
 use std::convert::TryFrom;
 
 use std::marker::PhantomData;
-use crate::lexer::{Lexer, Token};
-use crate::lr::ParserDefinition;
-use crate::index::{StateIndex, TermIndex, NonTermIndex, ProdIndex};
-use crate::lr::Action::{self, Shift, Reduce, Accept, Error};
-use crate::builder::Builder;
-use crate::grammar::{TerminalInfo, TerminalInfos, TerminalsState};
-use crate::debug::{log, logn};
+use rustemort::lexer::{Lexer, Token};
+use rustemort::lr::ParserDefinition;
+use rustemort::index::{StateIndex, TermIndex, NonTermIndex, ProdIndex};
+use rustemort::lr::Action::{self, Shift, Reduce, Accept, Error};
+use rustemort::builder::Builder;
+use rustemort::grammar::{TerminalInfo, TerminalInfos, TerminalsState};
+use rustemort::debug::{log, logn};
 use super::parser::GrammarLexer;
 use super::rustemo_types::{TermKind, ProdKind, Terminal, NonTerminal, Symbol};
 
@@ -27,7 +27,7 @@ pub struct RustemoParserDefinition {
     gotos: [[Option<StateIndex>; NONTERMINAL_NO]; STATE_NO]
 }
 
-pub(in crate::lang) static PARSER_DEFINITION: RustemoParserDefinition = RustemoParserDefinition {
+pub(in crate) static PARSER_DEFINITION: RustemoParserDefinition = RustemoParserDefinition {
    actions: [
    // State 0:S'
     [Shift(StateIndex(4), TermIndex(0)), Shift(StateIndex(6), TermIndex(1)), Error, Error, Error, Shift(StateIndex(10), TermIndex(5)), Shift(StateIndex(8), TermIndex(6)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
@@ -563,7 +563,7 @@ pub struct RustemoLexerDefinition {
     recognizers: [fn(&str) -> Option<&str>; TERMINAL_NO]
 }
 
-pub(in crate::lang) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinition {
+pub(in crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinition {
    terminals: [
     TerminalInfo{
        id: TermIndex(0),

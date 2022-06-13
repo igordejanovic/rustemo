@@ -1,17 +1,9 @@
-// See: https://github.com/rust-lang/rfcs/issues/2324
-// For local std docs browsing
-#[doc(inline)]
-pub use std;
-
-mod builder;
-mod common;
-pub mod grammar;
-mod lang;
 mod lexer;
-mod lr;
-pub mod parser;
-pub mod tree;
-mod index;
-
-pub(crate) mod debug;
+mod parser;
+mod rustemo;
+mod rustemo_types;
+mod types;
+mod grammar;
+mod generator;
+mod table;
 pub(crate) mod tests;
