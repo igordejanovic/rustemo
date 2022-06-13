@@ -238,7 +238,7 @@ if __name__ == '__main__':
         f.write('use rustemort::builder::Builder;\n')
         f.write('use rustemort::grammar::{TerminalInfo, TerminalInfos, TerminalsState};\n')
         f.write('use rustemort::debug::{log, logn};\n')
-        f.write('use super::parser::GrammarLexer;\n')
+        f.write('use super::parser::RustemoLexer;\n')
         f.write('use super::rustemo_types::{TermKind, ProdKind, Terminal, NonTerminal, Symbol};\n\n')
         f.write('use super::types::*;\n\n')
 
@@ -312,7 +312,7 @@ if __name__ == '__main__':
         f.write('impl<\'i, I> Builder for RustemoBuilder<\'i, I>\n')
         f.write('{\n')
         f.write('    type Output = Symbol;\n')
-        f.write('    type Lexer = GrammarLexer<\'i>;\n')
+        f.write('    type Lexer = RustemoLexer<\'i>;\n')
         f.write('\n')
         f.write('    fn new() -> Self {\n')
         f.write('        RustemoBuilder {\n')

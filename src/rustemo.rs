@@ -1,4 +1,4 @@
-// Generated on 2022-06-13 11:57:52.402952 from bootstrap.py. Do not edit!
+// Generated on 2022-06-13 15:35:05.020449 from bootstrap.py. Do not edit!
 
 use regex::Regex;
 use std::convert::TryFrom;
@@ -11,7 +11,7 @@ use rustemort::lr::Action::{self, Shift, Reduce, Accept, Error};
 use rustemort::builder::Builder;
 use rustemort::grammar::{TerminalInfo, TerminalInfos, TerminalsState};
 use rustemort::debug::{log, logn};
-use super::parser::GrammarLexer;
+use super::parser::RustemoLexer;
 use super::rustemo_types::{TermKind, ProdKind, Terminal, NonTerminal, Symbol};
 
 use super::types::*;
@@ -1611,7 +1611,7 @@ pub struct RustemoBuilder<'i, I: 'i> {
 impl<'i, I> Builder for RustemoBuilder<'i, I>
 {
     type Output = Symbol;
-    type Lexer = GrammarLexer<'i>;
+    type Lexer = RustemoLexer<'i>;
 
     fn new() -> Self {
         RustemoBuilder {

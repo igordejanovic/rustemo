@@ -361,14 +361,14 @@ mod tests {
     use rustemort::index::ProdIndex;
     use crate::{
         grammar::Grammar,
-        parser::GrammarParser,
+        parser::RustemoParser,
         table::{first_sets, LRItem},
     };
 
     use super::follow_sets;
 
     fn test_grammar() -> Grammar {
-        GrammarParser::default().parse(
+        RustemoParser::default().parse(
             r#"
             E: T Ep;
             Ep: "+" T Ep | EMPTY;

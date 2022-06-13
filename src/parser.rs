@@ -15,14 +15,14 @@ use rustemort::{
     parser::Parser,
 };
 
-pub struct GrammarLexer<'i>(DefaultLexer<'i, RustemoLexerDefinition>);
+pub struct RustemoLexer<'i>(DefaultLexer<'i, RustemoLexerDefinition>);
 
-pub struct GrammarParser<'i>(LRParser<&'i str, RustemoParserDefinition>);
+pub struct RustemoParser<'i>(LRParser<&'i str, RustemoParserDefinition>);
 
-type RBuilder<'i> = RustemoBuilder<'i, <GrammarLexer<'i> as Lexer>::Input>;
+type RBuilder<'i> = RustemoBuilder<'i, <RustemoLexer<'i> as Lexer>::Input>;
 
-impl<'i> GrammarParser<'i> {
-    pub(in crate) fn parse(&mut self, lexer: GrammarLexer<'i>) -> Grammar {
+impl<'i> RustemoParser<'i> {
+    pub(in crate) fn parse(&mut self, lexer: RustemoLexer<'i>) -> Grammar {
         let builder = RBuilder::new();
         let pgfile = match self.0.parse(lexer, builder) {
             Symbol::NonTerminal(NonTerminal::PGFile(p)) => p,
@@ -34,7 +34,7 @@ impl<'i> GrammarParser<'i> {
     }
 }
 
-impl<'i> Default for GrammarParser<'i> {
+impl<'i> Default for RustemoParser<'i> {
     fn default() -> Self {
         Self(LRParser {
             context: LRContext {
@@ -48,7 +48,7 @@ impl<'i> Default for GrammarParser<'i> {
     }
 }
 
-impl<'i> Lexer for GrammarLexer<'i> {
+impl<'i> Lexer for RustemoLexer<'i> {
     type Input = &'i str;
 
     fn next_token(&self, context: &mut impl rustemort::parser::Context<Self::Input>) -> Option<rustemort::lexer::Token<Self::Input>> {
@@ -58,7 +58,7 @@ impl<'i> Lexer for GrammarLexer<'i> {
 
 // Enables creating a lexer from a reference to an object that can be converted
 // to a string reference.
-impl<'i, T> From<&'i T> for GrammarLexer<'i>
+impl<'i, T> From<&'i T> for RustemoLexer<'i>
 where
     T: AsRef<str> + ?Sized,
 {
@@ -77,7 +77,7 @@ mod tests {
 
     #[test]
     fn type_of_return() {
-        let grammar = GrammarParser::default().parse(
+        let grammar = RustemoParser::default().parse(
             r#"
              S: A B;
              A: "a";
@@ -97,7 +97,7 @@ mod tests {
         path.pop();
         path.push("rustemo.rustemo");
         let content: String = fs::read_to_string(&path).expect("Cannot load rustemo grammar!");
-        let grammar = GrammarParser::default().parse(content.as_str().into());
+        let grammar = RustemoParser::default().parse(content.as_str().into());
 
         path.pop();
         path.push("rustemo.parse_tree");

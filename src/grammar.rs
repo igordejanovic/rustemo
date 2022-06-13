@@ -433,11 +433,11 @@ impl Grammar {
 #[cfg(test)]
 mod tests {
     use rustemort::index::ProdIndex;
-    use crate::parser::GrammarParser;
+    use crate::parser::RustemoParser;
 
     #[test]
     fn create_terminals_1() {
-        let grammar = GrammarParser::default().parse(
+        let grammar = RustemoParser::default().parse(
             r#"
             S: "first_term" "second_term";
             "#
@@ -457,7 +457,7 @@ mod tests {
 
     #[test]
     fn create_terminals_2() {
-        let grammar = GrammarParser::default().parse(
+        let grammar = RustemoParser::default().parse(
             r#"
             S: "first_term" A "second_term";
             A: third_term;
@@ -480,7 +480,7 @@ mod tests {
 
     #[test]
     fn create_terminals_multiple() {
-        let grammar = GrammarParser::default().parse(
+        let grammar = RustemoParser::default().parse(
             r#"
             S: "first_term" A "second_term" "first_term";
             A: third_term "third_term" "first_term" second_term;
@@ -503,7 +503,7 @@ mod tests {
 
     #[test]
     fn terminals_regex() {
-        let grammar = GrammarParser::default().parse(
+        let grammar = RustemoParser::default().parse(
             r#"
             S: "foo" rmatch_term A;
             A: "some" "more_regex";
@@ -539,7 +539,7 @@ mod tests {
 
     #[test]
     fn nonterminals_productions() {
-        let grammar = GrammarParser::default().parse(
+        let grammar = RustemoParser::default().parse(
             r#"
             S: A "some_term" B | B;
             A: B;
