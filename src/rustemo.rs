@@ -7,7 +7,6 @@ use std::marker::PhantomData;
 use rustemort::lexer::{Lexer, DefaultLexer, Token, LexerDefinition, RecognizerIterator};
 use rustemort::lr::{LRParser, LRContext, ParserDefinition};
 use rustemort::lr::Action::{self, Shift, Reduce, Accept, Error};
-use rustemort::parser::Parser;
 use rustemort::index::{StateIndex, TermIndex, NonTermIndex, ProdIndex};
 use rustemort::builder::Builder;
 use rustemort::grammar::{TerminalInfo, TerminalInfos, TerminalsState};

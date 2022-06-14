@@ -234,7 +234,6 @@ if __name__ == '__main__':
         f.write('use rustemort::lexer::{Lexer, DefaultLexer, Token, LexerDefinition, RecognizerIterator};\n')
         f.write('use rustemort::lr::{LRParser, LRContext, ParserDefinition};\n')
         f.write('use rustemort::lr::Action::{self, Shift, Reduce, Accept, Error};\n')
-        f.write('use rustemort::parser::Parser;\n')
         f.write('use rustemort::index::{StateIndex, TermIndex, NonTermIndex, ProdIndex};\n')
         f.write('use rustemort::builder::Builder;\n')
         f.write('use rustemort::grammar::{TerminalInfo, TerminalInfos, TerminalsState};\n')
