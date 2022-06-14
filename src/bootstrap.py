@@ -240,7 +240,7 @@ if __name__ == '__main__':
         f.write('use rustemort::debug::{log, logn};\n')
         f.write('use super::parser::RustemoLexer;\n')
         f.write('use super::rustemo_types::{TermKind, ProdKind, Terminal, NonTerminal, Symbol};\n\n')
-        f.write('use super::types::*;\n\n')
+        f.write('use super::rustemo_actions::*;\n\n')
 
         f.write(f'const TERMINAL_NO: usize = {no_terminals};\n')
         f.write(f'const NONTERMINAL_NO: usize = {no_nonterminals};\n')
@@ -418,7 +418,7 @@ if __name__ == '__main__':
         f.write('// Generated on {} from bootstrap.py. Do not edit!\n\n'
                 .format(datetime.now()))
         f.write('use num_enum::TryFromPrimitive;\n')
-        f.write('use super::types::*;\n\n')
+        f.write('use super::rustemo_actions::*;\n\n')
 
         f.write('#[derive(Debug, Copy, Clone, TryFromPrimitive)]\n')
         f.write('#[repr(usize)]\n')

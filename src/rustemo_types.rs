@@ -1,7 +1,7 @@
 // Generated on 2022-06-13 15:47:20.143233 from bootstrap.py. Do not edit!
 
 use num_enum::TryFromPrimitive;
-use super::types::*;
+use super::rustemo_actions::*;
 
 #[derive(Debug, Copy, Clone, TryFromPrimitive)]
 #[repr(usize)]

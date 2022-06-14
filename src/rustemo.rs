@@ -13,7 +13,7 @@ use rustemort::grammar::{TerminalInfo, TerminalInfos, TerminalsState};
 use rustemort::debug::{log, logn};
 use super::rustemo_types::{TermKind, ProdKind, Terminal, NonTerminal, Symbol};
 
-use super::types::*;
+use super::rustemo_actions::*;
 
 const TERMINAL_NO: usize = 44;
 const NONTERMINAL_NO: usize = 36;

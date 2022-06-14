@@ -4,7 +4,7 @@ use rustemort::index::{
     NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, SymbolVec, TermIndex, TermVec,
 };
 
-use super::types::{
+use super::rustemo_actions::{
     GrammarRule, GrammarSymbol, Imports, PGFile, ProductionMetaDatas, Recognizer, TerminalMetaDatas,
 };
 
@@ -50,7 +50,7 @@ pub struct Production {
 
 impl Production {
     pub fn rhs_symbols(&self) -> Vec<SymbolIndex> {
-       self.rhs.iter().map(|a| res_symbol(a)).collect()
+        self.rhs.iter().map(|a| res_symbol(a)).collect()
     }
 }
 
@@ -208,18 +208,22 @@ impl Grammar {
                     rhs: production
                         .assignments
                         .into_iter()
-                        .map(|assignment| match assignment {
-                            super::types::Assignment::PlainAssignment(assign)
-                            | super::types::Assignment::BoolAssignment(assign) => Assignment {
-                                name: Some(assign.name),
-                                symbol: ResolvingSymbolIndex::Resolving(
-                                    assign.gsymref.gsymbol.unwrap(),
-                                ),
-                            },
-                            super::types::Assignment::GSymbolReference(reference) => Assignment {
-                                name: None,
-                                symbol: ResolvingSymbolIndex::Resolving(reference.gsymbol.unwrap()),
-                            },
+                        .map(|assignment| {
+                            use super::rustemo_actions::Assignment::*;
+                            match assignment {
+                                PlainAssignment(assign) | BoolAssignment(assign) => Assignment {
+                                    name: Some(assign.name),
+                                    symbol: ResolvingSymbolIndex::Resolving(
+                                        assign.gsymref.gsymbol.unwrap(),
+                                    ),
+                                },
+                                GSymbolReference(reference) => Assignment {
+                                    name: None,
+                                    symbol: ResolvingSymbolIndex::Resolving(
+                                        reference.gsymbol.unwrap(),
+                                    ),
+                                },
+                            }
                         })
                         .collect(),
                     meta: production.meta,
@@ -232,7 +236,7 @@ impl Grammar {
     }
 
     fn collect_terminals(
-        grammar_terminals: Vec<super::types::Terminal>,
+        grammar_terminals: Vec<super::rustemo_actions::Terminal>,
         terminals: &mut IndexMap<String, Terminal>,
     ) {
         let mut next_term_idx = TermIndex(1); // Account for STOP terminal
@@ -426,14 +430,18 @@ impl Grammar {
 
     #[inline]
     pub(crate) fn production_rhs_symbols(&self, prod: ProdIndex) -> Vec<SymbolIndex> {
-        self.productions()[prod].rhs.iter().map(|assgn| res_symbol(assgn)).collect()
+        self.productions()[prod]
+            .rhs
+            .iter()
+            .map(|assgn| res_symbol(assgn))
+            .collect()
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use rustemort::index::ProdIndex;
     use crate::rustemo::RustemoParser;
+    use rustemort::index::ProdIndex;
 
     #[test]
     fn create_terminals_1() {
@@ -531,8 +539,8 @@ mod tests {
             .as_ref()
             .unwrap()
             {
-                crate::types::Recognizer::StrConst(_) => false,
-                crate::types::Recognizer::RegExTerm(regex) => regex == term_regex,
+                crate::rustemo_actions::Recognizer::StrConst(_) => false,
+                crate::rustemo_actions::Recognizer::RegExTerm(regex) => regex == term_regex,
             });
         }
     }
