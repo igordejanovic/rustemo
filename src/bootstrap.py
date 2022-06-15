@@ -360,8 +360,8 @@ if __name__ == '__main__':
         f.write('        }\n')
         f.write('    }\n')
         f.write('\n')
-        f.write('    fn shift_action(&mut self, term_kind: TermIndex, token: Token<<Self::Lexer as Lexer>::Input>) {\n')
-        f.write('        let termval = match TermKind::try_from(term_kind.0).unwrap() {\n')
+        f.write('    fn shift_action(&mut self, term_idx: TermIndex, token: Token<<Self::Lexer as Lexer>::Input>) {\n')
+        f.write('        let termval = match TermKind::try_from(term_idx.0).unwrap() {\n')
         for t_name, idx in terminals.items():
             term = parser.grammar.terminals[t_name]
             t_name = terminal_name(t_name)
@@ -373,8 +373,8 @@ if __name__ == '__main__':
         f.write('        };\n')
         f.write('        self.res_stack.push(Symbol::Terminal(termval));\n')
         f.write('    }\n\n')
-        f.write('    fn reduce_action(&mut self, prod_kind: ProdIndex, prod_len: usize, _prod_str: &\'static str) {\n')
-        f.write('        let prod = match ProdKind::try_from(prod_kind.0).unwrap() {\n')
+        f.write('    fn reduce_action(&mut self, prod_idx: ProdIndex, prod_len: usize, _prod_str: &\'static str) {\n')
+        f.write('        let prod = match ProdKind::try_from(prod_idx.0).unwrap() {\n')
         for nt_name, nt in parser.grammar.nonterminals.items():
             if nt_name == 'S\'': continue
             nt_name = camel_case(nt_name)

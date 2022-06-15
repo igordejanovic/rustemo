@@ -1658,8 +1658,8 @@ impl<'i, I> Builder for RustemoBuilder<'i, I>
         }
     }
 
-    fn shift_action(&mut self, term_kind: TermIndex, token: Token<<Self::Lexer as Lexer>::Input>) {
-        let termval = match TermKind::try_from(term_kind.0).unwrap() {
+    fn shift_action(&mut self, term_idx: TermIndex, token: Token<<Self::Lexer as Lexer>::Input>) {
+        let termval = match TermKind::try_from(term_idx.0).unwrap() {
             TermKind::Terminals => Terminal::Terminals,
             TermKind::Import => Terminal::Import,
             TermKind::StrConst => Terminal::StrConst(str_const(token)),

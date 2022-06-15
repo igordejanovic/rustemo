@@ -114,17 +114,17 @@ where
             let action = self.definition.action(current_state, next_token.index());
 
             match action {
-                Shift(state_id, term_kind) => {
+                Shift(state_id, term_idx) => {
                     log!(
                         "Shifting to state {:?} with token {:?}",
                         state_id,
                         next_token
                     );
                     self.context.to_state(state_id);
-                    builder.shift_action(term_kind, next_token);
+                    builder.shift_action(term_idx, next_token);
                     next_token = self.next_token(&lexer);
                 }
-                Reduce(prod_kind, prod_len, nonterm_id, prod_str) => {
+                Reduce(prod_idx, prod_len, nonterm_id, prod_str) => {
                     log!(
                         "Reduce by production '{:?}', size {:?}, non-terminal {:?}",
                         prod_str,
@@ -135,7 +135,7 @@ where
                     let to_state = self.definition.goto(from_state, nonterm_id);
                     self.context.to_state(to_state);
                     log!("GOTO {:?} -> {:?}", from_state, to_state);
-                    builder.reduce_action(prod_kind, prod_len, prod_str);
+                    builder.reduce_action(prod_idx, prod_len, prod_str);
                 }
                 Accept => break,
                 Error => panic!("Error!"),
