@@ -4,7 +4,10 @@ pub(crate) mod utils {
         std::any::type_name::<T>()
     }
 
-    pub(crate) fn string_difference(a: &String, b: &String) -> Option<(usize, (char, char))> {
+    pub(crate) fn string_difference(
+        a: &String,
+        b: &String,
+    ) -> Option<(usize, (char, char))> {
         Some(
             a.chars()
                 .zip(b.chars())

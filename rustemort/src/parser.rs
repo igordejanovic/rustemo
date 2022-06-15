@@ -1,4 +1,8 @@
-use crate::{builder::Builder, lexer::{Lexer, Token}, index::StateIndex};
+use crate::{
+    builder::Builder,
+    index::StateIndex,
+    lexer::{Lexer, Token},
+};
 
 pub trait Parser<L, B>
 where

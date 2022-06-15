@@ -1,5 +1,4 @@
 #[allow(unused_macros)]
-
 #[macro_export]
 /// See <https://stackoverflow.com/questions/38141056/does-rust-have-a-debug-macro>
 #[cfg(debug_assertions)]

@@ -1,9 +1,9 @@
-use core::fmt::Debug;
 use crate::builder::Builder;
 use crate::debug::log;
-use crate::index::{StateIndex, TermIndex, NonTermIndex, ProdIndex};
+use crate::index::{NonTermIndex, ProdIndex, StateIndex, TermIndex};
 use crate::lexer::{Lexer, Token};
 use crate::parser::{Context, Parser};
+use core::fmt::Debug;
 
 #[derive(Debug)]
 pub struct LRContext<I> {
@@ -85,7 +85,10 @@ impl<I: Debug, D: ParserDefinition> LRParser<I, D> {
     }
 
     #[inline]
-    fn next_token<L: Lexer<Input=I>>(&mut self, lexer: &L) -> Token<L::Input> {
+    fn next_token<L: Lexer<Input = I>>(
+        &mut self,
+        lexer: &L,
+    ) -> Token<L::Input> {
         match lexer.next_token(&mut self.context) {
             Some(t) => t,
             None => {
@@ -99,7 +102,7 @@ impl<D, L, B, I> Parser<L, B> for LRParser<I, D>
 where
     D: ParserDefinition,
     I: Debug,
-    L: Lexer<Input=I>,
+    L: Lexer<Input = I>,
     B: Builder<Lexer = L>,
 {
     fn parse(&mut self, lexer: L, mut builder: B) -> B::Output {
@@ -111,7 +114,8 @@ where
             log!("Current state: {:?}", current_state);
             log!("Token ahead: {:?}", next_token);
 
-            let action = self.definition.action(current_state, next_token.index());
+            let action =
+                self.definition.action(current_state, next_token.index());
 
             match action {
                 Shift(state_id, term_idx) => {

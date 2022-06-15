@@ -1,5 +1,8 @@
-use std::{ops::{IndexMut, Index}, slice::Iter};
 use core::slice;
+use std::{
+    ops::{Index, IndexMut},
+    slice::Iter,
+};
 
 macro_rules! create_index {
     ($index:ident, $collection:ident) => {
@@ -11,7 +14,7 @@ macro_rules! create_index {
 
         impl<T> $collection<T> {
             pub const fn new() -> Self {
-            Self(Vec::new())
+                Self(Vec::new())
             }
 
             pub fn get(&self, index: $index) -> Option<&T> {
@@ -31,8 +34,7 @@ macro_rules! create_index {
             }
         }
 
-        impl<T> IntoIterator for $collection<T>
-        {
+        impl<T> IntoIterator for $collection<T> {
             type Item = T;
             type IntoIter = <Vec<T> as IntoIterator>::IntoIter;
 
@@ -85,7 +87,7 @@ macro_rules! create_index {
 
         impl Default for $index {
             fn default() -> Self {
-                Self(usize::MAX)    // invalid value by default
+                Self(usize::MAX) // invalid value by default
             }
         }
 
@@ -94,7 +96,7 @@ macro_rules! create_index {
                 Self(a)
             }
         }
-    }
+    };
 }
 
 create_index!(StateIndex, StateVec);

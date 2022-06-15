@@ -1,8 +1,9 @@
 use crate::{
-    debug::log,
     common::Location,
+    debug::log,
     grammar::TerminalInfo,
-    parser::Context, index::{TermIndex, StateIndex},
+    index::{StateIndex, TermIndex},
+    parser::Context,
 };
 use core::fmt::Debug;
 
@@ -16,7 +17,10 @@ pub trait Lexer {
     /// Given the current context, this method should generate next token or
     /// None if no token is found. It should update the given mutable context to
     /// reflect the current progress.
-    fn next_token(&self, context: &mut impl Context<Self::Input>) -> Option<Token<Self::Input>>;
+    fn next_token(
+        &self,
+        context: &mut impl Context<Self::Input>,
+    ) -> Option<Token<Self::Input>>;
 }
 
 /// `Token` represent a single token from the input stream.
@@ -75,7 +79,10 @@ where
     D: LexerDefinition<Recognizer = for<'a> fn(&'a str) -> Option<&'a str>>,
 {
     type Input = &'i str;
-    fn next_token(&self, context: &mut impl Context<Self::Input>) -> Option<Token<Self::Input>> {
+    fn next_token(
+        &self,
+        context: &mut impl Context<Self::Input>,
+    ) -> Option<Token<Self::Input>> {
         self.skip(context);
         log!(
             "Context: {}",
@@ -106,11 +113,11 @@ where
                 context.set_position(new_pos);
                 context.set_token_ahead(Some(t.clone()));
                 Some(t)
-            },
+            }
             None => {
                 context.set_token_ahead(None);
                 None
-            },
+            }
         }
     }
 }
@@ -119,7 +126,10 @@ pub trait LexerDefinition {
     type Recognizer;
     /// For the given state, returns iterator of recognizers that should be
     /// tried in order.
-    fn recognizers(&self, state_index: StateIndex) -> RecognizerIterator<Self::Recognizer>;
+    fn recognizers(
+        &self,
+        state_index: StateIndex,
+    ) -> RecognizerIterator<Self::Recognizer>;
 }
 
 pub struct RecognizerIterator<R: 'static> {
@@ -137,7 +147,10 @@ impl<R> Iterator for RecognizerIterator<R> {
             match self.terminals_for_state[self.index] {
                 Some(term_idx) => {
                     self.index += 1;
-                    Some((&self.recognizers[term_idx], &self.terminals[term_idx]))
+                    Some((
+                        &self.recognizers[term_idx],
+                        &self.terminals[term_idx],
+                    ))
                 }
                 None => None,
             }

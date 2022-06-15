@@ -74,7 +74,8 @@ pub type Priority = u8;
 // }
 
 pub type TerminalInfos<const T: usize> = [TerminalInfo; T];
-pub type TerminalsState<const T: usize, const S: usize> = [[Option<usize>; T]; S];
+pub type TerminalsState<const T: usize, const S: usize> =
+    [[Option<usize>; T]; S];
 // pub type Actions<const T: usize, const S: usize> = [[Action; T]; S];
 // pub type Gotos<const N: usize, const S: usize> = [[Option<usize>; N]; S];
 
@@ -93,4 +94,3 @@ pub struct NonTerminalInfo {
     #[cfg(debug_assertions)]
     pub production_str: &'static str,
 }
-

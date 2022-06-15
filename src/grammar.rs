@@ -1,11 +1,13 @@
 use indexmap::IndexMap;
 
 use rustemort::index::{
-    NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, SymbolVec, TermIndex, TermVec,
+    NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, SymbolVec,
+    TermIndex, TermVec,
 };
 
 use super::rustemo_actions::{
-    GrammarRule, GrammarSymbol, Imports, PGFile, ProductionMetaDatas, Recognizer, TerminalMetaDatas,
+    GrammarRule, GrammarSymbol, Imports, PGFile, ProductionMetaDatas,
+    Recognizer, TerminalMetaDatas,
 };
 
 #[derive(Debug)]
@@ -98,7 +100,11 @@ impl Grammar {
 
         // Extract productions and nonterminals from grammar rules.
         if let Some(rules) = pgfile.rules {
-            Grammar::extract_productions_and_symbols(rules, &mut nonterminals, &mut productions);
+            Grammar::extract_productions_and_symbols(
+                rules,
+                &mut nonterminals,
+                &mut productions,
+            );
         }
 
         // TODO: Desugaring. Related to the previous. Desugar repetitions and
@@ -110,10 +116,17 @@ impl Grammar {
         }
 
         // Create implicit terminals from string constants.
-        Grammar::create_terminals_from_productions(&productions, &mut terminals);
+        Grammar::create_terminals_from_productions(
+            &productions,
+            &mut terminals,
+        );
 
         // Resolve references in productions.
-        Grammar::resolve_references(&mut productions, &terminals, &nonterminals);
+        Grammar::resolve_references(
+            &mut productions,
+            &terminals,
+            &nonterminals,
+        );
 
         let term_len = terminals.len();
         Grammar {
@@ -133,7 +146,9 @@ impl Grammar {
             },
             nonterm_by_name: nonterminals
                 .values()
-                .map(|nt| (nt.name.to_string(), nt.idx.to_symbol_index(term_len)))
+                .map(|nt| {
+                    (nt.name.to_string(), nt.idx.to_symbol_index(term_len))
+                })
                 .collect(),
             nonterminals: if nonterminals.is_empty() {
                 None
@@ -211,7 +226,8 @@ impl Grammar {
                         .map(|assignment| {
                             use super::rustemo_actions::Assignment::*;
                             match assignment {
-                                PlainAssignment(assign) | BoolAssignment(assign) => Assignment {
+                                PlainAssignment(assign)
+                                | BoolAssignment(assign) => Assignment {
                                     name: Some(assign.name),
                                     symbol: ResolvingSymbolIndex::Resolving(
                                         assign.gsymref.gsymbol.unwrap(),
@@ -262,7 +278,8 @@ impl Grammar {
         let mut next_term_idx = TermIndex(terminals.len());
         for production in productions {
             for assign in &production.rhs {
-                if let ResolvingSymbolIndex::Resolving(symbol) = &assign.symbol {
+                if let ResolvingSymbolIndex::Resolving(symbol) = &assign.symbol
+                {
                     if let GrammarSymbol::StrConst(name) = symbol {
                         if !terminals.contains_key(name) {
                             terminals.insert(
@@ -271,7 +288,9 @@ impl Grammar {
                                     idx: next_term_idx,
                                     name: name.to_string(),
                                     action: None,
-                                    recognizer: Some(Recognizer::StrConst(name.to_string())),
+                                    recognizer: Some(Recognizer::StrConst(
+                                        name.to_string(),
+                                    )),
                                     meta: TerminalMetaDatas::new(),
                                 },
                             );
@@ -291,7 +310,8 @@ impl Grammar {
         // Resolve references.
         for production in productions {
             for assign in &mut production.rhs {
-                if let ResolvingSymbolIndex::Resolving(symbol) = &assign.symbol {
+                if let ResolvingSymbolIndex::Resolving(symbol) = &assign.symbol
+                {
                     match symbol {
                         GrammarSymbol::Name(name) => {
                             assign.symbol = ResolvingSymbolIndex::Resolved(
@@ -300,7 +320,12 @@ impl Grammar {
                                 } else {
                                     nonterminals
                                         .get(name)
-                                        .unwrap_or_else(|| panic!("unexisting symbol {:?}.", name))
+                                        .unwrap_or_else(|| {
+                                            panic!(
+                                                "unexisting symbol {:?}.",
+                                                name
+                                            )
+                                        })
                                         .idx
                                         .to_symbol_index(terminals.len())
                                 },
@@ -310,7 +335,12 @@ impl Grammar {
                             assign.symbol = ResolvingSymbolIndex::Resolved(
                                 terminals
                                     .get(name)
-                                    .unwrap_or_else(|| panic!("terminal {:?} not created!.", name))
+                                    .unwrap_or_else(|| {
+                                        panic!(
+                                            "terminal {:?} not created!.",
+                                            name
+                                        )
+                                    })
                                     .idx
                                     .to_symbol_index(),
                             )
@@ -349,7 +379,10 @@ impl Grammar {
         }
     }
 
-    pub(crate) fn symbol_indexes(&self, names: &[&str]) -> SymbolVec<SymbolIndex> {
+    pub(crate) fn symbol_indexes(
+        &self,
+        names: &[&str],
+    ) -> SymbolVec<SymbolIndex> {
         let mut indexes = SymbolVec::new();
         for name in names {
             indexes.push(self.symbol_index(name))
@@ -429,7 +462,10 @@ impl Grammar {
     }
 
     #[inline]
-    pub(crate) fn production_rhs_symbols(&self, prod: ProdIndex) -> Vec<SymbolIndex> {
+    pub(crate) fn production_rhs_symbols(
+        &self,
+        prod: ProdIndex,
+    ) -> Vec<SymbolIndex> {
         self.productions()[prod]
             .rhs
             .iter()
@@ -531,7 +567,8 @@ mod tests {
                 .collect::<Vec<_>>(),
             &["STOP", "rmatch_term", "more_regex", "foo", "some"]
         );
-        for (term_name, term_regex) in [("rmatch_term", r#""[^"]+""#), ("more_regex", r#"\d{2,5}"#)]
+        for (term_name, term_regex) in
+            [("rmatch_term", r#""[^"]+""#), ("more_regex", r#"\d{2,5}"#)]
         {
             assert!(match grammar.terminals.as_ref().unwrap()
                 [grammar.symbol_to_term(grammar.term_by_name[term_name])]
@@ -540,7 +577,8 @@ mod tests {
             .unwrap()
             {
                 crate::rustemo_actions::Recognizer::StrConst(_) => false,
-                crate::rustemo_actions::Recognizer::RegExTerm(regex) => regex == term_regex,
+                crate::rustemo_actions::Recognizer::RegExTerm(regex) =>
+                    regex == term_regex,
             });
         }
     }

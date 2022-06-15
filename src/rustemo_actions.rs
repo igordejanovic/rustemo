@@ -175,12 +175,20 @@ pub fn production_rule_p1(
     meta: ProductionMetaDatas,
     rhs: GrammarRuleRHS,
 ) -> GrammarRule {
-    GrammarRule { name, rhs, meta, action: None}
+    GrammarRule {
+        name,
+        rhs,
+        meta,
+        action: None,
+    }
 }
 
 pub type GrammarRuleRHS = Vec<Production>;
 pub type ProductionRuleRHS = GrammarRuleRHS;
-pub fn production_rule_rhsp0(mut rhs: GrammarRuleRHS, prod: Production) -> GrammarRuleRHS {
+pub fn production_rule_rhsp0(
+    mut rhs: GrammarRuleRHS,
+    prod: Production,
+) -> GrammarRuleRHS {
     rhs.push(prod);
     rhs
 }
@@ -199,7 +207,10 @@ pub fn production_p0(assignments: Assignments) -> Production {
         meta: ProductionMetaDatas::new(),
     }
 }
-pub fn production_p1(assignments: Assignments, meta: ProductionMetaDatas) -> Production {
+pub fn production_p1(
+    assignments: Assignments,
+    meta: ProductionMetaDatas,
+) -> Production {
     Production { assignments, meta }
 }
 
@@ -214,7 +225,10 @@ pub fn terminal_rules_p1(rule: Terminal) -> Terminals {
     vec![rule]
 }
 
-pub fn terminal_rule_with_action_p0(action: String, mut rule: Terminal) -> Terminal {
+pub fn terminal_rule_with_action_p0(
+    action: String,
+    mut rule: Terminal,
+) -> Terminal {
     rule.action = Some(action);
     rule
 }
@@ -311,7 +325,9 @@ pub fn production_meta_datas_p0(
     metas.extend(meta);
     metas
 }
-pub fn production_meta_datas_p1(meta: ProductionMetaData) -> ProductionMetaDatas {
+pub fn production_meta_datas_p1(
+    meta: ProductionMetaData,
+) -> ProductionMetaDatas {
     meta
 }
 
@@ -393,7 +409,10 @@ pub fn assignment_p2(gsymref: GrammarSymbolReference) -> Assignment {
 }
 
 pub type Assignments = Vec<Assignment>;
-pub fn assignments_p0(mut assigns: Assignments, assign: Assignment) -> Assignments {
+pub fn assignments_p0(
+    mut assigns: Assignments,
+    assign: Assignment,
+) -> Assignments {
     assigns.push(assign);
     assigns
 }
@@ -406,12 +425,18 @@ pub struct PlainAssignment {
     pub name: Name,
     pub gsymref: GrammarSymbolReference,
 }
-pub fn plain_assignment_p0(name: Name, gsymref: GrammarSymbolReference) -> PlainAssignment {
+pub fn plain_assignment_p0(
+    name: Name,
+    gsymref: GrammarSymbolReference,
+) -> PlainAssignment {
     PlainAssignment { name, gsymref }
 }
 
 pub type BoolAssignment = PlainAssignment;
-pub fn bool_assignment_p0(name: Name, gsymref: GrammarSymbolReference) -> BoolAssignment {
+pub fn bool_assignment_p0(
+    name: Name,
+    gsymref: GrammarSymbolReference,
+) -> BoolAssignment {
     BoolAssignment { name, gsymref }
 }
 
@@ -470,37 +495,49 @@ pub struct RepeatOperator {
     pub operator: RepeatOperatorEnum,
     pub rep_modifiers: OptionalRepeatModifiersExpression,
 }
-pub fn repeat_operator_p0(rep_modifiers: OptionalRepeatModifiersExpression) -> RepeatOperator {
+pub fn repeat_operator_p0(
+    rep_modifiers: OptionalRepeatModifiersExpression,
+) -> RepeatOperator {
     RepeatOperator {
         operator: RepeatOperatorEnum::ZeroOrMore,
         rep_modifiers,
     }
 }
-pub fn repeat_operator_p1(rep_modifiers: OptionalRepeatModifiersExpression) -> RepeatOperator {
+pub fn repeat_operator_p1(
+    rep_modifiers: OptionalRepeatModifiersExpression,
+) -> RepeatOperator {
     RepeatOperator {
         operator: RepeatOperatorEnum::ZeroOrMoreGreedy,
         rep_modifiers,
     }
 }
-pub fn repeat_operator_p2(rep_modifiers: OptionalRepeatModifiersExpression) -> RepeatOperator {
+pub fn repeat_operator_p2(
+    rep_modifiers: OptionalRepeatModifiersExpression,
+) -> RepeatOperator {
     RepeatOperator {
         operator: RepeatOperatorEnum::OneOrMore,
         rep_modifiers,
     }
 }
-pub fn repeat_operator_p3(rep_modifiers: OptionalRepeatModifiersExpression) -> RepeatOperator {
+pub fn repeat_operator_p3(
+    rep_modifiers: OptionalRepeatModifiersExpression,
+) -> RepeatOperator {
     RepeatOperator {
         operator: RepeatOperatorEnum::OneOrMoreGreedy,
         rep_modifiers,
     }
 }
-pub fn repeat_operator_p4(rep_modifiers: OptionalRepeatModifiersExpression) -> RepeatOperator {
+pub fn repeat_operator_p4(
+    rep_modifiers: OptionalRepeatModifiersExpression,
+) -> RepeatOperator {
     RepeatOperator {
         operator: RepeatOperatorEnum::Optional,
         rep_modifiers,
     }
 }
-pub fn repeat_operator_p5(rep_modifiers: OptionalRepeatModifiersExpression) -> RepeatOperator {
+pub fn repeat_operator_p5(
+    rep_modifiers: OptionalRepeatModifiersExpression,
+) -> RepeatOperator {
     RepeatOperator {
         operator: RepeatOperatorEnum::OptionalGreedy,
         rep_modifiers,
@@ -513,7 +550,8 @@ pub fn optional_repeat_modifiers_expression_p0(
 ) -> OptionalRepeatModifiersExpression {
     Some(opt_rep_modifiers)
 }
-pub fn optional_repeat_modifiers_expression_p1() -> OptionalRepeatModifiersExpression {
+pub fn optional_repeat_modifiers_expression_p1(
+) -> OptionalRepeatModifiersExpression {
     None
 }
 
@@ -525,7 +563,9 @@ pub fn optional_repeat_modifiers_p0(
     modifiers.push(modifier);
     modifiers
 }
-pub fn optional_repeat_modifiers_p1(modifier: OptionalRepeatModifier) -> OptionalRepeatModifiers {
+pub fn optional_repeat_modifiers_p1(
+    modifier: OptionalRepeatModifier,
+) -> OptionalRepeatModifiers {
     vec![modifier]
 }
 

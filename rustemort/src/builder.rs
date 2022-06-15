@@ -1,6 +1,7 @@
 use crate::{
+    index::{ProdIndex, TermIndex},
     lexer::{Lexer, Token},
-    tree::TreeNode, index::{TermIndex, ProdIndex},
+    tree::TreeNode,
 };
 
 /// Building output during semantic actions.
@@ -23,7 +24,11 @@ pub trait Builder {
     ///
     /// * `term_idx` - A terminal unique identifier - index.
     /// * `token` - A token recognized in the input.
-    fn shift_action(&mut self, term_idx: TermIndex, token: Token<<Self::Lexer as Lexer>::Input>);
+    fn shift_action(
+        &mut self,
+        term_idx: TermIndex,
+        token: Token<<Self::Lexer as Lexer>::Input>,
+    );
 
     /// Called when LR reduce is taking place.
     ///
@@ -33,7 +38,12 @@ pub trait Builder {
     ///                to perform.
     /// * `prod_len` - A RHS length, used to pop appropriate number of
     ///                subresults from the stack
-    fn reduce_action(&mut self, prod_idx: ProdIndex, prod_len: usize, prod_str: &'static str);
+    fn reduce_action(
+        &mut self,
+        prod_idx: ProdIndex,
+        prod_len: usize,
+        prod_str: &'static str,
+    );
 
     /// Returns the product of parsing. Usually the one and only element left on
     /// the result stack.
@@ -57,8 +67,14 @@ impl<L: Lexer> Builder for TreeBuilder<L> {
         self.res_stack.push(TreeNode::TermNode(token))
     }
 
-    fn reduce_action(&mut self, _prod_idx: ProdIndex, prod_len: usize, prod_str: &'static str) {
-        let children = self.res_stack.split_off(self.res_stack.len() - prod_len);
+    fn reduce_action(
+        &mut self,
+        _prod_idx: ProdIndex,
+        prod_len: usize,
+        prod_str: &'static str,
+    ) {
+        let children =
+            self.res_stack.split_off(self.res_stack.len() - prod_len);
         self.res_stack.push(TreeNode::NonTermNode {
             children,
             prod: prod_str,

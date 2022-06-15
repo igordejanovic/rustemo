@@ -14,11 +14,11 @@ where
                     grammar_path, error
                 );
             })
-            .as_str().into(),
+            .as_str()
+            .into(),
     );
 
     // TODO: Calculate tables
     //
     // TODO: Generate parser code.
-
 }

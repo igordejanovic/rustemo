@@ -6,7 +6,9 @@ use indexmap::IndexMap;
 
 use rustemort::{
     grammar::Priority,
-    index::{NonTermVec, ProdIndex, StateIndex, SymbolIndex, SymbolVec, TermVec},
+    index::{
+        NonTermVec, ProdIndex, StateIndex, SymbolIndex, SymbolVec, TermVec,
+    },
     lr::Action,
 };
 
@@ -66,7 +68,6 @@ impl PartialEq for LRItem {
         self.prod == other.prod && self.position == other.position
     }
 }
-
 
 /// LRItem is a production with a dot in the RHS.
 ///
@@ -173,7 +174,8 @@ pub(in crate) fn calculate_lr_tables(grammar: Grammar) {
         // Each production has a priority. But since productions are grouped by
         // grammar symbol that is ahead we take the maximal priority given for
         // all productions for the given grammar symbol.
-        let mut max_prior_per_symbol: IndexMap<SymbolIndex, Priority> = IndexMap::new();
+        let mut max_prior_per_symbol: IndexMap<SymbolIndex, Priority> =
+            IndexMap::new();
 
         for item in &state.items {
             let symbol = item.symbol_at_position(&grammar);
@@ -257,7 +259,11 @@ fn first_sets(grammar: &Grammar) -> FirstSets {
 /// Finds all terminals which can start the given sequence of symbols. Note that
 /// if all symbols in the sequence can derive EMPTY, EMPTY will be a part of the
 /// returned set.
-fn firsts(grammar: &Grammar, first_sets: &FirstSets, symbols: Vec<SymbolIndex>) -> Firsts {
+fn firsts(
+    grammar: &Grammar,
+    first_sets: &FirstSets,
+    symbols: Vec<SymbolIndex>,
+) -> Firsts {
     let mut firsts = Firsts::new();
     let mut break_out = false;
     for symbol in symbols {
@@ -316,8 +322,11 @@ fn follow_sets(grammar: &Grammar, first_sets: &FirstSets) -> FollowSets {
                 for rnext in &production.rhs[idx + 1..] {
                     let follow_symbols = &first_sets[res_symbol(rnext)];
 
-                    follow_sets[rhs_symbol]
-                        .extend(follow_symbols.iter().filter(|&&s| s != grammar.empty_index));
+                    follow_sets[rhs_symbol].extend(
+                        follow_symbols
+                            .iter()
+                            .filter(|&&s| s != grammar.empty_index),
+                    );
 
                     if !follow_symbols.contains(&grammar.empty_index) {
                         break_out = true;
@@ -329,7 +338,8 @@ fn follow_sets(grammar: &Grammar, first_sets: &FirstSets) -> FollowSets {
                     // Rule 3: If all symbols right of current RHS produce EMPTY
                     // then this RHS symbol must contain all what follows symbol
                     // at LHS.
-                    let lhs_follows: Follow = follow_sets[lhs_symbol].iter().copied().collect();
+                    let lhs_follows: Follow =
+                        follow_sets[lhs_symbol].iter().copied().collect();
                     follow_sets[rhs_symbol].extend(lhs_follows.iter());
                 }
 
@@ -357,11 +367,15 @@ fn closure(state: &mut LRState, grammar: &Grammar, first_sets: &FirstSets) {
                 if grammar.is_nonterm(symbol) {
                     let mut new_follow;
                     // Find first set of substring that follow symbol at position
-                    if item.position + 1 < grammar.productions()[item.prod].rhs.len() {
+                    if item.position + 1
+                        < grammar.productions()[item.prod].rhs.len()
+                    {
                         new_follow = firsts(
                             &grammar,
                             &first_sets,
-                            grammar.production_rhs_symbols(item.prod)[item.position + 1..].to_vec(),
+                            grammar.production_rhs_symbols(item.prod)
+                                [item.position + 1..]
+                                .to_vec(),
                         );
                         // If symbols that follows the current nonterminal can
                         // derive EMPTY add follows of current item.
@@ -379,7 +393,10 @@ fn closure(state: &mut LRState, grammar: &Grammar, first_sets: &FirstSets) {
                     // create LR items with the calculated follow.
                     let nonterm = grammar.symbol_to_nonterm(symbol);
                     for prod in &grammar.nonterminals()[nonterm].productions {
-                        new_items.insert(LRItem::new_follow(*prod, new_follow.clone()));
+                        new_items.insert(LRItem::new_follow(
+                            *prod,
+                            new_follow.clone(),
+                        ));
                     }
                 }
             }
@@ -397,12 +414,12 @@ mod tests {
 
     use std::collections::HashSet;
 
-    use rustemort::index::ProdIndex;
     use crate::{
         grammar::Grammar,
         rustemo::RustemoParser,
         table::{first_sets, LRItem},
     };
+    use rustemort::index::ProdIndex;
 
     use super::follow_sets;
 
@@ -484,7 +501,9 @@ mod tests {
         let prod = ProdIndex(1);
         let mut item = LRItem::new(prod);
         assert_eq!(
-            &grammar.symbol_names(&grammar.productions.as_ref().unwrap()[prod].rhs_symbols()),
+            &grammar.symbol_names(
+                &grammar.productions.as_ref().unwrap()[prod].rhs_symbols()
+            ),
             &["T", "Ep"]
         );
         assert_eq!(
