@@ -1,7 +1,7 @@
 #[allow(unused_macros)]
 
 #[macro_export]
-/// See https://stackoverflow.com/questions/38141056/does-rust-have-a-debug-macro
+/// See <https://stackoverflow.com/questions/38141056/does-rust-have-a-debug-macro>
 #[cfg(debug_assertions)]
 macro_rules! logn {
     ($( $args:expr ),*) => { print!( $( $args ),* ); }
@@ -29,6 +29,6 @@ macro_rules! logn {
     };
 }
 
-// See: https://stackoverflow.com/questions/26731243/how-do-i-use-a-macro-across-module-files
+// See: <https://stackoverflow.com/questions/26731243/how-do-i-use-a-macro-across-module-files>
 pub use log;
 pub use logn;
