@@ -67,6 +67,32 @@ impl PartialEq for LRItem {
     }
 }
 
+
+/// LRItem is a production with a dot in the RHS.
+///
+/// Intuitivelly, the dot signifies the position where the parsing process is in
+/// a given state. The beginning position is 0, before the first symbol in a
+/// production RHS. The end position is len(RHS), after the last symbol in a
+/// RHS.
+///
+/// LRItem also keeps a set of follow terminals. The item is valid only if the
+/// production is followed by a terminal from the given follow set.
+///
+/// # Example
+///
+/// ```rust
+/// // If prod with index 5 is A: B a C;
+/// let item = LRItem::new(5)
+///                 .next_item().unwrap()
+///                 .next_item().unwrap();
+/// assert_eq(&item.position, 2)
+/// ```
+///
+/// ```text
+/// A: B a . C;
+///        ^
+///        |------ position is 2
+/// ```
 impl LRItem {
     fn new(prod: ProdIndex) -> Self {
         LRItem {
@@ -116,6 +142,9 @@ impl LRItem {
 
 pub(in crate) struct LRTable {}
 
+/// Calculate LR table (all states with GOTOs and ACTIONs) for the given Grammar.
+///
+/// This table is used to drive LR/GLR parser.
 pub(in crate) fn calculate_lr_tables(grammar: Grammar) {
     let first_sets = first_sets(&grammar);
     check_empty_sets(&grammar, &first_sets);
@@ -156,6 +185,7 @@ pub(in crate) fn calculate_lr_tables(grammar: Grammar) {
 }
 
 /// Check for states with GOTO links but without SHIFT links.
+///
 /// This is invalid as GOTO links will never be traversed.
 fn check_empty_sets(grammar: &Grammar, first_sets: &FirstSets) {
     first_sets
@@ -172,7 +202,9 @@ fn check_empty_sets(grammar: &Grammar, first_sets: &FirstSets) {
 }
 
 /// Calculates the sets of terminals that can start the sentence derived from all
-/// grammar symbols. The Dragon book p. 221.
+/// grammar symbols.
+///
+/// The Dragon book p. 221.
 fn first_sets(grammar: &Grammar) -> FirstSets {
     let mut first_sets = SymbolVec::new();
 
@@ -223,7 +255,8 @@ fn first_sets(grammar: &Grammar) -> FirstSets {
 /// For the given sequence of symbols finds a set of FIRST terminals.
 ///
 /// Finds all terminals which can start the given sequence of symbols. Note that
-/// if all symbols in the sequence can derive EMPTY add EMPTY to the output.
+/// if all symbols in the sequence can derive EMPTY, EMPTY will be a part of the
+/// returned set.
 fn firsts(grammar: &Grammar, first_sets: &FirstSets, symbols: Vec<SymbolIndex>) -> Firsts {
     let mut firsts = Firsts::new();
     let mut break_out = false;
@@ -309,6 +342,12 @@ fn follow_sets(grammar: &Grammar, first_sets: &FirstSets) -> FollowSets {
     follow_sets
 }
 
+/// Closes over LR items of the given LRState.
+///
+/// Starting from the given items (usually just kernel items), for each item, if
+/// right of the dot is a non-terminal, adds all items where LHS is a given
+/// terminal and the dot is at the beginning. In other words, adds all missing
+/// non-kernel items.
 fn closure(state: &mut LRState, grammar: &Grammar, first_sets: &FirstSets) {
     loop {
         let mut new_items: HashSet<LRItem> = HashSet::new();
