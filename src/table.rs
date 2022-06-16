@@ -210,6 +210,7 @@ fn check_empty_sets(grammar: &Grammar, first_sets: &FirstSets) {
 fn first_sets(grammar: &Grammar) -> FirstSets {
     let mut first_sets = SymbolVec::new();
 
+    // First set for each terminal contains only the terminal itself.
     if let Some(ref terminals) = grammar.terminals {
         for terminal in terminals {
             let mut new_set = Firsts::new();
@@ -217,6 +218,8 @@ fn first_sets(grammar: &Grammar) -> FirstSets {
             first_sets.push(new_set);
         }
     }
+
+    // Initialize empty sets for nonterminals
     if let Some(ref nonterminals) = grammar.nonterminals {
         nonterminals
             .iter()
@@ -232,20 +235,14 @@ fn first_sets(grammar: &Grammar) -> FirstSets {
         for production in grammar.productions.as_ref().unwrap() {
             let lhs_nonterm = grammar.nonterm_to_symbol(production.nonterminal);
 
+            let rhs_firsts =
+                firsts(&grammar, &first_sets, production.rhs_symbols());
+
             let lhs_len = first_sets[lhs_nonterm].len();
-            let rhs_firsts = firsts(
-                &grammar,
-                &first_sets,
-                production
-                    .rhs
-                    .iter()
-                    .map(|assgn| res_symbol(assgn))
-                    .collect(),
-            );
 
             first_sets[lhs_nonterm].extend(rhs_firsts);
 
-            // Check if any addition is actuall performed.
+            // Check if any addition is actually performed.
             if lhs_len < first_sets[lhs_nonterm].len() {
                 additions = true
             }
