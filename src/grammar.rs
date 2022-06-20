@@ -42,17 +42,57 @@ pub struct NonTerminal {
     pub productions: Vec<ProdIndex>,
 }
 
+#[derive(Debug, PartialEq)]
+pub enum Associativity {
+    None,
+    Left,
+    Right,
+}
+
+impl Default for Associativity {
+    fn default() -> Self {
+        Associativity::None
+    }
+}
+
+type Priority = u32;
+const DEFAULT_PRIORITY: u32 = 10;
+
 #[derive(Debug)]
 pub struct Production {
     pub idx: ProdIndex,
     pub nonterminal: NonTermIndex,
     pub rhs: Vec<Assignment>,
+    pub assoc: Associativity,
+    pub prio: Priority,
+    pub dynamic: bool,
+    pub nops: bool,
+    pub nopse: bool,
     pub meta: ProductionMetaDatas,
+}
+
+impl Default for Production {
+    fn default() -> Self {
+        Self {
+            idx: Default::default(),
+            nonterminal: Default::default(),
+            rhs: Default::default(),
+            assoc: Default::default(),
+            prio: DEFAULT_PRIORITY,
+            dynamic: Default::default(),
+            nops: Default::default(),
+            nopse: Default::default(),
+            meta: Default::default(),
+        }
+    }
 }
 
 impl Production {
     pub fn rhs_symbols(&self) -> Vec<SymbolIndex> {
         self.rhs.iter().map(|a| res_symbol(a)).collect()
+    }
+    pub fn rhs_symbol(&self, pos: usize) -> SymbolIndex {
+        res_symbol(&self.rhs[pos])
     }
 }
 
@@ -198,7 +238,7 @@ impl Grammar {
                     rules[0].name.to_string(),
                 )),
             }],
-            meta: ProductionMetaDatas::new(),
+            ..Production::default()
         });
 
         for rule in rules {
@@ -217,7 +257,7 @@ impl Grammar {
             // Gather productions, create indexes. Transform RHS to mark
             // resolving references.
             for production in rule.rhs {
-                let new_production = Production {
+                let mut new_production = Production {
                     idx: next_prod_idx,
                     nonterminal: nonterminal.idx,
                     rhs: production
@@ -243,7 +283,30 @@ impl Grammar {
                         })
                         .collect(),
                     meta: production.meta,
+                    ..Production::default()
                 };
+
+                // Map meta-data to production fields for easier access
+                if let Some(meta) = new_production.meta.remove("priority") {
+                    new_production.prio = match meta {
+                        crate::rustemo_actions::Const::Int(p) => p,
+                        _ => panic!("Invalid Const!"),
+                    }
+                }
+
+                if let Some(_) = new_production.meta.remove("left") {
+                    new_production.assoc = Associativity::Left;
+                }
+                if let Some(_) = new_production.meta.remove("right") {
+                    new_production.assoc = Associativity::Right;
+                }
+                if let Some(_) = new_production.meta.remove("nops") {
+                    new_production.nops = true;
+                }
+                if let Some(_) = new_production.meta.remove("nopse") {
+                    new_production.nopse = true;
+                }
+
                 productions.push(new_production);
                 nonterminal.productions.push(next_prod_idx);
                 next_prod_idx.0 += 1;
@@ -476,7 +539,7 @@ impl Grammar {
 
 #[cfg(test)]
 mod tests {
-    use crate::rustemo::RustemoParser;
+    use crate::{rustemo::RustemoParser, grammar::Associativity};
     use rustemort::index::ProdIndex;
 
     #[test]
@@ -628,5 +691,32 @@ mod tests {
                 .collect::<Vec<_>>(),
             &[0, 1, 2, 3, 4]
         );
+    }
+
+
+    #[test]
+    fn productions_meta_data() {
+        let grammar = RustemoParser::default().parse(
+            r#"
+            S: A "some_term" B {5} | B {nops};
+            A: B {nopse, bla: 5};
+            B: some_term {right};
+            "#
+            .into(),
+        );
+        assert_eq!(grammar.productions.as_ref().unwrap().len(), 5);
+
+        assert_eq!(grammar.productions()[1.into()].prio, 5);
+        assert_eq!(grammar.productions()[1.into()].meta.len(), 0);
+
+        assert_eq!(grammar.productions()[2.into()].prio, 10);
+        assert!(grammar.productions()[2.into()].nops);
+        assert!(!grammar.productions()[2.into()].nopse);
+
+        assert_eq!(grammar.productions()[3.into()].prio, 10);
+        assert!(grammar.productions()[3.into()].nopse);
+        assert_eq!(grammar.productions()[3.into()].meta.len(), 1);
+
+        assert_eq!(grammar.productions()[4.into()].assoc, Associativity::Right);
     }
 }
