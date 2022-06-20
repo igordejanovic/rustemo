@@ -1,7 +1,4 @@
 use crate::{common::Location, index::TermIndex};
-use std::hash::Hash;
-
-pub type Priority = u8;
 
 // #[derive(Debug)]
 // struct Recognizer;

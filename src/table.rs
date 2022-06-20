@@ -1,16 +1,18 @@
 //! Calculating LR tables
 
-use std::collections::HashSet;
+use std::{cmp, collections::{HashSet, HashMap}, arch::x86_64::_SIDD_LEAST_SIGNIFICANT};
 
 use indexmap::IndexMap;
 
 use rustemort::{
-    grammar::Priority,
     index::{
-        NonTermVec, ProdIndex, StateIndex, SymbolIndex, SymbolVec, TermVec,
+        NonTermVec, ProdIndex, StateIndex, SymbolIndex, SymbolVec, TermIndex,
+        TermVec,
     },
     lr::Action,
 };
+
+use crate::grammar::Priority;
 
 use super::grammar::{res_symbol, Grammar};
 
@@ -21,11 +23,37 @@ type FirstSets = SymbolVec<Firsts>;
 
 /// LR State is a set of LR items and a dict of LR automata actions and gotos.
 struct LRState {
+    /// The index of this state.
     index: StateIndex,
+
+    /// The grammar symbol related to this state. Intuitivelly, the grammar
+    /// symbol seen on transition to this state. E.g. if the simbol is terminal
+    /// the parser did a Shift operation to enter this state, otherwise it did
+    /// reduce.
     symbol: SymbolIndex,
+
+    /// A set of LR(1) items used to construct this state.
     items: HashSet<LRItem>,
+
+    /// A terminal indexed vector of LR actions. Actions intruct LR parser to
+    /// Shift from the input, Reduce the top of the LR stack or accept the
+    /// input.
     actions: TermVec<Action>,
+
+    /// A non-terminal indexed vector of LR GOTOs. GOTOs represent transitions
+    /// to another state after successful reduction of a non-terminal.
     gotos: NonTermVec<Option<StateIndex>>,
+
+    // Each production has a priority. We use this priority to resolve S/R
+    // and R/R conflicts. Since the Shift operation is executed over
+    // terminal symbol to resolve S/R we need terminal priority. But, the
+    // priority given for a terminal directly is used in lexical
+    // disambiguation. Instead, we need terminal priority iherited from
+    // productions. We, say that the priority of terminals in S/R resolution
+    // will be the priority of the productiction terminal is used in. But,
+    // since the same terminal can be used in many production we will take
+    // the maximum for S/R resolution.
+    max_prior_for_term: HashMap<TermIndex, Priority>,
 }
 
 impl LRState {
@@ -36,6 +64,7 @@ impl LRState {
             items: HashSet::new(),
             actions: grammar.new_termvec(Action::Error),
             gotos: grammar.new_nontermvec(None),
+            max_prior_for_term: HashMap::new(),
         }
     }
 
@@ -111,7 +140,7 @@ impl LRItem {
         }
     }
 
-    fn add_follow(&mut self, symbol: SymbolIndex) -> &Self {
+    fn add_follow(mut self, symbol: SymbolIndex) -> Self {
         self.follow.insert(symbol);
         self
     }
@@ -152,7 +181,7 @@ pub(in crate) fn calculate_lr_tables(grammar: Grammar) {
     let follow_sets = follow_sets(&grammar, &first_sets);
 
     let mut state = LRState::new(&grammar, StateIndex(0), grammar.start_index);
-    state.add_item(LRItem::new(ProdIndex(0)));
+    state.add_item(LRItem::new_follow(ProdIndex(0), Follow::new()));
 
     let mut state_queue = vec![state];
     let mut states = vec![];
@@ -163,26 +192,31 @@ pub(in crate) fn calculate_lr_tables(grammar: Grammar) {
         // will also calculate GOTO and ACTIONS dicts for each state. These
         // dicts will be keyed by a grammar symbol.
         closure(&mut state, &grammar, &first_sets);
-        states.push(state);
-        let state = states.last().unwrap();
 
         // To find out other states we examine following grammar symbols in the
         // current state (symbols following current position/"dot") and group
         // all items by a grammar symbol.
         let mut per_next_symbol = IndexMap::new();
 
-        // Each production has a priority. But since productions are grouped by
-        // grammar symbol that is ahead we take the maximal priority given for
-        // all productions for the given grammar symbol.
-        let mut max_prior_per_symbol: IndexMap<SymbolIndex, Priority> =
-            IndexMap::new();
-
+        // Group LR items per grammar symbol right of the dot, and calculate
+        // terminal max priorities.
         for item in &state.items {
             let symbol = item.symbol_at_position(&grammar);
             if let Some(symbol) = symbol {
                 per_next_symbol.entry(symbol).or_insert(vec![]).push(item);
+                if grammar.is_term(symbol) {
+                    let symbol = grammar.symbol_to_term(symbol);
+                    let prod_prio = grammar.productions()[item.prod].prio;
+                    state
+                        .max_prior_for_term
+                        .entry(symbol)
+                        .and_modify(|v| *v = cmp::max(*v, prod_prio))
+                        .or_insert(prod_prio);
+                }
             }
         }
+
+        states.push(state);
     }
 }
 
@@ -313,7 +347,7 @@ fn follow_sets(grammar: &Grammar, first_sets: &FirstSets) -> FollowSets {
             // Rule 2: If there is a production A -> α B β then everything in
             // FIRST(β) except EMPTY is in FOLLOW(B).
             for idx in 0..production.rhs.len() {
-                let rhs_symbol = res_symbol(&production.rhs[idx]);
+                let rhs_symbol = production.rhs_symbol(idx);
                 let elements = follow_sets[rhs_symbol].len();
                 let mut break_out = false;
                 for rnext in &production.rhs[idx + 1..] {
@@ -416,9 +450,9 @@ mod tests {
         rustemo::RustemoParser,
         table::{first_sets, LRItem},
     };
-    use rustemort::index::ProdIndex;
+    use rustemort::index::{ProdIndex, StateIndex};
 
-    use super::follow_sets;
+    use super::{follow_sets, LRState};
 
     fn test_grammar() -> Grammar {
         RustemoParser::default().parse(
@@ -445,6 +479,7 @@ mod tests {
             &first_sets[grammar.symbol_index("id")],
             &HashSet::from_iter(grammar.symbol_indexes(&["id"]))
         );
+
         assert_eq!(
             &first_sets[grammar.symbol_index("F")],
             &HashSet::from_iter(grammar.symbol_indexes(&["(", "id"]))
@@ -516,5 +551,14 @@ mod tests {
         assert!(item.symbol_at_position(&grammar).is_none());
         item.position = 3;
         assert!(item.symbol_at_position(&grammar).is_none());
+    }
+
+    #[test]
+    fn test_closure() {
+        let grammar = test_grammar();
+
+        // Create some LR state
+        let lr_state =
+            LRState::new(&grammar, StateIndex(0), grammar.symbol_index("T"));
     }
 }

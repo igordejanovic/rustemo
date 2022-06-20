@@ -55,8 +55,8 @@ impl Default for Associativity {
     }
 }
 
-type Priority = u32;
-const DEFAULT_PRIORITY: u32 = 10;
+pub type Priority = u32;
+pub const DEFAULT_PRIORITY: u32 = 10;
 
 #[derive(Debug)]
 pub struct Production {
