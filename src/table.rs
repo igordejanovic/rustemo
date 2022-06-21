@@ -34,8 +34,8 @@ struct LRState {
     /// The index of this state.
     index: StateIndex,
 
-    /// The grammar symbol related to this state. Intuitivelly, the grammar
-    /// symbol seen on transition to this state. E.g. if the simbol is terminal
+    /// The grammar symbol related to this state. Intuitively, the grammar
+    /// symbol seen on transition to this state. E.g. if the symbol is terminal
     /// the parser did a Shift operation to enter this state, otherwise it did
     /// reduce.
     symbol: SymbolIndex,
@@ -43,7 +43,7 @@ struct LRState {
     /// LR(1) items used to construct this state.
     items: ItemVec<LRItem>,
 
-    /// A terminal indexed vector of LR actions. Actions intruct LR parser to
+    /// A terminal indexed vector of LR actions. Actions instruct LR parser to
     /// Shift from the input, Reduce the top of the LR stack or accept the
     /// input.
     actions: TermVec<Action>,
@@ -56,9 +56,9 @@ struct LRState {
     // and R/R conflicts. Since the Shift operation is executed over
     // terminal symbol to resolve S/R we need terminal priority. But, the
     // priority given for a terminal directly is used in lexical
-    // disambiguation. Instead, we need terminal priority iherited from
+    // disambiguation. Instead, we need terminal priority inherited from
     // productions. We, say that the priority of terminals in S/R resolution
-    // will be the priority of the productiction terminal is used in. But,
+    // will be the priority of the production terminal is used in. But,
     // since the same terminal can be used in many production we will take
     // the maximum for S/R resolution.
     max_prior_for_term: HashMap<TermIndex, Priority>,
@@ -108,7 +108,7 @@ impl PartialEq for LRItem {
 
 /// LRItem is a production with a dot in the RHS.
 ///
-/// Intuitivelly, the dot signifies the position where the parsing process is in
+/// Intuitively, the dot signifies the position where the parsing process is in
 /// a given state. The beginning position is 0, before the first symbol in a
 /// production RHS. The end position is len(RHS), after the last symbol in a
 /// RHS.
