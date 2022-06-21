@@ -45,8 +45,9 @@ struct LRState {
 
     /// A terminal indexed vector of LR actions. Actions instruct LR parser to
     /// Shift from the input, Reduce the top of the LR stack or accept the
-    /// input.
-    actions: TermVec<Action>,
+    /// input. For the deterministic parsing the vector of action can contain only
+    /// one action.
+    actions: TermVec<Vec<Action>>,
 
     /// A non-terminal indexed vector of LR GOTOs. GOTOs represent transitions
     /// to another state after successful reduction of a non-terminal.
@@ -70,7 +71,23 @@ impl LRState {
             index,
             symbol,
             items: ItemVec::new(),
-            actions: grammar.new_termvec(Action::Error),
+            actions: grammar.new_termvec(vec![Action::Error]),
+            gotos: grammar.new_nontermvec(None),
+            max_prior_for_term: HashMap::new(),
+        }
+    }
+
+    fn new_with_items(
+        grammar: &Grammar,
+        index: StateIndex,
+        symbol: SymbolIndex,
+        items: ItemVec<LRItem>,
+    ) -> Self {
+        Self {
+            index,
+            symbol,
+            items,
+            actions: grammar.new_termvec(vec![Action::Error]),
             gotos: grammar.new_nontermvec(None),
             max_prior_for_term: HashMap::new(),
         }
@@ -86,7 +103,7 @@ impl LRState {
 /// position inside production (the dot). If the item is of LR_1 type follow set
 /// is also defined. Follow set is a set of terminals that can follow symbol at
 /// the given position in the given production.
-#[derive(Debug, Eq)]
+#[derive(Debug, Eq, Clone)]
 struct LRItem {
     prod: ProdIndex,
     position: usize,
@@ -176,6 +193,15 @@ impl LRItem {
             None
         }
     }
+
+    fn inc_position(mut self) -> Self {
+        self.position += 1;
+        self
+    }
+
+    fn is_kernel(&self) -> bool {
+        self.position > 0 || self.prod == ProdIndex(0)
+    }
 }
 
 pub(in crate) struct LRTable {}
@@ -191,8 +217,13 @@ pub(in crate) fn calculate_lr_tables(grammar: Grammar) {
     let state = LRState::new(&grammar, StateIndex(0), grammar.start_index)
         .add_item(LRItem::new_follow(ProdIndex(0), Follow::new()));
 
+    // States to be processed.
     let mut state_queue = vec![state];
+    // Finished states.
     let mut states = vec![];
+
+    let mut state_idx: usize = 1;
+
     while let Some(mut state) = state_queue.pop() {
         // For each state calculate its closure first, i.e. starting from a so
         // called "kernel items" expand collection with non-kernel items. We
@@ -205,7 +236,64 @@ pub(in crate) fn calculate_lr_tables(grammar: Grammar) {
         // all items by a grammar symbol.
         let per_next_symbol = group_per_next_symbol(&grammar, &mut state);
 
+        // Create new states reachable from the current state. Updates current
+        // state actions.
+        create_new_states(
+            &grammar,
+            &mut state,
+            &states,
+            &mut state_queue,
+            per_next_symbol,
+            state_idx,
+        );
+
+        propagate_follows();
+
+        calculate_reductions();
+
+
         states.push(state);
+    }
+}
+
+/// Calculate reductions entries in action tables and resolve possible
+/// conflicts.
+fn calculate_reductions() {
+    todo!()
+}
+
+/// Update follow sets by propagation for each LR item.
+fn propagate_follows() {
+    todo!()
+}
+
+/// Create new states that can be reached from the given state and update
+/// actions.
+fn create_new_states(
+    grammar: &Grammar,
+    state: &mut LRState,
+    states: &[LRState],
+    state_queue: &mut [LRState],
+    per_next_symbol: IndexMap<SymbolIndex, Vec<ItemIndex>>,
+    state_idx: usize,
+) {
+    // Create next states
+    for (symbol, items) in per_next_symbol {
+        if symbol == grammar.stop_index {
+            state.actions[grammar.symbol_to_term(symbol)] =
+                vec![Action::Accept];
+            continue;
+        }
+        let next_state_items = items
+            .into_iter()
+            .map(|i| state.items[i].clone())
+            .map(|i| i.inc_position()).collect();
+        let maybe_new_state = LRState::new_with_items(
+            &grammar,
+            state_idx.into(),
+            symbol,
+            next_state_items,
+        );
     }
 }
 
@@ -466,7 +554,7 @@ mod tests {
     use crate::{
         grammar::Grammar,
         rustemo::RustemoParser,
-        table::{first_sets, Follow, LRItem, ItemIndex},
+        table::{first_sets, Follow, ItemIndex, LRItem},
     };
     use rustemort::{
         index::{ProdIndex, StateIndex, SymbolIndex},
@@ -620,10 +708,15 @@ mod tests {
         assert_eq!(per_next_symbol.len(), 3);
         assert_eq!(
             per_next_symbol.keys().cloned().collect::<Vec<_>>(),
-            vec![1, 2, 4].iter().map(|v| SymbolIndex(*v)).collect::<Vec<_>>());
+            vec![1, 2, 4]
+                .iter()
+                .map(|v| SymbolIndex(*v))
+                .collect::<Vec<_>>()
+        );
         assert_eq!(
             per_next_symbol.values().cloned().collect::<Vec<_>>(),
-            vec![vec![0.into()], vec![1.into()], vec![2.into()]]);
+            vec![vec![0.into()], vec![1.into()], vec![2.into()]]
+        );
 
         // Check production based term priorities
         assert_eq!(
