@@ -1,9 +1,9 @@
-use core::slice;
 use std::{
     ops::{Index, IndexMut},
-    slice::Iter,
+    slice::{Iter, IterMut},
 };
 
+#[macro_export]
 macro_rules! create_index {
     ($index:ident, $collection:ident) => {
         #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
@@ -46,20 +46,20 @@ macro_rules! create_index {
 
         impl<'a, T> IntoIterator for &'a $collection<T> {
             type Item = &'a T;
-            type IntoIter = slice::Iter<'a, T>;
+            type IntoIter = Iter<'a, T>;
 
             #[inline]
-            fn into_iter(self) -> slice::Iter<'a, T> {
+            fn into_iter(self) -> Iter<'a, T> {
                 self.0.iter()
             }
         }
 
         impl<'a, T> IntoIterator for &'a mut $collection<T> {
             type Item = &'a mut T;
-            type IntoIter = slice::IterMut<'a, T>;
+            type IntoIter = IterMut<'a, T>;
 
             #[inline]
-            fn into_iter(self) -> slice::IterMut<'a, T> {
+            fn into_iter(self) -> IterMut<'a, T> {
                 self.0.iter_mut()
             }
         }

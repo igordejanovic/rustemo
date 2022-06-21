@@ -1,10 +1,16 @@
 //! Calculating LR tables
 
-use std::{cmp, collections::{HashSet, HashMap}, arch::x86_64::_SIDD_LEAST_SIGNIFICANT};
+use std::{
+    cmp,
+    collections::{HashMap, HashSet},
+    ops::{Index, IndexMut},
+    slice::{Iter, IterMut},
+};
 
 use indexmap::IndexMap;
 
 use rustemort::{
+    create_index,
     index::{
         NonTermVec, ProdIndex, StateIndex, SymbolIndex, SymbolVec, TermIndex,
         TermVec,
@@ -21,6 +27,8 @@ type FollowSets = SymbolVec<Follow>;
 type Firsts = HashSet<SymbolIndex>;
 type FirstSets = SymbolVec<Firsts>;
 
+create_index!(ItemIndex, ItemVec);
+
 /// LR State is a set of LR items and a dict of LR automata actions and gotos.
 struct LRState {
     /// The index of this state.
@@ -32,8 +40,8 @@ struct LRState {
     /// reduce.
     symbol: SymbolIndex,
 
-    /// A set of LR(1) items used to construct this state.
-    items: HashSet<LRItem>,
+    /// LR(1) items used to construct this state.
+    items: ItemVec<LRItem>,
 
     /// A terminal indexed vector of LR actions. Actions intruct LR parser to
     /// Shift from the input, Reduce the top of the LR stack or accept the
@@ -61,15 +69,15 @@ impl LRState {
         Self {
             index,
             symbol,
-            items: HashSet::new(),
+            items: ItemVec::new(),
             actions: grammar.new_termvec(Action::Error),
             gotos: grammar.new_nontermvec(None),
             max_prior_for_term: HashMap::new(),
         }
     }
 
-    fn add_item(&mut self, item: LRItem) -> &Self {
-        self.items.insert(item);
+    fn add_item(mut self, item: LRItem) -> Self {
+        self.items.push(item);
         self
     }
 }
@@ -78,7 +86,7 @@ impl LRState {
 /// position inside production (the dot). If the item is of LR_1 type follow set
 /// is also defined. Follow set is a set of terminals that can follow symbol at
 /// the given position in the given production.
-#[derive(Eq)]
+#[derive(Debug, Eq)]
 struct LRItem {
     prod: ProdIndex,
     position: usize,
@@ -180,12 +188,11 @@ pub(in crate) fn calculate_lr_tables(grammar: Grammar) {
     check_empty_sets(&grammar, &first_sets);
     let follow_sets = follow_sets(&grammar, &first_sets);
 
-    let mut state = LRState::new(&grammar, StateIndex(0), grammar.start_index);
-    state.add_item(LRItem::new_follow(ProdIndex(0), Follow::new()));
+    let state = LRState::new(&grammar, StateIndex(0), grammar.start_index)
+        .add_item(LRItem::new_follow(ProdIndex(0), Follow::new()));
 
     let mut state_queue = vec![state];
     let mut states = vec![];
-
     while let Some(mut state) = state_queue.pop() {
         // For each state calculate its closure first, i.e. starting from a so
         // called "kernel items" expand collection with non-kernel items. We
@@ -196,28 +203,39 @@ pub(in crate) fn calculate_lr_tables(grammar: Grammar) {
         // To find out other states we examine following grammar symbols in the
         // current state (symbols following current position/"dot") and group
         // all items by a grammar symbol.
-        let mut per_next_symbol = IndexMap::new();
-
-        // Group LR items per grammar symbol right of the dot, and calculate
-        // terminal max priorities.
-        for item in &state.items {
-            let symbol = item.symbol_at_position(&grammar);
-            if let Some(symbol) = symbol {
-                per_next_symbol.entry(symbol).or_insert(vec![]).push(item);
-                if grammar.is_term(symbol) {
-                    let symbol = grammar.symbol_to_term(symbol);
-                    let prod_prio = grammar.productions()[item.prod].prio;
-                    state
-                        .max_prior_for_term
-                        .entry(symbol)
-                        .and_modify(|v| *v = cmp::max(*v, prod_prio))
-                        .or_insert(prod_prio);
-                }
-            }
-        }
+        let per_next_symbol = group_per_next_symbol(&grammar, &mut state);
 
         states.push(state);
     }
+}
+
+/// Group LR items per grammar symbol right of the dot, and calculate
+/// terminal max priorities.
+fn group_per_next_symbol(
+    grammar: &Grammar,
+    state: &mut LRState,
+) -> IndexMap<SymbolIndex, Vec<ItemIndex>> {
+    let mut per_next_symbol = IndexMap::new();
+
+    for (idx, item) in state.items.iter().enumerate() {
+        let symbol = item.symbol_at_position(&grammar);
+        if let Some(symbol) = symbol {
+            per_next_symbol
+                .entry(symbol)
+                .or_insert(vec![])
+                .push(idx.into());
+            if grammar.is_term(symbol) {
+                let symbol = grammar.symbol_to_term(symbol);
+                let prod_prio = grammar.productions()[item.prod].prio;
+                state
+                    .max_prior_for_term
+                    .entry(symbol)
+                    .and_modify(|v| *v = cmp::max(*v, prod_prio))
+                    .or_insert(prod_prio);
+            }
+        }
+    }
+    per_next_symbol
 }
 
 /// Check for states with GOTO links but without SHIFT links.
@@ -448,11 +466,14 @@ mod tests {
     use crate::{
         grammar::Grammar,
         rustemo::RustemoParser,
-        table::{first_sets, LRItem},
+        table::{first_sets, Follow, LRItem, ItemIndex},
     };
-    use rustemort::index::{ProdIndex, StateIndex};
+    use rustemort::{
+        index::{ProdIndex, StateIndex, SymbolIndex},
+        log,
+    };
 
-    use super::{follow_sets, LRState};
+    use super::{follow_sets, group_per_next_symbol, LRState};
 
     fn test_grammar() -> Grammar {
         RustemoParser::default().parse(
@@ -462,6 +483,18 @@ mod tests {
             T: F Tp;
             Tp: "*" F Tp | EMPTY;
             F: "(" E ")" | "id";
+            "#
+            .into(),
+        )
+    }
+
+    fn test_ambiguous_grammar() -> Grammar {
+        RustemoParser::default().parse(
+            r#"
+            E: E "+" E {1, left}
+             | E "*" E {2, left}
+             | "(" E ")"
+             | "id";
             "#
             .into(),
         )
@@ -551,6 +584,58 @@ mod tests {
         assert!(item.symbol_at_position(&grammar).is_none());
         item.position = 3;
         assert!(item.symbol_at_position(&grammar).is_none());
+    }
+
+    #[test]
+    fn test_group_per_next_symbol() {
+        let grammar = test_ambiguous_grammar();
+
+        // Create some LR state
+        let mut lr_state =
+            LRState::new(&grammar, 0.into(), grammar.symbol_index("E"))
+                .add_item(LRItem {
+                    prod: 1.into(),
+                    position: 1,
+                    follow: Follow::new(),
+                })
+                .add_item(LRItem {
+                    prod: 2.into(),
+                    position: 1,
+                    follow: Follow::new(),
+                })
+                .add_item(LRItem {
+                    prod: 3.into(),
+                    position: 2,
+                    follow: Follow::new(),
+                });
+
+        let per_next_symbol = group_per_next_symbol(&grammar, &mut lr_state);
+
+        //log!("Symbols: {:?}", grammar.symbol_names(per_next_symbol.keys()));
+        // Symbols: ["+", "*", ")"]
+        //log!("Pernext: {:?}", per_next_symbol);
+        // Pernext: {SymbolIndex(1): [ItemIndex(0)], SymbolIndex(2): [ItemIndex(1)], SymbolIndex(4): [ItemIndex(2)]}
+
+        // Check items grouping per symbol
+        assert_eq!(per_next_symbol.len(), 3);
+        assert_eq!(
+            per_next_symbol.keys().cloned().collect::<Vec<_>>(),
+            vec![1, 2, 4].iter().map(|v| SymbolIndex(*v)).collect::<Vec<_>>());
+        assert_eq!(
+            per_next_symbol.values().cloned().collect::<Vec<_>>(),
+            vec![vec![0.into()], vec![1.into()], vec![2.into()]]);
+
+        // Check production based term priorities
+        assert_eq!(
+            lr_state.max_prior_for_term
+                [&grammar.symbol_to_term(grammar.term_by_name["*"])],
+            2
+        );
+        assert_eq!(
+            lr_state.max_prior_for_term
+                [&grammar.symbol_to_term(grammar.term_by_name["+"])],
+            1
+        );
     }
 
     #[test]
