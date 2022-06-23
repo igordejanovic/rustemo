@@ -65,6 +65,17 @@ struct LRState {
     max_prior_for_term: HashMap<TermIndex, Priority>,
 }
 
+/// Two LR states are equal if they contain the same kernel items.
+impl PartialEq for LRState {
+    fn eq(&self, other: &Self) -> bool {
+        self.kernel_items()
+            .iter()
+            .zip(other.kernel_items().iter())
+            .all(|(x, y)| x == y)
+    }
+}
+impl Eq for LRState {}
+
 impl LRState {
     fn new(grammar: &Grammar, index: StateIndex, symbol: SymbolIndex) -> Self {
         Self {
@@ -97,6 +108,11 @@ impl LRState {
         self.items.push(item);
         self
     }
+
+    fn kernel_items(&self) -> Vec<&LRItem> {
+        self.items.iter().filter(|i| i.is_kernel()).collect()
+    }
+
 }
 
 /// Represents an item in the items set. Item is defined by a production and a
@@ -194,11 +210,18 @@ impl LRItem {
         }
     }
 
+    /// Moves position to the right.
+    ///
+    /// TODO: Should this be bound checked?
     fn inc_position(mut self) -> Self {
         self.position += 1;
         self
     }
 
+    /// True if this item belongs to the kernel core.
+    ///
+    /// Kernel core items are those where position is not 0 except the augmented
+    /// production which by definition belongs to the core.
     fn is_kernel(&self) -> bool {
         self.position > 0 || self.prod == ProdIndex(0)
     }
@@ -209,7 +232,7 @@ pub(in crate) struct LRTable {}
 /// Calculate LR table (all states with GOTOs and ACTIONs) for the given Grammar.
 ///
 /// This table is used to drive LR/GLR parser.
-pub(in crate) fn calculate_lr_tables(grammar: Grammar) {
+pub(in crate) fn calculate_lr_tables(grammar: &Grammar) {
     let first_sets = first_sets(&grammar);
     check_empty_sets(&grammar, &first_sets);
     let follow_sets = follow_sets(&grammar, &first_sets);
@@ -294,7 +317,22 @@ fn create_new_states(
             symbol,
             next_state_items,
         );
+
+        // if let Some(existing_state) = find_state(state, states)
+
+        // if states.contains(&maybe_new_state) {
+
+        // } else if state_queue.contains(&maybe_new_state) {
+
+        // } {}
     }
+}
+
+fn find_state<'a>(
+    state: &LRState,
+    states: &'a [LRState],
+) -> Option<&'a LRState> {
+    states.iter().find(|x| *x == state)
 }
 
 /// Group LR items per grammar symbol right of the dot, and calculate
