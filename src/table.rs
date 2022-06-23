@@ -33,9 +33,9 @@ struct LRState {
     index: StateIndex,
 
     /// The grammar symbol related to this state. Intuitively, the grammar
-    /// symbol seen on transition to this state. E.g. if the symbol is terminal
-    /// the parser did a Shift operation to enter this state, otherwise it did
-    /// reduce.
+    /// symbol seen on a transition to this state. E.g. if the symbol is
+    /// terminal the parser did a Shift operation to enter this state, otherwise
+    /// it did reduce.
     symbol: SymbolIndex,
 
     /// LR(1) items used to construct this state.
@@ -43,23 +43,22 @@ struct LRState {
 
     /// A terminal indexed vector of LR actions. Actions instruct LR parser to
     /// Shift from the input, Reduce the top of the LR stack or accept the
-    /// input. For the deterministic parsing the vector of action can contain only
-    /// one action.
+    /// input. For the deterministic parsing the internal vector of actions can
+    /// contain only one action.
     actions: TermVec<Vec<Action>>,
 
     /// A non-terminal indexed vector of LR GOTOs. GOTOs represent transitions
     /// to another state after successful reduction of a non-terminal.
     gotos: NonTermVec<Option<StateIndex>>,
 
-    // Each production has a priority. We use this priority to resolve S/R
-    // and R/R conflicts. Since the Shift operation is executed over
-    // terminal symbol to resolve S/R we need terminal priority. But, the
-    // priority given for a terminal directly is used in lexical
-    // disambiguation. Instead, we need terminal priority inherited from
-    // productions. We, say that the priority of terminals in S/R resolution
-    // will be the priority of the production terminal is used in. But,
-    // since the same terminal can be used in many production we will take
-    // the maximum for S/R resolution.
+    // Each production has a priority. We use this priority to resolve S/R and
+    // R/R conflicts. Since the Shift operation is executed over terminal symbol
+    // to resolve S/R we need terminal priority. But, the priority given for a
+    // terminal directly is used in lexical disambiguation. Instead, we need
+    // terminal priority inherited from productions. We, say that the priority
+    // of terminals in S/R resolution will be the priority of the production
+    // terminal is used in. But, since the same terminal can be used in many
+    // production we will take the maximum for S/R resolution.
     max_prior_for_term: BTreeMap<TermIndex, Priority>,
 }
 
