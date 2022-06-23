@@ -30,7 +30,7 @@ create_index!(ItemIndex, ItemVec);
 /// LR State is a set of LR items and a dict of LR automata actions and gotos.
 struct LRState {
     /// The index of this state.
-    index: StateIndex,
+    idx: StateIndex,
 
     /// The grammar symbol related to this state. Intuitively, the grammar
     /// symbol seen on a transition to this state. E.g. if the symbol is
@@ -65,10 +65,10 @@ struct LRState {
 /// Two LR states are equal if they contain the same kernel items.
 impl PartialEq for LRState {
     fn eq(&self, other: &Self) -> bool {
-        self.kernel_items()
-            .iter()
-            .zip(other.kernel_items().iter())
-            .all(|(x, y)| x == y)
+        let self_ki = self.kernel_items();
+        let other_ki = other.kernel_items();
+        self_ki.len() == other_ki.len()
+            && self_ki.iter().zip(other_ki.iter()).all(|(x, y)| x == y)
     }
 }
 impl Eq for LRState {}
@@ -76,7 +76,7 @@ impl Eq for LRState {}
 impl LRState {
     fn new(grammar: &Grammar, index: StateIndex, symbol: SymbolIndex) -> Self {
         Self {
-            index,
+            idx: index,
             symbol,
             items: ItemVec::new(),
             actions: grammar.new_termvec(vec![Action::Error]),
@@ -92,7 +92,7 @@ impl LRState {
         items: ItemVec<LRItem>,
     ) -> Self {
         Self {
-            index,
+            idx: index,
             symbol,
             items,
             actions: grammar.new_termvec(vec![Action::Error]),
@@ -109,7 +109,6 @@ impl LRState {
     fn kernel_items(&self) -> Vec<&LRItem> {
         self.items.iter().filter(|i| i.is_kernel()).collect()
     }
-
 }
 
 /// Represents an item in the items set. Item is defined by a production and a
@@ -224,12 +223,10 @@ impl LRItem {
     }
 }
 
-pub(in crate) struct LRTable {}
-
-/// Calculate LR table (all states with GOTOs and ACTIONs) for the given Grammar.
+/// Calculate LR states with GOTOs and ACTIONs for the given Grammar.
 ///
-/// This table is used to drive LR/GLR parser.
-pub(in crate) fn calculate_lr_tables(grammar: &Grammar) {
+/// This collection of states is used to generate LR/GLR parser tables.
+fn lr_states_for_grammar(grammar: &Grammar) -> Vec<LRState> {
     let first_sets = first_sets(&grammar);
     check_empty_sets(&grammar, &first_sets);
     let follow_sets = follow_sets(&grammar, &first_sets);
@@ -242,7 +239,7 @@ pub(in crate) fn calculate_lr_tables(grammar: &Grammar) {
     // Finished states.
     let mut states = vec![];
 
-    let mut state_idx: usize = 1;
+    let mut current_state_idx: usize = 1;
 
     while let Some(mut state) = state_queue.pop() {
         // For each state calculate its closure first, i.e. starting from a so
@@ -256,24 +253,51 @@ pub(in crate) fn calculate_lr_tables(grammar: &Grammar) {
         // all items by a grammar symbol.
         let per_next_symbol = group_per_next_symbol(&grammar, &mut state);
 
-        // Create new states reachable from the current state. Updates current
-        // state actions.
-        create_new_states(
-            &grammar,
-            &mut state,
-            &states,
-            &mut state_queue,
-            per_next_symbol,
-            state_idx,
-        );
+        // Create accept action if possible.
+        for (&symbol, _) in &per_next_symbol {
+            if symbol == grammar.stop_index {
+                state.actions[grammar.symbol_to_term(symbol)] =
+                    vec![Action::Accept];
+                break;
+            }
+        }
+
+        // Create new states reachable from the current state.
+        let new_states = create_new_states(&grammar, &state, per_next_symbol);
+
+        // Find states that already exists and try to merge. If not possible to
+        // merge or not found push state to state queue.
+        for mut new_state in new_states {
+            let mut new_state_found = true;
+            if let Some(mut old_state) = states
+                .iter_mut()
+                .chain(state_queue.iter_mut())
+                .find(|x: &&mut LRState| **x == new_state)
+            {
+                // If the same state already exists try to merge.
+                if merge_state(&mut old_state, &new_state) {
+                    new_state_found = false;
+                }
+            }
+            if new_state_found {
+                // Merge is not possible. Create new state.
+                new_state.idx = StateIndex(current_state_idx);
+                state_queue.push(new_state);
+                current_state_idx += 1;
+            }
+        }
 
         propagate_follows();
 
         calculate_reductions();
 
-
         states.push(state);
     }
+    states
+}
+
+fn merge_state(old_state: &mut LRState, new_state: &LRState) -> bool {
+    false
 }
 
 /// Calculate reductions entries in action tables and resolve possible
@@ -287,42 +311,27 @@ fn propagate_follows() {
     todo!()
 }
 
-/// Create new states that can be reached from the given state and update
-/// actions.
+/// Create new states that can be reached from the given state.
 fn create_new_states(
     grammar: &Grammar,
-    state: &mut LRState,
-    states: &[LRState],
-    state_queue: &mut [LRState],
+    state: &LRState,
     per_next_symbol: BTreeMap<SymbolIndex, Vec<ItemIndex>>,
-    state_idx: usize,
-) {
-    // Create next states
+) -> Vec<LRState> {
+    let mut states = Vec::new();
     for (symbol, items) in per_next_symbol {
-        if symbol == grammar.stop_index {
-            state.actions[grammar.symbol_to_term(symbol)] =
-                vec![Action::Accept];
-            continue;
-        }
         let next_state_items = items
             .into_iter()
             .map(|i| state.items[i].clone())
-            .map(|i| i.inc_position()).collect();
-        let maybe_new_state = LRState::new_with_items(
+            .map(|i| i.inc_position())
+            .collect();
+        states.push(LRState::new_with_items(
             &grammar,
-            state_idx.into(),
+            StateIndex(0), // Temporary value. The caller will set the real index.
             symbol,
             next_state_items,
-        );
-
-        // if let Some(existing_state) = find_state(state, states)
-
-        // if states.contains(&maybe_new_state) {
-
-        // } else if state_queue.contains(&maybe_new_state) {
-
-        // } {}
+        ));
     }
+    states
 }
 
 fn find_state<'a>(
