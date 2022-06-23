@@ -1,4 +1,4 @@
-use indexmap::IndexMap;
+use std::collections::BTreeMap;
 
 use rustemort::lexer::Token;
 
@@ -287,7 +287,7 @@ pub enum Associativity {
     Left,
     Right,
 }
-pub type ProductionMetaData = IndexMap<String, Const>;
+pub type ProductionMetaData = BTreeMap<String, Const>;
 
 pub fn production_meta_data_p0() -> ProductionMetaData {
     ProductionMetaData::from([("left".into(), Const::Bool(true))])
@@ -331,7 +331,7 @@ pub fn production_meta_datas_p1(
     meta
 }
 
-pub type TerminalMetaData = IndexMap<String, Const>;
+pub type TerminalMetaData = BTreeMap<String, Const>;
 pub fn terminal_meta_data_p0() -> TerminalMetaData {
     TerminalMetaData::from([("prefer".into(), Const::Bool(true))])
 }

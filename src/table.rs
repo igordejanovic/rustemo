@@ -2,12 +2,10 @@
 
 use std::{
     cmp,
-    collections::{HashMap, HashSet},
+    collections::{BTreeMap, BTreeSet},
     ops::{Index, IndexMut},
     slice::{Iter, IterMut},
 };
-
-use indexmap::IndexMap;
 
 use rustemort::{
     create_index,
@@ -22,9 +20,9 @@ use crate::grammar::Priority;
 
 use super::grammar::{res_symbol, Grammar};
 
-type Follow = HashSet<SymbolIndex>;
+type Follow = BTreeSet<SymbolIndex>;
 type FollowSets = SymbolVec<Follow>;
-type Firsts = HashSet<SymbolIndex>;
+type Firsts = BTreeSet<SymbolIndex>;
 type FirstSets = SymbolVec<Firsts>;
 
 create_index!(ItemIndex, ItemVec);
@@ -62,7 +60,7 @@ struct LRState {
     // will be the priority of the production terminal is used in. But,
     // since the same terminal can be used in many production we will take
     // the maximum for S/R resolution.
-    max_prior_for_term: HashMap<TermIndex, Priority>,
+    max_prior_for_term: BTreeMap<TermIndex, Priority>,
 }
 
 /// Two LR states are equal if they contain the same kernel items.
@@ -84,7 +82,7 @@ impl LRState {
             items: ItemVec::new(),
             actions: grammar.new_termvec(vec![Action::Error]),
             gotos: grammar.new_nontermvec(None),
-            max_prior_for_term: HashMap::new(),
+            max_prior_for_term: BTreeMap::new(),
         }
     }
 
@@ -100,7 +98,7 @@ impl LRState {
             items,
             actions: grammar.new_termvec(vec![Action::Error]),
             gotos: grammar.new_nontermvec(None),
-            max_prior_for_term: HashMap::new(),
+            max_prior_for_term: BTreeMap::new(),
         }
     }
 
@@ -119,7 +117,7 @@ impl LRState {
 /// position inside production (the dot). If the item is of LR_1 type follow set
 /// is also defined. Follow set is a set of terminals that can follow symbol at
 /// the given position in the given production.
-#[derive(Debug, Eq, Clone)]
+#[derive(Debug, Eq, Clone, PartialOrd, Ord)]
 struct LRItem {
     prod: ProdIndex,
     position: usize,
@@ -297,7 +295,7 @@ fn create_new_states(
     state: &mut LRState,
     states: &[LRState],
     state_queue: &mut [LRState],
-    per_next_symbol: IndexMap<SymbolIndex, Vec<ItemIndex>>,
+    per_next_symbol: BTreeMap<SymbolIndex, Vec<ItemIndex>>,
     state_idx: usize,
 ) {
     // Create next states
@@ -340,8 +338,8 @@ fn find_state<'a>(
 fn group_per_next_symbol(
     grammar: &Grammar,
     state: &mut LRState,
-) -> IndexMap<SymbolIndex, Vec<ItemIndex>> {
-    let mut per_next_symbol = IndexMap::new();
+) -> BTreeMap<SymbolIndex, Vec<ItemIndex>> {
+    let mut per_next_symbol = BTreeMap::new();
 
     for (idx, item) in state.items.iter().enumerate() {
         let symbol = item.symbol_at_position(&grammar);
@@ -535,7 +533,7 @@ fn follow_sets(grammar: &Grammar, first_sets: &FirstSets) -> FollowSets {
 /// non-kernel items.
 fn closure(state: &mut LRState, grammar: &Grammar, first_sets: &FirstSets) {
     loop {
-        let mut new_items: HashSet<LRItem> = HashSet::new();
+        let mut new_items: BTreeSet<LRItem> = BTreeSet::new();
 
         for item in &state.items {
             if let Some(symbol) = item.symbol_at_position(grammar) {
@@ -587,7 +585,7 @@ fn closure(state: &mut LRState, grammar: &Grammar, first_sets: &FirstSets) {
 #[cfg(test)]
 mod tests {
 
-    use std::collections::HashSet;
+    use std::collections::BTreeSet;
 
     use crate::{
         grammar::Grammar,
@@ -636,28 +634,28 @@ mod tests {
         // First of terminal is just a terminal itself.
         assert_eq!(
             &first_sets[grammar.symbol_index("id")],
-            &HashSet::from_iter(grammar.symbol_indexes(&["id"]))
+            &BTreeSet::from_iter(grammar.symbol_indexes(&["id"]))
         );
 
         assert_eq!(
             &first_sets[grammar.symbol_index("F")],
-            &HashSet::from_iter(grammar.symbol_indexes(&["(", "id"]))
+            &BTreeSet::from_iter(grammar.symbol_indexes(&["(", "id"]))
         );
         assert_eq!(
             &first_sets[grammar.symbol_index("T")],
-            &HashSet::from_iter(grammar.symbol_indexes(&["(", "id"]))
+            &BTreeSet::from_iter(grammar.symbol_indexes(&["(", "id"]))
         );
         assert_eq!(
             &first_sets[grammar.symbol_index("E")],
-            &HashSet::from_iter(grammar.symbol_indexes(&["(", "id"]))
+            &BTreeSet::from_iter(grammar.symbol_indexes(&["(", "id"]))
         );
         assert_eq!(
             &first_sets[grammar.symbol_index("Ep")],
-            &HashSet::from_iter(grammar.symbol_indexes(&["+", "EMPTY"]))
+            &BTreeSet::from_iter(grammar.symbol_indexes(&["+", "EMPTY"]))
         );
         assert_eq!(
             &first_sets[grammar.symbol_index("Tp")],
-            &HashSet::from_iter(grammar.symbol_indexes(&["*", "EMPTY"]))
+            &BTreeSet::from_iter(grammar.symbol_indexes(&["*", "EMPTY"]))
         );
     }
 
@@ -668,20 +666,20 @@ mod tests {
 
         assert_eq!(
             &follow_sets[grammar.symbol_index("E")],
-            &HashSet::from_iter(grammar.symbol_indexes(&[")", "STOP"]))
+            &BTreeSet::from_iter(grammar.symbol_indexes(&[")", "STOP"]))
         );
         dbg!(grammar.symbol_names(&follow_sets[grammar.symbol_index("Ep")]));
         assert_eq!(
             &follow_sets[grammar.symbol_index("Ep")],
-            &HashSet::from_iter(grammar.symbol_indexes(&[")", "STOP"]))
+            &BTreeSet::from_iter(grammar.symbol_indexes(&[")", "STOP"]))
         );
         assert_eq!(
             &follow_sets[grammar.symbol_index("T")],
-            &HashSet::from_iter(grammar.symbol_indexes(&["+", ")", "STOP"]))
+            &BTreeSet::from_iter(grammar.symbol_indexes(&["+", ")", "STOP"]))
         );
         assert_eq!(
             &follow_sets[grammar.symbol_index("Tp")],
-            &HashSet::from_iter(grammar.symbol_indexes(&["+", ")", "STOP"]))
+            &BTreeSet::from_iter(grammar.symbol_indexes(&["+", ")", "STOP"]))
         );
     }
 

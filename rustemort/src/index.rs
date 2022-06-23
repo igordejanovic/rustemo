@@ -6,13 +6,31 @@ use std::{
 #[macro_export]
 macro_rules! create_index {
     ($index:ident, $collection:ident) => {
-        #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+        #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq, PartialOrd)]
         pub struct $index(pub usize);
+
+        impl Default for $index {
+            fn default() -> Self {
+                Self(usize::MAX) // invalid value by default
+            }
+        }
+
+        impl From<usize> for $index {
+            fn from(a: usize) -> Self {
+                Self(a)
+            }
+        }
+
+        impl Ord for $index {
+            fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+                self.0.cmp(&other.0)
+            }
+        }
 
         #[derive(Debug)]
         pub struct $collection<T>(pub Vec<T>);
 
-        impl<T> $collection<T> {
+        impl<T: Ord> $collection<T> {
             pub const fn new() -> Self {
                 Self(Vec::new())
             }
@@ -35,6 +53,10 @@ macro_rules! create_index {
 
             pub fn last(&self) -> Option<&T> {
                 self.0.last()
+            }
+
+            pub fn sort(&mut self) {
+                self.0.sort()
             }
         }
 
@@ -89,17 +111,6 @@ macro_rules! create_index {
             }
         }
 
-        impl Default for $index {
-            fn default() -> Self {
-                Self(usize::MAX) // invalid value by default
-            }
-        }
-
-        impl From<usize> for $index {
-            fn from(a: usize) -> Self {
-                Self(a)
-            }
-        }
     };
 }
 

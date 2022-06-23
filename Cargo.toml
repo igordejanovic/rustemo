@@ -12,7 +12,6 @@ doctest = false
 [dependencies]
 regex = "1"
 num_enum = "0.5"
-indexmap = "1.8.0"
 rustemort = { path = "rustemort", version = "0.1"}
 
 [dev-dependencies]

@@ -1,4 +1,7 @@
-use indexmap::IndexMap;
+use std::{
+    collections::BTreeMap,
+    hash::{Hash, Hasher}
+};
 
 use rustemort::index::{
     NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, SymbolVec,
@@ -16,14 +19,42 @@ pub struct Grammar {
     pub productions: Option<ProdVec<Production>>,
     pub terminals: Option<TermVec<Terminal>>,
     pub nonterminals: Option<NonTermVec<NonTerminal>>,
-    pub nonterm_by_name: IndexMap<String, SymbolIndex>,
-    pub term_by_name: IndexMap<String, SymbolIndex>,
+    pub nonterm_by_name: BTreeMap<String, SymbolIndex>,
+    pub term_by_name: BTreeMap<String, SymbolIndex>,
     // Index of EMPTY symbol
     pub empty_index: SymbolIndex,
     // Index of STOP symbol
     pub stop_index: SymbolIndex,
     // Index of grammar start symbol
     pub start_index: SymbolIndex,
+}
+
+macro_rules! grammar_elem {
+    ($name:ident) => {
+        impl PartialEq for $name {
+            fn eq(&self, other: &Self) -> bool {
+                self.idx == other.idx
+            }
+        }
+        impl Eq for $name {}
+        impl Hash for $name {
+            fn hash<H: Hasher>(&self, state: &mut H) {
+                self.idx.hash(state);
+            }
+        }
+
+        impl PartialOrd for $name {
+            fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+                self.idx.partial_cmp(&other.idx)
+            }
+        }
+
+        impl Ord for $name {
+            fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+                self.idx.cmp(&other.idx)
+            }
+        }
+    }
 }
 
 #[derive(Debug)]
@@ -34,6 +65,8 @@ pub struct Terminal {
     pub recognizer: Option<Recognizer>,
     pub meta: TerminalMetaDatas,
 }
+grammar_elem!(Terminal);
+
 
 #[derive(Debug)]
 pub struct NonTerminal {
@@ -41,6 +74,7 @@ pub struct NonTerminal {
     pub name: String,
     pub productions: Vec<ProdIndex>,
 }
+grammar_elem!(NonTerminal);
 
 #[derive(Debug, PartialEq)]
 pub enum Associativity {
@@ -70,6 +104,7 @@ pub struct Production {
     pub nopse: bool,
     pub meta: ProductionMetaDatas,
 }
+grammar_elem!(Production);
 
 impl Default for Production {
     fn default() -> Self {
@@ -122,8 +157,8 @@ pub(in crate) fn res_symbol(assign: &Assignment) -> SymbolIndex {
 
 impl Grammar {
     pub fn from_pgfile(pgfile: PGFile) -> Self {
-        let mut terminals: IndexMap<String, Terminal> = IndexMap::new();
-        let mut nonterminals: IndexMap<String, NonTerminal> = IndexMap::new();
+        let mut terminals: BTreeMap<String, Terminal> = BTreeMap::new();
+        let mut nonterminals: BTreeMap<String, NonTerminal> = BTreeMap::new();
         let mut productions: ProdVec<Production> = ProdVec::new();
 
         // Create implicit STOP terminal used to signify the end of the input.
@@ -182,7 +217,9 @@ impl Grammar {
             terminals: if terminals.is_empty() {
                 None
             } else {
-                Some(terminals.into_values().collect())
+                let mut terms: TermVec<_> = terminals.into_values().collect();
+                terms.sort();
+                Some(terms)
             },
             nonterm_by_name: nonterminals
                 .values()
@@ -193,14 +230,16 @@ impl Grammar {
             nonterminals: if nonterminals.is_empty() {
                 None
             } else {
-                Some(nonterminals.into_values().collect())
+                let mut nonterms: NonTermVec<_> = nonterminals.into_values().collect();
+                nonterms.sort();
+                Some(nonterms)
             },
         }
     }
 
     fn extract_productions_and_symbols(
         rules: Vec<GrammarRule>,
-        nonterminals: &mut IndexMap<String, NonTerminal>,
+        nonterminals: &mut BTreeMap<String, NonTerminal>,
         productions: &mut ProdVec<Production>,
     ) {
         let mut last_nonterm_idx = NonTermIndex(1); // Account for EMPTY and S'
@@ -316,7 +355,7 @@ impl Grammar {
 
     fn collect_terminals(
         grammar_terminals: Vec<super::rustemo_actions::Terminal>,
-        terminals: &mut IndexMap<String, Terminal>,
+        terminals: &mut BTreeMap<String, Terminal>,
     ) {
         let mut next_term_idx = TermIndex(1); // Account for STOP terminal
         for terminal in grammar_terminals {
@@ -336,7 +375,7 @@ impl Grammar {
 
     fn create_terminals_from_productions(
         productions: &ProdVec<Production>,
-        terminals: &mut IndexMap<String, Terminal>,
+        terminals: &mut BTreeMap<String, Terminal>,
     ) {
         let mut next_term_idx = TermIndex(terminals.len());
         for production in productions {
@@ -367,8 +406,8 @@ impl Grammar {
 
     fn resolve_references(
         productions: &mut ProdVec<Production>,
-        terminals: &IndexMap<String, Terminal>,
-        nonterminals: &IndexMap<String, NonTerminal>,
+        terminals: &BTreeMap<String, Terminal>,
+        nonterminals: &BTreeMap<String, NonTerminal>,
     ) {
         // Resolve references.
         for production in productions {
@@ -581,6 +620,7 @@ mod tests {
                 .iter()
                 .map(|t| &t.name)
                 .collect::<Vec<_>>(),
+            // `third_term` is collected first and gets lower TermIndex (1)
             &["STOP", "third_term", "first_term", "second_term"]
         );
     }
@@ -604,6 +644,7 @@ mod tests {
                 .iter()
                 .map(|t| &t.name)
                 .collect::<Vec<_>>(),
+            // `third_term` is collected first and gets lower TermIndex (1)
             &["STOP", "third_term", "first_term", "second_term"]
         );
     }
@@ -656,7 +697,7 @@ mod tests {
             "#
             .into(),
         );
-        assert_eq!(grammar.nonterminals.as_ref().unwrap().len(), 5);
+        assert_eq!(grammar.nonterminals().len(), 5);
         assert_eq!(
             grammar
                 .nonterminals
@@ -704,7 +745,7 @@ mod tests {
             "#
             .into(),
         );
-        assert_eq!(grammar.productions.as_ref().unwrap().len(), 5);
+        assert_eq!(grammar.productions().len(), 5);
 
         assert_eq!(grammar.productions()[1.into()].prio, 5);
         assert_eq!(grammar.productions()[1.into()].meta.len(), 0);

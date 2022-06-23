@@ -3780,23 +3780,38 @@ Grammar {
         ),
     ),
     nonterm_by_name: {
+        "Assignment": SymbolIndex(
+            61,
+        ),
+        "Assignments": SymbolIndex(
+            62,
+        ),
+        "BoolAssignment": SymbolIndex(
+            64,
+        ),
+        "Comment": SymbolIndex(
+            76,
+        ),
+        "Const": SymbolIndex(
+            60,
+        ),
+        "Cornc": SymbolIndex(
+            78,
+        ),
+        "Corncs": SymbolIndex(
+            77,
+        ),
         "EMPTY": SymbolIndex(
             44,
-        ),
-        "S'": SymbolIndex(
-            45,
         ),
         "File": SymbolIndex(
             46,
         ),
-        "Imports": SymbolIndex(
-            47,
+        "GSymbol": SymbolIndex(
+            72,
         ),
-        "Import": SymbolIndex(
-            48,
-        ),
-        "GrammarRules": SymbolIndex(
-            49,
+        "GSymbolReference": SymbolIndex(
+            66,
         ),
         "GrammarRule": SymbolIndex(
             50,
@@ -3804,71 +3819,14 @@ Grammar {
         "GrammarRuleRHS": SymbolIndex(
             51,
         ),
-        "Production": SymbolIndex(
-            52,
+        "GrammarRules": SymbolIndex(
+            49,
         ),
-        "TerminalRules": SymbolIndex(
-            53,
+        "Import": SymbolIndex(
+            48,
         ),
-        "TerminalRule": SymbolIndex(
-            54,
-        ),
-        "ProdMetaData": SymbolIndex(
-            55,
-        ),
-        "ProdMetaDatas": SymbolIndex(
-            56,
-        ),
-        "TermMetaData": SymbolIndex(
-            57,
-        ),
-        "TermMetaDatas": SymbolIndex(
-            58,
-        ),
-        "UserMetaData": SymbolIndex(
-            59,
-        ),
-        "Const": SymbolIndex(
-            60,
-        ),
-        "Assignment": SymbolIndex(
-            61,
-        ),
-        "Assignments": SymbolIndex(
-            62,
-        ),
-        "PlainAssignment": SymbolIndex(
-            63,
-        ),
-        "BoolAssignment": SymbolIndex(
-            64,
-        ),
-        "ProductionGroup": SymbolIndex(
-            65,
-        ),
-        "GSymbolReference": SymbolIndex(
-            66,
-        ),
-        "RepetitionOperator": SymbolIndex(
-            67,
-        ),
-        "RepetitionOperatorOp": SymbolIndex(
-            68,
-        ),
-        "RepetitionModifiersExp": SymbolIndex(
-            69,
-        ),
-        "RepetitionModifiers": SymbolIndex(
-            70,
-        ),
-        "RepetitionModifier": SymbolIndex(
-            71,
-        ),
-        "GSymbol": SymbolIndex(
-            72,
-        ),
-        "Recognizer": SymbolIndex(
-            73,
+        "Imports": SymbolIndex(
+            47,
         ),
         "Layout": SymbolIndex(
             74,
@@ -3876,113 +3834,59 @@ Grammar {
         "LayoutItem": SymbolIndex(
             75,
         ),
-        "Comment": SymbolIndex(
-            76,
+        "PlainAssignment": SymbolIndex(
+            63,
         ),
-        "Corncs": SymbolIndex(
-            77,
+        "ProdMetaData": SymbolIndex(
+            55,
         ),
-        "Cornc": SymbolIndex(
-            78,
+        "ProdMetaDatas": SymbolIndex(
+            56,
+        ),
+        "Production": SymbolIndex(
+            52,
+        ),
+        "ProductionGroup": SymbolIndex(
+            65,
+        ),
+        "Recognizer": SymbolIndex(
+            73,
+        ),
+        "RepetitionModifier": SymbolIndex(
+            71,
+        ),
+        "RepetitionModifiers": SymbolIndex(
+            70,
+        ),
+        "RepetitionModifiersExp": SymbolIndex(
+            69,
+        ),
+        "RepetitionOperator": SymbolIndex(
+            67,
+        ),
+        "RepetitionOperatorOp": SymbolIndex(
+            68,
+        ),
+        "S'": SymbolIndex(
+            45,
+        ),
+        "TermMetaData": SymbolIndex(
+            57,
+        ),
+        "TermMetaDatas": SymbolIndex(
+            58,
+        ),
+        "TerminalRule": SymbolIndex(
+            54,
+        ),
+        "TerminalRules": SymbolIndex(
+            53,
+        ),
+        "UserMetaData": SymbolIndex(
+            59,
         ),
     },
     term_by_name: {
-        "STOP": SymbolIndex(
-            0,
-        ),
-        "NAME": SymbolIndex(
-            1,
-        ),
-        "REGEX_TERM": SymbolIndex(
-            2,
-        ),
-        "INT_CONST": SymbolIndex(
-            3,
-        ),
-        "FLOAT_CONST": SymbolIndex(
-            4,
-        ),
-        "BOOL_CONST": SymbolIndex(
-            5,
-        ),
-        "STR_CONST": SymbolIndex(
-            6,
-        ),
-        "ACTION": SymbolIndex(
-            7,
-        ),
-        "WS": SymbolIndex(
-            8,
-        ),
-        "COMMENTLINE": SymbolIndex(
-            9,
-        ),
-        "NOTCOMMENT": SymbolIndex(
-            10,
-        ),
-        "terminals": SymbolIndex(
-            11,
-        ),
-        "import": SymbolIndex(
-            12,
-        ),
-        "as": SymbolIndex(
-            13,
-        ),
-        ":": SymbolIndex(
-            14,
-        ),
-        ";": SymbolIndex(
-            15,
-        ),
-        "{": SymbolIndex(
-            16,
-        ),
-        "}": SymbolIndex(
-            17,
-        ),
-        "|": SymbolIndex(
-            18,
-        ),
-        "left": SymbolIndex(
-            19,
-        ),
-        "reduce": SymbolIndex(
-            20,
-        ),
-        "right": SymbolIndex(
-            21,
-        ),
-        "shift": SymbolIndex(
-            22,
-        ),
-        "dynamic": SymbolIndex(
-            23,
-        ),
-        "nops": SymbolIndex(
-            24,
-        ),
-        "nopse": SymbolIndex(
-            25,
-        ),
-        ",": SymbolIndex(
-            26,
-        ),
-        "prefer": SymbolIndex(
-            27,
-        ),
-        "finish": SymbolIndex(
-            28,
-        ),
-        "nofinish": SymbolIndex(
-            29,
-        ),
-        "=": SymbolIndex(
-            30,
-        ),
-        "?=": SymbolIndex(
-            31,
-        ),
         "(": SymbolIndex(
             32,
         ),
@@ -3995,11 +3899,29 @@ Grammar {
         "*!": SymbolIndex(
             35,
         ),
+        "*/": SymbolIndex(
+            43,
+        ),
         "+": SymbolIndex(
             36,
         ),
         "+!": SymbolIndex(
             37,
+        ),
+        ",": SymbolIndex(
+            26,
+        ),
+        "/*": SymbolIndex(
+            42,
+        ),
+        ":": SymbolIndex(
+            14,
+        ),
+        ";": SymbolIndex(
+            15,
+        ),
+        "=": SymbolIndex(
+            30,
         ),
         "?": SymbolIndex(
             38,
@@ -4007,17 +3929,95 @@ Grammar {
         "?!": SymbolIndex(
             39,
         ),
+        "?=": SymbolIndex(
+            31,
+        ),
+        "ACTION": SymbolIndex(
+            7,
+        ),
+        "BOOL_CONST": SymbolIndex(
+            5,
+        ),
+        "COMMENTLINE": SymbolIndex(
+            9,
+        ),
+        "FLOAT_CONST": SymbolIndex(
+            4,
+        ),
+        "INT_CONST": SymbolIndex(
+            3,
+        ),
+        "NAME": SymbolIndex(
+            1,
+        ),
+        "NOTCOMMENT": SymbolIndex(
+            10,
+        ),
+        "REGEX_TERM": SymbolIndex(
+            2,
+        ),
+        "STOP": SymbolIndex(
+            0,
+        ),
+        "STR_CONST": SymbolIndex(
+            6,
+        ),
+        "WS": SymbolIndex(
+            8,
+        ),
         "[": SymbolIndex(
             40,
         ),
         "]": SymbolIndex(
             41,
         ),
-        "/*": SymbolIndex(
-            42,
+        "as": SymbolIndex(
+            13,
         ),
-        "*/": SymbolIndex(
-            43,
+        "dynamic": SymbolIndex(
+            23,
+        ),
+        "finish": SymbolIndex(
+            28,
+        ),
+        "import": SymbolIndex(
+            12,
+        ),
+        "left": SymbolIndex(
+            19,
+        ),
+        "nofinish": SymbolIndex(
+            29,
+        ),
+        "nops": SymbolIndex(
+            24,
+        ),
+        "nopse": SymbolIndex(
+            25,
+        ),
+        "prefer": SymbolIndex(
+            27,
+        ),
+        "reduce": SymbolIndex(
+            20,
+        ),
+        "right": SymbolIndex(
+            21,
+        ),
+        "shift": SymbolIndex(
+            22,
+        ),
+        "terminals": SymbolIndex(
+            11,
+        ),
+        "{": SymbolIndex(
+            16,
+        ),
+        "|": SymbolIndex(
+            18,
+        ),
+        "}": SymbolIndex(
+            17,
         ),
     },
     empty_index: SymbolIndex(
