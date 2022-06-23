@@ -32,6 +32,10 @@ macro_rules! create_index {
             pub fn iter(&self) -> Iter<'_, T> {
                 self.0.iter()
             }
+
+            pub fn last(&self) -> Option<&T> {
+                self.0.last()
+            }
         }
 
         impl<T> IntoIterator for $collection<T> {
