@@ -3,6 +3,7 @@
 use std::{
     cmp,
     collections::{BTreeMap, BTreeSet},
+    iter,
     ops::{Index, IndexMut},
     slice::{Iter, IterMut},
 };
@@ -21,13 +22,19 @@ use crate::grammar::Priority;
 use super::grammar::{res_symbol, Grammar};
 
 type Follow = BTreeSet<SymbolIndex>;
-type FollowSets = SymbolVec<Follow>;
 type Firsts = BTreeSet<SymbolIndex>;
+
+fn follow<T: IntoIterator<Item = usize>>(indexes: T) -> Follow {
+    indexes.into_iter().map(|i| SymbolIndex(i)).collect()
+}
+
+type FollowSets = SymbolVec<Follow>;
 type FirstSets = SymbolVec<Firsts>;
 
 create_index!(ItemIndex, ItemVec);
 
 /// LR State is a set of LR items and a dict of LR automata actions and gotos.
+#[derive(Clone)]
 struct LRState {
     /// The index of this state.
     idx: StateIndex,
@@ -118,6 +125,7 @@ impl LRState {
 #[derive(Debug, Eq, Clone, PartialOrd, Ord)]
 struct LRItem {
     prod: ProdIndex,
+    prod_len: usize,
     position: usize,
     follow: Follow,
 }
@@ -161,17 +169,19 @@ impl PartialEq for LRItem {
 ///        |------ position is 2
 /// ```
 impl LRItem {
-    fn new(prod: ProdIndex) -> Self {
+    fn new(grammar: &Grammar, prod: ProdIndex) -> Self {
         LRItem {
             prod,
+            prod_len: grammar.production_len(prod),
             position: 0,
             follow: Follow::new(),
         }
     }
 
-    fn new_follow(prod: ProdIndex, follow: Follow) -> Self {
+    fn with_follow(grammar: &Grammar, prod: ProdIndex, follow: Follow) -> Self {
         LRItem {
             prod,
+            prod_len: grammar.production_len(prod),
             position: 0,
             follow,
         }
@@ -195,9 +205,10 @@ impl LRItem {
     }
 
     fn next_item(&self, grammar: &Grammar) -> Option<Self> {
-        if self.position < grammar.productions.as_ref()?[self.prod].rhs.len() {
+        if self.position < grammar.production_len(self.prod) {
             Some(Self {
                 prod: self.prod,
+                prod_len: grammar.production_len(self.prod),
                 position: self.position + 1,
                 follow: self.follow.clone(),
             })
@@ -207,9 +218,8 @@ impl LRItem {
     }
 
     /// Moves position to the right.
-    ///
-    /// TODO: Should this be bound checked?
     fn inc_position(mut self) -> Self {
+        assert!(self.position < self.prod_len);
         self.position += 1;
         self
     }
@@ -220,6 +230,10 @@ impl LRItem {
     /// production which by definition belongs to the core.
     fn is_kernel(&self) -> bool {
         self.position > 0 || self.prod == ProdIndex(0)
+    }
+
+    fn is_reducing(&self) -> bool {
+        self.position == self.prod_len
     }
 }
 
@@ -232,7 +246,7 @@ fn lr_states_for_grammar(grammar: &Grammar) -> Vec<LRState> {
     let follow_sets = follow_sets(&grammar, &first_sets);
 
     let state = LRState::new(&grammar, StateIndex(0), grammar.start_index)
-        .add_item(LRItem::new_follow(ProdIndex(0), Follow::new()));
+        .add_item(LRItem::with_follow(grammar, ProdIndex(0), Follow::new()));
 
     // States to be processed.
     let mut state_queue = vec![state];
@@ -296,8 +310,58 @@ fn lr_states_for_grammar(grammar: &Grammar) -> Vec<LRState> {
     states
 }
 
+/// Try to merge new_state to old_state if possible. If not possible return
+/// false.
+///
+/// If old state has no R/R conflicts additional check is made and merging is
+/// not done if it would add R/R conflict.
 fn merge_state(old_state: &mut LRState, new_state: &LRState) -> bool {
-    false
+    // States with different kernel sets cannot be merged.
+    if old_state != new_state {
+        return false;
+    }
+
+    let old_state_items = old_state
+        .items
+        .clone()
+        .into_iter()
+        .filter(|item| item.is_reducing());
+
+    // Item pairs of item from an old state and corresponding item from the new state.
+    let item_pairs: Vec<(&mut LRItem, &LRItem)> = iter::zip(
+        old_state.items.iter_mut().filter(|item| item.is_reducing()),
+        old_state_items
+            .map(|x| new_state.items.iter().find(|&i| *i == x).unwrap()),
+    )
+    .collect();
+
+    for (old, new) in &item_pairs {
+        for (old_in, new_in) in &item_pairs {
+            if old == old_in {
+                continue;
+            }
+            // Check if any of the current follow terminals exists in any other
+            // new follow but not in the same item old follow.
+            if old
+                .follow
+                .iter()
+                .find(|&x| {
+                    new_in.follow.contains(x)
+                        && !old_in.follow.contains(x)
+                        && !new.follow.contains(x) // If conflict exist in new, merge anyway
+                })
+                .is_some()
+            {
+                return false;
+            }
+        }
+    }
+
+    // Do the merge by updating old items follow sets.
+    for (old, new) in item_pairs {
+        old.follow.extend(new.follow.iter())
+    }
+    true
 }
 
 /// Calculate reductions entries in action tables and resolve possible
@@ -539,7 +603,11 @@ fn follow_sets(grammar: &Grammar, first_sets: &FirstSets) -> FollowSets {
 /// right of the dot is a non-terminal, adds all items where LHS is a given
 /// terminal and the dot is at the beginning. In other words, adds all missing
 /// non-kernel items.
-fn closure(state: &mut LRState, grammar: &Grammar, first_sets: &FirstSets) {
+fn closure(
+    state: &mut LRState,
+    grammar: &Grammar,
+    first_sets: &FirstSets,
+) -> ! {
     loop {
         let mut new_items: BTreeSet<LRItem> = BTreeSet::new();
 
@@ -574,7 +642,8 @@ fn closure(state: &mut LRState, grammar: &Grammar, first_sets: &FirstSets) {
                     // create LR items with the calculated follow.
                     let nonterm = grammar.symbol_to_nonterm(symbol);
                     for prod in &grammar.nonterminals()[nonterm].productions {
-                        new_items.insert(LRItem::new_follow(
+                        new_items.insert(LRItem::with_follow(
+                            &grammar,
                             *prod,
                             new_follow.clone(),
                         ));
@@ -605,7 +674,9 @@ mod tests {
         log,
     };
 
-    use super::{follow_sets, group_per_next_symbol, LRState};
+    use super::{
+        follow, follow_sets, group_per_next_symbol, merge_state, LRState,
+    };
 
     fn test_grammar() -> Grammar {
         RustemoParser::default().parse(
@@ -696,7 +767,7 @@ mod tests {
         let grammar = test_grammar();
 
         let prod = ProdIndex(1);
-        let mut item = LRItem::new(prod);
+        let mut item = LRItem::new(&grammar, prod);
         assert_eq!(
             &grammar.symbol_names(
                 &grammar.productions.as_ref().unwrap()[prod].rhs_symbols()
@@ -727,16 +798,19 @@ mod tests {
             LRState::new(&grammar, 0.into(), grammar.symbol_index("E"))
                 .add_item(LRItem {
                     prod: 1.into(),
+                    prod_len: grammar.production_len(1.into()),
                     position: 1,
                     follow: Follow::new(),
                 })
                 .add_item(LRItem {
                     prod: 2.into(),
+                    prod_len: grammar.production_len(2.into()),
                     position: 1,
                     follow: Follow::new(),
                 })
                 .add_item(LRItem {
                     prod: 3.into(),
+                    prod_len: grammar.production_len(3.into()),
                     position: 2,
                     follow: Follow::new(),
                 });
@@ -773,6 +847,86 @@ mod tests {
                 [&grammar.symbol_to_term(grammar.term_by_name["+"])],
             1
         );
+    }
+
+    #[test]
+    fn test_merge_states() {
+        let grammar = test_grammar();
+        let lr_item_1 = LRItem {
+            prod: ProdIndex(1),
+            prod_len: 2,
+            position: 2,
+            follow: Follow::new(),
+        };
+        let lr_item_2 = LRItem {
+            prod: ProdIndex(2),
+            prod_len: 3,
+            position: 3,
+            follow: Follow::new(),
+        };
+        let mut old_state = LRState::new(&grammar, 0.into(), 0.into())
+            .add_item(LRItem {
+                follow: follow([1, 3]),
+                ..lr_item_1
+            })
+            .add_item(LRItem {
+                follow: follow([2]),
+                ..lr_item_2
+            });
+
+        // This should be merged as there are no introduced R/R conflicts
+        let new_state_1 = LRState::new(&grammar, 0.into(), 0.into())
+            .add_item(LRItem {
+                follow: follow([1]),
+                ..lr_item_1
+            })
+            .add_item(LRItem {
+                follow: follow([2, 4]),
+                ..lr_item_2
+            });
+        let mut old_state_1 = old_state.clone();
+        assert!(merge_state(&mut old_state_1, &new_state_1));
+        // When the merge succeed verify that items follows are indeed extended.
+        assert_eq!(old_state_1.items[0.into()].follow, follow([1, 3]));
+        assert_eq!(old_state_1.items[1.into()].follow, follow([2, 4]));
+
+        // This merge introduces new R/R conflict as the second item has 1 in
+        // the follow set. Term 1 exists in the first item of the old state so
+        // merging will make two items eligible for reduction on the term 1 in
+        // the input.
+        let new_state_2 = LRState::new(&grammar, 0.into(), 0.into())
+            .add_item(LRItem {
+                follow: follow([3]),
+                ..lr_item_1
+            })
+            .add_item(LRItem {
+                follow: follow([2, 1]),
+                ..lr_item_2
+            });
+        let mut old_state_2 = old_state.clone();
+        assert!(!merge_state(&mut old_state_2, &new_state_2));
+        // Verify that no merge happened
+        assert_eq!(old_state_2.items[0.into()].follow, follow([1, 3]));
+        assert_eq!(old_state_2.items[1.into()].follow, follow([2]));
+
+        // The last thing to check is situation where new state has R/R
+        // conflicts and there are no additional merge introduced R/R conflicts.
+        // This time we should merge as the R/R conflict is not introduced by
+        // merge process but exists due to the grammar not being LR(1).
+        let new_state_3 = LRState::new(&grammar, 0.into(), 0.into())
+            .add_item(LRItem {
+                follow: follow([1, 3]),
+                ..lr_item_1
+            })
+            .add_item(LRItem {
+                follow: follow([2, 1]),
+                ..lr_item_2
+            });
+        let mut old_state_3 = old_state.clone();
+        assert!(merge_state(&mut old_state_3, &new_state_3));
+        // Verify that no merge happened
+        assert_eq!(old_state_3.items[0.into()].follow, follow([1, 3]));
+        assert_eq!(old_state_3.items[1.into()].follow, follow([2, 1]));
     }
 
     #[test]

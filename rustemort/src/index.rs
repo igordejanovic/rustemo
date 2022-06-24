@@ -27,7 +27,7 @@ macro_rules! create_index {
             }
         }
 
-        #[derive(Debug)]
+        #[derive(Debug, Clone)]
         pub struct $collection<T>(pub Vec<T>);
 
         impl<T: Ord> $collection<T> {
@@ -49,6 +49,10 @@ macro_rules! create_index {
 
             pub fn iter(&self) -> Iter<'_, T> {
                 self.0.iter()
+            }
+
+            pub fn iter_mut(&mut self) -> IterMut<'_, T> {
+                self.0.iter_mut()
             }
 
             pub fn last(&self) -> Option<&T> {

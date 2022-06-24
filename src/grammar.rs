@@ -564,6 +564,11 @@ impl Grammar {
     }
 
     #[inline]
+    pub(crate) fn production_len(&self, prod: ProdIndex) -> usize {
+        self.productions()[prod].rhs.len()
+    }
+
+    #[inline]
     pub(crate) fn production_rhs_symbols(
         &self,
         prod: ProdIndex,
