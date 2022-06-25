@@ -4026,7 +4026,7 @@ Grammar {
     stop_index: SymbolIndex(
         0,
     ),
-    start_index: SymbolIndex(
+    augmented_index: SymbolIndex(
         45,
     ),
 }

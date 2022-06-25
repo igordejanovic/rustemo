@@ -245,7 +245,8 @@ fn lr_states_for_grammar(grammar: &Grammar) -> Vec<LRState> {
     check_empty_sets(&grammar, &first_sets);
     let follow_sets = follow_sets(&grammar, &first_sets);
 
-    let state = LRState::new(&grammar, StateIndex(0), grammar.start_index)
+    // Create a state for the first production (augmented)
+    let state = LRState::new(&grammar, StateIndex(0), grammar.augmented_index)
         .add_item(LRItem::with_follow(grammar, ProdIndex(0), Follow::new()));
 
     // States to be processed.
@@ -550,7 +551,7 @@ fn follow_sets(grammar: &Grammar, first_sets: &FirstSets) -> FollowSets {
 
     // Rule 1: Place $ in FOLLOW(S), where S is the start symbol, and $ is
     // the input right endmarker.
-    follow_sets[grammar.start_index].insert(grammar.stop_index);
+    follow_sets[grammar.augmented_index].insert(grammar.stop_index);
 
     let mut additions = true;
     while additions {

@@ -25,8 +25,8 @@ pub struct Grammar {
     pub empty_index: SymbolIndex,
     // Index of STOP symbol
     pub stop_index: SymbolIndex,
-    // Index of grammar start symbol
-    pub start_index: SymbolIndex,
+    // Index of grammar augmented symbol
+    pub augmented_index: SymbolIndex,
 }
 
 macro_rules! grammar_elem {
@@ -207,8 +207,8 @@ impl Grammar {
         Grammar {
             imports: pgfile.imports,
             productions: Some(productions),
-            empty_index: terminals.len().into(),
-            start_index: (terminals.len() + 1).into(), // skip EMPTY
+            empty_index: terminals.len().into(), // Right after the last terminal
+            augmented_index: (terminals.len() + 1).into(), // skip EMPTY
             stop_index: 0.into(),
             term_by_name: terminals
                 .values()
