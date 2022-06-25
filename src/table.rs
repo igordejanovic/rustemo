@@ -437,7 +437,9 @@ fn propagate_follows(
                             target_item.follow.extend(&source_item.follow);
 
                             // if target item follow was changed set changed to true
-                            changed = target_item.follow.len() > follow_len;
+                            if target_item.follow.len() > follow_len {
+                                changed = true
+                            }
                         }
                     }
                 })
