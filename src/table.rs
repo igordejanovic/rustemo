@@ -11,8 +11,8 @@ use std::{
 use rustemort::{
     create_index,
     index::{
-        NonTermVec, ProdIndex, StateIndex, SymbolIndex, SymbolVec, TermIndex,
-        TermVec,
+        NonTermVec, ProdIndex, StateIndex, StateVec, SymbolIndex, SymbolVec,
+        TermIndex, TermVec,
     },
     log,
     lr::Action,
@@ -245,7 +245,7 @@ impl LRItem {
 /// Calculate LR states with GOTOs and ACTIONs for the given Grammar.
 ///
 /// This collection of states is used to generate LR/GLR parser tables.
-fn lr_states_for_grammar(grammar: &Grammar) -> Vec<LRState> {
+fn lr_states_for_grammar(grammar: &Grammar) -> StateVec<LRState> {
     let first_sets = first_sets(grammar);
     check_empty_sets(grammar, &first_sets);
 
@@ -258,7 +258,7 @@ fn lr_states_for_grammar(grammar: &Grammar) -> Vec<LRState> {
     // States to be processed.
     let mut state_queue = vec![state];
     // Finished states.
-    let mut states = vec![];
+    let mut states = StateVec::new();
 
     let mut current_state_idx: usize = 1;
 
@@ -312,8 +312,7 @@ fn lr_states_for_grammar(grammar: &Grammar) -> Vec<LRState> {
                     Some(target_state_idx);
             } else {
                 let term = grammar.symbol_to_term(new_state.symbol);
-                state.actions[term]
-                    .push(Action::Shift(target_state_idx, term));
+                state.actions[term].push(Action::Shift(target_state_idx, term));
             }
 
             if new_state_found {
@@ -329,7 +328,7 @@ fn lr_states_for_grammar(grammar: &Grammar) -> Vec<LRState> {
     }
 
     log!("LR states constructed. Updating follows.");
-    propagate_follows();
+    propagate_follows(&mut states, grammar, &first_sets);
 
     log!(
         "Calculate REDUCTION entries in ACTION tables and resolve \
@@ -394,9 +393,56 @@ fn merge_state(old_state: &mut LRState, new_state: &LRState) -> bool {
     true
 }
 
-/// Update follow sets by propagation for each LR item.
-fn propagate_follows() {
-    todo!()
+/// Propagate LR items follows.
+///
+/// This is needed due to state merging. Whenever merge occurs, target state
+/// follows might get updated so we have to propagate those changes to other
+/// states.
+fn propagate_follows(
+    states: &mut StateVec<LRState>,
+    grammar: &Grammar,
+    first_sets: &FirstSets,
+) {
+    let mut changed = true;
+    let states_cl = states.clone();
+    while changed {
+        changed = false;
+        for state in states.iter_mut() {
+            // Refresh closure to propagate follows from kernel items to
+            // non-kernel of the same state as the merge is done only for kernel
+            // items.
+            closure(state, grammar, first_sets);
+        }
+
+        for state in states_cl.iter() {
+            // Use GOTOs and ACTIONS to propagate follows between states.
+            state
+                .gotos
+                .iter()
+                .filter_map(|x| x.as_ref())
+                .chain(state.actions.iter().flat_map(|x| {
+                    x.iter().filter_map(|a| match a {
+                        Action::Shift(state, _) => Some(state),
+                        _ => None,
+                    })
+                }))
+                .for_each(|&target_state| {
+                    for target_item in &mut states[target_state].items {
+                        // Find corresponding item in state
+                        if let Some(source_item) =
+                            state.items.iter().find(|&x| x == target_item)
+                        {
+                            // Update follow of target item with item from state
+                            let follow_len = target_item.follow.len();
+                            target_item.follow.extend(&source_item.follow);
+
+                            // if target item follow was changed set changed to true
+                            changed = target_item.follow.len() > follow_len;
+                        }
+                    }
+                })
+        }
+    }
 }
 
 /// Calculate reductions entries in action tables and resolve possible
@@ -415,8 +461,7 @@ fn create_new_states(
     for (symbol, items) in per_next_symbol {
         let next_state_items = items
             .into_iter()
-            .map(|i| state.items[i].clone())
-            .map(|i| i.inc_position())
+            .map(|i| state.items[i].clone().inc_position())
             .collect();
         states.push(LRState::new_with_items(
             &grammar,
