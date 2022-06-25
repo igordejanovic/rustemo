@@ -291,6 +291,8 @@ fn lr_states_for_grammar(grammar: &Grammar) -> Vec<LRState> {
         // merge or not found push state to state queue.
         for mut new_state in new_states {
             let mut new_state_found = true;
+            let mut target_state = &new_state;
+            let mut target_state_idx = StateIndex(current_state_idx);
             if let Some(mut old_state) = states
                 .iter_mut()
                 .chain(state_queue.iter_mut())
@@ -299,21 +301,24 @@ fn lr_states_for_grammar(grammar: &Grammar) -> Vec<LRState> {
                 // If the same state already exists try to merge.
                 if merge_state(&mut old_state, &new_state) {
                     new_state_found = false;
+                    target_state = old_state;
+                    target_state_idx = old_state.idx;
                 }
             }
+
+            // Create GOTO for non-terminal or Shift Action for terminal.
+            if grammar.is_nonterm(target_state.symbol) {
+                state.gotos[grammar.symbol_to_nonterm(target_state.symbol)] =
+                    Some(target_state_idx);
+            } else {
+                let term = grammar.symbol_to_term(new_state.symbol);
+                state.actions[term]
+                    .push(Action::Shift(target_state_idx, term));
+            }
+
             if new_state_found {
                 // Merge is not possible. Create new state.
                 new_state.idx = StateIndex(current_state_idx);
-
-                // Create GOTO for non-terminal or Shift Action for terminal.
-                if grammar.is_nonterm(new_state.symbol) {
-                    state.gotos[grammar.symbol_to_nonterm(new_state.symbol)] =
-                        Some(new_state.idx);
-                } else {
-                    let term = grammar.symbol_to_term(new_state.symbol);
-                    state.actions[term]
-                        .push(Action::Shift(new_state.idx, term));
-                }
 
                 state_queue.push(new_state);
                 current_state_idx += 1;
