@@ -25,8 +25,12 @@ use super::grammar::{res_symbol, Grammar};
 type Follow = BTreeSet<SymbolIndex>;
 type Firsts = BTreeSet<SymbolIndex>;
 
-fn follow<T: IntoIterator<Item = usize>>(indexes: T) -> Follow {
-    indexes.into_iter().map(|i| SymbolIndex(i)).collect()
+fn follow<T, I>(indexes: T) -> BTreeSet<SymbolIndex>
+where
+    T: IntoIterator<Item = I>,
+    I: Into<SymbolIndex>,
+{
+    indexes.into_iter().map(|i| i.into()).collect()
 }
 
 type FollowSets = SymbolVec<Follow>;
@@ -738,28 +742,28 @@ mod tests {
         // First of terminal is just a terminal itself.
         assert_eq!(
             &first_sets[grammar.symbol_index("id")],
-            &BTreeSet::from_iter(grammar.symbol_indexes(&["id"]))
+            &follow(grammar.symbol_indexes(&["id"]))
         );
 
         assert_eq!(
             &first_sets[grammar.symbol_index("F")],
-            &BTreeSet::from_iter(grammar.symbol_indexes(&["(", "id"]))
+            &follow(grammar.symbol_indexes(&["(", "id"]))
         );
         assert_eq!(
             &first_sets[grammar.symbol_index("T")],
-            &BTreeSet::from_iter(grammar.symbol_indexes(&["(", "id"]))
+            &follow(grammar.symbol_indexes(&["(", "id"]))
         );
         assert_eq!(
             &first_sets[grammar.symbol_index("E")],
-            &BTreeSet::from_iter(grammar.symbol_indexes(&["(", "id"]))
+            &follow(grammar.symbol_indexes(&["(", "id"]))
         );
         assert_eq!(
             &first_sets[grammar.symbol_index("Ep")],
-            &BTreeSet::from_iter(grammar.symbol_indexes(&["+", "EMPTY"]))
+            &follow(grammar.symbol_indexes(&["+", "EMPTY"]))
         );
         assert_eq!(
             &first_sets[grammar.symbol_index("Tp")],
-            &BTreeSet::from_iter(grammar.symbol_indexes(&["*", "EMPTY"]))
+            &follow(grammar.symbol_indexes(&["*", "EMPTY"]))
         );
     }
 
@@ -770,20 +774,20 @@ mod tests {
 
         assert_eq!(
             &follow_sets[grammar.symbol_index("E")],
-            &BTreeSet::from_iter(grammar.symbol_indexes(&[")", "STOP"]))
+            &follow(grammar.symbol_indexes(&[")", "STOP"]))
         );
         dbg!(grammar.symbol_names(&follow_sets[grammar.symbol_index("Ep")]));
         assert_eq!(
             &follow_sets[grammar.symbol_index("Ep")],
-            &BTreeSet::from_iter(grammar.symbol_indexes(&[")", "STOP"]))
+            &follow(grammar.symbol_indexes(&[")", "STOP"]))
         );
         assert_eq!(
             &follow_sets[grammar.symbol_index("T")],
-            &BTreeSet::from_iter(grammar.symbol_indexes(&["+", ")", "STOP"]))
+            &follow(grammar.symbol_indexes(&["+", ")", "STOP"]))
         );
         assert_eq!(
             &follow_sets[grammar.symbol_index("Tp")],
-            &BTreeSet::from_iter(grammar.symbol_indexes(&["+", ")", "STOP"]))
+            &follow(grammar.symbol_indexes(&["+", ")", "STOP"]))
         );
     }
 
