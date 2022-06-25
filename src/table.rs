@@ -294,7 +294,7 @@ fn lr_states_for_grammar(grammar: &Grammar) -> Vec<LRState> {
             if let Some(mut old_state) = states
                 .iter_mut()
                 .chain(state_queue.iter_mut())
-                .find(|x: &&mut LRState| **x == new_state)
+                .find(|x| **x == new_state)
             {
                 // If the same state already exists try to merge.
                 if merge_state(&mut old_state, &new_state) {
@@ -304,6 +304,17 @@ fn lr_states_for_grammar(grammar: &Grammar) -> Vec<LRState> {
             if new_state_found {
                 // Merge is not possible. Create new state.
                 new_state.idx = StateIndex(current_state_idx);
+
+                // Create GOTO for non-terminal or Shift Action for terminal.
+                if grammar.is_nonterm(new_state.symbol) {
+                    state.gotos[grammar.symbol_to_nonterm(new_state.symbol)] =
+                        Some(new_state.idx);
+                } else {
+                    let term = grammar.symbol_to_term(new_state.symbol);
+                    state.actions[term]
+                        .push(Action::Shift(new_state.idx, term));
+                }
+
                 state_queue.push(new_state);
                 current_state_idx += 1;
             }
