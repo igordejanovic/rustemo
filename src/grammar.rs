@@ -523,7 +523,7 @@ impl Grammar {
     /// terminal index.
     #[inline]
     pub(crate) fn symbol_to_nonterm(&self, index: SymbolIndex) -> NonTermIndex {
-        NonTermIndex(index.0 - self.term_len())
+        NonTermIndex(index.0.checked_sub(self.term_len()).unwrap())
     }
 
     #[inline]
