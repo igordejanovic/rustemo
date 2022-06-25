@@ -1,6 +1,6 @@
 use std::{
     collections::BTreeMap,
-    hash::{Hash, Hasher}
+    hash::{Hash, Hasher},
 };
 
 use rustemort::index::{
@@ -54,7 +54,7 @@ macro_rules! grammar_elem {
                 self.idx.cmp(&other.idx)
             }
         }
-    }
+    };
 }
 
 #[derive(Debug)]
@@ -66,7 +66,6 @@ pub struct Terminal {
     pub meta: TerminalMetaDatas,
 }
 grammar_elem!(Terminal);
-
 
 #[derive(Debug)]
 pub struct NonTerminal {
@@ -230,7 +229,8 @@ impl Grammar {
             nonterminals: if nonterminals.is_empty() {
                 None
             } else {
-                let mut nonterms: NonTermVec<_> = nonterminals.into_values().collect();
+                let mut nonterms: NonTermVec<_> =
+                    nonterminals.into_values().collect();
                 nonterms.sort();
                 Some(nonterms)
             },
@@ -583,7 +583,7 @@ impl Grammar {
 
 #[cfg(test)]
 mod tests {
-    use crate::{rustemo::RustemoParser, grammar::Associativity};
+    use crate::{grammar::Associativity, rustemo::RustemoParser};
     use rustemort::index::ProdIndex;
 
     #[test]
@@ -738,7 +738,6 @@ mod tests {
             &[0, 1, 2, 3, 4]
         );
     }
-
 
     #[test]
     fn productions_meta_data() {

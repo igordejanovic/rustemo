@@ -30,7 +30,7 @@ macro_rules! create_index {
         #[derive(Debug, Clone)]
         pub struct $collection<T>(pub Vec<T>);
 
-        impl<T: Ord> $collection<T> {
+        impl<T: Ord + PartialEq> $collection<T> {
             pub const fn new() -> Self {
                 Self(Vec::new())
             }
@@ -43,6 +43,14 @@ macro_rules! create_index {
                 self.0.len()
             }
 
+            pub fn contains(&self, x: &T) -> bool {
+                self.0.contains(x)
+            }
+
+            pub fn last(&self) -> Option<&T> {
+                self.0.last()
+            }
+
             pub fn push(&mut self, value: T) {
                 self.0.push(value);
             }
@@ -53,10 +61,6 @@ macro_rules! create_index {
 
             pub fn iter_mut(&mut self) -> IterMut<'_, T> {
                 self.0.iter_mut()
-            }
-
-            pub fn last(&self) -> Option<&T> {
-                self.0.last()
             }
 
             pub fn sort(&mut self) {

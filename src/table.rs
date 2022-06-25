@@ -14,6 +14,7 @@ use rustemort::{
         NonTermVec, ProdIndex, StateIndex, SymbolIndex, SymbolVec, TermIndex,
         TermVec,
     },
+    log,
     lr::Action,
 };
 
@@ -34,7 +35,7 @@ type FirstSets = SymbolVec<Firsts>;
 create_index!(ItemIndex, ItemVec);
 
 /// LR State is a set of LR items and a dict of LR automata actions and gotos.
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 struct LRState {
     /// The index of this state.
     idx: StateIndex,
@@ -241,12 +242,13 @@ impl LRItem {
 ///
 /// This collection of states is used to generate LR/GLR parser tables.
 fn lr_states_for_grammar(grammar: &Grammar) -> Vec<LRState> {
-    let first_sets = first_sets(&grammar);
-    check_empty_sets(&grammar, &first_sets);
-    let follow_sets = follow_sets(&grammar, &first_sets);
+    let first_sets = first_sets(grammar);
+    check_empty_sets(grammar, &first_sets);
+
+    let follow_sets = follow_sets(grammar, &first_sets);
 
     // Create a state for the first production (augmented)
-    let state = LRState::new(&grammar, StateIndex(0), grammar.augmented_index)
+    let state = LRState::new(grammar, StateIndex(0), grammar.augmented_index)
         .add_item(LRItem::with_follow(grammar, ProdIndex(0), Follow::new()));
 
     // States to be processed.
@@ -256,17 +258,18 @@ fn lr_states_for_grammar(grammar: &Grammar) -> Vec<LRState> {
 
     let mut current_state_idx: usize = 1;
 
+    log!("Calculating LR automaton states.");
     while let Some(mut state) = state_queue.pop() {
         // For each state calculate its closure first, i.e. starting from a so
         // called "kernel items" expand collection with non-kernel items. We
         // will also calculate GOTO and ACTIONS dicts for each state. These
         // dicts will be keyed by a grammar symbol.
-        closure(&mut state, &grammar, &first_sets);
+        closure(&mut state, grammar, &first_sets);
 
         // To find out other states we examine following grammar symbols in the
         // current state (symbols following current position/"dot") and group
         // all items by a grammar symbol.
-        let per_next_symbol = group_per_next_symbol(&grammar, &mut state);
+        let per_next_symbol = group_per_next_symbol(grammar, &mut state);
 
         // Create accept action if possible.
         for (&symbol, _) in &per_next_symbol {
@@ -302,12 +305,18 @@ fn lr_states_for_grammar(grammar: &Grammar) -> Vec<LRState> {
             }
         }
 
-        propagate_follows();
-
-        calculate_reductions();
-
         states.push(state);
     }
+
+    log!("LR states constructed. Updating follows.");
+    propagate_follows();
+
+    log!(
+        "Calculate REDUCTION entries in ACTION tables and resolve \
+          possible conflicts."
+    );
+    calculate_reductions();
+
     states
 }
 
@@ -365,14 +374,14 @@ fn merge_state(old_state: &mut LRState, new_state: &LRState) -> bool {
     true
 }
 
-/// Calculate reductions entries in action tables and resolve possible
-/// conflicts.
-fn calculate_reductions() {
+/// Update follow sets by propagation for each LR item.
+fn propagate_follows() {
     todo!()
 }
 
-/// Update follow sets by propagation for each LR item.
-fn propagate_follows() {
+/// Calculate reductions entries in action tables and resolve possible
+/// conflicts.
+fn calculate_reductions() {
     todo!()
 }
 
@@ -485,7 +494,7 @@ fn first_sets(grammar: &Grammar) -> FirstSets {
             let lhs_nonterm = grammar.nonterm_to_symbol(production.nonterminal);
 
             let rhs_firsts =
-                firsts(&grammar, &first_sets, production.rhs_symbols());
+                firsts(&grammar, &first_sets, &production.rhs_symbols());
 
             let lhs_len = first_sets[lhs_nonterm].len();
 
@@ -508,11 +517,11 @@ fn first_sets(grammar: &Grammar) -> FirstSets {
 fn firsts(
     grammar: &Grammar,
     first_sets: &FirstSets,
-    symbols: Vec<SymbolIndex>,
+    symbols: &[SymbolIndex],
 ) -> Firsts {
     let mut firsts = Firsts::new();
     let mut break_out = false;
-    for symbol in symbols {
+    for &symbol in symbols {
         let symbol_firsts = &first_sets[symbol];
         let mut empty = false;
 
@@ -604,11 +613,7 @@ fn follow_sets(grammar: &Grammar, first_sets: &FirstSets) -> FollowSets {
 /// right of the dot is a non-terminal, adds all items where LHS is a given
 /// terminal and the dot is at the beginning. In other words, adds all missing
 /// non-kernel items.
-fn closure(
-    state: &mut LRState,
-    grammar: &Grammar,
-    first_sets: &FirstSets,
-) -> ! {
+fn closure(state: &mut LRState, grammar: &Grammar, first_sets: &FirstSets) {
     loop {
         let mut new_items: BTreeSet<LRItem> = BTreeSet::new();
 
@@ -623,13 +628,13 @@ fn closure(
                         new_follow = firsts(
                             &grammar,
                             &first_sets,
-                            grammar.production_rhs_symbols(item.prod)
-                                [item.position + 1..]
-                                .to_vec(),
+                            &grammar.production_rhs_symbols(item.prod)
+                                [item.position + 1..],
                         );
                         // If symbols that follows the current nonterminal can
                         // derive EMPTY add follows of current item.
                         if new_follow.contains(&grammar.empty_index) {
+                            new_follow.remove(&grammar.empty_index);
                             new_follow.extend(&item.follow);
                         }
                     } else {
@@ -655,15 +660,33 @@ fn closure(
 
         // Add all new items to state.items. If item is already there update
         // follow. If there is no change break from the loop.
-        // TODO: /HERE/ -- see notes on LRItem change
-        todo!()
+        let mut change = false;
+        for new_item in new_items {
+            match state.items.iter_mut().find(|x| *x == &new_item) {
+                Some(item) => {
+                    // Item already exists, update follows
+                    let l = item.follow.len();
+                    item.follow.extend(&new_item.follow);
+                    if item.follow.len() > l {
+                        change = true;
+                    }
+                }
+                None => {
+                    state.items.push(new_item);
+                    change = true;
+                }
+            }
+        }
+        if !change {
+            break;
+        }
     }
 }
 
 #[cfg(test)]
 mod tests {
 
-    use std::collections::BTreeSet;
+    use std::{collections::BTreeSet, iter};
 
     use crate::{
         grammar::Grammar,
@@ -676,7 +699,8 @@ mod tests {
     };
 
     use super::{
-        follow, follow_sets, group_per_next_symbol, merge_state, LRState,
+        closure, follow, follow_sets, group_per_next_symbol, merge_state,
+        LRState,
     };
 
     fn test_grammar() -> Grammar {
@@ -865,7 +889,7 @@ mod tests {
             position: 3,
             follow: Follow::new(),
         };
-        let mut old_state = LRState::new(&grammar, 0.into(), 0.into())
+        let old_state = LRState::new(&grammar, 0.into(), 0.into())
             .add_item(LRItem {
                 follow: follow([1, 3]),
                 ..lr_item_1
@@ -933,9 +957,36 @@ mod tests {
     #[test]
     fn test_closure() {
         let grammar = test_grammar();
+        let firsts = first_sets(&grammar);
 
         // Create some LR state
-        let lr_state =
-            LRState::new(&grammar, StateIndex(0), grammar.symbol_index("T"));
+        let mut lr_state =
+            LRState::new(&grammar, StateIndex(0), grammar.symbol_index("T"))
+                .add_item(LRItem::with_follow(
+                    &grammar,
+                    ProdIndex(1),
+                    follow([grammar.stop_index]),
+                ));
+
+        closure(&mut lr_state, &grammar, &firsts);
+
+        let prods = [1, 4, 7, 8];
+        let follow_sets = [
+            grammar.symbol_indexes(&["STOP"]),
+            grammar.symbol_indexes(&["STOP", "+"]),
+            grammar.symbol_indexes(&["STOP", "+", "*"]),
+            grammar.symbol_indexes(&["STOP", "+", "*"]),
+        ];
+
+        assert_eq!(lr_state.items.len(), 4);
+
+        itertools::izip!(&lr_state.items, prods, follow_sets)
+            .into_iter()
+            .for_each(|(item, prod, follows)| {
+                assert_eq!(item.prod, prod.into());
+                assert!(item.follow.iter().eq(follows.iter()));
+            });
+
+        log!("{:?}", lr_state);
     }
 }
