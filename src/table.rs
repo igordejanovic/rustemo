@@ -18,7 +18,7 @@ use rustemort::{
     lr::Action,
 };
 
-use crate::grammar::Priority;
+use crate::{grammar::{Associativity, Priority, DEFAULT_PRIORITY}, settings::{Settings, LRTableType}};
 
 use super::grammar::{res_symbol, Grammar};
 
@@ -245,7 +245,7 @@ impl LRItem {
 /// Calculate LR states with GOTOs and ACTIONs for the given Grammar.
 ///
 /// This collection of states is used to generate LR/GLR parser tables.
-fn lr_states_for_grammar(grammar: &Grammar) -> StateVec<LRState> {
+fn lr_states_for_grammar(grammar: &Grammar, settings: &Settings) -> StateVec<LRState> {
     let first_sets = first_sets(grammar);
     check_empty_sets(grammar, &first_sets);
 
@@ -299,7 +299,7 @@ fn lr_states_for_grammar(grammar: &Grammar) -> StateVec<LRState> {
                 .find(|x| **x == new_state)
             {
                 // If the same state already exists try to merge.
-                if merge_state(&mut old_state, &new_state) {
+                if merge_state(&mut old_state, &new_state, settings) {
                     new_state_found = false;
                     target_state = old_state;
                     target_state_idx = old_state.idx;
@@ -344,7 +344,7 @@ fn lr_states_for_grammar(grammar: &Grammar) -> StateVec<LRState> {
 ///
 /// If old state has no R/R conflicts additional check is made and merging is
 /// not done if it would add R/R conflict.
-fn merge_state(old_state: &mut LRState, new_state: &LRState) -> bool {
+fn merge_state(old_state: &mut LRState, new_state: &LRState, settings: &Settings) -> bool {
     // States with different kernel sets cannot be merged.
     if old_state != new_state {
         return false;
@@ -364,24 +364,28 @@ fn merge_state(old_state: &mut LRState, new_state: &LRState) -> bool {
     )
     .collect();
 
-    for (old, new) in &item_pairs {
-        for (old_in, new_in) in &item_pairs {
-            if old == old_in {
-                continue;
-            }
-            // Check if any of the current follow terminals exists in any other
-            // new follow but not in the same item old follow.
-            if old
-                .follow
-                .iter()
-                .find(|&x| {
-                    new_in.follow.contains(x)
-                        && !old_in.follow.contains(x)
-                        && !new.follow.contains(x) // If conflict exist in new, merge anyway
-                })
-                .is_some()
-            {
-                return false;
+    if settings.lr_table_type != LRTableType::LALR {
+        // If this is not pure LALR check to see if merging would introduce R/R.
+        // In case it would, do not merge but keep these states split.
+        for (old, new) in &item_pairs {
+            for (old_in, new_in) in &item_pairs {
+                if old == old_in {
+                    continue;
+                }
+                // Check if any of the current follow terminals exists in any other
+                // new follow but not in the same item old follow.
+                if old
+                    .follow
+                    .iter()
+                    .find(|&x| {
+                        new_in.follow.contains(x)
+                            && !old_in.follow.contains(x)
+                            && !new.follow.contains(x) // If conflict exist in new, merge anyway
+                    })
+                    .is_some()
+                {
+                    return false;
+                }
             }
         }
     }
@@ -758,7 +762,7 @@ mod tests {
     use crate::{
         grammar::Grammar,
         rustemo::RustemoParser,
-        table::{first_sets, Follow, ItemIndex, LRItem},
+        table::{first_sets, Follow, ItemIndex, LRItem}, settings::Settings,
     };
     use rustemort::{
         index::{ProdIndex, StateIndex, SymbolIndex},
@@ -977,7 +981,8 @@ mod tests {
                 ..lr_item_2
             });
         let mut old_state_1 = old_state.clone();
-        assert!(merge_state(&mut old_state_1, &new_state_1));
+        let settings = Settings::default();
+        assert!(merge_state(&mut old_state_1, &new_state_1, &settings));
         // When the merge succeed verify that items follows are indeed extended.
         assert_eq!(old_state_1.items[0.into()].follow, follow([1, 3]));
         assert_eq!(old_state_1.items[1.into()].follow, follow([2, 4]));
@@ -996,7 +1001,7 @@ mod tests {
                 ..lr_item_2
             });
         let mut old_state_2 = old_state.clone();
-        assert!(!merge_state(&mut old_state_2, &new_state_2));
+        assert!(!merge_state(&mut old_state_2, &new_state_2, &settings));
         // Verify that no merge happened
         assert_eq!(old_state_2.items[0.into()].follow, follow([1, 3]));
         assert_eq!(old_state_2.items[1.into()].follow, follow([2]));
@@ -1015,7 +1020,7 @@ mod tests {
                 ..lr_item_2
             });
         let mut old_state_3 = old_state.clone();
-        assert!(merge_state(&mut old_state_3, &new_state_3));
+        assert!(merge_state(&mut old_state_3, &new_state_3, &settings));
         // Verify that no merge happened
         assert_eq!(old_state_3.items[0.into()].follow, follow([1, 3]));
         assert_eq!(old_state_3.items[1.into()].follow, follow([2, 1]));
