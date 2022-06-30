@@ -1,6 +1,7 @@
 use std::{
     ops::{Index, IndexMut},
     slice::{Iter, IterMut},
+    fmt::Display,
 };
 
 #[macro_export]
@@ -12,6 +13,12 @@ macro_rules! create_index {
         impl Default for $index {
             fn default() -> Self {
                 Self(usize::MAX) // invalid value by default
+            }
+        }
+
+        impl Display for $index {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                write!(f, "{}", self.0)
             }
         }
 

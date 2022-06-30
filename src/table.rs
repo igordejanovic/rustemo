@@ -6,6 +6,7 @@ use std::{
     iter,
     ops::{Index, IndexMut},
     slice::{Iter, IterMut},
+    fmt::Display,
 };
 
 use rustemort::{

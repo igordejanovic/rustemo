@@ -1,12 +1,13 @@
 use std::{
     collections::BTreeMap,
+    fmt::Display,
     hash::{Hash, Hasher},
 };
 
-use rustemort::index::{
+use rustemort::{index::{
     NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, SymbolVec,
     TermIndex, TermVec,
-};
+}, log};
 
 use super::rustemo_actions::{
     GrammarRule, GrammarSymbol, Imports, PGFile, ProductionMetaDatas,
@@ -74,6 +75,41 @@ pub struct NonTerminal {
     pub productions: Vec<ProdIndex>,
 }
 grammar_elem!(NonTerminal);
+
+impl Display for Grammar {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        writeln!(f, "\nGRAMMAR [")?;
+        writeln!(f, "\nTerminals:")?;
+        for terminal in self.terminals() {
+            writeln!(f, "{}. {}", terminal.idx, terminal.name)?;
+        }
+        writeln!(f, "\nNonTerminals:")?;
+        for nonterminal in self.nonterminals() {
+            writeln!(
+                f,
+                "{} ({}). {}",
+                nonterminal.idx,
+                self.nonterm_to_symbol(nonterminal.idx),
+                nonterminal.name
+            )?;
+        }
+        writeln!(f, "\nProductions:")?;
+        for production in self.productions() {
+            write!(
+                f,
+                "{}. {}: ",
+                production.idx,
+                self.nonterminals()[production.nonterminal].name
+            )?;
+            for assignment in &production.rhs {
+                write!(f, "{} ", self.symbol_name(res_symbol(assignment)))?;
+            }
+            writeln!(f, "")?;
+        }
+
+        writeln!(f, "\n] GRAMMAR")
+    }
+}
 
 #[derive(Debug, PartialEq)]
 pub enum Associativity {
@@ -203,7 +239,7 @@ impl Grammar {
         );
 
         let term_len = terminals.len();
-        Grammar {
+        let grammar = Grammar {
             imports: pgfile.imports,
             productions: Some(productions),
             empty_index: terminals.len().into(), // Right after the last terminal
@@ -234,7 +270,10 @@ impl Grammar {
                 nonterms.sort();
                 Some(nonterms)
             },
-        }
+        };
+        // TODO: Dump only if tracing is used
+        log!("{grammar}");
+        grammar
     }
 
     fn extract_productions_and_symbols(
