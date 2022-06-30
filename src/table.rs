@@ -260,7 +260,11 @@ fn lr_states_for_grammar(
 
     // Create a state for the first production (augmented)
     let state = LRState::new(grammar, StateIndex(0), grammar.augmented_index)
-        .add_item(LRItem::with_follow(grammar, ProdIndex(0), Follow::new()));
+        .add_item(LRItem::with_follow(
+            grammar,
+            ProdIndex(0),
+            Follow::from([grammar.stop_index]),
+        ));
 
     // States to be processed.
     let mut state_queue = VecDeque::from([state]);
