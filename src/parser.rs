@@ -24,7 +24,7 @@ impl<'i> RustemoParser<'i> {
 mod tests {
     use std::fmt::Write;
 
-    use crate::tests::utils::{string_difference, type_of};
+    use crate::{tests::utils::{string_difference, type_of}, output_cmp};
 
     use super::*;
 
@@ -53,22 +53,6 @@ mod tests {
             fs::read_to_string(&path).expect("Cannot load rustemo grammar!");
         let grammar = RustemoParser::default().parse(content.as_str().into());
 
-        path.pop();
-        path.push("rustemo.parse_tree");
-        if path.exists() {
-            let content: String = fs::read_to_string(&path)
-                .expect("Cannot load tree output file.");
-            let mut output = String::new();
-            write!(&mut output, "{:#?}", grammar)
-                .expect("Error formatting output tree.");
-            if let Some(diff) = string_difference(&content, &output) {
-                assert!(false, "Strings differ at: {:?}", diff)
-            }
-        } else {
-            let mut output = String::new();
-            write!(&mut output, "{:#?}", grammar)
-                .expect("Error formatting output tree.");
-            fs::write(path, output).expect("Error writing file");
-        }
+        output_cmp!("rustemo.parse_tree", format!("{:#?}", grammar));
     }
 }
