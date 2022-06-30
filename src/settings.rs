@@ -1,12 +1,12 @@
 #[derive(Debug, PartialEq)]
 pub enum LRTableType {
-    LALR,
-    LALRP,
-    LALRRN,
+    LALR,        // http://publications.csail.mit.edu/lcs/pubs/pdf/MIT-LCS-TR-065.pdf
+    LALR_PAGERW, // https://doi.org/10.1007/BF00290336
+    LALR_RN,      // https://doi.org/10.1145/1146809.1146810
 }
 
 impl Default for LRTableType {
-    fn default() -> Self { LRTableType::LALRP }
+    fn default() -> Self { LRTableType::LALR_PAGERW }
 }
 
 

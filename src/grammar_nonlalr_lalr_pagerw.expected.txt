@@ -1,0 +1,699 @@
+
+GRAMMAR [
+
+Terminals:
+0. STOP
+1. a
+2. b
+3. c
+4. d
+
+NonTerminals:
+0 (5). EMPTY
+1 (6). S'
+2 (7). S
+3 (8). A
+4 (9). B
+
+Productions:
+0. S': S 
+1. S: A a 
+2. S: b A c 
+3. S: B c 
+4. S: b B a 
+5. A: d 
+6. B: d 
+
+] GRAMMAR
+
+
+StateVec(
+    [
+        LRState {
+            idx: 0,
+            symbol: 6,
+            items: ItemVec(
+                [
+                    LRItem {
+                        prod: 0,
+                        prod_len: 1,
+                        position: 0,
+                        follow: {
+                            0,
+                        },
+                    },
+                    LRItem {
+                        prod: 1,
+                        prod_len: 2,
+                        position: 0,
+                        follow: {
+                            0,
+                        },
+                    },
+                    LRItem {
+                        prod: 2,
+                        prod_len: 3,
+                        position: 0,
+                        follow: {
+                            0,
+                        },
+                    },
+                    LRItem {
+                        prod: 3,
+                        prod_len: 2,
+                        position: 0,
+                        follow: {
+                            0,
+                        },
+                    },
+                    LRItem {
+                        prod: 4,
+                        prod_len: 3,
+                        position: 0,
+                        follow: {
+                            0,
+                        },
+                    },
+                    LRItem {
+                        prod: 5,
+                        prod_len: 1,
+                        position: 0,
+                        follow: {
+                            1,
+                        },
+                    },
+                    LRItem {
+                        prod: 6,
+                        prod_len: 1,
+                        position: 0,
+                        follow: {
+                            3,
+                        },
+                    },
+                ],
+            ),
+            actions: TermVec(
+                [
+                    [],
+                    [],
+                    [
+                        Shift(
+                            1,
+                            2,
+                        ),
+                    ],
+                    [],
+                    [
+                        Shift(
+                            2,
+                            4,
+                        ),
+                    ],
+                ],
+            ),
+            gotos: NonTermVec(
+                [
+                    None,
+                    None,
+                    Some(
+                        3,
+                    ),
+                    Some(
+                        4,
+                    ),
+                    Some(
+                        5,
+                    ),
+                ],
+            ),
+            max_prior_for_term: {
+                2: 10,
+                4: 10,
+            },
+        },
+        LRState {
+            idx: 1,
+            symbol: 2,
+            items: ItemVec(
+                [
+                    LRItem {
+                        prod: 2,
+                        prod_len: 3,
+                        position: 1,
+                        follow: {
+                            0,
+                        },
+                    },
+                    LRItem {
+                        prod: 4,
+                        prod_len: 3,
+                        position: 1,
+                        follow: {
+                            0,
+                        },
+                    },
+                    LRItem {
+                        prod: 5,
+                        prod_len: 1,
+                        position: 0,
+                        follow: {
+                            1,
+                            3,
+                        },
+                    },
+                    LRItem {
+                        prod: 6,
+                        prod_len: 1,
+                        position: 0,
+                        follow: {
+                            1,
+                            3,
+                        },
+                    },
+                ],
+            ),
+            actions: TermVec(
+                [
+                    [],
+                    [],
+                    [],
+                    [],
+                    [
+                        Shift(
+                            6,
+                            4,
+                        ),
+                    ],
+                ],
+            ),
+            gotos: NonTermVec(
+                [
+                    None,
+                    None,
+                    None,
+                    Some(
+                        7,
+                    ),
+                    Some(
+                        8,
+                    ),
+                ],
+            ),
+            max_prior_for_term: {
+                4: 10,
+            },
+        },
+        LRState {
+            idx: 2,
+            symbol: 4,
+            items: ItemVec(
+                [
+                    LRItem {
+                        prod: 5,
+                        prod_len: 1,
+                        position: 1,
+                        follow: {
+                            1,
+                        },
+                    },
+                    LRItem {
+                        prod: 6,
+                        prod_len: 1,
+                        position: 1,
+                        follow: {
+                            3,
+                        },
+                    },
+                ],
+            ),
+            actions: TermVec(
+                [
+                    [],
+                    [
+                        Reduce(
+                            5,
+                            1,
+                            3,
+                            "<?>",
+                        ),
+                    ],
+                    [],
+                    [
+                        Reduce(
+                            6,
+                            1,
+                            4,
+                            "<?>",
+                        ),
+                    ],
+                    [],
+                ],
+            ),
+            gotos: NonTermVec(
+                [
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                ],
+            ),
+            max_prior_for_term: {},
+        },
+        LRState {
+            idx: 3,
+            symbol: 7,
+            items: ItemVec(
+                [
+                    LRItem {
+                        prod: 0,
+                        prod_len: 1,
+                        position: 1,
+                        follow: {
+                            0,
+                        },
+                    },
+                ],
+            ),
+            actions: TermVec(
+                [
+                    [
+                        Reduce(
+                            0,
+                            1,
+                            1,
+                            "<?>",
+                        ),
+                    ],
+                    [],
+                    [],
+                    [],
+                    [],
+                ],
+            ),
+            gotos: NonTermVec(
+                [
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                ],
+            ),
+            max_prior_for_term: {},
+        },
+        LRState {
+            idx: 4,
+            symbol: 8,
+            items: ItemVec(
+                [
+                    LRItem {
+                        prod: 1,
+                        prod_len: 2,
+                        position: 1,
+                        follow: {
+                            0,
+                        },
+                    },
+                ],
+            ),
+            actions: TermVec(
+                [
+                    [],
+                    [
+                        Shift(
+                            9,
+                            1,
+                        ),
+                    ],
+                    [],
+                    [],
+                    [],
+                ],
+            ),
+            gotos: NonTermVec(
+                [
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                ],
+            ),
+            max_prior_for_term: {
+                1: 10,
+            },
+        },
+        LRState {
+            idx: 5,
+            symbol: 9,
+            items: ItemVec(
+                [
+                    LRItem {
+                        prod: 3,
+                        prod_len: 2,
+                        position: 1,
+                        follow: {
+                            0,
+                        },
+                    },
+                ],
+            ),
+            actions: TermVec(
+                [
+                    [],
+                    [],
+                    [],
+                    [
+                        Shift(
+                            10,
+                            3,
+                        ),
+                    ],
+                    [],
+                ],
+            ),
+            gotos: NonTermVec(
+                [
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                ],
+            ),
+            max_prior_for_term: {
+                3: 10,
+            },
+        },
+        LRState {
+            idx: 6,
+            symbol: 4,
+            items: ItemVec(
+                [
+                    LRItem {
+                        prod: 5,
+                        prod_len: 1,
+                        position: 1,
+                        follow: {
+                            3,
+                        },
+                    },
+                    LRItem {
+                        prod: 6,
+                        prod_len: 1,
+                        position: 1,
+                        follow: {
+                            1,
+                        },
+                    },
+                ],
+            ),
+            actions: TermVec(
+                [
+                    [],
+                    [
+                        Reduce(
+                            6,
+                            1,
+                            4,
+                            "<?>",
+                        ),
+                    ],
+                    [],
+                    [
+                        Reduce(
+                            5,
+                            1,
+                            3,
+                            "<?>",
+                        ),
+                    ],
+                    [],
+                ],
+            ),
+            gotos: NonTermVec(
+                [
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                ],
+            ),
+            max_prior_for_term: {},
+        },
+        LRState {
+            idx: 7,
+            symbol: 8,
+            items: ItemVec(
+                [
+                    LRItem {
+                        prod: 2,
+                        prod_len: 3,
+                        position: 2,
+                        follow: {
+                            0,
+                        },
+                    },
+                ],
+            ),
+            actions: TermVec(
+                [
+                    [],
+                    [],
+                    [],
+                    [
+                        Shift(
+                            11,
+                            3,
+                        ),
+                    ],
+                    [],
+                ],
+            ),
+            gotos: NonTermVec(
+                [
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                ],
+            ),
+            max_prior_for_term: {
+                3: 10,
+            },
+        },
+        LRState {
+            idx: 8,
+            symbol: 9,
+            items: ItemVec(
+                [
+                    LRItem {
+                        prod: 4,
+                        prod_len: 3,
+                        position: 2,
+                        follow: {
+                            0,
+                        },
+                    },
+                ],
+            ),
+            actions: TermVec(
+                [
+                    [],
+                    [
+                        Shift(
+                            12,
+                            1,
+                        ),
+                    ],
+                    [],
+                    [],
+                    [],
+                ],
+            ),
+            gotos: NonTermVec(
+                [
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                ],
+            ),
+            max_prior_for_term: {
+                1: 10,
+            },
+        },
+        LRState {
+            idx: 9,
+            symbol: 1,
+            items: ItemVec(
+                [
+                    LRItem {
+                        prod: 1,
+                        prod_len: 2,
+                        position: 2,
+                        follow: {
+                            0,
+                        },
+                    },
+                ],
+            ),
+            actions: TermVec(
+                [
+                    [
+                        Reduce(
+                            1,
+                            2,
+                            2,
+                            "<?>",
+                        ),
+                    ],
+                    [],
+                    [],
+                    [],
+                    [],
+                ],
+            ),
+            gotos: NonTermVec(
+                [
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                ],
+            ),
+            max_prior_for_term: {},
+        },
+        LRState {
+            idx: 10,
+            symbol: 3,
+            items: ItemVec(
+                [
+                    LRItem {
+                        prod: 3,
+                        prod_len: 2,
+                        position: 2,
+                        follow: {
+                            0,
+                        },
+                    },
+                ],
+            ),
+            actions: TermVec(
+                [
+                    [
+                        Reduce(
+                            3,
+                            2,
+                            2,
+                            "<?>",
+                        ),
+                    ],
+                    [],
+                    [],
+                    [],
+                    [],
+                ],
+            ),
+            gotos: NonTermVec(
+                [
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                ],
+            ),
+            max_prior_for_term: {},
+        },
+        LRState {
+            idx: 11,
+            symbol: 3,
+            items: ItemVec(
+                [
+                    LRItem {
+                        prod: 2,
+                        prod_len: 3,
+                        position: 3,
+                        follow: {
+                            0,
+                        },
+                    },
+                ],
+            ),
+            actions: TermVec(
+                [
+                    [
+                        Reduce(
+                            2,
+                            3,
+                            2,
+                            "<?>",
+                        ),
+                    ],
+                    [],
+                    [],
+                    [],
+                    [],
+                ],
+            ),
+            gotos: NonTermVec(
+                [
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                ],
+            ),
+            max_prior_for_term: {},
+        },
+        LRState {
+            idx: 12,
+            symbol: 1,
+            items: ItemVec(
+                [
+                    LRItem {
+                        prod: 4,
+                        prod_len: 3,
+                        position: 3,
+                        follow: {
+                            0,
+                        },
+                    },
+                ],
+            ),
+            actions: TermVec(
+                [
+                    [
+                        Reduce(
+                            4,
+                            3,
+                            2,
+                            "<?>",
+                        ),
+                    ],
+                    [],
+                    [],
+                    [],
+                    [],
+                ],
+            ),
+            gotos: NonTermVec(
+                [
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                ],
+            ),
+            max_prior_for_term: {},
+        },
+    ],
+)

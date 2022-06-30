@@ -900,13 +900,13 @@ fn closure(state: &mut LRState, grammar: &Grammar, first_sets: &FirstSets) {
 #[cfg(test)]
 mod tests {
 
-    use std::{collections::BTreeSet, iter};
-
+    use crate::table::first_sets;
     use crate::{
         grammar::Grammar,
+        output_cmp,
         rustemo::RustemoParser,
         settings::Settings,
-        table::{first_sets, Follow, ItemIndex, LRItem},
+        table::{Follow, LRItem},
     };
     use rustemort::{
         index::{ProdIndex, StateIndex, SymbolIndex},
@@ -937,6 +937,20 @@ mod tests {
             E: E "+" T | T;
             T: T "*" F | F;
             F: "(" E ")" | "id";
+            "#
+            .into(),
+        )
+    }
+
+    /// Grammar from the Dragon book, p.278
+    /// This grammar is LR(1) but not LALR.
+    /// See also: https://www.gnu.org/software/bison/manual/bison.html#Mysterious-Conflicts
+    fn test_non_lalr_grammar() -> Grammar {
+        RustemoParser::default().parse(
+            r#"
+            S: A "a" | "b" A "c" | B "c" | "b" B "a";
+            A: "d";
+            B: "d";
             "#
             .into(),
         )
@@ -1235,7 +1249,7 @@ mod tests {
     }
 
     #[test]
-    fn test_lr_states_for_grammar() {
+    fn test_lr_states_for_grammar_2() {
         let grammar = test_grammar_2();
 
         let settings = Settings {
@@ -1245,8 +1259,50 @@ mod tests {
 
         let states = lr_states_for_grammar(&grammar, &settings);
 
-        log!("{:#?}", states);
-        log!("{:#?}", grammar.terminals);
-        log!("{:#?}", grammar.nonterminals);
+        output_cmp!("grammar_2.expected.txt", format!("{states:#?}"));
+    }
+
+    #[test]
+    fn test_lr_states_for_non_lalr_grammar() {
+        let grammar = test_non_lalr_grammar();
+
+        // Calculating LR tables with LALR method will result in a state with
+        // R/R conflicts. So, deterministic LR parsing method cannot be used for
+        // this grammar and LALR construction method.
+        //
+        // Conflicts are found in state 2 which is entered when 'd' is
+        // recognized in the input. There are two R/R conflicts, for inputs 'a'
+        // and 'c'. In both case parser may reduce both A and B.
+        let settings = Settings {
+            lr_table_type: crate::settings::LRTableType::LALR,
+            ..Settings::default()
+        };
+
+        let states = lr_states_for_grammar(&grammar, &settings);
+
+        output_cmp!(
+            "grammar_nonlalr_lalr.expected.txt",
+            format!("{grammar}\n\n{states:#?}")
+        );
+
+        // In LALR_PAGERW construction method R/R conflicts are avoided during
+        // merge phase where states are kept split if merging would introduce
+        // new R/R conflict. This essentially makes LALR_PAGERW very close in
+        // power to canonical LR(1) but with the number of states which is
+        // almost like in LALR (i.e. LR(0)).
+        //
+        // In this case we have 13 states while in previous LALR case there was
+        // 12 states.
+        let settings = Settings {
+            lr_table_type: crate::settings::LRTableType::LALR_PAGERW,
+            ..Settings::default()
+        };
+
+        let states = lr_states_for_grammar(&grammar, &settings);
+
+        output_cmp!(
+            "grammar_nonlalr_lalr_pagerw.expected.txt",
+            format!("{grammar}\n\n{states:#?}")
+        );
     }
 }
