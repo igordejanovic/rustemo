@@ -3,10 +3,10 @@
 use std::{
     cmp,
     collections::{BTreeMap, BTreeSet, VecDeque},
+    fmt::{self, Display},
     iter,
     ops::{Index, IndexMut},
     slice::{Iter, IterMut},
-    fmt::Display,
 };
 
 use rustemort::{
@@ -348,6 +348,10 @@ fn lr_states_for_grammar(
     );
     calculate_reductions(&mut states, grammar, &settings);
 
+    log!("States:");
+    for state in &states {
+        log!("{state:#?}");
+    }
     states
 }
 

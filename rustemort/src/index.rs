@@ -1,13 +1,13 @@
 use std::{
     ops::{Index, IndexMut},
     slice::{Iter, IterMut},
-    fmt::Display,
+    fmt::{self, Display},
 };
 
 #[macro_export]
 macro_rules! create_index {
     ($index:ident, $collection:ident) => {
-        #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq, PartialOrd)]
+        #[derive(Copy, Clone, Hash, PartialEq, Eq, PartialOrd)]
         pub struct $index(pub usize);
 
         impl Default for $index {
@@ -17,6 +17,12 @@ macro_rules! create_index {
         }
 
         impl Display for $index {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                write!(f, "{}", self.0)
+            }
+        }
+
+        impl fmt::Debug for $index {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 write!(f, "{}", self.0)
             }
