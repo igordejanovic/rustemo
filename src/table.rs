@@ -562,7 +562,10 @@ fn calculate_reductions(
                                     Action::Reduce(prod, ..) => {
                                         grammar.productions()[*prod].prio
                                     }
-                                    other => panic!("This should not happen. Got {:?}", other),
+                                    other => panic!(
+                                        "This should not happen. Got {:?}",
+                                        other
+                                    ),
                                 })
                                 .collect::<Vec<_>>();
                             if reduces_prio.iter().all(|x| prod.prio < *x) {
@@ -907,8 +910,8 @@ mod tests {
     };
 
     use super::{
-        closure, follow, follow_sets, group_per_next_symbol, merge_state,
-        LRState, lr_states_for_grammar,
+        closure, follow, follow_sets, group_per_next_symbol,
+        lr_states_for_grammar, merge_state, LRState,
     };
 
     fn test_grammar() -> Grammar {
@@ -1084,7 +1087,12 @@ mod tests {
         );
         assert_eq!(
             per_next_symbol.values().cloned().collect::<Vec<_>>(),
-            vec![vec![0.into()], vec![1.into()], vec![2.into()], vec![3.into()]]
+            vec![
+                vec![0.into()],
+                vec![1.into()],
+                vec![2.into()],
+                vec![3.into()]
+            ]
         );
 
         // Check production based term priorities
@@ -1236,6 +1244,5 @@ mod tests {
         log!("{:#?}", states);
         log!("{:#?}", grammar.terminals);
         log!("{:#?}", grammar.nonterminals);
-
     }
 }
