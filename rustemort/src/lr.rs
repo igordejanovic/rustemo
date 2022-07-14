@@ -4,6 +4,7 @@ use crate::index::{NonTermIndex, ProdIndex, StateIndex, TermIndex};
 use crate::lexer::{Lexer, Token};
 use crate::parser::{Context, Parser};
 use core::fmt::Debug;
+use std::fmt::Display;
 
 #[derive(Debug)]
 pub struct LRContext<I> {
@@ -63,6 +64,25 @@ pub enum Action {
     Reduce(ProdIndex, usize, NonTermIndex, &'static str),
     Accept,
     Error,
+}
+
+impl Display for Action {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Action::Shift(state, term) => {
+                write!(f, "Shift(StateIndex({}), TermIndex({}))", state, term)
+            }
+            Action::Reduce(prod, len, nonterm, prod_desc) => {
+                write!(
+                    f,
+                    "Reduce(ProdIndex({}), {}, NonTermIndex({}), \"{}\")",
+                    prod, len, nonterm, prod_desc
+                )
+            }
+            Action::Accept => write!(f, "Accept"),
+            Action::Error => write!(f, "Error"),
+        }
+    }
 }
 
 #[derive(Debug)]

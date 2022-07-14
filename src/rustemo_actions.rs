@@ -339,7 +339,7 @@ pub fn terminal_meta_data_p1() -> TerminalMetaData {
     TerminalMetaData::from([("finish".into(), Const::Bool(true))])
 }
 pub fn terminal_meta_data_p2() -> TerminalMetaData {
-    TerminalMetaData::from([("nofinish".into(), Const::Bool(true))])
+    TerminalMetaData::from([("finish".into(), Const::Bool(false))])
 }
 pub fn terminal_meta_data_p3() -> TerminalMetaData {
     TerminalMetaData::from([("dynamic".into(), Const::Bool(true))])

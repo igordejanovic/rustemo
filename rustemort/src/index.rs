@@ -1,7 +1,7 @@
 use std::{
+    fmt::{self, Display},
     ops::{Index, IndexMut},
     slice::{Iter, IterMut},
-    fmt::{self, Display},
 };
 
 #[macro_export]
@@ -58,7 +58,7 @@ macro_rules! create_index {
 
             pub fn contains(&self, x: &T) -> bool
             where
-                T: PartialEq<T>
+                T: PartialEq<T>,
             {
                 self.0.contains(x)
             }
@@ -81,7 +81,7 @@ macro_rules! create_index {
 
             pub fn sort(&mut self)
             where
-                T: Ord
+                T: Ord,
             {
                 self.0.sort()
             }
@@ -129,6 +129,27 @@ macro_rules! create_index {
 
             fn index(&self, index: $index) -> &Self::Output {
                 self.0.index(index.0)
+            }
+        }
+
+        impl<T> Index<std::ops::Range<usize>> for $collection<T> {
+            type Output = [T];
+            fn index(&self, index: std::ops::Range<usize>) -> &Self::Output {
+                &self.0[index.start..index.end]
+            }
+        }
+
+        impl<T> Index<std::ops::RangeFrom<usize>> for $collection<T> {
+            type Output = [T];
+            fn index(&self, index: std::ops::RangeFrom<usize>) -> &Self::Output {
+                &self.0[index.start..]
+            }
+        }
+
+        impl<T> Index<std::ops::RangeTo<usize>> for $collection<T> {
+            type Output = [T];
+            fn index(&self, index: std::ops::RangeTo<usize>) -> &Self::Output {
+                &self.0[..index.end]
             }
         }
 

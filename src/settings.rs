@@ -12,7 +12,7 @@ impl Default for LRTableType {
 
 
 #[derive(Debug, Default)]
-pub(in crate) struct Settings {
+pub struct Settings {
     pub prefer_shifts: bool,
     pub prefer_shifts_over_empty: bool,
     pub lr_table_type: LRTableType,

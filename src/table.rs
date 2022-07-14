@@ -1,7 +1,7 @@
 //! Calculating LR tables
 
 use std::{
-    cmp,
+    cmp::{self, Ordering},
     collections::{BTreeMap, BTreeSet, VecDeque},
     fmt::{self, Display},
     iter,
@@ -20,8 +20,8 @@ use rustemort::{
 };
 
 use crate::{
-    grammar::{Associativity, Priority, DEFAULT_PRIORITY},
-    settings::{LRTableType, Settings},
+    grammar::{Associativity, Priority, DEFAULT_PRIORITY, Terminal},
+    settings::{LRTableType, Settings}, rustemo_actions::Recognizer,
 };
 
 use super::grammar::{res_symbol, Grammar};
@@ -44,15 +44,15 @@ create_index!(ItemIndex, ItemVec);
 
 /// LR State is a set of LR items and a dict of LR automata actions and gotos.
 #[derive(Debug, Clone)]
-struct LRState {
+pub struct LRState {
     /// The index of this state.
-    idx: StateIndex,
+    pub idx: StateIndex,
 
     /// The grammar symbol related to this state. Intuitively, the grammar
     /// symbol seen on a transition to this state. E.g. if the symbol is
     /// terminal the parser did a Shift operation to enter this state, otherwise
     /// it did reduce.
-    symbol: SymbolIndex,
+    pub symbol: SymbolIndex,
 
     /// LR(1) items used to construct this state.
     items: ItemVec<LRItem>,
@@ -61,11 +61,14 @@ struct LRState {
     /// Shift from the input, Reduce the top of the LR stack or accept the
     /// input. For the deterministic parsing the internal vector of actions can
     /// contain only one action.
-    actions: TermVec<Vec<Action>>,
+    pub actions: TermVec<Vec<Action>>,
 
     /// A non-terminal indexed vector of LR GOTOs. GOTOs represent transitions
     /// to another state after successful reduction of a non-terminal.
-    gotos: NonTermVec<Option<StateIndex>>,
+    pub gotos: NonTermVec<Option<StateIndex>>,
+
+    /// Terminals sorted by the priority for lexical disambiguation.
+    pub sorted_terminals: Vec<TermIndex>,
 
     // Each production has a priority. We use this priority to resolve S/R and
     // R/R conflicts. Since the Shift operation is executed over terminal symbol
@@ -98,6 +101,7 @@ impl LRState {
             actions: grammar.new_termvec(vec![]),
             gotos: grammar.new_nontermvec(None),
             max_prior_for_term: BTreeMap::new(),
+            sorted_terminals: Vec::new(),
         }
     }
 
@@ -114,6 +118,7 @@ impl LRState {
             actions: grammar.new_termvec(vec![]),
             gotos: grammar.new_nontermvec(None),
             max_prior_for_term: BTreeMap::new(),
+            sorted_terminals: Vec::new(),
         }
     }
 
@@ -249,7 +254,7 @@ impl LRItem {
 /// Calculate LR states with GOTOs and ACTIONs for the given Grammar.
 ///
 /// This collection of states is used to generate LR/GLR parser tables.
-fn lr_states_for_grammar(
+pub fn lr_states_for_grammar(
     grammar: &Grammar,
     settings: &Settings,
 ) -> StateVec<LRState> {
@@ -347,6 +352,9 @@ fn lr_states_for_grammar(
           possible conflicts."
     );
     calculate_reductions(&mut states, grammar, &settings);
+
+    log!("Sort terminals for lexical disambiguation");
+    sort_terminals(grammar, &mut states);
 
     log!("States:");
     for state in &states {
@@ -597,6 +605,40 @@ fn calculate_reductions(
                 }
             }
         }
+    }
+}
+
+/// Sort terminals for each state according to explicit priority and terminal
+/// recognizer type. String recognizers have precedence over regex recognizers.
+/// Longer string recognizers have precedence over shorter.
+fn sort_terminals(grammar: &Grammar, states: &mut StateVec<LRState>) {
+    for state in states {
+        let mut terminals = state.actions
+                             .iter()
+                             .enumerate()
+                             .filter(|(idx, actions)| !actions.is_empty())
+                             .map(|(idx, _)| TermIndex(idx)).collect::<Vec<_>>();
+        terminals.sort_by(|&l, &r| {
+            fn term_prio(term: &Terminal) -> u32 {
+                term.prio * 1000 + match &term.recognizer {
+                    Some(recognizer) => (match recognizer {
+                        Recognizer::StrConst(str_rec) => str_rec.len(),
+                        Recognizer::RegExTerm(_) => 0,
+                    }) as u32,
+                    None => 0,
+                }
+            }
+            let l_term_prio = term_prio(&grammar.terminals()[l]);
+            let r_term_prio = term_prio(&grammar.terminals()[r]);
+            if l_term_prio < r_term_prio {
+                Ordering::Less
+            } else if l_term_prio > r_term_prio {
+                Ordering::Greater
+            } else {
+                Ordering::Equal
+            }
+        });
+        state.sorted_terminals = terminals;
     }
 }
 
@@ -900,7 +942,7 @@ fn closure(state: &mut LRState, grammar: &Grammar, first_sets: &FirstSets) {
 #[cfg(test)]
 mod tests {
 
-    use crate::table::first_sets;
+    use crate::table::{first_sets, ItemIndex};
     use crate::{
         grammar::Grammar,
         output_cmp,
@@ -1170,8 +1212,8 @@ mod tests {
         let settings = Settings::default();
         assert!(merge_state(&mut old_state_1, &new_state_1, &settings));
         // When the merge succeed verify that items follows are indeed extended.
-        assert_eq!(old_state_1.items[0.into()].follow, follow([1, 3]));
-        assert_eq!(old_state_1.items[1.into()].follow, follow([2, 4]));
+        assert_eq!(old_state_1.items[ItemIndex(0)].follow, follow([1, 3]));
+        assert_eq!(old_state_1.items[ItemIndex(1)].follow, follow([2, 4]));
 
         // This merge introduces new R/R conflict as the second item has 1 in
         // the follow set. Term 1 exists in the first item of the old state so
@@ -1189,8 +1231,8 @@ mod tests {
         let mut old_state_2 = old_state.clone();
         assert!(!merge_state(&mut old_state_2, &new_state_2, &settings));
         // Verify that no merge happened
-        assert_eq!(old_state_2.items[0.into()].follow, follow([1, 3]));
-        assert_eq!(old_state_2.items[1.into()].follow, follow([2]));
+        assert_eq!(old_state_2.items[ItemIndex(0)].follow, follow([1, 3]));
+        assert_eq!(old_state_2.items[ItemIndex(1)].follow, follow([2]));
 
         // The last thing to check is situation where new state has R/R
         // conflicts and there are no additional merge introduced R/R conflicts.
@@ -1208,8 +1250,8 @@ mod tests {
         let mut old_state_3 = old_state.clone();
         assert!(merge_state(&mut old_state_3, &new_state_3, &settings));
         // Verify that no merge happened
-        assert_eq!(old_state_3.items[0.into()].follow, follow([1, 3]));
-        assert_eq!(old_state_3.items[1.into()].follow, follow([2, 1]));
+        assert_eq!(old_state_3.items[ItemIndex(0)].follow, follow([1, 3]));
+        assert_eq!(old_state_3.items[ItemIndex(1)].follow, follow([2, 1]));
     }
 
     #[test]

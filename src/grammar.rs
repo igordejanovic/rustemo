@@ -9,6 +9,8 @@ use rustemort::{index::{
     TermIndex, TermVec,
 }, log};
 
+use crate::rustemo_actions::Const;
+
 use super::rustemo_actions::{
     GrammarRule, GrammarSymbol, Imports, PGFile, ProductionMetaDatas,
     Recognizer, TerminalMetaDatas,
@@ -64,6 +66,12 @@ pub struct Terminal {
     pub name: String,
     pub action: Option<String>,
     pub recognizer: Option<Recognizer>,
+
+    /// Terminal will carry content if it is a non-constant match (e.g. a regex
+    /// or a custom recognizer).
+    pub has_content: bool,
+
+    pub prio: Priority,
     pub meta: TerminalMetaDatas,
 }
 grammar_elem!(Terminal);
@@ -131,6 +139,7 @@ pub const DEFAULT_PRIORITY: u32 = 10;
 pub struct Production {
     pub idx: ProdIndex,
     pub nonterminal: NonTermIndex,
+    pub ntidx: usize,
     pub rhs: Vec<Assignment>,
     pub assoc: Associativity,
     pub prio: Priority,
@@ -146,6 +155,7 @@ impl Default for Production {
         Self {
             idx: Default::default(),
             nonterminal: Default::default(),
+            ntidx: Default::default(),
             rhs: Default::default(),
             assoc: Default::default(),
             prio: DEFAULT_PRIORITY,
@@ -204,6 +214,8 @@ impl Grammar {
                 name: "STOP".to_string(),
                 action: None,
                 recognizer: None,
+                has_content: false,
+                prio: DEFAULT_PRIORITY,
                 meta: TerminalMetaDatas::new(),
             },
         );
@@ -385,6 +397,7 @@ impl Grammar {
                     new_production.nopse = true;
                 }
 
+                new_production.ntidx = nonterminal.productions.len();
                 productions.push(new_production);
                 nonterminal.productions.push(next_prod_idx);
                 next_prod_idx.0 += 1;
@@ -404,7 +417,21 @@ impl Grammar {
                     idx: next_term_idx,
                     name: terminal.name,
                     action: terminal.action,
+                    has_content: match &terminal.recognizer {
+                        Some(recognizer) => match recognizer {
+                            Recognizer::StrConst(_) => false,
+                            Recognizer::RegExTerm(_) => true,
+                        },
+                        None => true,
+                    },
                     recognizer: terminal.recognizer,
+                    prio: match terminal.meta.get("priority") {
+                        Some(prio) => match prio {
+                            Const::Int(prio) => *prio,
+                            _ => unreachable!()
+                        },
+                        None => DEFAULT_PRIORITY,
+                    },
                     meta: terminal.meta,
                 },
             );
@@ -432,6 +459,8 @@ impl Grammar {
                                     recognizer: Some(Recognizer::StrConst(
                                         name.to_string(),
                                     )),
+                                    has_content: false,
+                                    prio: DEFAULT_PRIORITY,
                                     meta: TerminalMetaDatas::new(),
                                 },
                             );
@@ -790,17 +819,17 @@ mod tests {
         );
         assert_eq!(grammar.productions().len(), 5);
 
-        assert_eq!(grammar.productions()[1.into()].prio, 5);
-        assert_eq!(grammar.productions()[1.into()].meta.len(), 0);
+        assert_eq!(grammar.productions()[ProdIndex(1)].prio, 5);
+        assert_eq!(grammar.productions()[ProdIndex(1)].meta.len(), 0);
 
-        assert_eq!(grammar.productions()[2.into()].prio, 10);
-        assert!(grammar.productions()[2.into()].nops);
-        assert!(!grammar.productions()[2.into()].nopse);
+        assert_eq!(grammar.productions()[ProdIndex(2)].prio, 10);
+        assert!(grammar.productions()[ProdIndex(2)].nops);
+        assert!(!grammar.productions()[ProdIndex(2)].nopse);
 
-        assert_eq!(grammar.productions()[3.into()].prio, 10);
-        assert!(grammar.productions()[3.into()].nopse);
-        assert_eq!(grammar.productions()[3.into()].meta.len(), 1);
+        assert_eq!(grammar.productions()[ProdIndex(3)].prio, 10);
+        assert!(grammar.productions()[ProdIndex(3)].nopse);
+        assert_eq!(grammar.productions()[ProdIndex(3)].meta.len(), 1);
 
-        assert_eq!(grammar.productions()[4.into()].assoc, Associativity::Right);
+        assert_eq!(grammar.productions()[ProdIndex(4)].assoc, Associativity::Right);
     }
 }
