@@ -307,6 +307,18 @@ if __name__ == '__main__':
         f.write('   ]\n')
         f.write('};\n\n')
 
+        f.write('impl LexerDefinition for RustemoLexerDefinition {\n')
+        f.write('    type Recognizer = for<\'i> fn(&\'i str) -> Option<&\'i str>;\n\n')
+        f.write('    fn recognizers(&self, state_index: StateIndex) -> RecognizerIterator<Self::Recognizer> {\n')
+        f.write('            RecognizerIterator {\n')
+        f.write('                terminals: &LEXER_DEFINITION.terminals,\n')
+        f.write('                terminals_for_state: &LEXER_DEFINITION.terminals_for_state[state_index.0][..],\n')
+        f.write('                recognizers: &LEXER_DEFINITION.recognizers,\n')
+        f.write('                index: 0\n')
+        f.write('            }\n')
+        f.write('    }\n')
+        f.write('}\n\n')
+
         f.write('pub struct RustemoLexer<\'i>(DefaultLexer<\'i, RustemoLexerDefinition>);\n\n');
 
         f.write('impl<\'i> Lexer for RustemoLexer<\'i> {\n')
@@ -328,18 +340,6 @@ if __name__ == '__main__':
         f.write('{\n')
         f.write('    fn from(input: &\'i T) -> Self {\n')
         f.write('        Self(DefaultLexer::new(input.as_ref(), &LEXER_DEFINITION))\n')
-        f.write('    }\n')
-        f.write('}\n\n')
-
-        f.write('impl LexerDefinition for RustemoLexerDefinition {\n')
-        f.write('    type Recognizer = for<\'i> fn(&\'i str) -> Option<&\'i str>;\n\n')
-        f.write('    fn recognizers(&self, state_index: StateIndex) -> RecognizerIterator<Self::Recognizer> {\n')
-        f.write('            RecognizerIterator {\n')
-        f.write('                terminals: &LEXER_DEFINITION.terminals,\n')
-        f.write('                terminals_for_state: &LEXER_DEFINITION.terminals_for_state[state_index.0][..],\n')
-        f.write('                recognizers: &LEXER_DEFINITION.recognizers,\n')
-        f.write('                index: 0\n')
-        f.write('            }\n')
         f.write('    }\n')
         f.write('}\n\n')
 

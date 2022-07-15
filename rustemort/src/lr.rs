@@ -53,9 +53,10 @@ impl<I> Context<I> for LRContext<I> {
     }
 }
 
+/// Provides LR actions and GOTOs given the state and term/nonterm.
 pub trait ParserDefinition {
     fn action(&self, state: StateIndex, term_index: TermIndex) -> Action;
-    fn goto(&self, state: StateIndex, nonterm_id: NonTermIndex) -> StateIndex;
+    fn goto(&self, state: StateIndex, nonterm_index: NonTermIndex) -> StateIndex;
 }
 
 #[derive(Debug, Copy, Clone)]

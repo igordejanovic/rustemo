@@ -57,7 +57,7 @@ pub fn not_comment<'a>(token: Token<&'a str>) -> NotComment {
 }
 
 pub type STOP = ();
-pub fn stop<'a>(token: Token<&'a str>) -> STOP {}
+pub fn stop<'a>(_token: Token<&'a str>) -> STOP {}
 
 #[derive(Debug)]
 pub struct PGFile {

@@ -1,0 +1,111 @@
+File: GrammarRules
+    | Imports GrammarRules
+    | GrammarRules 'terminals' TerminalRules
+    | Imports GrammarRules 'terminals' TerminalRules
+    | 'terminals' TerminalRules;
+
+Imports: Imports Import | Import;
+Import: 'import' StrConst
+      | 'import' StrConst 'as' Name;
+
+GrammarRules: GrammarRules GrammarRule
+            | GrammarRule;
+GrammarRule: Action? Name ':' GrammarRuleRHS ';'
+           | Action? Name '{' ProdMetaDatas '}' ':' GrammarRuleRHS ';';
+
+GrammarRuleRHS {left, 5}: GrammarRuleRHS '|' Production
+                        | Production;
+Production: Assignments
+          | Assignments '{' ProdMetaDatas '}';
+
+TerminalRules: TerminalRules TerminalRule
+             | TerminalRule;
+TerminalRule {left, 15}: Action? Name ':' Recognizer ';'
+                       | Action? Name ':' ';'
+                       | Action? Name ':' Recognizer '{' TermMetaDatas '}' ';'
+                       | Action? Name ':' '{' TermMetaDatas '}' ';';
+
+ProdMetaData: 'left' | 'reduce' | 'right' | 'shift' | 'dynamic' | 'nops' | 'nopse'
+            | IntConst
+            | UserMetaData;
+ProdMetaDatas {left}: ProdMetaDatas ',' ProdMetaData | ProdMetaData;
+
+TermMetaData: 'prefer' | 'finish' | 'nofinish' | 'dynamic'
+            | IntConst
+            | UserMetaData;
+TermMetaDatas: TermMetaDatas ',' TermMetaData | TermMetaData;
+
+UserMetaData: Name ':' Const;
+Const: IntConst | FloatConst | BoolConst | StrConst;
+
+Assignment: PlainAssignment
+          | BoolAssignment
+          | GSymbolReference;
+Assignments: Assignments Assignment | Assignment;
+PlainAssignment: Name '=' GSymbolReference;
+BoolAssignment: Name '?=' GSymbolReference;
+
+ProductionGroup: '(' GrammarRuleRHS ')';
+
+GSymbolReference: GSymbol RepetitionOperator?
+                | ProductionGroup RepetitionOperator?;
+RepetitionOperator: RepetitionOperatorOp RepetitionModifiersExp?;
+RepetitionOperatorOp: '*' | '*!' | '+' | '+!' | '?' | '?!';
+RepetitionModifiersExp: '[' RepetitionModifiers ']';
+RepetitionModifiers: RepetitionModifiers ',' RepetitionModifier | RepetitionModifier;
+RepetitionModifier: Name;
+
+GSymbol: Name | StrConst;
+Recognizer: StrConst | RegexTerm;
+
+Layout: LayoutItem | Layout LayoutItem | EMPTY;
+LayoutItem: WS | Comment;
+Comment: '/*' Corncs '*/' | CommentLine;
+Corncs: Cornc | Corncs Cornc | EMPTY;
+Cornc: Comment | NotComment | WS;
+
+terminals
+
+Terminals: 'terminals';
+Import: 'import';
+As: 'as';
+Colon: ':';
+SemiColon: ';';
+Comma: ',';
+OBrace: '{';
+CBrace: '}';
+OBracket: '(';
+CBracket: ')';
+OSBracket: '[';
+CSBracket: ']';
+Choice: '|';
+ZeroOrMore: '*';
+ZeroOrMoreGreedy: '*!';
+OneOrMore: '+';
+OneOrMoreGreedy: '+!';
+Optional: '?';
+OptionalGreedy: '?!';
+Equals: '=';
+QEquals: '?=';
+Left: 'left';
+Right: 'right';
+Reduce: 'reduce';
+Shift: 'shift';
+Dynamic: 'dynamic';
+NOPS: 'nops';
+NOPSE: 'nopse';
+Prefer: 'prefer';
+Finish: 'finish';
+NoFinish: 'nofinish';
+OComment: '/*';
+CComment: '*/';
+Name: /[a-zA-Z_][a-zA-Z0-9_\.]*/;
+RegexTerm: /'\/(\\.|[^\/\\])*\/'/;
+IntConst: /\d+/;
+FloatConst: /[+-]?(\d+\.\d*|\.\d+)([eE][+-]?\d+)?(?<=[\w\.])(?![\w\.])/;
+BoolConst: /true|false/;
+StrConst: /(?s)('[^'\\]*(?:\\.[^'\\]*)*')|("[^"\\]*(?:\\.[^"\\]*)*")/;
+Action: /@[a-zA-Z0-9_]+/;
+WS: /\s+/;
+CommentLine: /\/\/.*/;
+NotComment: /((\*[^\/])|[^\s*\/]|\/[^\*])+/;

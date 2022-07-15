@@ -261,8 +261,6 @@ pub fn lr_states_for_grammar(
     let first_sets = first_sets(grammar);
     check_empty_sets(grammar, &first_sets);
 
-    let follow_sets = follow_sets(grammar, &first_sets);
-
     // Create a state for the first production (augmented)
     let state = LRState::new(grammar, StateIndex(0), grammar.augmented_index)
         .add_item(LRItem::with_follow(
@@ -616,7 +614,7 @@ fn sort_terminals(grammar: &Grammar, states: &mut StateVec<LRState>) {
         let mut terminals = state.actions
                              .iter()
                              .enumerate()
-                             .filter(|(idx, actions)| !actions.is_empty())
+                             .filter(|(_, actions)| !actions.is_empty())
                              .map(|(idx, _)| TermIndex(idx)).collect::<Vec<_>>();
         terminals.sort_by(|&l, &r| {
             fn term_prio(term: &Terminal) -> u32 {

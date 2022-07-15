@@ -1606,6 +1606,19 @@ pub(in crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefi
 
 pub struct RustemoLexer<'i>(DefaultLexer<'i, RustemoLexerDefinition>);
 
+impl LexerDefinition for RustemoLexerDefinition {
+    type Recognizer = for<'i> fn(&'i str) -> Option<&'i str>;
+
+    fn recognizers(&self, state_index: StateIndex) -> RecognizerIterator<Self::Recognizer> {
+            RecognizerIterator {
+                terminals: &LEXER_DEFINITION.terminals,
+                terminals_for_state: &LEXER_DEFINITION.terminals_for_state[state_index.0][..],
+                recognizers: &LEXER_DEFINITION.recognizers,
+                index: 0
+            }
+    }
+}
+
 impl<'i> Lexer for RustemoLexer<'i> {
     type Input = &'i str;
 
@@ -1625,19 +1638,6 @@ where
 {
     fn from(input: &'i T) -> Self {
         Self(DefaultLexer::new(input.as_ref(), &LEXER_DEFINITION))
-    }
-}
-
-impl LexerDefinition for RustemoLexerDefinition {
-    type Recognizer = for<'i> fn(&'i str) -> Option<&'i str>;
-
-    fn recognizers(&self, state_index: StateIndex) -> RecognizerIterator<Self::Recognizer> {
-            RecognizerIterator {
-                terminals: &LEXER_DEFINITION.terminals,
-                terminals_for_state: &LEXER_DEFINITION.terminals_for_state[state_index.0][..],
-                recognizers: &LEXER_DEFINITION.recognizers,
-                index: 0
-            }
     }
 }
 

@@ -4,10 +4,13 @@ use std::{
     hash::{Hash, Hasher},
 };
 
-use rustemort::{index::{
-    NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, SymbolVec,
-    TermIndex, TermVec,
-}, log};
+use rustemort::{
+    index::{
+        NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, SymbolVec,
+        TermIndex, TermVec,
+    },
+    log,
+};
 
 use crate::rustemo_actions::Const;
 
@@ -179,6 +182,27 @@ impl Production {
     }
 }
 
+impl Display for Production {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}: ", self.idx)?;
+        for assign in &self.rhs {
+            if assign.name.is_some() {
+                write!(f, " {} ", assign.name.as_ref().unwrap())?;
+            } else {
+                let s = match &assign.symbol {
+                    ResolvingSymbolIndex::Resolved(symbol) => format!("{}", symbol),
+                    ResolvingSymbolIndex::Resolving(symbol) => match symbol {
+                        GrammarSymbol::Name(name) => name.into(),
+                        GrammarSymbol::StrConst(mtch) => format!("\"{}\"", mtch),
+                    },
+                };
+                write!(f, " {} ", s)?;
+            }
+        }
+        write!(f, "")
+    }
+}
+
 #[derive(Debug)]
 pub enum ResolvingSymbolIndex {
     Resolved(SymbolIndex),
@@ -206,6 +230,8 @@ pub(in crate) fn res_symbol(assign: &Assignment) -> SymbolIndex {
 impl Grammar {
     pub fn from_pgfile(pgfile: PGFile) -> Self {
         let mut terminals: BTreeMap<String, Terminal> = BTreeMap::new();
+        let mut terminals_matches: BTreeMap<String, &Terminal> =
+            BTreeMap::new();
         let mut nonterminals: BTreeMap<String, NonTerminal> = BTreeMap::new();
         let mut productions: ProdVec<Production> = ProdVec::new();
 
@@ -237,13 +263,17 @@ impl Grammar {
 
         // Collect grammar terminals
         if let Some(grammar_terminals) = pgfile.terminals {
-            Grammar::collect_terminals(grammar_terminals, &mut terminals);
+            Grammar::collect_terminals(
+                grammar_terminals,
+                &mut terminals,
+                &mut terminals_matches,
+            );
         }
 
         // Create implicit terminals from string constants.
-        Grammar::create_terminals_from_productions(
-            &productions,
-            &mut terminals,
+        Grammar::resolve_inline_terminals_from_productions(
+            &mut productions,
+            &terminals_matches,
         );
 
         // Resolve references in productions.
@@ -408,30 +438,34 @@ impl Grammar {
         }
     }
 
-    fn collect_terminals(
+    fn collect_terminals<'a>(
         grammar_terminals: Vec<super::rustemo_actions::Terminal>,
-        terminals: &mut BTreeMap<String, Terminal>,
+        terminals: &'a mut BTreeMap<String, Terminal>,
+        terminals_matches: &mut BTreeMap<String, &'a Terminal>,
     ) {
         let mut next_term_idx = TermIndex(1); // Account for STOP terminal
         for terminal in grammar_terminals {
+            let name = terminal.name.clone();
             terminals.insert(
-                terminal.name.to_string(),
+                name.clone(),
                 Terminal {
                     idx: next_term_idx,
                     name: terminal.name,
                     action: terminal.action,
                     has_content: match &terminal.recognizer {
                         Some(recognizer) => match recognizer {
+                            // Terminal has no content only if it is a string match
                             Recognizer::StrConst(_) => false,
                             Recognizer::RegExTerm(_) => true,
                         },
                         None => true,
                     },
                     recognizer: terminal.recognizer,
+                    // Extract priority from meta-data
                     prio: match terminal.meta.get("priority") {
                         Some(prio) => match prio {
                             Const::Int(prio) => *prio,
-                            _ => unreachable!()
+                            _ => unreachable!(),
                         },
                         None => DEFAULT_PRIORITY,
                     },
@@ -440,35 +474,48 @@ impl Grammar {
             );
             next_term_idx.0 += 1;
         }
+
+        for terminal in terminals.values() {
+            // Collect each terminal which uses a string match recognizer
+            // Those can be used as inline terminals in productions.
+            if let Some(Recognizer::StrConst(m)) = &terminal.recognizer {
+                terminals_matches.insert(m.clone(), &terminal);
+            }
+        }
     }
 
-    fn create_terminals_from_productions(
-        productions: &ProdVec<Production>,
-        terminals: &mut BTreeMap<String, Terminal>,
+    /// Inline terminals are those created by specifying string match directly
+    /// as a part of a production. In such a case we should verify that the
+    /// terminal with the same string match is defined and we should resolve
+    /// inline instance to the instance provided in "terminals" section.
+    ///
+    /// Thus, in production you can either reference terminal by name or use the
+    /// same string match.
+    fn resolve_inline_terminals_from_productions(
+        productions: &mut ProdVec<Production>,
+        terminals_matches: &BTreeMap<String, &Terminal>,
     ) {
-        let mut next_term_idx = TermIndex(terminals.len());
         for production in productions {
-            for assign in &production.rhs {
+            let production_str = format!("{}", production);
+            for assign in &mut production.rhs {
                 if let ResolvingSymbolIndex::Resolving(symbol) = &assign.symbol
                 {
-                    if let GrammarSymbol::StrConst(name) = symbol {
-                        if !terminals.contains_key(name) {
-                            terminals.insert(
-                                name.to_string(),
-                                Terminal {
-                                    idx: next_term_idx,
-                                    name: name.to_string(),
-                                    action: None,
-                                    recognizer: Some(Recognizer::StrConst(
-                                        name.to_string(),
-                                    )),
-                                    has_content: false,
-                                    prio: DEFAULT_PRIORITY,
-                                    meta: TerminalMetaDatas::new(),
-                                },
+                    if let GrammarSymbol::StrConst(mtch) = symbol {
+                        if terminals_matches.contains_key(mtch) {
+                            assign.symbol = ResolvingSymbolIndex::Resolved(
+                                terminals_matches
+                                    .get(mtch)
+                                    .unwrap()
+                                    .idx
+                                    .to_symbol_index()
                             );
-                            next_term_idx.0 += 1;
+                        } else {
+                            panic!(
+                                concat!("terminal \"{}\" used in production \"{:?}\" ",
+                                        "is not defined in the 'terminals' section!."),
+                                mtch, production_str)
                         }
+
                     }
                 }
             }
@@ -833,6 +880,9 @@ mod tests {
         assert!(grammar.productions()[ProdIndex(3)].nopse);
         assert_eq!(grammar.productions()[ProdIndex(3)].meta.len(), 1);
 
-        assert_eq!(grammar.productions()[ProdIndex(4)].assoc, Associativity::Right);
+        assert_eq!(
+            grammar.productions()[ProdIndex(4)].assoc,
+            Associativity::Right
+        );
     }
 }

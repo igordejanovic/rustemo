@@ -31,7 +31,7 @@ pub struct Token<I> {
     pub value: I,
     /// Location (with span) in the input file where this token is found.
     pub location: Option<Location>,
-    /// The semantically irrelevant part of the input (e.g. whitespaces) the
+    /// Semantically irrelevant part of the input (e.g. whitespaces) the
     /// preceeds the token.
     pub layout: Option<I>,
     /// Location (with span) in the input file where this layout is found.
