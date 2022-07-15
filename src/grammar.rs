@@ -174,6 +174,9 @@ impl Production {
     pub fn rhs_symbol(&self, pos: usize) -> SymbolIndex {
         res_symbol(&self.rhs[pos])
     }
+    pub fn nonterminal<'a>(&self, grammar: &'a Grammar) -> &'a NonTerminal {
+        &grammar.nonterminals()[self.nonterminal]
+    }
 }
 
 #[derive(Debug)]
@@ -310,10 +313,10 @@ impl Grammar {
         // Augmented non-terminal and production. by default first rule is
         // starting rule.
         nonterminals.insert(
-            "S'".to_string(),
+            "AUG".to_string(),
             NonTerminal {
                 idx: NonTermIndex(1),
-                name: "S'".to_string(),
+                name: "AUG".to_string(),
                 productions: vec![ProdIndex(0)],
             },
         );
