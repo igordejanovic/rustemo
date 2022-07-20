@@ -4,7 +4,7 @@ use std::{
     hash::{Hash, Hasher},
 };
 
-use rustemort::{
+use rustemo_rt::{
     index::{
         NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, SymbolVec,
         TermIndex, TermVec,
@@ -702,7 +702,7 @@ impl Grammar {
 #[cfg(test)]
 mod tests {
     use crate::{grammar::Associativity, rustemo::RustemoParser};
-    use rustemort::index::ProdIndex;
+    use rustemo_rt::index::ProdIndex;
 
     #[test]
     fn create_terminals_1() {

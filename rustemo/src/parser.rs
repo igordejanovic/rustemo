@@ -4,7 +4,7 @@ use super::{
     rustemo_types::{NonTerminal, Symbol},
 };
 
-use rustemort::{builder::Builder, lexer::Lexer, parser::Parser};
+use rustemo_rt::{builder::Builder, lexer::Lexer, parser::Parser};
 
 impl<'i> RustemoParser<'i> {
     pub fn parse(&mut self, lexer: RustemoLexer<'i>) -> Grammar {

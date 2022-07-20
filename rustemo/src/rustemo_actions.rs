@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 
-use rustemort::lexer::Token;
+use rustemo_rt::lexer::Token;
 
 pub type StrConst = String;
 pub fn str_const<'i>(token: Token<&'i str>) -> StrConst {

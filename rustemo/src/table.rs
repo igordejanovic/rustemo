@@ -9,7 +9,7 @@ use std::{
     slice::{Iter, IterMut},
 };
 
-use rustemort::{
+use rustemo_rt::{
     create_index,
     index::{
         NonTermVec, ProdIndex, StateIndex, StateVec, SymbolIndex, SymbolVec,
@@ -948,7 +948,7 @@ mod tests {
         settings::Settings,
         table::{Follow, LRItem},
     };
-    use rustemort::{
+    use rustemo_rt::{
         index::{ProdIndex, StateIndex, SymbolIndex},
         log,
     };

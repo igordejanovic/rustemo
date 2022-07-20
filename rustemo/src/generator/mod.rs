@@ -1,7 +1,7 @@
 use chrono::Local;
 use convert_case::{Case, Casing};
 use indoc::indoc;
-use rustemort::index::{StateVec, NonTermIndex};
+use rustemo_rt::index::{StateVec, NonTermIndex};
 use std::{
     fmt::Debug,
     fs::{self, File},
@@ -143,13 +143,13 @@ fn generate_parser_definition<W: Write>(
         use std::convert::TryFrom;
 
         use std::marker::PhantomData;
-        use rustemort::lexer::{{Lexer, DefaultLexer, Token, LexerDefinition, RecognizerIterator}};
-        use rustemort::lr::{{LRParser, LRContext, ParserDefinition}};
-        use rustemort::lr::Action::{{self, Shift, Reduce, Accept, Error}};
-        use rustemort::index::{{StateIndex, TermIndex, NonTermIndex, ProdIndex}};
-        use rustemort::builder::Builder;
-        use rustemort::grammar::{{TerminalInfo, TerminalInfos, TerminalsState}};
-        use rustemort::debug::{{log, logn}};
+        use rustemo_rt::lexer::{{Lexer, DefaultLexer, Token, LexerDefinition, RecognizerIterator}};
+        use rustemo_rt::lr::{{LRParser, LRContext, ParserDefinition}};
+        use rustemo_rt::lr::Action::{{self, Shift, Reduce, Accept, Error}};
+        use rustemo_rt::index::{{StateIndex, TermIndex, NonTermIndex, ProdIndex}};
+        use rustemo_rt::builder::Builder;
+        use rustemo_rt::grammar::{{TerminalInfo, TerminalInfos, TerminalsState}};
+        use rustemo_rt::debug::{{log, logn}};
         use rustemo::rustemo_types::{{TermKind, ProdKind, Terminal, NonTerminal, Symbol}};
 
         use super::{file_name}_actions::*;
@@ -436,8 +436,8 @@ fn generate_parser_definition<W: Write>(
 
                 fn next_token(
                     &self,
-                    context: &mut impl rustemort::parser::Context<Self::Input>,
-                ) -> Option<rustemort::lexer::Token<Self::Input>> {{
+                    context: &mut impl rustemo_rt::parser::Context<Self::Input>,
+                ) -> Option<rustemo_rt::lexer::Token<Self::Input>> {{
                     self.0.next_token(context)
                 }}
             }}
