@@ -3,8 +3,9 @@
 #[doc(inline)]
 pub use std;
 
-pub mod builder;
+#[macro_use]
 pub mod common;
+pub mod builder;
 pub mod grammar;
 pub mod index;
 pub mod lexer;
@@ -13,3 +14,4 @@ pub mod parser;
 pub mod tree;
 
 pub mod debug;
+
