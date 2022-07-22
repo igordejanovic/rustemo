@@ -1,7 +1,7 @@
 use chrono::Local;
 use convert_case::{Case, Casing};
 use indoc::indoc;
-use rustemo_rt::index::{NonTermIndex, StateVec};
+use rustemo_rt::index::{NonTermIndex, StateVec, TermIndex};
 use std::{
     fmt::{Debug, Display},
     fs::{self, File},
@@ -435,6 +435,31 @@ fn generate_parser_definition<W: Write>(
                     )
                 }
             }
+        } else {
+            // STOP recognition
+            if terminal.idx == TermIndex(0) {
+                geni!(
+                    out,
+                    indoc! {
+                        r#"
+                        // 0:STOP
+                        |input: &str| {{
+                            logn!("Recognizing <STOP> -- ");
+                            if input.len() == 0 {{
+                                log!("recognized");
+                                Some("")
+                            }} else {{
+                                log!("not recognized");
+                                None
+                            }}
+                        }},
+                        "#
+                    },
+                )
+            } else {
+                // TODO: Custom recognizers?
+                unreachable!()
+            }
         }
     }
     geni!(out, "],\n");
@@ -540,6 +565,7 @@ fn generate_parser_definition<W: Write>(
         }
     );
 
+    // Calling actions on reductions
     out.inc_indent();
     out.inc_indent();
     for production in &grammar.productions()[1..] {
@@ -626,9 +652,21 @@ fn generate_parser_definition<W: Write>(
 
     out.dec_indent();
     geni!(out, "}};\n");
-
     out.dec_indent();
     geni!(out, "}}\n");
+
+
+    // Getting builder result
+    geni!(
+        out,
+        indoc! {r#"
+            fn get_result(&mut self) -> Self::Output {{
+                self.res_stack.pop().unwrap()
+            }}
+        "#
+        }
+    );
+
     out.dec_indent();
     geni!(out, "}}\n");
 
