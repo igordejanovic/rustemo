@@ -873,8 +873,8 @@ fn follow_sets(grammar: &Grammar, first_sets: &FirstSets) -> FollowSets {
 ///
 /// Starting from the given items (usually just kernel items), for each item, if
 /// right of the dot is a non-terminal, adds all items where LHS is a given
-/// terminal and the dot is at the beginning. In other words, adds all missing
-/// non-kernel items.
+/// non-terminal and the dot is at the beginning. In other words, adds all
+/// missing non-kernel items.
 fn closure(state: &mut LRState, grammar: &Grammar, first_sets: &FirstSets) {
     loop {
         let mut new_items: BTreeSet<LRItem> = BTreeSet::new();

@@ -138,6 +138,8 @@ where
             let action =
                 self.definition.action(current_state, next_token.index());
 
+            log!("Action: {:?}", action);
+
             match action {
                 Shift(state_id, term_idx) => {
                     log!(

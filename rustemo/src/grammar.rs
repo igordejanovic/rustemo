@@ -445,9 +445,8 @@ impl Grammar {
     ) {
         let mut next_term_idx = TermIndex(1); // Account for STOP terminal
         for terminal in grammar_terminals {
-            let name = terminal.name.clone();
             terminals.insert(
-                name.clone(),
+                terminal.name.clone(),
                 Terminal {
                     idx: next_term_idx,
                     name: terminal.name,

@@ -170,7 +170,7 @@ fn generate_parser_definition<W: Write>(
         use rustemo_rt::lexer::{{Lexer, DefaultLexer, Token, LexerDefinition, RecognizerIterator}};
         use rustemo_rt::parser::Parser;
         use rustemo_rt::lr::{{LRParser, LRContext, ParserDefinition}};
-        use rustemo_rt::lr::Action::{{self, Shift, Reduce, Error}};
+        use rustemo_rt::lr::Action::{{self, Shift, Reduce, Accept, Error}};
         use rustemo_rt::index::{{StateIndex, TermIndex, NonTermIndex, ProdIndex}};
         use rustemo_rt::builder::Builder;
         use rustemo_rt::grammar::{{TerminalInfo, TerminalInfos, TerminalsState}};
@@ -296,7 +296,7 @@ fn generate_parser_definition<W: Write>(
                     _ => {{
                         panic!("Invalid return type of inner parse.")
                     }}
-                }};
+                }}
             }}
         }}
 
@@ -414,7 +414,7 @@ fn generate_parser_definition<W: Write>(
                            r###"
                             |input: &str| {{
                                 logn!("Recognizing <{term_name}> -- ");
-                                let regex = Regex::new(r#"{regex_match}"#).unwrap();
+                                let regex = Regex::new(r#"^{regex_match}"#).unwrap();
                                 let match_str = regex.find(input);
                                 match match_str {{
                                     Some(x) => {{
@@ -633,7 +633,7 @@ fn generate_parser_definition<W: Write>(
 
         geni!(
             out,
-            "{} => NonTerminal::{}({}_p{}({}))\n",
+            "{} => NonTerminal::{}({}_p{}({})),\n",
             lhs,
             prod_nt_name,
             prod_nt_name.to_case(Case::Snake),
@@ -644,6 +644,8 @@ fn generate_parser_definition<W: Write>(
                 .join(", ")
         );
 
+        geni!(out, "_ => panic!(\"Invalid symbol parse stack data.\")\n");
+
         out.dec_indent();
         geni!(out, "}}\n");
         out.dec_indent();
@@ -652,6 +654,15 @@ fn generate_parser_definition<W: Write>(
 
     out.dec_indent();
     geni!(out, "}};\n");
+
+    geni!(
+        out,
+        indoc! {r#"
+            self.res_stack.push(Symbol::NonTerminal(prod));
+        "#
+        }
+    );
+
     out.dec_indent();
     geni!(out, "}}\n");
 
