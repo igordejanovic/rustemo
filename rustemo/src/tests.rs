@@ -38,18 +38,21 @@ pub(crate) mod utils {
                 crate::tests::utils::string_difference,
                 std::{fs, path::PathBuf},
             };
-            let mut t_path = PathBuf::from(file!());
-            t_path.pop();
-            t_path.push($path);
+            let t_path: PathBuf =
+                [env!("CARGO_MANIFEST_DIR"), $path].iter().collect();
 
             if t_path.exists() {
                 let content: String = fs::read_to_string(&t_path)
-                    .expect("Cannot load output file.");
+                    .unwrap_or_else(|err| {
+                        panic!("Cannot load output file {:?}: {}", t_path, err)
+                    });
                 if let Some(diff) = string_difference(&content, &$out_str) {
                     assert!(false, "Strings differ at: {:?}", diff)
                 }
             } else {
-                fs::write(t_path, $out_str).expect("Error writing file");
+                fs::write(&t_path, $out_str).unwrap_or_else(|err| {
+                    panic!("Error writing file {:?}: {}", t_path, err)
+                });
             }
         }};
     }
