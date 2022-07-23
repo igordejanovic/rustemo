@@ -487,6 +487,14 @@ fn calculate_reductions(
     for state in states {
         for item in state.items.iter().filter(|x| x.is_reducing()) {
             let prod = &grammar.productions()[item.prod];
+
+            // Accept if reducing by augmented production for STOP lookahead
+            if prod.idx == ProdIndex(0) {
+                let actions = &mut state.actions[TermIndex(0)];
+                actions.push(Action::Accept);
+                continue
+            }
+
             let new_reduce = Action::Reduce(
                 item.prod,
                 item.prod_len,
