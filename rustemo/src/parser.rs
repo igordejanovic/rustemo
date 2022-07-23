@@ -22,9 +22,10 @@ impl<'i> RustemoParser<'i> {
 
 #[cfg(test)]
 mod tests {
-    use std::fmt::Write;
-
-    use crate::{tests::utils::{string_difference, type_of}, output_cmp};
+    use crate::{
+        output_cmp,
+        tests::utils::type_of,
+    };
 
     use super::*;
 
@@ -33,6 +34,7 @@ mod tests {
         let grammar = RustemoParser::default().parse(
             r#"
              S: A B;
+            terminals
              A: "a";
              B: "b";
             "#
@@ -46,13 +48,14 @@ mod tests {
         use std::fs;
         use std::path::PathBuf;
 
-        let mut path = PathBuf::from(file!());
-        path.pop();
-        path.push("rustemo.rustemo");
+        let path: PathBuf =
+            [env!("CARGO_MANIFEST_DIR"), "src", "rustemo.rustemo"]
+                .iter()
+                .collect();
         let content: String =
             fs::read_to_string(&path).expect("Cannot load rustemo grammar!");
         let grammar = RustemoParser::default().parse(content.as_str().into());
 
-        output_cmp!("rustemo.parse_tree", format!("{:#?}", grammar));
+        output_cmp!("src/rustemo.parse_tree", format!("{:#?}", grammar));
     }
 }

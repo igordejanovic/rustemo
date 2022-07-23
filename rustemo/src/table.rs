@@ -966,6 +966,13 @@ mod tests {
             T: F Tp;
             Tp: "*" F Tp | EMPTY;
             F: "(" E ")" | "id";
+
+            terminals
+            Plus: "+";
+            Mul: "*";
+            LParen: "(";
+            RParen: ")";
+            id: "id";
             "#
             .into(),
         )
@@ -977,6 +984,13 @@ mod tests {
             E: E "+" T | T;
             T: T "*" F | F;
             F: "(" E ")" | "id";
+
+            terminals
+            Plus: "+";
+            Mul: "*";
+            LParen: "(";
+            RParen: ")";
+            id: "id";
             "#
             .into(),
         )
@@ -991,6 +1005,11 @@ mod tests {
             S: A "a" | "b" A "c" | B "c" | "b" B "a";
             A: "d";
             B: "d";
+            terminals
+            a_t: "a";
+            b_t: "b";
+            c_t: "c";
+            d_t: "d";
             "#
             .into(),
         )
@@ -1004,6 +1023,14 @@ mod tests {
              | E "^" E {3, right}
              | "(" E ")"
              | "id";
+
+            terminals
+            Plus: "+";
+            Mul: "*";
+            Power: "^";
+            LParen: "(";
+            RParen: ")";
+            id: "id";
             "#
             .into(),
         )
@@ -1024,23 +1051,23 @@ mod tests {
 
         assert_eq!(
             &first_sets[grammar.symbol_index("F")],
-            &follow(grammar.symbol_indexes(&["(", "id"]))
+            &follow(grammar.symbol_indexes(&["LParen", "id"]))
         );
         assert_eq!(
             &first_sets[grammar.symbol_index("T")],
-            &follow(grammar.symbol_indexes(&["(", "id"]))
+            &follow(grammar.symbol_indexes(&["LParen", "id"]))
         );
         assert_eq!(
             &first_sets[grammar.symbol_index("E")],
-            &follow(grammar.symbol_indexes(&["(", "id"]))
+            &follow(grammar.symbol_indexes(&["LParen", "id"]))
         );
         assert_eq!(
             &first_sets[grammar.symbol_index("Ep")],
-            &follow(grammar.symbol_indexes(&["+", "EMPTY"]))
+            &follow(grammar.symbol_indexes(&["Plus", "EMPTY"]))
         );
         assert_eq!(
             &first_sets[grammar.symbol_index("Tp")],
-            &follow(grammar.symbol_indexes(&["*", "EMPTY"]))
+            &follow(grammar.symbol_indexes(&["Mul", "EMPTY"]))
         );
     }
 
@@ -1051,20 +1078,20 @@ mod tests {
 
         assert_eq!(
             &follow_sets[grammar.symbol_index("E")],
-            &follow(grammar.symbol_indexes(&[")", "STOP"]))
+            &follow(grammar.symbol_indexes(&["RParen", "STOP"]))
         );
         dbg!(grammar.symbol_names(&follow_sets[grammar.symbol_index("Ep")]));
         assert_eq!(
             &follow_sets[grammar.symbol_index("Ep")],
-            &follow(grammar.symbol_indexes(&[")", "STOP"]))
+            &follow(grammar.symbol_indexes(&["RParen", "STOP"]))
         );
         assert_eq!(
             &follow_sets[grammar.symbol_index("T")],
-            &follow(grammar.symbol_indexes(&["+", ")", "STOP"]))
+            &follow(grammar.symbol_indexes(&["Plus", "RParen", "STOP"]))
         );
         assert_eq!(
             &follow_sets[grammar.symbol_index("Tp")],
-            &follow(grammar.symbol_indexes(&["+", ")", "STOP"]))
+            &follow(grammar.symbol_indexes(&["Plus", "RParen", "STOP"]))
         );
     }
 
@@ -1156,17 +1183,17 @@ mod tests {
         // Check production based term priorities
         assert_eq!(
             lr_state.max_prior_for_term
-                [&grammar.symbol_to_term(grammar.term_by_name["^"])],
+                [&grammar.symbol_to_term(grammar.term_by_name["Power"])],
             3
         );
         assert_eq!(
             lr_state.max_prior_for_term
-                [&grammar.symbol_to_term(grammar.term_by_name["*"])],
+                [&grammar.symbol_to_term(grammar.term_by_name["Mul"])],
             2
         );
         assert_eq!(
             lr_state.max_prior_for_term
-                [&grammar.symbol_to_term(grammar.term_by_name["+"])],
+                [&grammar.symbol_to_term(grammar.term_by_name["Plus"])],
             1
         );
     }
@@ -1271,9 +1298,9 @@ mod tests {
         let prods = [1, 4, 7, 8];
         let follow_sets = [
             grammar.symbol_indexes(&["STOP"]),
-            grammar.symbol_indexes(&["STOP", "+"]),
-            grammar.symbol_indexes(&["STOP", "+", "*"]),
-            grammar.symbol_indexes(&["STOP", "+", "*"]),
+            grammar.symbol_indexes(&["STOP", "Plus"]),
+            grammar.symbol_indexes(&["STOP", "Plus", "Mul"]),
+            grammar.symbol_indexes(&["STOP", "Plus", "Mul"]),
         ];
 
         assert_eq!(lr_state.items.len(), 4);

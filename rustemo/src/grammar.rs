@@ -709,6 +709,9 @@ mod tests {
         let grammar = RustemoParser::default().parse(
             r#"
             S: "first_term" "second_term";
+            terminals
+            first_term: "first_term";
+            second_term: "second_term";
             "#
             .into(),
         );
@@ -731,6 +734,8 @@ mod tests {
             S: "first_term" A "second_term";
             A: third_term;
             terminals
+            first_term: "first_term";
+            second_term: "second_term";
             third_term: ;
             "#
             .into(),
@@ -743,8 +748,7 @@ mod tests {
                 .iter()
                 .map(|t| &t.name)
                 .collect::<Vec<_>>(),
-            // `third_term` is collected first and gets lower TermIndex (1)
-            &["STOP", "third_term", "first_term", "second_term"]
+            &["STOP", "first_term", "second_term", "third_term"]
         );
     }
 
@@ -755,7 +759,9 @@ mod tests {
             S: "first_term" A "second_term" "first_term";
             A: third_term "third_term" "first_term" second_term;
             terminals
-            third_term: ;
+            first_term: "first_term";
+            second_term: "second_term";
+            third_term: "third_term";
             "#
             .into(),
         );
@@ -767,8 +773,7 @@ mod tests {
                 .iter()
                 .map(|t| &t.name)
                 .collect::<Vec<_>>(),
-            // `third_term` is collected first and gets lower TermIndex (1)
-            &["STOP", "third_term", "first_term", "second_term"]
+            &["STOP", "first_term", "second_term", "third_term"]
         );
     }
 
@@ -777,8 +782,10 @@ mod tests {
         let grammar = RustemoParser::default().parse(
             r#"
             S: "foo" rmatch_term A;
-            A: "some" "more_regex";
+            A: "some" more_regex;
             terminals
+            foo: "foo";
+            some: "some";
             rmatch_term: /"[^"]+"/;
             more_regex: /\d{2,5}/;
             "#
@@ -792,7 +799,7 @@ mod tests {
                 .iter()
                 .map(|t| &t.name)
                 .collect::<Vec<_>>(),
-            &["STOP", "rmatch_term", "more_regex", "foo", "some"]
+            &["STOP", "foo", "some", "rmatch_term", "more_regex"]
         );
         for (term_name, term_regex) in
             [("rmatch_term", r#""[^"]+""#), ("more_regex", r#"\d{2,5}"#)]
@@ -817,6 +824,8 @@ mod tests {
             S: A "some_term" B | B;
             A: B;
             B: some_term;
+            terminals
+            some_term: "some_term";
             "#
             .into(),
         );
@@ -829,7 +838,7 @@ mod tests {
                 .iter()
                 .map(|nt| &nt.name)
                 .collect::<Vec<_>>(),
-            &["EMPTY", "S'", "S", "A", "B"]
+            &["EMPTY", "AUG", "S", "A", "B"]
         );
         assert_eq!(
             grammar
@@ -864,6 +873,8 @@ mod tests {
             S: A "some_term" B {5} | B {nops};
             A: B {nopse, bla: 5};
             B: some_term {right};
+            terminals
+            some_term: "some_term";
             "#
             .into(),
         );
