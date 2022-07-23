@@ -6,6 +6,7 @@ Grammar {
                 Production {
                     idx: 0,
                     nonterminal: 1,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
@@ -24,6 +25,7 @@ Grammar {
                 Production {
                     idx: 1,
                     nonterminal: 2,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
@@ -42,6 +44,7 @@ Grammar {
                 Production {
                     idx: 2,
                     nonterminal: 2,
+                    ntidx: 1,
                     rhs: [
                         Assignment {
                             name: None,
@@ -66,6 +69,7 @@ Grammar {
                 Production {
                     idx: 3,
                     nonterminal: 2,
+                    ntidx: 2,
                     rhs: [
                         Assignment {
                             name: None,
@@ -76,7 +80,7 @@ Grammar {
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                11,
+                                1,
                             ),
                         },
                         Assignment {
@@ -96,6 +100,7 @@ Grammar {
                 Production {
                     idx: 4,
                     nonterminal: 2,
+                    ntidx: 3,
                     rhs: [
                         Assignment {
                             name: None,
@@ -112,7 +117,7 @@ Grammar {
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                11,
+                                1,
                             ),
                         },
                         Assignment {
@@ -132,11 +137,12 @@ Grammar {
                 Production {
                     idx: 5,
                     nonterminal: 2,
+                    ntidx: 4,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                11,
+                                1,
                             ),
                         },
                         Assignment {
@@ -156,6 +162,7 @@ Grammar {
                 Production {
                     idx: 6,
                     nonterminal: 3,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
@@ -166,7 +173,7 @@ Grammar {
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                48,
+                                2,
                             ),
                         },
                     ],
@@ -180,11 +187,12 @@ Grammar {
                 Production {
                     idx: 7,
                     nonterminal: 3,
+                    ntidx: 1,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                48,
+                                2,
                             ),
                         },
                     ],
@@ -198,17 +206,18 @@ Grammar {
                 Production {
                     idx: 8,
                     nonterminal: 4,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                12,
+                                2,
                             ),
                         },
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                6,
+                                39,
                             ),
                         },
                     ],
@@ -222,29 +231,30 @@ Grammar {
                 Production {
                     idx: 9,
                     nonterminal: 4,
+                    ntidx: 1,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                12,
+                                2,
                             ),
                         },
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                6,
+                                39,
                             ),
                         },
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                13,
+                                3,
                             ),
                         },
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                1,
+                                34,
                             ),
                         },
                     ],
@@ -258,6 +268,7 @@ Grammar {
                 Production {
                     idx: 10,
                     nonterminal: 5,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
@@ -282,6 +293,7 @@ Grammar {
                 Production {
                     idx: 11,
                     nonterminal: 5,
+                    ntidx: 1,
                     rhs: [
                         Assignment {
                             name: None,
@@ -300,23 +312,24 @@ Grammar {
                 Production {
                     idx: 12,
                     nonterminal: 6,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                7,
+                                40,
                             ),
                         },
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                1,
+                                34,
                             ),
                         },
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                14,
+                                4,
                             ),
                         },
                         Assignment {
@@ -328,7 +341,7 @@ Grammar {
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                15,
+                                5,
                             ),
                         },
                     ],
@@ -342,23 +355,24 @@ Grammar {
                 Production {
                     idx: 13,
                     nonterminal: 6,
+                    ntidx: 1,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
+                                40,
+                            ),
+                        },
+                        Assignment {
+                            name: None,
+                            symbol: Resolved(
+                                34,
+                            ),
+                        },
+                        Assignment {
+                            name: None,
+                            symbol: Resolved(
                                 7,
-                            ),
-                        },
-                        Assignment {
-                            name: None,
-                            symbol: Resolved(
-                                1,
-                            ),
-                        },
-                        Assignment {
-                            name: None,
-                            symbol: Resolved(
-                                16,
                             ),
                         },
                         Assignment {
@@ -370,13 +384,13 @@ Grammar {
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                17,
+                                8,
                             ),
                         },
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                14,
+                                4,
                             ),
                         },
                         Assignment {
@@ -388,7 +402,7 @@ Grammar {
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                15,
+                                5,
                             ),
                         },
                     ],
@@ -402,6 +416,7 @@ Grammar {
                 Production {
                     idx: 14,
                     nonterminal: 7,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
@@ -412,7 +427,7 @@ Grammar {
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                18,
+                                13,
                             ),
                         },
                         Assignment {
@@ -432,6 +447,7 @@ Grammar {
                 Production {
                     idx: 15,
                     nonterminal: 7,
+                    ntidx: 1,
                     rhs: [
                         Assignment {
                             name: None,
@@ -450,6 +466,7 @@ Grammar {
                 Production {
                     idx: 16,
                     nonterminal: 8,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
@@ -468,6 +485,7 @@ Grammar {
                 Production {
                     idx: 17,
                     nonterminal: 8,
+                    ntidx: 1,
                     rhs: [
                         Assignment {
                             name: None,
@@ -478,7 +496,7 @@ Grammar {
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                16,
+                                7,
                             ),
                         },
                         Assignment {
@@ -490,7 +508,7 @@ Grammar {
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                17,
+                                8,
                             ),
                         },
                     ],
@@ -504,6 +522,7 @@ Grammar {
                 Production {
                     idx: 18,
                     nonterminal: 9,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
@@ -528,6 +547,7 @@ Grammar {
                 Production {
                     idx: 19,
                     nonterminal: 9,
+                    ntidx: 1,
                     rhs: [
                         Assignment {
                             name: None,
@@ -546,23 +566,24 @@ Grammar {
                 Production {
                     idx: 20,
                     nonterminal: 10,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                7,
+                                40,
                             ),
                         },
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                1,
+                                34,
                             ),
                         },
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                14,
+                                4,
                             ),
                         },
                         Assignment {
@@ -574,7 +595,7 @@ Grammar {
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                15,
+                                5,
                             ),
                         },
                     ],
@@ -588,29 +609,30 @@ Grammar {
                 Production {
                     idx: 21,
                     nonterminal: 10,
+                    ntidx: 1,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                7,
+                                40,
                             ),
                         },
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                1,
+                                34,
                             ),
                         },
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                14,
+                                4,
                             ),
                         },
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                15,
+                                5,
                             ),
                         },
                     ],
@@ -624,23 +646,24 @@ Grammar {
                 Production {
                     idx: 22,
                     nonterminal: 10,
+                    ntidx: 2,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                7,
+                                40,
                             ),
                         },
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                1,
+                                34,
                             ),
                         },
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                14,
+                                4,
                             ),
                         },
                         Assignment {
@@ -652,7 +675,7 @@ Grammar {
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                16,
+                                7,
                             ),
                         },
                         Assignment {
@@ -664,13 +687,13 @@ Grammar {
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                17,
+                                8,
                             ),
                         },
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                15,
+                                5,
                             ),
                         },
                     ],
@@ -684,29 +707,30 @@ Grammar {
                 Production {
                     idx: 23,
                     nonterminal: 10,
+                    ntidx: 3,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
+                                40,
+                            ),
+                        },
+                        Assignment {
+                            name: None,
+                            symbol: Resolved(
+                                34,
+                            ),
+                        },
+                        Assignment {
+                            name: None,
+                            symbol: Resolved(
+                                4,
+                            ),
+                        },
+                        Assignment {
+                            name: None,
+                            symbol: Resolved(
                                 7,
-                            ),
-                        },
-                        Assignment {
-                            name: None,
-                            symbol: Resolved(
-                                1,
-                            ),
-                        },
-                        Assignment {
-                            name: None,
-                            symbol: Resolved(
-                                14,
-                            ),
-                        },
-                        Assignment {
-                            name: None,
-                            symbol: Resolved(
-                                16,
                             ),
                         },
                         Assignment {
@@ -718,13 +742,13 @@ Grammar {
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                17,
+                                8,
                             ),
                         },
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                15,
+                                5,
                             ),
                         },
                     ],
@@ -738,60 +762,7 @@ Grammar {
                 Production {
                     idx: 24,
                     nonterminal: 11,
-                    rhs: [
-                        Assignment {
-                            name: None,
-                            symbol: Resolved(
-                                19,
-                            ),
-                        },
-                    ],
-                    assoc: None,
-                    prio: 10,
-                    dynamic: false,
-                    nops: false,
-                    nopse: false,
-                    meta: {},
-                },
-                Production {
-                    idx: 25,
-                    nonterminal: 11,
-                    rhs: [
-                        Assignment {
-                            name: None,
-                            symbol: Resolved(
-                                20,
-                            ),
-                        },
-                    ],
-                    assoc: None,
-                    prio: 10,
-                    dynamic: false,
-                    nops: false,
-                    nopse: false,
-                    meta: {},
-                },
-                Production {
-                    idx: 26,
-                    nonterminal: 11,
-                    rhs: [
-                        Assignment {
-                            name: None,
-                            symbol: Resolved(
-                                21,
-                            ),
-                        },
-                    ],
-                    assoc: None,
-                    prio: 10,
-                    dynamic: false,
-                    nops: false,
-                    nopse: false,
-                    meta: {},
-                },
-                Production {
-                    idx: 27,
-                    nonterminal: 11,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
@@ -808,26 +779,9 @@ Grammar {
                     meta: {},
                 },
                 Production {
-                    idx: 28,
+                    idx: 25,
                     nonterminal: 11,
-                    rhs: [
-                        Assignment {
-                            name: None,
-                            symbol: Resolved(
-                                23,
-                            ),
-                        },
-                    ],
-                    assoc: None,
-                    prio: 10,
-                    dynamic: false,
-                    nops: false,
-                    nopse: false,
-                    meta: {},
-                },
-                Production {
-                    idx: 29,
-                    nonterminal: 11,
+                    ntidx: 1,
                     rhs: [
                         Assignment {
                             name: None,
@@ -844,8 +798,28 @@ Grammar {
                     meta: {},
                 },
                 Production {
-                    idx: 30,
+                    idx: 26,
                     nonterminal: 11,
+                    ntidx: 2,
+                    rhs: [
+                        Assignment {
+                            name: None,
+                            symbol: Resolved(
+                                23,
+                            ),
+                        },
+                    ],
+                    assoc: None,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 27,
+                    nonterminal: 11,
+                    ntidx: 3,
                     rhs: [
                         Assignment {
                             name: None,
@@ -862,13 +836,71 @@ Grammar {
                     meta: {},
                 },
                 Production {
-                    idx: 31,
+                    idx: 28,
                     nonterminal: 11,
+                    ntidx: 4,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                3,
+                                26,
+                            ),
+                        },
+                    ],
+                    assoc: None,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 29,
+                    nonterminal: 11,
+                    ntidx: 5,
+                    rhs: [
+                        Assignment {
+                            name: None,
+                            symbol: Resolved(
+                                27,
+                            ),
+                        },
+                    ],
+                    assoc: None,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 30,
+                    nonterminal: 11,
+                    ntidx: 6,
+                    rhs: [
+                        Assignment {
+                            name: None,
+                            symbol: Resolved(
+                                28,
+                            ),
+                        },
+                    ],
+                    assoc: None,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 31,
+                    nonterminal: 11,
+                    ntidx: 7,
+                    rhs: [
+                        Assignment {
+                            name: None,
+                            symbol: Resolved(
+                                36,
                             ),
                         },
                     ],
@@ -882,6 +914,7 @@ Grammar {
                 Production {
                     idx: 32,
                     nonterminal: 11,
+                    ntidx: 8,
                     rhs: [
                         Assignment {
                             name: None,
@@ -900,6 +933,7 @@ Grammar {
                 Production {
                     idx: 33,
                     nonterminal: 12,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
@@ -910,7 +944,7 @@ Grammar {
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                26,
+                                6,
                             ),
                         },
                         Assignment {
@@ -930,6 +964,7 @@ Grammar {
                 Production {
                     idx: 34,
                     nonterminal: 12,
+                    ntidx: 1,
                     rhs: [
                         Assignment {
                             name: None,
@@ -948,42 +983,7 @@ Grammar {
                 Production {
                     idx: 35,
                     nonterminal: 13,
-                    rhs: [
-                        Assignment {
-                            name: None,
-                            symbol: Resolved(
-                                27,
-                            ),
-                        },
-                    ],
-                    assoc: None,
-                    prio: 10,
-                    dynamic: false,
-                    nops: false,
-                    nopse: false,
-                    meta: {},
-                },
-                Production {
-                    idx: 36,
-                    nonterminal: 13,
-                    rhs: [
-                        Assignment {
-                            name: None,
-                            symbol: Resolved(
-                                28,
-                            ),
-                        },
-                    ],
-                    assoc: None,
-                    prio: 10,
-                    dynamic: false,
-                    nops: false,
-                    nopse: false,
-                    meta: {},
-                },
-                Production {
-                    idx: 37,
-                    nonterminal: 13,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
@@ -1000,13 +1000,52 @@ Grammar {
                     meta: {},
                 },
                 Production {
-                    idx: 38,
+                    idx: 36,
                     nonterminal: 13,
+                    ntidx: 1,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                23,
+                                30,
+                            ),
+                        },
+                    ],
+                    assoc: None,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 37,
+                    nonterminal: 13,
+                    ntidx: 2,
+                    rhs: [
+                        Assignment {
+                            name: None,
+                            symbol: Resolved(
+                                31,
+                            ),
+                        },
+                    ],
+                    assoc: None,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 38,
+                    nonterminal: 13,
+                    ntidx: 3,
+                    rhs: [
+                        Assignment {
+                            name: None,
+                            symbol: Resolved(
+                                26,
                             ),
                         },
                     ],
@@ -1020,11 +1059,12 @@ Grammar {
                 Production {
                     idx: 39,
                     nonterminal: 13,
+                    ntidx: 4,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                3,
+                                36,
                             ),
                         },
                     ],
@@ -1038,6 +1078,7 @@ Grammar {
                 Production {
                     idx: 40,
                     nonterminal: 13,
+                    ntidx: 5,
                     rhs: [
                         Assignment {
                             name: None,
@@ -1056,6 +1097,7 @@ Grammar {
                 Production {
                     idx: 41,
                     nonterminal: 14,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
@@ -1066,7 +1108,7 @@ Grammar {
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                26,
+                                6,
                             ),
                         },
                         Assignment {
@@ -1086,6 +1128,7 @@ Grammar {
                 Production {
                     idx: 42,
                     nonterminal: 14,
+                    ntidx: 1,
                     rhs: [
                         Assignment {
                             name: None,
@@ -1104,17 +1147,18 @@ Grammar {
                 Production {
                     idx: 43,
                     nonterminal: 15,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                1,
+                                34,
                             ),
                         },
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                14,
+                                4,
                             ),
                         },
                         Assignment {
@@ -1134,11 +1178,12 @@ Grammar {
                 Production {
                     idx: 44,
                     nonterminal: 16,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                3,
+                                36,
                             ),
                         },
                     ],
@@ -1152,11 +1197,12 @@ Grammar {
                 Production {
                     idx: 45,
                     nonterminal: 16,
+                    ntidx: 1,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                4,
+                                37,
                             ),
                         },
                     ],
@@ -1170,11 +1216,12 @@ Grammar {
                 Production {
                     idx: 46,
                     nonterminal: 16,
+                    ntidx: 2,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                5,
+                                38,
                             ),
                         },
                     ],
@@ -1188,11 +1235,12 @@ Grammar {
                 Production {
                     idx: 47,
                     nonterminal: 16,
+                    ntidx: 3,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                6,
+                                39,
                             ),
                         },
                     ],
@@ -1206,6 +1254,7 @@ Grammar {
                 Production {
                     idx: 48,
                     nonterminal: 17,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
@@ -1224,6 +1273,7 @@ Grammar {
                 Production {
                     idx: 49,
                     nonterminal: 17,
+                    ntidx: 1,
                     rhs: [
                         Assignment {
                             name: None,
@@ -1242,6 +1292,7 @@ Grammar {
                 Production {
                     idx: 50,
                     nonterminal: 17,
+                    ntidx: 2,
                     rhs: [
                         Assignment {
                             name: None,
@@ -1260,6 +1311,7 @@ Grammar {
                 Production {
                     idx: 51,
                     nonterminal: 18,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
@@ -1284,6 +1336,7 @@ Grammar {
                 Production {
                     idx: 52,
                     nonterminal: 18,
+                    ntidx: 1,
                     rhs: [
                         Assignment {
                             name: None,
@@ -1302,17 +1355,18 @@ Grammar {
                 Production {
                     idx: 53,
                     nonterminal: 19,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                1,
+                                34,
                             ),
                         },
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                30,
+                                20,
                             ),
                         },
                         Assignment {
@@ -1332,17 +1386,18 @@ Grammar {
                 Production {
                     idx: 54,
                     nonterminal: 20,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                1,
+                                34,
                             ),
                         },
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                31,
+                                21,
                             ),
                         },
                         Assignment {
@@ -1362,11 +1417,12 @@ Grammar {
                 Production {
                     idx: 55,
                     nonterminal: 21,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                32,
+                                9,
                             ),
                         },
                         Assignment {
@@ -1378,7 +1434,7 @@ Grammar {
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                33,
+                                10,
                             ),
                         },
                     ],
@@ -1392,6 +1448,7 @@ Grammar {
                 Production {
                     idx: 56,
                     nonterminal: 22,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
@@ -1416,6 +1473,7 @@ Grammar {
                 Production {
                     idx: 57,
                     nonterminal: 22,
+                    ntidx: 1,
                     rhs: [
                         Assignment {
                             name: None,
@@ -1440,6 +1498,7 @@ Grammar {
                 Production {
                     idx: 58,
                     nonterminal: 23,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
@@ -1464,11 +1523,12 @@ Grammar {
                 Production {
                     idx: 59,
                     nonterminal: 24,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                34,
+                                14,
                             ),
                         },
                     ],
@@ -1482,11 +1542,12 @@ Grammar {
                 Production {
                     idx: 60,
                     nonterminal: 24,
+                    ntidx: 1,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                35,
+                                15,
                             ),
                         },
                     ],
@@ -1500,11 +1561,12 @@ Grammar {
                 Production {
                     idx: 61,
                     nonterminal: 24,
+                    ntidx: 2,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                36,
+                                16,
                             ),
                         },
                     ],
@@ -1518,11 +1580,12 @@ Grammar {
                 Production {
                     idx: 62,
                     nonterminal: 24,
+                    ntidx: 3,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                37,
+                                17,
                             ),
                         },
                     ],
@@ -1536,11 +1599,12 @@ Grammar {
                 Production {
                     idx: 63,
                     nonterminal: 24,
+                    ntidx: 4,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                38,
+                                18,
                             ),
                         },
                     ],
@@ -1554,11 +1618,12 @@ Grammar {
                 Production {
                     idx: 64,
                     nonterminal: 24,
+                    ntidx: 5,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                39,
+                                19,
                             ),
                         },
                     ],
@@ -1572,11 +1637,12 @@ Grammar {
                 Production {
                     idx: 65,
                     nonterminal: 25,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                40,
+                                11,
                             ),
                         },
                         Assignment {
@@ -1588,7 +1654,7 @@ Grammar {
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                41,
+                                12,
                             ),
                         },
                     ],
@@ -1602,6 +1668,7 @@ Grammar {
                 Production {
                     idx: 66,
                     nonterminal: 26,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
@@ -1612,7 +1679,7 @@ Grammar {
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                26,
+                                6,
                             ),
                         },
                         Assignment {
@@ -1632,6 +1699,7 @@ Grammar {
                 Production {
                     idx: 67,
                     nonterminal: 26,
+                    ntidx: 1,
                     rhs: [
                         Assignment {
                             name: None,
@@ -1650,11 +1718,12 @@ Grammar {
                 Production {
                     idx: 68,
                     nonterminal: 27,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                1,
+                                34,
                             ),
                         },
                     ],
@@ -1668,11 +1737,12 @@ Grammar {
                 Production {
                     idx: 69,
                     nonterminal: 28,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                1,
+                                34,
                             ),
                         },
                     ],
@@ -1686,11 +1756,12 @@ Grammar {
                 Production {
                     idx: 70,
                     nonterminal: 28,
+                    ntidx: 1,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                6,
+                                39,
                             ),
                         },
                     ],
@@ -1704,11 +1775,12 @@ Grammar {
                 Production {
                     idx: 71,
                     nonterminal: 29,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                6,
+                                39,
                             ),
                         },
                     ],
@@ -1722,11 +1794,12 @@ Grammar {
                 Production {
                     idx: 72,
                     nonterminal: 29,
+                    ntidx: 1,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                2,
+                                35,
                             ),
                         },
                     ],
@@ -1740,6 +1813,7 @@ Grammar {
                 Production {
                     idx: 73,
                     nonterminal: 30,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
@@ -1758,6 +1832,7 @@ Grammar {
                 Production {
                     idx: 74,
                     nonterminal: 30,
+                    ntidx: 1,
                     rhs: [
                         Assignment {
                             name: None,
@@ -1782,6 +1857,7 @@ Grammar {
                 Production {
                     idx: 75,
                     nonterminal: 30,
+                    ntidx: 2,
                     rhs: [
                         Assignment {
                             name: None,
@@ -1800,11 +1876,12 @@ Grammar {
                 Production {
                     idx: 76,
                     nonterminal: 31,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                8,
+                                41,
                             ),
                         },
                     ],
@@ -1818,6 +1895,7 @@ Grammar {
                 Production {
                     idx: 77,
                     nonterminal: 31,
+                    ntidx: 1,
                     rhs: [
                         Assignment {
                             name: None,
@@ -1836,11 +1914,12 @@ Grammar {
                 Production {
                     idx: 78,
                     nonterminal: 32,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                42,
+                                32,
                             ),
                         },
                         Assignment {
@@ -1852,7 +1931,7 @@ Grammar {
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                43,
+                                33,
                             ),
                         },
                     ],
@@ -1866,11 +1945,12 @@ Grammar {
                 Production {
                     idx: 79,
                     nonterminal: 32,
+                    ntidx: 1,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                9,
+                                42,
                             ),
                         },
                     ],
@@ -1884,6 +1964,7 @@ Grammar {
                 Production {
                     idx: 80,
                     nonterminal: 33,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
@@ -1902,6 +1983,7 @@ Grammar {
                 Production {
                     idx: 81,
                     nonterminal: 33,
+                    ntidx: 1,
                     rhs: [
                         Assignment {
                             name: None,
@@ -1926,6 +2008,7 @@ Grammar {
                 Production {
                     idx: 82,
                     nonterminal: 33,
+                    ntidx: 2,
                     rhs: [
                         Assignment {
                             name: None,
@@ -1944,6 +2027,7 @@ Grammar {
                 Production {
                     idx: 83,
                     nonterminal: 34,
+                    ntidx: 0,
                     rhs: [
                         Assignment {
                             name: None,
@@ -1962,11 +2046,12 @@ Grammar {
                 Production {
                     idx: 84,
                     nonterminal: 34,
+                    ntidx: 1,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                10,
+                                43,
                             ),
                         },
                     ],
@@ -1980,11 +2065,12 @@ Grammar {
                 Production {
                     idx: 85,
                     nonterminal: 34,
+                    ntidx: 2,
                     rhs: [
                         Assignment {
                             name: None,
                             symbol: Resolved(
-                                8,
+                                41,
                             ),
                         },
                     ],
@@ -2006,87 +2092,532 @@ Grammar {
                     name: "STOP",
                     action: None,
                     recognizer: None,
+                    has_content: false,
+                    prio: 10,
                     meta: {},
                 },
                 Terminal {
                     idx: 1,
-                    name: "NAME",
+                    name: "Terminals",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            "terminals",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 2,
+                    name: "Import",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            "import",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 3,
+                    name: "As",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            "as",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 4,
+                    name: "Colon",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            ":",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 5,
+                    name: "SemiColon",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            ";",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 6,
+                    name: "Comma",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            ",",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 7,
+                    name: "OBrace",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            "{",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 8,
+                    name: "CBrace",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            "}",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 9,
+                    name: "OBracket",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            "(",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 10,
+                    name: "CBracket",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            ")",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 11,
+                    name: "OSBracket",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            "[",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 12,
+                    name: "CSBracket",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            "]",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 13,
+                    name: "Choice",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            "|",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 14,
+                    name: "ZeroOrMore",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            "*",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 15,
+                    name: "ZeroOrMoreGreedy",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            "*!",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 16,
+                    name: "OneOrMore",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            "+",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 17,
+                    name: "OneOrMoreGreedy",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            "+!",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 18,
+                    name: "Optional",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            "?",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 19,
+                    name: "OptionalGreedy",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            "?!",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 20,
+                    name: "Equals",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            "=",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 21,
+                    name: "QEquals",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            "?=",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 22,
+                    name: "Left",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            "left",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 23,
+                    name: "Right",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            "right",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 24,
+                    name: "Reduce",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            "reduce",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 25,
+                    name: "Shift",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            "shift",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 26,
+                    name: "Dynamic",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            "dynamic",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 27,
+                    name: "NOPS",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            "nops",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 28,
+                    name: "NOPSE",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            "nopse",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 29,
+                    name: "Prefer",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            "prefer",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 30,
+                    name: "Finish",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            "finish",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 31,
+                    name: "NoFinish",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            "nofinish",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 32,
+                    name: "OComment",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            "/*",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 33,
+                    name: "CComment",
+                    action: None,
+                    recognizer: Some(
+                        StrConst(
+                            "*/",
+                        ),
+                    ),
+                    has_content: false,
+                    prio: 10,
+                    meta: {},
+                },
+                Terminal {
+                    idx: 34,
+                    name: "Name",
                     action: None,
                     recognizer: Some(
                         RegExTerm(
                             "[a-zA-Z_][a-zA-Z0-9_\\.]*",
                         ),
                     ),
+                    has_content: true,
+                    prio: 10,
                     meta: {},
                 },
                 Terminal {
-                    idx: 2,
-                    name: "REGEX_TERM",
+                    idx: 35,
+                    name: "RegexTerm",
                     action: None,
                     recognizer: Some(
                         RegExTerm(
                             "'\\/(\\\\.|[^\\/\\\\])*\\/'",
                         ),
                     ),
+                    has_content: true,
+                    prio: 10,
                     meta: {},
                 },
                 Terminal {
-                    idx: 3,
-                    name: "INT_CONST",
+                    idx: 36,
+                    name: "IntConst",
                     action: None,
                     recognizer: Some(
                         RegExTerm(
                             "\\d+",
                         ),
                     ),
+                    has_content: true,
+                    prio: 10,
                     meta: {},
                 },
                 Terminal {
-                    idx: 4,
-                    name: "FLOAT_CONST",
+                    idx: 37,
+                    name: "FloatConst",
                     action: None,
                     recognizer: Some(
                         RegExTerm(
                             "[+-]?(\\d+\\.\\d*|\\.\\d+)([eE][+-]?\\d+)?(?<=[\\w\\.])(?![\\w\\.])",
                         ),
                     ),
+                    has_content: true,
+                    prio: 10,
                     meta: {},
                 },
                 Terminal {
-                    idx: 5,
-                    name: "BOOL_CONST",
+                    idx: 38,
+                    name: "BoolConst",
                     action: None,
                     recognizer: Some(
                         RegExTerm(
                             "true|false",
                         ),
                     ),
+                    has_content: true,
+                    prio: 10,
                     meta: {},
                 },
                 Terminal {
-                    idx: 6,
-                    name: "STR_CONST",
+                    idx: 39,
+                    name: "StrConst",
                     action: None,
                     recognizer: Some(
                         RegExTerm(
                             "(?s)('[^'\\\\]*(?:\\\\.[^'\\\\]*)*')|(\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\")",
                         ),
                     ),
+                    has_content: true,
+                    prio: 10,
                     meta: {},
                 },
                 Terminal {
-                    idx: 7,
-                    name: "ACTION",
+                    idx: 40,
+                    name: "Action",
                     action: None,
                     recognizer: Some(
                         RegExTerm(
                             "@[a-zA-Z0-9_]+",
                         ),
                     ),
+                    has_content: true,
+                    prio: 10,
                     meta: {},
                 },
                 Terminal {
-                    idx: 8,
+                    idx: 41,
                     name: "WS",
                     action: None,
                     recognizer: Some(
@@ -2094,391 +2625,34 @@ Grammar {
                             "\\s+",
                         ),
                     ),
+                    has_content: true,
+                    prio: 10,
                     meta: {},
                 },
                 Terminal {
-                    idx: 9,
-                    name: "COMMENTLINE",
+                    idx: 42,
+                    name: "CommentLine",
                     action: None,
                     recognizer: Some(
                         RegExTerm(
                             "\\/\\/.*",
                         ),
                     ),
+                    has_content: true,
+                    prio: 10,
                     meta: {},
                 },
                 Terminal {
-                    idx: 10,
-                    name: "NOTCOMMENT",
+                    idx: 43,
+                    name: "NotComment",
                     action: None,
                     recognizer: Some(
                         RegExTerm(
                             "((\\*[^\\/])|[^\\s*\\/]|\\/[^\\*])+",
                         ),
                     ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 11,
-                    name: "terminals",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            "terminals",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 12,
-                    name: "import",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            "import",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 13,
-                    name: "as",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            "as",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 14,
-                    name: ":",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            ":",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 15,
-                    name: ";",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            ";",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 16,
-                    name: "{",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            "{",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 17,
-                    name: "}",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            "}",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 18,
-                    name: "|",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            "|",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 19,
-                    name: "left",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            "left",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 20,
-                    name: "reduce",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            "reduce",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 21,
-                    name: "right",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            "right",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 22,
-                    name: "shift",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            "shift",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 23,
-                    name: "dynamic",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            "dynamic",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 24,
-                    name: "nops",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            "nops",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 25,
-                    name: "nopse",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            "nopse",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 26,
-                    name: ",",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            ",",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 27,
-                    name: "prefer",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            "prefer",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 28,
-                    name: "finish",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            "finish",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 29,
-                    name: "nofinish",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            "nofinish",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 30,
-                    name: "=",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            "=",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 31,
-                    name: "?=",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            "?=",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 32,
-                    name: "(",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            "(",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 33,
-                    name: ")",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            ")",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 34,
-                    name: "*",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            "*",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 35,
-                    name: "*!",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            "*!",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 36,
-                    name: "+",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            "+",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 37,
-                    name: "+!",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            "+!",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 38,
-                    name: "?",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            "?",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 39,
-                    name: "?!",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            "?!",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 40,
-                    name: "[",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            "[",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 41,
-                    name: "]",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            "]",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 42,
-                    name: "/*",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            "/*",
-                        ),
-                    ),
-                    meta: {},
-                },
-                Terminal {
-                    idx: 43,
-                    name: "*/",
-                    action: None,
-                    recognizer: Some(
-                        StrConst(
-                            "*/",
-                        ),
-                    ),
+                    has_content: true,
+                    prio: 10,
                     meta: {},
                 },
             ],
@@ -2494,7 +2668,7 @@ Grammar {
                 },
                 NonTerminal {
                     idx: 1,
-                    name: "S'",
+                    name: "AUG",
                     productions: [
                         0,
                     ],
@@ -2786,6 +2960,7 @@ Grammar {
         ),
     ),
     nonterm_by_name: {
+        "AUG": 45,
         "Assignment": 61,
         "Assignments": 62,
         "BoolAssignment": 64,
@@ -2815,7 +2990,6 @@ Grammar {
         "RepetitionModifiersExp": 69,
         "RepetitionOperator": 67,
         "RepetitionOperatorOp": 68,
-        "S'": 45,
         "TermMetaData": 57,
         "TermMetaDatas": 58,
         "TerminalRule": 54,
@@ -2823,50 +2997,50 @@ Grammar {
         "UserMetaData": 59,
     },
     term_by_name: {
-        "(": 32,
-        ")": 33,
-        "*": 34,
-        "*!": 35,
-        "*/": 43,
-        "+": 36,
-        "+!": 37,
-        ",": 26,
-        "/*": 42,
-        ":": 14,
-        ";": 15,
-        "=": 30,
-        "?": 38,
-        "?!": 39,
-        "?=": 31,
-        "ACTION": 7,
-        "BOOL_CONST": 5,
-        "COMMENTLINE": 9,
-        "FLOAT_CONST": 4,
-        "INT_CONST": 3,
-        "NAME": 1,
-        "NOTCOMMENT": 10,
-        "REGEX_TERM": 2,
+        "Action": 40,
+        "As": 3,
+        "BoolConst": 38,
+        "CBrace": 8,
+        "CBracket": 10,
+        "CComment": 33,
+        "CSBracket": 12,
+        "Choice": 13,
+        "Colon": 4,
+        "Comma": 6,
+        "CommentLine": 42,
+        "Dynamic": 26,
+        "Equals": 20,
+        "Finish": 30,
+        "FloatConst": 37,
+        "Import": 2,
+        "IntConst": 36,
+        "Left": 22,
+        "NOPS": 27,
+        "NOPSE": 28,
+        "Name": 34,
+        "NoFinish": 31,
+        "NotComment": 43,
+        "OBrace": 7,
+        "OBracket": 9,
+        "OComment": 32,
+        "OSBracket": 11,
+        "OneOrMore": 16,
+        "OneOrMoreGreedy": 17,
+        "Optional": 18,
+        "OptionalGreedy": 19,
+        "Prefer": 29,
+        "QEquals": 21,
+        "Reduce": 24,
+        "RegexTerm": 35,
+        "Right": 23,
         "STOP": 0,
-        "STR_CONST": 6,
-        "WS": 8,
-        "[": 40,
-        "]": 41,
-        "as": 13,
-        "dynamic": 23,
-        "finish": 28,
-        "import": 12,
-        "left": 19,
-        "nofinish": 29,
-        "nops": 24,
-        "nopse": 25,
-        "prefer": 27,
-        "reduce": 20,
-        "right": 21,
-        "shift": 22,
-        "terminals": 11,
-        "{": 16,
-        "|": 18,
-        "}": 17,
+        "SemiColon": 5,
+        "Shift": 25,
+        "StrConst": 39,
+        "Terminals": 1,
+        "WS": 41,
+        "ZeroOrMore": 14,
+        "ZeroOrMoreGreedy": 15,
     },
     empty_index: 44,
     stop_index: 0,

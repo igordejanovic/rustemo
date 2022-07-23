@@ -5,13 +5,13 @@ File: GrammarRules
     | 'terminals' TerminalRules;
 
 Imports: Imports Import | Import;
-Import: 'import' STR_CONST
-      | 'import' STR_CONST 'as' NAME;
+Import: 'import' StrConst
+      | 'import' StrConst 'as' Name;
 
 GrammarRules: GrammarRules GrammarRule
             | GrammarRule;
-GrammarRule: ACTION? NAME ':' GrammarRuleRHS ';'
-           | ACTION? NAME '{' ProdMetaDatas '}' ':' GrammarRuleRHS ';';
+GrammarRule: Action? Name ':' GrammarRuleRHS ';'
+           | Action? Name '{' ProdMetaDatas '}' ':' GrammarRuleRHS ';';
 
 GrammarRuleRHS {left, 5}: GrammarRuleRHS '|' Production
                         | Production;
@@ -20,30 +20,30 @@ Production: Assignments
 
 TerminalRules: TerminalRules TerminalRule
              | TerminalRule;
-TerminalRule {left, 15}: ACTION? NAME ':' Recognizer ';'
-                       | ACTION? NAME ':' ';'
-                       | ACTION? NAME ':' Recognizer '{' TermMetaDatas '}' ';'
-                       | ACTION? NAME ':' '{' TermMetaDatas '}' ';';
+TerminalRule {left, 15}: Action? Name ':' Recognizer ';'
+                       | Action? Name ':' ';'
+                       | Action? Name ':' Recognizer '{' TermMetaDatas '}' ';'
+                       | Action? Name ':' '{' TermMetaDatas '}' ';';
 
 ProdMetaData: 'left' | 'reduce' | 'right' | 'shift' | 'dynamic' | 'nops' | 'nopse'
-            | INT_CONST
+            | IntConst
             | UserMetaData;
 ProdMetaDatas {left}: ProdMetaDatas ',' ProdMetaData | ProdMetaData;
 
 TermMetaData: 'prefer' | 'finish' | 'nofinish' | 'dynamic'
-            | INT_CONST
+            | IntConst
             | UserMetaData;
 TermMetaDatas: TermMetaDatas ',' TermMetaData | TermMetaData;
 
-UserMetaData: NAME ':' Const;
-Const: INT_CONST | FLOAT_CONST | BOOL_CONST | STR_CONST;
+UserMetaData: Name ':' Const;
+Const: IntConst | FloatConst | BoolConst | StrConst;
 
 Assignment: PlainAssignment
           | BoolAssignment
           | GSymbolReference;
 Assignments: Assignments Assignment | Assignment;
-PlainAssignment: NAME '=' GSymbolReference;
-BoolAssignment: NAME '?=' GSymbolReference;
+PlainAssignment: Name '=' GSymbolReference;
+BoolAssignment: Name '?=' GSymbolReference;
 
 ProductionGroup: '(' GrammarRuleRHS ')';
 
@@ -53,26 +53,59 @@ RepetitionOperator: RepetitionOperatorOp RepetitionModifiersExp?;
 RepetitionOperatorOp: '*' | '*!' | '+' | '+!' | '?' | '?!';
 RepetitionModifiersExp: '[' RepetitionModifiers ']';
 RepetitionModifiers: RepetitionModifiers ',' RepetitionModifier | RepetitionModifier;
-RepetitionModifier: NAME;
+RepetitionModifier: Name;
 
-GSymbol: NAME | STR_CONST;
-Recognizer: STR_CONST | REGEX_TERM;
+GSymbol: Name | StrConst;
+Recognizer: StrConst | RegexTerm;
 
 Layout: LayoutItem | Layout LayoutItem | EMPTY;
 LayoutItem: WS | Comment;
-Comment: '/*' Corncs '*/' | COMMENTLINE;
+Comment: '/*' Corncs '*/' | CommentLine;
 Corncs: Cornc | Corncs Cornc | EMPTY;
-Cornc: Comment | NOTCOMMENT | WS;
+Cornc: Comment | NotComment | WS;
 
 terminals
 
-NAME: /[a-zA-Z_][a-zA-Z0-9_\.]*/;
-REGEX_TERM: /'\/(\\.|[^\/\\])*\/'/;
-INT_CONST: /\d+/;
-FLOAT_CONST: /[+-]?(\d+\.\d*|\.\d+)([eE][+-]?\d+)?(?<=[\w\.])(?![\w\.])/;
-BOOL_CONST: /true|false/;
-STR_CONST: /(?s)('[^'\\]*(?:\\.[^'\\]*)*')|("[^"\\]*(?:\\.[^"\\]*)*")/;
-ACTION: /@[a-zA-Z0-9_]+/;
+Terminals: 'terminals';
+Import: 'import';
+As: 'as';
+Colon: ':';
+SemiColon: ';';
+Comma: ',';
+OBrace: '{';
+CBrace: '}';
+OBracket: '(';
+CBracket: ')';
+OSBracket: '[';
+CSBracket: ']';
+Choice: '|';
+ZeroOrMore: '*';
+ZeroOrMoreGreedy: '*!';
+OneOrMore: '+';
+OneOrMoreGreedy: '+!';
+Optional: '?';
+OptionalGreedy: '?!';
+Equals: '=';
+QEquals: '?=';
+Left: 'left';
+Right: 'right';
+Reduce: 'reduce';
+Shift: 'shift';
+Dynamic: 'dynamic';
+NOPS: 'nops';
+NOPSE: 'nopse';
+Prefer: 'prefer';
+Finish: 'finish';
+NoFinish: 'nofinish';
+OComment: '/*';
+CComment: '*/';
+Name: /[a-zA-Z_][a-zA-Z0-9_\.]*/;
+RegexTerm: /'\/(\\.|[^\/\\])*\/'/;
+IntConst: /\d+/;
+FloatConst: /[+-]?(\d+\.\d*|\.\d+)([eE][+-]?\d+)?(?<=[\w\.])(?![\w\.])/;
+BoolConst: /true|false/;
+StrConst: /(?s)('[^'\\]*(?:\\.[^'\\]*)*')|("[^"\\]*(?:\\.[^"\\]*)*")/;
+Action: /@[a-zA-Z0-9_]+/;
 WS: /\s+/;
-COMMENTLINE: /\/\/.*/;
-NOTCOMMENT: /((\*[^\/])|[^\s*\/]|\/[^\*])+/;
+CommentLine: /\/\/.*/;
+NotComment: /((\*[^\/])|[^\s*\/]|\/[^\*])+/;
