@@ -6,6 +6,7 @@ use crate::{
     parser::Context,
 };
 use core::fmt::Debug;
+use std::cmp::min;
 
 /// The `Lexer` trait allows input tokenization
 ///
@@ -86,7 +87,11 @@ where
         self.skip(context);
         log!(
             "Context: {}",
-            self.input.chars().take(30).collect::<String>()
+            self.input[context.position() - min(15, context.position())..context.position()]
+                .chars()
+                .chain("-->".chars())
+                .chain(self.input[context.position()..].chars().take(15))
+                .collect::<String>()
         );
         let token: Option<Token<&'i str>> = self
             .definition
