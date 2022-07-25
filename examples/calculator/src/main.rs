@@ -26,6 +26,6 @@ fn test_parse_1() {
 #[test]
 fn test_parse_2() {
     let mut parser = calculator::CalculatorParser::default();
-    let ast = parser.parse_default("2 + ( 3  * 7 )".into());
-    assert_eq!(ast, 35);
+    let ast = parser.parse_default("2 + ( 3  * 7 ) + 2 * 4".into());
+    assert_eq!(ast, 31);
 }
