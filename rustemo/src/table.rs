@@ -619,20 +619,25 @@ fn calculate_reductions(
 /// Longer string recognizers have precedence over shorter.
 fn sort_terminals(grammar: &Grammar, states: &mut StateVec<LRState>) {
     for state in states {
-        let mut terminals = state.actions
-                             .iter()
-                             .enumerate()
-                             .filter(|(_, actions)| !actions.is_empty())
-                             .map(|(idx, _)| TermIndex(idx)).collect::<Vec<_>>();
+        let mut terminals = state
+            .actions
+            .iter()
+            .enumerate()
+            .filter(|(_, actions)| !actions.is_empty())
+            .map(|(idx, _)| TermIndex(idx))
+            .collect::<Vec<_>>();
         terminals.sort_by(|&l, &r| {
             fn term_prio(term: &Terminal) -> u32 {
-                term.prio * 1000 + match &term.recognizer {
-                    Some(recognizer) => (match recognizer {
-                        Recognizer::StrConst(str_rec) => str_rec.len(),
-                        Recognizer::RegExTerm(_) => 0,
-                    }) as u32,
-                    None => 0,
-                }
+                term.prio * 1000
+                    + match &term.recognizer {
+                        Some(recognizer) => {
+                            (match recognizer {
+                                Recognizer::StrConst(str_rec) => str_rec.len(),
+                                Recognizer::RegExTerm(_) => 0,
+                            }) as u32
+                        }
+                        None => 0,
+                    }
             }
             let l_term_prio = term_prio(&grammar.terminals()[l]);
             let r_term_prio = term_prio(&grammar.terminals()[r]);
