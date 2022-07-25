@@ -1,6 +1,7 @@
 //! Calculating LR tables
 
 use std::{
+    cell::RefCell,
     cmp::{self, Ordering},
     collections::{BTreeMap, BTreeSet, VecDeque},
     fmt::{self, Display},
@@ -142,7 +143,7 @@ struct LRItem {
     prod: ProdIndex,
     prod_len: usize,
     position: usize,
-    follow: Follow,
+    follow: RefCell<Follow>,
 }
 
 impl std::hash::Hash for LRItem {
@@ -189,7 +190,7 @@ impl LRItem {
             prod,
             prod_len: grammar.production_len(prod),
             position: 0,
-            follow: Follow::new(),
+            follow: RefCell::new(Follow::new()),
         }
     }
 
@@ -198,12 +199,12 @@ impl LRItem {
             prod,
             prod_len: grammar.production_len(prod),
             position: 0,
-            follow,
+            follow: RefCell::new(follow),
         }
     }
 
     fn add_follow(mut self, symbol: SymbolIndex) -> Self {
-        self.follow.insert(symbol);
+        self.follow.borrow_mut().insert(symbol);
         self
     }
 
@@ -403,11 +404,12 @@ fn merge_state(
                 // new follow but not in the same item old follow.
                 if old
                     .follow
+                    .borrow()
                     .iter()
                     .find(|&x| {
-                        new_in.follow.contains(x)
-                            && !old_in.follow.contains(x)
-                            && !new.follow.contains(x) // If conflict exist in new, merge anyway
+                        new_in.follow.borrow().contains(x)
+                            && !old_in.follow.borrow().contains(x)
+                            && !new.follow.borrow().contains(x) // If conflict exist in new, merge anyway
                     })
                     .is_some()
                 {
@@ -419,7 +421,7 @@ fn merge_state(
 
     // Do the merge by updating old items follow sets.
     for (old, new) in item_pairs {
-        old.follow.extend(new.follow.iter())
+        old.follow.borrow_mut().extend(new.follow.borrow().iter())
     }
     true
 }
@@ -435,7 +437,6 @@ fn propagate_follows(
     first_sets: &FirstSets,
 ) {
     let mut changed = true;
-    let states_cl = states.clone();
     while changed {
         changed = false;
         for state in states.iter_mut() {
@@ -445,7 +446,7 @@ fn propagate_follows(
             closure(state, grammar, first_sets);
         }
 
-        for state in states_cl.iter() {
+        for state in states.iter() {
             // Use GOTOs and ACTIONS to propagate follows between states.
             state
                 .gotos
@@ -458,30 +459,27 @@ fn propagate_follows(
                     })
                 }))
                 .for_each(|&target_state| {
-                    log!("Follow prop: {}->{}\n", state.idx, target_state);
-                    let source_state = states[state.idx].clone();
                     for target_item in &mut states[target_state]
                         .items
-                        .iter_mut()
+                        .iter()
                         .filter(|x| x.is_kernel())
                     {
                         // Find corresponding item in state
                         if let Some(source_item) =
-                            source_state.items.iter().find(|&x| {
+                            state.items.iter().find(|&x| {
                                 x.prod == target_item.prod
                                     && x.position == target_item.position - 1
                             })
                         {
-                            log!("Follow source {:?}", source_item);
-                            log!("Follow target {:?}", target_item);
                             // Update follow of target item with item from state
-                            let follow_len = target_item.follow.len();
-                            target_item.follow.extend(&source_item.follow);
+                            let follow_len = target_item.follow.borrow().len();
+                            target_item
+                                .follow
+                                .borrow_mut()
+                                .extend(source_item.follow.borrow().iter());
 
                             // if target item follow was changed set changed to true
-                            if target_item.follow.len() > follow_len {
-                                log!("Follow changed");
-                                log!("Follow target {:?}", target_item);
+                            if target_item.follow.borrow().len() > follow_len {
                                 changed = true
                             }
                         }
@@ -515,7 +513,7 @@ fn calculate_reductions(
                 grammar.productions()[item.prod].nonterminal,
                 "<?>",
             );
-            for follow_symbol in &item.follow {
+            for follow_symbol in item.follow.borrow().iter() {
                 let follow_term = grammar.symbol_to_term(*follow_symbol);
                 let actions = &mut state.actions[follow_term];
                 if actions.is_empty() {
@@ -916,13 +914,13 @@ fn closure(state: &mut LRState, grammar: &Grammar, first_sets: &FirstSets) {
                         // derive EMPTY add follows of current item.
                         if new_follow.contains(&grammar.empty_index) {
                             new_follow.remove(&grammar.empty_index);
-                            new_follow.extend(&item.follow);
+                            new_follow.extend(item.follow.borrow().iter());
                         }
                     } else {
                         // If current item position is at the end add all of its
                         // follow to the next item.
                         new_follow = Follow::new();
-                        new_follow.extend(&item.follow);
+                        new_follow.extend(item.follow.borrow().iter());
                     }
 
                     // Get all productions of the current non-terminal and
@@ -946,9 +944,11 @@ fn closure(state: &mut LRState, grammar: &Grammar, first_sets: &FirstSets) {
             match state.items.iter_mut().find(|x| *x == &new_item) {
                 Some(item) => {
                     // Item already exists, update follows
-                    let l = item.follow.len();
-                    item.follow.extend(&new_item.follow);
-                    if item.follow.len() > l {
+                    let l = item.follow.borrow().len();
+                    item.follow
+                        .borrow_mut()
+                        .extend(new_item.follow.borrow().iter());
+                    if item.follow.borrow().len() > l {
                         change = true;
                     }
                 }
@@ -966,6 +966,8 @@ fn closure(state: &mut LRState, grammar: &Grammar, first_sets: &FirstSets) {
 
 #[cfg(test)]
 mod tests {
+
+    use std::cell::RefCell;
 
     use crate::table::{first_sets, ItemIndex};
     use crate::{
@@ -1160,25 +1162,25 @@ mod tests {
                     prod: 1.into(),
                     prod_len: grammar.production_len(1.into()),
                     position: 1,
-                    follow: Follow::new(),
+                    follow: RefCell::new(Follow::new()),
                 })
                 .add_item(LRItem {
                     prod: 2.into(),
                     prod_len: grammar.production_len(2.into()),
                     position: 1,
-                    follow: Follow::new(),
+                    follow: RefCell::new(Follow::new()),
                 })
                 .add_item(LRItem {
                     prod: 3.into(),
                     prod_len: grammar.production_len(2.into()),
                     position: 1,
-                    follow: Follow::new(),
+                    follow: RefCell::new(Follow::new()),
                 })
                 .add_item(LRItem {
                     prod: 4.into(),
                     prod_len: grammar.production_len(3.into()),
                     position: 2,
-                    follow: Follow::new(),
+                    follow: RefCell::new(Follow::new()),
                 });
 
         let per_next_symbol = group_per_next_symbol(&grammar, &mut lr_state);
@@ -1232,40 +1234,46 @@ mod tests {
             prod: ProdIndex(1),
             prod_len: 2,
             position: 2,
-            follow: Follow::new(),
+            follow: RefCell::new(Follow::new()),
         };
         let lr_item_2 = LRItem {
             prod: ProdIndex(2),
             prod_len: 3,
             position: 3,
-            follow: Follow::new(),
+            follow: RefCell::new(Follow::new()),
         };
         let old_state = LRState::new(&grammar, 0.into(), 0.into())
             .add_item(LRItem {
-                follow: follow([1, 3]),
+                follow: RefCell::new(follow([1, 3])),
                 ..lr_item_1
             })
             .add_item(LRItem {
-                follow: follow([2]),
+                follow: RefCell::new(follow([2])),
                 ..lr_item_2
             });
 
         // This should be merged as there are no introduced R/R conflicts
         let new_state_1 = LRState::new(&grammar, 0.into(), 0.into())
             .add_item(LRItem {
-                follow: follow([1]),
+                follow: RefCell::new(follow([1])),
                 ..lr_item_1
             })
             .add_item(LRItem {
-                follow: follow([2, 4]),
+                follow: RefCell::new(follow([2, 4])),
                 ..lr_item_2
             });
         let mut old_state_1 = old_state.clone();
         let settings = Settings::default();
         assert!(merge_state(&mut old_state_1, &new_state_1, &settings));
         // When the merge succeed verify that items follows are indeed extended.
-        assert_eq!(old_state_1.items[ItemIndex(0)].follow, follow([1, 3]));
-        assert_eq!(old_state_1.items[ItemIndex(1)].follow, follow([2, 4]));
+        assert_eq!(
+            *old_state_1.items[ItemIndex(0)].follow.borrow(),
+            follow([1, 3])
+        );
+        assert_eq!(
+            *old_state_1.items[ItemIndex(1)].follow.borrow(),
+            follow([2, 4])
+        );
 
         // This merge introduces new R/R conflict as the second item has 1 in
         // the follow set. Term 1 exists in the first item of the old state so
@@ -1273,18 +1281,24 @@ mod tests {
         // the input.
         let new_state_2 = LRState::new(&grammar, 0.into(), 0.into())
             .add_item(LRItem {
-                follow: follow([3]),
+                follow: RefCell::new(follow([3])),
                 ..lr_item_1
             })
             .add_item(LRItem {
-                follow: follow([2, 1]),
+                follow: RefCell::new(follow([2, 1])),
                 ..lr_item_2
             });
         let mut old_state_2 = old_state.clone();
         assert!(!merge_state(&mut old_state_2, &new_state_2, &settings));
         // Verify that no merge happened
-        assert_eq!(old_state_2.items[ItemIndex(0)].follow, follow([1, 3]));
-        assert_eq!(old_state_2.items[ItemIndex(1)].follow, follow([2]));
+        assert_eq!(
+            *old_state_2.items[ItemIndex(0)].follow.borrow(),
+            follow([1, 3])
+        );
+        assert_eq!(
+            *old_state_2.items[ItemIndex(1)].follow.borrow(),
+            follow([2])
+        );
 
         // The last thing to check is situation where new state has R/R
         // conflicts and there are no additional merge introduced R/R conflicts.
@@ -1292,18 +1306,24 @@ mod tests {
         // merge process but exists due to the grammar not being LR(1).
         let new_state_3 = LRState::new(&grammar, 0.into(), 0.into())
             .add_item(LRItem {
-                follow: follow([1, 3]),
+                follow: RefCell::new(follow([1, 3])),
                 ..lr_item_1
             })
             .add_item(LRItem {
-                follow: follow([2, 1]),
+                follow: RefCell::new(follow([2, 1])),
                 ..lr_item_2
             });
         let mut old_state_3 = old_state.clone();
         assert!(merge_state(&mut old_state_3, &new_state_3, &settings));
         // Verify that no merge happened
-        assert_eq!(old_state_3.items[ItemIndex(0)].follow, follow([1, 3]));
-        assert_eq!(old_state_3.items[ItemIndex(1)].follow, follow([2, 1]));
+        assert_eq!(
+            *old_state_3.items[ItemIndex(0)].follow.borrow(),
+            follow([1, 3])
+        );
+        assert_eq!(
+            *old_state_3.items[ItemIndex(1)].follow.borrow(),
+            follow([2, 1])
+        );
     }
 
     #[test]
@@ -1336,7 +1356,7 @@ mod tests {
             .into_iter()
             .for_each(|(item, prod, follows)| {
                 assert_eq!(item.prod, prod.into());
-                assert!(item.follow.iter().eq(follows.iter()));
+                assert!(item.follow.borrow().iter().eq(follows.iter()));
             });
 
         log!("{:?}", lr_state);
