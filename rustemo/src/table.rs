@@ -20,8 +20,9 @@ use rustemo_rt::{
 };
 
 use crate::{
-    grammar::{Associativity, Priority, DEFAULT_PRIORITY, Terminal},
-    settings::{LRTableType, Settings}, rustemo_actions::Recognizer,
+    grammar::{Associativity, Priority, Terminal, DEFAULT_PRIORITY},
+    rustemo_actions::Recognizer,
+    settings::{LRTableType, Settings},
 };
 
 use super::grammar::{res_symbol, Grammar};
@@ -457,17 +458,30 @@ fn propagate_follows(
                     })
                 }))
                 .for_each(|&target_state| {
-                    for target_item in &mut states[target_state].items {
+                    log!("Follow prop: {}->{}\n", state.idx, target_state);
+                    let source_state = states[state.idx].clone();
+                    for target_item in &mut states[target_state]
+                        .items
+                        .iter_mut()
+                        .filter(|x| x.is_kernel())
+                    {
                         // Find corresponding item in state
                         if let Some(source_item) =
-                            state.items.iter().find(|&x| x == target_item)
+                            source_state.items.iter().find(|&x| {
+                                x.prod == target_item.prod
+                                    && x.position == target_item.position - 1
+                            })
                         {
+                            log!("Follow source {:?}", source_item);
+                            log!("Follow target {:?}", target_item);
                             // Update follow of target item with item from state
                             let follow_len = target_item.follow.len();
                             target_item.follow.extend(&source_item.follow);
 
                             // if target item follow was changed set changed to true
                             if target_item.follow.len() > follow_len {
+                                log!("Follow changed");
+                                log!("Follow target {:?}", target_item);
                                 changed = true
                             }
                         }
@@ -492,7 +506,7 @@ fn calculate_reductions(
             if prod.idx == ProdIndex(0) {
                 let actions = &mut state.actions[TermIndex(0)];
                 actions.push(Action::Accept);
-                continue
+                continue;
             }
 
             let new_reduce = Action::Reduce(
