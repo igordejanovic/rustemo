@@ -1373,7 +1373,7 @@ mod tests {
 
         let states = lr_states_for_grammar(&grammar, &settings);
 
-        output_cmp!("grammar_2.expected.txt", format!("{states:#?}"));
+        output_cmp!("src/grammar_2.expected.txt", format!("{states:#?}"));
     }
 
     #[test]
@@ -1395,7 +1395,7 @@ mod tests {
         let states = lr_states_for_grammar(&grammar, &settings);
 
         output_cmp!(
-            "grammar_nonlalr_lalr.expected.txt",
+            "src/grammar_nonlalr_lalr.expected.txt",
             format!("{grammar}\n\n{states:#?}")
         );
 
@@ -1415,7 +1415,7 @@ mod tests {
         let states = lr_states_for_grammar(&grammar, &settings);
 
         output_cmp!(
-            "grammar_nonlalr_lalr_pagerw.expected.txt",
+            "src/grammar_nonlalr_lalr_pagerw.expected.txt",
             format!("{grammar}\n\n{states:#?}")
         );
     }

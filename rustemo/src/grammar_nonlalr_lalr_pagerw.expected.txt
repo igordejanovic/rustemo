@@ -3,26 +3,26 @@ GRAMMAR [
 
 Terminals:
 0. STOP
-1. a
-2. b
-3. c
-4. d
+1. a_t
+2. b_t
+3. c_t
+4. d_t
 
 NonTerminals:
 0 (5). EMPTY
-1 (6). S'
+1 (6). AUG
 2 (7). S
 3 (8). A
 4 (9). B
 
 Productions:
-0. S': S 
-1. S: A a 
-2. S: b A c 
-3. S: B c 
-4. S: b B a 
-5. A: d 
-6. B: d 
+0. AUG: S 
+1. S: A a_t 
+2. S: b_t A c_t 
+3. S: B c_t 
+4. S: b_t B a_t 
+5. A: d_t 
+6. B: d_t 
 
 ] GRAMMAR
 
@@ -38,56 +38,70 @@ StateVec(
                         prod: 0,
                         prod_len: 1,
                         position: 0,
-                        follow: {
-                            0,
+                        follow: RefCell {
+                            value: {
+                                0,
+                            },
                         },
                     },
                     LRItem {
                         prod: 1,
                         prod_len: 2,
                         position: 0,
-                        follow: {
-                            0,
+                        follow: RefCell {
+                            value: {
+                                0,
+                            },
                         },
                     },
                     LRItem {
                         prod: 2,
                         prod_len: 3,
                         position: 0,
-                        follow: {
-                            0,
+                        follow: RefCell {
+                            value: {
+                                0,
+                            },
                         },
                     },
                     LRItem {
                         prod: 3,
                         prod_len: 2,
                         position: 0,
-                        follow: {
-                            0,
+                        follow: RefCell {
+                            value: {
+                                0,
+                            },
                         },
                     },
                     LRItem {
                         prod: 4,
                         prod_len: 3,
                         position: 0,
-                        follow: {
-                            0,
+                        follow: RefCell {
+                            value: {
+                                0,
+                            },
                         },
                     },
                     LRItem {
                         prod: 5,
                         prod_len: 1,
                         position: 0,
-                        follow: {
-                            1,
+                        follow: RefCell {
+                            value: {
+                                1,
+                            },
                         },
                     },
                     LRItem {
                         prod: 6,
                         prod_len: 1,
                         position: 0,
-                        follow: {
-                            3,
+                        follow: RefCell {
+                            value: {
+                                3,
+                            },
                         },
                     },
                 ],
@@ -126,6 +140,10 @@ StateVec(
                     ),
                 ],
             ),
+            sorted_terminals: [
+                2,
+                4,
+            ],
             max_prior_for_term: {
                 2: 10,
                 4: 10,
@@ -140,34 +158,40 @@ StateVec(
                         prod: 2,
                         prod_len: 3,
                         position: 1,
-                        follow: {
-                            0,
+                        follow: RefCell {
+                            value: {
+                                0,
+                            },
                         },
                     },
                     LRItem {
                         prod: 4,
                         prod_len: 3,
                         position: 1,
-                        follow: {
-                            0,
+                        follow: RefCell {
+                            value: {
+                                0,
+                            },
                         },
                     },
                     LRItem {
                         prod: 5,
                         prod_len: 1,
                         position: 0,
-                        follow: {
-                            1,
-                            3,
+                        follow: RefCell {
+                            value: {
+                                3,
+                            },
                         },
                     },
                     LRItem {
                         prod: 6,
                         prod_len: 1,
                         position: 0,
-                        follow: {
-                            1,
-                            3,
+                        follow: RefCell {
+                            value: {
+                                1,
+                            },
                         },
                     },
                 ],
@@ -199,6 +223,9 @@ StateVec(
                     ),
                 ],
             ),
+            sorted_terminals: [
+                4,
+            ],
             max_prior_for_term: {
                 4: 10,
             },
@@ -212,16 +239,20 @@ StateVec(
                         prod: 5,
                         prod_len: 1,
                         position: 1,
-                        follow: {
-                            1,
+                        follow: RefCell {
+                            value: {
+                                1,
+                            },
                         },
                     },
                     LRItem {
                         prod: 6,
                         prod_len: 1,
                         position: 1,
-                        follow: {
-                            3,
+                        follow: RefCell {
+                            value: {
+                                3,
+                            },
                         },
                     },
                 ],
@@ -258,6 +289,10 @@ StateVec(
                     None,
                 ],
             ),
+            sorted_terminals: [
+                1,
+                3,
+            ],
             max_prior_for_term: {},
         },
         LRState {
@@ -269,8 +304,10 @@ StateVec(
                         prod: 0,
                         prod_len: 1,
                         position: 1,
-                        follow: {
-                            0,
+                        follow: RefCell {
+                            value: {
+                                0,
+                            },
                         },
                     },
                 ],
@@ -278,12 +315,7 @@ StateVec(
             actions: TermVec(
                 [
                     [
-                        Reduce(
-                            0,
-                            1,
-                            1,
-                            "<?>",
-                        ),
+                        Accept,
                     ],
                     [],
                     [],
@@ -300,6 +332,9 @@ StateVec(
                     None,
                 ],
             ),
+            sorted_terminals: [
+                0,
+            ],
             max_prior_for_term: {},
         },
         LRState {
@@ -311,8 +346,10 @@ StateVec(
                         prod: 1,
                         prod_len: 2,
                         position: 1,
-                        follow: {
-                            0,
+                        follow: RefCell {
+                            value: {
+                                0,
+                            },
                         },
                     },
                 ],
@@ -340,6 +377,9 @@ StateVec(
                     None,
                 ],
             ),
+            sorted_terminals: [
+                1,
+            ],
             max_prior_for_term: {
                 1: 10,
             },
@@ -353,8 +393,10 @@ StateVec(
                         prod: 3,
                         prod_len: 2,
                         position: 1,
-                        follow: {
-                            0,
+                        follow: RefCell {
+                            value: {
+                                0,
+                            },
                         },
                     },
                 ],
@@ -382,6 +424,9 @@ StateVec(
                     None,
                 ],
             ),
+            sorted_terminals: [
+                3,
+            ],
             max_prior_for_term: {
                 3: 10,
             },
@@ -395,16 +440,20 @@ StateVec(
                         prod: 5,
                         prod_len: 1,
                         position: 1,
-                        follow: {
-                            3,
+                        follow: RefCell {
+                            value: {
+                                3,
+                            },
                         },
                     },
                     LRItem {
                         prod: 6,
                         prod_len: 1,
                         position: 1,
-                        follow: {
-                            1,
+                        follow: RefCell {
+                            value: {
+                                1,
+                            },
                         },
                     },
                 ],
@@ -441,6 +490,10 @@ StateVec(
                     None,
                 ],
             ),
+            sorted_terminals: [
+                1,
+                3,
+            ],
             max_prior_for_term: {},
         },
         LRState {
@@ -452,8 +505,10 @@ StateVec(
                         prod: 2,
                         prod_len: 3,
                         position: 2,
-                        follow: {
-                            0,
+                        follow: RefCell {
+                            value: {
+                                0,
+                            },
                         },
                     },
                 ],
@@ -481,6 +536,9 @@ StateVec(
                     None,
                 ],
             ),
+            sorted_terminals: [
+                3,
+            ],
             max_prior_for_term: {
                 3: 10,
             },
@@ -494,8 +552,10 @@ StateVec(
                         prod: 4,
                         prod_len: 3,
                         position: 2,
-                        follow: {
-                            0,
+                        follow: RefCell {
+                            value: {
+                                0,
+                            },
                         },
                     },
                 ],
@@ -523,6 +583,9 @@ StateVec(
                     None,
                 ],
             ),
+            sorted_terminals: [
+                1,
+            ],
             max_prior_for_term: {
                 1: 10,
             },
@@ -536,8 +599,10 @@ StateVec(
                         prod: 1,
                         prod_len: 2,
                         position: 2,
-                        follow: {
-                            0,
+                        follow: RefCell {
+                            value: {
+                                0,
+                            },
                         },
                     },
                 ],
@@ -567,6 +632,9 @@ StateVec(
                     None,
                 ],
             ),
+            sorted_terminals: [
+                0,
+            ],
             max_prior_for_term: {},
         },
         LRState {
@@ -578,8 +646,10 @@ StateVec(
                         prod: 3,
                         prod_len: 2,
                         position: 2,
-                        follow: {
-                            0,
+                        follow: RefCell {
+                            value: {
+                                0,
+                            },
                         },
                     },
                 ],
@@ -609,6 +679,9 @@ StateVec(
                     None,
                 ],
             ),
+            sorted_terminals: [
+                0,
+            ],
             max_prior_for_term: {},
         },
         LRState {
@@ -620,8 +693,10 @@ StateVec(
                         prod: 2,
                         prod_len: 3,
                         position: 3,
-                        follow: {
-                            0,
+                        follow: RefCell {
+                            value: {
+                                0,
+                            },
                         },
                     },
                 ],
@@ -651,6 +726,9 @@ StateVec(
                     None,
                 ],
             ),
+            sorted_terminals: [
+                0,
+            ],
             max_prior_for_term: {},
         },
         LRState {
@@ -662,8 +740,10 @@ StateVec(
                         prod: 4,
                         prod_len: 3,
                         position: 3,
-                        follow: {
-                            0,
+                        follow: RefCell {
+                            value: {
+                                0,
+                            },
                         },
                     },
                 ],
@@ -693,6 +773,9 @@ StateVec(
                     None,
                 ],
             ),
+            sorted_terminals: [
+                0,
+            ],
             max_prior_for_term: {},
         },
     ],
