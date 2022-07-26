@@ -1,7 +1,9 @@
 use std::{path::PathBuf, process::exit};
 
-mod calculator;
-mod calculator_actions;
+mod calculator1;
+mod calculator1_actions;
+mod calculator2;
+mod calculator2_actions;
 
 fn main() {
     let grammar_file: PathBuf = [env!("CARGO_MANIFEST_DIR"),
@@ -17,15 +19,22 @@ fn main() {
 }
 
 #[test]
-fn test_parse_1() {
-    let mut parser = calculator::CalculatorParser::default();
+fn test_calculator1_1() {
+    let mut parser = calculator1::Calculator1Parser::default();
     let ast = parser.parse_default("2 + 3 * 7 + 6 * 3".into());
     assert_eq!(ast, 41);
 }
 
 #[test]
-fn test_parse_2() {
-    let mut parser = calculator::CalculatorParser::default();
+fn test_calculator1_2() {
+    let mut parser = calculator1::Calculator1Parser::default();
     let ast = parser.parse_default("2 + ( 3  * 7 ) + 2 * 4".into());
     assert_eq!(ast, 31);
+}
+
+#[test]
+fn test_calculator2_1() {
+    let mut parser = calculator2::Calculator2Parser::default();
+    let ast = parser.parse_default("7 + 56.4 / 3 + 5 / 2 * (7 - 1)".into());
+    assert_eq!(ast, 40.800003f32);
 }

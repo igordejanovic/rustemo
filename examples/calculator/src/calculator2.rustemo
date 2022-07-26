@@ -1,0 +1,18 @@
+E: E '+' E {1, left}
+ | E '-' E {1, left}
+ | E '*' E {2, left}
+ | E '/' E {2, left}
+ | E '^' E {3, right}
+ | '(' E ')'
+ | Num;
+
+terminals
+
+Plus: '+';
+Sub: '-';
+Mul: '*';
+Div: '/';
+Pow: '^';
+LParen: '(';
+RParen: ')';
+Num: /\d+(\.\d+)?/;

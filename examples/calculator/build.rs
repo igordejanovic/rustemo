@@ -1,9 +1,8 @@
-use std::{path::PathBuf, process::exit};
+use std::{process::exit, path::PathBuf};
 
 fn main() {
-    let grammar_file: PathBuf = [env!("CARGO_MANIFEST_DIR"),
-                                 "src", "calculator.rustemo"].iter().collect();
-    if let Err(e) = rustemo::generate_parser(grammar_file) {
+    let root_dir: PathBuf = [env!("CARGO_MANIFEST_DIR"), "src"].iter().collect();
+    if let Err(e) = rustemo::generate_parsers(root_dir) {
         eprintln!("{}", e);
         exit(1);
     }
