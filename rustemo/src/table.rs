@@ -203,7 +203,7 @@ impl LRItem {
         }
     }
 
-    fn add_follow(mut self, symbol: SymbolIndex) -> Self {
+    fn add_follow(self, symbol: SymbolIndex) -> Self {
         self.follow.borrow_mut().insert(symbol);
         self
     }
