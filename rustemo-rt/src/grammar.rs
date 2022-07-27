@@ -1,4 +1,4 @@
-use crate::{common::Location, index::TermIndex};
+use crate::{location::Location, index::TermIndex};
 
 // #[derive(Debug)]
 // struct Recognizer;

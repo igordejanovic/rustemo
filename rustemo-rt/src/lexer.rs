@@ -1,5 +1,5 @@
 use crate::{
-    common::Location,
+    location::Location,
     debug::log,
     grammar::TerminalInfo,
     index::{StateIndex, TermIndex},

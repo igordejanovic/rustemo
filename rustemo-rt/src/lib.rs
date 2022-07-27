@@ -5,6 +5,7 @@ pub use std;
 
 #[macro_use]
 pub mod common;
+pub mod location;
 pub mod builder;
 pub mod grammar;
 pub mod index;
