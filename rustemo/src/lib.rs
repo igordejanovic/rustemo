@@ -4,7 +4,6 @@ extern crate rustemo_rt;
 pub mod generator;
 pub mod build;
 pub mod grammar;
-pub mod parser;
 pub mod settings;
 
 #[rustfmt::skip]

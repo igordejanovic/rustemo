@@ -1,12 +1,17 @@
-// Generated on 2022-06-13 15:47:20.136838 from bootstrap.py. Do not edit!
+// Generated on 2022-07-29 17:00:07.835767 from bootstrap.py. Do not edit!
 
 use regex::Regex;
 use std::convert::TryFrom;
+use std::path::Path;
+use std::fmt::Debug;
 
-use std::marker::PhantomData;
-use rustemo_rt::lexer::{Lexer, DefaultLexer, Token, LexerDefinition, RecognizerIterator};
-use rustemo_rt::lr::{LRParser, LRContext, ParserDefinition};
-use rustemo_rt::lr::Action::{self, Shift, Reduce, Accept, Error};
+use rustemo_rt::lexer::{Lexer, Token};
+use rustemo_rt::parser::Parser;
+use rustemo_rt::error::RustemoResult;
+use rustemo_rt::lr::lexer::{LRStringLexer, LRContext, LexerDefinition, RecognizerIterator};
+use rustemo_rt::lr::builder::LRBuilder;
+use rustemo_rt::lr::parser::{LRParser, ParserDefinition};
+use rustemo_rt::lr::parser::Action::{self, Shift, Reduce, Accept, Error};
 use rustemo_rt::index::{StateIndex, TermIndex, NonTermIndex, ProdIndex};
 use rustemo_rt::builder::Builder;
 use rustemo_rt::grammar::{TerminalInfo, TerminalInfos, TerminalsState};
@@ -555,20 +560,39 @@ impl ParserDefinition for RustemoParserDefinition {
     }
 }
 
-pub struct RustemoParser<'i>(pub LRParser<&'i str, RustemoParserDefinition>);
+pub struct RustemoParser(LRParser<RustemoParserDefinition>);
 
-impl<'i> Default for RustemoParser<'i> {
+impl Default for RustemoParser {
     fn default() -> Self {
-        Self(LRParser {
-            context: LRContext {
-                parse_stack: vec![StateIndex(0)],
-                current_state: StateIndex(0),
-                position: 0,
-                token: None,
-            },
-            definition: &PARSER_DEFINITION,
-        })
+        Self(LRParser::new(&PARSER_DEFINITION))
     }
+}
+
+impl RustemoParser {
+    pub fn parse<I, L, B>(mut context: LRContext<I>, lexer: L, mut builder: B) -> RustemoResult<B::Output>
+    where
+        I: Debug,
+        L: Lexer<I, LRContext<I>>,
+        B: LRBuilder<I>,
+    {
+        Self::default().0.parse(context, lexer, builder)
+    }
+
+    pub fn parse_str<'i>(input: &'i str) -> RustemoResult<<RustemoBuilder as Builder>::Output> {
+        let context = LRContext::new("<str>".to_string(), input);
+        let lexer = LRStringLexer::new(&LEXER_DEFINITION);
+        let builder = RustemoBuilder::new();
+        RustemoParser::default().0.parse(context, lexer, builder) 
+    }
+
+    // FIXME: Return/move owned input string with the result.
+    // pub fn parse_file<F: AsRef<Path>>(file: F) -> RustemoResult<<RustemoBuilder as Builder>::Output> {
+    //    let input = std::fs::read_to_string(file.as_ref())?;
+    //    let context = LRContext::new(file.as_ref().to_str().unwrap().to_string(), input);
+    //    let lexer = LRStringLexer::new(&LEXER_DEFINITION);
+    //    let builder = RustemoBuilder::new();
+    //    RustemoParser::default().0.parse(context, lexer, builder) 
+    //}
 }
 
 pub struct RustemoLexerDefinition {
@@ -1604,8 +1628,6 @@ pub(in crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefi
    ]
 };
 
-pub struct RustemoLexer<'i>(DefaultLexer<'i, RustemoLexerDefinition>);
-
 impl LexerDefinition for RustemoLexerDefinition {
     type Recognizer = for<'i> fn(&'i str) -> Option<&'i str>;
 
@@ -1619,46 +1641,28 @@ impl LexerDefinition for RustemoLexerDefinition {
     }
 }
 
-impl<'i> Lexer for RustemoLexer<'i> {
-    type Input = &'i str;
-
-    fn next_token(
-        &self,
-        context: &mut impl rustemo_rt::parser::Context<Self::Input>,
-    ) -> Option<rustemo_rt::lexer::Token<Self::Input>> {
-        self.0.next_token(context)
-    }
-}
-
-// Enables creating a lexer from a reference to an object that can be converted
-// to a string reference.
-impl<'i, T> From<&'i T> for RustemoLexer<'i>
-where
-    T: AsRef<str> + ?Sized,
-{
-    fn from(input: &'i T) -> Self {
-        Self(DefaultLexer::new(input.as_ref(), &LEXER_DEFINITION))
-    }
-}
-
-pub struct RustemoBuilder<'i, I: 'i> {
+pub struct RustemoBuilder {
     res_stack: Vec<Symbol>,
-    phantom: PhantomData<&'i I>
 }
 
-impl<'i, I> Builder for RustemoBuilder<'i, I>
+impl Builder for RustemoBuilder
 {
     type Output = Symbol;
-    type Lexer = RustemoLexer<'i>;
 
     fn new() -> Self {
         RustemoBuilder {
             res_stack: vec![],
-            phantom: PhantomData,
         }
     }
 
-    fn shift_action(&mut self, term_idx: TermIndex, token: Token<<Self::Lexer as Lexer>::Input>) {
+    fn get_result(&mut self) -> RustemoResult<Self::Output> {
+       Ok(self.res_stack.pop().unwrap())
+    }
+}
+
+impl<'i> LRBuilder<&'i str> for RustemoBuilder
+{
+    fn shift_action(&mut self, term_idx: TermIndex, token: Token<&'i str>) {
         let termval = match TermKind::try_from(term_idx.0).unwrap() {
             TermKind::Terminals => Terminal::Terminals,
             TermKind::Import => Terminal::Import,
@@ -1708,8 +1712,8 @@ impl<'i, I> Builder for RustemoBuilder<'i, I>
         self.res_stack.push(Symbol::Terminal(termval));
     }
 
-    fn reduce_action(&mut self, prod_kind: ProdIndex, prod_len: usize, _prod_str: &'static str) {
-        let prod = match ProdKind::try_from(prod_kind.0).unwrap() {
+    fn reduce_action(&mut self, prod_idx: ProdIndex, prod_len: usize, _prod_str: &'static str) {
+        let prod = match ProdKind::try_from(prod_idx.0).unwrap() {
             ProdKind::PGFileP0 => {
                 let mut i = self.res_stack.split_off(self.res_stack.len()-1).into_iter();
                 match (i.next().unwrap()) {
@@ -2327,8 +2331,5 @@ impl<'i, I> Builder for RustemoBuilder<'i, I>
         self.res_stack.push(Symbol::NonTerminal(prod));
     }
 
-    fn get_result(&mut self) -> Self::Output {
-       self.res_stack.pop().unwrap()
-    }
 }
 

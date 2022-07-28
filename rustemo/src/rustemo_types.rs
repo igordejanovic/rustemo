@@ -1,4 +1,4 @@
-// Generated on 2022-06-13 15:47:20.143233 from bootstrap.py. Do not edit!
+// Generated on 2022-07-29 17:00:07.840683 from bootstrap.py. Do not edit!
 
 use num_enum::TryFromPrimitive;
 use super::rustemo_actions::*;

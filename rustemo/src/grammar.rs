@@ -2,6 +2,7 @@ use std::{
     collections::BTreeMap,
     fmt::Display,
     hash::{Hash, Hasher},
+    path::Path,
 };
 
 use rustemo_rt::{
@@ -9,10 +10,10 @@ use rustemo_rt::{
         NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, SymbolVec,
         TermIndex, TermVec,
     },
-    log,
+    log, error::RustemoResult,
 };
 
-use crate::rustemo_actions::Const;
+use crate::{rustemo::RustemoParser, rustemo_actions::Const};
 
 use super::rustemo_actions::{
     GrammarRule, GrammarSymbol, Imports, PGFile, ProductionMetaDatas,
@@ -190,10 +191,14 @@ impl Display for Production {
                 write!(f, " {} ", assign.name.as_ref().unwrap())?;
             } else {
                 let s = match &assign.symbol {
-                    ResolvingSymbolIndex::Resolved(symbol) => format!("{}", symbol),
+                    ResolvingSymbolIndex::Resolved(symbol) => {
+                        format!("{}", symbol)
+                    }
                     ResolvingSymbolIndex::Resolving(symbol) => match symbol {
                         GrammarSymbol::Name(name) => name.into(),
-                        GrammarSymbol::StrConst(mtch) => format!("\"{}\"", mtch),
+                        GrammarSymbol::StrConst(mtch) => {
+                            format!("\"{}\"", mtch)
+                        }
                     },
                 };
                 write!(f, " {} ", s)?;
@@ -228,7 +233,32 @@ pub(in crate) fn res_symbol(assign: &Assignment) -> SymbolIndex {
 }
 
 impl Grammar {
-    pub fn from_pgfile(pgfile: PGFile) -> Self {
+    /// Parses given string and constructs a Grammar instance
+    pub fn from_string<G: AsRef<str>>(grammar_str: G) -> RustemoResult<Self> {
+        use crate::rustemo_types::{NonTerminal, Symbol};
+        if let Symbol::NonTerminal(NonTerminal::PGFile(pgfile)) =
+            RustemoParser::parse_str(grammar_str.as_ref())?
+        {
+            Ok(Self::from_pgfile(pgfile))
+        } else {
+            panic!("Invalid symbol from grammar parse!")
+        }
+    }
+
+    /// Parses given file and constructs a Grammar instance
+    /// FIXME: Return/move owned string from file content.
+    // pub fn from_file<F: AsRef<Path>>(file: F) -> RustemoResult<Self> {
+    //     use crate::rustemo_types::{NonTerminal, Symbol};
+    //     if let Symbol::NonTerminal(NonTerminal::PGFile(pgfile)) =
+    //         RustemoParser::parse_file(file)?
+    //     {
+    //         Ok(Self::from_pgfile(pgfile))
+    //     } else {
+    //         panic!("Invalid symbol from grammar parse!")
+    //     }
+    // }
+
+    fn from_pgfile(pgfile: PGFile) -> Self {
         let mut terminals: BTreeMap<String, Terminal> = BTreeMap::new();
         let mut terminals_matches: BTreeMap<String, &Terminal> =
             BTreeMap::new();
@@ -506,7 +536,7 @@ impl Grammar {
                                     .get(mtch)
                                     .unwrap()
                                     .idx
-                                    .to_symbol_index()
+                                    .to_symbol_index(),
                             );
                         } else {
                             panic!(
@@ -514,7 +544,6 @@ impl Grammar {
                                         "is not defined in the 'terminals' section!."),
                                 mtch, production_str)
                         }
-
                     }
                 }
             }
@@ -700,20 +729,50 @@ impl Grammar {
 
 #[cfg(test)]
 mod tests {
-    use crate::{grammar::Associativity, rustemo::RustemoParser};
+    use crate::{
+        grammar::{Associativity, Grammar},
+        output_cmp,
+        tests::utils::type_of,
+    };
     use rustemo_rt::index::ProdIndex;
 
     #[test]
+    fn grammar_from_string() {
+        let grammar = Grammar::from_string(
+            r#"
+             S: A B;
+            terminals
+             A: "a";
+             B: "b";
+            "#
+        ).unwrap();
+        assert!(type_of(&grammar) == "rustemo::grammar::Grammar");
+    }
+
+    // TODO: Include this test when from_file is fixed
+    // #[test]
+    // fn grammar_from_file() {
+    //     use std::path::PathBuf;
+
+    //     let path: PathBuf =
+    //         [env!("CARGO_MANIFEST_DIR"), "src", "rustemo.rustemo"]
+    //             .iter()
+    //             .collect();
+    //     let grammar = Grammar::from_file(path);
+
+    //     output_cmp!("src/rustemo.parse_tree", format!("{:#?}", grammar));
+    // }
+
+    #[test]
     fn create_terminals_1() {
-        let grammar = RustemoParser::default().parse(
+        let grammar = Grammar::from_string(
             r#"
             S: "first_term" "second_term";
             terminals
             first_term: "first_term";
             second_term: "second_term";
             "#
-            .into(),
-        );
+        ).unwrap();
         assert_eq!(
             grammar
                 .terminals
@@ -728,7 +787,7 @@ mod tests {
 
     #[test]
     fn create_terminals_2() {
-        let grammar = RustemoParser::default().parse(
+        let grammar = Grammar::from_string(
             r#"
             S: "first_term" A "second_term";
             A: third_term;
@@ -737,8 +796,7 @@ mod tests {
             second_term: "second_term";
             third_term: ;
             "#
-            .into(),
-        );
+        ).unwrap();
         assert_eq!(
             grammar
                 .terminals
@@ -753,7 +811,7 @@ mod tests {
 
     #[test]
     fn create_terminals_multiple() {
-        let grammar = RustemoParser::default().parse(
+        let grammar = Grammar::from_string(
             r#"
             S: "first_term" A "second_term" "first_term";
             A: third_term "third_term" "first_term" second_term;
@@ -762,8 +820,7 @@ mod tests {
             second_term: "second_term";
             third_term: "third_term";
             "#
-            .into(),
-        );
+        ).unwrap();
         assert_eq!(
             grammar
                 .terminals
@@ -778,7 +835,7 @@ mod tests {
 
     #[test]
     fn terminals_regex() {
-        let grammar = RustemoParser::default().parse(
+        let grammar = Grammar::from_string(
             r#"
             S: "foo" rmatch_term A;
             A: "some" more_regex;
@@ -788,8 +845,7 @@ mod tests {
             rmatch_term: /"[^"]+"/;
             more_regex: /\d{2,5}/;
             "#
-            .into(),
-        );
+        ).unwrap();
         assert_eq!(
             grammar
                 .terminals
@@ -818,7 +874,7 @@ mod tests {
 
     #[test]
     fn nonterminals_productions() {
-        let grammar = RustemoParser::default().parse(
+        let grammar = Grammar::from_string(
             r#"
             S: A "some_term" B | B;
             A: B;
@@ -826,8 +882,7 @@ mod tests {
             terminals
             some_term: "some_term";
             "#
-            .into(),
-        );
+        ).unwrap();
         assert_eq!(grammar.nonterminals().len(), 5);
         assert_eq!(
             grammar
@@ -867,7 +922,7 @@ mod tests {
 
     #[test]
     fn productions_meta_data() {
-        let grammar = RustemoParser::default().parse(
+        let grammar = Grammar::from_string(
             r#"
             S: A "some_term" B {5} | B {nops};
             A: B {nopse, bla: 5};
@@ -875,8 +930,7 @@ mod tests {
             terminals
             some_term: "some_term";
             "#
-            .into(),
-        );
+        ).unwrap();
         assert_eq!(grammar.productions().len(), 5);
 
         assert_eq!(grammar.productions()[ProdIndex(1)].prio, 5);

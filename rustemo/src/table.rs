@@ -17,7 +17,7 @@ use rustemo_rt::{
         TermIndex, TermVec,
     },
     log,
-    lr::Action,
+    lr::parser::Action,
 };
 
 use crate::{
@@ -988,7 +988,7 @@ mod tests {
     };
 
     fn test_grammar() -> Grammar {
-        RustemoParser::default().parse(
+        Grammar::from_string(
             r#"
             E: T Ep;
             Ep: "+" T Ep | EMPTY;
@@ -1003,12 +1003,11 @@ mod tests {
             RParen: ")";
             id: "id";
             "#
-            .into(),
-        )
+        ).unwrap()
     }
 
     fn test_grammar_2() -> Grammar {
-        RustemoParser::default().parse(
+        Grammar::from_string(
             r#"
             E: E "+" T | T;
             T: T "*" F | F;
@@ -1021,15 +1020,14 @@ mod tests {
             RParen: ")";
             id: "id";
             "#
-            .into(),
-        )
+        ).unwrap()
     }
 
     /// Grammar from the Dragon book, p.278
     /// This grammar is LR(1) but not LALR.
     /// See also: https://www.gnu.org/software/bison/manual/bison.html#Mysterious-Conflicts
     fn test_non_lalr_grammar() -> Grammar {
-        RustemoParser::default().parse(
+        Grammar::from_string(
             r#"
             S: A "a" | "b" A "c" | B "c" | "b" B "a";
             A: "d";
@@ -1040,12 +1038,11 @@ mod tests {
             c_t: "c";
             d_t: "d";
             "#
-            .into(),
-        )
+        ).unwrap()
     }
 
     fn test_ambiguous_grammar() -> Grammar {
-        RustemoParser::default().parse(
+        Grammar::from_string(
             r#"
             E: E "+" E {1, left}
              | E "*" E {2, left}
@@ -1061,8 +1058,7 @@ mod tests {
             RParen: ")";
             id: "id";
             "#
-            .into(),
-        )
+        ).unwrap()
     }
 
     #[test]
