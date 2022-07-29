@@ -1,9 +1,8 @@
-use std::fmt::Display;
-use std::fmt::Debug;
+use std::fmt::{Display, Debug};
 use crate::debug::log;
 use crate::error::RustemoResult;
 use crate::index::{NonTermIndex, ProdIndex, StateIndex, TermIndex};
-use crate::lexer::{Context, Lexer, Token};
+use crate::lexer::Lexer;
 use crate::parser::Parser;
 use crate::lr::lexer::LRContext;
 
@@ -61,21 +60,6 @@ impl<D: ParserDefinition> LRParser<D> {
     }
 
     #[inline]
-    fn next_token<C, L, I>(&self, context: &mut C, lexer: &L) -> Token<I>
-    where
-        C: Context<I>,
-        L: Lexer<I, C>,
-        I: Debug,
-    {
-        match lexer.next_token(context) {
-            Some(t) => t,
-            None => {
-                panic!("Error at {}", context.location_str());
-            }
-        }
-    }
-
-    #[inline]
     fn to_state<I>(&mut self, context: &mut LRContext<I>, state: StateIndex) {
         self.parse_stack.push(state);
         context.set_state(state);
@@ -98,7 +82,7 @@ where
 {
     fn parse(&mut self, mut context: LRContext<I>, lexer: L, mut builder: B) -> RustemoResult<B::Output> {
         use Action::*;
-        let mut next_token = self.next_token(&mut context, &lexer);
+        let mut next_token = lexer.next_token(&mut context)?;
         loop {
             let current_state = self.parse_stack.last().unwrap();
             log!("Stack: {:?}", self.parse_stack);
@@ -119,7 +103,7 @@ where
                     );
                     self.to_state(&mut context, state_id);
                     builder.shift_action(term_idx, next_token);
-                    next_token = self.next_token(&mut context, &lexer);
+                    next_token = lexer.next_token(&mut context)?;
                 }
                 Reduce(prod_idx, prod_len, nonterm_id, prod_str) => {
                     log!(
