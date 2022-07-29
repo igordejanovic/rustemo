@@ -1,10 +1,11 @@
 use std::cmp::min;
 
 use crate::debug::log;
+use crate::error::{RustemoError, RustemoResult};
 use crate::grammar::TerminalInfo;
 use crate::index::StateIndex;
 use crate::lexer::{Context, Lexer, Token};
-use crate::location::Location;
+use crate::location::{Location, Position};
 
 #[derive(Debug)]
 pub struct LRContext<I> {
@@ -103,6 +104,15 @@ impl<I> LRContext<I> {
     }
 }
 
+impl<I> From<&mut LRContext<I>> for Location {
+    fn from(context: &mut LRContext<I>) -> Self {
+        context.location().unwrap_or(Self {
+            start: Position::Position(context.position()),
+            end: None,
+        })
+    }
+}
+
 /// A lexer that operates over string inputs and uses generated string and regex
 /// recognizers provided by the parser table.
 pub struct LRStringLexer<D: 'static> {
@@ -125,7 +135,8 @@ where
         log!("Skipped ws: {}", skipped.len());
         context.set_layout(
             &context.input()
-                [context.position()..context.position() + skipped.len()]);
+                [context.position()..context.position() + skipped.len()],
+        );
         context.set_position(context.position() + skipped.len());
     }
 }
@@ -137,7 +148,7 @@ where
     fn next_token(
         &self,
         context: &mut LRContext<&'i str>,
-    ) -> Option<Token<&'i str>> {
+    ) -> RustemoResult<Token<&'i str>> {
         Self::skip(context);
         log!(
             "Context: {}",
@@ -175,11 +186,25 @@ where
                 let new_pos = context.position() + t.value.len();
                 context.set_position(new_pos);
                 context.set_token_ahead(Some(t.clone()));
-                Some(t)
+                Ok(t)
             }
             None => {
                 context.set_token_ahead(None);
-                None
+                let expected = self
+                    .definition
+                    .recognizers(context.state())
+                    .map(|(_, terminal_info)| terminal_info.name)
+                    .collect::<Vec<_>>()
+                    .join(", ");
+                Err(RustemoError::ParseError {
+                    message: format!(
+                        "Error at position {}. Expected one of {}.",
+                        context.position(),
+                        expected
+                    ),
+                    file: context.file(),
+                    location: Location::from(context),
+                })
             }
         }
     }

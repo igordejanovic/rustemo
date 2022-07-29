@@ -1,28 +1,28 @@
 use std::fmt::Display;
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Copy, Clone)]
 pub struct LineBased {
-    pub line: u32,
-    pub column: u32,
+    pub line: usize,
+    pub column: usize,
 }
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Copy, Clone)]
 pub enum Position {
-    Position(u32),
+    Position(usize),
     LineBased(LineBased),
 }
 
 impl Position {
-    pub fn from_lc(line: u32, column: u32) -> Self {
+    pub fn from_lc(line: usize, column: usize) -> Self {
         Self::LineBased(LineBased { line, column })
     }
 
-    pub fn from_pos(pos: u32) -> Self {
+    pub fn from_pos(pos: usize) -> Self {
         Self::Position(pos)
     }
 
     #[inline]
-    pub fn line(&self) -> u32 {
+    pub fn line(&self) -> usize {
         match self {
             Position::Position(pos) => *pos,
             Position::LineBased(lb) => lb.line,
@@ -30,7 +30,7 @@ impl Position {
     }
 
     #[inline]
-    pub fn column(&self) -> u32 {
+    pub fn column(&self) -> usize {
         match self {
             Position::Position(_) => 0,
             Position::LineBased(lb) => lb.column,
@@ -38,7 +38,7 @@ impl Position {
     }
 
     #[inline]
-    pub fn position(&self) -> u32 {
+    pub fn position(&self) -> usize {
         match self {
             Position::Position(pos) => *pos,
             Position::LineBased(lb) => lb.line,
@@ -66,7 +66,7 @@ impl Display for Position {
 ///
 /// The path is kept on the parsing context and there is the method on the
 /// context to produce the display of the location with the full file path.
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Copy)]
 pub struct Location {
     /// The start position of the range.
     pub start: Position,

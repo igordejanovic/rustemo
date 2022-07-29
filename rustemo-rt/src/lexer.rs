@@ -1,7 +1,7 @@
 use crate::{
     grammar::TerminalInfo,
     index::TermIndex,
-    location::Location,
+    location::Location, error::RustemoResult,
 };
 use core::fmt::Debug;
 
@@ -11,10 +11,13 @@ use core::fmt::Debug;
 /// context.
 pub trait Lexer<I, C: Context<I>> {
 
-    /// Given the current context, this method should generate next token or
-    /// None if no token is found. It should update the given mutable context to
-    /// reflect the current progress.
-    fn next_token(&self, context: &mut C) -> Option<Token<I>>;
+    /// Given the current context, this method should return RustemoResult with
+    /// token found ahead of the current location or error indicating what is
+    /// expected.
+    ///
+    /// It should update the given mutable context to reflect the current
+    /// progress.
+    fn next_token(&self, context: &mut C) -> RustemoResult<Token<I>>;
 }
 
 /// Lexer context is used to keep the lexing state. It provides necessary

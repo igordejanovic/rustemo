@@ -5,6 +5,8 @@ mod calculator2_actions;
 
 #[cfg(test)]
 mod test_calculator1 {
+    use rustemo_rt::error::RustemoError;
+
     use crate::calculator1::Calculator1Parser;
 
     #[test]
@@ -19,8 +21,23 @@ mod test_calculator1 {
         assert_eq!(result.unwrap(), 31);
     }
 
+    #[test]
+    fn test_calculator1_error() {
+        let result = Calculator1Parser::parse_str("2 + ( 3  *  + 7 ) + 2 * 4");
+        assert!(result.is_err());
+        assert_eq!(
+            "Error at position 12. Expected one of Num, LParen.",
+            match result.err().unwrap() {
+                RustemoError::ParseError {
+                    message,
+                    file,
+                    location,
+                } => message,
+                _ => panic!(),
+            }
+        );
+    }
 }
-
 
 #[cfg(test)]
 mod test_calculator2 {
@@ -28,7 +45,9 @@ mod test_calculator2 {
 
     #[test]
     fn test_calculator2_1() {
-        let result = calculator2::Calculator2Parser::parse_str("7 + 56.4 / 3 + 5 / 2 * (7 - 1)");
+        let result = calculator2::Calculator2Parser::parse_str(
+            "7 + 56.4 / 3 + 5 / 2 * (7 - 1)",
+        );
         assert_eq!(result.unwrap(), 40.800003f32);
     }
 }
