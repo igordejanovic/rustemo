@@ -104,6 +104,17 @@ impl<I> LRContext<I> {
     }
 }
 
+impl<'i> LRContext<&'i str> {
+    fn context_str(&self) -> String {
+        self.input()
+            [self.position() - min(15, self.position())..self.position()]
+            .chars()
+            .chain("-->".chars())
+            .chain(self.input()[self.position()..].chars().take(15))
+            .collect::<String>()
+    }
+}
+
 impl<I> From<&mut LRContext<I>> for Location {
     fn from(context: &mut LRContext<I>) -> Self {
         context.location().unwrap_or(Self {
@@ -150,15 +161,7 @@ where
         context: &mut LRContext<&'i str>,
     ) -> RustemoResult<Token<&'i str>> {
         Self::skip(context);
-        log!(
-            "Context: {}",
-            context.input()[context.position() - min(15, context.position())
-                ..context.position()]
-                .chars()
-                .chain("-->".chars())
-                .chain(context.input()[context.position()..].chars().take(15))
-                .collect::<String>()
-        );
+        log!("Context: {}", context.context_str());
         let token: Option<Token<&'i str>> = self
             .definition
             .recognizers(context.state())
@@ -198,8 +201,9 @@ where
                     .join(", ");
                 Err(RustemoError::ParseError {
                     message: format!(
-                        "Error at position {}. Expected one of {}.",
-                        context.position(),
+                        r#"Error at position {} "{}". Expected one of {}."#,
+                        context.location_str(),
+                        context.context_str(),
                         expected
                     ),
                     file: context.file(),
