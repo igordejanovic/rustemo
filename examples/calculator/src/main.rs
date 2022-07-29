@@ -26,7 +26,7 @@ mod test_calculator1 {
         let result = Calculator1Parser::parse_str("2 + ( 3  *  + 7 ) + 2 * 4");
         assert!(result.is_err());
         assert_eq!(
-            r#"Error at position <str>:12 "2 + ( 3  *  -->+ 7 ) + 2 * 4". Expected one of Num, LParen."#,
+            r#"Error at position <str>:1:12 "2 + ( 3  *  -->+ 7 ) + 2 * 4". Expected one of Num, LParen."#,
             match result.err().unwrap() {
                 RustemoError::ParseError {
                     message,

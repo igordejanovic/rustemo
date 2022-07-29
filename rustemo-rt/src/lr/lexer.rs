@@ -5,7 +5,7 @@ use crate::error::{RustemoError, RustemoResult};
 use crate::grammar::TerminalInfo;
 use crate::index::StateIndex;
 use crate::lexer::{Context, Lexer, Token};
-use crate::location::{Location, Position};
+use crate::location::{Location, Position, LineBased};
 
 #[derive(Debug)]
 pub struct LRContext<I> {
@@ -113,6 +113,24 @@ impl<'i> LRContext<&'i str> {
             .chain(self.input()[self.position()..].chars().take(15))
             .collect::<String>()
     }
+
+    fn update_location<C: AsRef<str>>(&mut self, content: C) {
+        let content = content.as_ref();
+        let (mut line, mut column) = self.location().map_or((1, 0), |l| match l {
+            Location{start: Position::LineBased(lb), ..} => (lb.line, lb.column),
+            _ => panic!(),
+        });
+        let newlines = content.as_bytes().iter().filter(|&c| *c == b'\n').count();
+        let newcolumn = content.len() - content.as_bytes().iter().rposition(|&c| c == b'\n').unwrap_or(0);
+        line += newlines;
+        column += newcolumn;
+
+        self.set_location(Location {
+            start: Position::LineBased(LineBased{line, column}),
+            end: None,
+        });
+        self.set_position(self.position() + content.len());
+    }
 }
 
 impl<I> From<&mut LRContext<I>> for Location {
@@ -138,7 +156,7 @@ where
         Self { definition }
     }
 
-    fn skip<'i>(context: &mut impl Context<&'i str>) {
+    fn skip<'i>(context: &mut LRContext<&'i str>) {
         let skipped = context.input()[context.position()..]
             .chars()
             .take_while(|x| x.is_whitespace())
@@ -148,7 +166,7 @@ where
             &context.input()
                 [context.position()..context.position() + skipped.len()],
         );
-        context.set_position(context.position() + skipped.len());
+        context.update_location(skipped);
     }
 }
 
@@ -186,8 +204,7 @@ where
 
         match token {
             Some(t) => {
-                let new_pos = context.position() + t.value.len();
-                context.set_position(new_pos);
+                context.update_location(t.value);
                 context.set_token_ahead(Some(t.clone()));
                 Ok(t)
             }
