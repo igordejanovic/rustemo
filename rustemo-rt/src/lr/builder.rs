@@ -1,4 +1,9 @@
-use crate::{builder::Builder, index::{TermIndex, ProdIndex}, lexer::Token, error::RustemoResult};
+use crate::{
+    builder::Builder,
+    error::RustemoResult,
+    index::{ProdIndex, TermIndex},
+    lexer::Token,
+};
 
 /// A builder variant for LR parsing.
 ///

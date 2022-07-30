@@ -1,4 +1,4 @@
-use crate::{location::Location, index::TermIndex};
+use crate::{index::TermIndex, location::Location};
 
 pub type TerminalInfos<const T: usize> = [TerminalInfo; T];
 pub type TerminalsState<const T: usize, const S: usize> =

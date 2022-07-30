@@ -5,7 +5,6 @@ use crate::error::RustemoResult;
 /// This trait is implemented by types that are in charge of building output of
 /// the parsing process (e.g. a parse tree).
 pub trait Builder {
-
     /// A type produced by this builder. See `get_result`.
     type Output;
 
@@ -15,4 +14,3 @@ pub trait Builder {
     /// the result stack.
     fn get_result(&mut self) -> RustemoResult<Self::Output>;
 }
-

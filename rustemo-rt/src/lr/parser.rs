@@ -1,10 +1,10 @@
-use std::fmt::{Display, Debug};
 use crate::debug::log;
 use crate::error::RustemoResult;
 use crate::index::{NonTermIndex, ProdIndex, StateIndex, TermIndex};
 use crate::lexer::Lexer;
-use crate::parser::Parser;
 use crate::lr::lexer::LRContext;
+use crate::parser::Parser;
+use std::fmt::{Debug, Display};
 
 use super::builder::LRBuilder;
 
@@ -66,7 +66,11 @@ impl<D: ParserDefinition> LRParser<D> {
     }
 
     #[inline]
-    fn pop_states<I>(&mut self, context: &mut LRContext<I>, states: usize) -> StateIndex {
+    fn pop_states<I>(
+        &mut self,
+        context: &mut LRContext<I>,
+        states: usize,
+    ) -> StateIndex {
         let _ = self.parse_stack.split_off(self.parse_stack.len() - states);
         context.set_state(*self.parse_stack.last().unwrap());
         context.state()
@@ -80,7 +84,12 @@ where
     L: Lexer<I, LRContext<I>>,
     B: LRBuilder<I>,
 {
-    fn parse(&mut self, mut context: LRContext<I>, lexer: L, mut builder: B) -> RustemoResult<B::Output> {
+    fn parse(
+        &mut self,
+        mut context: LRContext<I>,
+        lexer: L,
+        mut builder: B,
+    ) -> RustemoResult<B::Output> {
         use Action::*;
         let mut next_token = lexer.next_token(&mut context)?;
         loop {

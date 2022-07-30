@@ -18,7 +18,7 @@ pub fn t_p0(left: T, right: F) -> T {
     left * right
 }
 pub fn t_p1(f: F) -> T {
-   f
+    f
 }
 
 pub type F = i32;

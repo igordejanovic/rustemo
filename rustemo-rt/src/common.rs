@@ -28,4 +28,3 @@ macro_rules! rustemo_mod {
         $(#[$attr])* $vis mod $modname { include!(concat!(env!("OUT_DIR"), $source)); }
     };
 }
-

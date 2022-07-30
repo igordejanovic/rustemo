@@ -1,7 +1,6 @@
 use crate::{
-    grammar::TerminalInfo,
-    index::TermIndex,
-    location::Location, error::RustemoResult,
+    error::RustemoResult, grammar::TerminalInfo, index::TermIndex,
+    location::Location,
 };
 use core::fmt::Debug;
 
@@ -10,7 +9,6 @@ use core::fmt::Debug;
 /// Lexer is stateless and its job is to produce next token given the current
 /// context.
 pub trait Lexer<I, C: Context<I>> {
-
     /// Given the current context, this method should return RustemoResult with
     /// token found ahead of the current location or error indicating what is
     /// expected.
@@ -83,4 +81,3 @@ impl<I> Token<I> {
         self.terminal.id
     }
 }
-

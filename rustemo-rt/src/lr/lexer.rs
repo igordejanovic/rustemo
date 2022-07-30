@@ -5,7 +5,7 @@ use crate::error::{RustemoError, RustemoResult};
 use crate::grammar::TerminalInfo;
 use crate::index::StateIndex;
 use crate::lexer::{Context, Lexer, Token};
-use crate::location::{Location, Position, LineBased};
+use crate::location::{LineBased, Location, Position};
 
 #[derive(Debug)]
 pub struct LRContext<I> {
@@ -116,17 +116,27 @@ impl<'i> LRContext<&'i str> {
 
     fn update_location<C: AsRef<str>>(&mut self, content: C) {
         let content = content.as_ref();
-        let (mut line, mut column) = self.location().map_or((1, 0), |l| match l {
-            Location{start: Position::LineBased(lb), ..} => (lb.line, lb.column),
-            _ => panic!(),
-        });
-        let newlines = content.as_bytes().iter().filter(|&c| *c == b'\n').count();
-        let newcolumn = content.len() - content.as_bytes().iter().rposition(|&c| c == b'\n').unwrap_or(0);
+        let (mut line, mut column) =
+            self.location().map_or((1, 0), |l| match l {
+                Location {
+                    start: Position::LineBased(lb),
+                    ..
+                } => (lb.line, lb.column),
+                _ => panic!(),
+            });
+        let newlines =
+            content.as_bytes().iter().filter(|&c| *c == b'\n').count();
+        let newcolumn = content.len()
+            - content
+                .as_bytes()
+                .iter()
+                .rposition(|&c| c == b'\n')
+                .unwrap_or(0);
         line += newlines;
         column += newcolumn;
 
         self.set_location(Location {
-            start: Position::LineBased(LineBased{line, column}),
+            start: Position::LineBased(LineBased { line, column }),
             end: None,
         });
         self.set_position(self.position() + content.len());

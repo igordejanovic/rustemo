@@ -1,5 +1,5 @@
-use std::fmt::Display;
 use crate::location::Location;
+use std::fmt::Display;
 
 pub type RustemoResult<R> = Result<R, RustemoError>;
 

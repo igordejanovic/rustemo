@@ -5,14 +5,13 @@ pub use std;
 
 #[macro_use]
 pub mod common;
-pub mod error;
-pub mod location;
 pub mod builder;
+pub mod error;
 pub mod grammar;
 pub mod index;
 pub mod lexer;
+pub mod location;
 pub mod lr;
 pub mod parser;
 
 pub mod debug;
-

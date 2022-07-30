@@ -1,6 +1,6 @@
+use rustemo_rt::error::RustemoResult;
 use std::fs;
 use std::path::{Path, PathBuf};
-use rustemo_rt::error::RustemoResult;
 
 use crate::generator::generate_parser;
 
@@ -32,8 +32,8 @@ where
 /// files.
 pub fn generate_parsers<P>(dir: P) -> RustemoResult<()>
 where
-    P: AsRef<Path> + std::fmt::Debug {
-
+    P: AsRef<Path> + std::fmt::Debug,
+{
     fn visitor(grammar: &PathBuf) -> RustemoResult<()> {
         log!("Generating parser for grammar {:?}", grammar);
         generate_parser(grammar)

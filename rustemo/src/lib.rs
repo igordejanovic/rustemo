@@ -1,8 +1,8 @@
 #[macro_use]
 extern crate rustemo_rt;
 
-pub mod generator;
 pub mod build;
+pub mod generator;
 pub mod grammar;
 pub mod settings;
 
@@ -26,8 +26,6 @@ mod rustemo;
 mod rustemo_actions;
 mod table;
 pub(crate) mod tests;
-
-
 
 pub use crate::build::generate_parsers;
 pub use crate::generator::generate_parser;

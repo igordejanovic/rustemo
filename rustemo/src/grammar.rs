@@ -5,17 +5,18 @@ use std::{
 };
 
 use rustemo_rt::{
+    error::RustemoResult,
     index::{
         NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, SymbolVec,
         TermIndex, TermVec,
     },
-    log, error::RustemoResult,
+    log,
 };
 
-use crate::{rustemo::RustemoParser, rustemo_actions::Const};
+use crate::rustemo::RustemoParser;
 
 use super::rustemo_actions::{
-    GrammarRule, GrammarSymbol, Imports, PGFile, ProdMetaDatas,
+    Const, GrammarRule, GrammarSymbol, Imports, PGFile, ProdMetaDatas,
     Recognizer, TermMetaDatas,
 };
 
@@ -234,7 +235,9 @@ pub(in crate) fn res_symbol(assign: &Assignment) -> SymbolIndex {
 impl Grammar {
     /// Parses given string and constructs a Grammar instance
     pub fn from_string<G: AsRef<str>>(grammar_str: G) -> RustemoResult<Self> {
-        Ok(Self::from_pgfile(RustemoParser::parse_str(grammar_str.as_ref())?))
+        Ok(Self::from_pgfile(RustemoParser::parse_str(
+            grammar_str.as_ref(),
+        )?))
     }
 
     /// Parses given file and constructs a Grammar instance
@@ -405,40 +408,46 @@ impl Grammar {
                 let mut new_production = Production {
                     idx: next_prod_idx,
                     nonterminal: nonterminal.idx,
-                    rhs: production
-                        .assignments
-                        .into_iter()
-                        // Remove EMPTY from production RHS
-                        .filter(|assignment| {
-                            use crate::rustemo_actions::{Assignment, GrammarSymbolRef};
-                            match assignment {
-                                Assignment::GrammarSymbolRef(GrammarSymbolRef{
-                                   gsymbol: Some(GrammarSymbol::Name(name)),
-                                   ..
-                                }) if name.as_str() == "EMPTY" => false,
-                                _ => true
-                            }
-                        })
-                        // Map all RHS elements to Assignments
-                        .map(|assignment| {
-                            use super::rustemo_actions::Assignment::*;
-                            match assignment {
-                                PlainAssignment(assign)
-                                | BoolAssignment(assign) => Assignment {
-                                    name: Some(assign.name),
-                                    symbol: ResolvingSymbolIndex::Resolving(
-                                        assign.gsymref.gsymbol.unwrap(),
-                                    ),
-                                },
-                                GrammarSymbolRef(reference) => Assignment {
-                                    name: None,
-                                    symbol: ResolvingSymbolIndex::Resolving(
-                                        reference.gsymbol.unwrap(),
-                                    ),
-                                },
-                            }
-                        })
-                        .collect(),
+                    rhs:
+                        production
+                            .assignments
+                            .into_iter()
+                            // Remove EMPTY from production RHS
+                            .filter(|assignment| {
+                                use crate::rustemo_actions::{
+                                    Assignment, GrammarSymbolRef,
+                                };
+                                match assignment {
+                                    Assignment::GrammarSymbolRef(
+                                        GrammarSymbolRef {
+                                            gsymbol:
+                                                Some(GrammarSymbol::Name(name)),
+                                            ..
+                                        },
+                                    ) if name.as_str() == "EMPTY" => false,
+                                    _ => true,
+                                }
+                            })
+                            // Map all RHS elements to Assignments
+                            .map(|assignment| {
+                                use super::rustemo_actions::Assignment::*;
+                                match assignment {
+                                    PlainAssignment(assign)
+                                    | BoolAssignment(assign) => Assignment {
+                                        name: Some(assign.name),
+                                        symbol: ResolvingSymbolIndex::Resolving(
+                                            assign.gsymref.gsymbol.unwrap(),
+                                        ),
+                                    },
+                                    GrammarSymbolRef(reference) => Assignment {
+                                        name: None,
+                                        symbol: ResolvingSymbolIndex::Resolving(
+                                            reference.gsymbol.unwrap(),
+                                        ),
+                                    },
+                                }
+                            })
+                            .collect(),
                     meta: production.meta,
                     ..Production::default()
                 };
@@ -734,7 +743,6 @@ impl Grammar {
 mod tests {
     use crate::{
         grammar::{Associativity, Grammar},
-        output_cmp,
         tests::utils::type_of,
     };
     use rustemo_rt::index::ProdIndex;
@@ -747,8 +755,9 @@ mod tests {
             terminals
              A: "a";
              B: "b";
-            "#
-        ).unwrap();
+            "#,
+        )
+        .unwrap();
         assert!(type_of(&grammar) == "rustemo::grammar::Grammar");
     }
 
@@ -774,8 +783,9 @@ mod tests {
             terminals
             first_term: "first_term";
             second_term: "second_term";
-            "#
-        ).unwrap();
+            "#,
+        )
+        .unwrap();
         assert_eq!(
             grammar
                 .terminals
@@ -798,8 +808,9 @@ mod tests {
             first_term: "first_term";
             second_term: "second_term";
             third_term: ;
-            "#
-        ).unwrap();
+            "#,
+        )
+        .unwrap();
         assert_eq!(
             grammar
                 .terminals
@@ -822,8 +833,9 @@ mod tests {
             first_term: "first_term";
             second_term: "second_term";
             third_term: "third_term";
-            "#
-        ).unwrap();
+            "#,
+        )
+        .unwrap();
         assert_eq!(
             grammar
                 .terminals
@@ -847,8 +859,9 @@ mod tests {
             some: "some";
             rmatch_term: /"[^"]+"/;
             more_regex: /\d{2,5}/;
-            "#
-        ).unwrap();
+            "#,
+        )
+        .unwrap();
         assert_eq!(
             grammar
                 .terminals
@@ -884,8 +897,9 @@ mod tests {
             B: some_term;
             terminals
             some_term: "some_term";
-            "#
-        ).unwrap();
+            "#,
+        )
+        .unwrap();
         assert_eq!(grammar.nonterminals().len(), 5);
         assert_eq!(
             grammar
@@ -932,8 +946,9 @@ mod tests {
             B: some_term {right};
             terminals
             some_term: "some_term";
-            "#
-        ).unwrap();
+            "#,
+        )
+        .unwrap();
         assert_eq!(grammar.productions().len(), 5);
 
         assert_eq!(grammar.productions()[ProdIndex(1)].prio, 5);

@@ -542,7 +542,7 @@ fn generate_parser_definition<W: Write>(
                 prod_nt_name.to_case(Case::Snake),
                 production.ntidx,
             );
-            continue
+            continue;
         }
 
         geni!(

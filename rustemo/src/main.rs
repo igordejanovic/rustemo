@@ -6,7 +6,6 @@ use rustemo::generator::generate_parser;
 #[derive(Parser)]
 #[clap(author, version, about, long_about = None)]
 struct Cli {
-
     /// Regenerate output even if exists
     #[clap(short, long, action)]
     force: bool,
@@ -25,5 +24,4 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     Ok(())
-
 }

@@ -1,6 +1,7 @@
 use crate::{
     builder::Builder,
-    lexer::{Context, Lexer}, error::RustemoResult,
+    error::RustemoResult,
+    lexer::{Context, Lexer},
 };
 
 pub trait Parser<I, C, L, B>
@@ -9,6 +10,10 @@ where
     L: Lexer<I, C>,
     B: Builder,
 {
-    fn parse(&mut self, context: C, lexer: L, builder: B) -> RustemoResult<B::Output>;
+    fn parse(
+        &mut self,
+        context: C,
+        lexer: L,
+        builder: B,
+    ) -> RustemoResult<B::Output>;
 }
-
