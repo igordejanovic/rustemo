@@ -416,6 +416,18 @@ impl Grammar {
                     rhs: production
                         .assignments
                         .into_iter()
+                        // Remove EMPTY from production RHS
+                        .filter(|assignment| {
+                            use crate::rustemo_actions::{Assignment, GrammarSymbolRef};
+                            match assignment {
+                                Assignment::GrammarSymbolRef(GrammarSymbolRef{
+                                   gsymbol: Some(GrammarSymbol::Name(name)),
+                                   ..
+                                }) if name.as_str() == "EMPTY" => false,
+                                _ => true
+                            }
+                        })
+                        // Map all RHS elements to Assignments
                         .map(|assignment| {
                             use super::rustemo_actions::Assignment::*;
                             match assignment {
