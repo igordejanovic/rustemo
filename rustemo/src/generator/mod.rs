@@ -494,8 +494,9 @@ fn generate_parser_definition<W: Write>(
     for terminal in grammar.terminals() {
         if let Some(Recognizer::RegExTerm(_)) = terminal.recognizer {
             geni!(out,
-                    "TermKind::{term_name} => Terminal::{term_name}({action_fun}(token)),\n",
+                  "TermKind::{term_name} => Terminal::{term_name}({file_name}_actions::{action_fun}(token)),\n",
                     term_name=terminal.name,
+                    file_name=file_name,
                     action_fun=terminal.name.to_case(Case::Snake)
             )
         } else {
@@ -720,9 +721,12 @@ fn generate_parser_types<W: Write>(
 
     out.inc_indent();
     for nonterminal in &grammar.nonterminals()[2..] {
-        geni!(out, "{name}({file_name}_actions::{name}),\n",
-              file_name = file_name,
-              name = nonterminal.name);
+        geni!(
+            out,
+            "{name}({file_name}_actions::{name}),\n",
+            file_name = file_name,
+            name = nonterminal.name
+        );
     }
     out.dec_indent();
     geni!(out, "}}\n\n");
