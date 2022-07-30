@@ -36,8 +36,16 @@ pub fn action<'a>(token: Token<&'a str>) -> Action {
     token.value.into()
 }
 
-pub type RegExTerm = String;
-pub fn reg_ex_term<'a>(token: Token<&'a str>) -> RegExTerm {
+pub type ActionOpt = Option<Action>;
+pub fn action_opt_p0(action: Action) -> ActionOpt {
+    Some(action)
+}
+pub fn action_opt_p1() -> ActionOpt {
+    None
+}
+
+pub type RegexTerm = String;
+pub fn regex_term<'a>(token: Token<&'a str>) -> RegexTerm {
     token.value.trim_matches('/').into()
 }
 
@@ -65,28 +73,28 @@ pub struct PGFile {
     pub rules: Option<GrammarRules>,
     pub terminals: Option<Terminals>,
 }
-pub fn pgfile_p0(rules: GrammarRules) -> PGFile {
+pub fn pg_file_p0(rules: GrammarRules) -> PGFile {
     PGFile {
         imports: None,
         rules: Some(rules),
         terminals: None,
     }
 }
-pub fn pgfile_p1(imports: Imports, rules: GrammarRules) -> PGFile {
+pub fn pg_file_p1(imports: Imports, rules: GrammarRules) -> PGFile {
     PGFile {
         imports: Some(imports),
         rules: Some(rules),
         terminals: None,
     }
 }
-pub fn pgfile_p2(rules: GrammarRules, terminals: Terminals) -> PGFile {
+pub fn pg_file_p2(rules: GrammarRules, terminals: Terminals) -> PGFile {
     PGFile {
         imports: None,
         rules: Some(rules),
         terminals: Some(terminals),
     }
 }
-pub fn pgfile_p3(
+pub fn pg_file_p3(
     imports: Imports,
     rules: GrammarRules,
     terminals: Terminals,
@@ -97,7 +105,7 @@ pub fn pgfile_p3(
         terminals: Some(terminals),
     }
 }
-pub fn pgfile_p4(terminals: Terminals) -> PGFile {
+pub fn pg_file_p4(terminals: Terminals) -> PGFile {
     PGFile {
         imports: None,
         rules: None,
@@ -105,111 +113,101 @@ pub fn pgfile_p4(terminals: Terminals) -> PGFile {
     }
 }
 
-pub type Imports = Vec<Import>;
-pub fn imports_p0(mut imports: Imports, import: Import) -> Imports {
+pub type Imports = Vec<ImportStm>;
+pub fn imports_p0(mut imports: Imports, import: ImportStm) -> Imports {
     imports.push(import);
     imports
 }
-pub fn imports_p1(import: Import) -> Imports {
+pub fn imports_p1(import: ImportStm) -> Imports {
     vec![import]
 }
 
 #[derive(Debug)]
-pub struct Import {
+pub struct ImportStm {
     pub path: String,
     pub name: Option<String>,
 }
-pub fn import_p0(path: StrConst) -> Import {
-    Import { path, name: None }
+pub fn import_stm_p0(path: StrConst) -> ImportStm {
+    ImportStm { path, name: None }
 }
-pub fn import_p1(path: StrConst, name: Name) -> Import {
-    Import {
+pub fn import_stm_p1(path: StrConst, name: Name) -> ImportStm {
+    ImportStm {
         path,
         name: Some(name),
     }
 }
 
 pub type GrammarRules = Vec<GrammarRule>;
-pub type ProductionRules = GrammarRules;
-pub fn production_rules_p0(
+pub fn grammar_rules_p0(
     mut rules: GrammarRules,
     rule: GrammarRule,
 ) -> GrammarRules {
     rules.push(rule);
     rules
 }
-pub fn production_rules_p1(rule: GrammarRule) -> GrammarRules {
+pub fn grammar_rules_p1(rule: GrammarRule) -> GrammarRules {
     vec![rule]
 }
 
 #[derive(Debug)]
 pub struct GrammarRule {
-    pub action: Option<String>,
+    pub action: Option<Action>,
     pub name: String,
     pub rhs: GrammarRuleRHS,
-    pub meta: ProductionMetaDatas,
+    pub meta: ProdMetaDatas,
 }
-pub fn production_rule_with_action_p0(
-    action: String,
-    mut rule: GrammarRule,
-) -> GrammarRule {
-    rule.action = Some(action);
-    rule
-}
-pub fn production_rule_with_action_p1(rule: GrammarRule) -> GrammarRule {
-    rule
-}
-
-pub type ProductionRule = GrammarRule;
-pub type ProductionRuleWithAction = GrammarRule;
-pub fn production_rule_p0(name: String, rhs: GrammarRuleRHS) -> GrammarRule {
-    GrammarRule {
-        name,
-        rhs,
-        action: None,
-        meta: ProductionMetaDatas::new(),
-    }
-}
-pub fn production_rule_p1(
-    name: String,
-    meta: ProductionMetaDatas,
+pub fn grammar_rule_p0(
+    action: Option<Action>,
+    name: Name,
     rhs: GrammarRuleRHS,
 ) -> GrammarRule {
     GrammarRule {
+        action,
+        name,
+        rhs,
+        meta: ProdMetaDatas::new(),
+    }
+}
+pub fn grammar_rule_p1(
+    action: Option<Action>,
+    name: Name,
+    meta: ProdMetaDatas,
+    rhs: GrammarRuleRHS,
+) -> GrammarRule {
+    GrammarRule {
+        action,
         name,
         rhs,
         meta,
-        action: None,
     }
 }
 
 pub type GrammarRuleRHS = Vec<Production>;
-pub type ProductionRuleRHS = GrammarRuleRHS;
-pub fn production_rule_rhsp0(
+pub fn grammar_rule_rhs_p0(
     mut rhs: GrammarRuleRHS,
     prod: Production,
 ) -> GrammarRuleRHS {
     rhs.push(prod);
     rhs
 }
-pub fn production_rule_rhsp1(prod: Production) -> GrammarRuleRHS {
+pub fn grammar_rule_rhs_p1(prod: Production) -> GrammarRuleRHS {
     vec![prod]
 }
 
 #[derive(Debug)]
 pub struct Production {
     pub assignments: Assignments,
-    pub meta: ProductionMetaDatas,
+    pub meta: ProdMetaDatas,
 }
 pub fn production_p0(assignments: Assignments) -> Production {
     Production {
         assignments,
-        meta: ProductionMetaDatas::new(),
+        meta: ProdMetaDatas::new(),
     }
 }
 pub fn production_p1(
     assignments: Assignments,
-    meta: ProductionMetaDatas,
+    meta: ProdMetaDatas,
 ) -> Production {
     Production { assignments, meta }
 }
@@ -241,41 +239,50 @@ pub struct Terminal {
     pub name: String,
     pub action: Option<String>,
     pub recognizer: Option<Recognizer>,
-    pub meta: TerminalMetaDatas,
+    pub meta: TermMetaDatas,
 }
 pub type TerminalRule = Terminal;
-pub fn terminal_rule_p0(name: String, recognizer: Recognizer) -> Terminal {
-    Terminal {
-        name,
-        action: None,
-        recognizer: Some(recognizer),
-        meta: TerminalMetaDatas::new(),
-    }
-}
-pub fn terminal_rule_p1(name: String) -> Terminal {
-    Terminal {
-        name,
-        action: None,
-        recognizer: None,
-        meta: TerminalMetaDatas::new(),
-    }
-}
-pub fn terminal_rule_p2(
+pub fn terminal_rule_p0(
+    action: Option<Action>,
     name: String,
     recognizer: Recognizer,
-    meta: TerminalMetaDatas,
 ) -> Terminal {
     Terminal {
         name,
-        action: None,
+        action,
+        recognizer: Some(recognizer),
+        meta: TermMetaDatas::new(),
+    }
+}
+pub fn terminal_rule_p1(action: Option<Action>, name: String) -> Terminal {
+    Terminal {
+        name,
+        action,
+        recognizer: None,
+        meta: TermMetaDatas::new(),
+    }
+}
+pub fn terminal_rule_p2(
+    action: Option<Action>,
+    name: String,
+    recognizer: Recognizer,
+    meta: TermMetaDatas,
+) -> Terminal {
+    Terminal {
+        action,
+        name,
         recognizer: Some(recognizer),
         meta,
     }
 }
-pub fn terminal_rule_p3(name: String, meta: TerminalMetaDatas) -> Terminal {
+pub fn terminal_rule_p3(
+    action: Option<Action>,
+    name: String,
+    meta: TermMetaDatas,
+) -> Terminal {
     Terminal {
         name,
-        action: None,
+        action,
         recognizer: None,
         meta,
     }
@@ -287,79 +294,77 @@ pub enum Associativity {
     Left,
     Right,
 }
-pub type ProductionMetaData = BTreeMap<String, Const>;
+pub type ProdMetaData = BTreeMap<String, Const>;
 
-pub fn production_meta_data_p0() -> ProductionMetaData {
-    ProductionMetaData::from([("left".into(), Const::Bool(true))])
+pub fn prod_meta_data_p0() -> ProdMetaData {
+    ProdMetaData::from([("left".into(), Const::Bool(true))])
 }
-pub fn production_meta_data_p1() -> ProductionMetaData {
-    ProductionMetaData::from([("left".into(), Const::Bool(true))])
+pub fn prod_meta_data_p1() -> ProdMetaData {
+    ProdMetaData::from([("left".into(), Const::Bool(true))])
 }
-pub fn production_meta_data_p2() -> ProductionMetaData {
-    ProductionMetaData::from([("right".into(), Const::Bool(true))])
+pub fn prod_meta_data_p2() -> ProdMetaData {
+    ProdMetaData::from([("right".into(), Const::Bool(true))])
 }
-pub fn production_meta_data_p3() -> ProductionMetaData {
-    ProductionMetaData::from([("right".into(), Const::Bool(true))])
+pub fn prod_meta_data_p3() -> ProdMetaData {
+    ProdMetaData::from([("right".into(), Const::Bool(true))])
 }
-pub fn production_meta_data_p4() -> ProductionMetaData {
-    ProductionMetaData::from([("dynamic".into(), Const::Bool(true))])
+pub fn prod_meta_data_p4() -> ProdMetaData {
+    ProdMetaData::from([("dynamic".into(), Const::Bool(true))])
 }
-pub fn production_meta_data_p5() -> ProductionMetaData {
-    ProductionMetaData::from([("nops".into(), Const::Bool(true))])
+pub fn prod_meta_data_p5() -> ProdMetaData {
+    ProdMetaData::from([("nops".into(), Const::Bool(true))])
 }
-pub fn production_meta_data_p6() -> ProductionMetaData {
-    ProductionMetaData::from([("nopse".into(), Const::Bool(true))])
+pub fn prod_meta_data_p6() -> ProdMetaData {
+    ProdMetaData::from([("nopse".into(), Const::Bool(true))])
 }
-pub fn production_meta_data_p7(prio: IntConst) -> ProductionMetaData {
-    ProductionMetaData::from([("priority".into(), Const::Int(prio))])
+pub fn prod_meta_data_p7(prio: IntConst) -> ProdMetaData {
+    ProdMetaData::from([("priority".into(), Const::Int(prio))])
 }
-pub fn production_meta_data_p8(user: UserMetaData) -> ProductionMetaData {
-    ProductionMetaData::from([(user.name, user.value)])
+pub fn prod_meta_data_p8(user: UserMetaData) -> ProdMetaData {
+    ProdMetaData::from([(user.name, user.value)])
 }
 
-pub type ProductionMetaDatas = ProductionMetaData;
-pub fn production_meta_datas_p0(
-    mut metas: ProductionMetaDatas,
-    meta: ProductionMetaData,
-) -> ProductionMetaDatas {
+pub type ProdMetaDatas = ProdMetaData;
+pub fn prod_meta_datas_p0(
+    mut metas: ProdMetaDatas,
+    meta: ProdMetaData,
+) -> ProdMetaDatas {
     metas.extend(meta);
     metas
 }
-pub fn production_meta_datas_p1(
-    meta: ProductionMetaData,
-) -> ProductionMetaDatas {
+pub fn prod_meta_datas_p1(meta: ProdMetaData) -> ProdMetaDatas {
     meta
 }
 
-pub type TerminalMetaData = BTreeMap<String, Const>;
-pub fn terminal_meta_data_p0() -> TerminalMetaData {
-    TerminalMetaData::from([("prefer".into(), Const::Bool(true))])
+pub type TermMetaData = BTreeMap<String, Const>;
+pub fn term_meta_data_p0() -> TermMetaData {
+    TermMetaData::from([("prefer".into(), Const::Bool(true))])
 }
-pub fn terminal_meta_data_p1() -> TerminalMetaData {
-    TerminalMetaData::from([("finish".into(), Const::Bool(true))])
+pub fn term_meta_data_p1() -> TermMetaData {
+    TermMetaData::from([("finish".into(), Const::Bool(true))])
 }
-pub fn terminal_meta_data_p2() -> TerminalMetaData {
-    TerminalMetaData::from([("finish".into(), Const::Bool(false))])
+pub fn term_meta_data_p2() -> TermMetaData {
+    TermMetaData::from([("finish".into(), Const::Bool(false))])
 }
-pub fn terminal_meta_data_p3() -> TerminalMetaData {
-    TerminalMetaData::from([("dynamic".into(), Const::Bool(true))])
+pub fn term_meta_data_p3() -> TermMetaData {
+    TermMetaData::from([("dynamic".into(), Const::Bool(true))])
 }
-pub fn terminal_meta_data_p4(prio: IntConst) -> TerminalMetaData {
-    TerminalMetaData::from([("priority".into(), Const::Int(prio))])
+pub fn term_meta_data_p4(prio: IntConst) -> TermMetaData {
+    TermMetaData::from([("priority".into(), Const::Int(prio))])
 }
-pub fn terminal_meta_data_p5(user: UserMetaData) -> TerminalMetaData {
-    TerminalMetaData::from([(user.name, user.value)])
+pub fn term_meta_data_p5(user: UserMetaData) -> TermMetaData {
+    TermMetaData::from([(user.name, user.value)])
 }
 
-pub type TerminalMetaDatas = TerminalMetaData;
-pub fn terminal_meta_datas_p0(
-    mut metas: TerminalMetaDatas,
-    meta: TerminalMetaData,
-) -> TerminalMetaDatas {
+pub type TermMetaDatas = TermMetaData;
+pub fn term_meta_datas_p0(
+    mut metas: TermMetaDatas,
+    meta: TermMetaData,
+) -> TermMetaDatas {
     metas.extend(meta);
     metas
 }
-pub fn terminal_meta_datas_p1(meta: TerminalMetaData) -> TerminalMetaDatas {
+pub fn term_meta_datas_p1(meta: TermMetaData) -> TermMetaDatas {
     meta
 }
 
@@ -396,7 +401,7 @@ pub fn const_p3(str_const: StrConst) -> Const {
 pub enum Assignment {
     PlainAssignment(PlainAssignment),
     BoolAssignment(BoolAssignment),
-    GSymbolReference(GrammarSymbolReference),
+    GrammarSymbolRef(GrammarSymbolRef),
 }
 pub fn assignment_p0(assig: PlainAssignment) -> Assignment {
     Assignment::PlainAssignment(assig)
@@ -404,8 +409,8 @@ pub fn assignment_p0(assig: PlainAssignment) -> Assignment {
 pub fn assignment_p1(assig: BoolAssignment) -> Assignment {
     Assignment::BoolAssignment(assig)
 }
-pub fn assignment_p2(gsymref: GrammarSymbolReference) -> Assignment {
-    Assignment::GSymbolReference(gsymref)
+pub fn assignment_p2(gsymref: GrammarSymbolRef) -> Assignment {
+    Assignment::GrammarSymbolRef(gsymref)
 }
 
 pub type Assignments = Vec<Assignment>;
@@ -423,11 +428,11 @@ pub fn assignments_p1(assign: Assignment) -> Assignments {
 #[derive(Debug)]
 pub struct PlainAssignment {
     pub name: Name,
-    pub gsymref: GrammarSymbolReference,
+    pub gsymref: GrammarSymbolRef,
 }
 pub fn plain_assignment_p0(
     name: Name,
-    gsymref: GrammarSymbolReference,
+    gsymref: GrammarSymbolRef,
 ) -> PlainAssignment {
     PlainAssignment { name, gsymref }
 }
@@ -435,7 +440,7 @@ pub fn plain_assignment_p0(
 pub type BoolAssignment = PlainAssignment;
 pub fn bool_assignment_p0(
     name: Name,
-    gsymref: GrammarSymbolReference,
+    gsymref: GrammarSymbolRef,
 ) -> BoolAssignment {
     BoolAssignment { name, gsymref }
 }
@@ -447,42 +452,68 @@ pub fn production_group_p0(prod_rule_rhs: GrammarRuleRHS) -> ProductionGroup {
 }
 
 #[derive(Debug)]
-pub struct GrammarSymbolReference {
+pub struct GrammarSymbolRef {
     pub gsymbol: Option<GrammarSymbol>,
-    pub repeat_operator: OptRepeatOperator,
+    pub repetition_operator: RepetitionOperatorOpt,
     pub production_group: Option<ProductionGroup>,
 }
-pub fn grammar_symbol_reference_p0(
+pub fn grammar_symbol_ref_p0(
     gsymbol: GrammarSymbol,
-    repeat_operator: OptRepeatOperator,
-) -> GrammarSymbolReference {
-    GrammarSymbolReference {
+    repetition_operator: RepetitionOperatorOpt,
+) -> GrammarSymbolRef {
+    GrammarSymbolRef {
         gsymbol: Some(gsymbol),
-        repeat_operator,
+        repetition_operator,
         production_group: None,
     }
 }
-pub fn grammar_symbol_reference_p1(
+pub fn grammar_symbol_ref_p1(
     prod_group: ProductionGroup,
-    repeat_operator: OptRepeatOperator,
-) -> GrammarSymbolReference {
-    GrammarSymbolReference {
+    repetition_operator: RepetitionOperatorOpt,
+) -> GrammarSymbolRef {
+    GrammarSymbolRef {
         gsymbol: None,
-        repeat_operator,
+        repetition_operator,
         production_group: Some(prod_group),
     }
 }
 
-pub type OptRepeatOperator = Option<RepeatOperator>;
-pub fn opt_repeat_operator_p0(repop: RepeatOperator) -> OptRepeatOperator {
+pub type RepetitionOperatorOpt = Option<RepetitionOperator>;
+pub fn opt_repetition_operator_p0(
+    repop: RepetitionOperator,
+) -> RepetitionOperatorOpt {
     Some(repop)
 }
-pub fn opt_repeat_operator_p1() -> OptRepeatOperator {
+pub fn opt_repetition_operator_p1() -> RepetitionOperatorOpt {
     None
 }
 
 #[derive(Debug)]
-pub enum RepeatOperatorEnum {
+pub struct RepetitionOperator {
+    pub repetition_operator_op: RepetitionOperatorOp,
+    pub repetition_modifiers_exp: Option<RepetitionModifiersExp>,
+}
+pub fn repetition_operator_p0(
+    repetition_operator_op: RepetitionOperatorOp,
+    repetition_modifiers_exp: Option<RepetitionModifiersExp>,
+) -> RepetitionOperator {
+    RepetitionOperator {
+        repetition_operator_op,
+        repetition_modifiers_exp,
+    }
+}
+
+pub fn repetition_operator_opt_p0(
+    repetition_operator: RepetitionOperator,
+) -> Option<RepetitionOperator> {
+    Some(repetition_operator)
+}
+pub fn repetition_operator_opt_p1() -> Option<RepetitionOperator> {
+    None
+}
+
+#[derive(Debug)]
+pub enum RepetitionOperatorOp {
     ZeroOrMore,
     ZeroOrMoreGreedy,
     OneOrMore,
@@ -490,89 +521,60 @@ pub enum RepeatOperatorEnum {
     Optional,
     OptionalGreedy,
 }
-#[derive(Debug)]
-pub struct RepeatOperator {
-    pub operator: RepeatOperatorEnum,
-    pub rep_modifiers: OptionalRepeatModifiersExpression,
+pub fn repetition_operator_op_p0() -> RepetitionOperatorOp {
+    RepetitionOperatorOp::ZeroOrMore
 }
-pub fn repeat_operator_p0(
-    rep_modifiers: OptionalRepeatModifiersExpression,
-) -> RepeatOperator {
-    RepeatOperator {
-        operator: RepeatOperatorEnum::ZeroOrMore,
-        rep_modifiers,
-    }
+pub fn repetition_operator_op_p1() -> RepetitionOperatorOp {
+    RepetitionOperatorOp::ZeroOrMoreGreedy
 }
-pub fn repeat_operator_p1(
-    rep_modifiers: OptionalRepeatModifiersExpression,
-) -> RepeatOperator {
-    RepeatOperator {
-        operator: RepeatOperatorEnum::ZeroOrMoreGreedy,
-        rep_modifiers,
-    }
+pub fn repetition_operator_op_p2() -> RepetitionOperatorOp {
+    RepetitionOperatorOp::OneOrMore
 }
-pub fn repeat_operator_p2(
-    rep_modifiers: OptionalRepeatModifiersExpression,
-) -> RepeatOperator {
-    RepeatOperator {
-        operator: RepeatOperatorEnum::OneOrMore,
-        rep_modifiers,
-    }
+pub fn repetition_operator_op_p3() -> RepetitionOperatorOp {
+    RepetitionOperatorOp::OneOrMoreGreedy
 }
-pub fn repeat_operator_p3(
-    rep_modifiers: OptionalRepeatModifiersExpression,
-) -> RepeatOperator {
-    RepeatOperator {
-        operator: RepeatOperatorEnum::OneOrMoreGreedy,
-        rep_modifiers,
-    }
+pub fn repetition_operator_op_p4() -> RepetitionOperatorOp {
+    RepetitionOperatorOp::Optional
 }
-pub fn repeat_operator_p4(
-    rep_modifiers: OptionalRepeatModifiersExpression,
-) -> RepeatOperator {
-    RepeatOperator {
-        operator: RepeatOperatorEnum::Optional,
-        rep_modifiers,
-    }
-}
-pub fn repeat_operator_p5(
-    rep_modifiers: OptionalRepeatModifiersExpression,
-) -> RepeatOperator {
-    RepeatOperator {
-        operator: RepeatOperatorEnum::OptionalGreedy,
-        rep_modifiers,
-    }
+pub fn repetition_operator_op_p5() -> RepetitionOperatorOp {
+    RepetitionOperatorOp::OptionalGreedy
 }
 
-pub type OptionalRepeatModifiersExpression = Option<OptionalRepeatModifiers>;
-pub fn optional_repeat_modifiers_expression_p0(
-    opt_rep_modifiers: OptionalRepeatModifiers,
-) -> OptionalRepeatModifiersExpression {
-    Some(opt_rep_modifiers)
+pub type RepetitionModifiersExp = RepetitionModifiers;
+pub type RepetitionModifiersExpOpt = Option<RepetitionModifiers>;
+pub fn repetition_modifiers_exp_p0(
+    repetition_modifiers: RepetitionModifiers,
+) -> RepetitionModifiersExp {
+    repetition_modifiers
 }
-pub fn optional_repeat_modifiers_expression_p1(
-) -> OptionalRepeatModifiersExpression {
+
+pub fn repetition_modifiers_exp_opt_p0(
+    repetitioni_modifiers_exp: RepetitionModifiersExp,
+) -> Option<RepetitionModifiersExp> {
+    Some(repetitioni_modifiers_exp)
+}
+pub fn repetition_modifiers_exp_opt_p1() -> Option<RepetitionModifiersExp> {
     None
 }
 
-pub type OptionalRepeatModifiers = Vec<OptionalRepeatModifier>;
-pub fn optional_repeat_modifiers_p0(
-    mut modifiers: OptionalRepeatModifiers,
-    modifier: OptionalRepeatModifier,
-) -> OptionalRepeatModifiers {
-    modifiers.push(modifier);
-    modifiers
+pub type RepetitionModifiers = Vec<RepetitionModifier>;
+pub fn repetition_modifiers_p0(
+    mut repetition_modifiers: RepetitionModifiers,
+    repetition_modifier: RepetitionModifier,
+) -> RepetitionModifiers {
+    repetition_modifiers.push(repetition_modifier);
+    repetition_modifiers
 }
-pub fn optional_repeat_modifiers_p1(
-    modifier: OptionalRepeatModifier,
-) -> OptionalRepeatModifiers {
-    vec![modifier]
+pub fn repetition_modifiers_p1(
+    repetition_modifier: RepetitionModifier,
+) -> RepetitionModifiers {
+    vec![repetition_modifier]
 }
 
 #[derive(Debug)]
-pub struct OptionalRepeatModifier(pub Name);
-pub fn optional_repeat_modifier_p0(name: Name) -> OptionalRepeatModifier {
-    OptionalRepeatModifier(name)
+pub struct RepetitionModifier(pub Name);
+pub fn repetition_modifier_p0(name: Name) -> RepetitionModifier {
+    RepetitionModifier(name)
 }
 
 #[derive(Debug)]
@@ -590,62 +592,62 @@ pub fn grammar_symbol_p1(str_const: StrConst) -> GrammarSymbol {
 #[derive(Debug)]
 pub enum Recognizer {
     StrConst(StrConst),
-    RegExTerm(RegExTerm),
+    RegExTerm(RegexTerm),
 }
 pub fn recognizer_p0(str_const: StrConst) -> Recognizer {
     Recognizer::StrConst(str_const)
 }
-pub fn recognizer_p1(regex: RegExTerm) -> Recognizer {
+pub fn recognizer_p1(regex: RegexTerm) -> Recognizer {
     Recognizer::RegExTerm(regex)
 }
 
-pub type LAYOUT = String;
-pub fn layoutp0(item: LAYOUTITEM) -> LAYOUT {
+pub type Layout = String;
+pub fn layout_p0(item: LayoutItem) -> Layout {
     item
 }
-pub fn layoutp1(mut layout: LAYOUT, item: LAYOUTITEM) -> LAYOUT {
+pub fn layout_p1(mut layout: Layout, item: LayoutItem) -> Layout {
     layout.push_str(&item);
     layout
 }
-pub fn layoutp2() -> LAYOUT {
+pub fn layout_p2() -> Layout {
     "".into()
 }
 
-pub type LAYOUTITEM = String;
-pub fn layoutitemp0(ws: WS) -> LAYOUTITEM {
+pub type LayoutItem = String;
+pub fn layout_item_p0(ws: WS) -> LayoutItem {
     ws
 }
-pub fn layoutitemp1(comment: Comment) -> LAYOUTITEM {
+pub fn layout_item_p1(comment: Comment) -> LayoutItem {
     comment
 }
 
 pub type Comment = String;
-pub fn comment_p0(s: CORNCS) -> Comment {
+pub fn comment_p0(s: Corncs) -> Comment {
     s
 }
 pub fn comment_p1(s: CommentLine) -> Comment {
     s
 }
 
-pub type CORNCS = String;
-pub fn corncsp0(s: CORNC) -> CORNCS {
+pub type Corncs = String;
+pub fn corncs_p0(s: Cornc) -> Corncs {
     s
 }
-pub fn corncsp1(mut ss: CORNCS, s: CORNC) -> CORNCS {
+pub fn corncs_p1(mut ss: Corncs, s: Cornc) -> Corncs {
     ss.push_str(&s);
     ss
 }
-pub fn corncsp2() -> CORNCS {
+pub fn corncs_p2() -> Corncs {
     "".into()
 }
 
-pub type CORNC = String;
-pub fn corncp0(s: Comment) -> CORNC {
+pub type Cornc = String;
+pub fn cornc_p0(s: Comment) -> Cornc {
     s
 }
-pub fn corncp1(s: NotComment) -> CORNC {
+pub fn cornc_p1(s: NotComment) -> Cornc {
     s
 }
-pub fn corncp2(s: WS) -> CORNC {
+pub fn cornc_p2(s: WS) -> Cornc {
     s
 }

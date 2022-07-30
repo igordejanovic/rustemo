@@ -2,7 +2,6 @@ use std::{
     collections::BTreeMap,
     fmt::Display,
     hash::{Hash, Hasher},
-    path::Path,
 };
 
 use rustemo_rt::{
@@ -16,8 +15,8 @@ use rustemo_rt::{
 use crate::{rustemo::RustemoParser, rustemo_actions::Const};
 
 use super::rustemo_actions::{
-    GrammarRule, GrammarSymbol, Imports, PGFile, ProductionMetaDatas,
-    Recognizer, TerminalMetaDatas,
+    GrammarRule, GrammarSymbol, Imports, PGFile, ProdMetaDatas,
+    Recognizer, TermMetaDatas,
 };
 
 #[derive(Debug)]
@@ -76,7 +75,7 @@ pub struct Terminal {
     pub has_content: bool,
 
     pub prio: Priority,
-    pub meta: TerminalMetaDatas,
+    pub meta: TermMetaDatas,
 }
 grammar_elem!(Terminal);
 
@@ -150,7 +149,7 @@ pub struct Production {
     pub dynamic: bool,
     pub nops: bool,
     pub nopse: bool,
-    pub meta: ProductionMetaDatas,
+    pub meta: ProdMetaDatas,
 }
 grammar_elem!(Production);
 
@@ -235,14 +234,7 @@ pub(in crate) fn res_symbol(assign: &Assignment) -> SymbolIndex {
 impl Grammar {
     /// Parses given string and constructs a Grammar instance
     pub fn from_string<G: AsRef<str>>(grammar_str: G) -> RustemoResult<Self> {
-        use crate::rustemo_types::{NonTerminal, Symbol};
-        if let Symbol::NonTerminal(NonTerminal::PGFile(pgfile)) =
-            RustemoParser::parse_str(grammar_str.as_ref())?
-        {
-            Ok(Self::from_pgfile(pgfile))
-        } else {
-            panic!("Invalid symbol from grammar parse!")
-        }
+        Ok(Self::from_pgfile(RustemoParser::parse_str(grammar_str.as_ref())?))
     }
 
     /// Parses given file and constructs a Grammar instance
@@ -275,7 +267,7 @@ impl Grammar {
                 recognizer: None,
                 has_content: false,
                 prio: DEFAULT_PRIORITY,
-                meta: TerminalMetaDatas::new(),
+                meta: TermMetaDatas::new(),
             },
         );
 
@@ -438,7 +430,7 @@ impl Grammar {
                                         assign.gsymref.gsymbol.unwrap(),
                                     ),
                                 },
-                                GSymbolReference(reference) => Assignment {
+                                GrammarSymbolRef(reference) => Assignment {
                                     name: None,
                                     symbol: ResolvingSymbolIndex::Resolving(
                                         reference.gsymbol.unwrap(),
