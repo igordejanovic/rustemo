@@ -155,7 +155,7 @@ fn generate_parser_definition<W: Write>(
         use rustemo_rt::grammar::{{TerminalInfo, TerminalInfos, TerminalsState}};
         use rustemo_rt::debug::{{log, logn}};
 
-        use super::{file_name}_actions::*;
+        use super::{file_name}_actions;
 
         const TERMINAL_NO: usize = {term_count};
         const NONTERMINAL_NO: usize = {nonterm_count};
@@ -170,7 +170,7 @@ fn generate_parser_definition<W: Write>(
         max_actions = max_actions,
     );
 
-    generate_parser_types(&grammar, &mut out)?;
+    generate_parser_types(&grammar, file_name, &mut out)?;
 
     geni!(
         out,
@@ -570,14 +570,19 @@ fn generate_parser_definition<W: Write>(
                         "_".to_string()
                     }
                 } else {
-                    counter += 1;
-                    let nt = &grammar.nonterminals()
-                        [grammar.symbol_to_nonterm(symbol)];
-                    format!(
-                        "Symbol::NonTerminal(NonTerminal::{}(p{}))",
-                        nt.name,
-                        counter - 1
-                    )
+                    // Special handling of EMPTY non-terminal
+                    if grammar.empty_index == symbol {
+                        String::from("Symbol::NonTerminal(NonTerminal::EMPTY)")
+                    } else {
+                        let nt = &grammar.nonterminals()
+                            [grammar.symbol_to_nonterm(symbol)];
+                        counter += 1;
+                        format!(
+                            "Symbol::NonTerminal(NonTerminal::{}(p{}))",
+                            nt.name,
+                            counter - 1
+                        )
+                    }
                 }
             })
             .collect::<Vec<_>>()
@@ -589,9 +594,10 @@ fn generate_parser_definition<W: Write>(
 
         geni!(
             out,
-            "{} => NonTerminal::{}({}_p{}({})),\n",
+            "{} => NonTerminal::{}({}_actions::{}_p{}({})),\n",
             lhs,
             prod_nt_name,
+            file_name,
             prod_nt_name.to_case(Case::Snake),
             production.ntidx,
             (0..counter)
@@ -630,6 +636,7 @@ fn generate_parser_definition<W: Write>(
 
 fn generate_parser_types<W: Write>(
     grammar: &Grammar,
+    file_name: &str,
     out: &mut RustWrite<W>,
 ) -> RustemoResult<()> {
     geni!(
@@ -690,7 +697,7 @@ fn generate_parser_types<W: Write>(
             "{}{},\n",
             terminal.name,
             if terminal.has_content {
-                format!("({})", terminal.name)
+                format!("({}_actions::{})", file_name, terminal.name)
             } else {
                 "".to_string()
             }
@@ -705,13 +712,16 @@ fn generate_parser_types<W: Write>(
             r#"
                 #[derive(Debug)]
                 pub enum NonTerminal {{
+                    EMPTY,
               "#
         }
     );
 
     out.inc_indent();
     for nonterminal in &grammar.nonterminals()[2..] {
-        geni!(out, "{name}({name}),\n", name = nonterminal.name);
+        geni!(out, "{name}({file_name}_actions::{name}),\n",
+              file_name = file_name,
+              name = nonterminal.name);
     }
     out.dec_indent();
     geni!(out, "}}\n\n");
