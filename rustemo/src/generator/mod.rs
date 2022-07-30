@@ -455,7 +455,7 @@ fn generate_parser_definition<W: Write>(
 
             impl Builder for {parser_name}Builder
             {{
-                type Output = {root_symbol_name};
+                type Output = {file_name}_actions::{root_symbol_name};
 
                 fn new() -> Self {{
                     {parser_name}Builder {{
@@ -473,6 +473,7 @@ fn generate_parser_definition<W: Write>(
         "#
         },
         parser_name = parser_name,
+        file_name = file_name,
         root_symbol_name = root_symbol_name,
     );
 
