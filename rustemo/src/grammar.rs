@@ -638,13 +638,12 @@ impl Grammar {
         indexes
     }
 
-    pub(crate) fn symbol_names<'a, T>(&self, indexes: T) -> Vec<String>
+    pub(crate) fn symbol_names<T>(&self, indexes: T) -> Vec<String>
     where
-        T: IntoIterator<Item = &'a SymbolIndex>,
+        T: IntoIterator<Item = SymbolIndex>,
     {
         indexes
             .into_iter()
-            .copied()
             .map(|i| self.symbol_name(i))
             .collect()
     }

@@ -180,6 +180,12 @@ where
     ) -> RustemoResult<Token<&'i str>> {
         Self::skip(context);
         log!("Context: {}", context.context_str());
+        log!(
+            "Trying recognizers: {:?}",
+            self.definition
+                .recognizers(context.state())
+                .map(|(_, terminal_info)| terminal_info.name).collect::<Vec<_>>()
+        );
         let token: Option<Token<&'i str>> = self
             .definition
             .recognizers(context.state())

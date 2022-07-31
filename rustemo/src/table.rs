@@ -397,7 +397,7 @@ fn merge_state(
         // In case it would, do not merge but keep these states split.
         for (old, new) in &item_pairs {
             if !old.is_reducing() {
-                continue
+                continue;
             }
             for (old_in, new_in) in &item_pairs {
                 if old == old_in {
@@ -641,8 +641,12 @@ fn sort_terminals(grammar: &Grammar, states: &mut StateVec<LRState>) {
             .filter(|(_, actions)| !actions.is_empty())
             .map(|(idx, _)| TermIndex(idx))
             .collect::<Vec<_>>();
-        terminals.sort_by(|&l, &r| {
-            fn term_prio(term: &Terminal) -> u32 {
+
+        let term_prio = |term: &Terminal| -> u32 {
+            // Make STOP the first to try
+            if grammar.term_to_symbol(term.idx) == grammar.stop_index {
+                1e6 as u32
+            } else {
                 term.prio * 1000
                     + match &term.recognizer {
                         Some(recognizer) => {
@@ -654,16 +658,24 @@ fn sort_terminals(grammar: &Grammar, states: &mut StateVec<LRState>) {
                         None => 0,
                     }
             }
+        };
+        terminals.sort_by(|&l, &r| {
             let l_term_prio = term_prio(&grammar.terminals()[l]);
             let r_term_prio = term_prio(&grammar.terminals()[r]);
-            if l_term_prio < r_term_prio {
+            if l_term_prio > r_term_prio {
                 Ordering::Less
-            } else if l_term_prio > r_term_prio {
+            } else if l_term_prio < r_term_prio {
                 Ordering::Greater
             } else {
                 Ordering::Equal
             }
         });
+        log!(
+            "SORTED: {:?}",
+            &grammar.symbol_names(
+                terminals.iter().map(|i| grammar.term_to_symbol(*i)).collect::<Vec<_>>()
+            )
+        );
         state.sorted_terminals = terminals;
     }
 }
@@ -1005,8 +1017,9 @@ mod tests {
             LParen: "(";
             RParen: ")";
             id: "id";
-            "#
-        ).unwrap()
+            "#,
+        )
+        .unwrap()
     }
 
     fn test_grammar_2() -> Grammar {
@@ -1022,8 +1035,9 @@ mod tests {
             LParen: "(";
             RParen: ")";
             id: "id";
-            "#
-        ).unwrap()
+            "#,
+        )
+        .unwrap()
     }
 
     /// Grammar from the Dragon book, p.278
@@ -1040,8 +1054,9 @@ mod tests {
             b_t: "b";
             c_t: "c";
             d_t: "d";
-            "#
-        ).unwrap()
+            "#,
+        )
+        .unwrap()
     }
 
     fn test_ambiguous_grammar() -> Grammar {
@@ -1060,8 +1075,9 @@ mod tests {
             LParen: "(";
             RParen: ")";
             id: "id";
-            "#
-        ).unwrap()
+            "#,
+        )
+        .unwrap()
     }
 
     #[test]
@@ -1108,7 +1124,7 @@ mod tests {
             &follow_sets[grammar.symbol_index("E")],
             &follow(grammar.symbol_indexes(&["RParen", "STOP"]))
         );
-        dbg!(grammar.symbol_names(&follow_sets[grammar.symbol_index("Ep")]));
+        dbg!(grammar.symbol_names(follow_sets[grammar.symbol_index("Ep")].clone()));
         assert_eq!(
             &follow_sets[grammar.symbol_index("Ep")],
             &follow(grammar.symbol_indexes(&["RParen", "STOP"]))
@@ -1131,7 +1147,7 @@ mod tests {
         let mut item = LRItem::new(&grammar, prod);
         assert_eq!(
             &grammar.symbol_names(
-                &grammar.productions.as_ref().unwrap()[prod].rhs_symbols()
+                grammar.productions.as_ref().unwrap()[prod].rhs_symbols()
             ),
             &["T", "Ep"]
         );
@@ -1416,6 +1432,35 @@ mod tests {
         output_cmp!(
             "src/grammar_nonlalr_lalr_pagerw.expected.txt",
             format!("{grammar}\n\n{states:#?}")
+        );
+    }
+
+    #[test]
+    fn test_sorted_terminals() {
+        let grammar = Grammar::from_string(
+            r#"
+            S: A | C | B;
+            terminals
+            A: /\d+/;
+            B: "bb";
+            C: "c";
+            "#,
+        )
+        .unwrap();
+
+        let settings = Settings {
+            lr_table_type: crate::settings::LRTableType::LALR_PAGERW,
+            ..Settings::default()
+        };
+
+        let states = lr_states_for_grammar(&grammar, &settings);
+        assert_eq!(
+            &states[StateIndex(0)]
+                .sorted_terminals
+                .iter()
+                .map(|i| i.0)
+                .collect::<Vec<_>>(),
+            &vec![2, 3, 1]
         );
     }
 }

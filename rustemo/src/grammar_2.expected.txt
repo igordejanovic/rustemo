@@ -123,8 +123,8 @@ StateVec(
                 ],
             ),
             sorted_terminals: [
-                3,
                 5,
+                3,
             ],
             max_prior_for_term: {
                 3: 10,
@@ -257,8 +257,8 @@ StateVec(
                 ],
             ),
             sorted_terminals: [
-                3,
                 5,
+                3,
             ],
             max_prior_for_term: {
                 3: 10,
@@ -738,8 +738,8 @@ StateVec(
                 ],
             ),
             sorted_terminals: [
-                3,
                 5,
+                3,
             ],
             max_prior_for_term: {
                 3: 10,
@@ -824,8 +824,8 @@ StateVec(
                 ],
             ),
             sorted_terminals: [
-                3,
                 5,
+                3,
             ],
             max_prior_for_term: {
                 3: 10,
