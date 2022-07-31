@@ -382,11 +382,11 @@ fn merge_state(
         .items
         .clone()
         .into_iter()
-        .filter(|item| item.is_reducing());
+        .filter(|item| item.is_kernel());
 
     // Item pairs of item from an old state and corresponding item from the new state.
     let item_pairs: Vec<(&mut LRItem, &LRItem)> = iter::zip(
-        old_state.items.iter_mut().filter(|item| item.is_reducing()),
+        old_state.items.iter_mut().filter(|item| item.is_kernel()),
         old_state_items
             .map(|x| new_state.items.iter().find(|&i| *i == x).unwrap()),
     )
@@ -396,6 +396,9 @@ fn merge_state(
         // If this is not pure LALR check to see if merging would introduce R/R.
         // In case it would, do not merge but keep these states split.
         for (old, new) in &item_pairs {
+            if !old.is_reducing() {
+                continue
+            }
             for (old_in, new_in) in &item_pairs {
                 if old == old_in {
                     continue;
