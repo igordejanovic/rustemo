@@ -528,13 +528,29 @@ fn generate_parser_definition<W: Write>(
     out.inc_indent();
     for production in &grammar.productions()[1..] {
         let prod_nt_name = &grammar.nonterminals()[production.nonterminal].name;
+        let rhs_len = production.rhs.len();
+
+        // Handle EMPTY production
+        if rhs_len == 0 {
+            geni!(
+                out,
+                "ProdKind::{}P{} => NonTerminal::{}({}_actions::{}_p{}()),\n",
+                prod_nt_name,
+                production.ntidx,
+                prod_nt_name,
+                file_name,
+                prod_nt_name.to_case(Case::Snake),
+                production.ntidx,
+            );
+            continue
+        }
+
         geni!(
             out,
             "ProdKind::{}P{} => {{\n",
             prod_nt_name,
             production.ntidx
         );
-        let rhs_len = production.rhs.len();
         out.inc_indent();
         geni!(out,
               "let mut i = self.res_stack.split_off(self.res_stack.len()-{rhs_len}).into_iter();\n",
@@ -572,19 +588,14 @@ fn generate_parser_definition<W: Write>(
                         "_".to_string()
                     }
                 } else {
-                    // Special handling of EMPTY non-terminal
-                    if grammar.empty_index == symbol {
-                        String::from("Symbol::NonTerminal(NonTerminal::EMPTY)")
-                    } else {
-                        let nt = &grammar.nonterminals()
-                            [grammar.symbol_to_nonterm(symbol)];
-                        counter += 1;
-                        format!(
-                            "Symbol::NonTerminal(NonTerminal::{}(p{}))",
-                            nt.name,
-                            counter - 1
-                        )
-                    }
+                    let nt = &grammar.nonterminals()
+                        [grammar.symbol_to_nonterm(symbol)];
+                    counter += 1;
+                    format!(
+                        "Symbol::NonTerminal(NonTerminal::{}(p{}))",
+                        nt.name,
+                        counter - 1
+                    )
                 }
             })
             .collect::<Vec<_>>()
@@ -714,7 +725,6 @@ fn generate_parser_types<W: Write>(
             r#"
                 #[derive(Debug)]
                 pub enum NonTerminal {{
-                    EMPTY,
               "#
         }
     );
