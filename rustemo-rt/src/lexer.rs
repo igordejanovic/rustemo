@@ -12,9 +12,6 @@ pub trait Lexer<I, C: Context<I>> {
     /// Given the current context, this method should return RustemoResult with
     /// token found ahead of the current location or error indicating what is
     /// expected.
-    ///
-    /// It should update the given mutable context to reflect the current
-    /// progress.
     fn next_token(&self, context: &mut C) -> RustemoResult<Token<I>>;
 }
 
@@ -46,18 +43,13 @@ pub trait Context<I> {
     /// the current location or absolute position if location is not used.
     fn location_str(&self) -> String;
 
-    /// Token recognized ahead of the current position.
-    /// TODO: In case of lexical ambiguity it could be multiple tokens.
-    fn token_ahead(&self) -> &Option<Token<I>>;
-    fn set_token_ahead(&mut self, token: Option<Token<I>>);
-
     /// Layout before the current token ahead (e.g. whitespaces)
     fn layout(&self) -> &Option<I>;
     fn set_layout(&mut self, layout: I);
 }
 
 /// `Token` represent a single token from the input stream.
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 pub struct Token<I> {
     pub terminal: &'static TerminalInfo,
 

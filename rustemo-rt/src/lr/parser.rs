@@ -1,7 +1,7 @@
 use crate::debug::log;
 use crate::error::RustemoResult;
 use crate::index::{NonTermIndex, ProdIndex, StateIndex, TermIndex};
-use crate::lexer::Lexer;
+use crate::lexer::{Context, Lexer};
 use crate::lr::lexer::LRContext;
 use crate::parser::Parser;
 use std::fmt::{Debug, Display};

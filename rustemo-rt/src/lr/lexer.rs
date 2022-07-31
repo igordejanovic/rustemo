@@ -59,16 +59,6 @@ impl<I> Context<I> for LRContext<I> {
     }
 
     #[inline]
-    fn token_ahead(&self) -> &Option<Token<I>> {
-        &self.token
-    }
-
-    #[inline]
-    fn set_token_ahead(&mut self, token: Option<Token<I>>) {
-        self.token = token;
-    }
-
-    #[inline]
     fn input(&self) -> &I {
         &self.input
     }
@@ -221,11 +211,9 @@ where
         match token {
             Some(t) => {
                 context.update_location(t.value);
-                context.set_token_ahead(Some(t.clone()));
                 Ok(t)
             }
             None => {
-                context.set_token_ahead(None);
                 let expected = self
                     .definition
                     .recognizers(context.state())
