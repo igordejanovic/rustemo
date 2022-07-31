@@ -130,6 +130,7 @@ impl<'i> LRContext<&'i str> {
             end: None,
         });
         self.set_position(self.position() + content.len());
+        log!("Position: {}", self.position());
     }
 }
 
