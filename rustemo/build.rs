@@ -56,23 +56,23 @@ fn bootstrap() -> Result<(), Box<dyn Error>> {
         )
     });
 
-    let status = Command::new(rustemo_path)
+    let status = Command::new(&rustemo_path)
         .args(&[
             "--force",
             "--outdir",
             out_dir.to_str().expect("output path is not valid UTF-8"),
             root_dir
+                .join("rustemo")
                 .join(grammar_file)
                 .to_str()
                 .expect("output path is not valid UTF-8"),
         ])
         .status()?;
+
     if !status.success() {
-        return Err(format!(
-            "Compiling the .rustemo file failed. Status: {}",
-            status
-        )
-        .into());
+        // Abruptly finish build process in bootstrap mode
+        // FIXME: Should return Error but it doesn't terminate the build process.
+        panic!("Rustemo parser not generated! {}", status);
     }
     Ok(())
 }
