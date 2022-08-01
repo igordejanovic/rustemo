@@ -127,10 +127,13 @@ where
     W: Write,
     F: AsRef<Path> + Debug,
 {
+    let err_message = format!("Invalid file name {:?}", file_name);
     let file_name = file_name
         .as_ref()
+        .file_stem()
+        .expect(&err_message)
         .to_str()
-        .expect(format!("Invalid file name {:?}", file_name).as_str());
+        .expect(&err_message);
     let mut out = RustWrite::new(out);
     let parser_name = file_name.to_case(Case::Pascal);
     let root_symbol_name =
