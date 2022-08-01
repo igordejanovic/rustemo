@@ -174,7 +174,7 @@ impl PartialEq for LRItem {
 ///        |------ position is 2
 /// ```
 impl LRItem {
-    #[test]
+    #[cfg(test)]
     fn new(grammar: &Grammar, prod: ProdIndex) -> Self {
         LRItem {
             prod,
@@ -831,7 +831,7 @@ fn firsts(
 type Follow = BTreeSet<SymbolIndex>;
 #[allow(dead_code)]
 type FollowSets = SymbolVec<Follow>;
-#[test]
+#[cfg(test)]
 fn follow_sets(grammar: &Grammar, first_sets: &FirstSets) -> FollowSets {
     let mut follow_sets = FollowSets::new();
     for _ in 0..first_sets.len() {

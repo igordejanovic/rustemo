@@ -555,6 +555,19 @@ where
             continue;
         }
 
+        // Special handling of production with only str match terms in RHS
+        let terms_no_content = production
+            .rhs
+            .iter()
+            .filter(|&a| {
+                let symbol = res_symbol(a);
+                grammar.is_nonterm(symbol)
+                    || grammar.terminals()[grammar.symbol_to_term(symbol)]
+                        .has_content
+            })
+            .count()
+            == 0;
+
         geni!(
             out,
             "ProdKind::{}P{} => {{\n",
@@ -562,10 +575,33 @@ where
             production.ntidx
         );
         out.inc_indent();
-        geni!(out,
-              "let mut i = self.res_stack.split_off(self.res_stack.len()-{rhs_len}).into_iter();\n",
-              rhs_len=rhs_len
-        );
+        if terms_no_content {
+            geni!(out,
+                  "let _ = self.res_stack.split_off(self.res_stack.len()-{rhs_len}).into_iter();\n",
+                  rhs_len=rhs_len
+            );
+        } else {
+            geni!(out,
+                  "let mut i = self.res_stack.split_off(self.res_stack.len()-{rhs_len}).into_iter();\n",
+                  rhs_len=rhs_len
+            );
+        }
+
+        if terms_no_content {
+            geni!(
+                out,
+                "NonTerminal::{}({}_actions::{}_p{}())\n",
+                prod_nt_name,
+                file_name,
+                prod_nt_name.to_case(Case::Snake),
+                production.ntidx,
+            );
+            out.dec_indent();
+
+            geni!(out, "}}\n");
+            continue;
+        }
+
         geni!(
             out,
             "match {}{}{} {{",
