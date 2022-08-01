@@ -3,7 +3,7 @@ use convert_case::{Case, Casing};
 use indoc::indoc;
 use rustemo_rt::{
     error::{RustemoError, RustemoResult},
-    index::{NonTermIndex, StateVec, SymbolIndex, TermIndex},
+    index::{NonTermIndex, StateVec, TermIndex},
 };
 use std::{
     fmt::Debug,
@@ -19,9 +19,6 @@ use crate::{
     settings::Settings,
     table::{lr_states_for_grammar, LRState},
 };
-
-#[cfg(test)]
-mod tests;
 
 macro_rules! geni {
     ($w:expr, $($args:tt)*) => {
@@ -153,12 +150,10 @@ where
         use num_enum::TryFromPrimitive;
         use std:: {{
             convert::TryFrom,
-            path::Path,
-            fs,
             fmt::Debug,
         }};
 
-        use rustemo_rt::lexer::{{Lexer, Context, Token}};
+        use rustemo_rt::lexer::{{Lexer, Token}};
         use rustemo_rt::parser::Parser;
         use rustemo_rt::builder::Builder;
         use rustemo_rt::error::RustemoResult;

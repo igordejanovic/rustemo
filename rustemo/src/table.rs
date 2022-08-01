@@ -988,7 +988,6 @@ mod tests {
     use crate::{
         grammar::Grammar,
         output_cmp,
-        rustemo::RustemoParser,
         settings::Settings,
         table::{Follow, LRItem},
     };
