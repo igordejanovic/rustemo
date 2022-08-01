@@ -1,7 +1,15 @@
+use calculator1::Calculator1Parser;
+use calculator2::Calculator2Parser;
+
 mod calculator1;
 mod calculator1_actions;
 mod calculator2;
 mod calculator2_actions;
+
+fn main() {
+    let _result1 = Calculator1Parser::parse_str("2 + 3 * 7 + 6 * 3");
+    let _result2 = Calculator2Parser::parse_str("2 + 3 * 7 + 6 * 3");
+}
 
 #[cfg(test)]
 mod test_calculator1 {
