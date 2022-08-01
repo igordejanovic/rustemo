@@ -14,6 +14,11 @@ fn main() {
             eprintln!("{}", err);
             exit(1);
         }
+    } else if env::var("CARGO_FEATURE_FINALIZE").is_ok() {
+        if let Err(err) = finalize() {
+            eprintln!("{}", err);
+            exit(1);
+        }
     }
 }
 
@@ -31,22 +36,21 @@ fn find_rustemo_binary(prefix: &PathBuf) -> Option<PathBuf> {
     }
 }
 
-fn bootstrap() -> Result<(), Box<dyn Error>> {
-    println!("Bootstrapping parser.");
-    let grammar_file = "src/rustemo.rustemo";
-    println!(r#"cargo:rerun-if-changed={}"#, grammar_file);
-
-    let out_dir =
-        Path::new(&env::var("OUT_DIR").expect("cargo did not set OUT_DIR"))
-            .join("src");
-
-    fs::create_dir_all(&out_dir)?;
-
-    let root_dir = Path::new(
+fn _root_dir() -> PathBuf {
+    return Path::new(
         &env::var("CARGO_MANIFEST_DIR")
             .expect("cargo did not set CARGO_MANIFEST_DIR"),
     )
     .join("..");
+}
+
+fn _generate(out_dir: &Path) -> Result<(), Box<dyn Error>> {
+    let grammar_file = "src/rustemo.rustemo";
+    println!(r#"cargo:rerun-if-changed={}"#, grammar_file);
+
+    fs::create_dir_all(&out_dir)?;
+
+    let root_dir = _root_dir();
 
     let rustemo_path = find_rustemo_binary(&root_dir).unwrap_or_else(|| {
         panic!(
@@ -74,5 +78,21 @@ fn bootstrap() -> Result<(), Box<dyn Error>> {
         // FIXME: Should return Error but it doesn't terminate the build process.
         panic!("Rustemo parser not generated! {}", status);
     }
+    Ok(())
+}
+
+fn bootstrap() -> Result<(), Box<dyn Error>> {
+    println!("Bootstrapping parser.");
+    let out_dir =
+        Path::new(&env::var("OUT_DIR").expect("cargo did not set OUT_DIR"))
+            .join("src");
+    _generate(&out_dir)?;
+    Ok(())
+}
+
+fn finalize() -> Result<(), Box<dyn Error>> {
+    println!("Finalizing parser.");
+    let out_dir = _root_dir().join("rustemo/src/");
+    _generate(&out_dir)?;
     Ok(())
 }
