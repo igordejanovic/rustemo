@@ -10,7 +10,7 @@ use std::{
     fs::File,
     io::{self, Write},
     iter::repeat,
-    path::Path,
+    path::{Path, PathBuf},
 };
 
 use crate::{
@@ -79,46 +79,58 @@ impl<W: Write> RustWrite<W> {
     }
 }
 
-pub fn generate_parser<F>(grammar_path: F) -> RustemoResult<()>
+pub fn generate_parser<F>(
+    grammar_path: F,
+    out_dir: Option<F>,
+) -> RustemoResult<()>
 where
     F: AsRef<Path> + Debug,
 {
-    let mut file_name = String::from(
+    let file_name =
         grammar_path
             .as_ref()
             .file_name()
-            .ok_or(RustemoError::Error("Invalid file name.".to_string()))?
-            .to_str()
             .ok_or(RustemoError::Error(
-                "Filename must be valid unicode.".to_string(),
-            ))?,
-    );
-    file_name = String::from(file_name.strip_suffix(".rustemo").ok_or(
-        RustemoError::Error(
-            "Grammar filename must use .rustemo extension.".to_string(),
-        ),
-    )?);
+                "Invalid grammar file name.".to_string(),
+            ))?;
 
-    //let grammar = Grammar::from_file(grammar_path)?;
+    let out_dir = match out_dir {
+        Some(dir) => PathBuf::from(dir.as_ref()),
+        None => PathBuf::from(
+            grammar_path
+                .as_ref()
+                .parent()
+                .expect("Cannot deduce parent directory of the grammar file."),
+        ),
+    };
+
     let grammar_input = std::fs::read_to_string(grammar_path.as_ref())?;
     let grammar = Grammar::from_string(grammar_input)?;
 
     let states = lr_states_for_grammar(&grammar, &Settings::default());
 
     // Generate parser definition
-    let out_file = grammar_path.as_ref().with_extension("rs");
+    let out_file = out_dir.join(file_name).with_extension("rs");
     let out_file = File::create(out_file)?;
     generate_parser_definition(&grammar, &file_name, states, out_file)?;
 
     Ok(())
 }
 
-fn generate_parser_definition<W: Write>(
+fn generate_parser_definition<W, F>(
     grammar: &Grammar,
-    file_name: &str,
+    file_name: F,
     states: StateVec<LRState>,
     out: W,
-) -> RustemoResult<()> {
+) -> RustemoResult<()>
+where
+    W: Write,
+    F: AsRef<Path> + Debug,
+{
+    let file_name = file_name
+        .as_ref()
+        .to_str()
+        .expect(format!("Invalid file name {:?}", file_name).as_str());
     let mut out = RustWrite::new(out);
     let parser_name = file_name.to_case(Case::Pascal);
     let root_symbol_name =

@@ -13,12 +13,16 @@ struct Cli {
     /// Rustemo grammar file to parse
     #[clap(value_parser, value_name="GRAMMAR FILE", value_hint = clap::ValueHint::FilePath)]
     grammar_file: PathBuf,
+
+    /// Output directory. Default is the same as input grammar file.
+    #[clap(short, long, value_name="OUT DIR", value_hint = clap::ValueHint::DirPath)]
+    outdir: Option<PathBuf>,
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cli = Cli::parse();
 
-    match generate_parser(cli.grammar_file) {
+    match generate_parser(cli.grammar_file, cli.outdir) {
         Ok(_) => println!("Parser generated successfully"),
         Err(e) => eprintln!("{}", e),
     }

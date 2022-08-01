@@ -36,7 +36,7 @@ where
 {
     fn visitor(grammar: &PathBuf) -> RustemoResult<()> {
         log!("Generating parser for grammar {:?}", grammar);
-        generate_parser(grammar)
+        generate_parser(grammar, None)
     }
 
     visit_dirs(dir, &visitor)
