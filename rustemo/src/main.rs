@@ -24,7 +24,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     match generate_parser(cli.grammar_file, cli.outdir) {
         Ok(_) => println!("Parser generated successfully"),
-        Err(e) => eprintln!("{}", e),
+        Err(e) => return Err(format!("Parser not generated. {e}").into())
     }
 
     Ok(())
