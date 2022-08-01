@@ -13,7 +13,6 @@ pub struct LRContext<I> {
     input: I,
     position: usize,
     location: Option<Location>,
-    token: Option<Token<I>>,
     layout: Option<I>,
     state: StateIndex,
 }
@@ -24,7 +23,6 @@ impl<I> LRContext<I> {
             file,
             input,
             position: 0,
-            token: None,
             location: None,
             layout: None,
             state: StateIndex(0),
