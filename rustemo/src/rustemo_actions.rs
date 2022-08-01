@@ -64,9 +64,6 @@ pub fn not_comment<'a>(token: Token<&'a str>) -> NotComment {
     token.value.into()
 }
 
-pub type STOP = ();
-pub fn stop<'a>(_token: Token<&'a str>) -> STOP {}
-
 #[derive(Debug)]
 pub struct PGFile {
     pub imports: Option<Imports>,
@@ -214,24 +211,12 @@ pub fn production_p1(
 
 pub type Terminals = Vec<Terminal>;
 pub type TerminalRules = Terminals;
-pub type TerminalRuleWithAction = Terminal;
 pub fn terminal_rules_p0(mut rules: Terminals, rule: Terminal) -> Terminals {
     rules.push(rule);
     rules
 }
 pub fn terminal_rules_p1(rule: Terminal) -> Terminals {
     vec![rule]
-}
-
-pub fn terminal_rule_with_action_p0(
-    action: String,
-    mut rule: Terminal,
-) -> Terminal {
-    rule.action = Some(action);
-    rule
-}
-pub fn terminal_rule_with_action_p1(rule: Terminal) -> Terminal {
-    rule
 }
 
 #[derive(Debug)]
@@ -288,12 +273,6 @@ pub fn terminal_rule_p3(
     }
 }
 
-#[derive(Debug)]
-pub enum Associativity {
-    None,
-    Left,
-    Right,
-}
 pub type ProdMetaData = BTreeMap<String, Const>;
 
 pub fn prod_meta_data_p0() -> ProdMetaData {
@@ -478,16 +457,6 @@ pub fn grammar_symbol_ref_p1(
     }
 }
 
-pub type RepetitionOperatorOpt = Option<RepetitionOperator>;
-pub fn opt_repetition_operator_p0(
-    repop: RepetitionOperator,
-) -> RepetitionOperatorOpt {
-    Some(repop)
-}
-pub fn opt_repetition_operator_p1() -> RepetitionOperatorOpt {
-    None
-}
-
 #[derive(Debug)]
 pub struct RepetitionOperator {
     pub repetition_operator_op: RepetitionOperatorOp,
@@ -503,6 +472,7 @@ pub fn repetition_operator_p0(
     }
 }
 
+pub type RepetitionOperatorOpt = Option<RepetitionOperator>;
 pub fn repetition_operator_opt_p0(
     repetition_operator: RepetitionOperator,
 ) -> Option<RepetitionOperator> {

@@ -28,18 +28,7 @@ use crate::{
 
 use super::grammar::{res_symbol, Grammar};
 
-type Follow = BTreeSet<SymbolIndex>;
 type Firsts = BTreeSet<SymbolIndex>;
-
-fn follow<T, I>(indexes: T) -> BTreeSet<SymbolIndex>
-where
-    T: IntoIterator<Item = I>,
-    I: Into<SymbolIndex>,
-{
-    indexes.into_iter().map(|i| i.into()).collect()
-}
-
-type FollowSets = SymbolVec<Follow>;
 type FirstSets = SymbolVec<Firsts>;
 
 create_index!(ItemIndex, ItemVec);
@@ -185,6 +174,7 @@ impl PartialEq for LRItem {
 ///        |------ position is 2
 /// ```
 impl LRItem {
+    #[test]
     fn new(grammar: &Grammar, prod: ProdIndex) -> Self {
         LRItem {
             prod,
@@ -203,11 +193,6 @@ impl LRItem {
         }
     }
 
-    fn add_follow(self, symbol: SymbolIndex) -> Self {
-        self.follow.borrow_mut().insert(symbol);
-        self
-    }
-
     fn symbol_at_position(&self, grammar: &Grammar) -> Option<SymbolIndex> {
         Some(res_symbol(
             grammar
@@ -220,6 +205,9 @@ impl LRItem {
         ))
     }
 
+    /// Return new item with position incremented.
+    /// Currently unused.
+    #[allow(dead_code)]
     fn next_item(&self, grammar: &Grammar) -> Option<Self> {
         if self.position < grammar.production_len(self.prod) {
             Some(Self {
@@ -702,13 +690,6 @@ fn create_new_states(
     states
 }
 
-fn find_state<'a>(
-    state: &LRState,
-    states: &'a [LRState],
-) -> Option<&'a LRState> {
-    states.iter().find(|x| *x == state)
-}
-
 /// Group LR items per grammar symbol right of the dot, and calculate
 /// terminal max priorities.
 fn group_per_next_symbol(
@@ -846,6 +827,11 @@ fn firsts(
 /// given grammar.
 ///
 /// The dragon book p.221
+/// Currently unused
+type Follow = BTreeSet<SymbolIndex>;
+#[allow(dead_code)]
+type FollowSets = SymbolVec<Follow>;
+#[test]
 fn follow_sets(grammar: &Grammar, first_sets: &FirstSets) -> FollowSets {
     let mut follow_sets = FollowSets::new();
     for _ in 0..first_sets.len() {
@@ -983,6 +969,7 @@ fn closure(state: &mut LRState, grammar: &Grammar, first_sets: &FirstSets) {
 mod tests {
 
     use std::cell::RefCell;
+    use std::collections::BTreeSet;
 
     use crate::table::{first_sets, ItemIndex};
     use crate::{
@@ -997,9 +984,17 @@ mod tests {
     };
 
     use super::{
-        closure, follow, follow_sets, group_per_next_symbol,
+        closure, follow_sets, group_per_next_symbol,
         lr_states_for_grammar, merge_state, LRState,
     };
+
+    fn follow<T, I>(indexes: T) -> BTreeSet<SymbolIndex>
+    where
+        T: IntoIterator<Item = I>,
+        I: Into<SymbolIndex>,
+    {
+        indexes.into_iter().map(|i| i.into()).collect()
+    }
 
     fn test_grammar() -> Grammar {
         Grammar::from_string(

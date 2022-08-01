@@ -272,7 +272,7 @@ where
             L: Lexer<I, LRContext<I>>,
             B: LRBuilder<I>,
         {{
-            fn parse(&mut self, context: LRContext<I>, lexer: L, mut builder: B) -> RustemoResult<B::Output> {{
+            fn parse(&mut self, context: LRContext<I>, lexer: L, builder: B) -> RustemoResult<B::Output> {{
                 {parser_name}Parser::default().0.parse(context, lexer, builder)
             }}
         }}
@@ -527,7 +527,7 @@ where
         out,
         indoc! {r#"
 
-            fn reduce_action(&mut self, prod_kind: ProdIndex, prod_len: usize, _prod_str: &'static str) {{
+            fn reduce_action(&mut self, prod_kind: ProdIndex, _prod_len: usize, _prod_str: &'static str) {{
                 let prod = match ProdKind::try_from(prod_kind.0).unwrap() {{
         "#
         }

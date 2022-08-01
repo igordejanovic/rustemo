@@ -620,7 +620,7 @@ impl Grammar {
         NonTermVec(vec![default; self.nonterm_len()])
     }
 
-    pub(crate) fn symbol_index(&self, name: &str) -> SymbolIndex {
+    pub fn symbol_index(&self, name: &str) -> SymbolIndex {
         *self.term_by_name.get(name).unwrap_or_else(|| {
             self.nonterm_by_name.get(name).unwrap_or_else(|| {
                 panic!("No Symbol by name {:?}", name);
@@ -628,7 +628,7 @@ impl Grammar {
         })
     }
 
-    pub(crate) fn symbol_name(&self, index: SymbolIndex) -> String {
+    pub fn symbol_name(&self, index: SymbolIndex) -> String {
         if index.0 < self.term_len() {
             self.terminals.as_ref().unwrap()[self.symbol_to_term(index)]
                 .name
@@ -640,7 +640,7 @@ impl Grammar {
         }
     }
 
-    pub(crate) fn symbol_indexes(
+    pub fn symbol_indexes(
         &self,
         names: &[&str],
     ) -> SymbolVec<SymbolIndex> {
@@ -651,7 +651,7 @@ impl Grammar {
         indexes
     }
 
-    pub(crate) fn symbol_names<T>(&self, indexes: T) -> Vec<String>
+    pub fn symbol_names<T>(&self, indexes: T) -> Vec<String>
     where
         T: IntoIterator<Item = SymbolIndex>,
     {
@@ -662,72 +662,72 @@ impl Grammar {
     }
 
     #[inline]
-    pub(crate) fn term_to_symbol(&self, index: TermIndex) -> SymbolIndex {
+    pub fn term_to_symbol(&self, index: TermIndex) -> SymbolIndex {
         SymbolIndex(index.0)
     }
 
     /// Convert symbol index to terminal index.
     #[inline]
-    pub(crate) fn symbol_to_term(&self, index: SymbolIndex) -> TermIndex {
+    pub fn symbol_to_term(&self, index: SymbolIndex) -> TermIndex {
         TermIndex(index.0)
     }
 
     #[inline]
-    pub(crate) fn nonterm_to_symbol(&self, index: NonTermIndex) -> SymbolIndex {
+    pub fn nonterm_to_symbol(&self, index: NonTermIndex) -> SymbolIndex {
         SymbolIndex(index.0 + self.term_len())
     }
 
     /// Convert symbol index to non-terminal index. Panics if symbol index is a
     /// terminal index.
     #[inline]
-    pub(crate) fn symbol_to_nonterm(&self, index: SymbolIndex) -> NonTermIndex {
+    pub fn symbol_to_nonterm(&self, index: SymbolIndex) -> NonTermIndex {
         NonTermIndex(index.0.checked_sub(self.term_len()).unwrap())
     }
 
     #[inline]
-    pub(crate) fn is_nonterm(&self, index: SymbolIndex) -> bool {
+    pub fn is_nonterm(&self, index: SymbolIndex) -> bool {
         index.0 >= self.term_len()
     }
 
     #[inline]
-    pub(crate) fn is_term(&self, index: SymbolIndex) -> bool {
+    pub fn is_term(&self, index: SymbolIndex) -> bool {
         index.0 < self.term_len()
     }
 
     /// Number of terminals in the grammar.
     #[inline]
-    pub(crate) fn term_len(&self) -> usize {
+    pub fn term_len(&self) -> usize {
         self.terminals.as_ref().map_or(0, |t| t.len())
     }
 
     /// Number of non-terminals in the grammar including EMPTY and S'
     #[inline]
-    pub(crate) fn nonterm_len(&self) -> usize {
+    pub fn nonterm_len(&self) -> usize {
         self.nonterminals.as_ref().map_or(0, |nt| nt.len())
     }
 
     #[inline]
-    pub(crate) fn terminals(&self) -> &TermVec<Terminal> {
+    pub fn terminals(&self) -> &TermVec<Terminal> {
         self.terminals.as_ref().unwrap()
     }
 
     #[inline]
-    pub(in crate) fn nonterminals(&self) -> &NonTermVec<NonTerminal> {
+    pub fn nonterminals(&self) -> &NonTermVec<NonTerminal> {
         self.nonterminals.as_ref().unwrap()
     }
 
     #[inline]
-    pub(crate) fn productions(&self) -> &ProdVec<Production> {
+    pub fn productions(&self) -> &ProdVec<Production> {
         self.productions.as_ref().unwrap()
     }
 
     #[inline]
-    pub(crate) fn production_len(&self, prod: ProdIndex) -> usize {
+    pub fn production_len(&self, prod: ProdIndex) -> usize {
         self.productions()[prod].rhs.len()
     }
 
     #[inline]
-    pub(crate) fn production_rhs_symbols(
+    pub fn production_rhs_symbols(
         &self,
         prod: ProdIndex,
     ) -> Vec<SymbolIndex> {
