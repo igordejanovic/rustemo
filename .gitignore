@@ -21,3 +21,4 @@ Cargo.lock
 
 #/target
 #Cargo.lock
+/.gdb_history
