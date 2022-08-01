@@ -10,18 +10,10 @@ pub mod settings;
 #[cfg(not(feature = "bootstrap"))]
 mod rustemo;
 
-// #[rustfmt::skip]
-// #[cfg(not(feature = "bootstrap"))]
-// mod rustemo_types;
-
 // In bootstrapping mode use the generated parser from the OUT_DIR folder
-// #[rustfmt::skip]
-// #[cfg(feature = "bootstrap")]
-// rustemo_mod!(rustemo);
-
-// #[rustfmt::skip]
-// #[cfg(feature = "bootstrap")]
-// rustemo_mod!(rustemo_types);
+#[rustfmt::skip]
+#[cfg(feature = "bootstrap")]
+rustemo_mod!(rustemo, "/src/rustemo.rs");
 
 mod rustemo_actions;
 mod table;
