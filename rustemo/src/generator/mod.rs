@@ -684,23 +684,6 @@ fn generate_parser_types<W: Write>(
         out,
         indoc! {
             r#"
-                #[derive(Debug, Copy, Clone)]
-                pub enum NonTermKind {{
-              "#
-        }
-    );
-
-    out.inc_indent();
-    for nonterminal in grammar.nonterminals() {
-        geni!(out, "{} = {},\n", nonterminal.name, nonterminal.idx);
-    }
-    out.dec_indent();
-    geni!(out, "}}\n\n");
-
-    geni!(
-        out,
-        indoc! {
-            r#"
                 #[derive(Debug)]
                 pub enum Symbol {{
                     Terminal(Terminal),
