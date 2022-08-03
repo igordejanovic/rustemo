@@ -5,7 +5,6 @@ use std::{
 };
 
 use rustemo_rt::{
-    error::RustemoResult,
     index::{
         NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, SymbolVec,
         TermIndex, TermVec,
@@ -13,7 +12,7 @@ use rustemo_rt::{
     log,
 };
 
-use crate::rustemo::RustemoParser;
+use crate::{rustemo::RustemoParser, error::Result};
 
 use super::rustemo_actions::{
     Const, GrammarRule, GrammarSymbol, Imports, PGFile, ProdMetaDatas,
@@ -234,7 +233,7 @@ pub(in crate) fn res_symbol(assign: &Assignment) -> SymbolIndex {
 
 impl Grammar {
     /// Parses given string and constructs a Grammar instance
-    pub fn from_string<G: AsRef<str>>(grammar_str: G) -> RustemoResult<Self> {
+    pub fn from_string<G: AsRef<str>>(grammar_str: G) -> Result<Self> {
         Ok(Self::from_pgfile(RustemoParser::parse_str(
             grammar_str.as_ref(),
         )?))
@@ -242,7 +241,7 @@ impl Grammar {
 
     /// Parses given file and constructs a Grammar instance
     /// FIXME: Return/move owned string from file content.
-    // pub fn from_file<F: AsRef<Path>>(file: F) -> RustemoResult<Self> {
+    // pub fn from_file<F: AsRef<Path>>(file: F) -> Result<Self> {
     //     use crate::rustemo_types::{NonTerminal, Symbol};
     //     if let Symbol::NonTerminal(NonTerminal::PGFile(pgfile)) =
     //         RustemoParser::parse_file(file)?

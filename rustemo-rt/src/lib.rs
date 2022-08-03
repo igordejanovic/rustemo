@@ -15,3 +15,6 @@ pub mod lr;
 pub mod parser;
 
 pub mod debug;
+
+pub use crate::error::Error;
+pub use crate::error::Result;

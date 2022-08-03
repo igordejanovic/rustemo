@@ -1,6 +1,6 @@
 use crate::{
     builder::Builder,
-    error::RustemoResult,
+    error::Result,
     index::{ProdIndex, TermIndex},
     lexer::Token,
 };
@@ -46,7 +46,7 @@ impl<I> Builder for TreeBuilder<I> {
         Self { res_stack: vec![] }
     }
 
-    fn get_result(&mut self) -> RustemoResult<Self::Output> {
+    fn get_result(&mut self) -> Result<Self::Output> {
         Ok(self.res_stack.pop().unwrap())
     }
 }

@@ -13,7 +13,7 @@ fn main() {
 
 #[cfg(test)]
 mod test_calculator1 {
-    use rustemo_rt::error::RustemoError;
+    use rustemo_rt::Error;
 
     use crate::calculator1::Calculator1Parser;
 
@@ -36,7 +36,7 @@ mod test_calculator1 {
         assert_eq!(
             r#"Error at position <str>:1:12 "2 + ( 3  *  -->+ 7 ) + 2 * 4". Expected one of LParen, Num."#,
             match result.err().unwrap() {
-                RustemoError::ParseError {
+                Error::ParseError {
                     message,
                     file: _,
                     location: _,

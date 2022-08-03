@@ -1,6 +1,6 @@
 use crate::{
     builder::Builder,
-    error::RustemoResult,
+    error::Result,
     lexer::{Context, Lexer},
 };
 
@@ -15,5 +15,5 @@ where
         context: C,
         lexer: L,
         builder: B,
-    ) -> RustemoResult<B::Output>;
+    ) -> Result<B::Output>;
 }

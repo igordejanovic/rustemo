@@ -1,10 +1,7 @@
 use chrono::Local;
 use convert_case::{Case, Casing};
 use indoc::indoc;
-use rustemo_rt::{
-    error::{RustemoError, RustemoResult},
-    index::{NonTermIndex, StateVec, TermIndex},
-};
+use rustemo_rt::index::{NonTermIndex, StateVec, TermIndex};
 use std::{
     fmt::Debug,
     fs::File,
@@ -17,7 +14,7 @@ use crate::{
     grammar::{res_symbol, Grammar},
     rustemo_actions::Recognizer,
     settings::Settings,
-    table::{lr_states_for_grammar, LRState},
+    table::{lr_states_for_grammar, LRState}, error::{Error, Result},
 };
 
 macro_rules! geni {
@@ -79,7 +76,7 @@ impl<W: Write> RustWrite<W> {
 pub fn generate_parser<F>(
     grammar_path: F,
     out_dir: Option<F>,
-) -> RustemoResult<()>
+) -> Result<()>
 where
     F: AsRef<Path> + Debug,
 {
@@ -87,7 +84,7 @@ where
         grammar_path
             .as_ref()
             .file_name()
-            .ok_or(RustemoError::Error(
+            .ok_or(Error::Error(
                 "Invalid grammar file name.".to_string(),
             ))?;
 
@@ -119,7 +116,7 @@ fn generate_parser_definition<W, F>(
     file_name: F,
     states: StateVec<LRState>,
     out: W,
-) -> RustemoResult<()>
+) -> Result<()>
 where
     W: Write,
     F: AsRef<Path> + Debug,
@@ -156,7 +153,7 @@ where
         use rustemo_rt::lexer::{{Lexer, Token}};
         use rustemo_rt::parser::Parser;
         use rustemo_rt::builder::Builder;
-        use rustemo_rt::error::RustemoResult;
+        use rustemo_rt::Result;
         use rustemo_rt::lr::lexer::{{LRStringLexer, LRContext, LexerDefinition, RecognizerIterator}};
         use rustemo_rt::lr::builder::LRBuilder;
         use rustemo_rt::lr::parser::{{LRParser, ParserDefinition}};
@@ -272,14 +269,14 @@ where
             L: Lexer<I, LRContext<I>>,
             B: LRBuilder<I>,
         {{
-            fn parse(&mut self, context: LRContext<I>, lexer: L, builder: B) -> RustemoResult<B::Output> {{
+            fn parse(&mut self, context: LRContext<I>, lexer: L, builder: B) -> Result<B::Output> {{
                 {parser_name}Parser::default().0.parse(context, lexer, builder)
             }}
         }}
 
         impl {parser_name}Parser
         {{
-            pub fn parse_str<'i>(input: &'i str) -> RustemoResult<<{parser_name}Builder as Builder>::Output> {{
+            pub fn parse_str<'i>(input: &'i str) -> Result<<{parser_name}Builder as Builder>::Output> {{
                 let context = LRContext::new("<str>".to_string(), input);
                 let lexer = LRStringLexer::new(&LEXER_DEFINITION);
                 let builder = {parser_name}Builder::new();
@@ -473,7 +470,7 @@ where
                     }}
                 }}
 
-                fn get_result(&mut self) -> RustemoResult<Self::Output> {{
+                fn get_result(&mut self) -> Result<Self::Output> {{
                     match self.res_stack.pop().unwrap() {{
                         Symbol::NonTerminal(NonTerminal::{root_symbol_name}(r)) => Ok(r),
                         _ => panic!("Invalid result on the parsing stack!"),
@@ -697,7 +694,7 @@ fn generate_parser_types<W: Write>(
     grammar: &Grammar,
     file_name: &str,
     out: &mut RustWrite<W>,
-) -> RustemoResult<()> {
+) -> Result<()> {
     geni!(
         out,
         indoc! {

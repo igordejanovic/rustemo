@@ -1,5 +1,5 @@
 use crate::{
-    error::RustemoResult, grammar::TerminalInfo, index::TermIndex,
+    error::Result, grammar::TerminalInfo, index::TermIndex,
     location::Location,
 };
 use core::fmt::Debug;
@@ -12,7 +12,7 @@ pub trait Lexer<I, C: Context<I>> {
     /// Given the current context, this method should return RustemoResult with
     /// token found ahead of the current location or error indicating what is
     /// expected.
-    fn next_token(&self, context: &mut C) -> RustemoResult<Token<I>>;
+    fn next_token(&self, context: &mut C) -> Result<Token<I>>;
 }
 
 /// Lexer context is used to keep the lexing state. It provides necessary

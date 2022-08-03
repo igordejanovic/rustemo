@@ -1,4 +1,4 @@
-use rustemo_rt::error::RustemoResult;
+use crate::Result;
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -6,8 +6,8 @@ use crate::generator::generate_parser;
 
 fn visit_dirs<P>(
     dir: P,
-    visitor: &dyn Fn(&PathBuf) -> RustemoResult<()>,
-) -> RustemoResult<()>
+    visitor: &dyn Fn(&PathBuf) -> Result<()>,
+) -> Result<()>
 where
     P: AsRef<Path>,
 {
@@ -30,11 +30,11 @@ where
 
 /// Recurse into a given directory and generate all parsers for .rustemo grammar
 /// files.
-pub fn generate_parsers<P>(dir: P) -> RustemoResult<()>
+pub fn generate_parsers<P>(dir: P) -> Result<()>
 where
     P: AsRef<Path> + std::fmt::Debug,
 {
-    fn visitor(grammar: &PathBuf) -> RustemoResult<()> {
+    fn visitor(grammar: &PathBuf) -> Result<()> {
         log!("Generating parser for grammar {:?}", grammar);
         generate_parser(grammar, None)
     }

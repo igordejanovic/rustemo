@@ -5,6 +5,7 @@ pub mod build;
 pub mod generator;
 pub mod grammar;
 pub mod settings;
+pub mod error;
 
 #[rustfmt::skip]
 #[cfg(not(feature = "bootstrap"))]
@@ -21,3 +22,6 @@ pub(crate) mod tests;
 
 pub use crate::build::generate_parsers;
 pub use crate::generator::generate_parser;
+
+pub use crate::error::Result;
+pub use crate::error::Error;

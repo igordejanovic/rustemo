@@ -1,5 +1,5 @@
 use crate::debug::log;
-use crate::error::RustemoResult;
+use crate::error::Result;
 use crate::index::{NonTermIndex, ProdIndex, StateIndex, TermIndex};
 use crate::lexer::Lexer;
 use crate::lr::lexer::LRContext;
@@ -89,7 +89,7 @@ where
         mut context: LRContext<I>,
         lexer: L,
         mut builder: B,
-    ) -> RustemoResult<B::Output> {
+    ) -> Result<B::Output> {
         use Action::*;
         let mut next_token = lexer.next_token(&mut context)?;
         loop {

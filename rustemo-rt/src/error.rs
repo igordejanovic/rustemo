@@ -1,10 +1,10 @@
 use crate::location::Location;
 use std::fmt::Display;
 
-pub type RustemoResult<R> = Result<R, RustemoError>;
+pub type Result<R> = std::result::Result<R, Error>;
 
 #[derive(Debug)]
-pub enum RustemoError {
+pub enum Error {
     /// Generic Rustemo error
     Error(String),
 
@@ -16,22 +16,22 @@ pub enum RustemoError {
     IOError(std::io::Error),
 }
 
-impl Display for RustemoError {
+impl Display for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            RustemoError::ParseError {
+            Error::ParseError {
                 message,
                 file,
                 location,
             } => write!(f, "Parse error at {}:{}: {}", file, location, message),
-            RustemoError::IOError(e) => write!(f, "Error: {}", e),
-            RustemoError::Error(e) => write!(f, "IOError: {}", e),
+            Error::IOError(e) => write!(f, "Error: {}", e),
+            Error::Error(e) => write!(f, "IOError: {}", e),
         }
     }
 }
 
-impl From<std::io::Error> for RustemoError {
+impl From<std::io::Error> for Error {
     fn from(e: std::io::Error) -> Self {
-        RustemoError::IOError(e)
+        Error::IOError(e)
     }
 }

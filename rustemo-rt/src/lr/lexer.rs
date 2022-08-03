@@ -1,7 +1,7 @@
 use std::cmp::min;
 
 use crate::debug::log;
-use crate::error::{RustemoError, RustemoResult};
+use crate::error::{Error, Result};
 use crate::grammar::TerminalInfo;
 use crate::index::StateIndex;
 use crate::lexer::{Context, Lexer, Token};
@@ -176,7 +176,7 @@ where
     fn next_token(
         &self,
         context: &mut LRContext<&'i str>,
-    ) -> RustemoResult<Token<&'i str>> {
+    ) -> Result<Token<&'i str>> {
         Self::skip(context);
         log!("Context: {}", context.context_str());
         log!(
@@ -219,7 +219,7 @@ where
                     .map(|(_, terminal_info)| terminal_info.name)
                     .collect::<Vec<_>>()
                     .join(", ");
-                Err(RustemoError::ParseError {
+                Err(Error::ParseError {
                     message: format!(
                         r#"Error at position {} "{}". Expected one of {}."#,
                         context.location_str(),
