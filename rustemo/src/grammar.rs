@@ -4,6 +4,7 @@ use std::{
     hash::{Hash, Hasher},
 };
 
+use convert_case::{Case, Casing};
 use rustemo_rt::{
     index::{
         NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, SymbolVec,
@@ -86,6 +87,13 @@ pub struct NonTerminal {
     pub productions: Vec<ProdIndex>,
 }
 grammar_elem!(NonTerminal);
+
+impl NonTerminal {
+    #[inline]
+    pub fn productions<'a>(&self, grammar: &'a Grammar) -> Vec<&'a Production> {
+        self.productions.iter().map(|&idx| &grammar.productions()[idx]).collect()
+    }
+}
 
 impl Display for Grammar {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -735,6 +743,20 @@ impl Grammar {
             .iter()
             .map(|assgn| res_symbol(assgn))
             .collect()
+    }
+
+    #[inline]
+    pub fn is_enum(&self, nonterminal: &NonTerminal) -> bool {
+        let prods = nonterminal.productions(self);
+        prods.iter().filter(|x| x.rhs.len() == 1).count() == prods.len()
+    }
+
+    #[inline]
+    pub fn nt_field_name(&self, assig: &Assignment, symbol: SymbolIndex) -> String {
+        match &assig.name {
+            Some(s) => s.clone(),
+            None => self.symbol_name(symbol),
+        }.to_case(Case::Snake)
     }
 }
 

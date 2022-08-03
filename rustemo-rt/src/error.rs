@@ -24,8 +24,8 @@ impl Display for Error {
                 file,
                 location,
             } => write!(f, "Parse error at {}:{}: {}", file, location, message),
-            Error::IOError(e) => write!(f, "Error: {}", e),
-            Error::Error(e) => write!(f, "IOError: {}", e),
+            Error::IOError(e) => write!(f, "IOError: {}", e),
+            Error::Error(e) => write!(f, "Error: {}", e),
         }
     }
 }
