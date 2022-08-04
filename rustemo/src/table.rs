@@ -282,7 +282,7 @@ pub fn lr_states_for_grammar(
         // Create accept action if possible.
         for (&symbol, _) in &per_next_symbol {
             if symbol == grammar.stop_index {
-                state.actions[grammar.symbol_to_term(symbol)] =
+                state.actions[grammar.symbol_to_term_index(symbol)] =
                     vec![Action::Accept];
                 break;
             }
@@ -313,10 +313,10 @@ pub fn lr_states_for_grammar(
 
             // Create GOTO for non-terminal or Shift Action for terminal.
             if grammar.is_nonterm(target_state_symbol) {
-                state.gotos[grammar.symbol_to_nonterm(target_state_symbol)] =
+                state.gotos[grammar.symbol_to_nonterm_index(target_state_symbol)] =
                     Some(target_state_idx);
             } else {
-                let term = grammar.symbol_to_term(new_state.symbol);
+                let term = grammar.symbol_to_term_index(new_state.symbol);
                 state.actions[term].push(Action::Shift(target_state_idx, term));
             }
 
@@ -505,7 +505,7 @@ fn calculate_reductions(
                 "<?>",
             );
             for follow_symbol in item.follow.borrow().iter() {
-                let follow_term = grammar.symbol_to_term(*follow_symbol);
+                let follow_term = grammar.symbol_to_term_index(*follow_symbol);
                 let actions = &mut state.actions[follow_term];
                 if actions.is_empty() {
                     // No other action are possible for this follow terminal.
@@ -632,7 +632,7 @@ fn sort_terminals(grammar: &Grammar, states: &mut StateVec<LRState>) {
 
         let term_prio = |term: &Terminal| -> u32 {
             // Make STOP the first to try
-            if grammar.term_to_symbol(term.idx) == grammar.stop_index {
+            if grammar.term_to_symbol_index(term.idx) == grammar.stop_index {
                 1e6 as u32
             } else {
                 term.prio * 1000
@@ -661,7 +661,7 @@ fn sort_terminals(grammar: &Grammar, states: &mut StateVec<LRState>) {
         log!(
             "SORTED: {:?}",
             &grammar.symbol_names(
-                terminals.iter().map(|i| grammar.term_to_symbol(*i)).collect::<Vec<_>>()
+                terminals.iter().map(|i| grammar.term_to_symbol_index(*i)).collect::<Vec<_>>()
             )
         );
         state.sorted_terminals = terminals;
@@ -706,7 +706,7 @@ fn group_per_next_symbol(
                 .or_insert(vec![])
                 .push(idx.into());
             if grammar.is_term(symbol) {
-                let symbol = grammar.symbol_to_term(symbol);
+                let symbol = grammar.symbol_to_term_index(symbol);
                 let prod_prio = grammar.productions()[item.prod].prio;
                 state
                     .max_prior_for_term
@@ -766,7 +766,7 @@ fn first_sets(grammar: &Grammar) -> FirstSets {
     while additions {
         additions = false;
         for production in grammar.productions.as_ref().unwrap() {
-            let lhs_nonterm = grammar.nonterm_to_symbol(production.nonterminal);
+            let lhs_nonterm = grammar.nonterm_to_symbol_index(production.nonterminal);
 
             let rhs_firsts =
                 firsts(&grammar, &first_sets, &production.rhs_symbols());
@@ -846,7 +846,7 @@ fn follow_sets(grammar: &Grammar, first_sets: &FirstSets) -> FollowSets {
     while additions {
         additions = false;
         for production in grammar.productions.as_ref().unwrap() {
-            let lhs_symbol = grammar.nonterm_to_symbol(production.nonterminal);
+            let lhs_symbol = grammar.nonterm_to_symbol_index(production.nonterminal);
 
             // Rule 2: If there is a production A -> α B β then everything in
             // FIRST(β) except EMPTY is in FOLLOW(B).
@@ -926,7 +926,7 @@ fn closure(state: &mut LRState, grammar: &Grammar, first_sets: &FirstSets) {
 
                     // Get all productions of the current non-terminal and
                     // create LR items with the calculated follow.
-                    let nonterm = grammar.symbol_to_nonterm(symbol);
+                    let nonterm = grammar.symbol_to_nonterm_index(symbol);
                     for prod in &grammar.nonterminals()[nonterm].productions {
                         new_items.insert(LRItem::with_follow(
                             &grammar,
@@ -1221,17 +1221,17 @@ mod tests {
         // Check production based term priorities
         assert_eq!(
             lr_state.max_prior_for_term
-                [&grammar.symbol_to_term(grammar.term_by_name["Power"])],
+                [&grammar.symbol_to_term_index(grammar.term_by_name["Power"])],
             3
         );
         assert_eq!(
             lr_state.max_prior_for_term
-                [&grammar.symbol_to_term(grammar.term_by_name["Mul"])],
+                [&grammar.symbol_to_term_index(grammar.term_by_name["Mul"])],
             2
         );
         assert_eq!(
             lr_state.max_prior_for_term
-                [&grammar.symbol_to_term(grammar.term_by_name["Plus"])],
+                [&grammar.symbol_to_term_index(grammar.term_by_name["Plus"])],
             1
         );
     }

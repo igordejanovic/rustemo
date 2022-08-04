@@ -13,7 +13,7 @@ use rustemo_rt::{
     log,
 };
 
-use crate::{rustemo::RustemoParser, error::Result};
+use crate::{error::Result, rustemo::RustemoParser};
 
 use super::rustemo_actions::{
     Const, GrammarRule, GrammarSymbol, Imports, PGFile, ProdMetaDatas,
@@ -91,7 +91,10 @@ grammar_elem!(NonTerminal);
 impl NonTerminal {
     #[inline]
     pub fn productions<'a>(&self, grammar: &'a Grammar) -> Vec<&'a Production> {
-        self.productions.iter().map(|&idx| &grammar.productions()[idx]).collect()
+        self.productions
+            .iter()
+            .map(|&idx| &grammar.productions()[idx])
+            .collect()
     }
 }
 
@@ -108,7 +111,7 @@ impl Display for Grammar {
                 f,
                 "{} ({}). {}",
                 nonterminal.idx,
-                self.nonterm_to_symbol(nonterminal.idx),
+                self.nonterm_to_symbol_index(nonterminal.idx),
                 nonterminal.name
             )?;
         }
@@ -179,12 +182,15 @@ impl Default for Production {
 }
 
 impl Production {
+    #[inline]
     pub fn rhs_symbols(&self) -> Vec<SymbolIndex> {
         self.rhs.iter().map(|a| res_symbol(a)).collect()
     }
+    #[inline]
     pub fn rhs_symbol(&self, pos: usize) -> SymbolIndex {
         res_symbol(&self.rhs[pos])
     }
+    #[inline]
     pub fn nonterminal<'a>(&self, grammar: &'a Grammar) -> &'a NonTerminal {
         &grammar.nonterminals()[self.nonterminal]
     }
@@ -637,20 +643,13 @@ impl Grammar {
 
     pub fn symbol_name(&self, index: SymbolIndex) -> String {
         if index.0 < self.term_len() {
-            self.terminals.as_ref().unwrap()[self.symbol_to_term(index)]
-                .name
-                .clone()
+            self.symbol_to_term(index).name.clone()
         } else {
-            self.nonterminals.as_ref().unwrap()[self.symbol_to_nonterm(index)]
-                .name
-                .clone()
+            self.symbol_to_nonterm(index).name.clone()
         }
     }
 
-    pub fn symbol_indexes(
-        &self,
-        names: &[&str],
-    ) -> SymbolVec<SymbolIndex> {
+    pub fn symbol_indexes(&self, names: &[&str]) -> SymbolVec<SymbolIndex> {
         let mut indexes = SymbolVec::new();
         for name in names {
             indexes.push(self.symbol_index(name))
@@ -662,34 +661,52 @@ impl Grammar {
     where
         T: IntoIterator<Item = SymbolIndex>,
     {
-        indexes
-            .into_iter()
-            .map(|i| self.symbol_name(i))
-            .collect()
+        indexes.into_iter().map(|i| self.symbol_name(i)).collect()
     }
 
     #[inline]
-    pub fn term_to_symbol(&self, index: TermIndex) -> SymbolIndex {
+    pub fn term_to_symbol_index(&self, index: TermIndex) -> SymbolIndex {
         SymbolIndex(index.0)
     }
 
     /// Convert symbol index to terminal index.
     #[inline]
-    pub fn symbol_to_term(&self, index: SymbolIndex) -> TermIndex {
+    pub fn symbol_to_term_index(&self, index: SymbolIndex) -> TermIndex {
         TermIndex(index.0)
     }
 
+    /// Convert symbol index to terminal
     #[inline]
-    pub fn nonterm_to_symbol(&self, index: NonTermIndex) -> SymbolIndex {
+    pub fn symbol_to_term(&self, index: SymbolIndex) -> &Terminal {
+        &self.terminals()[self.symbol_to_term_index(index)]
+    }
+
+    #[inline]
+    pub fn nonterm_to_symbol_index(&self, index: NonTermIndex) -> SymbolIndex {
         SymbolIndex(index.0 + self.term_len())
     }
 
     /// Convert symbol index to non-terminal index. Panics if symbol index is a
     /// terminal index.
     #[inline]
-    pub fn symbol_to_nonterm(&self, index: SymbolIndex) -> NonTermIndex {
+    pub fn symbol_to_nonterm_index(&self, index: SymbolIndex) -> NonTermIndex {
         NonTermIndex(index.0.checked_sub(self.term_len()).unwrap())
     }
+
+    /// Convert symbol index to non-terminal. Panics if symbol index is a
+    /// terminal index.
+    #[inline]
+    pub fn symbol_to_nonterm(&self, index: SymbolIndex) -> &NonTerminal {
+        &self.nonterminals()
+            [NonTermIndex(index.0.checked_sub(self.term_len()).unwrap())]
+    }
+
+    /// Convert symbol index to non-terminal. Panics if symbol index is a
+    /// terminal index.
+    // #[inline]
+    // pub fn symbol_to_nonterm(&self, index: SymbolIndex) -> NonTermIndex {
+    //     NonTermIndex(index.0.checked_sub(self.term_len()).unwrap())
+    // }
 
     #[inline]
     pub fn is_nonterm(&self, index: SymbolIndex) -> bool {
@@ -734,10 +751,7 @@ impl Grammar {
     }
 
     #[inline]
-    pub fn production_rhs_symbols(
-        &self,
-        prod: ProdIndex,
-    ) -> Vec<SymbolIndex> {
+    pub fn production_rhs_symbols(&self, prod: ProdIndex) -> Vec<SymbolIndex> {
         self.productions()[prod]
             .rhs
             .iter()
@@ -896,11 +910,11 @@ mod tests {
         for (term_name, term_regex) in
             [("rmatch_term", r#""[^"]+""#), ("more_regex", r#"\d{2,5}"#)]
         {
-            assert!(match grammar.terminals.as_ref().unwrap()
-                [grammar.symbol_to_term(grammar.term_by_name[term_name])]
-            .recognizer
-            .as_ref()
-            .unwrap()
+            assert!(match grammar
+                .symbol_to_term(grammar.term_by_name[term_name])
+                .recognizer
+                .as_ref()
+                .unwrap()
             {
                 crate::rustemo_actions::Recognizer::StrConst(_) => false,
                 crate::rustemo_actions::Recognizer::RegExTerm(regex) =>
