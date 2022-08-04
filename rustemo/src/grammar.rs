@@ -154,7 +154,7 @@ pub struct Production {
     pub idx: ProdIndex,
     pub nonterminal: NonTermIndex,
     pub ntidx: usize,
-    pub rhs: Vec<Assignment>,
+    pub rhs: Vec<ResolvingAssignment>,
     pub assoc: Associativity,
     pub prio: Priority,
     pub dynamic: bool,
@@ -182,14 +182,45 @@ impl Default for Production {
 }
 
 impl Production {
+
     #[inline]
     pub fn rhs_symbols(&self) -> Vec<SymbolIndex> {
         self.rhs.iter().map(|a| res_symbol(a)).collect()
     }
+
+    /// Returns resolved RHS assignments
+    #[inline]
+    pub fn rhs_assign(&self) -> Vec<Assignment> {
+        self.rhs.iter().map(|a| Assignment {
+            name: a.name.clone(),
+            symbol: res_symbol(a)
+        }).collect()
+    }
+
+    /// Returns RHS assignment which has some content (i.e. non-terminals and
+    /// non-constant terminals).
+    pub fn rhs_with_content(&self, grammar: &Grammar) -> Vec<Assignment> {
+        self.rhs_assign()
+            .into_iter()
+            .filter_map(|a| {
+                if grammar.is_term(a.symbol) {
+                    let term = grammar.symbol_to_term(a.symbol);
+                    if term.has_content {
+                        return Some(a);
+                    }
+                } else {
+                    return Some(a);
+                }
+                None
+            })
+            .collect::<Vec<_>>()
+    }
+
     #[inline]
     pub fn rhs_symbol(&self, pos: usize) -> SymbolIndex {
         res_symbol(&self.rhs[pos])
     }
+
     #[inline]
     pub fn nonterminal<'a>(&self, grammar: &'a Grammar) -> &'a NonTerminal {
         &grammar.nonterminals()[self.nonterminal]
@@ -228,14 +259,20 @@ pub enum ResolvingSymbolIndex {
 }
 
 #[derive(Debug)]
-pub struct Assignment {
+pub struct ResolvingAssignment {
     pub name: Option<String>,
     pub symbol: ResolvingSymbolIndex,
 }
 
+#[derive(Debug)]
+pub struct Assignment {
+    pub name: Option<String>,
+    pub symbol: SymbolIndex,
+}
+
 /// Called for Assignment to extract resolved SymbolIndex.
 #[inline]
-pub(in crate) fn res_symbol(assign: &Assignment) -> SymbolIndex {
+pub(in crate) fn res_symbol(assign: &ResolvingAssignment) -> SymbolIndex {
     match assign.symbol {
         ResolvingSymbolIndex::Resolved(index) => index,
         ResolvingSymbolIndex::Resolving(_) => {
@@ -393,7 +430,7 @@ impl Grammar {
         productions.push(Production {
             idx: ProdIndex(0),
             nonterminal: NonTermIndex(1),
-            rhs: vec![Assignment {
+            rhs: vec![ResolvingAssignment {
                 name: None,
                 symbol: ResolvingSymbolIndex::Resolving(GrammarSymbol::Name(
                     rules[0].name.to_string(),
@@ -446,13 +483,13 @@ impl Grammar {
                                 use super::rustemo_actions::Assignment::*;
                                 match assignment {
                                     PlainAssignment(assign)
-                                    | BoolAssignment(assign) => Assignment {
+                                    | BoolAssignment(assign) => ResolvingAssignment {
                                         name: Some(assign.name),
                                         symbol: ResolvingSymbolIndex::Resolving(
                                             assign.gsymref.gsymbol.unwrap(),
                                         ),
                                     },
-                                    GrammarSymbolRef(reference) => Assignment {
+                                    GrammarSymbolRef(reference) => ResolvingAssignment {
                                         name: None,
                                         symbol: ResolvingSymbolIndex::Resolving(
                                             reference.gsymbol.unwrap(),
@@ -649,6 +686,13 @@ impl Grammar {
         }
     }
 
+    /// If this symbol is either a non-terminal of a terminal with a content.
+    /// I.e. not a constant match terminal (keyword, punctuation...)
+    #[inline]
+    pub fn symbol_has_content(&self, symbol: SymbolIndex) -> bool {
+        self.is_nonterm(symbol) || self.symbol_to_term(symbol).has_content
+    }
+
     pub fn symbol_indexes(&self, names: &[&str]) -> SymbolVec<SymbolIndex> {
         let mut indexes = SymbolVec::new();
         for name in names {
@@ -657,6 +701,7 @@ impl Grammar {
         indexes
     }
 
+    #[inline]
     pub fn symbol_names<T>(&self, indexes: T) -> Vec<String>
     where
         T: IntoIterator<Item = SymbolIndex>,
@@ -766,11 +811,16 @@ impl Grammar {
     }
 
     #[inline]
-    pub fn nt_field_name(&self, assig: &Assignment, symbol: SymbolIndex) -> String {
+    pub fn assig_name(
+        &self,
+        assig: &ResolvingAssignment,
+        symbol: SymbolIndex,
+    ) -> String {
         match &assig.name {
             Some(s) => s.clone(),
             None => self.symbol_name(symbol),
-        }.to_case(Case::Snake)
+        }
+        .to_case(Case::Snake)
     }
 }
 

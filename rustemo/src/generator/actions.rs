@@ -4,16 +4,17 @@
 //! changes.
 
 use std::{
-    collections::{BTreeMap, BTreeSet},
+    collections::BTreeSet,
     path::{Path, PathBuf},
 };
 
 use convert_case::{Case, Casing};
 use proc_macro2::{Ident, Span};
+use quote::quote;
 use syn::{self, parse::Parser, parse_quote};
 
 use crate::error::{Error, Result};
-use crate::grammar::{res_symbol, Grammar, NonTerminal};
+use crate::grammar::{Grammar, NonTerminal, Production};
 
 pub(crate) fn generate_parser_actions<F>(
     grammar: &Grammar,
@@ -35,10 +36,11 @@ where
         log!("Parsing action file with Syn: {:?}", action_file);
         syn::parse_file(&std::fs::read_to_string(&action_file)?)?
     } else {
-        // Create new empty file with common uses.
+        // Create new empty file with common uses statements.
         log!("Action file not found. Creating: {:?}", action_file);
         parse_quote! {
-            use std::collections::BTreeMap;
+            ///! This file is maintained by rustemo but can be modified manually.
+            ///! All manual changes will be preserved except non-doc comments.
             use rustemo_rt::lexer::Token;
         }
     };
@@ -51,17 +53,33 @@ where
             // Used for grammar rules of the form:
             // NT: First | Second | Third;
             // TODO: Are non-terminals allowed in the RHS?
-            syn::Item::Enum(e) => type_names.insert(e.ident.to_string()),
+            syn::Item::Enum(e) => {
+                let type_name = e.ident.to_string();
+                log!("Found enum type '{}'", type_name);
+                type_names.insert(e.ident.to_string())
+            }
+            syn::Item::Struct(e) => {
+                let type_name = e.ident.to_string();
+                log!("Found struct type '{}'", type_name);
+                type_names.insert(e.ident.to_string())
+            }
             // Used for actions
-            syn::Item::Fn(f) => action_names.insert(f.sig.ident.to_string()),
-            // Used for types produced for rules LHS
-            syn::Item::Type(t) => type_names.insert(t.ident.to_string()),
+            syn::Item::Fn(f) => {
+                let type_name = f.sig.ident.to_string();
+                log!("Found action function '{}'", type_name);
+                action_names.insert(type_name)
+            }
+            syn::Item::Type(t) => {
+                let type_name = t.ident.to_string();
+                log!("Found type '{}'", type_name);
+                type_names.insert(type_name)
+            }
             _ => false,
         };
     }
 
     // Generate types and actions for terminals
-    for terminal in grammar.terminals() {
+    for terminal in grammar.terminals().iter().filter(|t| t.has_content) {
         // Add terminal types
         let type_name = &terminal.name;
         let type_name_ident = Ident::new(type_name, Span::call_site());
@@ -78,25 +96,31 @@ where
             log!("Create action function for terminal '{type_name}'.");
             ast.items.push(parse_quote! {
                 pub fn #action_name_ident<'a>(token: Token<&'a str>) -> #type_name_ident {
-                    token.value
+                    token.value.into()
                 }
             })
         }
     }
 
     // Generate types and actions for non-terminals
-    for nonterminal in grammar.nonterminals() {
-        // Add nonterminal type
+    for nonterminal in grammar.nonterminals().iter().filter(|&nt| {
+        let nt_symbol = grammar.nonterm_to_symbol_index(nt.idx);
+        nt_symbol != grammar.augmented_index && nt_symbol != grammar.empty_index
+    }) {
+        // Add non-terminal type
         let type_name = &nonterminal.name;
         if !type_names.contains(type_name) {
+            log!("Creating type for non-terminal '{type_name}'.");
             ast.items.push(nonterminal_type(grammar, nonterminal));
         }
 
-        // Add nonterminal actions
-        // let action_name = nonterminal.name.to_case(Case::Snake);
-        // if !action_names.contains(&action_name) {
-        //     ast.items.push(parse_quote! {})
-        // }
+        // Add non-terminal actions
+        for (action_name, action) in nonterminal_actions(grammar, nonterminal) {
+            if !action_names.contains(&action_name) {
+                log!("Creating action '{action_name}'.");
+                ast.items.push(action);
+            }
+        }
     }
 
     log!("Writing action file {:?}", action_file);
@@ -105,9 +129,36 @@ where
     Ok(())
 }
 
-struct Field {
-    inner: syn::Field,
+/// Represents a field in a struct type constructed for a NonTerminal
+struct NTTypeField {
+    name: String,
+    type_: String,
+    boxed: bool,
+    optional: bool,
     count: usize,
+}
+
+impl NTTypeField {
+    fn to_syn_field(&self, nonterminal: &NonTerminal) -> syn::Field {
+        let name_ident = Ident::new(&self.name, Span::call_site());
+        let field_type: syn::Type = syn::parse_str(&self.type_).unwrap();
+        let mut field = syn::Field::parse_named
+            .parse2(if self.boxed {
+                // Handle direct recursion
+                quote! { pub #name_ident: Box<#field_type> }
+            } else {
+                quote! { pub #name_ident: #field_type }
+            })
+            .unwrap();
+
+        // If reference is not available in each production the value is
+        // optional
+        if self.count < nonterminal.productions.len() {
+            let base_type = field.ty;
+            field.ty = syn::parse2(quote! { Option<#base_type> }).unwrap();
+        }
+        field
+    }
 }
 
 /// Create Rust type for the given non-terminal.
@@ -122,55 +173,179 @@ fn nonterminal_type(grammar: &Grammar, nonterminal: &NonTerminal) -> syn::Item {
 
     return if grammar.is_enum(nonterminal) {
         // Variants will be named after RHS symbol names
-        let variants = grammar
-            .symbol_names(prods.iter().map(|p| res_symbol(&p.rhs[0])))
-            .into_iter()
-            .map(|s| quote::format_ident!("{}", &s));
+        let variants: Vec<syn::Variant> = prods
+            .iter()
+            .map(|prod| {
+                let assign = &prod.rhs_assign()[0];
+                let type_name = grammar.symbol_name(assign.symbol);
+                if grammar.symbol_has_content(assign.symbol) {
+                    syn::parse_str(&format!("{type_name}({type_name})"))
+                        .unwrap()
+                } else {
+                    syn::parse_str(&type_name).unwrap()
+                }
+            })
+            .collect::<Vec<_>>();
+
         parse_quote! {
+            #[derive(Debug, Clone)]
             pub enum #type_name_ident {
-                #(#variants(#variants)),*
+                #(#variants),*
             }
         }
     } else {
-        let mut f: BTreeMap<String, Field> = BTreeMap::new();
-        for prod in nonterminal.productions(grammar) {
-            for assig in &prod.rhs {
-                let symbol = res_symbol(assig);
-                let name = grammar.nt_field_name(assig, symbol);
-                let name_ident = Ident::new(
-                    &grammar.nt_field_name(assig, symbol),
-                    Span::call_site(),
-                );
-                let field_type: syn::Type =
-                    syn::parse_str(&grammar.symbol_name(symbol)).unwrap();
-                f.entry(name.clone())
-                    .and_modify(|e| e.count += 1)
-                    .or_insert(Field {
-                        inner: syn::Field::parse_named
-                            .parse2(
-                                quote::quote! { pub #name_ident: #field_type },
-                            )
-                            .unwrap(),
-                        count: 0,
-                    });
-            }
-        }
-
-        // Those fields that don't show up in each productions are optional.
-        f.values_mut().for_each(|v| {
-            if v.count < nonterminal.productions.len() {
-                let base_type = &v.inner.ty;
-                v.inner.ty =
-                    syn::parse2(quote::quote! { Option<#base_type> }).unwrap();
-            }
-        });
-
-        let fields = f.into_iter().map(|(_, f)| f.inner);
+        let fields = nonterminal_type_fields(&grammar, nonterminal)
+            .into_iter()
+            .map(|f| f.to_syn_field(nonterminal));
 
         parse_quote! {
+            #[derive(Debug, Clone)]
             pub struct #type_name_ident {
                 #(#fields),*
             }
         }
     };
+}
+
+fn nonterminal_type_fields(
+    grammar: &Grammar,
+    nonterminal: &NonTerminal,
+) -> Vec<NTTypeField> {
+    let mut fields: Vec<NTTypeField> = vec![];
+    for prod in nonterminal.productions(grammar) {
+        for prod_field in production_type_fields(grammar, prod) {
+            match fields.iter_mut().find(|f| f.name == prod_field.name) {
+                Some(f) => f.count += 1,
+                None => fields.push(prod_field),
+            }
+        }
+    }
+
+    // Those fields that don't show up in each productions are optional.
+    fields
+        .iter_mut()
+        .for_each(|v| v.optional = v.count < nonterminal.productions.len());
+
+    fields
+}
+
+fn production_type_fields(
+    grammar: &Grammar,
+    prod: &Production,
+) -> Vec<NTTypeField> {
+    let nt_name = &grammar.nonterminals()[prod.nonterminal].name;
+    let mut names = vec![];
+    let mut fields = vec![];
+    for assign in prod.rhs_with_content(grammar) {
+        // If assignment name is not given use referenced NonTerminal name.
+        let type_name = grammar.symbol_name(assign.symbol);
+        let mut name = assign.name.unwrap_or(type_name.to_case(Case::Snake));
+        let name_count = names.iter().filter(|&n| *n == name).count();
+        if name_count > 0 {
+            name = format!("{}{}", name, name_count);
+        }
+        names.push(name.clone());
+        fields.push(NTTypeField {
+            name,
+            count: 0,
+            type_: type_name.clone(),
+            boxed: type_name == *nt_name,
+            optional: false,
+        });
+    }
+    fields
+}
+
+/// Creates an action function for each production of the given non-terminal.
+fn nonterminal_actions(
+    grammar: &Grammar,
+    nonterminal: &NonTerminal,
+) -> Vec<(String, syn::Item)> {
+    let mut actions: Vec<(String, syn::Item)> = vec![];
+    let nt_fields = nonterminal_type_fields(grammar, nonterminal);
+    let type_name = &nonterminal.name;
+    let type_name_ident: syn::Type = syn::parse_str(&type_name).unwrap();
+    for (idx, prod) in nonterminal.productions(grammar).iter().enumerate() {
+        let fn_name = format!("{}_p{}", type_name.to_case(Case::Snake), idx);
+        let fn_name_ident = Ident::new(&fn_name, Span::call_site());
+        let prod_fields = production_type_fields(grammar, prod);
+
+        let args: Vec<syn::FnArg> = prod_fields
+            .iter()
+            .map(|f| {
+                let type_name: syn::Type = syn::parse_str(&f.type_).unwrap();
+                let name = Ident::new(&f.name, Span::call_site());
+                let arg: syn::FnArg =
+                    syn::parse2(quote! { #name: #type_name }).unwrap();
+                arg
+            })
+            .collect();
+
+        let body_expr: syn::Expr = if grammar.is_enum(nonterminal) {
+            // Enum variant value
+            let assign = &prod.rhs_assign()[0];
+            let symbol = assign.symbol;
+            let symbol_ident =
+                Ident::new(&grammar.symbol_name(symbol), Span::call_site());
+            let arg_type_name =
+                grammar.symbol_name(symbol).to_case(Case::Snake);
+            let arg_name = assign.name.as_ref().unwrap_or(&arg_type_name);
+            let arg_ident = Ident::new(arg_name, Span::call_site());
+            let variant: syn::Variant = if grammar.is_term(symbol)
+                && !grammar.symbol_to_term(symbol).has_content
+            {
+                // Variant witout content
+                syn::parse2(quote! { #symbol_ident }).unwrap()
+            } else {
+                // Variant with content
+                syn::parse2(quote! { #symbol_ident(#arg_ident) }).unwrap()
+            };
+
+            parse_quote! {
+                #type_name_ident::#variant
+            }
+        } else {
+            // Struct value
+            let field_values = nt_fields
+                .iter()
+                .map(|f| {
+                    let in_prod =
+                        prod_fields.iter().find(|x| x.name == f.name).is_some();
+                    let ident = Ident::new(&f.name, Span::call_site());
+                    let mut value: syn::Expr = syn::parse2(if in_prod {
+                        quote! { #ident }
+                    } else {
+                        quote! { None }
+                    })
+                    .unwrap();
+                    if in_prod && f.boxed {
+                        value =
+                            syn::parse2(quote! { Box::new(#value) }).unwrap();
+                    }
+                    if in_prod && f.optional {
+                        value = syn::parse2(quote! { Some(#value) }).unwrap();
+                    }
+                    syn::parse2(if in_prod && !f.boxed && !f.optional {
+                        quote! { #value }
+                    } else {
+                        quote! { #ident: #value }
+                    })
+                    .unwrap()
+                })
+                .collect::<Vec<syn::FieldValue>>();
+            parse_quote! {
+                #type_name_ident {
+                    #(#field_values),*
+                }
+            }
+        };
+
+        let fn_item: syn::Item = parse_quote! {
+            pub fn #fn_name_ident(#(#args),*) -> #type_name_ident {
+                #body_expr
+            }
+        };
+        actions.push((fn_name, fn_item));
+    }
+    actions
 }
