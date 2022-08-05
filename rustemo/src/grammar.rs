@@ -154,6 +154,7 @@ pub struct Production {
     pub idx: ProdIndex,
     pub nonterminal: NonTermIndex,
     pub ntidx: usize,
+    pub kind: Option<String>,
     pub rhs: Vec<ResolvingAssignment>,
     pub assoc: Associativity,
     pub prio: Priority,
@@ -170,6 +171,7 @@ impl Default for Production {
             idx: Default::default(),
             nonterminal: Default::default(),
             ntidx: Default::default(),
+            kind: None,
             rhs: Default::default(),
             assoc: Default::default(),
             prio: DEFAULT_PRIORITY,
@@ -507,6 +509,13 @@ impl Grammar {
                     new_production.prio = match meta {
                         crate::rustemo_actions::Const::Int(p) => p,
                         _ => panic!("Invalid Const!"),
+                    }
+                }
+
+                if let Some(kind) = new_production.meta.remove("kind") {
+                    new_production.kind = match kind {
+                        Const::String(s) => Some(s),
+                        _ => None
                     }
                 }
 

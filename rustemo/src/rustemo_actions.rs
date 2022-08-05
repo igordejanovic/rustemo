@@ -273,6 +273,11 @@ pub fn terminal_rule_p3(
     }
 }
 
+pub type ProdKind = String;
+pub fn prod_kind_p0(name: Name) -> Name {
+    name
+}
+
 pub type ProdMetaData = BTreeMap<String, Const>;
 
 pub fn prod_meta_data_p0() -> ProdMetaData {
@@ -301,6 +306,9 @@ pub fn prod_meta_data_p7(prio: IntConst) -> ProdMetaData {
 }
 pub fn prod_meta_data_p8(user: UserMetaData) -> ProdMetaData {
     ProdMetaData::from([(user.name, user.value)])
+}
+pub fn prod_meta_data_p9(kind: Name) -> ProdMetaData {
+    ProdMetaData::from([("kind".into(), Const::String(kind))])
 }
 
 pub type ProdMetaDatas = ProdMetaData;

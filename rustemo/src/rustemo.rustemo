@@ -27,7 +27,8 @@ TerminalRule {left, 15}: ActionOpt Name ':' Recognizer ';'
 
 ProdMetaData: 'left' | 'reduce' | 'right' | 'shift' | 'dynamic' | 'nops' | 'nopse'
             | IntConst
-            | UserMetaData;
+            | UserMetaData
+            | ProdKind;
 ProdMetaDatas {left}: ProdMetaDatas ',' ProdMetaData | ProdMetaData;
 
 TermMetaData: 'prefer' | 'finish' | 'nofinish' | 'dynamic'
@@ -36,6 +37,7 @@ TermMetaData: 'prefer' | 'finish' | 'nofinish' | 'dynamic'
 TermMetaDatas: TermMetaDatas ',' TermMetaData | TermMetaData;
 
 UserMetaData: Name ':' Const;
+ProdKind: Name;
 Const: IntConst | FloatConst | BoolConst | StrConst;
 
 Assignment: PlainAssignment

@@ -22,8 +22,8 @@ use rustemo_rt::debug::{log, logn};
 use super::rustemo_actions;
 
 const TERMINAL_NO: usize = 44;
-const NONTERMINAL_NO: usize = 38;
-const STATE_NO: usize = 120;
+const NONTERMINAL_NO: usize = 39;
+const STATE_NO: usize = 122;
 const MAX_ACTIONS: usize = 15;
 
 #[derive(Debug, Copy, Clone, TryFromPrimitive)]
@@ -146,6 +146,7 @@ pub enum NonTerminal {
     TermMetaData(rustemo_actions::TermMetaData),
     TermMetaDatas(rustemo_actions::TermMetaDatas),
     UserMetaData(rustemo_actions::UserMetaData),
+    ProdKind(rustemo_actions::ProdKind),
     Const(rustemo_actions::Const),
     Assignment(rustemo_actions::Assignment),
     Assignments(rustemo_actions::Assignments),
@@ -206,63 +207,65 @@ pub enum ProdKind {
     ProdMetaDataP6 = 32,
     ProdMetaDataP7 = 33,
     ProdMetaDataP8 = 34,
-    ProdMetaDatasP0 = 35,
-    ProdMetaDatasP1 = 36,
-    TermMetaDataP0 = 37,
-    TermMetaDataP1 = 38,
-    TermMetaDataP2 = 39,
-    TermMetaDataP3 = 40,
-    TermMetaDataP4 = 41,
-    TermMetaDataP5 = 42,
-    TermMetaDatasP0 = 43,
-    TermMetaDatasP1 = 44,
-    UserMetaDataP0 = 45,
-    ConstP0 = 46,
-    ConstP1 = 47,
-    ConstP2 = 48,
-    ConstP3 = 49,
-    AssignmentP0 = 50,
-    AssignmentP1 = 51,
-    AssignmentP2 = 52,
-    AssignmentsP0 = 53,
-    AssignmentsP1 = 54,
-    PlainAssignmentP0 = 55,
-    BoolAssignmentP0 = 56,
-    ProductionGroupP0 = 57,
-    GrammarSymbolRefP0 = 58,
-    GrammarSymbolRefP1 = 59,
-    RepetitionOperatorP0 = 60,
-    RepetitionOperatorOptP0 = 61,
-    RepetitionOperatorOptP1 = 62,
-    RepetitionOperatorOpP0 = 63,
-    RepetitionOperatorOpP1 = 64,
-    RepetitionOperatorOpP2 = 65,
-    RepetitionOperatorOpP3 = 66,
-    RepetitionOperatorOpP4 = 67,
-    RepetitionOperatorOpP5 = 68,
-    RepetitionModifiersExpP0 = 69,
-    RepetitionModifiersExpOptP0 = 70,
-    RepetitionModifiersExpOptP1 = 71,
-    RepetitionModifiersP0 = 72,
-    RepetitionModifiersP1 = 73,
-    RepetitionModifierP0 = 74,
-    GrammarSymbolP0 = 75,
-    GrammarSymbolP1 = 76,
-    RecognizerP0 = 77,
-    RecognizerP1 = 78,
-    LayoutP0 = 79,
-    LayoutP1 = 80,
-    LayoutP2 = 81,
-    LayoutItemP0 = 82,
-    LayoutItemP1 = 83,
-    CommentP0 = 84,
-    CommentP1 = 85,
-    CorncsP0 = 86,
-    CorncsP1 = 87,
-    CorncsP2 = 88,
-    CorncP0 = 89,
-    CorncP1 = 90,
-    CorncP2 = 91,
+    ProdMetaDataP9 = 35,
+    ProdMetaDatasP0 = 36,
+    ProdMetaDatasP1 = 37,
+    TermMetaDataP0 = 38,
+    TermMetaDataP1 = 39,
+    TermMetaDataP2 = 40,
+    TermMetaDataP3 = 41,
+    TermMetaDataP4 = 42,
+    TermMetaDataP5 = 43,
+    TermMetaDatasP0 = 44,
+    TermMetaDatasP1 = 45,
+    UserMetaDataP0 = 46,
+    ProdKindP0 = 47,
+    ConstP0 = 48,
+    ConstP1 = 49,
+    ConstP2 = 50,
+    ConstP3 = 51,
+    AssignmentP0 = 52,
+    AssignmentP1 = 53,
+    AssignmentP2 = 54,
+    AssignmentsP0 = 55,
+    AssignmentsP1 = 56,
+    PlainAssignmentP0 = 57,
+    BoolAssignmentP0 = 58,
+    ProductionGroupP0 = 59,
+    GrammarSymbolRefP0 = 60,
+    GrammarSymbolRefP1 = 61,
+    RepetitionOperatorP0 = 62,
+    RepetitionOperatorOptP0 = 63,
+    RepetitionOperatorOptP1 = 64,
+    RepetitionOperatorOpP0 = 65,
+    RepetitionOperatorOpP1 = 66,
+    RepetitionOperatorOpP2 = 67,
+    RepetitionOperatorOpP3 = 68,
+    RepetitionOperatorOpP4 = 69,
+    RepetitionOperatorOpP5 = 70,
+    RepetitionModifiersExpP0 = 71,
+    RepetitionModifiersExpOptP0 = 72,
+    RepetitionModifiersExpOptP1 = 73,
+    RepetitionModifiersP0 = 74,
+    RepetitionModifiersP1 = 75,
+    RepetitionModifierP0 = 76,
+    GrammarSymbolP0 = 77,
+    GrammarSymbolP1 = 78,
+    RecognizerP0 = 79,
+    RecognizerP1 = 80,
+    LayoutP0 = 81,
+    LayoutP1 = 82,
+    LayoutP2 = 83,
+    LayoutItemP0 = 84,
+    LayoutItemP1 = 85,
+    CommentP0 = 86,
+    CommentP1 = 87,
+    CorncsP0 = 88,
+    CorncsP1 = 89,
+    CorncsP2 = 90,
+    CorncP0 = 91,
+    CorncP1 = 92,
+    CorncP2 = 93,
 }
 
 pub struct RustemoParserDefinition {
@@ -325,7 +328,7 @@ pub(in crate) static PARSER_DEFINITION: RustemoParserDefinition = RustemoParserD
     // State 25:OBrace
     [Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(41), TermIndex(22)), Shift(StateIndex(42), TermIndex(23)), Shift(StateIndex(43), TermIndex(24)), Shift(StateIndex(44), TermIndex(25)), Shift(StateIndex(45), TermIndex(26)), Shift(StateIndex(46), TermIndex(27)), Shift(StateIndex(47), TermIndex(28)), Error, Error, Error, Error, Error, Shift(StateIndex(48), TermIndex(34)), Error, Shift(StateIndex(49), TermIndex(36)), Error, Error, Error, Error, Error, Error, Error],
     // State 26:Colon
-    [Error, Error, Error, Error, Error, Shift(StateIndex(53), TermIndex(5)), Error, Shift(StateIndex(54), TermIndex(7)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(55), TermIndex(35)), Error, Error, Error, Shift(StateIndex(56), TermIndex(39)), Error, Error, Error, Error],
+    [Error, Error, Error, Error, Error, Shift(StateIndex(54), TermIndex(5)), Error, Shift(StateIndex(55), TermIndex(7)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(56), TermIndex(35)), Error, Error, Error, Shift(StateIndex(57), TermIndex(39)), Error, Error, Error, Error],
     // State 27:Name
     [Error, Error, Reduce(ProdIndex(9), 4, NonTermIndex(4), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(9), 4, NonTermIndex(4), "<?>"), Error, Error, Error, Error, Error, Reduce(ProdIndex(9), 4, NonTermIndex(4), "<?>"), Error, Error, Error],
     // State 28:TerminalRules
@@ -333,27 +336,27 @@ pub(in crate) static PARSER_DEFINITION: RustemoParserDefinition = RustemoParserD
     // State 29:OBracket
     [Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(29), TermIndex(9)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(30), TermIndex(34)), Error, Error, Error, Error, Shift(StateIndex(31), TermIndex(39)), Error, Error, Error, Error],
     // State 30:Name
-    [Error, Error, Error, Error, Error, Reduce(ProdIndex(75), 1, NonTermIndex(31), "<?>"), Error, Reduce(ProdIndex(75), 1, NonTermIndex(31), "<?>"), Error, Reduce(ProdIndex(75), 1, NonTermIndex(31), "<?>"), Reduce(ProdIndex(75), 1, NonTermIndex(31), "<?>"), Error, Error, Reduce(ProdIndex(75), 1, NonTermIndex(31), "<?>"), Reduce(ProdIndex(75), 1, NonTermIndex(31), "<?>"), Reduce(ProdIndex(75), 1, NonTermIndex(31), "<?>"), Reduce(ProdIndex(75), 1, NonTermIndex(31), "<?>"), Reduce(ProdIndex(75), 1, NonTermIndex(31), "<?>"), Reduce(ProdIndex(75), 1, NonTermIndex(31), "<?>"), Reduce(ProdIndex(75), 1, NonTermIndex(31), "<?>"), Shift(StateIndex(59), TermIndex(20)), Shift(StateIndex(60), TermIndex(21)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(75), 1, NonTermIndex(31), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(75), 1, NonTermIndex(31), "<?>"), Error, Error, Error, Error],
+    [Error, Error, Error, Error, Error, Reduce(ProdIndex(77), 1, NonTermIndex(32), "<?>"), Error, Reduce(ProdIndex(77), 1, NonTermIndex(32), "<?>"), Error, Reduce(ProdIndex(77), 1, NonTermIndex(32), "<?>"), Reduce(ProdIndex(77), 1, NonTermIndex(32), "<?>"), Error, Error, Reduce(ProdIndex(77), 1, NonTermIndex(32), "<?>"), Reduce(ProdIndex(77), 1, NonTermIndex(32), "<?>"), Reduce(ProdIndex(77), 1, NonTermIndex(32), "<?>"), Reduce(ProdIndex(77), 1, NonTermIndex(32), "<?>"), Reduce(ProdIndex(77), 1, NonTermIndex(32), "<?>"), Reduce(ProdIndex(77), 1, NonTermIndex(32), "<?>"), Reduce(ProdIndex(77), 1, NonTermIndex(32), "<?>"), Shift(StateIndex(60), TermIndex(20)), Shift(StateIndex(61), TermIndex(21)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(77), 1, NonTermIndex(32), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(77), 1, NonTermIndex(32), "<?>"), Error, Error, Error, Error],
     // State 31:StrConst
-    [Error, Error, Error, Error, Error, Reduce(ProdIndex(76), 1, NonTermIndex(31), "<?>"), Error, Reduce(ProdIndex(76), 1, NonTermIndex(31), "<?>"), Error, Reduce(ProdIndex(76), 1, NonTermIndex(31), "<?>"), Reduce(ProdIndex(76), 1, NonTermIndex(31), "<?>"), Error, Error, Reduce(ProdIndex(76), 1, NonTermIndex(31), "<?>"), Reduce(ProdIndex(76), 1, NonTermIndex(31), "<?>"), Reduce(ProdIndex(76), 1, NonTermIndex(31), "<?>"), Reduce(ProdIndex(76), 1, NonTermIndex(31), "<?>"), Reduce(ProdIndex(76), 1, NonTermIndex(31), "<?>"), Reduce(ProdIndex(76), 1, NonTermIndex(31), "<?>"), Reduce(ProdIndex(76), 1, NonTermIndex(31), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(76), 1, NonTermIndex(31), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(76), 1, NonTermIndex(31), "<?>"), Error, Error, Error, Error],
+    [Error, Error, Error, Error, Error, Reduce(ProdIndex(78), 1, NonTermIndex(32), "<?>"), Error, Reduce(ProdIndex(78), 1, NonTermIndex(32), "<?>"), Error, Reduce(ProdIndex(78), 1, NonTermIndex(32), "<?>"), Reduce(ProdIndex(78), 1, NonTermIndex(32), "<?>"), Error, Error, Reduce(ProdIndex(78), 1, NonTermIndex(32), "<?>"), Reduce(ProdIndex(78), 1, NonTermIndex(32), "<?>"), Reduce(ProdIndex(78), 1, NonTermIndex(32), "<?>"), Reduce(ProdIndex(78), 1, NonTermIndex(32), "<?>"), Reduce(ProdIndex(78), 1, NonTermIndex(32), "<?>"), Reduce(ProdIndex(78), 1, NonTermIndex(32), "<?>"), Reduce(ProdIndex(78), 1, NonTermIndex(32), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(78), 1, NonTermIndex(32), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(78), 1, NonTermIndex(32), "<?>"), Error, Error, Error, Error],
     // State 32:GrammarRuleRHS
-    [Error, Error, Error, Error, Error, Shift(StateIndex(61), TermIndex(5)), Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(62), TermIndex(13)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    [Error, Error, Error, Error, Error, Shift(StateIndex(62), TermIndex(5)), Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(63), TermIndex(13)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
     // State 33:Production
     [Error, Error, Error, Error, Error, Reduce(ProdIndex(17), 1, NonTermIndex(8), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(17), 1, NonTermIndex(8), "<?>"), Error, Error, Reduce(ProdIndex(17), 1, NonTermIndex(8), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
     // State 34:Assignment
-    [Error, Error, Error, Error, Error, Reduce(ProdIndex(54), 1, NonTermIndex(19), "<?>"), Error, Reduce(ProdIndex(54), 1, NonTermIndex(19), "<?>"), Error, Reduce(ProdIndex(54), 1, NonTermIndex(19), "<?>"), Reduce(ProdIndex(54), 1, NonTermIndex(19), "<?>"), Error, Error, Reduce(ProdIndex(54), 1, NonTermIndex(19), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(54), 1, NonTermIndex(19), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(54), 1, NonTermIndex(19), "<?>"), Error, Error, Error, Error],
+    [Error, Error, Error, Error, Error, Reduce(ProdIndex(56), 1, NonTermIndex(20), "<?>"), Error, Reduce(ProdIndex(56), 1, NonTermIndex(20), "<?>"), Error, Reduce(ProdIndex(56), 1, NonTermIndex(20), "<?>"), Reduce(ProdIndex(56), 1, NonTermIndex(20), "<?>"), Error, Error, Reduce(ProdIndex(56), 1, NonTermIndex(20), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(56), 1, NonTermIndex(20), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(56), 1, NonTermIndex(20), "<?>"), Error, Error, Error, Error],
     // State 35:Assignments
-    [Error, Error, Error, Error, Error, Reduce(ProdIndex(18), 1, NonTermIndex(9), "<?>"), Error, Shift(StateIndex(63), TermIndex(7)), Error, Shift(StateIndex(29), TermIndex(9)), Reduce(ProdIndex(18), 1, NonTermIndex(9), "<?>"), Error, Error, Reduce(ProdIndex(18), 1, NonTermIndex(9), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(30), TermIndex(34)), Error, Error, Error, Error, Shift(StateIndex(31), TermIndex(39)), Error, Error, Error, Error],
+    [Error, Error, Error, Error, Error, Reduce(ProdIndex(18), 1, NonTermIndex(9), "<?>"), Error, Shift(StateIndex(64), TermIndex(7)), Error, Shift(StateIndex(29), TermIndex(9)), Reduce(ProdIndex(18), 1, NonTermIndex(9), "<?>"), Error, Error, Reduce(ProdIndex(18), 1, NonTermIndex(9), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(30), TermIndex(34)), Error, Error, Error, Error, Shift(StateIndex(31), TermIndex(39)), Error, Error, Error, Error],
     // State 36:PlainAssignment
-    [Error, Error, Error, Error, Error, Reduce(ProdIndex(50), 1, NonTermIndex(18), "<?>"), Error, Reduce(ProdIndex(50), 1, NonTermIndex(18), "<?>"), Error, Reduce(ProdIndex(50), 1, NonTermIndex(18), "<?>"), Reduce(ProdIndex(50), 1, NonTermIndex(18), "<?>"), Error, Error, Reduce(ProdIndex(50), 1, NonTermIndex(18), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(50), 1, NonTermIndex(18), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(50), 1, NonTermIndex(18), "<?>"), Error, Error, Error, Error],
+    [Error, Error, Error, Error, Error, Reduce(ProdIndex(52), 1, NonTermIndex(19), "<?>"), Error, Reduce(ProdIndex(52), 1, NonTermIndex(19), "<?>"), Error, Reduce(ProdIndex(52), 1, NonTermIndex(19), "<?>"), Reduce(ProdIndex(52), 1, NonTermIndex(19), "<?>"), Error, Error, Reduce(ProdIndex(52), 1, NonTermIndex(19), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(52), 1, NonTermIndex(19), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(52), 1, NonTermIndex(19), "<?>"), Error, Error, Error, Error],
     // State 37:BoolAssignment
-    [Error, Error, Error, Error, Error, Reduce(ProdIndex(51), 1, NonTermIndex(18), "<?>"), Error, Reduce(ProdIndex(51), 1, NonTermIndex(18), "<?>"), Error, Reduce(ProdIndex(51), 1, NonTermIndex(18), "<?>"), Reduce(ProdIndex(51), 1, NonTermIndex(18), "<?>"), Error, Error, Reduce(ProdIndex(51), 1, NonTermIndex(18), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(51), 1, NonTermIndex(18), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(51), 1, NonTermIndex(18), "<?>"), Error, Error, Error, Error],
+    [Error, Error, Error, Error, Error, Reduce(ProdIndex(53), 1, NonTermIndex(19), "<?>"), Error, Reduce(ProdIndex(53), 1, NonTermIndex(19), "<?>"), Error, Reduce(ProdIndex(53), 1, NonTermIndex(19), "<?>"), Reduce(ProdIndex(53), 1, NonTermIndex(19), "<?>"), Error, Error, Reduce(ProdIndex(53), 1, NonTermIndex(19), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(53), 1, NonTermIndex(19), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(53), 1, NonTermIndex(19), "<?>"), Error, Error, Error, Error],
     // State 38:ProductionGroup
-    [Error, Error, Error, Error, Error, Reduce(ProdIndex(62), 0, NonTermIndex(25), "<?>"), Error, Reduce(ProdIndex(62), 0, NonTermIndex(25), "<?>"), Error, Reduce(ProdIndex(62), 0, NonTermIndex(25), "<?>"), Reduce(ProdIndex(62), 0, NonTermIndex(25), "<?>"), Error, Error, Reduce(ProdIndex(62), 0, NonTermIndex(25), "<?>"), Shift(StateIndex(65), TermIndex(14)), Shift(StateIndex(66), TermIndex(15)), Shift(StateIndex(67), TermIndex(16)), Shift(StateIndex(68), TermIndex(17)), Shift(StateIndex(69), TermIndex(18)), Shift(StateIndex(70), TermIndex(19)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(62), 0, NonTermIndex(25), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(62), 0, NonTermIndex(25), "<?>"), Error, Error, Error, Error],
+    [Error, Error, Error, Error, Error, Reduce(ProdIndex(64), 0, NonTermIndex(26), "<?>"), Error, Reduce(ProdIndex(64), 0, NonTermIndex(26), "<?>"), Error, Reduce(ProdIndex(64), 0, NonTermIndex(26), "<?>"), Reduce(ProdIndex(64), 0, NonTermIndex(26), "<?>"), Error, Error, Reduce(ProdIndex(64), 0, NonTermIndex(26), "<?>"), Shift(StateIndex(66), TermIndex(14)), Shift(StateIndex(67), TermIndex(15)), Shift(StateIndex(68), TermIndex(16)), Shift(StateIndex(69), TermIndex(17)), Shift(StateIndex(70), TermIndex(18)), Shift(StateIndex(71), TermIndex(19)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(64), 0, NonTermIndex(26), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(64), 0, NonTermIndex(26), "<?>"), Error, Error, Error, Error],
     // State 39:GrammarSymbolRef
-    [Error, Error, Error, Error, Error, Reduce(ProdIndex(52), 1, NonTermIndex(18), "<?>"), Error, Reduce(ProdIndex(52), 1, NonTermIndex(18), "<?>"), Error, Reduce(ProdIndex(52), 1, NonTermIndex(18), "<?>"), Reduce(ProdIndex(52), 1, NonTermIndex(18), "<?>"), Error, Error, Reduce(ProdIndex(52), 1, NonTermIndex(18), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(52), 1, NonTermIndex(18), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(52), 1, NonTermIndex(18), "<?>"), Error, Error, Error, Error],
+    [Error, Error, Error, Error, Error, Reduce(ProdIndex(54), 1, NonTermIndex(19), "<?>"), Error, Reduce(ProdIndex(54), 1, NonTermIndex(19), "<?>"), Error, Reduce(ProdIndex(54), 1, NonTermIndex(19), "<?>"), Reduce(ProdIndex(54), 1, NonTermIndex(19), "<?>"), Error, Error, Reduce(ProdIndex(54), 1, NonTermIndex(19), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(54), 1, NonTermIndex(19), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(54), 1, NonTermIndex(19), "<?>"), Error, Error, Error, Error],
     // State 40:GrammarSymbol
-    [Error, Error, Error, Error, Error, Reduce(ProdIndex(62), 0, NonTermIndex(25), "<?>"), Error, Reduce(ProdIndex(62), 0, NonTermIndex(25), "<?>"), Error, Reduce(ProdIndex(62), 0, NonTermIndex(25), "<?>"), Reduce(ProdIndex(62), 0, NonTermIndex(25), "<?>"), Error, Error, Reduce(ProdIndex(62), 0, NonTermIndex(25), "<?>"), Shift(StateIndex(65), TermIndex(14)), Shift(StateIndex(66), TermIndex(15)), Shift(StateIndex(67), TermIndex(16)), Shift(StateIndex(68), TermIndex(17)), Shift(StateIndex(69), TermIndex(18)), Shift(StateIndex(70), TermIndex(19)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(62), 0, NonTermIndex(25), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(62), 0, NonTermIndex(25), "<?>"), Error, Error, Error, Error],
+    [Error, Error, Error, Error, Error, Reduce(ProdIndex(64), 0, NonTermIndex(26), "<?>"), Error, Reduce(ProdIndex(64), 0, NonTermIndex(26), "<?>"), Error, Reduce(ProdIndex(64), 0, NonTermIndex(26), "<?>"), Reduce(ProdIndex(64), 0, NonTermIndex(26), "<?>"), Error, Error, Reduce(ProdIndex(64), 0, NonTermIndex(26), "<?>"), Shift(StateIndex(66), TermIndex(14)), Shift(StateIndex(67), TermIndex(15)), Shift(StateIndex(68), TermIndex(16)), Shift(StateIndex(69), TermIndex(17)), Shift(StateIndex(70), TermIndex(18)), Shift(StateIndex(71), TermIndex(19)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(64), 0, NonTermIndex(26), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(64), 0, NonTermIndex(26), "<?>"), Error, Error, Error, Error],
     // State 41:Left
     [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(26), 1, NonTermIndex(12), "<?>"), Error, Reduce(ProdIndex(26), 1, NonTermIndex(12), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
     // State 42:Right
@@ -369,391 +372,399 @@ pub(in crate) static PARSER_DEFINITION: RustemoParserDefinition = RustemoParserD
     // State 47:NOPSE
     [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(32), 1, NonTermIndex(12), "<?>"), Error, Reduce(ProdIndex(32), 1, NonTermIndex(12), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
     // State 48:Name
-    [Error, Error, Error, Error, Shift(StateIndex(75), TermIndex(4)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    [Error, Error, Error, Error, Shift(StateIndex(76), TermIndex(4)), Error, Reduce(ProdIndex(47), 1, NonTermIndex(17), "<?>"), Error, Reduce(ProdIndex(47), 1, NonTermIndex(17), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
     // State 49:IntConst
     [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(33), 1, NonTermIndex(12), "<?>"), Error, Reduce(ProdIndex(33), 1, NonTermIndex(12), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
     // State 50:ProdMetaData
-    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(36), 1, NonTermIndex(13), "<?>"), Error, Reduce(ProdIndex(36), 1, NonTermIndex(13), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(37), 1, NonTermIndex(13), "<?>"), Error, Reduce(ProdIndex(37), 1, NonTermIndex(13), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
     // State 51:ProdMetaDatas
-    [Error, Error, Error, Error, Error, Error, Shift(StateIndex(76), TermIndex(6)), Error, Shift(StateIndex(77), TermIndex(8)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    [Error, Error, Error, Error, Error, Error, Shift(StateIndex(77), TermIndex(6)), Error, Shift(StateIndex(78), TermIndex(8)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
     // State 52:UserMetaData
     [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(34), 1, NonTermIndex(12), "<?>"), Error, Reduce(ProdIndex(34), 1, NonTermIndex(12), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 53:SemiColon
+    // State 53:ProdKind
+    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(35), 1, NonTermIndex(12), "<?>"), Error, Reduce(ProdIndex(35), 1, NonTermIndex(12), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 54:SemiColon
     [Reduce(ProdIndex(23), 4, NonTermIndex(11), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(23), 4, NonTermIndex(11), "<?>"), Error, Error, Error, Error, Error, Reduce(ProdIndex(23), 4, NonTermIndex(11), "<?>"), Error, Error, Error],
-    // State 54:OBrace
-    [Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(78), TermIndex(26)), Error, Error, Shift(StateIndex(79), TermIndex(29)), Shift(StateIndex(80), TermIndex(30)), Shift(StateIndex(81), TermIndex(31)), Error, Error, Shift(StateIndex(48), TermIndex(34)), Error, Shift(StateIndex(82), TermIndex(36)), Error, Error, Error, Error, Error, Error, Error],
-    // State 55:RegexTerm
-    [Error, Error, Error, Error, Error, Reduce(ProdIndex(78), 1, NonTermIndex(32), "<?>"), Error, Reduce(ProdIndex(78), 1, NonTermIndex(32), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 56:StrConst
-    [Error, Error, Error, Error, Error, Reduce(ProdIndex(77), 1, NonTermIndex(32), "<?>"), Error, Reduce(ProdIndex(77), 1, NonTermIndex(32), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 57:Recognizer
-    [Error, Error, Error, Error, Error, Shift(StateIndex(86), TermIndex(5)), Error, Shift(StateIndex(87), TermIndex(7)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 58:GrammarRuleRHS
-    [Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(88), TermIndex(10)), Error, Error, Shift(StateIndex(62), TermIndex(13)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 59:Equals
-    [Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(29), TermIndex(9)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(89), TermIndex(34)), Error, Error, Error, Error, Shift(StateIndex(31), TermIndex(39)), Error, Error, Error, Error],
-    // State 60:QEquals
-    [Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(29), TermIndex(9)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(89), TermIndex(34)), Error, Error, Error, Error, Shift(StateIndex(31), TermIndex(39)), Error, Error, Error, Error],
-    // State 61:SemiColon
+    // State 55:OBrace
+    [Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(79), TermIndex(26)), Error, Error, Shift(StateIndex(80), TermIndex(29)), Shift(StateIndex(81), TermIndex(30)), Shift(StateIndex(82), TermIndex(31)), Error, Error, Shift(StateIndex(83), TermIndex(34)), Error, Shift(StateIndex(84), TermIndex(36)), Error, Error, Error, Error, Error, Error, Error],
+    // State 56:RegexTerm
+    [Error, Error, Error, Error, Error, Reduce(ProdIndex(80), 1, NonTermIndex(33), "<?>"), Error, Reduce(ProdIndex(80), 1, NonTermIndex(33), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 57:StrConst
+    [Error, Error, Error, Error, Error, Reduce(ProdIndex(79), 1, NonTermIndex(33), "<?>"), Error, Reduce(ProdIndex(79), 1, NonTermIndex(33), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 58:Recognizer
+    [Error, Error, Error, Error, Error, Shift(StateIndex(88), TermIndex(5)), Error, Shift(StateIndex(89), TermIndex(7)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 59:GrammarRuleRHS
+    [Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(90), TermIndex(10)), Error, Error, Shift(StateIndex(63), TermIndex(13)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 60:Equals
+    [Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(29), TermIndex(9)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(91), TermIndex(34)), Error, Error, Error, Error, Shift(StateIndex(31), TermIndex(39)), Error, Error, Error, Error],
+    // State 61:QEquals
+    [Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(29), TermIndex(9)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(91), TermIndex(34)), Error, Error, Error, Error, Shift(StateIndex(31), TermIndex(39)), Error, Error, Error, Error],
+    // State 62:SemiColon
     [Reduce(ProdIndex(12), 5, NonTermIndex(6), "<?>"), Reduce(ProdIndex(12), 5, NonTermIndex(6), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(12), 5, NonTermIndex(6), "<?>"), Error, Error, Error, Error, Error, Reduce(ProdIndex(12), 5, NonTermIndex(6), "<?>"), Error, Error, Error],
-    // State 62:Choice
+    // State 63:Choice
     [Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(29), TermIndex(9)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(30), TermIndex(34)), Error, Error, Error, Error, Shift(StateIndex(31), TermIndex(39)), Error, Error, Error, Error],
-    // State 63:OBrace
+    // State 64:OBrace
     [Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(41), TermIndex(22)), Shift(StateIndex(42), TermIndex(23)), Shift(StateIndex(43), TermIndex(24)), Shift(StateIndex(44), TermIndex(25)), Shift(StateIndex(45), TermIndex(26)), Shift(StateIndex(46), TermIndex(27)), Shift(StateIndex(47), TermIndex(28)), Error, Error, Error, Error, Error, Shift(StateIndex(48), TermIndex(34)), Error, Shift(StateIndex(49), TermIndex(36)), Error, Error, Error, Error, Error, Error, Error],
-    // State 64:Assignment
-    [Error, Error, Error, Error, Error, Reduce(ProdIndex(53), 2, NonTermIndex(19), "<?>"), Error, Reduce(ProdIndex(53), 2, NonTermIndex(19), "<?>"), Error, Reduce(ProdIndex(53), 2, NonTermIndex(19), "<?>"), Reduce(ProdIndex(53), 2, NonTermIndex(19), "<?>"), Error, Error, Reduce(ProdIndex(53), 2, NonTermIndex(19), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(53), 2, NonTermIndex(19), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(53), 2, NonTermIndex(19), "<?>"), Error, Error, Error, Error],
-    // State 65:ZeroOrMore
-    [Error, Error, Error, Error, Error, Reduce(ProdIndex(63), 1, NonTermIndex(26), "<?>"), Error, Reduce(ProdIndex(63), 1, NonTermIndex(26), "<?>"), Error, Reduce(ProdIndex(63), 1, NonTermIndex(26), "<?>"), Reduce(ProdIndex(63), 1, NonTermIndex(26), "<?>"), Reduce(ProdIndex(63), 1, NonTermIndex(26), "<?>"), Error, Reduce(ProdIndex(63), 1, NonTermIndex(26), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(63), 1, NonTermIndex(26), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(63), 1, NonTermIndex(26), "<?>"), Error, Error, Error, Error],
-    // State 66:ZeroOrMoreGreedy
-    [Error, Error, Error, Error, Error, Reduce(ProdIndex(64), 1, NonTermIndex(26), "<?>"), Error, Reduce(ProdIndex(64), 1, NonTermIndex(26), "<?>"), Error, Reduce(ProdIndex(64), 1, NonTermIndex(26), "<?>"), Reduce(ProdIndex(64), 1, NonTermIndex(26), "<?>"), Reduce(ProdIndex(64), 1, NonTermIndex(26), "<?>"), Error, Reduce(ProdIndex(64), 1, NonTermIndex(26), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(64), 1, NonTermIndex(26), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(64), 1, NonTermIndex(26), "<?>"), Error, Error, Error, Error],
-    // State 67:OneOrMore
-    [Error, Error, Error, Error, Error, Reduce(ProdIndex(65), 1, NonTermIndex(26), "<?>"), Error, Reduce(ProdIndex(65), 1, NonTermIndex(26), "<?>"), Error, Reduce(ProdIndex(65), 1, NonTermIndex(26), "<?>"), Reduce(ProdIndex(65), 1, NonTermIndex(26), "<?>"), Reduce(ProdIndex(65), 1, NonTermIndex(26), "<?>"), Error, Reduce(ProdIndex(65), 1, NonTermIndex(26), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(65), 1, NonTermIndex(26), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(65), 1, NonTermIndex(26), "<?>"), Error, Error, Error, Error],
-    // State 68:OneOrMoreGreedy
-    [Error, Error, Error, Error, Error, Reduce(ProdIndex(66), 1, NonTermIndex(26), "<?>"), Error, Reduce(ProdIndex(66), 1, NonTermIndex(26), "<?>"), Error, Reduce(ProdIndex(66), 1, NonTermIndex(26), "<?>"), Reduce(ProdIndex(66), 1, NonTermIndex(26), "<?>"), Reduce(ProdIndex(66), 1, NonTermIndex(26), "<?>"), Error, Reduce(ProdIndex(66), 1, NonTermIndex(26), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(66), 1, NonTermIndex(26), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(66), 1, NonTermIndex(26), "<?>"), Error, Error, Error, Error],
-    // State 69:Optional
-    [Error, Error, Error, Error, Error, Reduce(ProdIndex(67), 1, NonTermIndex(26), "<?>"), Error, Reduce(ProdIndex(67), 1, NonTermIndex(26), "<?>"), Error, Reduce(ProdIndex(67), 1, NonTermIndex(26), "<?>"), Reduce(ProdIndex(67), 1, NonTermIndex(26), "<?>"), Reduce(ProdIndex(67), 1, NonTermIndex(26), "<?>"), Error, Reduce(ProdIndex(67), 1, NonTermIndex(26), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(67), 1, NonTermIndex(26), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(67), 1, NonTermIndex(26), "<?>"), Error, Error, Error, Error],
-    // State 70:OptionalGreedy
-    [Error, Error, Error, Error, Error, Reduce(ProdIndex(68), 1, NonTermIndex(26), "<?>"), Error, Reduce(ProdIndex(68), 1, NonTermIndex(26), "<?>"), Error, Reduce(ProdIndex(68), 1, NonTermIndex(26), "<?>"), Reduce(ProdIndex(68), 1, NonTermIndex(26), "<?>"), Reduce(ProdIndex(68), 1, NonTermIndex(26), "<?>"), Error, Reduce(ProdIndex(68), 1, NonTermIndex(26), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(68), 1, NonTermIndex(26), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(68), 1, NonTermIndex(26), "<?>"), Error, Error, Error, Error],
-    // State 71:RepetitionOperator
-    [Error, Error, Error, Error, Error, Reduce(ProdIndex(61), 1, NonTermIndex(25), "<?>"), Error, Reduce(ProdIndex(61), 1, NonTermIndex(25), "<?>"), Error, Reduce(ProdIndex(61), 1, NonTermIndex(25), "<?>"), Reduce(ProdIndex(61), 1, NonTermIndex(25), "<?>"), Error, Error, Reduce(ProdIndex(61), 1, NonTermIndex(25), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(61), 1, NonTermIndex(25), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(61), 1, NonTermIndex(25), "<?>"), Error, Error, Error, Error],
-    // State 72:RepetitionOperatorOpt
-    [Error, Error, Error, Error, Error, Reduce(ProdIndex(59), 2, NonTermIndex(23), "<?>"), Error, Reduce(ProdIndex(59), 2, NonTermIndex(23), "<?>"), Error, Reduce(ProdIndex(59), 2, NonTermIndex(23), "<?>"), Reduce(ProdIndex(59), 2, NonTermIndex(23), "<?>"), Error, Error, Reduce(ProdIndex(59), 2, NonTermIndex(23), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(59), 2, NonTermIndex(23), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(59), 2, NonTermIndex(23), "<?>"), Error, Error, Error, Error],
-    // State 73:RepetitionOperatorOp
-    [Error, Error, Error, Error, Error, Reduce(ProdIndex(71), 0, NonTermIndex(28), "<?>"), Error, Reduce(ProdIndex(71), 0, NonTermIndex(28), "<?>"), Error, Reduce(ProdIndex(71), 0, NonTermIndex(28), "<?>"), Reduce(ProdIndex(71), 0, NonTermIndex(28), "<?>"), Shift(StateIndex(94), TermIndex(11)), Error, Reduce(ProdIndex(71), 0, NonTermIndex(28), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(71), 0, NonTermIndex(28), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(71), 0, NonTermIndex(28), "<?>"), Error, Error, Error, Error],
-    // State 74:RepetitionOperatorOpt
-    [Error, Error, Error, Error, Error, Reduce(ProdIndex(58), 2, NonTermIndex(23), "<?>"), Error, Reduce(ProdIndex(58), 2, NonTermIndex(23), "<?>"), Error, Reduce(ProdIndex(58), 2, NonTermIndex(23), "<?>"), Reduce(ProdIndex(58), 2, NonTermIndex(23), "<?>"), Error, Error, Reduce(ProdIndex(58), 2, NonTermIndex(23), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(58), 2, NonTermIndex(23), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(58), 2, NonTermIndex(23), "<?>"), Error, Error, Error, Error],
-    // State 75:Colon
-    [Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(97), TermIndex(36)), Shift(StateIndex(98), TermIndex(37)), Shift(StateIndex(99), TermIndex(38)), Shift(StateIndex(100), TermIndex(39)), Error, Error, Error, Error],
-    // State 76:Comma
-    [Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(41), TermIndex(22)), Shift(StateIndex(42), TermIndex(23)), Shift(StateIndex(43), TermIndex(24)), Shift(StateIndex(44), TermIndex(25)), Shift(StateIndex(45), TermIndex(26)), Shift(StateIndex(46), TermIndex(27)), Shift(StateIndex(47), TermIndex(28)), Error, Error, Error, Error, Error, Shift(StateIndex(48), TermIndex(34)), Error, Shift(StateIndex(49), TermIndex(36)), Error, Error, Error, Error, Error, Error, Error],
-    // State 77:CBrace
-    [Error, Error, Error, Error, Shift(StateIndex(103), TermIndex(4)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 78:Dynamic
-    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(40), 1, NonTermIndex(14), "<?>"), Error, Reduce(ProdIndex(40), 1, NonTermIndex(14), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 79:Prefer
-    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(37), 1, NonTermIndex(14), "<?>"), Error, Reduce(ProdIndex(37), 1, NonTermIndex(14), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 80:Finish
-    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(38), 1, NonTermIndex(14), "<?>"), Error, Reduce(ProdIndex(38), 1, NonTermIndex(14), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 81:NoFinish
-    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(39), 1, NonTermIndex(14), "<?>"), Error, Reduce(ProdIndex(39), 1, NonTermIndex(14), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 82:IntConst
-    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(41), 1, NonTermIndex(14), "<?>"), Error, Reduce(ProdIndex(41), 1, NonTermIndex(14), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 83:TermMetaData
-    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(44), 1, NonTermIndex(15), "<?>"), Error, Reduce(ProdIndex(44), 1, NonTermIndex(15), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 84:TermMetaDatas
-    [Error, Error, Error, Error, Error, Error, Shift(StateIndex(104), TermIndex(6)), Error, Shift(StateIndex(105), TermIndex(8)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 85:UserMetaData
-    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(42), 1, NonTermIndex(14), "<?>"), Error, Reduce(ProdIndex(42), 1, NonTermIndex(14), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 86:SemiColon
-    [Reduce(ProdIndex(22), 5, NonTermIndex(11), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(22), 5, NonTermIndex(11), "<?>"), Error, Error, Error, Error, Error, Reduce(ProdIndex(22), 5, NonTermIndex(11), "<?>"), Error, Error, Error],
-    // State 87:OBrace
-    [Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(78), TermIndex(26)), Error, Error, Shift(StateIndex(79), TermIndex(29)), Shift(StateIndex(80), TermIndex(30)), Shift(StateIndex(81), TermIndex(31)), Error, Error, Shift(StateIndex(48), TermIndex(34)), Error, Shift(StateIndex(82), TermIndex(36)), Error, Error, Error, Error, Error, Error, Error],
-    // State 88:CBracket
-    [Error, Error, Error, Error, Error, Reduce(ProdIndex(57), 3, NonTermIndex(22), "<?>"), Error, Reduce(ProdIndex(57), 3, NonTermIndex(22), "<?>"), Error, Reduce(ProdIndex(57), 3, NonTermIndex(22), "<?>"), Reduce(ProdIndex(57), 3, NonTermIndex(22), "<?>"), Error, Error, Reduce(ProdIndex(57), 3, NonTermIndex(22), "<?>"), Reduce(ProdIndex(57), 3, NonTermIndex(22), "<?>"), Reduce(ProdIndex(57), 3, NonTermIndex(22), "<?>"), Reduce(ProdIndex(57), 3, NonTermIndex(22), "<?>"), Reduce(ProdIndex(57), 3, NonTermIndex(22), "<?>"), Reduce(ProdIndex(57), 3, NonTermIndex(22), "<?>"), Reduce(ProdIndex(57), 3, NonTermIndex(22), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(57), 3, NonTermIndex(22), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(57), 3, NonTermIndex(22), "<?>"), Error, Error, Error, Error],
-    // State 89:Name
-    [Error, Error, Error, Error, Error, Reduce(ProdIndex(75), 1, NonTermIndex(31), "<?>"), Error, Reduce(ProdIndex(75), 1, NonTermIndex(31), "<?>"), Error, Reduce(ProdIndex(75), 1, NonTermIndex(31), "<?>"), Reduce(ProdIndex(75), 1, NonTermIndex(31), "<?>"), Error, Error, Reduce(ProdIndex(75), 1, NonTermIndex(31), "<?>"), Reduce(ProdIndex(75), 1, NonTermIndex(31), "<?>"), Reduce(ProdIndex(75), 1, NonTermIndex(31), "<?>"), Reduce(ProdIndex(75), 1, NonTermIndex(31), "<?>"), Reduce(ProdIndex(75), 1, NonTermIndex(31), "<?>"), Reduce(ProdIndex(75), 1, NonTermIndex(31), "<?>"), Reduce(ProdIndex(75), 1, NonTermIndex(31), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(75), 1, NonTermIndex(31), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(75), 1, NonTermIndex(31), "<?>"), Error, Error, Error, Error],
-    // State 90:GrammarSymbolRef
-    [Error, Error, Error, Error, Error, Reduce(ProdIndex(55), 3, NonTermIndex(20), "<?>"), Error, Reduce(ProdIndex(55), 3, NonTermIndex(20), "<?>"), Error, Reduce(ProdIndex(55), 3, NonTermIndex(20), "<?>"), Reduce(ProdIndex(55), 3, NonTermIndex(20), "<?>"), Error, Error, Reduce(ProdIndex(55), 3, NonTermIndex(20), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(55), 3, NonTermIndex(20), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(55), 3, NonTermIndex(20), "<?>"), Error, Error, Error, Error],
-    // State 91:GrammarSymbolRef
-    [Error, Error, Error, Error, Error, Reduce(ProdIndex(56), 3, NonTermIndex(21), "<?>"), Error, Reduce(ProdIndex(56), 3, NonTermIndex(21), "<?>"), Error, Reduce(ProdIndex(56), 3, NonTermIndex(21), "<?>"), Reduce(ProdIndex(56), 3, NonTermIndex(21), "<?>"), Error, Error, Reduce(ProdIndex(56), 3, NonTermIndex(21), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(56), 3, NonTermIndex(21), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(56), 3, NonTermIndex(21), "<?>"), Error, Error, Error, Error],
-    // State 92:Production
-    [Error, Error, Error, Error, Error, Reduce(ProdIndex(16), 3, NonTermIndex(8), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(16), 3, NonTermIndex(8), "<?>"), Error, Error, Reduce(ProdIndex(16), 3, NonTermIndex(8), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 93:ProdMetaDatas
-    [Error, Error, Error, Error, Error, Error, Shift(StateIndex(76), TermIndex(6)), Error, Shift(StateIndex(107), TermIndex(8)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 94:OSBracket
-    [Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(108), TermIndex(34)), Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 95:RepetitionModifiersExp
-    [Error, Error, Error, Error, Error, Reduce(ProdIndex(70), 1, NonTermIndex(28), "<?>"), Error, Reduce(ProdIndex(70), 1, NonTermIndex(28), "<?>"), Error, Reduce(ProdIndex(70), 1, NonTermIndex(28), "<?>"), Reduce(ProdIndex(70), 1, NonTermIndex(28), "<?>"), Error, Error, Reduce(ProdIndex(70), 1, NonTermIndex(28), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(70), 1, NonTermIndex(28), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(70), 1, NonTermIndex(28), "<?>"), Error, Error, Error, Error],
-    // State 96:RepetitionModifiersExpOpt
+    // State 65:Assignment
+    [Error, Error, Error, Error, Error, Reduce(ProdIndex(55), 2, NonTermIndex(20), "<?>"), Error, Reduce(ProdIndex(55), 2, NonTermIndex(20), "<?>"), Error, Reduce(ProdIndex(55), 2, NonTermIndex(20), "<?>"), Reduce(ProdIndex(55), 2, NonTermIndex(20), "<?>"), Error, Error, Reduce(ProdIndex(55), 2, NonTermIndex(20), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(55), 2, NonTermIndex(20), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(55), 2, NonTermIndex(20), "<?>"), Error, Error, Error, Error],
+    // State 66:ZeroOrMore
+    [Error, Error, Error, Error, Error, Reduce(ProdIndex(65), 1, NonTermIndex(27), "<?>"), Error, Reduce(ProdIndex(65), 1, NonTermIndex(27), "<?>"), Error, Reduce(ProdIndex(65), 1, NonTermIndex(27), "<?>"), Reduce(ProdIndex(65), 1, NonTermIndex(27), "<?>"), Reduce(ProdIndex(65), 1, NonTermIndex(27), "<?>"), Error, Reduce(ProdIndex(65), 1, NonTermIndex(27), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(65), 1, NonTermIndex(27), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(65), 1, NonTermIndex(27), "<?>"), Error, Error, Error, Error],
+    // State 67:ZeroOrMoreGreedy
+    [Error, Error, Error, Error, Error, Reduce(ProdIndex(66), 1, NonTermIndex(27), "<?>"), Error, Reduce(ProdIndex(66), 1, NonTermIndex(27), "<?>"), Error, Reduce(ProdIndex(66), 1, NonTermIndex(27), "<?>"), Reduce(ProdIndex(66), 1, NonTermIndex(27), "<?>"), Reduce(ProdIndex(66), 1, NonTermIndex(27), "<?>"), Error, Reduce(ProdIndex(66), 1, NonTermIndex(27), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(66), 1, NonTermIndex(27), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(66), 1, NonTermIndex(27), "<?>"), Error, Error, Error, Error],
+    // State 68:OneOrMore
+    [Error, Error, Error, Error, Error, Reduce(ProdIndex(67), 1, NonTermIndex(27), "<?>"), Error, Reduce(ProdIndex(67), 1, NonTermIndex(27), "<?>"), Error, Reduce(ProdIndex(67), 1, NonTermIndex(27), "<?>"), Reduce(ProdIndex(67), 1, NonTermIndex(27), "<?>"), Reduce(ProdIndex(67), 1, NonTermIndex(27), "<?>"), Error, Reduce(ProdIndex(67), 1, NonTermIndex(27), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(67), 1, NonTermIndex(27), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(67), 1, NonTermIndex(27), "<?>"), Error, Error, Error, Error],
+    // State 69:OneOrMoreGreedy
+    [Error, Error, Error, Error, Error, Reduce(ProdIndex(68), 1, NonTermIndex(27), "<?>"), Error, Reduce(ProdIndex(68), 1, NonTermIndex(27), "<?>"), Error, Reduce(ProdIndex(68), 1, NonTermIndex(27), "<?>"), Reduce(ProdIndex(68), 1, NonTermIndex(27), "<?>"), Reduce(ProdIndex(68), 1, NonTermIndex(27), "<?>"), Error, Reduce(ProdIndex(68), 1, NonTermIndex(27), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(68), 1, NonTermIndex(27), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(68), 1, NonTermIndex(27), "<?>"), Error, Error, Error, Error],
+    // State 70:Optional
+    [Error, Error, Error, Error, Error, Reduce(ProdIndex(69), 1, NonTermIndex(27), "<?>"), Error, Reduce(ProdIndex(69), 1, NonTermIndex(27), "<?>"), Error, Reduce(ProdIndex(69), 1, NonTermIndex(27), "<?>"), Reduce(ProdIndex(69), 1, NonTermIndex(27), "<?>"), Reduce(ProdIndex(69), 1, NonTermIndex(27), "<?>"), Error, Reduce(ProdIndex(69), 1, NonTermIndex(27), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(69), 1, NonTermIndex(27), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(69), 1, NonTermIndex(27), "<?>"), Error, Error, Error, Error],
+    // State 71:OptionalGreedy
+    [Error, Error, Error, Error, Error, Reduce(ProdIndex(70), 1, NonTermIndex(27), "<?>"), Error, Reduce(ProdIndex(70), 1, NonTermIndex(27), "<?>"), Error, Reduce(ProdIndex(70), 1, NonTermIndex(27), "<?>"), Reduce(ProdIndex(70), 1, NonTermIndex(27), "<?>"), Reduce(ProdIndex(70), 1, NonTermIndex(27), "<?>"), Error, Reduce(ProdIndex(70), 1, NonTermIndex(27), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(70), 1, NonTermIndex(27), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(70), 1, NonTermIndex(27), "<?>"), Error, Error, Error, Error],
+    // State 72:RepetitionOperator
+    [Error, Error, Error, Error, Error, Reduce(ProdIndex(63), 1, NonTermIndex(26), "<?>"), Error, Reduce(ProdIndex(63), 1, NonTermIndex(26), "<?>"), Error, Reduce(ProdIndex(63), 1, NonTermIndex(26), "<?>"), Reduce(ProdIndex(63), 1, NonTermIndex(26), "<?>"), Error, Error, Reduce(ProdIndex(63), 1, NonTermIndex(26), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(63), 1, NonTermIndex(26), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(63), 1, NonTermIndex(26), "<?>"), Error, Error, Error, Error],
+    // State 73:RepetitionOperatorOpt
+    [Error, Error, Error, Error, Error, Reduce(ProdIndex(61), 2, NonTermIndex(24), "<?>"), Error, Reduce(ProdIndex(61), 2, NonTermIndex(24), "<?>"), Error, Reduce(ProdIndex(61), 2, NonTermIndex(24), "<?>"), Reduce(ProdIndex(61), 2, NonTermIndex(24), "<?>"), Error, Error, Reduce(ProdIndex(61), 2, NonTermIndex(24), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(61), 2, NonTermIndex(24), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(61), 2, NonTermIndex(24), "<?>"), Error, Error, Error, Error],
+    // State 74:RepetitionOperatorOp
+    [Error, Error, Error, Error, Error, Reduce(ProdIndex(73), 0, NonTermIndex(29), "<?>"), Error, Reduce(ProdIndex(73), 0, NonTermIndex(29), "<?>"), Error, Reduce(ProdIndex(73), 0, NonTermIndex(29), "<?>"), Reduce(ProdIndex(73), 0, NonTermIndex(29), "<?>"), Shift(StateIndex(96), TermIndex(11)), Error, Reduce(ProdIndex(73), 0, NonTermIndex(29), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(73), 0, NonTermIndex(29), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(73), 0, NonTermIndex(29), "<?>"), Error, Error, Error, Error],
+    // State 75:RepetitionOperatorOpt
     [Error, Error, Error, Error, Error, Reduce(ProdIndex(60), 2, NonTermIndex(24), "<?>"), Error, Reduce(ProdIndex(60), 2, NonTermIndex(24), "<?>"), Error, Reduce(ProdIndex(60), 2, NonTermIndex(24), "<?>"), Reduce(ProdIndex(60), 2, NonTermIndex(24), "<?>"), Error, Error, Reduce(ProdIndex(60), 2, NonTermIndex(24), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(60), 2, NonTermIndex(24), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(60), 2, NonTermIndex(24), "<?>"), Error, Error, Error, Error],
-    // State 97:IntConst
-    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(46), 1, NonTermIndex(17), "<?>"), Error, Reduce(ProdIndex(46), 1, NonTermIndex(17), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 98:FloatConst
-    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(47), 1, NonTermIndex(17), "<?>"), Error, Reduce(ProdIndex(47), 1, NonTermIndex(17), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 99:BoolConst
-    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(48), 1, NonTermIndex(17), "<?>"), Error, Reduce(ProdIndex(48), 1, NonTermIndex(17), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 100:StrConst
-    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(49), 1, NonTermIndex(17), "<?>"), Error, Reduce(ProdIndex(49), 1, NonTermIndex(17), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 101:Const
-    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(45), 3, NonTermIndex(16), "<?>"), Error, Reduce(ProdIndex(45), 3, NonTermIndex(16), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 102:ProdMetaData
-    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(35), 3, NonTermIndex(13), "<?>"), Error, Reduce(ProdIndex(35), 3, NonTermIndex(13), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 103:Colon
+    // State 76:Colon
+    [Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(99), TermIndex(36)), Shift(StateIndex(100), TermIndex(37)), Shift(StateIndex(101), TermIndex(38)), Shift(StateIndex(102), TermIndex(39)), Error, Error, Error, Error],
+    // State 77:Comma
+    [Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(41), TermIndex(22)), Shift(StateIndex(42), TermIndex(23)), Shift(StateIndex(43), TermIndex(24)), Shift(StateIndex(44), TermIndex(25)), Shift(StateIndex(45), TermIndex(26)), Shift(StateIndex(46), TermIndex(27)), Shift(StateIndex(47), TermIndex(28)), Error, Error, Error, Error, Error, Shift(StateIndex(48), TermIndex(34)), Error, Shift(StateIndex(49), TermIndex(36)), Error, Error, Error, Error, Error, Error, Error],
+    // State 78:CBrace
+    [Error, Error, Error, Error, Shift(StateIndex(105), TermIndex(4)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 79:Dynamic
+    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(41), 1, NonTermIndex(14), "<?>"), Error, Reduce(ProdIndex(41), 1, NonTermIndex(14), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 80:Prefer
+    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(38), 1, NonTermIndex(14), "<?>"), Error, Reduce(ProdIndex(38), 1, NonTermIndex(14), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 81:Finish
+    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(39), 1, NonTermIndex(14), "<?>"), Error, Reduce(ProdIndex(39), 1, NonTermIndex(14), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 82:NoFinish
+    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(40), 1, NonTermIndex(14), "<?>"), Error, Reduce(ProdIndex(40), 1, NonTermIndex(14), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 83:Name
+    [Error, Error, Error, Error, Shift(StateIndex(76), TermIndex(4)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 84:IntConst
+    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(42), 1, NonTermIndex(14), "<?>"), Error, Reduce(ProdIndex(42), 1, NonTermIndex(14), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 85:TermMetaData
+    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(45), 1, NonTermIndex(15), "<?>"), Error, Reduce(ProdIndex(45), 1, NonTermIndex(15), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 86:TermMetaDatas
+    [Error, Error, Error, Error, Error, Error, Shift(StateIndex(106), TermIndex(6)), Error, Shift(StateIndex(107), TermIndex(8)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 87:UserMetaData
+    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(43), 1, NonTermIndex(14), "<?>"), Error, Reduce(ProdIndex(43), 1, NonTermIndex(14), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 88:SemiColon
+    [Reduce(ProdIndex(22), 5, NonTermIndex(11), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(22), 5, NonTermIndex(11), "<?>"), Error, Error, Error, Error, Error, Reduce(ProdIndex(22), 5, NonTermIndex(11), "<?>"), Error, Error, Error],
+    // State 89:OBrace
+    [Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(79), TermIndex(26)), Error, Error, Shift(StateIndex(80), TermIndex(29)), Shift(StateIndex(81), TermIndex(30)), Shift(StateIndex(82), TermIndex(31)), Error, Error, Shift(StateIndex(83), TermIndex(34)), Error, Shift(StateIndex(84), TermIndex(36)), Error, Error, Error, Error, Error, Error, Error],
+    // State 90:CBracket
+    [Error, Error, Error, Error, Error, Reduce(ProdIndex(59), 3, NonTermIndex(23), "<?>"), Error, Reduce(ProdIndex(59), 3, NonTermIndex(23), "<?>"), Error, Reduce(ProdIndex(59), 3, NonTermIndex(23), "<?>"), Reduce(ProdIndex(59), 3, NonTermIndex(23), "<?>"), Error, Error, Reduce(ProdIndex(59), 3, NonTermIndex(23), "<?>"), Reduce(ProdIndex(59), 3, NonTermIndex(23), "<?>"), Reduce(ProdIndex(59), 3, NonTermIndex(23), "<?>"), Reduce(ProdIndex(59), 3, NonTermIndex(23), "<?>"), Reduce(ProdIndex(59), 3, NonTermIndex(23), "<?>"), Reduce(ProdIndex(59), 3, NonTermIndex(23), "<?>"), Reduce(ProdIndex(59), 3, NonTermIndex(23), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(59), 3, NonTermIndex(23), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(59), 3, NonTermIndex(23), "<?>"), Error, Error, Error, Error],
+    // State 91:Name
+    [Error, Error, Error, Error, Error, Reduce(ProdIndex(77), 1, NonTermIndex(32), "<?>"), Error, Reduce(ProdIndex(77), 1, NonTermIndex(32), "<?>"), Error, Reduce(ProdIndex(77), 1, NonTermIndex(32), "<?>"), Reduce(ProdIndex(77), 1, NonTermIndex(32), "<?>"), Error, Error, Reduce(ProdIndex(77), 1, NonTermIndex(32), "<?>"), Reduce(ProdIndex(77), 1, NonTermIndex(32), "<?>"), Reduce(ProdIndex(77), 1, NonTermIndex(32), "<?>"), Reduce(ProdIndex(77), 1, NonTermIndex(32), "<?>"), Reduce(ProdIndex(77), 1, NonTermIndex(32), "<?>"), Reduce(ProdIndex(77), 1, NonTermIndex(32), "<?>"), Reduce(ProdIndex(77), 1, NonTermIndex(32), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(77), 1, NonTermIndex(32), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(77), 1, NonTermIndex(32), "<?>"), Error, Error, Error, Error],
+    // State 92:GrammarSymbolRef
+    [Error, Error, Error, Error, Error, Reduce(ProdIndex(57), 3, NonTermIndex(21), "<?>"), Error, Reduce(ProdIndex(57), 3, NonTermIndex(21), "<?>"), Error, Reduce(ProdIndex(57), 3, NonTermIndex(21), "<?>"), Reduce(ProdIndex(57), 3, NonTermIndex(21), "<?>"), Error, Error, Reduce(ProdIndex(57), 3, NonTermIndex(21), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(57), 3, NonTermIndex(21), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(57), 3, NonTermIndex(21), "<?>"), Error, Error, Error, Error],
+    // State 93:GrammarSymbolRef
+    [Error, Error, Error, Error, Error, Reduce(ProdIndex(58), 3, NonTermIndex(22), "<?>"), Error, Reduce(ProdIndex(58), 3, NonTermIndex(22), "<?>"), Error, Reduce(ProdIndex(58), 3, NonTermIndex(22), "<?>"), Reduce(ProdIndex(58), 3, NonTermIndex(22), "<?>"), Error, Error, Reduce(ProdIndex(58), 3, NonTermIndex(22), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(58), 3, NonTermIndex(22), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(58), 3, NonTermIndex(22), "<?>"), Error, Error, Error, Error],
+    // State 94:Production
+    [Error, Error, Error, Error, Error, Reduce(ProdIndex(16), 3, NonTermIndex(8), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(16), 3, NonTermIndex(8), "<?>"), Error, Error, Reduce(ProdIndex(16), 3, NonTermIndex(8), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 95:ProdMetaDatas
+    [Error, Error, Error, Error, Error, Error, Shift(StateIndex(77), TermIndex(6)), Error, Shift(StateIndex(109), TermIndex(8)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 96:OSBracket
+    [Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(110), TermIndex(34)), Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 97:RepetitionModifiersExp
+    [Error, Error, Error, Error, Error, Reduce(ProdIndex(72), 1, NonTermIndex(29), "<?>"), Error, Reduce(ProdIndex(72), 1, NonTermIndex(29), "<?>"), Error, Reduce(ProdIndex(72), 1, NonTermIndex(29), "<?>"), Reduce(ProdIndex(72), 1, NonTermIndex(29), "<?>"), Error, Error, Reduce(ProdIndex(72), 1, NonTermIndex(29), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(72), 1, NonTermIndex(29), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(72), 1, NonTermIndex(29), "<?>"), Error, Error, Error, Error],
+    // State 98:RepetitionModifiersExpOpt
+    [Error, Error, Error, Error, Error, Reduce(ProdIndex(62), 2, NonTermIndex(25), "<?>"), Error, Reduce(ProdIndex(62), 2, NonTermIndex(25), "<?>"), Error, Reduce(ProdIndex(62), 2, NonTermIndex(25), "<?>"), Reduce(ProdIndex(62), 2, NonTermIndex(25), "<?>"), Error, Error, Reduce(ProdIndex(62), 2, NonTermIndex(25), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(62), 2, NonTermIndex(25), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(62), 2, NonTermIndex(25), "<?>"), Error, Error, Error, Error],
+    // State 99:IntConst
+    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(48), 1, NonTermIndex(18), "<?>"), Error, Reduce(ProdIndex(48), 1, NonTermIndex(18), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 100:FloatConst
+    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(49), 1, NonTermIndex(18), "<?>"), Error, Reduce(ProdIndex(49), 1, NonTermIndex(18), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 101:BoolConst
+    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(50), 1, NonTermIndex(18), "<?>"), Error, Reduce(ProdIndex(50), 1, NonTermIndex(18), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 102:StrConst
+    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(51), 1, NonTermIndex(18), "<?>"), Error, Reduce(ProdIndex(51), 1, NonTermIndex(18), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 103:Const
+    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(46), 3, NonTermIndex(16), "<?>"), Error, Reduce(ProdIndex(46), 3, NonTermIndex(16), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 104:ProdMetaData
+    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(36), 3, NonTermIndex(13), "<?>"), Error, Reduce(ProdIndex(36), 3, NonTermIndex(13), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 105:Colon
     [Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(29), TermIndex(9)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(30), TermIndex(34)), Error, Error, Error, Error, Shift(StateIndex(31), TermIndex(39)), Error, Error, Error, Error],
-    // State 104:Comma
-    [Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(78), TermIndex(26)), Error, Error, Shift(StateIndex(79), TermIndex(29)), Shift(StateIndex(80), TermIndex(30)), Shift(StateIndex(81), TermIndex(31)), Error, Error, Shift(StateIndex(48), TermIndex(34)), Error, Shift(StateIndex(82), TermIndex(36)), Error, Error, Error, Error, Error, Error, Error],
-    // State 105:CBrace
-    [Error, Error, Error, Error, Error, Shift(StateIndex(113), TermIndex(5)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 106:TermMetaDatas
-    [Error, Error, Error, Error, Error, Error, Shift(StateIndex(104), TermIndex(6)), Error, Shift(StateIndex(114), TermIndex(8)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 106:Comma
+    [Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(79), TermIndex(26)), Error, Error, Shift(StateIndex(80), TermIndex(29)), Shift(StateIndex(81), TermIndex(30)), Shift(StateIndex(82), TermIndex(31)), Error, Error, Shift(StateIndex(83), TermIndex(34)), Error, Shift(StateIndex(84), TermIndex(36)), Error, Error, Error, Error, Error, Error, Error],
     // State 107:CBrace
+    [Error, Error, Error, Error, Error, Shift(StateIndex(115), TermIndex(5)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 108:TermMetaDatas
+    [Error, Error, Error, Error, Error, Error, Shift(StateIndex(106), TermIndex(6)), Error, Shift(StateIndex(116), TermIndex(8)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 109:CBrace
     [Error, Error, Error, Error, Error, Reduce(ProdIndex(19), 4, NonTermIndex(9), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(19), 4, NonTermIndex(9), "<?>"), Error, Error, Reduce(ProdIndex(19), 4, NonTermIndex(9), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 108:Name
-    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(74), 1, NonTermIndex(30), "<?>"), Error, Error, Error, Error, Error, Reduce(ProdIndex(74), 1, NonTermIndex(30), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 109:RepetitionModifiers
-    [Error, Error, Error, Error, Error, Error, Shift(StateIndex(115), TermIndex(6)), Error, Error, Error, Error, Error, Shift(StateIndex(116), TermIndex(12)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 110:RepetitionModifier
-    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(73), 1, NonTermIndex(29), "<?>"), Error, Error, Error, Error, Error, Reduce(ProdIndex(73), 1, NonTermIndex(29), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 111:GrammarRuleRHS
-    [Error, Error, Error, Error, Error, Shift(StateIndex(117), TermIndex(5)), Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(62), TermIndex(13)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 112:TermMetaData
-    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(43), 3, NonTermIndex(15), "<?>"), Error, Reduce(ProdIndex(43), 3, NonTermIndex(15), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 113:SemiColon
+    // State 110:Name
+    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(76), 1, NonTermIndex(31), "<?>"), Error, Error, Error, Error, Error, Reduce(ProdIndex(76), 1, NonTermIndex(31), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 111:RepetitionModifiers
+    [Error, Error, Error, Error, Error, Error, Shift(StateIndex(117), TermIndex(6)), Error, Error, Error, Error, Error, Shift(StateIndex(118), TermIndex(12)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 112:RepetitionModifier
+    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(75), 1, NonTermIndex(30), "<?>"), Error, Error, Error, Error, Error, Reduce(ProdIndex(75), 1, NonTermIndex(30), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 113:GrammarRuleRHS
+    [Error, Error, Error, Error, Error, Shift(StateIndex(119), TermIndex(5)), Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(63), TermIndex(13)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 114:TermMetaData
+    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(44), 3, NonTermIndex(15), "<?>"), Error, Reduce(ProdIndex(44), 3, NonTermIndex(15), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 115:SemiColon
     [Reduce(ProdIndex(25), 7, NonTermIndex(11), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(25), 7, NonTermIndex(11), "<?>"), Error, Error, Error, Error, Error, Reduce(ProdIndex(25), 7, NonTermIndex(11), "<?>"), Error, Error, Error],
-    // State 114:CBrace
-    [Error, Error, Error, Error, Error, Shift(StateIndex(118), TermIndex(5)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 115:Comma
-    [Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(108), TermIndex(34)), Error, Error, Error, Error, Error, Error, Error, Error, Error],
-    // State 116:CSBracket
-    [Error, Error, Error, Error, Error, Reduce(ProdIndex(69), 3, NonTermIndex(27), "<?>"), Error, Reduce(ProdIndex(69), 3, NonTermIndex(27), "<?>"), Error, Reduce(ProdIndex(69), 3, NonTermIndex(27), "<?>"), Reduce(ProdIndex(69), 3, NonTermIndex(27), "<?>"), Error, Error, Reduce(ProdIndex(69), 3, NonTermIndex(27), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(69), 3, NonTermIndex(27), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(69), 3, NonTermIndex(27), "<?>"), Error, Error, Error, Error],
-    // State 117:SemiColon
+    // State 116:CBrace
+    [Error, Error, Error, Error, Error, Shift(StateIndex(120), TermIndex(5)), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 117:Comma
+    [Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Shift(StateIndex(110), TermIndex(34)), Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 118:CSBracket
+    [Error, Error, Error, Error, Error, Reduce(ProdIndex(71), 3, NonTermIndex(28), "<?>"), Error, Reduce(ProdIndex(71), 3, NonTermIndex(28), "<?>"), Error, Reduce(ProdIndex(71), 3, NonTermIndex(28), "<?>"), Reduce(ProdIndex(71), 3, NonTermIndex(28), "<?>"), Error, Error, Reduce(ProdIndex(71), 3, NonTermIndex(28), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(71), 3, NonTermIndex(28), "<?>"), Error, Error, Error, Error, Reduce(ProdIndex(71), 3, NonTermIndex(28), "<?>"), Error, Error, Error, Error],
+    // State 119:SemiColon
     [Reduce(ProdIndex(13), 8, NonTermIndex(6), "<?>"), Reduce(ProdIndex(13), 8, NonTermIndex(6), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(13), 8, NonTermIndex(6), "<?>"), Error, Error, Error, Error, Error, Reduce(ProdIndex(13), 8, NonTermIndex(6), "<?>"), Error, Error, Error],
-    // State 118:SemiColon
+    // State 120:SemiColon
     [Reduce(ProdIndex(24), 8, NonTermIndex(11), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(24), 8, NonTermIndex(11), "<?>"), Error, Error, Error, Error, Error, Reduce(ProdIndex(24), 8, NonTermIndex(11), "<?>"), Error, Error, Error],
-    // State 119:RepetitionModifier
-    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(72), 3, NonTermIndex(29), "<?>"), Error, Error, Error, Error, Error, Reduce(ProdIndex(72), 3, NonTermIndex(29), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
+    // State 121:RepetitionModifier
+    [Error, Error, Error, Error, Error, Error, Reduce(ProdIndex(74), 3, NonTermIndex(30), "<?>"), Error, Error, Error, Error, Error, Reduce(ProdIndex(74), 3, NonTermIndex(30), "<?>"), Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error, Error],
 ],
     gotos: [
     // State 0:AUG
-    [None, None, Some(StateIndex(4)), Some(StateIndex(5)), Some(StateIndex(6)), Some(StateIndex(7)), Some(StateIndex(8)), Some(StateIndex(9)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, Some(StateIndex(4)), Some(StateIndex(5)), Some(StateIndex(6)), Some(StateIndex(7)), Some(StateIndex(8)), Some(StateIndex(9)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 1:Terminals
-    [None, None, None, None, None, None, None, Some(StateIndex(10)), None, None, Some(StateIndex(11)), Some(StateIndex(12)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, Some(StateIndex(10)), None, None, Some(StateIndex(11)), Some(StateIndex(12)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 2:Import
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 3:Action
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 4:PGFile
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 5:Imports
-    [None, None, None, None, Some(StateIndex(14)), Some(StateIndex(15)), Some(StateIndex(8)), Some(StateIndex(9)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, Some(StateIndex(14)), Some(StateIndex(15)), Some(StateIndex(8)), Some(StateIndex(9)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 6:ImportStm
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 7:GrammarRules
-    [None, None, None, None, None, None, Some(StateIndex(17)), Some(StateIndex(9)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, Some(StateIndex(17)), Some(StateIndex(9)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 8:GrammarRule
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 9:ActionOpt
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 10:ActionOpt
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 11:TerminalRules
-    [None, None, None, None, None, None, None, Some(StateIndex(10)), None, None, None, Some(StateIndex(20)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, Some(StateIndex(10)), None, None, None, Some(StateIndex(20)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 12:TerminalRule
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 13:StrConst
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 14:ImportStm
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 15:GrammarRules
-    [None, None, None, None, None, None, Some(StateIndex(17)), Some(StateIndex(9)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, Some(StateIndex(17)), Some(StateIndex(9)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 16:Terminals
-    [None, None, None, None, None, None, None, Some(StateIndex(10)), None, None, Some(StateIndex(23)), Some(StateIndex(12)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, Some(StateIndex(10)), None, None, Some(StateIndex(23)), Some(StateIndex(12)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 17:GrammarRule
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 18:Name
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 19:Name
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 20:TerminalRule
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 21:As
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 22:Terminals
-    [None, None, None, None, None, None, None, Some(StateIndex(10)), None, None, Some(StateIndex(28)), Some(StateIndex(12)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, Some(StateIndex(10)), None, None, Some(StateIndex(28)), Some(StateIndex(12)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 23:TerminalRules
-    [None, None, None, None, None, None, None, Some(StateIndex(10)), None, None, None, Some(StateIndex(20)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, Some(StateIndex(10)), None, None, None, Some(StateIndex(20)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 24:Colon
-    [None, None, None, None, None, None, None, None, Some(StateIndex(32)), Some(StateIndex(33)), None, None, None, None, None, None, None, None, Some(StateIndex(34)), Some(StateIndex(35)), Some(StateIndex(36)), Some(StateIndex(37)), Some(StateIndex(38)), Some(StateIndex(39)), None, None, None, None, None, None, None, Some(StateIndex(40)), None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, Some(StateIndex(32)), Some(StateIndex(33)), None, None, None, None, None, None, None, None, None, Some(StateIndex(34)), Some(StateIndex(35)), Some(StateIndex(36)), Some(StateIndex(37)), Some(StateIndex(38)), Some(StateIndex(39)), None, None, None, None, None, None, None, Some(StateIndex(40)), None, None, None, None, None, None],
     // State 25:OBrace
-    [None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(50)), Some(StateIndex(51)), None, None, Some(StateIndex(52)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(50)), Some(StateIndex(51)), None, None, Some(StateIndex(52)), Some(StateIndex(53)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 26:Colon
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(57)), None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(58)), None, None, None, None, None],
     // State 27:Name
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 28:TerminalRules
-    [None, None, None, None, None, None, None, Some(StateIndex(10)), None, None, None, Some(StateIndex(20)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, Some(StateIndex(10)), None, None, None, Some(StateIndex(20)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 29:OBracket
-    [None, None, None, None, None, None, None, None, Some(StateIndex(58)), Some(StateIndex(33)), None, None, None, None, None, None, None, None, Some(StateIndex(34)), Some(StateIndex(35)), Some(StateIndex(36)), Some(StateIndex(37)), Some(StateIndex(38)), Some(StateIndex(39)), None, None, None, None, None, None, None, Some(StateIndex(40)), None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, Some(StateIndex(59)), Some(StateIndex(33)), None, None, None, None, None, None, None, None, None, Some(StateIndex(34)), Some(StateIndex(35)), Some(StateIndex(36)), Some(StateIndex(37)), Some(StateIndex(38)), Some(StateIndex(39)), None, None, None, None, None, None, None, Some(StateIndex(40)), None, None, None, None, None, None],
     // State 30:Name
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 31:StrConst
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 32:GrammarRuleRHS
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 33:Production
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 34:Assignment
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 35:Assignments
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(64)), None, Some(StateIndex(36)), Some(StateIndex(37)), Some(StateIndex(38)), Some(StateIndex(39)), None, None, None, None, None, None, None, Some(StateIndex(40)), None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(65)), None, Some(StateIndex(36)), Some(StateIndex(37)), Some(StateIndex(38)), Some(StateIndex(39)), None, None, None, None, None, None, None, Some(StateIndex(40)), None, None, None, None, None, None],
     // State 36:PlainAssignment
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 37:BoolAssignment
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 38:ProductionGroup
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(71)), Some(StateIndex(72)), Some(StateIndex(73)), None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(72)), Some(StateIndex(73)), Some(StateIndex(74)), None, None, None, None, None, None, None, None, None, None, None],
     // State 39:GrammarSymbolRef
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 40:GrammarSymbol
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(71)), Some(StateIndex(74)), Some(StateIndex(73)), None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(72)), Some(StateIndex(75)), Some(StateIndex(74)), None, None, None, None, None, None, None, None, None, None, None],
     // State 41:Left
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 42:Right
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 43:Reduce
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 44:Shift
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 45:Dynamic
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 46:NOPS
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 47:NOPSE
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 48:Name
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 49:IntConst
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 50:ProdMetaData
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 51:ProdMetaDatas
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 52:UserMetaData
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 53:SemiColon
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 54:OBrace
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(83)), Some(StateIndex(84)), Some(StateIndex(85)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 55:RegexTerm
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 56:StrConst
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 57:Recognizer
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 58:GrammarRuleRHS
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 59:Equals
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(38)), Some(StateIndex(90)), None, None, None, None, None, None, None, Some(StateIndex(40)), None, None, None, None, None, None],
-    // State 60:QEquals
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(38)), Some(StateIndex(91)), None, None, None, None, None, None, None, Some(StateIndex(40)), None, None, None, None, None, None],
-    // State 61:SemiColon
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 62:Choice
-    [None, None, None, None, None, None, None, None, None, Some(StateIndex(92)), None, None, None, None, None, None, None, None, Some(StateIndex(34)), Some(StateIndex(35)), Some(StateIndex(36)), Some(StateIndex(37)), Some(StateIndex(38)), Some(StateIndex(39)), None, None, None, None, None, None, None, Some(StateIndex(40)), None, None, None, None, None, None],
-    // State 63:OBrace
-    [None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(50)), Some(StateIndex(93)), None, None, Some(StateIndex(52)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 64:Assignment
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 65:ZeroOrMore
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 66:ZeroOrMoreGreedy
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 67:OneOrMore
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 68:OneOrMoreGreedy
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 69:Optional
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 70:OptionalGreedy
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 71:RepetitionOperator
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 72:RepetitionOperatorOpt
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 73:RepetitionOperatorOp
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(95)), Some(StateIndex(96)), None, None, None, None, None, None, None, None, None],
-    // State 74:RepetitionOperatorOpt
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 75:Colon
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(101)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 76:Comma
-    [None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(102)), None, None, None, Some(StateIndex(52)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 77:CBrace
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 78:Dynamic
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 79:Prefer
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 80:Finish
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 81:NoFinish
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 82:IntConst
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 83:TermMetaData
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 84:TermMetaDatas
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 85:UserMetaData
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 86:SemiColon
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 87:OBrace
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(83)), Some(StateIndex(106)), Some(StateIndex(85)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 88:CBracket
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 89:Name
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 90:GrammarSymbolRef
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 91:GrammarSymbolRef
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 92:Production
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 93:ProdMetaDatas
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 94:OSBracket
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(109)), Some(StateIndex(110)), None, None, None, None, None, None, None],
-    // State 95:RepetitionModifiersExp
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 96:RepetitionModifiersExpOpt
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 97:IntConst
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 98:FloatConst
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 99:BoolConst
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 100:StrConst
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 101:Const
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 102:ProdMetaData
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 103:Colon
-    [None, None, None, None, None, None, None, None, Some(StateIndex(111)), Some(StateIndex(33)), None, None, None, None, None, None, None, None, Some(StateIndex(34)), Some(StateIndex(35)), Some(StateIndex(36)), Some(StateIndex(37)), Some(StateIndex(38)), Some(StateIndex(39)), None, None, None, None, None, None, None, Some(StateIndex(40)), None, None, None, None, None, None],
-    // State 104:Comma
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(112)), None, Some(StateIndex(85)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 105:CBrace
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 106:TermMetaDatas
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 53:ProdKind
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 54:SemiColon
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 55:OBrace
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(85)), Some(StateIndex(86)), Some(StateIndex(87)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 56:RegexTerm
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 57:StrConst
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 58:Recognizer
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 59:GrammarRuleRHS
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 60:Equals
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(38)), Some(StateIndex(92)), None, None, None, None, None, None, None, Some(StateIndex(40)), None, None, None, None, None, None],
+    // State 61:QEquals
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(38)), Some(StateIndex(93)), None, None, None, None, None, None, None, Some(StateIndex(40)), None, None, None, None, None, None],
+    // State 62:SemiColon
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 63:Choice
+    [None, None, None, None, None, None, None, None, None, Some(StateIndex(94)), None, None, None, None, None, None, None, None, None, Some(StateIndex(34)), Some(StateIndex(35)), Some(StateIndex(36)), Some(StateIndex(37)), Some(StateIndex(38)), Some(StateIndex(39)), None, None, None, None, None, None, None, Some(StateIndex(40)), None, None, None, None, None, None],
+    // State 64:OBrace
+    [None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(50)), Some(StateIndex(95)), None, None, Some(StateIndex(52)), Some(StateIndex(53)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 65:Assignment
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 66:ZeroOrMore
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 67:ZeroOrMoreGreedy
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 68:OneOrMore
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 69:OneOrMoreGreedy
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 70:Optional
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 71:OptionalGreedy
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 72:RepetitionOperator
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 73:RepetitionOperatorOpt
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 74:RepetitionOperatorOp
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(97)), Some(StateIndex(98)), None, None, None, None, None, None, None, None, None],
+    // State 75:RepetitionOperatorOpt
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 76:Colon
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(103)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 77:Comma
+    [None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(104)), None, None, None, Some(StateIndex(52)), Some(StateIndex(53)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 78:CBrace
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 79:Dynamic
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 80:Prefer
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 81:Finish
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 82:NoFinish
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 83:Name
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 84:IntConst
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 85:TermMetaData
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 86:TermMetaDatas
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 87:UserMetaData
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 88:SemiColon
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 89:OBrace
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(85)), Some(StateIndex(108)), Some(StateIndex(87)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 90:CBracket
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 91:Name
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 92:GrammarSymbolRef
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 93:GrammarSymbolRef
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 94:Production
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 95:ProdMetaDatas
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 96:OSBracket
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(111)), Some(StateIndex(112)), None, None, None, None, None, None, None],
+    // State 97:RepetitionModifiersExp
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 98:RepetitionModifiersExpOpt
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 99:IntConst
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 100:FloatConst
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 101:BoolConst
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 102:StrConst
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 103:Const
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 104:ProdMetaData
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 105:Colon
+    [None, None, None, None, None, None, None, None, Some(StateIndex(113)), Some(StateIndex(33)), None, None, None, None, None, None, None, None, None, Some(StateIndex(34)), Some(StateIndex(35)), Some(StateIndex(36)), Some(StateIndex(37)), Some(StateIndex(38)), Some(StateIndex(39)), None, None, None, None, None, None, None, Some(StateIndex(40)), None, None, None, None, None, None],
+    // State 106:Comma
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(114)), None, Some(StateIndex(87)), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 107:CBrace
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 108:Name
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 109:RepetitionModifiers
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 110:RepetitionModifier
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 111:GrammarRuleRHS
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 112:TermMetaData
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 113:SemiColon
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 114:CBrace
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 115:Comma
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(119)), None, None, None, None, None, None, None],
-    // State 116:CSBracket
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 117:SemiColon
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 118:SemiColon
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 119:RepetitionModifier
-    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 108:TermMetaDatas
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 109:CBrace
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 110:Name
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 111:RepetitionModifiers
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 112:RepetitionModifier
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 113:GrammarRuleRHS
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 114:TermMetaData
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 115:SemiColon
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 116:CBrace
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 117:Comma
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(StateIndex(121)), None, None, None, None, None, None, None],
+    // State 118:CSBracket
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 119:SemiColon
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 120:SemiColon
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 121:RepetitionModifier
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
 ]};
 
 impl ParserDefinition for RustemoParserDefinition {
@@ -1123,7 +1134,7 @@ pub(in crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefi
     // State 47:NOPSE
     [Some(6), Some(8), None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 48:Name
-    [Some(4), None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    [Some(4), Some(6), Some(8), None, None, None, None, None, None, None, None, None, None, None, None],
     // State 49:IntConst
     [Some(6), Some(8), None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 50:ProdMetaData
@@ -1132,139 +1143,143 @@ pub(in crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefi
     [Some(6), Some(8), None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 52:UserMetaData
     [Some(6), Some(8), None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 53:SemiColon
+    // State 53:ProdKind
+    [Some(6), Some(8), None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 54:SemiColon
     [Some(0), Some(34), Some(40), None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 54:OBrace
+    // State 55:OBrace
     [Some(31), Some(26), Some(29), Some(30), Some(34), Some(36), None, None, None, None, None, None, None, None, None],
-    // State 55:RegexTerm
+    // State 56:RegexTerm
     [Some(5), Some(7), None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 56:StrConst
+    // State 57:StrConst
     [Some(5), Some(7), None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 57:Recognizer
+    // State 58:Recognizer
     [Some(5), Some(7), None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 58:GrammarRuleRHS
+    // State 59:GrammarRuleRHS
     [Some(10), Some(13), None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 59:Equals
+    // State 60:Equals
     [Some(9), Some(34), Some(39), None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 60:QEquals
+    // State 61:QEquals
     [Some(9), Some(34), Some(39), None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 61:SemiColon
+    // State 62:SemiColon
     [Some(0), Some(1), Some(34), Some(40), None, None, None, None, None, None, None, None, None, None, None],
-    // State 62:Choice
+    // State 63:Choice
     [Some(9), Some(34), Some(39), None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 63:OBrace
+    // State 64:OBrace
     [Some(26), Some(24), Some(23), Some(25), Some(28), Some(22), Some(27), Some(34), Some(36), None, None, None, None, None, None],
-    // State 64:Assignment
+    // State 65:Assignment
     [Some(5), Some(7), Some(9), Some(10), Some(13), Some(34), Some(39), None, None, None, None, None, None, None, None],
-    // State 65:ZeroOrMore
+    // State 66:ZeroOrMore
     [Some(5), Some(7), Some(9), Some(10), Some(11), Some(13), Some(34), Some(39), None, None, None, None, None, None, None],
-    // State 66:ZeroOrMoreGreedy
+    // State 67:ZeroOrMoreGreedy
     [Some(5), Some(7), Some(9), Some(10), Some(11), Some(13), Some(34), Some(39), None, None, None, None, None, None, None],
-    // State 67:OneOrMore
+    // State 68:OneOrMore
     [Some(5), Some(7), Some(9), Some(10), Some(11), Some(13), Some(34), Some(39), None, None, None, None, None, None, None],
-    // State 68:OneOrMoreGreedy
+    // State 69:OneOrMoreGreedy
     [Some(5), Some(7), Some(9), Some(10), Some(11), Some(13), Some(34), Some(39), None, None, None, None, None, None, None],
-    // State 69:Optional
+    // State 70:Optional
     [Some(5), Some(7), Some(9), Some(10), Some(11), Some(13), Some(34), Some(39), None, None, None, None, None, None, None],
-    // State 70:OptionalGreedy
+    // State 71:OptionalGreedy
     [Some(5), Some(7), Some(9), Some(10), Some(11), Some(13), Some(34), Some(39), None, None, None, None, None, None, None],
-    // State 71:RepetitionOperator
+    // State 72:RepetitionOperator
     [Some(5), Some(7), Some(9), Some(10), Some(13), Some(34), Some(39), None, None, None, None, None, None, None, None],
-    // State 72:RepetitionOperatorOpt
+    // State 73:RepetitionOperatorOpt
     [Some(5), Some(7), Some(9), Some(10), Some(13), Some(34), Some(39), None, None, None, None, None, None, None, None],
-    // State 73:RepetitionOperatorOp
+    // State 74:RepetitionOperatorOp
     [Some(5), Some(7), Some(9), Some(10), Some(11), Some(13), Some(34), Some(39), None, None, None, None, None, None, None],
-    // State 74:RepetitionOperatorOpt
+    // State 75:RepetitionOperatorOpt
     [Some(5), Some(7), Some(9), Some(10), Some(13), Some(34), Some(39), None, None, None, None, None, None, None, None],
-    // State 75:Colon
+    // State 76:Colon
     [Some(36), Some(37), Some(38), Some(39), None, None, None, None, None, None, None, None, None, None, None],
-    // State 76:Comma
+    // State 77:Comma
     [Some(26), Some(24), Some(23), Some(25), Some(28), Some(22), Some(27), Some(34), Some(36), None, None, None, None, None, None],
-    // State 77:CBrace
+    // State 78:CBrace
     [Some(4), None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 78:Dynamic
+    // State 79:Dynamic
     [Some(6), Some(8), None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 79:Prefer
+    // State 80:Prefer
     [Some(6), Some(8), None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 80:Finish
+    // State 81:Finish
     [Some(6), Some(8), None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 81:NoFinish
+    // State 82:NoFinish
     [Some(6), Some(8), None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 82:IntConst
+    // State 83:Name
+    [Some(4), None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 84:IntConst
     [Some(6), Some(8), None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 83:TermMetaData
+    // State 85:TermMetaData
     [Some(6), Some(8), None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 84:TermMetaDatas
+    // State 86:TermMetaDatas
     [Some(6), Some(8), None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 85:UserMetaData
+    // State 87:UserMetaData
     [Some(6), Some(8), None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 86:SemiColon
+    // State 88:SemiColon
     [Some(0), Some(34), Some(40), None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 87:OBrace
+    // State 89:OBrace
     [Some(31), Some(26), Some(29), Some(30), Some(34), Some(36), None, None, None, None, None, None, None, None, None],
-    // State 88:CBracket
+    // State 90:CBracket
     [Some(15), Some(17), Some(19), Some(5), Some(7), Some(9), Some(10), Some(13), Some(14), Some(16), Some(18), Some(34), Some(39), None, None],
-    // State 89:Name
+    // State 91:Name
     [Some(15), Some(17), Some(19), Some(5), Some(7), Some(9), Some(10), Some(13), Some(14), Some(16), Some(18), Some(34), Some(39), None, None],
-    // State 90:GrammarSymbolRef
+    // State 92:GrammarSymbolRef
     [Some(5), Some(7), Some(9), Some(10), Some(13), Some(34), Some(39), None, None, None, None, None, None, None, None],
-    // State 91:GrammarSymbolRef
+    // State 93:GrammarSymbolRef
     [Some(5), Some(7), Some(9), Some(10), Some(13), Some(34), Some(39), None, None, None, None, None, None, None, None],
-    // State 92:Production
+    // State 94:Production
     [Some(5), Some(10), Some(13), None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 93:ProdMetaDatas
+    // State 95:ProdMetaDatas
     [Some(6), Some(8), None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 94:OSBracket
+    // State 96:OSBracket
     [Some(34), None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 95:RepetitionModifiersExp
+    // State 97:RepetitionModifiersExp
     [Some(5), Some(7), Some(9), Some(10), Some(13), Some(34), Some(39), None, None, None, None, None, None, None, None],
-    // State 96:RepetitionModifiersExpOpt
+    // State 98:RepetitionModifiersExpOpt
     [Some(5), Some(7), Some(9), Some(10), Some(13), Some(34), Some(39), None, None, None, None, None, None, None, None],
-    // State 97:IntConst
+    // State 99:IntConst
     [Some(6), Some(8), None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 98:FloatConst
+    // State 100:FloatConst
     [Some(6), Some(8), None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 99:BoolConst
+    // State 101:BoolConst
     [Some(6), Some(8), None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 100:StrConst
+    // State 102:StrConst
     [Some(6), Some(8), None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 101:Const
+    // State 103:Const
     [Some(6), Some(8), None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 102:ProdMetaData
+    // State 104:ProdMetaData
     [Some(6), Some(8), None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 103:Colon
+    // State 105:Colon
     [Some(9), Some(34), Some(39), None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 104:Comma
+    // State 106:Comma
     [Some(31), Some(26), Some(29), Some(30), Some(34), Some(36), None, None, None, None, None, None, None, None, None],
-    // State 105:CBrace
-    [Some(5), None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 106:TermMetaDatas
-    [Some(6), Some(8), None, None, None, None, None, None, None, None, None, None, None, None, None],
     // State 107:CBrace
-    [Some(5), Some(10), Some(13), None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 108:Name
-    [Some(6), Some(12), None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 109:RepetitionModifiers
-    [Some(6), Some(12), None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 110:RepetitionModifier
-    [Some(6), Some(12), None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 111:GrammarRuleRHS
-    [Some(5), Some(13), None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 112:TermMetaData
-    [Some(6), Some(8), None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 113:SemiColon
-    [Some(0), Some(34), Some(40), None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 114:CBrace
     [Some(5), None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 115:Comma
-    [Some(34), None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 116:CSBracket
-    [Some(5), Some(7), Some(9), Some(10), Some(13), Some(34), Some(39), None, None, None, None, None, None, None, None],
-    // State 117:SemiColon
-    [Some(0), Some(1), Some(34), Some(40), None, None, None, None, None, None, None, None, None, None, None],
-    // State 118:SemiColon
+    // State 108:TermMetaDatas
+    [Some(6), Some(8), None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 109:CBrace
+    [Some(5), Some(10), Some(13), None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 110:Name
+    [Some(6), Some(12), None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 111:RepetitionModifiers
+    [Some(6), Some(12), None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 112:RepetitionModifier
+    [Some(6), Some(12), None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 113:GrammarRuleRHS
+    [Some(5), Some(13), None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 114:TermMetaData
+    [Some(6), Some(8), None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 115:SemiColon
     [Some(0), Some(34), Some(40), None, None, None, None, None, None, None, None, None, None, None, None],
-    // State 119:RepetitionModifier
+    // State 116:CBrace
+    [Some(5), None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 117:Comma
+    [Some(34), None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 118:CSBracket
+    [Some(5), Some(7), Some(9), Some(10), Some(13), Some(34), Some(39), None, None, None, None, None, None, None, None],
+    // State 119:SemiColon
+    [Some(0), Some(1), Some(34), Some(40), None, None, None, None, None, None, None, None, None, None, None],
+    // State 120:SemiColon
+    [Some(0), Some(34), Some(40), None, None, None, None, None, None, None, None, None, None, None, None],
+    // State 121:RepetitionModifier
     [Some(6), Some(12), None, None, None, None, None, None, None, None, None, None, None, None, None],
 ],
 recognizers: [
@@ -2114,6 +2129,13 @@ impl<'i> LRBuilder<&'i str> for RustemoBuilder {
                     _ => panic!("Invalid symbol parse stack data.")
                 }
             },
+            ProdKind::ProdMetaDataP9 => {
+                let mut i = self.res_stack.split_off(self.res_stack.len()-1).into_iter();
+                match i.next().unwrap() {                
+                    Symbol::NonTerminal(NonTerminal::ProdKind(p0)) => NonTerminal::ProdMetaData(rustemo_actions::prod_meta_data_p9(p0)),
+                    _ => panic!("Invalid symbol parse stack data.")
+                }
+            },
             ProdKind::ProdMetaDatasP0 => {
                 let mut i = self.res_stack.split_off(self.res_stack.len()-3).into_iter();
                 match (i.next().unwrap(), i.next().unwrap(), i.next().unwrap()) {                
@@ -2176,6 +2198,13 @@ impl<'i> LRBuilder<&'i str> for RustemoBuilder {
                 let mut i = self.res_stack.split_off(self.res_stack.len()-3).into_iter();
                 match (i.next().unwrap(), i.next().unwrap(), i.next().unwrap()) {                
                     (Symbol::Terminal(Terminal::Name(p0)), _, Symbol::NonTerminal(NonTerminal::Const(p1))) => NonTerminal::UserMetaData(rustemo_actions::user_meta_data_p0(p0, p1)),
+                    _ => panic!("Invalid symbol parse stack data.")
+                }
+            },
+            ProdKind::ProdKindP0 => {
+                let mut i = self.res_stack.split_off(self.res_stack.len()-1).into_iter();
+                match i.next().unwrap() {                
+                    Symbol::Terminal(Terminal::Name(p0)) => NonTerminal::ProdKind(rustemo_actions::prod_kind_p0(p0)),
                     _ => panic!("Invalid symbol parse stack data.")
                 }
             },
