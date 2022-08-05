@@ -7,7 +7,6 @@ edition = "2021"
 
 [dependencies]
 rustemo-rt = { path = "../../rustemo-rt", version = "0.1" }
-rustemo = { path = "../../rustemo", version = "0.1"}
 regex = { version = "1", default_features = false, features = ["std", "unicode-perl"] }
 num_enum = { version = "0.5", default_features = false }
 

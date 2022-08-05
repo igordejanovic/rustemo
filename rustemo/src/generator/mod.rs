@@ -1,4 +1,4 @@
-mod actions;
+pub(crate) mod actions;
 
 use convert_case::{Case, Casing};
 use indoc::indoc;
@@ -12,7 +12,7 @@ use std::{
 };
 
 use crate::{
-    grammar::{res_symbol, Grammar},
+    grammar::{res_symbol, Grammar, NonTerminal, Production},
     rustemo_actions::Recognizer,
     settings::Settings,
     table::{lr_states_for_grammar, LRState}, error::{Error, Result},
@@ -30,6 +30,16 @@ macro_rules! gen {
     ($w:expr, $($args:tt)*) => {
         ($w).write(&::std::fmt::format(format_args!($($args)*)))?
     }
+}
+
+fn action_name(nonterminal: &NonTerminal, prod: &Production) -> String {
+    format!("{}_{}",
+            nonterminal.name.to_case(Case::Snake),
+            if let Some(ref kind) = prod.kind {
+                kind.to_case(Case::Snake)
+            } else {
+                format!("{}", prod.ntidx + 1)
+            })
 }
 
 #[derive(Default)]
@@ -79,6 +89,7 @@ impl<W: Write> RustWrite<W> {
 pub fn generate_parser<F>(
     grammar_path: F,
     out_dir: Option<F>,
+    settings: &Settings,
 ) -> Result<()>
 where
     F: AsRef<Path> + Debug,
@@ -112,7 +123,7 @@ where
     generate_parser_definition(&grammar, &file_name, states, out_file)?;
 
     // Generate actions
-    generate_parser_actions(&grammar, &grammar_path)?;
+    generate_parser_actions(&grammar, &grammar_path, settings)?;
 
     Ok(())
 }
@@ -540,20 +551,21 @@ where
     out.inc_indent();
     out.inc_indent();
     for production in &grammar.productions()[1..] {
-        let prod_nt_name = &grammar.nonterminals()[production.nonterminal].name;
+        let nonterminal = &grammar.nonterminals()[production.nonterminal];
+        let prod_nt_name = &nonterminal.name;
         let rhs_len = production.rhs.len();
+        let action_name = action_name(nonterminal, production);
 
         // Handle EMPTY production
         if rhs_len == 0 {
             geni!(
                 out,
-                "ProdKind::{}P{} => NonTerminal::{}({}_actions::{}_p{}()),\n",
+                "ProdKind::{}P{} => NonTerminal::{}({}_actions::{}()),\n",
                 prod_nt_name,
                 production.ntidx,
                 prod_nt_name,
                 file_name,
-                prod_nt_name.to_case(Case::Snake),
-                production.ntidx,
+                action_name,
             );
             continue;
         }
@@ -592,11 +604,10 @@ where
         if terms_no_content {
             geni!(
                 out,
-                "NonTerminal::{}({}_actions::{}_p{}())\n",
+                "NonTerminal::{}({}_actions::{}())\n",
                 prod_nt_name,
                 file_name,
-                prod_nt_name.to_case(Case::Snake),
-                production.ntidx,
+                action_name,
             );
             out.dec_indent();
 
@@ -654,12 +665,11 @@ where
 
         geni!(
             out,
-            "{} => NonTerminal::{}({}_actions::{}_p{}({})),\n",
+            "{} => NonTerminal::{}({}_actions::{}({})),\n",
             lhs,
             prod_nt_name,
             file_name,
-            prod_nt_name.to_case(Case::Snake),
-            production.ntidx,
+            action_name,
             (0..counter)
                 .map(|x| format!("p{}", x))
                 .collect::<Vec<_>>()

@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use clap::Parser;
-use rustemo::generator::generate_parser;
+use rustemo::{generator::generate_parser, settings::Settings};
 
 #[derive(Parser)]
 #[clap(author, version, about, long_about = None)]
@@ -22,7 +22,7 @@ struct Cli {
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cli = Cli::parse();
 
-    match generate_parser(cli.grammar_file, cli.outdir) {
+    match generate_parser(cli.grammar_file, cli.outdir, &Settings::default()) {
         Ok(_) => println!("Parser generated successfully"),
         Err(e) => return Err(format!("Parser not generated. {e}").into())
     }

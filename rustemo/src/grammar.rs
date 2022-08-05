@@ -204,15 +204,9 @@ impl Production {
     pub fn rhs_with_content(&self, grammar: &Grammar) -> Vec<Assignment> {
         self.rhs_assign()
             .into_iter()
-            .filter_map(|a| {
-                if grammar.is_term(a.symbol) {
-                    let term = grammar.symbol_to_term(a.symbol);
-                    if term.has_content {
-                        return Some(a);
-                    }
-                } else {
-                    return Some(a);
-                }
+            .filter_map(|a| if grammar.symbol_has_content(a.symbol) {
+                Some(a)
+            } else {
                 None
             })
             .collect::<Vec<_>>()
