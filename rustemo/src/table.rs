@@ -345,8 +345,8 @@ pub fn lr_states_for_grammar(
     sort_terminals(grammar, &mut states);
 
     log!("States:");
-    for state in &states {
-        log!("{state:#?}");
+    for _state in &states {
+        log!("{_state:#?}");
     }
     states
 }

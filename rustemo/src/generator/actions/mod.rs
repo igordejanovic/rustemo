@@ -84,12 +84,12 @@ where
             syn::Item::Enum(e) => {
                 let type_name = e.ident.to_string();
                 log!("Found enum type '{}'", type_name);
-                type_names.insert(e.ident.to_string())
+                type_names.insert(type_name)
             }
             syn::Item::Struct(e) => {
                 let type_name = e.ident.to_string();
                 log!("Found struct type '{}'", type_name);
-                type_names.insert(e.ident.to_string())
+                type_names.insert(type_name)
             }
             // Used for actions
             syn::Item::Fn(f) => {
