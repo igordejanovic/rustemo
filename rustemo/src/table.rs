@@ -22,7 +22,7 @@ use rustemo_rt::{
 
 use crate::{
     grammar::{Associativity, Priority, Terminal, DEFAULT_PRIORITY},
-    rustemo_actions::Recognizer,
+    lang::rustemo_actions::Recognizer,
     settings::{LRTableType, Settings},
 };
 

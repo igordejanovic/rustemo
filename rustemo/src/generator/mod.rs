@@ -13,7 +13,7 @@ use std::{
 
 use crate::{
     grammar::{res_symbol, Grammar, NonTerminal, Production},
-    rustemo_actions::Recognizer,
+    lang::rustemo_actions::Recognizer,
     settings::Settings,
     table::{lr_states_for_grammar, LRState}, error::{Error, Result},
 };

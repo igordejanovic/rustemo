@@ -13,12 +13,15 @@ use rustemo_rt::{
     log,
 };
 
-use crate::{error::Result, rustemo::RustemoParser};
+use crate::{error::Result, lang::rustemo::RustemoParser};
 
-use super::rustemo_actions::{
-    Const, GrammarRule, GrammarSymbol, Imports, PGFile, ProdMetaDatas,
+use super::lang::rustemo_actions::{
+    self, Const, GrammarRule, GrammarSymbol, Imports, PGFile, ProdMetaDatas,
     Recognizer, TermMetaDatas,
 };
+
+#[cfg(test)]
+mod tests;
 
 #[derive(Debug)]
 pub struct Grammar {
@@ -184,7 +187,6 @@ impl Default for Production {
 }
 
 impl Production {
-
     #[inline]
     pub fn rhs_symbols(&self) -> Vec<SymbolIndex> {
         self.rhs.iter().map(|a| res_symbol(a)).collect()
@@ -193,10 +195,13 @@ impl Production {
     /// Returns resolved RHS assignments
     #[inline]
     pub fn rhs_assign(&self) -> Vec<Assignment> {
-        self.rhs.iter().map(|a| Assignment {
-            name: a.name.clone(),
-            symbol: res_symbol(a)
-        }).collect()
+        self.rhs
+            .iter()
+            .map(|a| Assignment {
+                name: a.name.clone(),
+                symbol: res_symbol(a),
+            })
+            .collect()
     }
 
     /// Returns RHS assignment which has some content (i.e. non-terminals and
@@ -204,10 +209,12 @@ impl Production {
     pub fn rhs_with_content(&self, grammar: &Grammar) -> Vec<Assignment> {
         self.rhs_assign()
             .into_iter()
-            .filter_map(|a| if grammar.symbol_has_content(a.symbol) {
-                Some(a)
-            } else {
-                None
+            .filter_map(|a| {
+                if grammar.symbol_has_content(a.symbol) {
+                    Some(a)
+                } else {
+                    None
+                }
             })
             .collect::<Vec<_>>()
     }
@@ -460,7 +467,7 @@ impl Grammar {
                             .into_iter()
                             // Remove EMPTY from production RHS
                             .filter(|assignment| {
-                                use crate::rustemo_actions::{
+                                use rustemo_actions::{
                                     Assignment, GrammarSymbolRef,
                                 };
                                 match assignment {
@@ -476,21 +483,30 @@ impl Grammar {
                             })
                             // Map all RHS elements to Assignments
                             .map(|assignment| {
-                                use super::rustemo_actions::Assignment::*;
+                                use rustemo_actions::Assignment::*;
                                 match assignment {
                                     PlainAssignment(assign)
-                                    | BoolAssignment(assign) => ResolvingAssignment {
-                                        name: Some(assign.name),
-                                        symbol: ResolvingSymbolIndex::Resolving(
-                                            assign.gsymref.gsymbol.unwrap(),
-                                        ),
-                                    },
-                                    GrammarSymbolRef(reference) => ResolvingAssignment {
-                                        name: None,
-                                        symbol: ResolvingSymbolIndex::Resolving(
-                                            reference.gsymbol.unwrap(),
-                                        ),
-                                    },
+                                    | BoolAssignment(assign) => {
+                                        ResolvingAssignment {
+                                            name: Some(assign.name),
+                                            symbol:
+                                                ResolvingSymbolIndex::Resolving(
+                                                    assign
+                                                        .gsymref
+                                                        .gsymbol
+                                                        .unwrap(),
+                                                ),
+                                        }
+                                    }
+                                    GrammarSymbolRef(reference) => {
+                                        ResolvingAssignment {
+                                            name: None,
+                                            symbol:
+                                                ResolvingSymbolIndex::Resolving(
+                                                    reference.gsymbol.unwrap(),
+                                                ),
+                                        }
+                                    }
                                 }
                             })
                             .collect(),
@@ -501,7 +517,7 @@ impl Grammar {
                 // Map meta-data to production fields for easier access
                 if let Some(meta) = new_production.meta.remove("priority") {
                     new_production.prio = match meta {
-                        crate::rustemo_actions::Const::Int(p) => p,
+                        rustemo_actions::Const::Int(p) => p,
                         _ => panic!("Invalid Const!"),
                     }
                 }
@@ -509,7 +525,7 @@ impl Grammar {
                 if let Some(kind) = new_production.meta.remove("kind") {
                     new_production.kind = match kind {
                         Const::String(s) => Some(s),
-                        _ => None
+                        _ => None,
                     }
                 }
 
@@ -535,7 +551,7 @@ impl Grammar {
     }
 
     fn collect_terminals<'a>(
-        grammar_terminals: Vec<super::rustemo_actions::Terminal>,
+        grammar_terminals: Vec<rustemo_actions::Terminal>,
         terminals: &'a mut BTreeMap<String, Terminal>,
         terminals_matches: &mut BTreeMap<String, &'a Terminal>,
     ) {
@@ -824,235 +840,5 @@ impl Grammar {
             None => self.symbol_name(symbol),
         }
         .to_case(Case::Snake)
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::{
-        grammar::{Associativity, Grammar},
-        tests::utils::type_of,
-    };
-    use rustemo_rt::index::ProdIndex;
-
-    #[test]
-    fn grammar_from_string() {
-        let grammar = Grammar::from_string(
-            r#"
-             S: A B;
-            terminals
-             A: "a";
-             B: "b";
-            "#,
-        )
-        .unwrap();
-        assert!(type_of(&grammar) == "rustemo::grammar::Grammar");
-    }
-
-    // TODO: Include this test when from_file is fixed
-    // #[test]
-    // fn grammar_from_file() {
-    //     use std::path::PathBuf;
-
-    //     let path: PathBuf =
-    //         [env!("CARGO_MANIFEST_DIR"), "src", "rustemo.rustemo"]
-    //             .iter()
-    //             .collect();
-    //     let grammar = Grammar::from_file(path);
-
-    //     output_cmp!("src/rustemo.parse_tree", format!("{:#?}", grammar));
-    // }
-
-    #[test]
-    fn create_terminals_1() {
-        let grammar = Grammar::from_string(
-            r#"
-            S: "first_term" "second_term";
-            terminals
-            first_term: "first_term";
-            second_term: "second_term";
-            "#,
-        )
-        .unwrap();
-        assert_eq!(
-            grammar
-                .terminals
-                .as_ref()
-                .unwrap()
-                .iter()
-                .map(|t| &t.name)
-                .collect::<Vec<_>>(),
-            &["STOP", "first_term", "second_term"]
-        );
-    }
-
-    #[test]
-    fn create_terminals_2() {
-        let grammar = Grammar::from_string(
-            r#"
-            S: "first_term" A "second_term";
-            A: third_term;
-            terminals
-            first_term: "first_term";
-            second_term: "second_term";
-            third_term: ;
-            "#,
-        )
-        .unwrap();
-        assert_eq!(
-            grammar
-                .terminals
-                .as_ref()
-                .unwrap()
-                .iter()
-                .map(|t| &t.name)
-                .collect::<Vec<_>>(),
-            &["STOP", "first_term", "second_term", "third_term"]
-        );
-    }
-
-    #[test]
-    fn create_terminals_multiple() {
-        let grammar = Grammar::from_string(
-            r#"
-            S: "first_term" A "second_term" "first_term";
-            A: third_term "third_term" "first_term" second_term;
-            terminals
-            first_term: "first_term";
-            second_term: "second_term";
-            third_term: "third_term";
-            "#,
-        )
-        .unwrap();
-        assert_eq!(
-            grammar
-                .terminals
-                .as_ref()
-                .unwrap()
-                .iter()
-                .map(|t| &t.name)
-                .collect::<Vec<_>>(),
-            &["STOP", "first_term", "second_term", "third_term"]
-        );
-    }
-
-    #[test]
-    fn terminals_regex() {
-        let grammar = Grammar::from_string(
-            r#"
-            S: "foo" rmatch_term A;
-            A: "some" more_regex;
-            terminals
-            foo: "foo";
-            some: "some";
-            rmatch_term: /"[^"]+"/;
-            more_regex: /\d{2,5}/;
-            "#,
-        )
-        .unwrap();
-        assert_eq!(
-            grammar
-                .terminals
-                .as_ref()
-                .unwrap()
-                .iter()
-                .map(|t| &t.name)
-                .collect::<Vec<_>>(),
-            &["STOP", "foo", "some", "rmatch_term", "more_regex"]
-        );
-        for (term_name, term_regex) in
-            [("rmatch_term", r#""[^"]+""#), ("more_regex", r#"\d{2,5}"#)]
-        {
-            assert!(match grammar
-                .symbol_to_term(grammar.term_by_name[term_name])
-                .recognizer
-                .as_ref()
-                .unwrap()
-            {
-                crate::rustemo_actions::Recognizer::StrConst(_) => false,
-                crate::rustemo_actions::Recognizer::RegExTerm(regex) =>
-                    regex == term_regex,
-            });
-        }
-    }
-
-    #[test]
-    fn nonterminals_productions() {
-        let grammar = Grammar::from_string(
-            r#"
-            S: A "some_term" B | B;
-            A: B;
-            B: some_term;
-            terminals
-            some_term: "some_term";
-            "#,
-        )
-        .unwrap();
-        assert_eq!(grammar.nonterminals().len(), 5);
-        assert_eq!(
-            grammar
-                .nonterminals
-                .as_ref()
-                .unwrap()
-                .iter()
-                .map(|nt| &nt.name)
-                .collect::<Vec<_>>(),
-            &["EMPTY", "AUG", "S", "A", "B"]
-        );
-        assert_eq!(
-            grammar
-                .nonterminals
-                .as_ref()
-                .unwrap()
-                .iter()
-                .map(|nt| nt.productions.len())
-                .collect::<Vec<_>>(),
-            &[0, 1, 2, 1, 1]
-        );
-        assert_eq!(
-            grammar
-                .nonterminals
-                .as_ref()
-                .unwrap()
-                .iter()
-                .flat_map(|nt| &nt.productions)
-                .map(|index| {
-                    let ProdIndex(index) = index;
-                    *index
-                })
-                .collect::<Vec<_>>(),
-            &[0, 1, 2, 3, 4]
-        );
-    }
-
-    #[test]
-    fn productions_meta_data() {
-        let grammar = Grammar::from_string(
-            r#"
-            S: A "some_term" B {5} | B {nops};
-            A: B {nopse, bla: 5};
-            B: some_term {right};
-            terminals
-            some_term: "some_term";
-            "#,
-        )
-        .unwrap();
-        assert_eq!(grammar.productions().len(), 5);
-
-        assert_eq!(grammar.productions()[ProdIndex(1)].prio, 5);
-        assert_eq!(grammar.productions()[ProdIndex(1)].meta.len(), 0);
-
-        assert_eq!(grammar.productions()[ProdIndex(2)].prio, 10);
-        assert!(grammar.productions()[ProdIndex(2)].nops);
-        assert!(!grammar.productions()[ProdIndex(2)].nopse);
-
-        assert_eq!(grammar.productions()[ProdIndex(3)].prio, 10);
-        assert!(grammar.productions()[ProdIndex(3)].nopse);
-        assert_eq!(grammar.productions()[ProdIndex(3)].meta.len(), 1);
-
-        assert_eq!(
-            grammar.productions()[ProdIndex(4)].assoc,
-            Associativity::Right
-        );
     }
 }

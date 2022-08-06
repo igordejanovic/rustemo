@@ -7,16 +7,7 @@ pub mod grammar;
 pub mod settings;
 pub mod error;
 
-#[rustfmt::skip]
-#[cfg(not(feature = "bootstrap"))]
-mod rustemo;
-
-// In bootstrapping mode use the generated parser from the OUT_DIR folder
-#[rustfmt::skip]
-#[cfg(feature = "bootstrap")]
-rustemo_mod!(rustemo, "/src/rustemo.rs");
-
-mod rustemo_actions;
+mod lang;
 mod table;
 pub(crate) mod tests;
 
