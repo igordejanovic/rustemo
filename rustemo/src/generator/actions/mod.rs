@@ -12,11 +12,15 @@ use convert_case::{Case, Casing};
 use proc_macro2::{Ident, Span};
 use syn::{self, parse_quote};
 
-use crate::{error::{Error, Result}, settings::{Settings, GenActions}, grammar::Terminal};
 use crate::grammar::{Grammar, NonTerminal};
+use crate::{
+    error::{Error, Result},
+    grammar::Terminal,
+    settings::{GenActions, Settings},
+};
 
-mod rule;
 mod production;
+mod rule;
 
 pub(crate) trait ActionsGenerator {
     fn terminal_type(&self, terminal: &Terminal) -> syn::Item {
@@ -37,10 +41,16 @@ pub(crate) trait ActionsGenerator {
     }
 
     /// Create Rust types for the given non-terminal.
-    fn nonterminal_types(&self, nonterminal: &NonTerminal) -> Vec<(String, syn::Item)>;
+    fn nonterminal_types(
+        &self,
+        nonterminal: &NonTerminal,
+    ) -> Vec<(String, syn::Item)>;
 
     /// Creates an action function for each production of the given non-terminal.
-    fn nonterminal_actions(&self, nonterminal: &NonTerminal,) -> Vec<(String, syn::Item)>;
+    fn nonterminal_actions(
+        &self,
+        nonterminal: &NonTerminal,
+    ) -> Vec<(String, syn::Item)>;
 }
 
 pub(crate) fn generate_parser_actions<F>(
@@ -108,7 +118,9 @@ where
 
     let generator: Box<dyn ActionsGenerator> = match settings.gen_actions {
         GenActions::RuleBased => rule::RuleActionsGenerator::new(grammar),
-        GenActions::ProductionBased => production::ProductionActionsGenerator::new(grammar),
+        GenActions::ProductionBased => {
+            production::ProductionActionsGenerator::new(grammar)
+        }
     };
 
     // Generate types and actions for terminals
@@ -133,7 +145,9 @@ where
         nt_symbol != grammar.augmented_index && nt_symbol != grammar.empty_index
     }) {
         // Add non-terminal type
-        for (type_name, ty) in generator.nonterminal_types(nonterminal).into_iter() {
+        for (type_name, ty) in
+            generator.nonterminal_types(nonterminal).into_iter()
+        {
             if !type_names.contains(&type_name) {
                 log!("Creating type for non-terminal '{type_name}'.");
                 ast.items.push(ty);
@@ -141,7 +155,8 @@ where
         }
 
         // Add non-terminal actions
-        for (action_name, action) in generator.nonterminal_actions(nonterminal) {
+        for (action_name, action) in generator.nonterminal_actions(nonterminal)
+        {
             if !action_names.contains(&action_name) {
                 log!("Creating action '{action_name}'.");
                 ast.items.push(action);
@@ -154,4 +169,3 @@ where
 
     Ok(())
 }
-

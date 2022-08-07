@@ -1,6 +1,6 @@
 use crate::{
-    lang::rustemo_actions::Recognizer,
     grammar::{Associativity, Grammar},
+    lang::rustemo_actions::Recognizer,
     tests::utils::type_of,
 };
 use rustemo_rt::index::ProdIndex;
@@ -118,8 +118,7 @@ fn terminals_regex() {
             .unwrap()
         {
             Recognizer::StrConst(_) => false,
-            Recognizer::RegExTerm(regex) =>
-                regex == term_regex,
+            Recognizer::RegExTerm(regex) => regex == term_regex,
         });
     }
 }

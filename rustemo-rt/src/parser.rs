@@ -10,10 +10,5 @@ where
     L: Lexer<I, C>,
     B: Builder,
 {
-    fn parse(
-        &mut self,
-        context: C,
-        lexer: L,
-        builder: B,
-    ) -> Result<B::Output>;
+    fn parse(&mut self, context: C, lexer: L, builder: B) -> Result<B::Output>;
 }

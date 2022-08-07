@@ -46,7 +46,9 @@ pub fn action_opt_p1() -> ActionOpt {
 
 pub type RegexTerm = String;
 pub fn regex_term<'a>(token: Token<&'a str>) -> RegexTerm {
-    token.value[1..token.value.len()-1].replace(r"\/", "/").into()
+    token.value[1..token.value.len() - 1]
+        .replace(r"\/", "/")
+        .into()
 }
 
 pub type WS = String;

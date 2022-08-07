@@ -12,10 +12,11 @@ use std::{
 };
 
 use crate::{
+    error::{Error, Result},
     grammar::{res_symbol, Grammar, NonTerminal, Production},
     lang::rustemo_actions::Recognizer,
     settings::Settings,
-    table::{lr_states_for_grammar, LRState}, error::{Error, Result},
+    table::{lr_states_for_grammar, LRState},
 };
 
 use self::actions::generate_parser_actions;
@@ -33,13 +34,15 @@ macro_rules! gen {
 }
 
 fn action_name(nonterminal: &NonTerminal, prod: &Production) -> String {
-    format!("{}_{}",
-            nonterminal.name.to_case(Case::Snake),
-            if let Some(ref kind) = prod.kind {
-                kind.to_case(Case::Snake)
-            } else {
-                format!("{}", prod.ntidx + 1)
-            })
+    format!(
+        "{}_{}",
+        nonterminal.name.to_case(Case::Snake),
+        if let Some(ref kind) = prod.kind {
+            kind.to_case(Case::Snake)
+        } else {
+            format!("{}", prod.ntidx + 1)
+        }
+    )
 }
 
 #[derive(Default)]
@@ -94,13 +97,10 @@ pub fn generate_parser<F>(
 where
     F: AsRef<Path> + Debug,
 {
-    let file_name =
-        grammar_path
-            .as_ref()
-            .file_name()
-            .ok_or(Error::Error(
-                "Invalid grammar file name.".to_string(),
-            ))?;
+    let file_name = grammar_path
+        .as_ref()
+        .file_name()
+        .ok_or(Error::Error("Invalid grammar file name.".to_string()))?;
 
     let out_dir = match out_dir {
         Some(dir) => PathBuf::from(dir.as_ref()),

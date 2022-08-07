@@ -124,8 +124,7 @@ impl Display for Grammar {
             write!(
                 f,
                 "{}. {}: ",
-                production.idx,
-                self.nonterminals[production.nonterminal].name
+                production.idx, self.nonterminals[production.nonterminal].name
             )?;
             for assignment in &production.rhs {
                 write!(f, "{} ", self.symbol_name(res_symbol(assignment)))?;

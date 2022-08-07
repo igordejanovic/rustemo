@@ -25,50 +25,59 @@ impl<'a> ProductionActionsGenerator<'a> {
     fn prod_fields(&self, prod: &Production) -> Vec<ProdField> {
         let nonterminal = &self.grammar.nonterminals[prod.nonterminal];
         let variant_name = format!(
-                "{}{}",
-                nonterminal.name,
-                prod.kind
-                    .as_ref()
-                    .unwrap_or(&format!("{}", prod.ntidx + 1))
-            );
+            "{}{}",
+            nonterminal.name,
+            prod.kind.as_ref().unwrap_or(&format!("{}", prod.ntidx + 1))
+        );
         let rhs = prod.rhs_with_content(self.grammar);
         match rhs.iter().count() {
             0 => vec![],
             1 => {
-                let field_type_name =  self.grammar.symbol_name(rhs[0].symbol);
-                vec![ProdField{ name: variant_name.to_case(Case::Snake),
-                                ty: field_type_name.clone(),
-                                boxed: field_type_name == nonterminal.name }]
-            },
-            _ => // More than one ref with content. Make a new type.
+                let field_type_name = self.grammar.symbol_name(rhs[0].symbol);
+                vec![ProdField {
+                    name: variant_name.to_case(Case::Snake),
+                    ty: field_type_name.clone(),
+                    boxed: field_type_name == nonterminal.name,
+                }]
+            }
+            _ =>
+            // More than one ref with content. Make a new type.
+            {
                 prod.rhs_assign()
                     .into_iter()
                     .enumerate()
-                    .filter( |(_, assign)|
-                                    self.grammar.symbol_has_content(assign.symbol))
+                    .filter(|(_, assign)| {
+                        self.grammar.symbol_has_content(assign.symbol)
+                    })
                     .map(|(idx, assign)| {
-                        let field_type_name = self.grammar.symbol_name(assign.symbol);
-                        let name = assign
-                            .name
-                            .unwrap_or(
-                                format!("{}_{}",
-                                        field_type_name.to_case(Case::Snake),
-                                        idx + 1
-                                )
-                            );
-                        ProdField { name,
-                                    ty: field_type_name.clone(),
-                                    boxed: field_type_name == nonterminal.name }
-                    }).collect()
+                        let field_type_name =
+                            self.grammar.symbol_name(assign.symbol);
+                        let name = assign.name.unwrap_or(format!(
+                            "{}_{}",
+                            field_type_name.to_case(Case::Snake),
+                            idx + 1
+                        ));
+                        ProdField {
+                            name,
+                            ty: field_type_name.clone(),
+                            boxed: field_type_name == nonterminal.name,
+                        }
+                    })
+                    .collect()
+            }
         }
     }
 
-    fn variant_name(&self, nonterminal: &NonTerminal, prod: &Production) -> String {
-        format!("{}{}",
-                nonterminal.name,
-                prod.kind
-                .as_ref()
-                .unwrap_or(&format!("{}", prod.ntidx + 1)))
+    fn variant_name(
+        &self,
+        nonterminal: &NonTerminal,
+        prod: &Production,
+    ) -> String {
+        format!(
+            "{}{}",
+            nonterminal.name,
+            prod.kind.as_ref().unwrap_or(&format!("{}", prod.ntidx + 1))
+        )
     }
 }
 
@@ -164,18 +173,20 @@ impl<'a> ActionsGenerator for ProductionActionsGenerator<'a> {
             .iter()
             .map(|&prod| {
                 let action_name = format!(
-                        "{}_{}",
-                        nonterminal.name.to_case(Case::Snake),
-                        if let Some(ref kind) = prod.kind {
-                            kind.to_case(Case::Snake)
-                        } else {
-                            format!("{}", prod.ntidx + 1)
-                        }
-                    );
+                    "{}_{}",
+                    nonterminal.name.to_case(Case::Snake),
+                    if let Some(ref kind) = prod.kind {
+                        kind.to_case(Case::Snake)
+                    } else {
+                        format!("{}", prod.ntidx + 1)
+                    }
+                );
                 let action_ident = Ident::new(&action_name, Span::call_site());
                 let variant_name = self.variant_name(nonterminal, prod);
-                let variant_ident = Ident::new(&variant_name, Span::call_site());
-                let ret_type_ident = Ident::new(&nonterminal.name, Span::call_site());
+                let variant_ident =
+                    Ident::new(&variant_name, Span::call_site());
+                let ret_type_ident =
+                    Ident::new(&nonterminal.name, Span::call_site());
                 let mut fn_args: Vec<syn::FnArg> = vec![];
                 let mut field_vals: Vec<syn::FieldValue> = vec![];
                 let fields = self.prod_fields(prod);
@@ -183,33 +194,28 @@ impl<'a> ActionsGenerator for ProductionActionsGenerator<'a> {
                 for field in &fields {
                     let ident = Ident::new(&field.name, Span::call_site());
                     let ty: syn::Type = syn::parse_str(&field.ty).unwrap();
-                    fn_args.push(
-                        parse_quote! { #ident: #ty }
-                    );
+                    fn_args.push(parse_quote! { #ident: #ty });
 
                     if field.boxed {
-                        field_vals.push(
-                            parse_quote! { #ident: Box::new(#ident) }
-                        );
+                        field_vals
+                            .push(parse_quote! { #ident: Box::new(#ident) });
                     } else {
-                        field_vals.push(
-                            parse_quote! { #ident }
-                        );
+                        field_vals.push(parse_quote! { #ident });
                     }
                 }
 
                 let body_expr: syn::Expr = match fields.iter().count() {
                     0 => parse_quote! { #ret_type_ident::#variant_ident },
                     1 => {
-                        let inner_var_ident = Ident::new(&fields[0].name,
-                                                         Span::call_site());
+                        let inner_var_ident =
+                            Ident::new(&fields[0].name, Span::call_site());
                         parse_quote! {
                             #ret_type_ident::#variant_ident(#inner_var_ident)
                         }
-                    },
+                    }
                     _ => {
                         // More than one ref with content. Return stuct instance
-                        parse_quote!{
+                        parse_quote! {
                             #ret_type_ident::#variant_ident(
                                 #variant_ident {
                                     #(#field_vals),*
@@ -219,13 +225,16 @@ impl<'a> ActionsGenerator for ProductionActionsGenerator<'a> {
                     }
                 };
 
-               (action_name,
-                parse_quote! {
-                    pub fn #action_ident(#(#fn_args),*) -> #ret_type_ident {
-                        #body_expr
-                    }
-                })
-            }).collect();
+                (
+                    action_name,
+                    parse_quote! {
+                        pub fn #action_ident(#(#fn_args),*) -> #ret_type_ident {
+                            #body_expr
+                        }
+                    },
+                )
+            })
+            .collect();
 
         actions
     }

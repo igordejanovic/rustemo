@@ -183,7 +183,8 @@ where
             "Trying recognizers: {:?}",
             self.definition
                 .recognizers(context.state())
-                .map(|(_, terminal_info)| terminal_info.name).collect::<Vec<_>>()
+                .map(|(_, terminal_info)| terminal_info.name)
+                .collect::<Vec<_>>()
         );
         let token: Option<Token<&'i str>> = self
             .definition

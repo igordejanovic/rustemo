@@ -12,11 +12,13 @@ fn test_symbol_types() {
             D: a=A b=B  | mya=A B D | EMPTY;
             terminals
             Num: "42";
-        "#
-    ).unwrap();
+        "#,
+    )
+    .unwrap();
 
     let symbol_types = symbol_types(&grammar);
-    output_cmp!("src/grammar/types/symbol_types_expected.txt",
-                format!("{:#?}", symbol_types));
-
+    output_cmp!(
+        "src/grammar/types/symbol_types_expected.txt",
+        format!("{:#?}", symbol_types)
+    );
 }

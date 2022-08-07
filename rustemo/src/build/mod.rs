@@ -1,5 +1,5 @@
-use crate::Result;
 use crate::settings::Settings;
+use crate::Result;
 use std::fs;
 use std::path::{Path, PathBuf};
 

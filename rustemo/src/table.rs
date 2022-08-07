@@ -195,11 +195,7 @@ impl LRItem {
 
     fn symbol_at_position(&self, grammar: &Grammar) -> Option<SymbolIndex> {
         Some(res_symbol(
-            grammar
-                .productions
-                .get(self.prod)?
-                .rhs
-                .get(self.position)?,
+            grammar.productions.get(self.prod)?.rhs.get(self.position)?,
         ))
     }
 
@@ -311,7 +307,8 @@ pub fn lr_states_for_grammar(
 
             // Create GOTO for non-terminal or Shift Action for terminal.
             if grammar.is_nonterm(target_state_symbol) {
-                state.gotos[grammar.symbol_to_nonterm_index(target_state_symbol)] =
+                state.gotos
+                    [grammar.symbol_to_nonterm_index(target_state_symbol)] =
                     Some(target_state_idx);
             } else {
                 let term = grammar.symbol_to_term_index(new_state.symbol);
@@ -659,7 +656,10 @@ fn sort_terminals(grammar: &Grammar, states: &mut StateVec<LRState>) {
         log!(
             "SORTED: {:?}",
             &grammar.symbol_names(
-                terminals.iter().map(|i| grammar.term_to_symbol_index(*i)).collect::<Vec<_>>()
+                terminals
+                    .iter()
+                    .map(|i| grammar.term_to_symbol_index(*i))
+                    .collect::<Vec<_>>()
             )
         );
         state.sorted_terminals = terminals;
@@ -749,9 +749,10 @@ fn first_sets(grammar: &Grammar) -> FirstSets {
     }
 
     // Initialize empty sets for nonterminals
-    grammar.nonterminals
-           .iter()
-           .for_each(|_| first_sets.push(Firsts::new()));
+    grammar
+        .nonterminals
+        .iter()
+        .for_each(|_| first_sets.push(Firsts::new()));
 
     // EMPTY derives EMPTY
     first_sets[grammar.empty_index].insert(grammar.empty_index);
@@ -760,7 +761,8 @@ fn first_sets(grammar: &Grammar) -> FirstSets {
     while additions {
         additions = false;
         for production in &grammar.productions {
-            let lhs_nonterm = grammar.nonterm_to_symbol_index(production.nonterminal);
+            let lhs_nonterm =
+                grammar.nonterm_to_symbol_index(production.nonterminal);
 
             let rhs_firsts =
                 firsts(&grammar, &first_sets, &production.rhs_symbols());
@@ -840,7 +842,8 @@ fn follow_sets(grammar: &Grammar, first_sets: &FirstSets) -> FollowSets {
     while additions {
         additions = false;
         for production in &grammar.productions {
-            let lhs_symbol = grammar.nonterm_to_symbol_index(production.nonterminal);
+            let lhs_symbol =
+                grammar.nonterm_to_symbol_index(production.nonterminal);
 
             // Rule 2: If there is a production A -> α B β then everything in
             // FIRST(β) except EMPTY is in FOLLOW(B).
@@ -978,8 +981,8 @@ mod tests {
     };
 
     use super::{
-        closure, follow_sets, group_per_next_symbol,
-        lr_states_for_grammar, merge_state, LRState,
+        closure, follow_sets, group_per_next_symbol, lr_states_for_grammar,
+        merge_state, LRState,
     };
 
     fn follow<T, I>(indexes: T) -> BTreeSet<SymbolIndex>
@@ -1112,7 +1115,8 @@ mod tests {
             &follow_sets[grammar.symbol_index("E")],
             &follow(grammar.symbol_indexes(&["RParen", "STOP"]))
         );
-        dbg!(grammar.symbol_names(follow_sets[grammar.symbol_index("Ep")].clone()));
+        dbg!(grammar
+            .symbol_names(follow_sets[grammar.symbol_index("Ep")].clone()));
         assert_eq!(
             &follow_sets[grammar.symbol_index("Ep")],
             &follow(grammar.symbol_indexes(&["RParen", "STOP"]))
@@ -1134,9 +1138,7 @@ mod tests {
         let prod = ProdIndex(1);
         let mut item = LRItem::new(&grammar, prod);
         assert_eq!(
-            &grammar.symbol_names(
-                grammar.productions[prod].rhs_symbols()
-            ),
+            &grammar.symbol_names(grammar.productions[prod].rhs_symbols()),
             &["T", "Ep"]
         );
         assert_eq!(

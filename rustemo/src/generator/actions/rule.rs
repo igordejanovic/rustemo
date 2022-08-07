@@ -1,7 +1,7 @@
-use convert_case::{Casing, Case};
-use proc_macro2::{Span, Ident};
-use syn::{parse_quote, parse::Parser};
+use convert_case::{Case, Casing};
+use proc_macro2::{Ident, Span};
 use quote::quote;
+use syn::{parse::Parser, parse_quote};
 
 use crate::grammar::{Grammar, NonTerminal, Production};
 
@@ -44,7 +44,10 @@ pub(crate) struct RuleActionsGenerator<'a> {
 }
 
 impl<'a> ActionsGenerator for RuleActionsGenerator<'a> {
-    fn nonterminal_types(&self, nonterminal: &NonTerminal) -> Vec<(String, syn::Item)> {
+    fn nonterminal_types(
+        &self,
+        nonterminal: &NonTerminal,
+    ) -> Vec<(String, syn::Item)> {
         // Inspect each production RHS and find the superset of all possible
         // assignments which will be mapped to stuct fields.
         //
@@ -77,7 +80,8 @@ impl<'a> ActionsGenerator for RuleActionsGenerator<'a> {
                 }
             }
         } else {
-            let fields = self.nonterminal_type_fields(nonterminal)
+            let fields = self
+                .nonterminal_type_fields(nonterminal)
                 .into_iter()
                 .map(|f| f.to_syn_field(nonterminal));
 
@@ -101,15 +105,19 @@ impl<'a> ActionsGenerator for RuleActionsGenerator<'a> {
         let nt_fields = self.nonterminal_type_fields(nonterminal);
         let type_name = &nonterminal.name;
         let type_name_ident: syn::Type = syn::parse_str(&type_name).unwrap();
-        for (idx, prod) in nonterminal.productions(self.grammar).iter().enumerate() {
-            let fn_name = format!("{}_p{}", type_name.to_case(Case::Snake), idx);
+        for (idx, prod) in
+            nonterminal.productions(self.grammar).iter().enumerate()
+        {
+            let fn_name =
+                format!("{}_p{}", type_name.to_case(Case::Snake), idx);
             let fn_name_ident = Ident::new(&fn_name, Span::call_site());
             let prod_fields = self.production_type_fields(prod);
 
             let args: Vec<syn::FnArg> = prod_fields
                 .iter()
                 .map(|f| {
-                    let type_name: syn::Type = syn::parse_str(&f.type_).unwrap();
+                    let type_name: syn::Type =
+                        syn::parse_str(&f.type_).unwrap();
                     let name = Ident::new(&f.name, Span::call_site());
                     let arg: syn::FnArg =
                         syn::parse2(quote! { #name: #type_name }).unwrap();
@@ -121,8 +129,10 @@ impl<'a> ActionsGenerator for RuleActionsGenerator<'a> {
                 // Enum variant value
                 let assign = &prod.rhs_assign()[0];
                 let symbol = assign.symbol;
-                let symbol_ident =
-                    Ident::new(&self.grammar.symbol_name(symbol), Span::call_site());
+                let symbol_ident = Ident::new(
+                    &self.grammar.symbol_name(symbol),
+                    Span::call_site(),
+                );
                 let arg_type_name =
                     self.grammar.symbol_name(symbol).to_case(Case::Snake);
                 let arg_name = assign.name.as_ref().unwrap_or(&arg_type_name);
@@ -145,8 +155,10 @@ impl<'a> ActionsGenerator for RuleActionsGenerator<'a> {
                 let field_values = nt_fields
                     .iter()
                     .map(|f| {
-                        let in_prod =
-                            prod_fields.iter().find(|x| x.name == f.name).is_some();
+                        let in_prod = prod_fields
+                            .iter()
+                            .find(|x| x.name == f.name)
+                            .is_some();
                         let ident = Ident::new(&f.name, Span::call_site());
                         let mut value: syn::Expr = syn::parse2(if in_prod {
                             quote! { #ident }
@@ -155,11 +167,12 @@ impl<'a> ActionsGenerator for RuleActionsGenerator<'a> {
                         })
                         .unwrap();
                         if in_prod && f.boxed {
-                            value =
-                                syn::parse2(quote! { Box::new(#value) }).unwrap();
+                            value = syn::parse2(quote! { Box::new(#value) })
+                                .unwrap();
                         }
                         if in_prod && f.optional {
-                            value = syn::parse2(quote! { Some(#value) }).unwrap();
+                            value =
+                                syn::parse2(quote! { Some(#value) }).unwrap();
                         }
                         syn::parse2(if in_prod && !f.boxed && !f.optional {
                             quote! { #value }
@@ -188,7 +201,6 @@ impl<'a> ActionsGenerator for RuleActionsGenerator<'a> {
 }
 
 impl<'a> RuleActionsGenerator<'a> {
-
     pub fn new(grammar: &'a Grammar) -> Box<dyn ActionsGenerator + 'a> {
         Box::new(Self { grammar })
     }
@@ -215,17 +227,15 @@ impl<'a> RuleActionsGenerator<'a> {
         fields
     }
 
-    fn production_type_fields(
-        &self,
-        prod: &Production,
-    ) -> Vec<NTTypeField> {
+    fn production_type_fields(&self, prod: &Production) -> Vec<NTTypeField> {
         let nt_name = &self.grammar.nonterminals[prod.nonterminal].name;
         let mut names = vec![];
         let mut fields = vec![];
         for assign in prod.rhs_with_content(self.grammar) {
             // If assignment name is not given use referenced NonTerminal name.
             let type_name = self.grammar.symbol_name(assign.symbol);
-            let mut name = assign.name.unwrap_or(type_name.to_case(Case::Snake));
+            let mut name =
+                assign.name.unwrap_or(type_name.to_case(Case::Snake));
             let name_count = names.iter().filter(|&n| *n == name).count();
             if name_count > 0 {
                 name = format!("{}{}", name, name_count);
@@ -242,4 +252,3 @@ impl<'a> RuleActionsGenerator<'a> {
         fields
     }
 }
-

@@ -1,6 +1,5 @@
 use crate::{
-    error::Result, grammar::TerminalInfo, index::TermIndex,
-    location::Location,
+    error::Result, grammar::TerminalInfo, index::TermIndex, location::Location,
 };
 use core::fmt::Debug;
 

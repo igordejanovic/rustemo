@@ -52,7 +52,7 @@ pub(crate) fn symbol_types(grammar: &Grammar) -> Vec<SymbolType> {
             variants.push(match rhs.iter().count() {
                 0 => Variant {
                     name: variant_name,
-                    ty: None
+                    ty: None,
                 },
                 1 if rhs[0].name.is_none() => {
                     let ref_type = grammar.symbol_name(rhs[0].symbol);
@@ -61,7 +61,7 @@ pub(crate) fn symbol_types(grammar: &Grammar) -> Vec<SymbolType> {
                     }
                     Variant {
                         name: variant_name,
-                        ty: Some(ref_type.clone())
+                        ty: Some(ref_type.clone()),
                     }
                 }
                 _ => {
@@ -144,7 +144,7 @@ pub(crate) enum SymbolTypeKind {
 #[derive(Debug)]
 pub(crate) struct Variant {
     name: String,
-    ty: Option<String>
+    ty: Option<String>,
 }
 
 #[derive(Debug)]
