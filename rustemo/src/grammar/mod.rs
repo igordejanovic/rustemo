@@ -22,6 +22,7 @@ use super::lang::rustemo_actions::{
 
 #[cfg(test)]
 mod tests;
+pub(crate) mod types;
 
 #[derive(Debug)]
 pub struct Grammar {
