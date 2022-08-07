@@ -112,7 +112,7 @@ where
     };
 
     // Generate types and actions for terminals
-    for terminal in grammar.terminals().iter().filter(|t| t.has_content) {
+    for terminal in grammar.terminals.iter().filter(|t| t.has_content) {
         // Add terminal types
         let type_name = &terminal.name;
         if !type_names.contains(type_name) {
@@ -128,7 +128,7 @@ where
     }
 
     // Generate types and actions for non-terminals
-    for nonterminal in grammar.nonterminals().iter().filter(|&nt| {
+    for nonterminal in grammar.nonterminals.iter().filter(|&nt| {
         let nt_symbol = grammar.nonterm_to_symbol_index(nt.idx);
         nt_symbol != grammar.augmented_index && nt_symbol != grammar.empty_index
     }) {

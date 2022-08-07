@@ -23,7 +23,7 @@ impl<'a> ProductionActionsGenerator<'a> {
     }
 
     fn prod_fields(&self, prod: &Production) -> Vec<ProdField> {
-        let nonterminal = &self.grammar.nonterminals()[prod.nonterminal];
+        let nonterminal = &self.grammar.nonterminals[prod.nonterminal];
         let variant_name = format!(
                 "{}{}",
                 nonterminal.name,

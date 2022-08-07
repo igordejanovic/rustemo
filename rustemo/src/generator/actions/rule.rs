@@ -219,7 +219,7 @@ impl<'a> RuleActionsGenerator<'a> {
         &self,
         prod: &Production,
     ) -> Vec<NTTypeField> {
-        let nt_name = &self.grammar.nonterminals()[prod.nonterminal].name;
+        let nt_name = &self.grammar.nonterminals[prod.nonterminal].name;
         let mut names = vec![];
         let mut fields = vec![];
         for assign in prod.rhs_with_content(self.grammar) {

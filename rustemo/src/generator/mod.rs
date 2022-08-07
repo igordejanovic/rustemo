@@ -188,8 +188,8 @@ where
 
     "#},
         file_name = file_name,
-        term_count = grammar.term_len(),
-        nonterm_count = grammar.nonterm_len(),
+        term_count = grammar.terminals.len(),
+        nonterm_count = grammar.nonterminals.len(),
         states_count = states.len(),
         max_actions = max_actions,
     );
@@ -320,7 +320,7 @@ where
 
     out.inc_indent();
     geni!(out, "terminals: [\n");
-    for terminal in grammar.terminals() {
+    for terminal in &grammar.terminals {
         geni!(out, "TerminalInfo {{\n");
         out.inc_indent();
         geni!(out, "id: TermIndex({}),\n", terminal.idx);
@@ -372,7 +372,7 @@ where
 
     geni!(out, "recognizers: [\n");
     out.inc_indent();
-    for terminal in grammar.terminals() {
+    for terminal in &grammar.terminals {
         if let Some(recognizer) = &terminal.recognizer {
             geni!(out, "// {}:{}\n", terminal.idx, terminal.name);
             match recognizer {
@@ -515,7 +515,7 @@ where
     out.inc_indent();
     out.inc_indent();
     out.inc_indent();
-    for terminal in grammar.terminals() {
+    for terminal in &grammar.terminals {
         if let Some(Recognizer::RegExTerm(_)) = terminal.recognizer {
             geni!(out,
                   "TermKind::{term_name} => Terminal::{term_name}({file_name}_actions::{action_fun}(token)),\n",
@@ -550,8 +550,8 @@ where
     // Calling actions on reductions
     out.inc_indent();
     out.inc_indent();
-    for production in &grammar.productions()[1..] {
-        let nonterminal = &grammar.nonterminals()[production.nonterminal];
+    for production in &grammar.productions[1..] {
+        let nonterminal = &grammar.nonterminals[production.nonterminal];
         let prod_nt_name = &nonterminal.name;
         let rhs_len = production.rhs.len();
         let action_name = action_name(nonterminal, production);
@@ -646,7 +646,7 @@ where
                         "_".to_string()
                     }
                 } else {
-                    let nt = &grammar.nonterminals()
+                    let nt = &grammar.nonterminals
                         [grammar.symbol_to_nonterm_index(symbol)];
                     counter += 1;
                     format!(
@@ -721,7 +721,7 @@ fn generate_parser_types<W: Write>(
     );
 
     out.inc_indent();
-    for terminal in grammar.terminals() {
+    for terminal in &grammar.terminals {
         geni!(out, "{} = {},\n", terminal.name, terminal.idx);
     }
     out.dec_indent();
@@ -744,7 +744,7 @@ fn generate_parser_types<W: Write>(
     );
 
     out.inc_indent();
-    for terminal in grammar.terminals() {
+    for terminal in &grammar.terminals {
         geni!(
             out,
             "{}{},\n",
@@ -770,7 +770,7 @@ fn generate_parser_types<W: Write>(
     );
 
     out.inc_indent();
-    for nonterminal in &grammar.nonterminals()[2..] {
+    for nonterminal in &grammar.nonterminals[2..] {
         geni!(
             out,
             "{name}({file_name}_actions::{name}),\n",
@@ -793,7 +793,7 @@ fn generate_parser_types<W: Write>(
     );
 
     out.inc_indent();
-    for production in &grammar.productions()[1..] {
+    for production in &grammar.productions[1..] {
         let nt = production.nonterminal(grammar);
         geni!(
             out,

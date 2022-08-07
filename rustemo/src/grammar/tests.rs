@@ -33,8 +33,6 @@ fn create_terminals_1() {
     assert_eq!(
         grammar
             .terminals
-            .as_ref()
-            .unwrap()
             .iter()
             .map(|t| &t.name)
             .collect::<Vec<_>>(),
@@ -58,8 +56,6 @@ fn create_terminals_2() {
     assert_eq!(
         grammar
             .terminals
-            .as_ref()
-            .unwrap()
             .iter()
             .map(|t| &t.name)
             .collect::<Vec<_>>(),
@@ -83,8 +79,6 @@ fn create_terminals_multiple() {
     assert_eq!(
         grammar
             .terminals
-            .as_ref()
-            .unwrap()
             .iter()
             .map(|t| &t.name)
             .collect::<Vec<_>>(),
@@ -109,8 +103,6 @@ fn terminals_regex() {
     assert_eq!(
         grammar
             .terminals
-            .as_ref()
-            .unwrap()
             .iter()
             .map(|t| &t.name)
             .collect::<Vec<_>>(),
@@ -144,12 +136,10 @@ fn nonterminals_productions() {
         "#,
     )
     .unwrap();
-    assert_eq!(grammar.nonterminals().len(), 5);
+    assert_eq!(grammar.nonterminals.len(), 5);
     assert_eq!(
         grammar
             .nonterminals
-            .as_ref()
-            .unwrap()
             .iter()
             .map(|nt| &nt.name)
             .collect::<Vec<_>>(),
@@ -158,8 +148,6 @@ fn nonterminals_productions() {
     assert_eq!(
         grammar
             .nonterminals
-            .as_ref()
-            .unwrap()
             .iter()
             .map(|nt| nt.productions.len())
             .collect::<Vec<_>>(),
@@ -168,8 +156,6 @@ fn nonterminals_productions() {
     assert_eq!(
         grammar
             .nonterminals
-            .as_ref()
-            .unwrap()
             .iter()
             .flat_map(|nt| &nt.productions)
             .map(|index| {
@@ -193,21 +179,21 @@ fn productions_meta_data() {
         "#,
     )
     .unwrap();
-    assert_eq!(grammar.productions().len(), 5);
+    assert_eq!(grammar.productions.len(), 5);
 
-    assert_eq!(grammar.productions()[ProdIndex(1)].prio, 5);
-    assert_eq!(grammar.productions()[ProdIndex(1)].meta.len(), 0);
+    assert_eq!(grammar.productions[ProdIndex(1)].prio, 5);
+    assert_eq!(grammar.productions[ProdIndex(1)].meta.len(), 0);
 
-    assert_eq!(grammar.productions()[ProdIndex(2)].prio, 10);
-    assert!(grammar.productions()[ProdIndex(2)].nops);
-    assert!(!grammar.productions()[ProdIndex(2)].nopse);
+    assert_eq!(grammar.productions[ProdIndex(2)].prio, 10);
+    assert!(grammar.productions[ProdIndex(2)].nops);
+    assert!(!grammar.productions[ProdIndex(2)].nopse);
 
-    assert_eq!(grammar.productions()[ProdIndex(3)].prio, 10);
-    assert!(grammar.productions()[ProdIndex(3)].nopse);
-    assert_eq!(grammar.productions()[ProdIndex(3)].meta.len(), 1);
+    assert_eq!(grammar.productions[ProdIndex(3)].prio, 10);
+    assert!(grammar.productions[ProdIndex(3)].nopse);
+    assert_eq!(grammar.productions[ProdIndex(3)].meta.len(), 1);
 
     assert_eq!(
-        grammar.productions()[ProdIndex(4)].assoc,
+        grammar.productions[ProdIndex(4)].assoc,
         Associativity::Right
     );
 }

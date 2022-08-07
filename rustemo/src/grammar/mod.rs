@@ -26,10 +26,10 @@ pub(crate) mod types;
 
 #[derive(Debug)]
 pub struct Grammar {
-    pub imports: Option<Imports>,
-    pub productions: Option<ProdVec<Production>>,
-    pub terminals: Option<TermVec<Terminal>>,
-    pub nonterminals: Option<NonTermVec<NonTerminal>>,
+    pub imports: Imports,
+    pub productions: ProdVec<Production>,
+    pub terminals: TermVec<Terminal>,
+    pub nonterminals: NonTermVec<NonTerminal>,
     pub nonterm_by_name: BTreeMap<String, SymbolIndex>,
     pub term_by_name: BTreeMap<String, SymbolIndex>,
     // Index of EMPTY symbol
@@ -97,7 +97,7 @@ impl NonTerminal {
     pub fn productions<'a>(&self, grammar: &'a Grammar) -> Vec<&'a Production> {
         self.productions
             .iter()
-            .map(|&idx| &grammar.productions()[idx])
+            .map(|&idx| &grammar.productions[idx])
             .collect()
     }
 }
@@ -106,11 +106,11 @@ impl Display for Grammar {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         writeln!(f, "\nGRAMMAR [")?;
         writeln!(f, "\nTerminals:")?;
-        for terminal in self.terminals() {
+        for terminal in &self.terminals {
             writeln!(f, "{}. {}", terminal.idx, terminal.name)?;
         }
         writeln!(f, "\nNonTerminals:")?;
-        for nonterminal in self.nonterminals() {
+        for nonterminal in &self.nonterminals {
             writeln!(
                 f,
                 "{} ({}). {}",
@@ -120,12 +120,12 @@ impl Display for Grammar {
             )?;
         }
         writeln!(f, "\nProductions:")?;
-        for production in self.productions() {
+        for production in &self.productions {
             write!(
                 f,
                 "{}. {}: ",
                 production.idx,
-                self.nonterminals()[production.nonterminal].name
+                self.nonterminals[production.nonterminal].name
             )?;
             for assignment in &production.rhs {
                 write!(f, "{} ", self.symbol_name(res_symbol(assignment)))?;
@@ -227,7 +227,7 @@ impl Production {
 
     #[inline]
     pub fn nonterminal<'a>(&self, grammar: &'a Grammar) -> &'a NonTerminal {
-        &grammar.nonterminals()[self.nonterminal]
+        &grammar.nonterminals[self.nonterminal]
     }
 }
 
@@ -364,8 +364,8 @@ impl Grammar {
 
         let term_len = terminals.len();
         let grammar = Grammar {
-            imports: pgfile.imports,
-            productions: Some(productions),
+            imports: pgfile.imports.unwrap_or_default(),
+            productions,
             empty_index: terminals.len().into(), // Right after the last terminal
             augmented_index: (terminals.len() + 1).into(), // skip EMPTY
             stop_index: 0.into(),
@@ -373,12 +373,10 @@ impl Grammar {
                 .values()
                 .map(|t| (t.name.to_string(), t.idx.to_symbol_index()))
                 .collect(),
-            terminals: if terminals.is_empty() {
-                None
-            } else {
+            terminals: {
                 let mut terms: TermVec<_> = terminals.into_values().collect();
                 terms.sort();
-                Some(terms)
+                terms
             },
             nonterm_by_name: nonterminals
                 .values()
@@ -386,13 +384,11 @@ impl Grammar {
                     (nt.name.to_string(), nt.idx.to_symbol_index(term_len))
                 })
                 .collect(),
-            nonterminals: if nonterminals.is_empty() {
-                None
-            } else {
+            nonterminals: {
                 let mut nonterms: NonTermVec<_> =
                     nonterminals.into_values().collect();
                 nonterms.sort();
-                Some(nonterms)
+                nonterms
             },
         };
         // TODO: Dump only if tracing is used
@@ -683,11 +679,11 @@ impl Grammar {
     }
 
     pub(crate) fn new_termvec<T: Clone>(&self, default: T) -> TermVec<T> {
-        TermVec(vec![default; self.term_len()])
+        TermVec(vec![default; self.terminals.len()])
     }
 
     pub(crate) fn new_nontermvec<T: Clone>(&self, default: T) -> NonTermVec<T> {
-        NonTermVec(vec![default; self.nonterm_len()])
+        NonTermVec(vec![default; self.nonterminals.len()])
     }
 
     pub fn symbol_index(&self, name: &str) -> SymbolIndex {
@@ -699,7 +695,7 @@ impl Grammar {
     }
 
     pub fn symbol_name(&self, index: SymbolIndex) -> String {
-        if index.0 < self.term_len() {
+        if index.0 < self.terminals.len() {
             self.symbol_to_term(index).name.clone()
         } else {
             self.symbol_to_nonterm(index).name.clone()
@@ -743,27 +739,27 @@ impl Grammar {
     /// Convert symbol index to terminal
     #[inline]
     pub fn symbol_to_term(&self, index: SymbolIndex) -> &Terminal {
-        &self.terminals()[self.symbol_to_term_index(index)]
+        &self.terminals[self.symbol_to_term_index(index)]
     }
 
     #[inline]
     pub fn nonterm_to_symbol_index(&self, index: NonTermIndex) -> SymbolIndex {
-        SymbolIndex(index.0 + self.term_len())
+        SymbolIndex(index.0 + self.terminals.len())
     }
 
     /// Convert symbol index to non-terminal index. Panics if symbol index is a
     /// terminal index.
     #[inline]
     pub fn symbol_to_nonterm_index(&self, index: SymbolIndex) -> NonTermIndex {
-        NonTermIndex(index.0.checked_sub(self.term_len()).unwrap())
+        NonTermIndex(index.0.checked_sub(self.terminals.len()).unwrap())
     }
 
     /// Convert symbol index to non-terminal. Panics if symbol index is a
     /// terminal index.
     #[inline]
     pub fn symbol_to_nonterm(&self, index: SymbolIndex) -> &NonTerminal {
-        &self.nonterminals()
-            [NonTermIndex(index.0.checked_sub(self.term_len()).unwrap())]
+        &self.nonterminals
+            [NonTermIndex(index.0.checked_sub(self.terminals.len()).unwrap())]
     }
 
     /// Convert symbol index to non-terminal. Panics if symbol index is a
@@ -775,49 +771,22 @@ impl Grammar {
 
     #[inline]
     pub fn is_nonterm(&self, index: SymbolIndex) -> bool {
-        index.0 >= self.term_len()
+        index.0 >= self.terminals.len()
     }
 
     #[inline]
     pub fn is_term(&self, index: SymbolIndex) -> bool {
-        index.0 < self.term_len()
-    }
-
-    /// Number of terminals in the grammar.
-    #[inline]
-    pub fn term_len(&self) -> usize {
-        self.terminals.as_ref().map_or(0, |t| t.len())
-    }
-
-    /// Number of non-terminals in the grammar including EMPTY and S'
-    #[inline]
-    pub fn nonterm_len(&self) -> usize {
-        self.nonterminals.as_ref().map_or(0, |nt| nt.len())
-    }
-
-    #[inline]
-    pub fn terminals(&self) -> &TermVec<Terminal> {
-        self.terminals.as_ref().unwrap()
-    }
-
-    #[inline]
-    pub fn nonterminals(&self) -> &NonTermVec<NonTerminal> {
-        self.nonterminals.as_ref().unwrap()
-    }
-
-    #[inline]
-    pub fn productions(&self) -> &ProdVec<Production> {
-        self.productions.as_ref().unwrap()
+        index.0 < self.terminals.len()
     }
 
     #[inline]
     pub fn production_len(&self, prod: ProdIndex) -> usize {
-        self.productions()[prod].rhs.len()
+        self.productions[prod].rhs.len()
     }
 
     #[inline]
     pub fn production_rhs_symbols(&self, prod: ProdIndex) -> Vec<SymbolIndex> {
-        self.productions()[prod]
+        self.productions[prod]
             .rhs
             .iter()
             .map(|assgn| res_symbol(assgn))

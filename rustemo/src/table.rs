@@ -197,9 +197,7 @@ impl LRItem {
         Some(res_symbol(
             grammar
                 .productions
-                .as_ref()?
-                .get(self.prod)
-                .unwrap()
+                .get(self.prod)?
                 .rhs
                 .get(self.position)?,
         ))
@@ -489,7 +487,7 @@ fn calculate_reductions(
 ) {
     for state in states {
         for item in state.items.iter().filter(|x| x.is_reducing()) {
-            let prod = &grammar.productions()[item.prod];
+            let prod = &grammar.productions[item.prod];
 
             // Accept if reducing by augmented production for STOP lookahead
             if prod.idx == ProdIndex(0) {
@@ -501,7 +499,7 @@ fn calculate_reductions(
             let new_reduce = Action::Reduce(
                 item.prod,
                 item.prod_len,
-                grammar.productions()[item.prod].nonterminal,
+                grammar.productions[item.prod].nonterminal,
                 "<?>",
             );
             for follow_symbol in item.follow.borrow().iter() {
@@ -581,7 +579,7 @@ fn calculate_reductions(
                                 .iter()
                                 .map(|x| match x {
                                     Action::Reduce(prod, ..) => {
-                                        grammar.productions()[*prod].prio
+                                        grammar.productions[*prod].prio
                                     }
                                     other => panic!(
                                         "This should not happen. Got {:?}",
@@ -648,8 +646,8 @@ fn sort_terminals(grammar: &Grammar, states: &mut StateVec<LRState>) {
             }
         };
         terminals.sort_by(|&l, &r| {
-            let l_term_prio = term_prio(&grammar.terminals()[l]);
-            let r_term_prio = term_prio(&grammar.terminals()[r]);
+            let l_term_prio = term_prio(&grammar.terminals[l]);
+            let r_term_prio = term_prio(&grammar.terminals[r]);
             if l_term_prio > r_term_prio {
                 Ordering::Less
             } else if l_term_prio < r_term_prio {
@@ -707,7 +705,7 @@ fn group_per_next_symbol(
                 .push(idx.into());
             if grammar.is_term(symbol) {
                 let symbol = grammar.symbol_to_term_index(symbol);
-                let prod_prio = grammar.productions()[item.prod].prio;
+                let prod_prio = grammar.productions[item.prod].prio;
                 state
                     .max_prior_for_term
                     .entry(symbol)
@@ -744,20 +742,16 @@ fn first_sets(grammar: &Grammar) -> FirstSets {
     let mut first_sets = SymbolVec::new();
 
     // First set for each terminal contains only the terminal itself.
-    if let Some(ref terminals) = grammar.terminals {
-        for terminal in terminals {
-            let mut new_set = Firsts::new();
-            new_set.insert(terminal.idx.to_symbol_index());
-            first_sets.push(new_set);
-        }
+    for terminal in &grammar.terminals {
+        let mut new_set = Firsts::new();
+        new_set.insert(terminal.idx.to_symbol_index());
+        first_sets.push(new_set);
     }
 
     // Initialize empty sets for nonterminals
-    if let Some(ref nonterminals) = grammar.nonterminals {
-        nonterminals
-            .iter()
-            .for_each(|_| first_sets.push(Firsts::new()));
-    }
+    grammar.nonterminals
+           .iter()
+           .for_each(|_| first_sets.push(Firsts::new()));
 
     // EMPTY derives EMPTY
     first_sets[grammar.empty_index].insert(grammar.empty_index);
@@ -765,7 +759,7 @@ fn first_sets(grammar: &Grammar) -> FirstSets {
     let mut additions = true;
     while additions {
         additions = false;
-        for production in grammar.productions.as_ref().unwrap() {
+        for production in &grammar.productions {
             let lhs_nonterm = grammar.nonterm_to_symbol_index(production.nonterminal);
 
             let rhs_firsts =
@@ -845,7 +839,7 @@ fn follow_sets(grammar: &Grammar, first_sets: &FirstSets) -> FollowSets {
     let mut additions = true;
     while additions {
         additions = false;
-        for production in grammar.productions.as_ref().unwrap() {
+        for production in &grammar.productions {
             let lhs_symbol = grammar.nonterm_to_symbol_index(production.nonterminal);
 
             // Rule 2: If there is a production A -> α B β then everything in
@@ -903,7 +897,7 @@ fn closure(state: &mut LRState, grammar: &Grammar, first_sets: &FirstSets) {
                     let mut new_follow;
                     // Find first set of substring that follow symbol at position
                     if item.position + 1
-                        < grammar.productions()[item.prod].rhs.len()
+                        < grammar.productions[item.prod].rhs.len()
                     {
                         new_follow = firsts(
                             &grammar,
@@ -927,7 +921,7 @@ fn closure(state: &mut LRState, grammar: &Grammar, first_sets: &FirstSets) {
                     // Get all productions of the current non-terminal and
                     // create LR items with the calculated follow.
                     let nonterm = grammar.symbol_to_nonterm_index(symbol);
-                    for prod in &grammar.nonterminals()[nonterm].productions {
+                    for prod in &grammar.nonterminals[nonterm].productions {
                         new_items.insert(LRItem::with_follow(
                             &grammar,
                             *prod,
@@ -1141,7 +1135,7 @@ mod tests {
         let mut item = LRItem::new(&grammar, prod);
         assert_eq!(
             &grammar.symbol_names(
-                grammar.productions.as_ref().unwrap()[prod].rhs_symbols()
+                grammar.productions[prod].rhs_symbols()
             ),
             &["T", "Ep"]
         );

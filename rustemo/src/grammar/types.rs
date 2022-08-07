@@ -22,7 +22,7 @@ pub(crate) fn symbol_types(grammar: &Grammar) -> Vec<SymbolType> {
     // 6. If enum ref is NT or any inner struct Field is NT -> Recursive
 
     let mut types = vec![];
-    for terminal in grammar.terminals() {
+    for terminal in &grammar.terminals {
         types.push(SymbolType {
             name: terminal.name.clone(),
             symbol: grammar.term_to_symbol_index(terminal.idx),
@@ -31,7 +31,7 @@ pub(crate) fn symbol_types(grammar: &Grammar) -> Vec<SymbolType> {
         })
     }
 
-    for nonterminal in grammar.nonterminals() {
+    for nonterminal in &grammar.nonterminals {
 
     }
     types
