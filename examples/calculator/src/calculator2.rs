@@ -444,49 +444,49 @@ impl<'i> LRBuilder<&'i str> for Calculator2Builder {
             ProdKind::EP0 => {
                 let mut i = self.res_stack.split_off(self.res_stack.len()-3).into_iter();
                 match (i.next().unwrap(), i.next().unwrap(), i.next().unwrap()) {                
-                    (Symbol::NonTerminal(NonTerminal::E(p0)), _, Symbol::NonTerminal(NonTerminal::E(p1))) => NonTerminal::E(calculator2_actions::e_1(p0, p1)),
+                    (Symbol::NonTerminal(NonTerminal::E(p0)), _, Symbol::NonTerminal(NonTerminal::E(p1))) => NonTerminal::E(calculator2_actions::e_add(p0, p1)),
                     _ => panic!("Invalid symbol parse stack data.")
                 }
             },
             ProdKind::EP1 => {
                 let mut i = self.res_stack.split_off(self.res_stack.len()-3).into_iter();
                 match (i.next().unwrap(), i.next().unwrap(), i.next().unwrap()) {                
-                    (Symbol::NonTerminal(NonTerminal::E(p0)), _, Symbol::NonTerminal(NonTerminal::E(p1))) => NonTerminal::E(calculator2_actions::e_2(p0, p1)),
+                    (Symbol::NonTerminal(NonTerminal::E(p0)), _, Symbol::NonTerminal(NonTerminal::E(p1))) => NonTerminal::E(calculator2_actions::e_sub(p0, p1)),
                     _ => panic!("Invalid symbol parse stack data.")
                 }
             },
             ProdKind::EP2 => {
                 let mut i = self.res_stack.split_off(self.res_stack.len()-3).into_iter();
                 match (i.next().unwrap(), i.next().unwrap(), i.next().unwrap()) {                
-                    (Symbol::NonTerminal(NonTerminal::E(p0)), _, Symbol::NonTerminal(NonTerminal::E(p1))) => NonTerminal::E(calculator2_actions::e_3(p0, p1)),
+                    (Symbol::NonTerminal(NonTerminal::E(p0)), _, Symbol::NonTerminal(NonTerminal::E(p1))) => NonTerminal::E(calculator2_actions::e_mul(p0, p1)),
                     _ => panic!("Invalid symbol parse stack data.")
                 }
             },
             ProdKind::EP3 => {
                 let mut i = self.res_stack.split_off(self.res_stack.len()-3).into_iter();
                 match (i.next().unwrap(), i.next().unwrap(), i.next().unwrap()) {                
-                    (Symbol::NonTerminal(NonTerminal::E(p0)), _, Symbol::NonTerminal(NonTerminal::E(p1))) => NonTerminal::E(calculator2_actions::e_4(p0, p1)),
+                    (Symbol::NonTerminal(NonTerminal::E(p0)), _, Symbol::NonTerminal(NonTerminal::E(p1))) => NonTerminal::E(calculator2_actions::e_div(p0, p1)),
                     _ => panic!("Invalid symbol parse stack data.")
                 }
             },
             ProdKind::EP4 => {
                 let mut i = self.res_stack.split_off(self.res_stack.len()-3).into_iter();
                 match (i.next().unwrap(), i.next().unwrap(), i.next().unwrap()) {                
-                    (Symbol::NonTerminal(NonTerminal::E(p0)), _, Symbol::NonTerminal(NonTerminal::E(p1))) => NonTerminal::E(calculator2_actions::e_5(p0, p1)),
+                    (Symbol::NonTerminal(NonTerminal::E(p0)), _, Symbol::NonTerminal(NonTerminal::E(p1))) => NonTerminal::E(calculator2_actions::e_pow(p0, p1)),
                     _ => panic!("Invalid symbol parse stack data.")
                 }
             },
             ProdKind::EP5 => {
                 let mut i = self.res_stack.split_off(self.res_stack.len()-3).into_iter();
                 match (i.next().unwrap(), i.next().unwrap(), i.next().unwrap()) {                
-                    (_, Symbol::NonTerminal(NonTerminal::E(p0)), _) => NonTerminal::E(calculator2_actions::e_6(p0)),
+                    (_, Symbol::NonTerminal(NonTerminal::E(p0)), _) => NonTerminal::E(calculator2_actions::e_paren(p0)),
                     _ => panic!("Invalid symbol parse stack data.")
                 }
             },
             ProdKind::EP6 => {
                 let mut i = self.res_stack.split_off(self.res_stack.len()-1).into_iter();
                 match i.next().unwrap() {                
-                    Symbol::Terminal(Terminal::Num(p0)) => NonTerminal::E(calculator2_actions::e_7(p0)),
+                    Symbol::Terminal(Terminal::Num(p0)) => NonTerminal::E(calculator2_actions::e_num(p0)),
                     _ => panic!("Invalid symbol parse stack data.")
                 }
             },

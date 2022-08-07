@@ -1,10 +1,10 @@
 use calculator1::Calculator1Parser;
 use calculator2::Calculator2Parser;
 
-mod calculator1;
-mod calculator1_actions;
-mod calculator2;
-mod calculator2_actions;
+mod calculator_01;
+mod calculator_01_actions;
+mod calculator_02_ambig;
+mod calculator_02_ambig_actions;
 
 fn main() {
     let _result1 = Calculator1Parser::parse_str("2 + 3 * 7 + 6 * 3");

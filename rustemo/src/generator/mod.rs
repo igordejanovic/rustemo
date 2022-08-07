@@ -291,6 +291,7 @@ where
             }}
         }}
 
+        #[allow(dead_code)]
         impl {parser_name}Parser
         {{
             pub fn parse_str<'i>(input: &'i str) -> Result<<{parser_name}Builder as Builder>::Output> {{

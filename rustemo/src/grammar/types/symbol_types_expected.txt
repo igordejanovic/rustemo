@@ -1,193 +1,199 @@
-[
-    SymbolType {
-        name: "STOP",
-        symbol: 0,
-        kind: Terminal,
-        optional: false,
-    },
-    SymbolType {
-        name: "Num",
-        symbol: 1,
-        kind: Terminal,
-        optional: false,
-    },
-    SymbolType {
-        name: "EMPTY",
-        symbol: 2,
-        kind: Enum(
-            [],
-        ),
-        optional: false,
-    },
-    SymbolType {
-        name: "AUG",
-        symbol: 3,
-        kind: Ref(
-            "AUG_1",
-        ),
-        optional: false,
-    },
-    SymbolType {
-        name: "A_MyKind",
-        symbol: 4,
-        kind: Struct(
-            [
-                Field {
-                    name: "myb",
-                    ty: "B",
-                    recursive: false,
-                },
-                Field {
-                    name: "c",
-                    ty: "C",
-                    recursive: false,
-                },
-            ],
-        ),
-        optional: false,
-    },
-    SymbolType {
-        name: "A_2",
-        symbol: 4,
-        kind: Struct(
-            [
-                Field {
-                    name: "b",
-                    ty: "B",
-                    recursive: false,
-                },
-                Field {
-                    name: "c",
-                    ty: "C",
-                    recursive: false,
-                },
-            ],
-        ),
-        optional: false,
-    },
-    SymbolType {
-        name: "A",
-        symbol: 4,
-        kind: Enum(
-            [
-                Variant {
-                    name: "A_MyKind",
-                    ty: Some(
-                        "A_MyKind",
-                    ),
-                },
-                Variant {
-                    name: "A_2",
-                    ty: Some(
-                        "A_2",
-                    ),
-                },
-                Variant {
-                    name: "A_MyD",
-                    ty: Some(
-                        "D",
-                    ),
-                },
-                Variant {
-                    name: "A_4",
-                    ty: None,
-                },
-            ],
-        ),
-        optional: false,
-    },
-    SymbolType {
-        name: "B",
-        symbol: 5,
-        kind: Ref(
-            "B_1",
-        ),
-        optional: true,
-    },
-    SymbolType {
-        name: "C_1",
-        symbol: 6,
-        kind: Struct(
-            [
-                Field {
-                    name: "b",
-                    ty: "B",
-                    recursive: false,
-                },
-            ],
-        ),
-        optional: false,
-    },
-    SymbolType {
-        name: "C",
-        symbol: 6,
-        kind: Ref(
-            "C_1",
-        ),
-        optional: false,
-    },
-    SymbolType {
-        name: "D_1",
-        symbol: 7,
-        kind: Struct(
-            [
-                Field {
-                    name: "a",
-                    ty: "A",
-                    recursive: false,
-                },
-                Field {
-                    name: "b",
-                    ty: "B",
-                    recursive: false,
-                },
-            ],
-        ),
-        optional: false,
-    },
-    SymbolType {
-        name: "D_2",
-        symbol: 7,
-        kind: Struct(
-            [
-                Field {
-                    name: "mya",
-                    ty: "A",
-                    recursive: false,
-                },
-                Field {
-                    name: "b",
-                    ty: "B",
-                    recursive: false,
-                },
-                Field {
-                    name: "d",
-                    ty: "D",
-                    recursive: true,
-                },
-            ],
-        ),
-        optional: false,
-    },
-    SymbolType {
-        name: "D",
-        symbol: 7,
-        kind: Enum(
-            [
-                Variant {
-                    name: "D_1",
-                    ty: Some(
-                        "D_1",
-                    ),
-                },
-                Variant {
-                    name: "D_2",
-                    ty: Some(
-                        "D_2",
-                    ),
-                },
-            ],
-        ),
-        optional: true,
-    },
-]
+SymbolTypes {
+    symbol_types: [
+        SymbolType {
+            name: "STOP",
+            kind: Terminal,
+            optional: false,
+        },
+        SymbolType {
+            name: "Num",
+            kind: Terminal,
+            optional: false,
+        },
+        SymbolType {
+            name: "EMPTY",
+            kind: Enum(
+                [],
+            ),
+            optional: false,
+        },
+        SymbolType {
+            name: "AUG",
+            kind: Enum(
+                [
+                    Variant {
+                        name: "AUG_1",
+                        kind: Ref(
+                            "A",
+                        ),
+                    },
+                ],
+            ),
+            optional: false,
+        },
+        SymbolType {
+            name: "A",
+            kind: Enum(
+                [
+                    Variant {
+                        name: "A_MyKind",
+                        kind: Struct(
+                            [
+                                Field {
+                                    name: "myb",
+                                    ty: "B",
+                                    recursive: false,
+                                },
+                                Field {
+                                    name: "c",
+                                    ty: "C",
+                                    recursive: false,
+                                },
+                            ],
+                        ),
+                    },
+                    Variant {
+                        name: "A_2",
+                        kind: Struct(
+                            [
+                                Field {
+                                    name: "b_1",
+                                    ty: "B",
+                                    recursive: false,
+                                },
+                                Field {
+                                    name: "c",
+                                    ty: "C",
+                                    recursive: false,
+                                },
+                            ],
+                        ),
+                    },
+                    Variant {
+                        name: "A_MyD",
+                        kind: Ref(
+                            "D",
+                        ),
+                    },
+                    Variant {
+                        name: "A_4",
+                        kind: Plain,
+                    },
+                ],
+            ),
+            optional: false,
+        },
+        SymbolType {
+            name: "B",
+            kind: Enum(
+                [
+                    Variant {
+                        name: "B_1",
+                        kind: Ref(
+                            "C",
+                        ),
+                    },
+                ],
+            ),
+            optional: true,
+        },
+        SymbolType {
+            name: "C",
+            kind: Enum(
+                [
+                    Variant {
+                        name: "C_1",
+                        kind: Struct(
+                            [
+                                Field {
+                                    name: "b",
+                                    ty: "B",
+                                    recursive: false,
+                                },
+                            ],
+                        ),
+                    },
+                ],
+            ),
+            optional: false,
+        },
+        SymbolType {
+            name: "D",
+            kind: Enum(
+                [
+                    Variant {
+                        name: "D_1",
+                        kind: Struct(
+                            [
+                                Field {
+                                    name: "a",
+                                    ty: "A",
+                                    recursive: false,
+                                },
+                                Field {
+                                    name: "b",
+                                    ty: "B",
+                                    recursive: false,
+                                },
+                            ],
+                        ),
+                    },
+                    Variant {
+                        name: "D_2",
+                        kind: Struct(
+                            [
+                                Field {
+                                    name: "mya",
+                                    ty: "A",
+                                    recursive: false,
+                                },
+                                Field {
+                                    name: "b_2",
+                                    ty: "B",
+                                    recursive: false,
+                                },
+                                Field {
+                                    name: "d_3",
+                                    ty: "D",
+                                    recursive: true,
+                                },
+                            ],
+                        ),
+                    },
+                ],
+            ),
+            optional: true,
+        },
+        SymbolType {
+            name: "F",
+            kind: Enum(
+                [
+                    Variant {
+                        name: "F_1",
+                        kind: Struct(
+                            [
+                                Field {
+                                    name: "a",
+                                    ty: "A",
+                                    recursive: false,
+                                },
+                                Field {
+                                    name: "f_2",
+                                    ty: "F",
+                                    recursive: true,
+                                },
+                            ],
+                        ),
+                    },
+                    Variant {
+                        name: "F_2",
+                        kind: Ref(
+                            "D",
+                        ),
+                    },
+                ],
+            ),
+            optional: false,
+        },
+    ],
+}

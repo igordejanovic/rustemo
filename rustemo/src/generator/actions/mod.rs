@@ -41,10 +41,7 @@ pub(crate) trait ActionsGenerator {
     }
 
     /// Create Rust types for the given non-terminal.
-    fn nonterminal_types(
-        &self,
-        nonterminal: &NonTerminal,
-    ) -> Vec<(String, syn::Item)>;
+    fn nonterminal_types(&self, nonterminal: &NonTerminal) -> Vec<syn::Item>;
 
     /// Creates an action function for each production of the given non-terminal.
     fn nonterminal_actions(
@@ -145,11 +142,10 @@ where
         nt_symbol != grammar.augmented_index && nt_symbol != grammar.empty_index
     }) {
         // Add non-terminal type
-        for (type_name, ty) in
-            generator.nonterminal_types(nonterminal).into_iter()
-        {
-            if !type_names.contains(&type_name) {
-                log!("Creating type for non-terminal '{type_name}'.");
+        if !type_names.contains(&nonterminal.name) {
+            log!("Creating types for non-terminal '{}'.", nonterminal.name);
+            for ty in generator.nonterminal_types(nonterminal).into_iter()
+            {
                 ast.items.push(ty);
             }
         }

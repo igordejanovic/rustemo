@@ -3,239 +3,212 @@ use proc_macro2::{Ident, Span};
 use quote::quote;
 use syn::{parse::Parser, parse_quote};
 
-use crate::grammar::{Grammar, NonTerminal, Production};
+use crate::grammar::{
+    types::{SymbolTypeKind, SymbolTypes, VariantKind, Variant, SymbolType},
+    Grammar, NonTerminal,
+};
 
 use super::ActionsGenerator;
 
-pub(crate) struct ProductionActionsGenerator<'a> {
-    grammar: &'a Grammar,
+pub(crate) struct ProductionActionsGenerator {
+    types: SymbolTypes,
 }
 
-struct ProdField {
-    name: String,
-    ty: String,
-    boxed: bool,
-}
-
-impl<'a> ProductionActionsGenerator<'a> {
-    pub fn new(grammar: &'a Grammar) -> Box<dyn ActionsGenerator + 'a> {
-        Box::new(Self { grammar })
+impl ProductionActionsGenerator {
+    pub fn new(grammar: &Grammar) -> Box<dyn ActionsGenerator> {
+        Box::new(Self {
+            types: SymbolTypes::new(grammar),
+        })
     }
 
-    fn prod_fields(&self, prod: &Production) -> Vec<ProdField> {
-        let nonterminal = &self.grammar.nonterminals[prod.nonterminal];
-        let variant_name = format!(
-            "{}{}",
-            nonterminal.name,
-            prod.kind.as_ref().unwrap_or(&format!("{}", prod.ntidx + 1))
-        );
-        let rhs = prod.rhs_with_content(self.grammar);
-        match rhs.iter().count() {
-            0 => vec![],
-            1 => {
-                let field_type_name = self.grammar.symbol_name(rhs[0].symbol);
-                vec![ProdField {
-                    name: variant_name.to_case(Case::Snake),
-                    ty: field_type_name.clone(),
-                    boxed: field_type_name == nonterminal.name,
-                }]
+    fn get_action_args(&self, variant: &Variant) -> Vec<syn::FnArg> {
+        let mut fn_args: Vec<syn::FnArg> = vec![];
+
+        match &variant.kind {
+            VariantKind::Plain => (), // No args for plain enum
+            VariantKind::Struct(fields) => {
+                for field in fields {
+                    let f_name =
+                        Ident::new(&field.name, Span::call_site());
+                    let f_type =
+                        Ident::new(&field.ty, Span::call_site());
+                    fn_args.push(parse_quote! { #f_name: #f_type });
+                }
             }
-            _ =>
-            // More than one ref with content. Make a new type.
-            {
-                prod.rhs_assign()
-                    .into_iter()
-                    .enumerate()
-                    .filter(|(_, assign)| {
-                        self.grammar.symbol_has_content(assign.symbol)
-                    })
-                    .map(|(idx, assign)| {
-                        let field_type_name =
-                            self.grammar.symbol_name(assign.symbol);
-                        let name = assign.name.unwrap_or(format!(
-                            "{}_{}",
-                            field_type_name.to_case(Case::Snake),
-                            idx + 1
-                        ));
-                        ProdField {
-                            name,
-                            ty: field_type_name.clone(),
-                            boxed: field_type_name == nonterminal.name,
+            VariantKind::Ref(ref_type) => {
+                let ty = Ident::new(&ref_type, Span::call_site());
+                let name = Ident::new(
+                    &ref_type.to_case(Case::Snake),
+                    Span::call_site(),
+                );
+                fn_args.push(parse_quote! { #name: #ty });
+            }
+        };
+        fn_args
+    }
+
+    fn get_action_body(&self, ty: &SymbolType, variant: &Variant, variants_len: usize) -> syn::Expr {
+        let ty_ident = Ident::new(&ty.name, Span::call_site());
+        let variant_ident =
+            Ident::new(&variant.name, Span::call_site());
+        let expr: syn::Expr = match &variant.kind {
+            VariantKind::Plain => {
+                parse_quote! { #ty_ident::#variant_ident }
+            }
+            VariantKind::Struct(fields) => {
+                let struct_ty = Ident::new(&variant.name, Span::call_site());
+                let fields: Vec<syn::FieldValue> = fields
+                    .iter()
+                    .map(|f| {
+                        let field =
+                            Ident::new(&f.name, Span::call_site());
+                        if f.recursive {
+                            parse_quote! { #field: Box::new(#field) }
+                        } else {
+                            parse_quote! { #field }
                         }
                     })
-                    .collect()
-            }
-        }
-    }
+                    .collect();
 
-    fn variant_name(
-        &self,
-        nonterminal: &NonTerminal,
-        prod: &Production,
-    ) -> String {
-        format!(
-            "{}{}",
-            nonterminal.name,
-            prod.kind.as_ref().unwrap_or(&format!("{}", prod.ntidx + 1))
-        )
+                if variants_len == 1 {
+                    // Promote to struct
+                    parse_quote! {
+                        #struct_ty {
+                            #(#fields),*
+                        }
+                    }
+                } else {
+                    parse_quote! {
+                        #ty_ident::#variant_ident(
+                            #struct_ty {
+                                #(#fields),*
+                            }
+                        )
+                    }
+                }
+            }
+            VariantKind::Ref(ref_type) => {
+                let ref_type = Ident::new(
+                    &ref_type.to_case(Case::Snake),
+                    Span::call_site(),
+                );
+                parse_quote! {
+                    #ty_ident::#variant_ident(#ref_type)
+                }
+            }
+        };
+
+        if ty.optional {
+            parse_quote! { Some(#expr) }
+        } else {
+            expr
+        }
     }
 }
 
-impl<'a> ActionsGenerator for ProductionActionsGenerator<'a> {
+impl ActionsGenerator for ProductionActionsGenerator {
     fn nonterminal_types(
         &self,
         nonterminal: &NonTerminal,
-    ) -> Vec<(String, syn::Item)> {
-        // Each non-terminal is enum where variants are deduced from
-        // the non-terminal productions.
-        // If there is 0 content references variant is without content
-        // If there is 1 content reference variant contains a value
-        //    of the referenced symbol type.
-        // If there is >1 content references a new struct will be created and
-        // the variant contains a type of this struct.
-        // The name of the variant will be either production kind if given or
-        // <rule><prod idx>
-        // The name of struct field will be either assignment name or
-        // <ref_type_in_snakecase>_<position in production>
+    ) -> Vec<syn::Item> {
+        let ty = self.types.get_type(&nonterminal.name);
+        let type_ident = Ident::new(&nonterminal.name, Span::call_site());
 
-        let mut types: Vec<(String, syn::Item)> = vec![];
-        let prods = nonterminal.productions(self.grammar);
-
-        let variants: Vec<syn::Variant> = prods
-            .iter()
-            .map(|&prod| {
-                let variant_name = self.variant_name(nonterminal, prod);
-                let variant_ident = Ident::new(&variant_name, Span::call_site());
-                let fields = self.prod_fields(prod);
-                match fields.iter().count() {
-                    0 => parse_quote! { #variant_ident },
-                    1 => {
-                        let variant_inner_type = Ident::new(
-                            &fields[0].ty,
-                            Span::call_site(),
-                        );
-                        parse_quote! { #variant_ident(#variant_inner_type) }
-                    }
-                    _ => {
-                        // More than one ref with content. Make a new type.
-                        let struct_fields: Vec<syn::Field> = fields
-                            .into_iter()
-                            .map(|f| {
-                                let name_ident = Ident::new(&f.name, Span::call_site());
-                                let field_type_ident = Ident::new(&f.ty, Span::call_site());
-
+        match &ty.kind {
+            SymbolTypeKind::Enum(variants) => {
+                // Derived struct types
+                let mut types: Vec<syn::Item> =
+                    variants.iter().filter_map(|v| {
+                    match &v.kind {
+                        VariantKind::Struct(fields) => {
+                            let variant_ident = Ident::new(&v.name,
+                                                           Span::call_site());
+                            let fields: Vec<syn::Field> = fields.iter().map(|f| {
+                                let field_name = Ident::new(&f.name, Span::call_site());
+                                let field_type = Ident::new(&f.ty, Span::call_site());
                                 syn::Field::parse_named
-                                    .parse2(if f.ty == nonterminal.name {
-                                        // Handle direct recursion
-                                        quote! { pub #name_ident: Box<#field_type_ident> }
-                                    } else {
-                                        quote! { pub #name_ident: #field_type_ident }
-                                    })
-                                    .unwrap()
+                                    .parse2(
+                                        if f.recursive {
+                                            // Handle direct recursion
+                                            quote! { pub #field_name: Box<#field_type> }
+                                        } else {
+                                            quote! {pub #field_name: #field_type}
+                                        }
+                                    ).unwrap()
                             }).collect();
-
-                        types.push(
-                            (variant_name.clone(),
-                             parse_quote! {
-                                 #[derive(Debug, Clone)]
-                                 pub struct #variant_ident {
-                                     #(#struct_fields),*
-                                 }
-                             }
-                        ));
-
-                        parse_quote! { #variant_ident(#variant_ident) }
+                            Some(parse_quote! {
+                                #[allow(non_camel_case_types)]
+                                #[derive(Debug, Clone)]
+                                pub struct #variant_ident {
+                                    #(#fields),*
+                                }
+                            })
+                        },
+                        _ => None,
                     }
-                }
-            })
-            .collect::<Vec<_>>();
+                }).collect();
 
-        let type_name_ident = Ident::new(&nonterminal.name, Span::call_site());
-        types.push((
-            nonterminal.name.clone(),
-            parse_quote! {
-                #[derive(Debug, Clone)]
-                pub enum #type_name_ident {
-                    #(#variants),*
-                }
-            },
-        ));
-        types
+                // Enum type
+                let variants: Vec<syn::Variant> = variants
+                    .iter()
+                    .map(|v| {
+                        let variant_ident =
+                            Ident::new(&v.name, Span::call_site());
+                        match &v.kind {
+                            VariantKind::Plain => {
+                                parse_quote! { #variant_ident }
+                            }
+                            VariantKind::Struct(_) => {
+                                parse_quote! { #variant_ident(#variant_ident) }
+                            }
+                            VariantKind::Ref(ref_type) => {
+                                let ref_type =
+                                    Ident::new(&ref_type, Span::call_site());
+                                parse_quote! { #variant_ident(#ref_type) }
+                            }
+                        }
+                    })
+                    .collect();
+
+                types.push(
+                    parse_quote! {
+                        #[allow(non_camel_case_types)]
+                        #[derive(Debug, Clone)]
+                        pub enum #type_ident {
+                            #(#variants),*
+                        }
+                    },
+                );
+                types
+            }
+            SymbolTypeKind::Terminal => unreachable!(),
+        }
     }
 
     fn nonterminal_actions(
         &self,
         nonterminal: &NonTerminal,
     ) -> Vec<(String, syn::Item)> {
-        let prods = nonterminal.productions(self.grammar);
+        let ty = self.types.get_type(&nonterminal.name);
 
-        let actions: Vec<(String, syn::Item)> = prods
-            .iter()
-            .map(|&prod| {
-                let action_name = format!(
-                    "{}_{}",
-                    nonterminal.name.to_case(Case::Snake),
-                    if let Some(ref kind) = prod.kind {
-                        kind.to_case(Case::Snake)
-                    } else {
-                        format!("{}", prod.ntidx + 1)
-                    }
-                );
-                let action_ident = Ident::new(&action_name, Span::call_site());
-                let variant_name = self.variant_name(nonterminal, prod);
-                let variant_ident =
-                    Ident::new(&variant_name, Span::call_site());
-                let ret_type_ident =
-                    Ident::new(&nonterminal.name, Span::call_site());
-                let mut fn_args: Vec<syn::FnArg> = vec![];
-                let mut field_vals: Vec<syn::FieldValue> = vec![];
-                let fields = self.prod_fields(prod);
+        match &ty.kind {
+            SymbolTypeKind::Enum(variants) => {
+                variants.iter().map(|v| {
+                    let action_name = v.name.to_case(Case::Snake);
+                    let action = Ident::new(&action_name, Span::call_site());
+                    let args = self.get_action_args(v);
+                    let ret_type = Ident::new(&nonterminal.name,
+                                                Span::call_site());
+                    let body = self.get_action_body(ty, v, variants.len());
 
-                for field in &fields {
-                    let ident = Ident::new(&field.name, Span::call_site());
-                    let ty: syn::Type = syn::parse_str(&field.ty).unwrap();
-                    fn_args.push(parse_quote! { #ident: #ty });
-
-                    if field.boxed {
-                        field_vals
-                            .push(parse_quote! { #ident: Box::new(#ident) });
-                    } else {
-                        field_vals.push(parse_quote! { #ident });
-                    }
-                }
-
-                let body_expr: syn::Expr = match fields.iter().count() {
-                    0 => parse_quote! { #ret_type_ident::#variant_ident },
-                    1 => {
-                        let inner_var_ident =
-                            Ident::new(&fields[0].name, Span::call_site());
-                        parse_quote! {
-                            #ret_type_ident::#variant_ident(#inner_var_ident)
+                    (action_name, parse_quote!{
+                        pub fn #action(#(#args),*) -> #ret_type {
+                            #body
                         }
-                    }
-                    _ => {
-                        // More than one ref with content. Return stuct instance
-                        parse_quote! {
-                            #ret_type_ident::#variant_ident(
-                                #variant_ident {
-                                    #(#field_vals),*
-                                }
-                            )
-                        }
-                    }
-                };
-
-                (
-                    action_name,
-                    parse_quote! {
-                        pub fn #action_ident(#(#fn_args),*) -> #ret_type_ident {
-                            #body_expr
-                        }
-                    },
-                )
-            })
-            .collect();
-
-        actions
+                    })
+                }).collect()
+            },
+            SymbolTypeKind::Terminal => unreachable!{},
+        }
     }
 }

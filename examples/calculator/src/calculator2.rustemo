@@ -1,10 +1,10 @@
-E: E '+' E {1, left}
- | E '-' E {1, left}
- | E '*' E {2, left}
- | E '/' E {2, left}
- | E '^' E {3, right}
- | '(' E ')'
- | Num;
+E: E '+' E {Add, 1, left}
+ | E '-' E {Sub, 1, left}
+ | E '*' E {Mul, 2, left}
+ | E '/' E {Div, 2, left}
+ | E '^' E {Pow, 3, right}
+ | '(' E ')' {Paren}
+ | Num {Num};
 
 terminals
 

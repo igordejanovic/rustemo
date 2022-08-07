@@ -197,9 +197,11 @@ impl Production {
     pub fn rhs_assign(&self) -> Vec<Assignment> {
         self.rhs
             .iter()
-            .map(|a| Assignment {
+            .enumerate()
+            .map(|(idx, a)| Assignment {
                 name: a.name.clone(),
                 symbol: res_symbol(a),
+                idx,
             })
             .collect()
     }
@@ -271,6 +273,8 @@ pub struct ResolvingAssignment {
 pub struct Assignment {
     pub name: Option<String>,
     pub symbol: SymbolIndex,
+    /// position in RHS, zero based.
+    pub idx: usize,
 }
 
 /// Called for Assignment to extract resolved SymbolIndex.
@@ -635,6 +639,7 @@ impl Grammar {
     ) {
         // Resolve references.
         for production in productions {
+            let rhs_len = production.rhs.len();
             for assign in &mut production.rhs {
                 if let ResolvingSymbolIndex::Resolving(symbol) = &assign.symbol
                 {
@@ -644,7 +649,7 @@ impl Grammar {
                                 if let Some(terminal) = terminals.get(name) {
                                     terminal.idx.to_symbol_index()
                                 } else {
-                                    nonterminals
+                                    let nt_idx = nonterminals
                                         .get(name)
                                         .unwrap_or_else(|| {
                                             panic!(
@@ -652,10 +657,13 @@ impl Grammar {
                                                 name
                                             )
                                         })
-                                        .idx
-                                        .to_symbol_index(terminals.len())
+                                        .idx;
+                                    if rhs_len == 1 && nt_idx == production.nonterminal {
+                                        panic!("Infinite recursion on symbol '{}'", name);
+                                    }
+                                    nt_idx.to_symbol_index(terminals.len())
                                 },
-                            )
+                            );
                         }
                         GrammarSymbol::StrConst(name) => {
                             assign.symbol = ResolvingSymbolIndex::Resolved(
@@ -669,7 +677,7 @@ impl Grammar {
                                     })
                                     .idx
                                     .to_symbol_index(),
-                            )
+                            );
                         }
                     }
                 }

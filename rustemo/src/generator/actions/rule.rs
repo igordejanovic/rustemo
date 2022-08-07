@@ -47,18 +47,12 @@ impl<'a> ActionsGenerator for RuleActionsGenerator<'a> {
     fn nonterminal_types(
         &self,
         nonterminal: &NonTerminal,
-    ) -> Vec<(String, syn::Item)> {
-        // Inspect each production RHS and find the superset of all possible
-        // assignments which will be mapped to stuct fields.
-        //
-        // A special case is when each RHS has only one assignment without LHS
-        // defined. In that case construct Enum instead of struct.
-        let mut types: Vec<(String, syn::Item)> = vec![];
+    ) -> Vec<syn::Item> {
+        let mut types: Vec<syn::Item> = vec![];
         let prods = nonterminal.productions(self.grammar);
         let type_name_ident = Ident::new(&nonterminal.name, Span::call_site());
 
         let ty = if self.grammar.is_enum(nonterminal) {
-            // Variants will be named after RHS symbol names
             let variants: Vec<syn::Variant> = prods
                 .iter()
                 .map(|prod| {
@@ -93,7 +87,7 @@ impl<'a> ActionsGenerator for RuleActionsGenerator<'a> {
             }
         };
 
-        types.push((nonterminal.name.clone(), ty));
+        types.push(ty);
         types
     }
 
