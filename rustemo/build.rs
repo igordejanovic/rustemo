@@ -45,7 +45,7 @@ fn _root_dir() -> PathBuf {
 }
 
 fn _generate(out_dir: &Path) -> Result<(), Box<dyn Error>> {
-    let grammar_file = "src/rustemo.rustemo";
+    let grammar_file = "src/lang/rustemo.rustemo";
     println!(r#"cargo:rerun-if-changed={}"#, grammar_file);
 
     fs::create_dir_all(&out_dir)?;
@@ -63,6 +63,7 @@ fn _generate(out_dir: &Path) -> Result<(), Box<dyn Error>> {
     let status = Command::new(&rustemo_path)
         .args(&[
             "--force",
+            "--actions",
             "--outdir",
             out_dir.to_str().expect("output path is not valid UTF-8"),
             root_dir

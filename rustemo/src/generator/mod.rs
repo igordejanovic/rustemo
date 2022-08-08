@@ -119,11 +119,18 @@ where
 
     // Generate parser definition
     let out_file = out_dir.join(file_name).with_extension("rs");
+    if !settings.force && out_file.exists() {
+        return Err(Error::Error(
+            "Parser file already exists. Use --force to override.".to_string(),
+        ));
+    }
     let out_file = File::create(out_file)?;
     generate_parser_definition(&grammar, &file_name, states, out_file)?;
 
     // Generate actions
-    generate_parser_actions(&grammar, &grammar_path, settings)?;
+    if settings.actions {
+        generate_parser_actions(&grammar, &grammar_path)?;
+    }
 
     Ok(())
 }

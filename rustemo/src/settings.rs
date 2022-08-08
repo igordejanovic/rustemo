@@ -13,23 +13,24 @@ impl Default for LRTableType {
 }
 
 #[derive(Debug)]
-pub enum GenActions {
-    ProductionBased,
-    RuleBased,
-}
-
-impl Default for GenActions {
-    fn default() -> Self {
-        GenActions::ProductionBased
-    }
-}
-
-#[derive(Debug, Default)]
 pub struct Settings {
     pub prefer_shifts: bool,
     pub prefer_shifts_over_empty: bool,
     pub lr_table_type: LRTableType,
-    pub gen_actions: GenActions,
+    pub actions: bool,
+    pub force: bool,
+}
+
+impl Default for Settings {
+    fn default() -> Self {
+        Self {
+            prefer_shifts: Default::default(),
+            prefer_shifts_over_empty: Default::default(),
+            lr_table_type: Default::default(),
+            actions: true,
+            force: Default::default(),
+        }
+    }
 }
 
 impl Settings {
@@ -45,8 +46,12 @@ impl Settings {
         self.lr_table_type = table_type;
         self
     }
-    pub fn with_gen_actions(mut self, gen_actions: GenActions) -> Self {
-        self.gen_actions = gen_actions;
+    pub fn with_actions(mut self, actions: bool) -> Self {
+        self.actions = actions;
+        self
+    }
+    pub fn with_force(mut self, force: bool) -> Self {
+        self.force = force;
         self
     }
 }

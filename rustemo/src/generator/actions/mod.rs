@@ -16,11 +16,9 @@ use crate::grammar::{Grammar, NonTerminal};
 use crate::{
     error::{Error, Result},
     grammar::Terminal,
-    settings::{GenActions, Settings},
 };
 
 mod production;
-mod rule;
 
 pub(crate) trait ActionsGenerator {
     fn terminal_type(&self, terminal: &Terminal) -> syn::Item {
@@ -53,7 +51,6 @@ pub(crate) trait ActionsGenerator {
 pub(crate) fn generate_parser_actions<F>(
     grammar: &Grammar,
     grammar_path: F,
-    settings: &Settings,
 ) -> Result<()>
 where
     F: AsRef<Path> + core::fmt::Debug,
@@ -113,12 +110,8 @@ where
         };
     }
 
-    let generator: Box<dyn ActionsGenerator> = match settings.gen_actions {
-        GenActions::RuleBased => rule::RuleActionsGenerator::new(grammar),
-        GenActions::ProductionBased => {
-            production::ProductionActionsGenerator::new(grammar)
-        }
-    };
+    let generator: Box<dyn ActionsGenerator> =
+        production::ProductionActionsGenerator::new(grammar);
 
     // Generate types and actions for terminals
     for terminal in grammar.terminals.iter().filter(|t| t.has_content) {
@@ -144,8 +137,7 @@ where
         // Add non-terminal type
         if !type_names.contains(&nonterminal.name) {
             log!("Creating types for non-terminal '{}'.", nonterminal.name);
-            for ty in generator.nonterminal_types(nonterminal).into_iter()
-            {
+            for ty in generator.nonterminal_types(nonterminal).into_iter() {
                 ast.items.push(ty);
             }
         }
