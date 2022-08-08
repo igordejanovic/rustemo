@@ -1,0 +1,18 @@
+E: left=E '+' right=E {Add, 1, left}
+ | left=E '-' right=E {Sub, 1, left}
+ | left=E '*' right=E {Mul, 2, left}
+ | left=E '/' right=E {Div, 2, left}
+ | base=E '^' exp=E {Pow, 3, right}
+ | '(' E ')' {Paren}
+ | Num {Num};
+
+terminals
+
+Plus: '+';
+Sub: '-';
+Mul: '*';
+Div: '/';
+Pow: '^';
+LParen: '(';
+RParen: ')';
+Num: /\d+(\.\d+)?/;

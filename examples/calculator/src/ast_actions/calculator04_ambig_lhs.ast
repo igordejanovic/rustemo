@@ -1,0 +1,33 @@
+Ok(
+    E_Add(
+        E_Add {
+            left: E_Add(
+                E_Add {
+                    left: E_Num(
+                        "2",
+                    ),
+                    right: E_Mul(
+                        E_Mul {
+                            left: E_Num(
+                                "3",
+                            ),
+                            right: E_Num(
+                                "7",
+                            ),
+                        },
+                    ),
+                },
+            ),
+            right: E_Mul(
+                E_Mul {
+                    left: E_Num(
+                        "6",
+                    ),
+                    right: E_Num(
+                        "3",
+                    ),
+                },
+            ),
+        },
+    ),
+)

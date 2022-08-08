@@ -19,7 +19,7 @@ use rustemo_rt::index::{StateIndex, TermIndex, NonTermIndex, ProdIndex};
 use rustemo_rt::grammar::{TerminalInfo, TerminalInfos, TerminalsState};
 use rustemo_rt::debug::{log, logn};
 
-use super::calculator1_actions;
+use super::calculator01_actions;
 
 const TERMINAL_NO: usize = 6;
 const NONTERMINAL_NO: usize = 5;
@@ -50,14 +50,14 @@ pub enum Terminal {
     Mul,
     LParen,
     RParen,
-    Num(calculator1_actions::Num),
+    Num(calculator01_actions::Num),
 }
 
 #[derive(Debug)]
 pub enum NonTerminal {
-    E(calculator1_actions::E),
-    T(calculator1_actions::T),
-    F(calculator1_actions::F),
+    E(calculator01_actions::E),
+    T(calculator01_actions::T),
+    F(calculator01_actions::F),
 }
 
 #[derive(Copy, Clone, TryFromPrimitive)]
@@ -71,12 +71,12 @@ pub enum ProdKind {
     FP1 = 6,
 }
 
-pub struct Calculator1ParserDefinition {
+pub struct Calculator01ParserDefinition {
     actions: [[Action; TERMINAL_NO]; STATE_NO],
     gotos: [[Option<StateIndex>; NONTERMINAL_NO]; STATE_NO]
 }
 
-pub(in crate) static PARSER_DEFINITION: Calculator1ParserDefinition = Calculator1ParserDefinition {
+pub(in crate) static PARSER_DEFINITION: Calculator01ParserDefinition = Calculator01ParserDefinition {
     actions: [
     // State 0:AUG
     [Error, Error, Error, Shift(StateIndex(1), TermIndex(3)), Error, Shift(StateIndex(2), TermIndex(5))],
@@ -130,7 +130,7 @@ pub(in crate) static PARSER_DEFINITION: Calculator1ParserDefinition = Calculator
     [None, None, None, None, None],
 ]};
 
-impl ParserDefinition for Calculator1ParserDefinition {
+impl ParserDefinition for Calculator01ParserDefinition {
     fn action(&self, state_index: StateIndex, term_index: TermIndex) -> Action {
         PARSER_DEFINITION.actions[state_index.0][term_index.0]
     }
@@ -139,42 +139,43 @@ impl ParserDefinition for Calculator1ParserDefinition {
     }
 }
 
-pub struct Calculator1Parser(LRParser<Calculator1ParserDefinition>);
+pub struct Calculator01Parser(LRParser<Calculator01ParserDefinition>);
 
-impl<I, L, B> Parser<I, LRContext<I>, L, B> for Calculator1Parser
+impl<I, L, B> Parser<I, LRContext<I>, L, B> for Calculator01Parser
 where
     I: Debug,
     L: Lexer<I, LRContext<I>>,
     B: LRBuilder<I>,
 {
     fn parse(&mut self, context: LRContext<I>, lexer: L, builder: B) -> Result<B::Output> {
-        Calculator1Parser::default().0.parse(context, lexer, builder)
+        Calculator01Parser::default().0.parse(context, lexer, builder)
     }
 }
 
-impl Calculator1Parser
+#[allow(dead_code)]
+impl Calculator01Parser
 {
-    pub fn parse_str<'i>(input: &'i str) -> Result<<Calculator1Builder as Builder>::Output> {
+    pub fn parse_str<'i>(input: &'i str) -> Result<<Calculator01Builder as Builder>::Output> {
         let context = LRContext::new("<str>".to_string(), input);
         let lexer = LRStringLexer::new(&LEXER_DEFINITION);
-        let builder = Calculator1Builder::new();
-        Calculator1Parser::default().0.parse(context, lexer, builder)
+        let builder = Calculator01Builder::new();
+        Calculator01Parser::default().0.parse(context, lexer, builder)
     }
 }
 
-impl Default for Calculator1Parser {
+impl Default for Calculator01Parser {
     fn default() -> Self {
         Self(LRParser::new(&PARSER_DEFINITION))
     }
 }
 
-pub struct Calculator1LexerDefinition {
+pub struct Calculator01LexerDefinition {
     terminals: TerminalInfos<TERMINAL_NO>,
     terminals_for_state: TerminalsState<MAX_ACTIONS, STATE_NO>,
     recognizers: [fn(&str) -> Option<&str>; TERMINAL_NO]
 }
 
-pub(in crate) static LEXER_DEFINITION: Calculator1LexerDefinition = Calculator1LexerDefinition {
+pub(in crate) static LEXER_DEFINITION: Calculator01LexerDefinition = Calculator01LexerDefinition {
     terminals: [
     TerminalInfo {
         id: TermIndex(0),
@@ -311,7 +312,7 @@ recognizers: [
     ],
 };
 
-impl LexerDefinition for Calculator1LexerDefinition {
+impl LexerDefinition for Calculator01LexerDefinition {
     type Recognizer = for<'i> fn(&'i str) -> Option<&'i str>;
 
     fn recognizers(&self, state_index: StateIndex) -> RecognizerIterator<Self::Recognizer> {
@@ -324,16 +325,16 @@ impl LexerDefinition for Calculator1LexerDefinition {
     }
 }
 
-pub struct Calculator1Builder {
+pub struct Calculator01Builder {
     res_stack: Vec<Symbol>,
 }
 
-impl Builder for Calculator1Builder
+impl Builder for Calculator01Builder
 {
-    type Output = calculator1_actions::E;
+    type Output = calculator01_actions::E;
 
     fn new() -> Self {
-        Calculator1Builder {
+        Calculator01Builder {
             res_stack: vec![],
         }
     }
@@ -345,7 +346,7 @@ impl Builder for Calculator1Builder
         }
     }
 }
-impl<'i> LRBuilder<&'i str> for Calculator1Builder {
+impl<'i> LRBuilder<&'i str> for Calculator01Builder {
 
     fn shift_action(&mut self, term_idx: TermIndex, token: Token<&'i str>) {
         let termval = match TermKind::try_from(term_idx.0).unwrap() {
@@ -354,7 +355,7 @@ impl<'i> LRBuilder<&'i str> for Calculator1Builder {
             TermKind::Mul => Terminal::Mul,
             TermKind::LParen => Terminal::LParen,
             TermKind::RParen => Terminal::RParen,
-            TermKind::Num => Terminal::Num(calculator1_actions::num(token)),
+            TermKind::Num => Terminal::Num(calculator01_actions::num(token)),
         };
         self.res_stack.push(Symbol::Terminal(termval));
     }
@@ -364,42 +365,42 @@ impl<'i> LRBuilder<&'i str> for Calculator1Builder {
             ProdKind::EP0 => {
                 let mut i = self.res_stack.split_off(self.res_stack.len()-3).into_iter();
                 match (i.next().unwrap(), i.next().unwrap(), i.next().unwrap()) {                
-                    (Symbol::NonTerminal(NonTerminal::E(p0)), _, Symbol::NonTerminal(NonTerminal::T(p1))) => NonTerminal::E(calculator1_actions::e_1(p0, p1)),
+                    (Symbol::NonTerminal(NonTerminal::E(p0)), _, Symbol::NonTerminal(NonTerminal::T(p1))) => NonTerminal::E(calculator01_actions::e_1(p0, p1)),
                     _ => panic!("Invalid symbol parse stack data.")
                 }
             },
             ProdKind::EP1 => {
                 let mut i = self.res_stack.split_off(self.res_stack.len()-1).into_iter();
                 match i.next().unwrap() {                
-                    Symbol::NonTerminal(NonTerminal::T(p0)) => NonTerminal::E(calculator1_actions::e_2(p0)),
+                    Symbol::NonTerminal(NonTerminal::T(p0)) => NonTerminal::E(calculator01_actions::e_2(p0)),
                     _ => panic!("Invalid symbol parse stack data.")
                 }
             },
             ProdKind::TP0 => {
                 let mut i = self.res_stack.split_off(self.res_stack.len()-3).into_iter();
                 match (i.next().unwrap(), i.next().unwrap(), i.next().unwrap()) {                
-                    (Symbol::NonTerminal(NonTerminal::T(p0)), _, Symbol::NonTerminal(NonTerminal::F(p1))) => NonTerminal::T(calculator1_actions::t_1(p0, p1)),
+                    (Symbol::NonTerminal(NonTerminal::T(p0)), _, Symbol::NonTerminal(NonTerminal::F(p1))) => NonTerminal::T(calculator01_actions::t_1(p0, p1)),
                     _ => panic!("Invalid symbol parse stack data.")
                 }
             },
             ProdKind::TP1 => {
                 let mut i = self.res_stack.split_off(self.res_stack.len()-1).into_iter();
                 match i.next().unwrap() {                
-                    Symbol::NonTerminal(NonTerminal::F(p0)) => NonTerminal::T(calculator1_actions::t_2(p0)),
+                    Symbol::NonTerminal(NonTerminal::F(p0)) => NonTerminal::T(calculator01_actions::t_2(p0)),
                     _ => panic!("Invalid symbol parse stack data.")
                 }
             },
             ProdKind::FP0 => {
                 let mut i = self.res_stack.split_off(self.res_stack.len()-3).into_iter();
                 match (i.next().unwrap(), i.next().unwrap(), i.next().unwrap()) {                
-                    (_, Symbol::NonTerminal(NonTerminal::E(p0)), _) => NonTerminal::F(calculator1_actions::f_1(p0)),
+                    (_, Symbol::NonTerminal(NonTerminal::E(p0)), _) => NonTerminal::F(calculator01_actions::f_1(p0)),
                     _ => panic!("Invalid symbol parse stack data.")
                 }
             },
             ProdKind::FP1 => {
                 let mut i = self.res_stack.split_off(self.res_stack.len()-1).into_iter();
                 match i.next().unwrap() {                
-                    Symbol::Terminal(Terminal::Num(p0)) => NonTerminal::F(calculator1_actions::f_2(p0)),
+                    Symbol::Terminal(Terminal::Num(p0)) => NonTerminal::F(calculator01_actions::f_2(p0)),
                     _ => panic!("Invalid symbol parse stack data.")
                 }
             },

@@ -1,0 +1,10 @@
+E: E Plus T | T;
+T: T Mul F | F;
+F: LParen E RParen | Num;
+
+terminals
+Plus: "+";
+Mul: "*";
+LParen: "(";
+RParen: ")";
+Num: /\d+/;
