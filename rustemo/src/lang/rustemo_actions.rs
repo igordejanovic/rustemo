@@ -280,37 +280,37 @@ pub fn prod_kind_p0(name: Name) -> Name {
     name
 }
 
-pub type ProdMetaData = BTreeMap<String, Const>;
+pub type ProdMetaData = BTreeMap<String, ConstVal>;
 
 pub fn prod_meta_data_p0() -> ProdMetaData {
-    ProdMetaData::from([("left".into(), Const::Bool(true))])
+    ProdMetaData::from([("left".into(), ConstVal::Bool(true))])
 }
 pub fn prod_meta_data_p1() -> ProdMetaData {
-    ProdMetaData::from([("left".into(), Const::Bool(true))])
+    ProdMetaData::from([("left".into(), ConstVal::Bool(true))])
 }
 pub fn prod_meta_data_p2() -> ProdMetaData {
-    ProdMetaData::from([("right".into(), Const::Bool(true))])
+    ProdMetaData::from([("right".into(), ConstVal::Bool(true))])
 }
 pub fn prod_meta_data_p3() -> ProdMetaData {
-    ProdMetaData::from([("right".into(), Const::Bool(true))])
+    ProdMetaData::from([("right".into(), ConstVal::Bool(true))])
 }
 pub fn prod_meta_data_p4() -> ProdMetaData {
-    ProdMetaData::from([("dynamic".into(), Const::Bool(true))])
+    ProdMetaData::from([("dynamic".into(), ConstVal::Bool(true))])
 }
 pub fn prod_meta_data_p5() -> ProdMetaData {
-    ProdMetaData::from([("nops".into(), Const::Bool(true))])
+    ProdMetaData::from([("nops".into(), ConstVal::Bool(true))])
 }
 pub fn prod_meta_data_p6() -> ProdMetaData {
-    ProdMetaData::from([("nopse".into(), Const::Bool(true))])
+    ProdMetaData::from([("nopse".into(), ConstVal::Bool(true))])
 }
 pub fn prod_meta_data_p7(prio: IntConst) -> ProdMetaData {
-    ProdMetaData::from([("priority".into(), Const::Int(prio))])
+    ProdMetaData::from([("priority".into(), ConstVal::Int(prio))])
 }
 pub fn prod_meta_data_p8(user: UserMetaData) -> ProdMetaData {
     ProdMetaData::from([(user.name, user.value)])
 }
 pub fn prod_meta_data_p9(kind: Name) -> ProdMetaData {
-    ProdMetaData::from([("kind".into(), Const::String(kind))])
+    ProdMetaData::from([("kind".into(), ConstVal::String(kind))])
 }
 
 pub type ProdMetaDatas = ProdMetaData;
@@ -325,21 +325,21 @@ pub fn prod_meta_datas_p1(meta: ProdMetaData) -> ProdMetaDatas {
     meta
 }
 
-pub type TermMetaData = BTreeMap<String, Const>;
+pub type TermMetaData = BTreeMap<String, ConstVal>;
 pub fn term_meta_data_p0() -> TermMetaData {
-    TermMetaData::from([("prefer".into(), Const::Bool(true))])
+    TermMetaData::from([("prefer".into(), ConstVal::Bool(true))])
 }
 pub fn term_meta_data_p1() -> TermMetaData {
-    TermMetaData::from([("finish".into(), Const::Bool(true))])
+    TermMetaData::from([("finish".into(), ConstVal::Bool(true))])
 }
 pub fn term_meta_data_p2() -> TermMetaData {
-    TermMetaData::from([("finish".into(), Const::Bool(false))])
+    TermMetaData::from([("finish".into(), ConstVal::Bool(false))])
 }
 pub fn term_meta_data_p3() -> TermMetaData {
-    TermMetaData::from([("dynamic".into(), Const::Bool(true))])
+    TermMetaData::from([("dynamic".into(), ConstVal::Bool(true))])
 }
 pub fn term_meta_data_p4(prio: IntConst) -> TermMetaData {
-    TermMetaData::from([("priority".into(), Const::Int(prio))])
+    TermMetaData::from([("priority".into(), ConstVal::Int(prio))])
 }
 pub fn term_meta_data_p5(user: UserMetaData) -> TermMetaData {
     TermMetaData::from([(user.name, user.value)])
@@ -360,30 +360,30 @@ pub fn term_meta_datas_p1(meta: TermMetaData) -> TermMetaDatas {
 #[derive(Debug)]
 pub struct UserMetaData {
     name: Name,
-    value: Const,
+    value: ConstVal,
 }
-pub fn user_meta_data_p0(name: Name, value: Const) -> UserMetaData {
+pub fn user_meta_data_p0(name: Name, value: ConstVal) -> UserMetaData {
     UserMetaData { name, value }
 }
 
 #[derive(Debug)]
-pub enum Const {
+pub enum ConstVal {
     Int(u32),
     Float(f32),
     Bool(bool),
     String(String),
 }
-pub fn const_p0(int_const: IntConst) -> Const {
-    Const::Int(int_const)
+pub fn const_val_p0(int_const: IntConst) -> ConstVal {
+    ConstVal::Int(int_const)
 }
-pub fn const_p1(float_const: FloatConst) -> Const {
-    Const::Float(float_const)
+pub fn const_val_p1(float_const: FloatConst) -> ConstVal {
+    ConstVal::Float(float_const)
 }
-pub fn const_p2(bool_const: BoolConst) -> Const {
-    Const::Bool(bool_const)
+pub fn const_val_p2(bool_const: BoolConst) -> ConstVal {
+    ConstVal::Bool(bool_const)
 }
-pub fn const_p3(str_const: StrConst) -> Const {
-    Const::String(str_const)
+pub fn const_val_p3(str_const: StrConst) -> ConstVal {
+    ConstVal::String(str_const)
 }
 
 #[derive(Debug)]

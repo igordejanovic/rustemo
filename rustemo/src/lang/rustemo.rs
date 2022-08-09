@@ -147,7 +147,7 @@ pub enum NonTerminal {
     TermMetaDatas(rustemo_actions::TermMetaDatas),
     UserMetaData(rustemo_actions::UserMetaData),
     ProdKind(rustemo_actions::ProdKind),
-    Const(rustemo_actions::Const),
+    Const(rustemo_actions::ConstVal),
     Assignment(rustemo_actions::Assignment),
     Assignments(rustemo_actions::Assignments),
     PlainAssignment(rustemo_actions::PlainAssignment),
@@ -2211,28 +2211,28 @@ impl<'i> LRBuilder<&'i str> for RustemoBuilder {
             ProdKind::ConstP0 => {
                 let mut i = self.res_stack.split_off(self.res_stack.len()-1).into_iter();
                 match i.next().unwrap() {                
-                    Symbol::Terminal(Terminal::IntConst(p0)) => NonTerminal::Const(rustemo_actions::const_p0(p0)),
+                    Symbol::Terminal(Terminal::IntConst(p0)) => NonTerminal::Const(rustemo_actions::const_val_p0(p0)),
                     _ => panic!("Invalid symbol parse stack data.")
                 }
             },
             ProdKind::ConstP1 => {
                 let mut i = self.res_stack.split_off(self.res_stack.len()-1).into_iter();
                 match i.next().unwrap() {                
-                    Symbol::Terminal(Terminal::FloatConst(p0)) => NonTerminal::Const(rustemo_actions::const_p1(p0)),
+                    Symbol::Terminal(Terminal::FloatConst(p0)) => NonTerminal::Const(rustemo_actions::const_val_p1(p0)),
                     _ => panic!("Invalid symbol parse stack data.")
                 }
             },
             ProdKind::ConstP2 => {
                 let mut i = self.res_stack.split_off(self.res_stack.len()-1).into_iter();
                 match i.next().unwrap() {                
-                    Symbol::Terminal(Terminal::BoolConst(p0)) => NonTerminal::Const(rustemo_actions::const_p2(p0)),
+                    Symbol::Terminal(Terminal::BoolConst(p0)) => NonTerminal::Const(rustemo_actions::const_val_p2(p0)),
                     _ => panic!("Invalid symbol parse stack data.")
                 }
             },
             ProdKind::ConstP3 => {
                 let mut i = self.res_stack.split_off(self.res_stack.len()-1).into_iter();
                 match i.next().unwrap() {                
-                    Symbol::Terminal(Terminal::StrConst(p0)) => NonTerminal::Const(rustemo_actions::const_p3(p0)),
+                    Symbol::Terminal(Terminal::StrConst(p0)) => NonTerminal::Const(rustemo_actions::const_val_p3(p0)),
                     _ => panic!("Invalid symbol parse stack data.")
                 }
             },

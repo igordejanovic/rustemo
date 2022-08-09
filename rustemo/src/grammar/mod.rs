@@ -16,7 +16,7 @@ use rustemo_rt::{
 use crate::{error::Result, lang::rustemo::RustemoParser};
 
 use super::lang::rustemo_actions::{
-    self, Const, GrammarRule, GrammarSymbol, Imports, PGFile, ProdMetaDatas,
+    self, ConstVal, GrammarRule, GrammarSymbol, Imports, PGFile, ProdMetaDatas,
     Recognizer, TermMetaDatas,
 };
 
@@ -517,14 +517,14 @@ impl Grammar {
                 // Map meta-data to production fields for easier access
                 if let Some(meta) = new_production.meta.remove("priority") {
                     new_production.prio = match meta {
-                        rustemo_actions::Const::Int(p) => p,
+                        rustemo_actions::ConstVal::Int(p) => p,
                         _ => panic!("Invalid Const!"),
                     }
                 }
 
                 if let Some(kind) = new_production.meta.remove("kind") {
                     new_production.kind = match kind {
-                        Const::String(s) => Some(s),
+                        ConstVal::String(s) => Some(s),
                         _ => None,
                     }
                 }
@@ -575,7 +575,7 @@ impl Grammar {
                     // Extract priority from meta-data
                     prio: match terminal.meta.get("priority") {
                         Some(prio) => match prio {
-                            Const::Int(prio) => *prio,
+                            ConstVal::Int(prio) => *prio,
                             _ => unreachable!(),
                         },
                         None => DEFAULT_PRIORITY,

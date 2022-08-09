@@ -36,9 +36,9 @@ TermMetaData: 'prefer' | 'finish' | 'nofinish' | 'dynamic'
             | UserMetaData;
 TermMetaDatas: TermMetaDatas ',' TermMetaData | TermMetaData;
 
-UserMetaData: Name ':' Const;
+UserMetaData: Name ':' ConstVal;
 ProdKind: Name;
-Const: IntConst | FloatConst | BoolConst | StrConst;
+ConstVal: IntConst | FloatConst | BoolConst | StrConst;
 
 Assignment: PlainAssignment
           | BoolAssignment
