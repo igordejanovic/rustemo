@@ -57,7 +57,7 @@ SymbolTypes {
                         kind: Struct(
                             [
                                 Field {
-                                    name: "b_1",
+                                    name: "b",
                                     ty: "B",
                                     recursive: false,
                                 },
@@ -148,12 +148,12 @@ SymbolTypes {
                                     recursive: false,
                                 },
                                 Field {
-                                    name: "b_2",
+                                    name: "b",
                                     ty: "B",
                                     recursive: false,
                                 },
                                 Field {
-                                    name: "d_3",
+                                    name: "d",
                                     ty: "D",
                                     recursive: true,
                                 },
@@ -178,7 +178,7 @@ SymbolTypes {
                                     recursive: false,
                                 },
                                 Field {
-                                    name: "f_2",
+                                    name: "f",
                                     ty: "F",
                                     recursive: true,
                                 },

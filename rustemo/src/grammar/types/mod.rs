@@ -51,7 +51,8 @@ impl SymbolTypes {
                     production
                         .kind
                         .as_ref()
-                        .map_or((production.ntidx + 1).to_string(), |k| k.clone())
+                        .map_or((production.ntidx + 1).to_string(), |k| k
+                            .clone())
                 );
 
                 // Enum variants are deduced by the following rules:
@@ -75,15 +76,30 @@ impl SymbolTypes {
                     }
                     _ => {
                         let mut fields = vec![];
-                        for assign in rhs {
+                        for assign in &rhs {
                             let ref_type = grammar.symbol_name(assign.symbol);
-                            let name = assign.name.unwrap_or(format!(
-                                "{}_{}",
+                            let type_names = grammar.symbol_names(
+                                rhs.iter()
+                                    .map(|a| a.symbol)
+                                    .collect::<Vec<_>>(),
+                            );
+                            let name = assign.name.clone().unwrap_or(format!(
+                                "{}{}",
                                 ref_type.to_case(Case::Snake),
-                                assign.idx + 1
+                                if type_names
+                                    .iter()
+                                    .filter(|&ty| *ty == ref_type)
+                                    .count()
+                                    > 1
+                                {
+                                    // Not a unique type
+                                    format!("_{}", assign.idx + 1)
+                                } else {
+                                    "".into()
+                                }
                             ));
                             fields.push(Field {
-                                name,
+                                name: name.clone(),
                                 ty: ref_type.clone(),
                                 recursive: ref_type == nonterminal.name,
                             })
@@ -111,7 +127,6 @@ impl SymbolTypes {
         types
     }
 }
-
 
 #[derive(Debug)]
 pub(crate) struct SymbolType {
