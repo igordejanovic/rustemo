@@ -4,20 +4,25 @@
 /// Please see CONTRIBUTE.md for the description of the bootstrapping process.
 use std::env;
 use std::error::Error;
-use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::{exit, Command};
 
 fn main() {
-    if env::var("CARGO_FEATURE_BOOTSTRAP").is_ok() {
-        if let Err(err) = bootstrap() {
-            eprintln!("{}", err);
-            exit(1);
+    // If bootstrap files exist we are in bootstrapping mode.
+    if _root_dir().join("rustemo/src/lang/rustemo_bootstrap.rs").exists() {
+        println!(r#"cargo:rustc-cfg=bootstrap"#);
+
+        // Generate parser if bootstrap feature is not given.
+        // bootstrap feature is used to build a bootstrapping binary only.
+        if env::var("CARGO_FEATURE_BOOTSTRAP").is_err() {
+            if let Err(err) = bootstrap() {
+                eprintln!("{}", err);
+                exit(1);
+            }
         }
-    } else if env::var("CARGO_FEATURE_FINALIZE").is_ok() {
-        if let Err(err) = finalize() {
-            eprintln!("{}", err);
-            exit(1);
+    } else {
+        if env::var("CARGO_FEATURE_BOOTSTRAP").is_ok() {
+            panic!("Using 'bootstrap' feature without initiating the bootstrap mode.")
         }
     }
 }
@@ -37,25 +42,25 @@ fn find_rustemo_binary(prefix: &PathBuf) -> Option<PathBuf> {
 }
 
 fn _root_dir() -> PathBuf {
-    return Path::new(
+    Path::new(
         &env::var("CARGO_MANIFEST_DIR")
             .expect("cargo did not set CARGO_MANIFEST_DIR"),
     )
-    .join("..");
+    .join("..")
 }
 
-fn _generate(out_dir: &Path) -> Result<(), Box<dyn Error>> {
+fn bootstrap() -> Result<(), Box<dyn Error>> {
+    println!("Bootstrapping parser.");
+
     let grammar_file = "src/lang/rustemo.rustemo";
     println!(r#"cargo:rerun-if-changed={}"#, grammar_file);
-
-    fs::create_dir_all(&out_dir)?;
 
     let root_dir = _root_dir();
 
     let rustemo_path = find_rustemo_binary(&root_dir).unwrap_or_else(|| {
         panic!(
-            "Can't find a rustemo binary to use for the snapshot. \
-                    Make sure it is built and exists at target/{}/rustemo!",
+            "Can't find a rustemo binary to use for bootstrapping. \
+             Make sure it is built and exists at target/{}/rustemo!",
             env::var("PROFILE").unwrap()
         )
     });
@@ -63,9 +68,6 @@ fn _generate(out_dir: &Path) -> Result<(), Box<dyn Error>> {
     let status = Command::new(&rustemo_path)
         .args(&[
             "--force",
-            "--actions",
-            "--outdir",
-            out_dir.to_str().expect("output path is not valid UTF-8"),
             root_dir
                 .join("rustemo")
                 .join(grammar_file)
@@ -79,21 +81,6 @@ fn _generate(out_dir: &Path) -> Result<(), Box<dyn Error>> {
         // FIXME: Should return Error but it doesn't terminate the build process.
         panic!("Rustemo parser not generated! {}", status);
     }
-    Ok(())
-}
 
-fn bootstrap() -> Result<(), Box<dyn Error>> {
-    println!("Bootstrapping parser.");
-    let out_dir =
-        Path::new(&env::var("OUT_DIR").expect("cargo did not set OUT_DIR"))
-            .join("src");
-    _generate(&out_dir)?;
-    Ok(())
-}
-
-fn finalize() -> Result<(), Box<dyn Error>> {
-    println!("Finalizing parser.");
-    let out_dir = _root_dir().join("rustemo/src/");
-    _generate(&out_dir)?;
     Ok(())
 }

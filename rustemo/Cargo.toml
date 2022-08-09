@@ -36,13 +36,8 @@ criterion = "0.3.5"
 
 
 # ----- Features used when developing Rustemo.
-# Tells the build script to use an existing `rustemo` binary to generate
-# Rustemo's own parser instead of using the saved parser.
+# Used for bootstrapping process.
 bootstrap = []
-
-# Used in build.rs script to generate rustemo parser in the src tree. This
-# should be used as the last step of rustemo parser reworking.
-finalize = []
 
 [package.metadata.docs.rs]
 rustdoc-args = [ "--html-in-header", "docs-header.html" ]
