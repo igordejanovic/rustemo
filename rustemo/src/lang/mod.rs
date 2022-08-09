@@ -8,12 +8,16 @@
 #[rustfmt::skip]
 #[cfg(any(not(bootstrap), not(feature="bootstrap")))]
 pub(crate) mod rustemo;
+
+#[allow(non_camel_case_types)]
 #[cfg(any(not(bootstrap), not(feature="bootstrap")))]
 pub(crate) mod rustemo_actions;
 
 #[rustfmt::skip]
 #[cfg(all(bootstrap, feature="bootstrap"))]
 pub(crate) mod rustemo_bootstrap;
+
+#[allow(non_camel_case_types)]
 #[cfg(all(bootstrap, feature="bootstrap"))]
 pub(crate) mod rustemo_actions_bootstrap;
 

@@ -136,7 +136,6 @@ impl ActionsGenerator for ProductionActionsGenerator {
                                     ).unwrap()
                             }).collect();
                             Some(parse_quote! {
-                                #[allow(non_camel_case_types)]
                                 #[derive(Debug, Clone)]
                                 pub struct #type_ident {
                                     #(#fields),*
@@ -172,7 +171,6 @@ impl ActionsGenerator for ProductionActionsGenerator {
 
                 types.push(
                     parse_quote! {
-                        #[allow(non_camel_case_types)]
                         #[derive(Debug, Clone)]
                         pub enum #type_ident {
                             #(#variants),*
