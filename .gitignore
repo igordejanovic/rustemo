@@ -22,3 +22,6 @@ Cargo.lock
 #/target
 #Cargo.lock
 /.gdb_history
+
+# Bootstrapping files
+/rustemo/src/lang/*_bootstrap.rs
