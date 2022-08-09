@@ -26,7 +26,7 @@ impl ProductionActionsGenerator {
 
         match &variant.kind {
             VariantKind::Plain => (), // No args for plain enum
-            VariantKind::Struct(fields) => {
+            VariantKind::Struct(_, fields) => {
                 for field in fields {
                     let f_name =
                         Ident::new(&field.name, Span::call_site());
@@ -55,8 +55,8 @@ impl ProductionActionsGenerator {
             VariantKind::Plain => {
                 parse_quote! { #ty_ident::#variant_ident }
             }
-            VariantKind::Struct(fields) => {
-                let struct_ty = Ident::new(&variant.name, Span::call_site());
+            VariantKind::Struct(name, fields) => {
+                let struct_ty = Ident::new(&name, Span::call_site());
                 let fields: Vec<syn::FieldValue> = fields
                     .iter()
                     .map(|f| {
@@ -120,9 +120,8 @@ impl ActionsGenerator for ProductionActionsGenerator {
                 let mut types: Vec<syn::Item> =
                     variants.iter().filter_map(|v| {
                     match &v.kind {
-                        VariantKind::Struct(fields) => {
-                            let variant_ident = Ident::new(&v.name,
-                                                           Span::call_site());
+                        VariantKind::Struct(type_name, fields) => {
+                            let type_ident = Ident::new(&type_name, Span::call_site());
                             let fields: Vec<syn::Field> = fields.iter().map(|f| {
                                 let field_name = Ident::new(&f.name, Span::call_site());
                                 let field_type = Ident::new(&f.ty, Span::call_site());
@@ -139,7 +138,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
                             Some(parse_quote! {
                                 #[allow(non_camel_case_types)]
                                 #[derive(Debug, Clone)]
-                                pub struct #variant_ident {
+                                pub struct #type_ident {
                                     #(#fields),*
                                 }
                             })
@@ -158,8 +157,9 @@ impl ActionsGenerator for ProductionActionsGenerator {
                             VariantKind::Plain => {
                                 parse_quote! { #variant_ident }
                             }
-                            VariantKind::Struct(_) => {
-                                parse_quote! { #variant_ident(#variant_ident) }
+                            VariantKind::Struct(type_name, _) => {
+                                let type_ident = Ident::new(&type_name, Span::call_site());
+                                parse_quote! { #variant_ident(#type_ident) }
                             }
                             VariantKind::Ref(ref_type) => {
                                 let ref_type =

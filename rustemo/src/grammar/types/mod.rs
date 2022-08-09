@@ -45,15 +45,11 @@ impl SymbolTypes {
                     // Empty production
                     continue;
                 }
-                let variant_name = format!(
-                    "{}_{}",
-                    nonterminal.name,
-                    production
-                        .kind
-                        .as_ref()
-                        .map_or((production.ntidx + 1).to_string(), |k| k
-                            .clone())
-                );
+                let variant_name = if let Some(ref kind) = production.kind {
+                    kind.clone()
+                } else {
+                    format!("V{}", production.ntidx + 1)
+                };
 
                 // Enum variants are deduced by the following rules:
                 // - No content references => plain variant without inner content
@@ -104,9 +100,12 @@ impl SymbolTypes {
                                 recursive: ref_type == nonterminal.name,
                             })
                         }
+                        let struct_type = format!("{}_{}",
+                                                  nonterminal.name,
+                                                  variant_name);
                         Variant {
                             name: variant_name.clone(),
-                            kind: VariantKind::Struct(fields),
+                            kind: VariantKind::Struct(struct_type, fields),
                         }
                     }
                 });
@@ -150,7 +149,7 @@ pub(crate) struct Variant {
 #[derive(Debug)]
 pub(crate) enum VariantKind {
     Plain,
-    Struct(Vec<Field>),
+    Struct(String, Vec<Field>),
     Ref(String),
 }
 
