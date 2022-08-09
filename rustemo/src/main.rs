@@ -4,7 +4,9 @@ use clap::Parser;
 use rustemo::{generator::generate_parser, settings::Settings};
 
 #[derive(Parser)]
-#[clap(author, version, about, long_about = None)]
+#[cfg_attr(feature="bootstrap", clap(version = concat!(env!("CARGO_PKG_VERSION"), "-bootstrap")))]
+#[cfg_attr(not(feature="bootstrap"), clap(version = env!("CARGO_PKG_VERSION")))]
+#[clap(author, about, long_about = None)]
 struct Cli {
     /// Regenerate output even if exists
     #[clap(short, long, action)]
