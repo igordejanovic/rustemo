@@ -5,80 +5,74 @@ pub type Num = String;
 pub fn num<'a>(token: Token<&'a str>) -> Num {
     token.value.into()
 }
-#[allow(non_camel_case_types)]
 #[derive(Debug, Clone)]
-pub struct E_Add {
+pub struct EAdd {
     pub e_1: Box<E>,
     pub e_3: Box<E>,
 }
-#[allow(non_camel_case_types)]
 #[derive(Debug, Clone)]
-pub struct E_Sub {
+pub struct ESub {
     pub e_1: Box<E>,
     pub e_3: Box<E>,
 }
-#[allow(non_camel_case_types)]
 #[derive(Debug, Clone)]
-pub struct E_Mul {
+pub struct EMul {
     pub e_1: Box<E>,
     pub e_3: Box<E>,
 }
-#[allow(non_camel_case_types)]
 #[derive(Debug, Clone)]
-pub struct E_Div {
+pub struct EDiv {
     pub e_1: Box<E>,
     pub e_3: Box<E>,
 }
-#[allow(non_camel_case_types)]
 #[derive(Debug, Clone)]
-pub struct E_Pow {
+pub struct EPow {
     pub e_1: Box<E>,
     pub e_3: Box<E>,
 }
-#[allow(non_camel_case_types)]
 #[derive(Debug, Clone)]
 pub enum E {
-    E_Add(E_Add),
-    E_Sub(E_Sub),
-    E_Mul(E_Mul),
-    E_Div(E_Div),
-    E_Pow(E_Pow),
-    E_Paren(Box<E>),
-    E_Num(Num),
+    Add(EAdd),
+    Sub(ESub),
+    Mul(EMul),
+    Div(EDiv),
+    Pow(EPow),
+    Paren(Box<E>),
+    Num(Num),
 }
 pub fn e_add(e_1: E, e_3: E) -> E {
-    E::E_Add(E_Add {
+    E::Add(EAdd {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
 pub fn e_sub(e_1: E, e_3: E) -> E {
-    E::E_Sub(E_Sub {
+    E::Sub(ESub {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
 pub fn e_mul(e_1: E, e_3: E) -> E {
-    E::E_Mul(E_Mul {
+    E::Mul(EMul {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
 pub fn e_div(e_1: E, e_3: E) -> E {
-    E::E_Div(E_Div {
+    E::Div(EDiv {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
 pub fn e_pow(e_1: E, e_3: E) -> E {
-    E::E_Pow(E_Pow {
+    E::Pow(EPow {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
 pub fn e_paren(e: E) -> E {
-    E::E_Paren(Box::new(e))
+    E::Paren(Box::new(e))
 }
 pub fn e_num(num: Num) -> E {
-    E::E_Num(num)
+    E::Num(num)
 }

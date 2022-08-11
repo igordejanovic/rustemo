@@ -5,51 +5,46 @@ pub type Num = String;
 pub fn num<'a>(token: Token<&'a str>) -> Num {
     token.value.into()
 }
-#[allow(non_camel_case_types)]
 #[derive(Debug, Clone)]
-pub struct E_1 {
+pub struct EV1 {
     pub e: Box<E>,
     pub t: T,
 }
-#[allow(non_camel_case_types)]
 #[derive(Debug, Clone)]
 pub enum E {
-    E_1(E_1),
-    E_2(T),
+    V1(EV1),
+    V2(T),
 }
-pub fn e_1(e: E, t: T) -> E {
-    E::E_1(E_1 { e: Box::new(e), t })
+pub fn e_v1(e: E, t: T) -> E {
+    E::V1(EV1 { e: Box::new(e), t })
 }
-pub fn e_2(t: T) -> E {
-    E::E_2(t)
+pub fn e_v2(t: T) -> E {
+    E::V2(t)
 }
-#[allow(non_camel_case_types)]
 #[derive(Debug, Clone)]
-pub struct T_1 {
+pub struct TV1 {
     pub t: Box<T>,
     pub f: F,
 }
-#[allow(non_camel_case_types)]
 #[derive(Debug, Clone)]
 pub enum T {
-    T_1(T_1),
-    T_2(F),
+    V1(TV1),
+    V2(F),
 }
-pub fn t_1(t: T, f: F) -> T {
-    T::T_1(T_1 { t: Box::new(t), f })
+pub fn t_v1(t: T, f: F) -> T {
+    T::V1(TV1 { t: Box::new(t), f })
 }
-pub fn t_2(f: F) -> T {
-    T::T_2(f)
+pub fn t_v2(f: F) -> T {
+    T::V2(f)
 }
-#[allow(non_camel_case_types)]
 #[derive(Debug, Clone)]
 pub enum F {
-    F_1(Box<E>),
-    F_2(Num),
+    V1(Box<E>),
+    V2(Num),
 }
-pub fn f_1(e: E) -> F {
-    F::F_1(Box::new(e))
+pub fn f_v1(e: E) -> F {
+    F::V1(Box::new(e))
 }
-pub fn f_2(num: Num) -> F {
-    F::F_2(num)
+pub fn f_v2(num: Num) -> F {
+    F::V2(num)
 }

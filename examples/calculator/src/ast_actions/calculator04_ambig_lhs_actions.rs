@@ -5,80 +5,74 @@ pub type Num = String;
 pub fn num<'a>(token: Token<&'a str>) -> Num {
     token.value.into()
 }
-#[allow(non_camel_case_types)]
 #[derive(Debug, Clone)]
-pub struct E_Add {
+pub struct EAdd {
     pub left: Box<E>,
     pub right: Box<E>,
 }
-#[allow(non_camel_case_types)]
 #[derive(Debug, Clone)]
-pub struct E_Sub {
+pub struct ESub {
     pub left: Box<E>,
     pub right: Box<E>,
 }
-#[allow(non_camel_case_types)]
 #[derive(Debug, Clone)]
-pub struct E_Mul {
+pub struct EMul {
     pub left: Box<E>,
     pub right: Box<E>,
 }
-#[allow(non_camel_case_types)]
 #[derive(Debug, Clone)]
-pub struct E_Div {
+pub struct EDiv {
     pub left: Box<E>,
     pub right: Box<E>,
 }
-#[allow(non_camel_case_types)]
 #[derive(Debug, Clone)]
-pub struct E_Pow {
+pub struct EPow {
     pub base: Box<E>,
     pub exp: Box<E>,
 }
-#[allow(non_camel_case_types)]
 #[derive(Debug, Clone)]
 pub enum E {
-    E_Add(E_Add),
-    E_Sub(E_Sub),
-    E_Mul(E_Mul),
-    E_Div(E_Div),
-    E_Pow(E_Pow),
-    E_Paren(Box<E>),
-    E_Num(Num),
+    Add(EAdd),
+    Sub(ESub),
+    Mul(EMul),
+    Div(EDiv),
+    Pow(EPow),
+    Paren(Box<E>),
+    Num(Num),
 }
 pub fn e_add(left: E, right: E) -> E {
-    E::E_Add(E_Add {
+    E::Add(EAdd {
         left: Box::new(left),
         right: Box::new(right),
     })
 }
 pub fn e_sub(left: E, right: E) -> E {
-    E::E_Sub(E_Sub {
+    E::Sub(ESub {
         left: Box::new(left),
         right: Box::new(right),
     })
 }
 pub fn e_mul(left: E, right: E) -> E {
-    E::E_Mul(E_Mul {
+    E::Mul(EMul {
         left: Box::new(left),
         right: Box::new(right),
     })
 }
 pub fn e_div(left: E, right: E) -> E {
-    E::E_Div(E_Div {
+    E::Div(EDiv {
         left: Box::new(left),
         right: Box::new(right),
     })
 }
 pub fn e_pow(base: E, exp: E) -> E {
-    E::E_Pow(E_Pow {
+    E::Pow(EPow {
         base: Box::new(base),
         exp: Box::new(exp),
     })
 }
 pub fn e_paren(e: E) -> E {
-    E::E_Paren(Box::new(e))
+    E::Paren(Box::new(e))
 }
 pub fn e_num(num: Num) -> E {
-    E::E_Num(num)
+    E::Num(num)
 }

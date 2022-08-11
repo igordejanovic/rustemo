@@ -5,80 +5,74 @@ pub type Num = String;
 pub fn num<'a>(token: Token<&'a str>) -> Num {
     token.value.into()
 }
-#[allow(non_camel_case_types)]
 #[derive(Debug, Clone)]
-pub struct E_1 {
+pub struct EV1 {
     pub e_1: Box<E>,
     pub e_3: Box<E>,
 }
-#[allow(non_camel_case_types)]
 #[derive(Debug, Clone)]
-pub struct E_2 {
+pub struct EV2 {
     pub e_1: Box<E>,
     pub e_3: Box<E>,
 }
-#[allow(non_camel_case_types)]
 #[derive(Debug, Clone)]
-pub struct E_3 {
+pub struct EV3 {
     pub e_1: Box<E>,
     pub e_3: Box<E>,
 }
-#[allow(non_camel_case_types)]
 #[derive(Debug, Clone)]
-pub struct E_4 {
+pub struct EV4 {
     pub e_1: Box<E>,
     pub e_3: Box<E>,
 }
-#[allow(non_camel_case_types)]
 #[derive(Debug, Clone)]
-pub struct E_5 {
+pub struct EV5 {
     pub e_1: Box<E>,
     pub e_3: Box<E>,
 }
-#[allow(non_camel_case_types)]
 #[derive(Debug, Clone)]
 pub enum E {
-    E_1(E_1),
-    E_2(E_2),
-    E_3(E_3),
-    E_4(E_4),
-    E_5(E_5),
-    E_6(Box<E>),
-    E_Num(Num),
+    V1(EV1),
+    V2(EV2),
+    V3(EV3),
+    V4(EV4),
+    V5(EV5),
+    V6(Box<E>),
+    Num(Num),
 }
-pub fn e_1(e_1: E, e_3: E) -> E {
-    E::E_1(E_1 {
+pub fn e_v1(e_1: E, e_3: E) -> E {
+    E::V1(EV1 {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
-pub fn e_2(e_1: E, e_3: E) -> E {
-    E::E_2(E_2 {
+pub fn e_v2(e_1: E, e_3: E) -> E {
+    E::V2(EV2 {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
-pub fn e_3(e_1: E, e_3: E) -> E {
-    E::E_3(E_3 {
+pub fn e_v3(e_1: E, e_3: E) -> E {
+    E::V3(EV3 {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
-pub fn e_4(e_1: E, e_3: E) -> E {
-    E::E_4(E_4 {
+pub fn e_v4(e_1: E, e_3: E) -> E {
+    E::V4(EV4 {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
-pub fn e_5(e_1: E, e_3: E) -> E {
-    E::E_5(E_5 {
+pub fn e_v5(e_1: E, e_3: E) -> E {
+    E::V5(EV5 {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
-pub fn e_6(e: E) -> E {
-    E::E_6(Box::new(e))
+pub fn e_v6(e: E) -> E {
+    E::V6(Box::new(e))
 }
 pub fn e_num(num: Num) -> E {
-    E::E_Num(num)
+    E::Num(num)
 }
