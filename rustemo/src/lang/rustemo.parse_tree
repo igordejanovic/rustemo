@@ -1689,7 +1689,9 @@ Ok(
                     idx: 65,
                     nonterminal: 27,
                     ntidx: 0,
-                    kind: None,
+                    kind: Some(
+                        "ZeroOrMore",
+                    ),
                     rhs: [
                         ResolvingAssignment {
                             name: None,
@@ -1709,7 +1711,9 @@ Ok(
                     idx: 66,
                     nonterminal: 27,
                     ntidx: 1,
-                    kind: None,
+                    kind: Some(
+                        "ZeroOrMoreGreedy",
+                    ),
                     rhs: [
                         ResolvingAssignment {
                             name: None,
@@ -1729,7 +1733,9 @@ Ok(
                     idx: 67,
                     nonterminal: 27,
                     ntidx: 2,
-                    kind: None,
+                    kind: Some(
+                        "OneOrMore",
+                    ),
                     rhs: [
                         ResolvingAssignment {
                             name: None,
@@ -1749,7 +1755,9 @@ Ok(
                     idx: 68,
                     nonterminal: 27,
                     ntidx: 3,
-                    kind: None,
+                    kind: Some(
+                        "OneOrMoreGreedy",
+                    ),
                     rhs: [
                         ResolvingAssignment {
                             name: None,
@@ -1769,7 +1777,9 @@ Ok(
                     idx: 69,
                     nonterminal: 27,
                     ntidx: 4,
-                    kind: None,
+                    kind: Some(
+                        "Optional",
+                    ),
                     rhs: [
                         ResolvingAssignment {
                             name: None,
@@ -1789,7 +1799,9 @@ Ok(
                     idx: 70,
                     nonterminal: 27,
                     ntidx: 5,
-                    kind: None,
+                    kind: Some(
+                        "OptionalGreedy",
+                    ),
                     rhs: [
                         ResolvingAssignment {
                             name: None,
@@ -3025,7 +3037,7 @@ Ok(
                 },
                 NonTerminal {
                     idx: 18,
-                    name: "Const",
+                    name: "ConstVal",
                     productions: [
                         48,
                         49,
@@ -3204,7 +3216,7 @@ Ok(
             "Assignments": 64,
             "BoolAssignment": 66,
             "Comment": 80,
-            "Const": 62,
+            "ConstVal": 62,
             "Cornc": 82,
             "Corncs": 81,
             "EMPTY": 44,

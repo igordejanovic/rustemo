@@ -53,7 +53,12 @@ GrammarSymbolRef: GrammarSymbol RepetitionOperatorOpt
                 | ProductionGroup RepetitionOperatorOpt;
 RepetitionOperator: RepetitionOperatorOp RepetitionModifiersExpOpt;
 RepetitionOperatorOpt: RepetitionOperator | EMPTY;
-RepetitionOperatorOp: '*' | '*!' | '+' | '+!' | '?' | '?!';
+RepetitionOperatorOp: '*' {ZeroOrMore}
+                    | '*!' {ZeroOrMoreGreedy}
+                    | '+' {OneOrMore}
+                    | '+!' {OneOrMoreGreedy}
+                    | '?' {Optional}
+                    | '?!' {OptionalGreedy};
 RepetitionModifiersExp: '[' RepetitionModifiers ']';
 RepetitionModifiersExpOpt: RepetitionModifiersExp | EMPTY;
 RepetitionModifiers: RepetitionModifiers ',' RepetitionModifier | RepetitionModifier;
