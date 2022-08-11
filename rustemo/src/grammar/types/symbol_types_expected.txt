@@ -22,7 +22,7 @@ SymbolTypes {
             kind: Enum(
                 [
                     Variant {
-                        name: "AUG_1",
+                        name: "V1",
                         kind: Ref(
                             "A",
                         ),
@@ -36,8 +36,9 @@ SymbolTypes {
             kind: Enum(
                 [
                     Variant {
-                        name: "A_MyKind",
+                        name: "MyKind",
                         kind: Struct(
+                            "AMyKind",
                             [
                                 Field {
                                     name: "myb",
@@ -53,8 +54,9 @@ SymbolTypes {
                         ),
                     },
                     Variant {
-                        name: "A_2",
+                        name: "V2",
                         kind: Struct(
+                            "AV2",
                             [
                                 Field {
                                     name: "b",
@@ -70,13 +72,13 @@ SymbolTypes {
                         ),
                     },
                     Variant {
-                        name: "A_MyD",
+                        name: "MyD",
                         kind: Ref(
                             "D",
                         ),
                     },
                     Variant {
-                        name: "A_4",
+                        name: "V4",
                         kind: Plain,
                     },
                 ],
@@ -88,10 +90,14 @@ SymbolTypes {
             kind: Enum(
                 [
                     Variant {
-                        name: "B_1",
+                        name: "V1",
                         kind: Ref(
                             "C",
                         ),
+                    },
+                    Variant {
+                        name: "Empty",
+                        kind: Plain,
                     },
                 ],
             ),
@@ -102,8 +108,9 @@ SymbolTypes {
             kind: Enum(
                 [
                     Variant {
-                        name: "C_1",
+                        name: "V1",
                         kind: Struct(
+                            "CV1",
                             [
                                 Field {
                                     name: "b",
@@ -122,8 +129,9 @@ SymbolTypes {
             kind: Enum(
                 [
                     Variant {
-                        name: "D_1",
+                        name: "V1",
                         kind: Struct(
+                            "DV1",
                             [
                                 Field {
                                     name: "a",
@@ -139,8 +147,9 @@ SymbolTypes {
                         ),
                     },
                     Variant {
-                        name: "D_2",
+                        name: "V2",
                         kind: Struct(
+                            "DV2",
                             [
                                 Field {
                                     name: "mya",
@@ -160,6 +169,10 @@ SymbolTypes {
                             ],
                         ),
                     },
+                    Variant {
+                        name: "Empty",
+                        kind: Plain,
+                    },
                 ],
             ),
             optional: true,
@@ -169,8 +182,9 @@ SymbolTypes {
             kind: Enum(
                 [
                     Variant {
-                        name: "F_1",
+                        name: "V1",
                         kind: Struct(
+                            "FV1",
                             [
                                 Field {
                                     name: "a",
@@ -186,7 +200,7 @@ SymbolTypes {
                         ),
                     },
                     Variant {
-                        name: "F_2",
+                        name: "V2",
                         kind: Ref(
                             "D",
                         ),

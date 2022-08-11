@@ -8,11 +8,10 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use convert_case::{Case, Casing};
 use proc_macro2::{Ident, Span};
 use syn::{self, parse_quote};
 
-use crate::grammar::{Grammar, NonTerminal};
+use crate::grammar::{Grammar, NonTerminal, types::to_snake_case};
 use crate::{
     error::{Error, Result},
     grammar::Terminal,
@@ -29,7 +28,7 @@ pub(crate) trait ActionsGenerator {
     }
     fn terminal_action(&self, terminal: &Terminal) -> syn::Item {
         let type_name_ident = Ident::new(&terminal.name, Span::call_site());
-        let action_name = terminal.name.to_case(Case::Snake);
+        let action_name = to_snake_case(&terminal.name);
         let action_name_ident = Ident::new(&action_name, Span::call_site());
         parse_quote! {
             pub fn #action_name_ident<'a>(token: Token<&'a str>) -> #type_name_ident {
@@ -122,7 +121,7 @@ where
             ast.items.push(generator.terminal_type(terminal));
         }
         // Add terminal actions
-        let action_name = terminal.name.to_case(Case::Snake);
+        let action_name = to_snake_case(&terminal.name);
         if !action_names.contains(&action_name) {
             log!("Create action function for terminal '{type_name}'.");
             ast.items.push(generator.terminal_action(terminal))

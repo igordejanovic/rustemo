@@ -4,7 +4,6 @@ use std::{
     hash::{Hash, Hasher},
 };
 
-use convert_case::{Case, Casing};
 use rustemo_rt::{
     index::{
         NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, SymbolVec,
@@ -14,6 +13,8 @@ use rustemo_rt::{
 };
 
 use crate::{error::Result, lang::rustemo::RustemoParser};
+
+use self::types::to_snake_case;
 
 use super::lang::rustemo_actions::{
     self, ConstVal, GrammarRule, GrammarSymbol, Imports, PGFile, ProdMetaDatas,
@@ -812,10 +813,9 @@ impl Grammar {
         assig: &ResolvingAssignment,
         symbol: SymbolIndex,
     ) -> String {
-        match &assig.name {
+        to_snake_case(match &assig.name {
             Some(s) => s.clone(),
             None => self.symbol_name(symbol),
-        }
-        .to_case(Case::Snake)
+        })
     }
 }

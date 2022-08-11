@@ -1,9 +1,9 @@
 //! Inferring types from rustemo grammars.
 //! This is a base support for auto AST inference.
 
-use convert_case::{Case, Casing};
+use convert_case::{Case, Casing, Boundary};
 
-use super::Grammar;
+use super::{Grammar, Production};
 
 #[cfg(test)]
 mod tests;
@@ -11,6 +11,24 @@ mod tests;
 #[derive(Debug)]
 pub(crate) struct SymbolTypes {
     symbol_types: Vec<SymbolType>,
+}
+
+pub(crate) fn to_snake_case<S: AsRef<str>>(s: S) -> String {
+    s.as_ref().with_boundaries(&[Boundary::LowerUpper]).to_case(Case::Snake)
+}
+
+pub(crate) fn to_pascal_case<S: AsRef<str>>(s: S) -> String {
+    s.as_ref().to_case(Case::Pascal)
+}
+
+pub(crate) fn variant_name(prod: &Production) -> String {
+    if let Some(ref kind) = prod.kind {
+        kind.clone()
+    } else if prod.rhs.len() == 0 {
+        String::from("Empty")
+    } else {
+        format!("V{}", prod.ntidx + 1)
+    }
 }
 
 impl SymbolTypes {
@@ -40,16 +58,8 @@ impl SymbolTypes {
         for nonterminal in &grammar.nonterminals {
             let mut variants = vec![];
 
-            for production in &nonterminal.productions(grammar) {
-                if production.rhs.len() == 0 {
-                    // Empty production
-                    continue;
-                }
-                let variant_name = if let Some(ref kind) = production.kind {
-                    kind.clone()
-                } else {
-                    format!("V{}", production.ntidx + 1)
-                };
+            for production in nonterminal.productions(grammar) {
+                let variant_name = variant_name(production);
 
                 // Enum variants are deduced by the following rules:
                 // - No content references => plain variant without inner content
@@ -67,7 +77,7 @@ impl SymbolTypes {
                         let ref_type = grammar.symbol_name(rhs[0].symbol);
                         Variant {
                             name: variant_name,
-                            kind: VariantKind::Ref(ref_type.clone()),
+                            kind: VariantKind::Ref(ref_type),
                         }
                     }
                     _ => {
@@ -81,7 +91,7 @@ impl SymbolTypes {
                             );
                             let name = assign.name.clone().unwrap_or(format!(
                                 "{}{}",
-                                ref_type.to_case(Case::Snake),
+                                to_snake_case(&ref_type),
                                 if type_names
                                     .iter()
                                     .filter(|&ty| *ty == ref_type)
@@ -100,9 +110,9 @@ impl SymbolTypes {
                                 recursive: ref_type == nonterminal.name,
                             })
                         }
-                        let struct_type = format!("{}_{}",
-                                                  nonterminal.name,
-                                                  variant_name);
+
+                        let struct_type =
+                            format!("{}{}", &nonterminal.name, variant_name);
                         Variant {
                             name: variant_name.clone(),
                             kind: VariantKind::Struct(struct_type, fields),

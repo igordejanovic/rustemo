@@ -20,8 +20,6 @@ rustemo-rt = { path = "../rustemo-rt", version = "0.1"}
 regex = { version = "1", default_features = false, features = ["std", "unicode-perl"] }
 num_enum = { version = "0.5", default_features = false }
 itertools = { version = "0.10", default_features = false, features = ["use_std"] }
-chrono = { version = "0.4.19", default_features = false , features = ["std", "clock"]}
-indoc = { version = "1.0.6", default_features = false }
 convert_case = { version = "0.5.0", default_features = false }
 clap = { version = "3.2.13", features = ["derive"] }
 quote = "1.0.20"

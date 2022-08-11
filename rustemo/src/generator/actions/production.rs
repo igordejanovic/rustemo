@@ -1,10 +1,9 @@
-use convert_case::{Case, Casing};
 use proc_macro2::{Ident, Span};
 use quote::quote;
 use syn::{parse::Parser, parse_quote};
 
 use crate::grammar::{
-    types::{SymbolTypeKind, SymbolTypes, VariantKind, Variant, SymbolType},
+    types::{SymbolTypeKind, SymbolTypes, VariantKind, Variant, SymbolType, to_snake_case},
     Grammar, NonTerminal,
 };
 
@@ -37,8 +36,7 @@ impl ProductionActionsGenerator {
             }
             VariantKind::Ref(ref_type) => {
                 let ty = Ident::new(&ref_type, Span::call_site());
-                let name = Ident::new(
-                    &ref_type.to_case(Case::Snake),
+                let name = Ident::new(&to_snake_case(ref_type),
                     Span::call_site(),
                 );
                 fn_args.push(parse_quote! { #name: #ty });
@@ -89,7 +87,7 @@ impl ProductionActionsGenerator {
             }
             VariantKind::Ref(ref_type) => {
                 let ref_type = Ident::new(
-                    &ref_type.to_case(Case::Snake),
+                    &to_snake_case(ref_type),
                     Span::call_site(),
                 );
                 parse_quote! {
@@ -192,7 +190,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
         match &ty.kind {
             SymbolTypeKind::Enum(variants) => {
                 variants.iter().map(|v| {
-                    let action_name = v.name.to_case(Case::Snake);
+                    let action_name = to_snake_case(format!("{}_{}", ty.name, v.name));
                     let action = Ident::new(&action_name, Span::call_site());
                     let args = self.get_action_args(v);
                     let ret_type = Ident::new(&nonterminal.name,
