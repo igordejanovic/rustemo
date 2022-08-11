@@ -333,7 +333,7 @@ impl Grammar {
         );
 
         // Extract productions and nonterminals from grammar rules.
-        if let Some(rules) = pgfile.rules {
+        if let Some(rules) = pgfile.grammar_rules {
             Grammar::extract_productions_and_symbols(
                 rules,
                 &mut nonterminals,
@@ -345,7 +345,7 @@ impl Grammar {
         // groups.
 
         // Collect grammar terminals
-        if let Some(grammar_terminals) = pgfile.terminals {
+        if let Some(grammar_terminals) = pgfile.terminal_rules {
             Grammar::collect_terminals(
                 grammar_terminals,
                 &mut terminals,
@@ -568,7 +568,7 @@ impl Grammar {
                         Some(recognizer) => match recognizer {
                             // Terminal has no content only if it is a string match
                             Recognizer::StrConst(_) => false,
-                            Recognizer::RegExTerm(_) => true,
+                            Recognizer::RegexTerm(_) => true,
                         },
                         None => true,
                     },

@@ -118,7 +118,7 @@ fn terminals_regex() {
             .unwrap()
         {
             Recognizer::StrConst(_) => false,
-            Recognizer::RegExTerm(regex) => regex == term_regex,
+            Recognizer::RegexTerm(regex) => regex == term_regex,
         });
     }
 }

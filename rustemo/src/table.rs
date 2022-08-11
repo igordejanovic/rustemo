@@ -635,7 +635,7 @@ fn sort_terminals(grammar: &Grammar, states: &mut StateVec<LRState>) {
                         Some(recognizer) => {
                             (match recognizer {
                                 Recognizer::StrConst(str_rec) => str_rec.len(),
-                                Recognizer::RegExTerm(_) => 0,
+                                Recognizer::RegexTerm(_) => 0,
                             }) as u32
                         }
                         None => 0,

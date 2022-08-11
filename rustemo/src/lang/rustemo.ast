@@ -224,7 +224,9 @@ Ok(
                             ),
                         },
                         ResolvingAssignment {
-                            name: None,
+                            name: Some(
+                                "path",
+                            ),
                             symbol: Resolved(
                                 39,
                             ),
@@ -250,7 +252,9 @@ Ok(
                             ),
                         },
                         ResolvingAssignment {
-                            name: None,
+                            name: Some(
+                                "path",
+                            ),
                             symbol: Resolved(
                                 39,
                             ),
@@ -346,7 +350,9 @@ Ok(
                             ),
                         },
                         ResolvingAssignment {
-                            name: None,
+                            name: Some(
+                                "rhs",
+                            ),
                             symbol: Resolved(
                                 52,
                             ),
@@ -390,7 +396,9 @@ Ok(
                             ),
                         },
                         ResolvingAssignment {
-                            name: None,
+                            name: Some(
+                                "meta",
+                            ),
                             symbol: Resolved(
                                 57,
                             ),
@@ -408,7 +416,9 @@ Ok(
                             ),
                         },
                         ResolvingAssignment {
-                            name: None,
+                            name: Some(
+                                "rhs",
+                            ),
                             symbol: Resolved(
                                 52,
                             ),
@@ -467,7 +477,9 @@ Ok(
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
-                            name: None,
+                            name: Some(
+                                "rhs",
+                            ),
                             symbol: Resolved(
                                 52,
                             ),
@@ -551,7 +563,9 @@ Ok(
                             ),
                         },
                         ResolvingAssignment {
-                            name: None,
+                            name: Some(
+                                "meta",
+                            ),
                             symbol: Resolved(
                                 57,
                             ),
@@ -735,7 +749,9 @@ Ok(
                             ),
                         },
                         ResolvingAssignment {
-                            name: None,
+                            name: Some(
+                                "meta",
+                            ),
                             symbol: Resolved(
                                 59,
                             ),
@@ -791,7 +807,9 @@ Ok(
                             ),
                         },
                         ResolvingAssignment {
-                            name: None,
+                            name: Some(
+                                "meta",
+                            ),
                             symbol: Resolved(
                                 59,
                             ),
@@ -820,7 +838,9 @@ Ok(
                     idx: 26,
                     nonterminal: 12,
                     ntidx: 0,
-                    kind: None,
+                    kind: Some(
+                        "Left",
+                    ),
                     rhs: [
                         ResolvingAssignment {
                             name: None,
@@ -840,7 +860,9 @@ Ok(
                     idx: 27,
                     nonterminal: 12,
                     ntidx: 1,
-                    kind: None,
+                    kind: Some(
+                        "Reduce",
+                    ),
                     rhs: [
                         ResolvingAssignment {
                             name: None,
@@ -860,7 +882,9 @@ Ok(
                     idx: 28,
                     nonterminal: 12,
                     ntidx: 2,
-                    kind: None,
+                    kind: Some(
+                        "Right",
+                    ),
                     rhs: [
                         ResolvingAssignment {
                             name: None,
@@ -880,7 +904,9 @@ Ok(
                     idx: 29,
                     nonterminal: 12,
                     ntidx: 3,
-                    kind: None,
+                    kind: Some(
+                        "Shift",
+                    ),
                     rhs: [
                         ResolvingAssignment {
                             name: None,
@@ -900,7 +926,9 @@ Ok(
                     idx: 30,
                     nonterminal: 12,
                     ntidx: 4,
-                    kind: None,
+                    kind: Some(
+                        "Dynamic",
+                    ),
                     rhs: [
                         ResolvingAssignment {
                             name: None,
@@ -920,7 +948,9 @@ Ok(
                     idx: 31,
                     nonterminal: 12,
                     ntidx: 5,
-                    kind: None,
+                    kind: Some(
+                        "NOPS",
+                    ),
                     rhs: [
                         ResolvingAssignment {
                             name: None,
@@ -940,7 +970,9 @@ Ok(
                     idx: 32,
                     nonterminal: 12,
                     ntidx: 6,
-                    kind: None,
+                    kind: Some(
+                        "NOPSE",
+                    ),
                     rhs: [
                         ResolvingAssignment {
                             name: None,
@@ -960,7 +992,9 @@ Ok(
                     idx: 33,
                     nonterminal: 12,
                     ntidx: 7,
-                    kind: None,
+                    kind: Some(
+                        "Priority",
+                    ),
                     rhs: [
                         ResolvingAssignment {
                             name: None,
@@ -1023,7 +1057,9 @@ Ok(
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
-                            name: None,
+                            name: Some(
+                                "metas",
+                            ),
                             symbol: Resolved(
                                 57,
                             ),
@@ -1035,7 +1071,9 @@ Ok(
                             ),
                         },
                         ResolvingAssignment {
-                            name: None,
+                            name: Some(
+                                "meta",
+                            ),
                             symbol: Resolved(
                                 56,
                             ),
@@ -1055,7 +1093,9 @@ Ok(
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
-                            name: None,
+                            name: Some(
+                                "meta",
+                            ),
                             symbol: Resolved(
                                 56,
                             ),
@@ -1072,7 +1112,9 @@ Ok(
                     idx: 38,
                     nonterminal: 14,
                     ntidx: 0,
-                    kind: None,
+                    kind: Some(
+                        "Prefer",
+                    ),
                     rhs: [
                         ResolvingAssignment {
                             name: None,
@@ -1092,7 +1134,9 @@ Ok(
                     idx: 39,
                     nonterminal: 14,
                     ntidx: 1,
-                    kind: None,
+                    kind: Some(
+                        "Finish",
+                    ),
                     rhs: [
                         ResolvingAssignment {
                             name: None,
@@ -1112,7 +1156,9 @@ Ok(
                     idx: 40,
                     nonterminal: 14,
                     ntidx: 2,
-                    kind: None,
+                    kind: Some(
+                        "NoFinish",
+                    ),
                     rhs: [
                         ResolvingAssignment {
                             name: None,
@@ -1132,7 +1178,9 @@ Ok(
                     idx: 41,
                     nonterminal: 14,
                     ntidx: 3,
-                    kind: None,
+                    kind: Some(
+                        "Dynamic",
+                    ),
                     rhs: [
                         ResolvingAssignment {
                             name: None,
@@ -1152,7 +1200,9 @@ Ok(
                     idx: 42,
                     nonterminal: 14,
                     ntidx: 4,
-                    kind: None,
+                    kind: Some(
+                        "Priority",
+                    ),
                     rhs: [
                         ResolvingAssignment {
                             name: None,
@@ -1195,7 +1245,9 @@ Ok(
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
-                            name: None,
+                            name: Some(
+                                "metas",
+                            ),
                             symbol: Resolved(
                                 59,
                             ),
@@ -1207,7 +1259,9 @@ Ok(
                             ),
                         },
                         ResolvingAssignment {
-                            name: None,
+                            name: Some(
+                                "meta",
+                            ),
                             symbol: Resolved(
                                 58,
                             ),
@@ -1227,7 +1281,9 @@ Ok(
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
-                            name: None,
+                            name: Some(
+                                "meta",
+                            ),
                             symbol: Resolved(
                                 58,
                             ),
@@ -1259,7 +1315,9 @@ Ok(
                             ),
                         },
                         ResolvingAssignment {
-                            name: None,
+                            name: Some(
+                                "value",
+                            ),
                             symbol: Resolved(
                                 62,
                             ),
@@ -1497,7 +1555,9 @@ Ok(
                             ),
                         },
                         ResolvingAssignment {
-                            name: None,
+                            name: Some(
+                                "gsymref",
+                            ),
                             symbol: Resolved(
                                 68,
                             ),
@@ -1529,7 +1589,9 @@ Ok(
                             ),
                         },
                         ResolvingAssignment {
-                            name: None,
+                            name: Some(
+                                "gsymref",
+                            ),
                             symbol: Resolved(
                                 68,
                             ),
@@ -1555,7 +1617,9 @@ Ok(
                             ),
                         },
                         ResolvingAssignment {
-                            name: None,
+                            name: Some(
+                                "prod_rule_rhs",
+                            ),
                             symbol: Resolved(
                                 52,
                             ),
@@ -1581,7 +1645,9 @@ Ok(
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
-                            name: None,
+                            name: Some(
+                                "gsymbol",
+                            ),
                             symbol: Resolved(
                                 76,
                             ),
@@ -2751,7 +2817,7 @@ Ok(
                     name: "Name",
                     action: None,
                     recognizer: Some(
-                        RegExTerm(
+                        RegexTerm(
                             "[a-zA-Z_][a-zA-Z0-9_\\.]*",
                         ),
                     ),
@@ -2764,7 +2830,7 @@ Ok(
                     name: "RegexTerm",
                     action: None,
                     recognizer: Some(
-                        RegExTerm(
+                        RegexTerm(
                             "/(\\\\.|[^/\\\\])*/",
                         ),
                     ),
@@ -2777,7 +2843,7 @@ Ok(
                     name: "IntConst",
                     action: None,
                     recognizer: Some(
-                        RegExTerm(
+                        RegexTerm(
                             "\\d+",
                         ),
                     ),
@@ -2790,7 +2856,7 @@ Ok(
                     name: "FloatConst",
                     action: None,
                     recognizer: Some(
-                        RegExTerm(
+                        RegexTerm(
                             "[+-]?(\\d+\\.\\d*|\\.\\d+)([eE][+-]?\\d+)?(?<=[\\w\\.])(?![\\w\\.])",
                         ),
                     ),
@@ -2803,7 +2869,7 @@ Ok(
                     name: "BoolConst",
                     action: None,
                     recognizer: Some(
-                        RegExTerm(
+                        RegexTerm(
                             "true|false",
                         ),
                     ),
@@ -2816,7 +2882,7 @@ Ok(
                     name: "StrConst",
                     action: None,
                     recognizer: Some(
-                        RegExTerm(
+                        RegexTerm(
                             "(?s)(^'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')|(^\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\")",
                         ),
                     ),
@@ -2829,7 +2895,7 @@ Ok(
                     name: "Action",
                     action: None,
                     recognizer: Some(
-                        RegExTerm(
+                        RegexTerm(
                             "@[a-zA-Z0-9_]+",
                         ),
                     ),
@@ -2842,7 +2908,7 @@ Ok(
                     name: "WS",
                     action: None,
                     recognizer: Some(
-                        RegExTerm(
+                        RegexTerm(
                             "\\s+",
                         ),
                     ),
@@ -2855,7 +2921,7 @@ Ok(
                     name: "CommentLine",
                     action: None,
                     recognizer: Some(
-                        RegExTerm(
+                        RegexTerm(
                             "//.*",
                         ),
                     ),
@@ -2868,7 +2934,7 @@ Ok(
                     name: "NotComment",
                     action: None,
                     recognizer: Some(
-                        RegExTerm(
+                        RegexTerm(
                             "((\\*[^/])|[^\\s*/]|/[^\\*])+",
                         ),
                     ),

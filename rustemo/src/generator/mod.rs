@@ -488,7 +488,7 @@ fn generate_lexer_definition(
                         }
                     });
                 }
-                Recognizer::RegExTerm(regex_match) => {
+                Recognizer::RegexTerm(regex_match) => {
                     recognizers.push(parse_quote! {
                         |input: &str| {
                             logn!("Recognizing <{}> -- ", #term_name);
@@ -600,7 +600,7 @@ fn generate_builder(
     let shift_match_arms: Vec<syn::Arm> = grammar.terminals.iter().map(|terminal| {
         let action = format_ident!("{}", to_snake_case(&terminal.name));
         let term = format_ident!("{}", terminal.name);
-        if let Some(Recognizer::RegExTerm(_)) = terminal.recognizer {
+        if let Some(Recognizer::RegexTerm(_)) = terminal.recognizer {
             parse_quote!{
                 TermKind::#term => Terminal::#term(#actions_file::#action(token))
             }

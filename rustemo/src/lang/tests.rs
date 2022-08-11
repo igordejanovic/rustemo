@@ -12,5 +12,5 @@ fn test_rustemo_grammar() {
             .collect();
     let grammar = Grammar::from_string(fs::read_to_string(path).unwrap());
 
-    output_cmp!("src/lang/rustemo.parse_tree", format!("{:#?}", grammar));
+    output_cmp!("src/lang/rustemo.ast", format!("{:#?}", grammar));
 }

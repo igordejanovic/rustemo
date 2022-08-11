@@ -5,38 +5,40 @@ PGFile: GrammarRules
       | 'terminals' TerminalRules;
 
 Imports: Imports ImportStm | ImportStm;
-ImportStm: 'import' StrConst
-         | 'import' StrConst 'as' Name;
+ImportStm: 'import' path=StrConst
+         | 'import' path=StrConst 'as' Name;
 
 GrammarRules: GrammarRules GrammarRule
             | GrammarRule;
-GrammarRule: ActionOpt Name ':' GrammarRuleRHS ';'
-           | ActionOpt Name '{' ProdMetaDatas '}' ':' GrammarRuleRHS ';';
+GrammarRule: ActionOpt Name ':' rhs=GrammarRuleRHS ';'
+           | ActionOpt Name '{' meta=ProdMetaDatas '}' ':' rhs=GrammarRuleRHS ';';
 ActionOpt: Action | EMPTY;
-GrammarRuleRHS {left, 5}: GrammarRuleRHS '|' Production
+GrammarRuleRHS {left, 5}: rhs=GrammarRuleRHS '|' Production
                         | Production;
 Production: Assignments
-          | Assignments '{' ProdMetaDatas '}';
+          | Assignments '{' meta=ProdMetaDatas '}';
 
 TerminalRules: TerminalRules TerminalRule
              | TerminalRule;
 TerminalRule {left, 15}: ActionOpt Name ':' Recognizer ';'
                        | ActionOpt Name ':' ';'
-                       | ActionOpt Name ':' Recognizer '{' TermMetaDatas '}' ';'
-                       | ActionOpt Name ':' '{' TermMetaDatas '}' ';';
+                       | ActionOpt Name ':' Recognizer '{' meta=TermMetaDatas '}' ';'
+                       | ActionOpt Name ':' '{' meta=TermMetaDatas '}' ';';
 
-ProdMetaData: 'left' | 'reduce' | 'right' | 'shift' | 'dynamic' | 'nops' | 'nopse'
-            | IntConst
+ProdMetaData: 'left' {Left} | 'reduce' {Reduce} | 'right' {Right} | 'shift' {Shift}
+            | 'dynamic' {Dynamic} | 'nops' {NOPS} | 'nopse' {NOPSE}
+            | IntConst {Priority}
             | UserMetaData
             | ProdKind;
-ProdMetaDatas {left}: ProdMetaDatas ',' ProdMetaData | ProdMetaData;
+ProdMetaDatas {left}: metas=ProdMetaDatas ',' meta=ProdMetaData | meta=ProdMetaData;
 
-TermMetaData: 'prefer' | 'finish' | 'nofinish' | 'dynamic'
-            | IntConst
+TermMetaData: 'prefer' {Prefer} | 'finish' {Finish} | 'nofinish' {NoFinish}
+            | 'dynamic' {Dynamic}
+            | IntConst {Priority}
             | UserMetaData;
-TermMetaDatas: TermMetaDatas ',' TermMetaData | TermMetaData;
+TermMetaDatas: metas=TermMetaDatas ',' meta=TermMetaData | meta=TermMetaData;
 
-UserMetaData: Name ':' ConstVal;
+UserMetaData: Name ':' value=ConstVal;
 ProdKind: Name;
 ConstVal: IntConst | FloatConst | BoolConst | StrConst;
 
@@ -44,12 +46,12 @@ Assignment: PlainAssignment
           | BoolAssignment
           | GrammarSymbolRef;
 Assignments: Assignments Assignment | Assignment;
-PlainAssignment: Name '=' GrammarSymbolRef;
-BoolAssignment: Name '?=' GrammarSymbolRef;
+PlainAssignment: Name '=' gsymref=GrammarSymbolRef;
+BoolAssignment: Name '?=' gsymref=GrammarSymbolRef;
 
-ProductionGroup: '(' GrammarRuleRHS ')';
+ProductionGroup: '(' prod_rule_rhs=GrammarRuleRHS ')';
 
-GrammarSymbolRef: GrammarSymbol RepetitionOperatorOpt
+GrammarSymbolRef: gsymbol=GrammarSymbol RepetitionOperatorOpt
                 | ProductionGroup RepetitionOperatorOpt;
 RepetitionOperator: RepetitionOperatorOp RepetitionModifiersExpOpt;
 RepetitionOperatorOpt: RepetitionOperator | EMPTY;
