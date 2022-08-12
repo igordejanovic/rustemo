@@ -9,6 +9,8 @@ pub mod settings;
 
 mod lang;
 mod table;
+
+#[cfg(test)]
 pub(crate) mod tests;
 
 pub use crate::build::generate_parsers;
