@@ -1,15 +1,24 @@
 /// Build script for bootstrapping rustemo parser.
 /// Based on LALRPOP build script.
 /// https://github.com/lalrpop/lalrpop/blob/master/lalrpop/build.rs
-/// Please see CONTRIBUTE.md for the description of the bootstrapping process.
+/// Please see bootstrapping.md in the docs.
 use std::env;
 use std::error::Error;
 use std::path::{Path, PathBuf};
 use std::process::{exit, Command};
 
 fn main() {
+    // Rebuild if head changed to include the new git hash.
+    println!("cargo:rerun-if-changed=.git/HEAD");
+
+    println!("cargo:rerun-if-changed=src/**/*.rustemo");
+    println!("cargo:rerun-if-changed=src/generator/");
+
     // If bootstrap files exist we are in bootstrapping mode.
-    if _root_dir().join("rustemo/src/lang/rustemo_bootstrap.rs").exists() {
+    if _root_dir()
+        .join("rustemo/src/lang/rustemo_bootstrap.rs")
+        .exists()
+    {
         println!(r#"cargo:rustc-cfg=bootstrap"#);
 
         // Generate parser if bootstrap feature is not given.
@@ -25,6 +34,19 @@ fn main() {
             panic!("Using 'bootstrap' feature without initiating the bootstrap mode.")
         }
     }
+
+    // Setting environment with current head git hash to include in the version.
+    // See: https://stackoverflow.com/questions/43753491/include-git-commit-hash-as-string-into-rust-program
+    let output = Command::new("git")
+        .args(&["rev-parse", "HEAD"])
+        .output()
+        .unwrap();
+    let git_hash = String::from_utf8(output.stdout)
+        .unwrap()
+        .chars()
+        .take(10)
+        .collect::<String>();
+    println!("cargo:rustc-env=GIT_HASH={}", git_hash);
 }
 
 fn find_rustemo_binary(prefix: &PathBuf) -> Option<PathBuf> {
@@ -53,7 +75,6 @@ fn bootstrap() -> Result<(), Box<dyn Error>> {
     println!("Bootstrapping parser.");
 
     let grammar_file = "src/lang/rustemo.rustemo";
-    println!(r#"cargo:rerun-if-changed={}"#, grammar_file);
 
     let root_dir = _root_dir();
 
@@ -64,6 +85,19 @@ fn bootstrap() -> Result<(), Box<dyn Error>> {
             env::var("PROFILE").unwrap()
         )
     });
+
+    // Check if the binary is a bootstrapping version.
+    let output = Command::new(&rustemo_path).arg("--version").output()?;
+    if !String::from_utf8(output.stdout)
+        .unwrap()
+        .contains("bootstrap")
+    {
+        panic!(
+            "Using non-bootstrap binary in bootstrapping mode.
+              Re-create bootstrap binary with
+              'cargo build -p rustemo --features bootstrap'."
+        );
+    }
 
     let status = Command::new(&rustemo_path)
         .args(&[
