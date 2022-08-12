@@ -10,55 +10,41 @@ generate the parser you need a working parser. The problem is solved by using a
 previous version to generate the next.
 
 While the solution seems simple it is not easily achieved from the
-organizational point of view. Thus, rustemo defines a bootstrapping process to
-help with the development.
+organizational point of view. E.g., when you change parser generator code you
+would like to have rustemo parser regenerated with the new code but the current
+parser version might not be functional at that point.
+
+Thus, rustemo defines a bootstrapping process to help with the development. The
+idea is to build bootstrapping rustemo binary with the parser code from the git
+`main` branch and the rest of the code from the current source tree.
 
 If you are not changing the rustemo grammar or the parse code generator you
 won't need bootstrapping and should proceed as usual with Cargo commands.
 
-But, if you do need to change rustemo grammar or parser code generator you can
-start the bootstrapping process.
+But, if you do need to change the rustemo grammar or parser code generator you
+should install bootstrapping binary with the following command.
 
-For this purpose there is a CLI tool `boostrap` in the project repo. Install
-this tool with:
 
 ```sh
-$ cargo install --path bootstrap
+$ cargo install --path rustemo --features boostrap --debug
 ```
 
-Now, you have this little tool which is used to start/finish bootstrapping process.
+The `--debug` switch is optional but will provide faster build. This command
+will checkout rustemo parser files (parser and actions) from the git `main`
+branch, do the build with the rest of the code and install the binary.
 
-To start bootstrapping:
-
-```
-$ bootstrap start
-```
-
-This command will checkout rustemo parser files from the `main` branch of the
-git repo and then build the bootstrapping rustemo binary. You can verify that
-the bootstrapping binary is used by:
+You can verify that the bootstrapping binary is used by checking the version:
 
 ```
-$ target/debug/rustemo --version
-rustemo 0.1.0-bootstrap
+$ rustemo --version
+rustemo 0.1.0-1a45d75ca4-bootstrap
 ```
 
 ```admonish 
-It is assumed that you are calling the command anywhere from the git repo and 
-that the `main` branch contains a working parser.
+It is assumed that the `main` branch contains a working parser.
 ```
 
-These bootstrapping files are available in the same folder where the original
-parser is (`rustemo/src/lang`) but with `_bootstrap` suffix. If for whatever
-reason you want to regenerate bootstrapping binary (e.g. maybe you have changed
-parser code generator and want those changes to be applied) you do that by
-calling:
-
-```sh
-$ cargo build -p rustemo --features bootstrap
-```
-
-When the bootstrapping binary is in place you develop as usual and run tests:
+When the bootstrapping binary is installed you develop as usual and run tests:
 
 ```sh
 $ cargo test
@@ -66,17 +52,13 @@ $ cargo test
 
 If feature `bootstrap` is not provided, like in the previous command Cargo
 proceeds as usual by using current versions of parser files to build the test
-binary and run the tests. But, before the test binary build, the `build.rs`
-script will re-generate parser files from the grammar using the bootstrap
-binary.
-
-When you have finished your changes and all the tests pass you can terminate the
-bootstrap process with:
+binary and run the tests. But, when you change the rustemo grammar you should
+regenerate the parser code with rustemo:
 
 ```sh
-$ bootstrap finish
+rustemo rustemo/src/lang/rustemo.rustemo
 ```
 
-This command will simply delete the `_bootstrap` files. You can do that manually
-if you wish.
+This will also check your grammar for syntax and semantic errors and report
+diagnostics.
 

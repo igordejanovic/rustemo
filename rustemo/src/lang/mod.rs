@@ -1,30 +1,21 @@
-//! If in bootstrap mode we are loading _bootstrap modules if building build.rs
-//! script. If we are building regular code we are common parser files. This is
-//! done to enable developing rustemo parser by changing git versioned fiels and
-//! seeing diffs.
+//! If we start Cargo with bootstrap feature we will load parser code checked
+//! out from the git `main` branch.
 //!
-//! Bootstrap files are checked out from the main branch of the git repo by the
-//! build script. Do not forget to remove them when finished with the change.
+//! In regular builds parser code from the source tree will be used.
 #[rustfmt::skip]
-#[cfg(any(not(bootstrap), not(feature="bootstrap")))]
+#[cfg(not(feature="bootstrap"))]
 pub(crate) mod rustemo;
 
 #[allow(non_camel_case_types)]
-#[cfg(any(not(bootstrap), not(feature="bootstrap")))]
+#[cfg(not(feature="bootstrap"))]
 pub(crate) mod rustemo_actions;
 
-#[rustfmt::skip]
-#[cfg(all(bootstrap, feature="bootstrap"))]
-pub(crate) mod rustemo_bootstrap;
 
-#[allow(non_camel_case_types)]
-#[cfg(all(bootstrap, feature="bootstrap"))]
-pub(crate) mod rustemo_actions_bootstrap;
+#[cfg(feature="bootstrap")]
+rustemo_mod!{rustemo}
 
-#[cfg(all(bootstrap, feature="bootstrap"))]
-pub(crate) use rustemo_bootstrap as rustemo;
-#[cfg(all(bootstrap, feature="bootstrap"))]
-pub(crate) use rustemo_actions_bootstrap as rustemo_actions;
+#[cfg(feature="bootstrap")]
+rustemo_mod!{rustemo_actions}
 
 #[cfg(test)]
 mod tests;

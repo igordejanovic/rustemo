@@ -1,37 +1,19 @@
-/// Build script for bootstrapping rustemo parser.
-/// Based on LALRPOP build script.
-/// https://github.com/lalrpop/lalrpop/blob/master/lalrpop/build.rs
-/// Please see bootstrapping.md in the docs.
-use std::env;
+//! Build script for bootstrapping rustemo parser.
+//! Please see bootstrapping.md in the docs.
 use std::error::Error;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::process::{exit, Command};
+use std::{env, fs};
 
 fn main() {
     // Rebuild if head changed to include the new git hash.
     println!("cargo:rerun-if-changed=.git/HEAD");
+    println!("cargo:rerun-if-changed=src");
 
-    println!("cargo:rerun-if-changed=src/**/*.rustemo");
-    println!("cargo:rerun-if-changed=src/generator/");
-
-    // If bootstrap files exist we are in bootstrapping mode.
-    if _root_dir()
-        .join("rustemo/src/lang/rustemo_bootstrap.rs")
-        .exists()
-    {
-        println!(r#"cargo:rustc-cfg=bootstrap"#);
-
-        // Generate parser if bootstrap feature is not given.
-        // bootstrap feature is used to build a bootstrapping binary only.
-        if env::var("CARGO_FEATURE_BOOTSTRAP").is_err() {
-            if let Err(err) = bootstrap() {
-                eprintln!("{}", err);
-                exit(1);
-            }
-        }
-    } else {
-        if env::var("CARGO_FEATURE_BOOTSTRAP").is_ok() {
-            panic!("Using 'bootstrap' feature without initiating the bootstrap mode.")
+    if env::var("CARGO_FEATURE_BOOTSTRAP").is_ok() {
+        if let Err(err) = bootstrap() {
+            eprintln!("{}", err);
+            exit(1);
         }
     }
 
@@ -49,72 +31,37 @@ fn main() {
     println!("cargo:rustc-env=GIT_HASH={}", git_hash);
 }
 
-fn find_rustemo_binary(prefix: &PathBuf) -> Option<PathBuf> {
-    let rustemo_path = prefix
-        .join("target")
-        .join(env::var("PROFILE").unwrap())
-        .join("rustemo")
-        .with_extension(env::consts::EXE_EXTENSION);
-    if rustemo_path.exists() {
-        Some(rustemo_path)
-    } else {
-        println!("Trying to find rustemo binary at path {:?}", rustemo_path);
-        None
-    }
-}
-
-fn _root_dir() -> PathBuf {
-    Path::new(
-        &env::var("CARGO_MANIFEST_DIR")
-            .expect("cargo did not set CARGO_MANIFEST_DIR"),
-    )
-    .join("..")
-}
-
 fn bootstrap() -> Result<(), Box<dyn Error>> {
-    println!("Bootstrapping parser.");
+    println!("Building bootstrap binary.");
 
-    let grammar_file = "src/lang/rustemo.rustemo";
+    let out_dir =
+        PathBuf::from(env::var("OUT_DIR").expect("Cargo didn't set OUT_DIR"));
 
-    let root_dir = _root_dir();
+    fs::create_dir_all(out_dir.join("src/lang"))?;
 
-    let rustemo_path = find_rustemo_binary(&root_dir).unwrap_or_else(|| {
-        panic!(
-            "Can't find a rustemo binary to use for bootstrapping. \
-             Make sure it is built and exists at target/{}/rustemo!",
-            env::var("PROFILE").unwrap()
-        )
-    });
+    for f in [
+        "rustemo/src/lang/rustemo.rs",
+        "rustemo/src/lang/rustemo_actions.rs",
+    ] {
+        let output = Command::new("git")
+            .args(&["show", &format!("main:{}", f)])
+            .output()
+            .expect(&format!("Cannot checkout file {:?}", f));
 
-    // Check if the binary is a bootstrapping version.
-    let output = Command::new(&rustemo_path).arg("--version").output()?;
-    if !String::from_utf8(output.stdout)
-        .unwrap()
-        .contains("bootstrap")
-    {
-        panic!(
-            "Using non-bootstrap binary in bootstrapping mode.
-              Re-create bootstrap binary with
-              'cargo build -p rustemo --features bootstrap'."
-        );
+        if !output.status.success() {
+            panic!("git command execution failed!");
+        }
+
+        let out_file =
+            out_dir.join(PathBuf::from(f).strip_prefix("rustemo/").unwrap());
+
+        println!("{:?}", out_file);
+
+        fs::write(&out_file, output.stdout)
+            .expect(&format!("Cannot write to file {:?}.", out_file));
     }
 
-    let status = Command::new(&rustemo_path)
-        .args(&[
-            "--force",
-            root_dir
-                .join("rustemo")
-                .join(grammar_file)
-                .to_str()
-                .expect("output path is not valid UTF-8"),
-        ])
-        .status()?;
-
-    if !status.success() {
-        // Abruptly finish build process in bootstrap mode
-        // FIXME: Should return Error but it doesn't terminate the build process.
-        panic!("Rustemo parser not generated! {}", status);
-    }
+    println!("Git checkout complete!");
 
     Ok(())
 }
