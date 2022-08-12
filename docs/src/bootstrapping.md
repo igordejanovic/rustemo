@@ -29,9 +29,10 @@ should install bootstrapping binary with the following command.
 $ cargo install --path rustemo --features boostrap --debug
 ```
 
-The `--debug` switch is optional but will provide faster build. This command
-will checkout rustemo parser files (parser and actions) from the git `main`
-branch, do the build with the rest of the code and install the binary.
+The `--debug` switch is optional but will provide faster build and the built
+binary will provide better error repors in case of problems. This command will
+checkout rustemo parser files (parser and actions) from the git `main` branch,
+do the build with the rest of the code and install the binary.
 
 You can verify that the bootstrapping binary is used by checking the version:
 

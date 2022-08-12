@@ -3,23 +3,34 @@ SymbolTypes {
         SymbolType {
             name: "STOP",
             kind: Terminal,
-            optional: false,
         },
         SymbolType {
             name: "Num",
             kind: Terminal,
-            optional: false,
+        },
+        SymbolType {
+            name: "Ta",
+            kind: Terminal,
+        },
+        SymbolType {
+            name: "Tb",
+            kind: Terminal,
+        },
+        SymbolType {
+            name: "Tc",
+            kind: Terminal,
         },
         SymbolType {
             name: "EMPTY",
             kind: Enum(
+                "EMPTY",
                 [],
             ),
-            optional: false,
         },
         SymbolType {
             name: "AUG",
             kind: Enum(
+                "AUG",
                 [
                     Variant {
                         name: "V1",
@@ -29,11 +40,11 @@ SymbolTypes {
                     },
                 ],
             ),
-            optional: false,
         },
         SymbolType {
             name: "A",
             kind: Enum(
+                "A",
                 [
                     Variant {
                         name: "MyKind",
@@ -83,11 +94,11 @@ SymbolTypes {
                     },
                 ],
             ),
-            optional: false,
         },
         SymbolType {
             name: "B",
-            kind: Enum(
+            kind: Option(
+                "C",
                 [
                     Variant {
                         name: "V1",
@@ -97,15 +108,15 @@ SymbolTypes {
                     },
                     Variant {
                         name: "Empty",
-                        kind: Plain,
+                        kind: Empty,
                     },
                 ],
             ),
-            optional: true,
         },
         SymbolType {
             name: "C",
             kind: Enum(
+                "C",
                 [
                     Variant {
                         name: "V1",
@@ -122,11 +133,11 @@ SymbolTypes {
                     },
                 ],
             ),
-            optional: false,
         },
         SymbolType {
             name: "D",
-            kind: Enum(
+            kind: OptionEnum(
+                "DNE",
                 [
                     Variant {
                         name: "V1",
@@ -171,15 +182,15 @@ SymbolTypes {
                     },
                     Variant {
                         name: "Empty",
-                        kind: Plain,
+                        kind: Empty,
                     },
                 ],
             ),
-            optional: true,
         },
         SymbolType {
             name: "F",
             kind: Enum(
+                "F",
                 [
                     Variant {
                         name: "V1",
@@ -207,7 +218,311 @@ SymbolTypes {
                     },
                 ],
             ),
-            optional: false,
+        },
+        SymbolType {
+            name: "Optional1",
+            kind: Option(
+                "A",
+                [
+                    Variant {
+                        name: "V1",
+                        kind: Ref(
+                            "A",
+                        ),
+                    },
+                    Variant {
+                        name: "Empty",
+                        kind: Empty,
+                    },
+                ],
+            ),
+        },
+        SymbolType {
+            name: "Optional2",
+            kind: Option(
+                "A",
+                [
+                    Variant {
+                        name: "Empty",
+                        kind: Empty,
+                    },
+                    Variant {
+                        name: "V2",
+                        kind: Ref(
+                            "A",
+                        ),
+                    },
+                ],
+            ),
+        },
+        SymbolType {
+            name: "Alias",
+            kind: Enum(
+                "Alias",
+                [
+                    Variant {
+                        name: "V1",
+                        kind: Ref(
+                            "A",
+                        ),
+                    },
+                ],
+            ),
+        },
+        SymbolType {
+            name: "MultiNonContent1",
+            kind: Enum(
+                "MultiNonContent1",
+                [
+                    Variant {
+                        name: "V1",
+                        kind: Plain,
+                    },
+                    Variant {
+                        name: "V2",
+                        kind: Plain,
+                    },
+                    Variant {
+                        name: "V3",
+                        kind: Plain,
+                    },
+                ],
+            ),
+        },
+        SymbolType {
+            name: "MultiNonContent2",
+            kind: OptionEnum(
+                "MultiNonContent2NE",
+                [
+                    Variant {
+                        name: "V1",
+                        kind: Plain,
+                    },
+                    Variant {
+                        name: "V2",
+                        kind: Plain,
+                    },
+                    Variant {
+                        name: "V3",
+                        kind: Plain,
+                    },
+                    Variant {
+                        name: "Empty",
+                        kind: Empty,
+                    },
+                ],
+            ),
+        },
+        SymbolType {
+            name: "ZeroOrMore1",
+            kind: Vec(
+                "B",
+                [
+                    Variant {
+                        name: "V1",
+                        kind: Struct(
+                            "ZeroOrMore1V1",
+                            [
+                                Field {
+                                    name: "zero_or_more1",
+                                    ty: "ZeroOrMore1",
+                                    recursive: true,
+                                },
+                                Field {
+                                    name: "b",
+                                    ty: "B",
+                                    recursive: false,
+                                },
+                            ],
+                        ),
+                    },
+                    Variant {
+                        name: "V2",
+                        kind: Struct(
+                            "ZeroOrMore1V2",
+                            [
+                                Field {
+                                    name: "myb",
+                                    ty: "B",
+                                    recursive: false,
+                                },
+                            ],
+                        ),
+                    },
+                    Variant {
+                        name: "Empty",
+                        kind: Empty,
+                    },
+                ],
+            ),
+        },
+        SymbolType {
+            name: "ZeroOrMore2",
+            kind: Vec(
+                "B",
+                [
+                    Variant {
+                        name: "V1",
+                        kind: Struct(
+                            "ZeroOrMore2V1",
+                            [
+                                Field {
+                                    name: "b",
+                                    ty: "B",
+                                    recursive: false,
+                                },
+                                Field {
+                                    name: "z",
+                                    ty: "ZeroOrMore2",
+                                    recursive: true,
+                                },
+                            ],
+                        ),
+                    },
+                    Variant {
+                        name: "V2",
+                        kind: Ref(
+                            "B",
+                        ),
+                    },
+                    Variant {
+                        name: "Empty",
+                        kind: Empty,
+                    },
+                ],
+            ),
+        },
+        SymbolType {
+            name: "ZeroOrMore3",
+            kind: Vec(
+                "B",
+                [
+                    Variant {
+                        name: "V1",
+                        kind: Struct(
+                            "ZeroOrMore3V1",
+                            [
+                                Field {
+                                    name: "b",
+                                    ty: "B",
+                                    recursive: false,
+                                },
+                                Field {
+                                    name: "zero_or_more3",
+                                    ty: "ZeroOrMore3",
+                                    recursive: true,
+                                },
+                            ],
+                        ),
+                    },
+                    Variant {
+                        name: "Empty",
+                        kind: Empty,
+                    },
+                    Variant {
+                        name: "V3",
+                        kind: Ref(
+                            "B",
+                        ),
+                    },
+                ],
+            ),
+        },
+        SymbolType {
+            name: "OneOrMore1",
+            kind: Vec(
+                "B",
+                [
+                    Variant {
+                        name: "V1",
+                        kind: Struct(
+                            "OneOrMore1V1",
+                            [
+                                Field {
+                                    name: "one_or_more1",
+                                    ty: "OneOrMore1",
+                                    recursive: true,
+                                },
+                                Field {
+                                    name: "b",
+                                    ty: "B",
+                                    recursive: false,
+                                },
+                            ],
+                        ),
+                    },
+                    Variant {
+                        name: "V2",
+                        kind: Ref(
+                            "B",
+                        ),
+                    },
+                ],
+            ),
+        },
+        SymbolType {
+            name: "OneOrMore2",
+            kind: Vec(
+                "B",
+                [
+                    Variant {
+                        name: "V1",
+                        kind: Struct(
+                            "OneOrMore2V1",
+                            [
+                                Field {
+                                    name: "b",
+                                    ty: "B",
+                                    recursive: false,
+                                },
+                                Field {
+                                    name: "one_or_more2",
+                                    ty: "OneOrMore2",
+                                    recursive: true,
+                                },
+                            ],
+                        ),
+                    },
+                    Variant {
+                        name: "V2",
+                        kind: Ref(
+                            "B",
+                        ),
+                    },
+                ],
+            ),
+        },
+        SymbolType {
+            name: "OneOrMore3",
+            kind: Vec(
+                "B",
+                [
+                    Variant {
+                        name: "V1",
+                        kind: Ref(
+                            "B",
+                        ),
+                    },
+                    Variant {
+                        name: "V2",
+                        kind: Struct(
+                            "OneOrMore3V2",
+                            [
+                                Field {
+                                    name: "b",
+                                    ty: "B",
+                                    recursive: false,
+                                },
+                                Field {
+                                    name: "one_or_more3",
+                                    ty: "OneOrMore3",
+                                    recursive: true,
+                                },
+                            ],
+                        ),
+                    },
+                ],
+            ),
         },
     ],
 }

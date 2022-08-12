@@ -1,0 +1,15 @@
+A: 'b' | EMPTY;
+
+B: B A | A | EMPTY;
+
+C: C A | A;
+
+D: A | EMPTY;
+
+E: A B C | D | EMPTY;
+
+F: B F | B | EMPTY;
+
+terminals
+
+TB: 'b';
