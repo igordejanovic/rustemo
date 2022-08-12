@@ -1,0 +1,8 @@
+A: 'a'* B TC*;
+B: 'b' | EMPTY;
+
+terminals
+
+TA: 'a';
+TB: 'b';
+TC: 'c';
