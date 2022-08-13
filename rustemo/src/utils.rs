@@ -1,8 +1,8 @@
-pub(crate) fn type_of<T>(_: &T) -> &'static str {
+pub fn type_of<T>(_: &T) -> &'static str {
     std::any::type_name::<T>()
 }
 
-pub(crate) fn string_difference(
+pub fn string_difference(
     a: &String,
     b: &String,
 ) -> Option<(usize, (char, char))> {
@@ -37,7 +37,7 @@ pub(crate) fn string_difference(
 macro_rules! output_cmp {
     ($path:expr, $out_str:expr) => {{
         use {
-            crate::tests::utils::string_difference,
+            crate::string_difference,
             std::{fs, path::PathBuf},
         };
         let t_path: PathBuf =

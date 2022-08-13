@@ -200,6 +200,7 @@ impl Builder for RulePatternsBuilder {
     }
 }
 impl<'i> LRBuilder<&'i str> for RulePatternsBuilder {
+    #![allow(unused_variables)]
     fn shift_action(&mut self, term_idx: TermIndex, token: Token<&'i str>) {
         let termval = match TermKind::try_from(term_idx.0).unwrap() {
             TermKind::STOP => Terminal::STOP,

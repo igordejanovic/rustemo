@@ -1,7 +1,6 @@
 use crate::{
     grammar::{Associativity, Grammar},
-    lang::rustemo_actions::Recognizer,
-    tests::utils::type_of,
+    lang::rustemo_actions::Recognizer, utils::type_of,
 };
 use rustemo_rt::index::ProdIndex;
 

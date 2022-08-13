@@ -3,19 +3,19 @@
 use rustemo_rt::lexer::Token;
 #[derive(Debug, Clone)]
 pub enum A {
-    V1(Option<B>),
+    V1(B),
 }
-pub fn a_v1(b: Option<B>) -> A {
-    A::V1(b)
+pub fn a_v1(b: B) -> A {
+    b
 }
+pub type B = Option<BNE>;
 #[derive(Debug, Clone)]
-pub enum B {
+pub enum BNE {
     V1,
-    Empty,
 }
-pub fn b_v1() -> Option<B> {
-    Some(B::V1)
+pub fn b_v1() -> B {
+    Some(BNE::V1)
 }
-pub fn b_empty() -> Option<B> {
-    Some(B::Empty)
+pub fn b_empty() -> B {
+    None
 }

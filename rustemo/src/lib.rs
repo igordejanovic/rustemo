@@ -10,11 +10,13 @@ pub mod settings;
 mod lang;
 mod table;
 
-#[cfg(test)]
-pub(crate) mod tests;
+pub mod utils;
 
 pub use crate::build::generate_parsers;
 pub use crate::generator::generate_parser;
 
 pub use crate::error::Error;
 pub use crate::error::Result;
+
+// For output_cmp macro
+pub use crate::utils::string_difference;

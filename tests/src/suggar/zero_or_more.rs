@@ -43,7 +43,7 @@ pub enum Terminal {
 #[derive(Debug)]
 pub enum NonTerminal {
     A(zero_or_more_actions::A),
-    B(Option<zero_or_more_actions::B>),
+    B(zero_or_more_actions::B),
 }
 #[derive(Copy, Clone, TryFromPrimitive)]
 #[repr(usize)]
@@ -239,6 +239,7 @@ impl Builder for ZeroOrMoreBuilder {
     }
 }
 impl<'i> LRBuilder<&'i str> for ZeroOrMoreBuilder {
+    #![allow(unused_variables)]
     fn shift_action(&mut self, term_idx: TermIndex, token: Token<&'i str>) {
         let termval = match TermKind::try_from(term_idx.0).unwrap() {
             TermKind::STOP => Terminal::STOP,

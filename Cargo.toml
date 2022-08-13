@@ -2,5 +2,6 @@
 members = [
         "rustemo",
         "rustemo-rt",
+        "tests",
         "examples/calculator",
 ]

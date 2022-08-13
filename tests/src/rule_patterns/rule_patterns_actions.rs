@@ -13,7 +13,7 @@ pub fn a_empty() -> A {
     None
 }
 pub type B = Vec<A>;
-pub fn b_v1(b: B, a: A) -> B {
+pub fn b_v1(mut b: B, a: A) -> B {
     b.push(a);
     b
 }
@@ -24,7 +24,7 @@ pub fn b_empty() -> B {
     vec![]
 }
 pub type C = Vec<A>;
-pub fn c_v1(c: C, a: A) -> C {
+pub fn c_v1(mut c: C, a: A) -> C {
     c.push(a);
     c
 }
@@ -33,23 +33,34 @@ pub fn c_v2(a: A) -> C {
 }
 pub type D = Option<A>;
 pub fn d_v1(a: A) -> D {
-    Some(A::V1(a))
+    Some(a)
 }
 pub fn d_empty() -> D {
     None
 }
-pub type E = Option<D>;
+#[derive(Debug, Clone)]
+pub struct EV1 {
+    pub a: A,
+    pub b: B,
+    pub c: C,
+}
+pub type E = Option<ENE>;
+#[derive(Debug, Clone)]
+pub enum ENE {
+    V1(EV1),
+    V2(D),
+}
 pub fn e_v1(a: A, b: B, c: C) -> E {
-    Some(D::V1(EV1 { a, b, c }))
+    Some(ENE::V1(EV1 { a, b, c }))
 }
 pub fn e_v2(d: D) -> E {
-    Some(D::V2(d))
+    Some(ENE::V2(d))
 }
 pub fn e_empty() -> E {
     None
 }
 pub type F = Vec<B>;
-pub fn f_v1(b: B, f: F) -> F {
+pub fn f_v1(b: B, mut f: F) -> F {
     f.push(b);
     f
 }
