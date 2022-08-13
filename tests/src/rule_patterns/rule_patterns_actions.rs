@@ -12,24 +12,41 @@ pub fn a_v1() -> A {
 pub fn a_empty() -> A {
     None
 }
-pub type B = Vec<A>;
-pub fn b_v1(mut b: B, a: A) -> B {
-    b.push(a);
-    b
+#[derive(Debug, Clone)]
+pub struct BV1 {
+    pub b: Box<B>,
+    pub a: A,
+}
+pub type B = Option<BNE>;
+#[derive(Debug, Clone)]
+pub enum BNE {
+    V1(BV1),
+    V2(A),
+}
+pub fn b_v1(b: B, a: A) -> B {
+    Some(BNE::V1(BV1 { b: Box::new(b), a }))
 }
 pub fn b_v2(a: A) -> B {
-    vec![a]
+    Some(BNE::V2(a))
 }
 pub fn b_empty() -> B {
-    vec![]
+    None
 }
-pub type C = Vec<A>;
-pub fn c_v1(mut c: C, a: A) -> C {
-    c.push(a);
-    c
+#[derive(Debug, Clone)]
+pub struct CV1 {
+    pub c: Box<C>,
+    pub a: A,
+}
+#[derive(Debug, Clone)]
+pub enum C {
+    V1(CV1),
+    V2(A),
+}
+pub fn c_v1(c: C, a: A) -> C {
+    C::V1(CV1 { c: Box::new(c), a })
 }
 pub fn c_v2(a: A) -> C {
-    vec![a]
+    C::V2(a)
 }
 pub type D = Option<A>;
 pub fn d_v1(a: A) -> D {
@@ -59,14 +76,23 @@ pub fn e_v2(d: D) -> E {
 pub fn e_empty() -> E {
     None
 }
-pub type F = Vec<B>;
-pub fn f_v1(b: B, mut f: F) -> F {
-    f.push(b);
-    f
+#[derive(Debug, Clone)]
+pub struct FV1 {
+    pub b: B,
+    pub f: Box<F>,
+}
+pub type F = Option<FNE>;
+#[derive(Debug, Clone)]
+pub enum FNE {
+    V1(FV1),
+    V2(B),
+}
+pub fn f_v1(b: B, f: F) -> F {
+    Some(FNE::V1(FV1 { b, f: Box::new(f) }))
 }
 pub fn f_v2(b: B) -> F {
-    vec![b]
+    Some(FNE::V2(b))
 }
 pub fn f_empty() -> F {
-    vec![]
+    None
 }

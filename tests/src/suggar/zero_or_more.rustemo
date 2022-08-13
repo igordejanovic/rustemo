@@ -1,4 +1,4 @@
-A: 'a'* B TC*;
+A: 'c' B TC*;
 B: 'b' | EMPTY;
 
 terminals

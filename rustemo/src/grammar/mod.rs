@@ -4,23 +4,20 @@ use std::{
     hash::{Hash, Hasher},
 };
 
-use rustemo_rt::{
-    index::{
-        NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, SymbolVec,
-        TermIndex, TermVec,
-    },
-    log,
+use rustemo_rt::index::{
+    NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, SymbolVec,
+    TermIndex, TermVec,
 };
 
 use crate::{error::Result, lang::rustemo::RustemoParser};
 
-use self::types::to_snake_case;
+use self::{builder::GrammarBuilder, types::to_snake_case};
 
 use super::lang::rustemo_actions::{
-    self, ConstVal, GrammarRule, GrammarSymbol, Imports, PGFile, ProdMetaDatas,
-    Recognizer, TermMetaDatas,
+    GrammarSymbol, Imports, ProdMetaDatas, Recognizer, TermMetaDatas,
 };
 
+pub(crate) mod builder;
 #[cfg(test)]
 mod tests;
 pub(crate) mod types;
@@ -173,9 +170,11 @@ grammar_elem!(Production);
 impl Default for Production {
     fn default() -> Self {
         Self {
-            idx: Default::default(),
-            nonterminal: Default::default(),
-            ntidx: Default::default(),
+            // These two should always be given.
+            idx: ProdIndex(usize::MAX),
+            nonterminal: NonTermIndex(usize::MAX),
+
+            ntidx: 0,
             kind: None,
             rhs: Default::default(),
             assoc: Default::default(),
@@ -298,9 +297,8 @@ pub(crate) fn res_symbol(assign: &ResolvingAssignment) -> SymbolIndex {
 impl Grammar {
     /// Parses given string and constructs a Grammar instance
     pub fn from_string<G: AsRef<str>>(grammar_str: G) -> Result<Self> {
-        Ok(Self::from_pgfile(RustemoParser::parse_str(
-            grammar_str.as_ref(),
-        )?))
+        Ok(GrammarBuilder::new()
+            .from_file(RustemoParser::parse_str(grammar_str.as_ref())?))
     }
 
     /// Parses given file and constructs a Grammar instance
@@ -315,388 +313,6 @@ impl Grammar {
     //         panic!("Invalid symbol from grammar parse!")
     //     }
     // }
-
-    fn from_pgfile(pgfile: PGFile) -> Self {
-        let mut terminals: BTreeMap<String, Terminal> = BTreeMap::new();
-        let mut terminals_matches: BTreeMap<String, &Terminal> =
-            BTreeMap::new();
-        let mut nonterminals: BTreeMap<String, NonTerminal> = BTreeMap::new();
-        let mut productions: ProdVec<Production> = ProdVec::new();
-
-        // Create implicit STOP terminal used to signify the end of the input.
-        terminals.insert(
-            "STOP".to_string(),
-            Terminal {
-                idx: TermIndex(0),
-                name: "STOP".to_string(),
-                action: None,
-                recognizer: None,
-                has_content: false,
-                prio: DEFAULT_PRIORITY,
-                meta: TermMetaDatas::new(),
-            },
-        );
-
-        // Extract productions and nonterminals from grammar rules.
-        if let Some(rules) = pgfile.grammar_rules {
-            Grammar::extract_productions_and_symbols(
-                rules,
-                &mut nonterminals,
-                &mut productions,
-            );
-        }
-
-        // TODO: Desugaring. Related to the previous. Desugar repetitions and
-        // groups.
-
-        // Collect grammar terminals
-        if let Some(grammar_terminals) = pgfile.terminal_rules {
-            Grammar::collect_terminals(
-                grammar_terminals,
-                &mut terminals,
-                &mut terminals_matches,
-            );
-        }
-
-        // Create implicit terminals from string constants.
-        Grammar::resolve_inline_terminals_from_productions(
-            &mut productions,
-            &terminals_matches,
-        );
-
-        // Resolve references in productions.
-        Grammar::resolve_references(
-            &mut productions,
-            &terminals,
-            &nonterminals,
-        );
-
-        let term_len = terminals.len();
-        let grammar = Grammar {
-            imports: pgfile.imports.unwrap_or_default(),
-            productions,
-            empty_index: terminals.len().into(), // Right after the last terminal
-            augmented_index: (terminals.len() + 1).into(), // skip EMPTY
-            stop_index: 0.into(),
-            term_by_name: terminals
-                .values()
-                .map(|t| (t.name.to_string(), t.idx.to_symbol_index()))
-                .collect(),
-            terminals: {
-                let mut terms: TermVec<_> = terminals.into_values().collect();
-                terms.sort();
-                terms
-            },
-            nonterm_by_name: nonterminals
-                .values()
-                .map(|nt| {
-                    (nt.name.to_string(), nt.idx.to_symbol_index(term_len))
-                })
-                .collect(),
-            nonterminals: {
-                let mut nonterms: NonTermVec<_> =
-                    nonterminals.into_values().collect();
-                nonterms.sort();
-                nonterms
-            },
-        };
-        // TODO: Dump only if tracing is used
-        log!("{grammar}");
-        grammar
-    }
-
-    fn extract_productions_and_symbols(
-        rules: Vec<GrammarRule>,
-        nonterminals: &mut BTreeMap<String, NonTerminal>,
-        productions: &mut ProdVec<Production>,
-    ) {
-        let mut last_nonterm_idx = NonTermIndex(1); // Account for EMPTY and S'
-        let mut next_prod_idx = ProdIndex(1); // Account for S' -> S production
-        let mut nonterminal;
-
-        // EMPTY non-terminal is implicit
-        nonterminals.insert(
-            "EMPTY".to_string(),
-            NonTerminal {
-                idx: NonTermIndex(0),
-                name: "EMPTY".to_string(),
-                productions: vec![],
-                action: None,
-            },
-        );
-
-        // Augmented non-terminal and production. by default first rule is
-        // starting rule.
-        nonterminals.insert(
-            "AUG".to_string(),
-            NonTerminal {
-                idx: NonTermIndex(1),
-                name: "AUG".to_string(),
-                productions: vec![ProdIndex(0)],
-                action: None,
-            },
-        );
-
-        // Add augmented S' -> S production
-        productions.push(Production {
-            idx: ProdIndex(0),
-            nonterminal: NonTermIndex(1),
-            rhs: vec![ResolvingAssignment {
-                name: None,
-                symbol: ResolvingSymbolIndex::Resolving(GrammarSymbol::Name(
-                    rules[0].name.to_string(),
-                )),
-            }],
-            ..Production::default()
-        });
-
-        for rule in rules {
-            // Crate or find non-terminal for the current rule
-            nonterminal = nonterminals
-                .entry(rule.name.to_string())
-                .or_insert_with(|| {
-                    last_nonterm_idx.0 += 1;
-                    NonTerminal {
-                        idx: last_nonterm_idx,
-                        name: rule.name.to_string(),
-                        productions: vec![],
-                        action: rule.action
-                    }
-                });
-
-            // Gather productions, create indexes. Transform RHS to mark
-            // resolving references.
-            for production in rule.rhs {
-                let mut new_production = Production {
-                    idx: next_prod_idx,
-                    nonterminal: nonterminal.idx,
-                    rhs:
-                        production
-                            .assignments
-                            .into_iter()
-                            // Remove EMPTY from production RHS
-                            .filter(|assignment| {
-                                use rustemo_actions::{
-                                    Assignment, GrammarSymbolRef,
-                                };
-                                match assignment {
-                                    Assignment::GrammarSymbolRef(
-                                        GrammarSymbolRef {
-                                            gsymbol:
-                                                Some(GrammarSymbol::Name(name)),
-                                            ..
-                                        },
-                                    ) if name.as_str() == "EMPTY" => false,
-                                    _ => true,
-                                }
-                            })
-                            // Map all RHS elements to Assignments
-                            .map(|assignment| {
-                                use rustemo_actions::Assignment::*;
-                                let is_bool =
-                                    matches! { assignment, BoolAssignment(_) };
-                                match assignment {
-                                    PlainAssignment(assign)
-                                    | BoolAssignment(assign) => {
-                                        ResolvingAssignment {
-                                            name: Some(assign.name),
-                                            symbol:
-                                                ResolvingSymbolIndex::Resolving(
-                                                    assign
-                                                        .gsymref
-                                                        .gsymbol
-                                                        .unwrap(),
-                                                ),
-                                            is_bool,
-                                        }
-                                    }
-                                    GrammarSymbolRef(reference) => {
-                                        ResolvingAssignment {
-                                            name: None,
-                                            symbol:
-                                                ResolvingSymbolIndex::Resolving(
-                                                    reference.gsymbol.unwrap(),
-                                                ),
-                                            is_bool: false,
-                                        }
-                                    }
-                                }
-                            })
-                            .collect(),
-                    meta: production.meta,
-                    ..Production::default()
-                };
-
-                // Map meta-data to production fields for easier access
-                if let Some(meta) = new_production.meta.remove("priority") {
-                    new_production.prio = match meta {
-                        rustemo_actions::ConstVal::Int(p) => p,
-                        _ => panic!("Invalid Const!"),
-                    }
-                }
-
-                if let Some(kind) = new_production.meta.remove("kind") {
-                    new_production.kind = match kind {
-                        ConstVal::String(s) => Some(s),
-                        _ => None,
-                    }
-                }
-
-                if let Some(_) = new_production.meta.remove("left") {
-                    new_production.assoc = Associativity::Left;
-                }
-                if let Some(_) = new_production.meta.remove("right") {
-                    new_production.assoc = Associativity::Right;
-                }
-                if let Some(_) = new_production.meta.remove("nops") {
-                    new_production.nops = true;
-                }
-                if let Some(_) = new_production.meta.remove("nopse") {
-                    new_production.nopse = true;
-                }
-
-                new_production.ntidx = nonterminal.productions.len();
-                productions.push(new_production);
-                nonterminal.productions.push(next_prod_idx);
-                next_prod_idx.0 += 1;
-            }
-        }
-    }
-
-    fn collect_terminals<'a>(
-        grammar_terminals: Vec<rustemo_actions::Terminal>,
-        terminals: &'a mut BTreeMap<String, Terminal>,
-        terminals_matches: &mut BTreeMap<String, &'a Terminal>,
-    ) {
-        let mut next_term_idx = TermIndex(1); // Account for STOP terminal
-        for terminal in grammar_terminals {
-            terminals.insert(
-                terminal.name.clone(),
-                Terminal {
-                    idx: next_term_idx,
-                    name: terminal.name,
-                    action: terminal.action,
-                    has_content: match &terminal.recognizer {
-                        Some(recognizer) => match recognizer {
-                            // Terminal has no content only if it is a string match
-                            Recognizer::StrConst(_) => false,
-                            Recognizer::RegexTerm(_) => true,
-                        },
-                        None => true,
-                    },
-                    recognizer: terminal.recognizer,
-                    // Extract priority from meta-data
-                    prio: match terminal.meta.get("priority") {
-                        Some(prio) => match prio {
-                            ConstVal::Int(prio) => *prio,
-                            _ => unreachable!(),
-                        },
-                        None => DEFAULT_PRIORITY,
-                    },
-                    meta: terminal.meta,
-                },
-            );
-            next_term_idx.0 += 1;
-        }
-
-        for terminal in terminals.values() {
-            // Collect each terminal which uses a string match recognizer
-            // Those can be used as inline terminals in productions.
-            if let Some(Recognizer::StrConst(m)) = &terminal.recognizer {
-                terminals_matches.insert(m.clone(), &terminal);
-            }
-        }
-    }
-
-    /// Inline terminals are those created by specifying string match directly
-    /// as a part of a production. In such a case we should verify that the
-    /// terminal with the same string match is defined and we should resolve
-    /// inline instance to the instance provided in "terminals" section.
-    ///
-    /// Thus, in production you can either reference terminal by name or use the
-    /// same string match.
-    fn resolve_inline_terminals_from_productions(
-        productions: &mut ProdVec<Production>,
-        terminals_matches: &BTreeMap<String, &Terminal>,
-    ) {
-        for production in productions {
-            let production_str = format!("{}", production);
-            for assign in &mut production.rhs {
-                if let ResolvingSymbolIndex::Resolving(symbol) = &assign.symbol
-                {
-                    if let GrammarSymbol::StrConst(mtch) = symbol {
-                        if terminals_matches.contains_key(mtch) {
-                            assign.symbol = ResolvingSymbolIndex::Resolved(
-                                terminals_matches
-                                    .get(mtch)
-                                    .unwrap()
-                                    .idx
-                                    .to_symbol_index(),
-                            );
-                        } else {
-                            panic!(
-                                concat!("terminal \"{}\" used in production \"{:?}\" ",
-                                        "is not defined in the 'terminals' section!."),
-                                mtch, production_str)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    fn resolve_references(
-        productions: &mut ProdVec<Production>,
-        terminals: &BTreeMap<String, Terminal>,
-        nonterminals: &BTreeMap<String, NonTerminal>,
-    ) {
-        // Resolve references.
-        for production in productions {
-            let rhs_len = production.rhs.len();
-            for assign in &mut production.rhs {
-                if let ResolvingSymbolIndex::Resolving(symbol) = &assign.symbol
-                {
-                    match symbol {
-                        GrammarSymbol::Name(name) => {
-                            assign.symbol = ResolvingSymbolIndex::Resolved(
-                                if let Some(terminal) = terminals.get(name) {
-                                    terminal.idx.to_symbol_index()
-                                } else {
-                                    let nt_idx = nonterminals
-                                        .get(name)
-                                        .unwrap_or_else(|| {
-                                            panic!(
-                                                "unexisting symbol {:?}.",
-                                                name
-                                            )
-                                        })
-                                        .idx;
-                                    if rhs_len == 1 && nt_idx == production.nonterminal {
-                                        panic!("Infinite recursion on symbol '{}'", name);
-                                    }
-                                    nt_idx.to_symbol_index(terminals.len())
-                                },
-                            );
-                        }
-                        GrammarSymbol::StrConst(name) => {
-                            assign.symbol = ResolvingSymbolIndex::Resolved(
-                                terminals
-                                    .get(name)
-                                    .unwrap_or_else(|| {
-                                        panic!(
-                                            "terminal {:?} not created!.",
-                                            name
-                                        )
-                                    })
-                                    .idx
-                                    .to_symbol_index(),
-                            );
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     pub(crate) fn new_termvec<T: Clone>(&self, default: T) -> TermVec<T> {
         TermVec(vec![default; self.terminals.len()])
@@ -726,7 +342,9 @@ impl Grammar {
     /// I.e. not a constant match terminal (keyword, punctuation...)
     #[inline]
     pub fn symbol_has_content(&self, symbol: SymbolIndex) -> bool {
-        self.is_nonterm(symbol) || self.symbol_to_term(symbol).has_content
+        !self.is_empty(symbol)
+            && (self.is_nonterm(symbol)
+                || self.symbol_to_term(symbol).has_content)
     }
 
     pub fn symbol_indexes(&self, names: &[&str]) -> SymbolVec<SymbolIndex> {
@@ -797,6 +415,11 @@ impl Grammar {
     #[inline]
     pub fn is_term(&self, index: SymbolIndex) -> bool {
         index.0 < self.terminals.len()
+    }
+
+    #[inline]
+    pub fn is_empty(&self, index: SymbolIndex) -> bool {
+        index == self.empty_index
     }
 
     #[inline]

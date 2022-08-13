@@ -396,7 +396,7 @@ pub fn production_group_v1(prod_rule_rhs: GrammarRuleRHS) -> ProductionGroup {
 #[derive(Debug, Clone)]
 pub struct GrammarSymbolRef {
     pub gsymbol: Option<GrammarSymbol>,
-    pub repetition_operator: RepetitionOperatorOpt,
+    pub repetition_op: RepetitionOperatorOpt,
     pub production_group: Option<ProductionGroup>,
 }
 pub fn grammar_symbol_ref_v1(
@@ -405,7 +405,7 @@ pub fn grammar_symbol_ref_v1(
 ) -> GrammarSymbolRef {
     GrammarSymbolRef {
         gsymbol: Some(gsymbol),
-        repetition_operator,
+        repetition_op: repetition_operator,
         production_group: None,
     }
 }
@@ -415,22 +415,22 @@ pub fn grammar_symbol_ref_v2(
 ) -> GrammarSymbolRef {
     GrammarSymbolRef {
         gsymbol: None,
-        repetition_operator,
+        repetition_op: repetition_operator,
         production_group: Some(production_group),
     }
 }
 #[derive(Debug, Clone)]
 pub struct RepetitionOperator {
-    pub repetition_operator_op: RepetitionOperatorOp,
-    pub repetition_modifiers_exp: Option<RepetitionModifiersExp>,
+    pub rep_op: RepetitionOperatorOp,
+    pub rep_modifiers: Option<RepetitionModifiersExp>,
 }
 pub fn repetition_operator_v1(
     repetition_operator_op: RepetitionOperatorOp,
     repetition_modifiers_exp: Option<RepetitionModifiersExp>,
 ) -> RepetitionOperator {
     RepetitionOperator {
-        repetition_operator_op,
-        repetition_modifiers_exp,
+        rep_op: repetition_operator_op,
+        rep_modifiers: repetition_modifiers_exp,
     }
 }
 pub type RepetitionOperatorOpt = Option<RepetitionOperator>;

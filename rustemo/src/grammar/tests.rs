@@ -123,7 +123,7 @@ fn terminals_regex() {
 }
 
 #[test]
-fn nonterminals_productions() {
+fn nonterminal_productions() {
     let grammar = Grammar::from_string(
         r#"
         S: A "some_term" B | B;

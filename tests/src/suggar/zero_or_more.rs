@@ -58,7 +58,7 @@ pub struct ZeroOrMoreParserDefinition {
 }
 pub(crate) static PARSER_DEFINITION: ZeroOrMoreParserDefinition = ZeroOrMoreParserDefinition {
     actions: [
-        [Error, Shift(StateIndex(1usize), TermIndex(1usize)), Error, Error],
+        [Error, Error, Error, Shift(StateIndex(1usize), TermIndex(3usize))],
         [
             Error,
             Error,
@@ -158,7 +158,7 @@ pub(crate) static LEXER_DEFINITION: ZeroOrMoreLexerDefinition = ZeroOrMoreLexerD
         },
     ],
     terminals_for_state: [
-        [Some(1usize), None],
+        [Some(3usize), None],
         [Some(2usize), Some(3usize)],
         [Some(0usize), None],
         [Some(3usize), None],

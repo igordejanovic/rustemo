@@ -6,7 +6,7 @@ pub enum A {
     V1(B),
 }
 pub fn a_v1(b: B) -> A {
-    b
+    A::V1(b)
 }
 pub type B = Option<BNE>;
 #[derive(Debug, Clone)]

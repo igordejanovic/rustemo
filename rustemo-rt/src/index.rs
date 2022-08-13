@@ -10,12 +10,6 @@ macro_rules! create_index {
         #[derive(Copy, Clone, Hash, PartialEq, Eq, PartialOrd)]
         pub struct $index(pub usize);
 
-        impl Default for $index {
-            fn default() -> Self {
-                Self(usize::MAX) // invalid value by default
-            }
-        }
-
         impl Display for $index {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 write!(f, "{}", self.0)
