@@ -130,7 +130,7 @@ where
 
     // Generate actions
     if settings.actions {
-        generate_parser_actions(&grammar, &grammar_path)?;
+        generate_parser_actions(&grammar, &grammar_path, settings)?;
     }
 
     std::fs::write(out_file, prettyplease::unparse(&ast))?;

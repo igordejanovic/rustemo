@@ -11,7 +11,7 @@ use std::{
 use proc_macro2::{Ident, Span};
 use syn::{self, parse_quote};
 
-use crate::grammar::{Grammar, NonTerminal, types::to_snake_case};
+use crate::{grammar::{Grammar, NonTerminal, types::to_snake_case}, settings::Settings};
 use crate::{
     error::{Error, Result},
     grammar::Terminal,
@@ -50,6 +50,7 @@ pub(crate) trait ActionsGenerator {
 pub(crate) fn generate_parser_actions<F>(
     grammar: &Grammar,
     grammar_path: F,
+    settings: &Settings,
 ) -> Result<()>
 where
     F: AsRef<Path> + core::fmt::Debug,
@@ -63,12 +64,12 @@ where
     let action_file =
         PathBuf::from(grammar_path.as_ref()).with_file_name(file_name);
 
-    let mut ast = if action_file.exists() {
+    let mut ast = if action_file.exists() && !settings.force_all {
         log!("Parsing action file with Syn: {:?}", action_file);
         syn::parse_file(&std::fs::read_to_string(&action_file)?)?
     } else {
         // Create new empty file with common uses statements.
-        log!("Action file not found. Creating: {:?}", action_file);
+        log!("Creating: {:?}", action_file);
         parse_quote! {
             ///! This file is maintained by rustemo but can be modified manually.
             ///! All manual changes will be preserved except non-doc comments.
