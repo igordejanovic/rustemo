@@ -691,6 +691,7 @@ fn generate_builder(
         parse_quote! {
             impl<'i> LRBuilder<&'i str> for #builder {
 
+                #![allow(unused_variables)]
                 fn shift_action(&mut self, term_idx: TermIndex, token: Token<&'i str>) {
                     let termval = match TermKind::try_from(term_idx.0).unwrap() {
                         #(#shift_match_arms),*

@@ -13770,6 +13770,7 @@ impl Builder for RustemoBuilder {
     }
 }
 impl<'i> LRBuilder<&'i str> for RustemoBuilder {
+    #![allow(unused_variables)]
     fn shift_action(&mut self, term_idx: TermIndex, token: Token<&'i str>) {
         let termval = match TermKind::try_from(term_idx.0).unwrap() {
             TermKind::STOP => Terminal::STOP,
