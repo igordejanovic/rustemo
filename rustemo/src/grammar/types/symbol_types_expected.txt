@@ -394,8 +394,8 @@ SymbolTypes {
         },
         SymbolType {
             name: "ZeroOrMore3",
-            kind: Vec(
-                "B",
+            kind: OptionEnum(
+                "ZeroOrMore3NE",
                 [
                     Variant {
                         name: "V1",
@@ -430,8 +430,8 @@ SymbolTypes {
         },
         SymbolType {
             name: "OneOrMore1",
-            kind: Vec(
-                "B",
+            kind: Enum(
+                "OneOrMore1",
                 [
                     Variant {
                         name: "V1",
@@ -494,8 +494,8 @@ SymbolTypes {
         },
         SymbolType {
             name: "OneOrMore3",
-            kind: Vec(
-                "B",
+            kind: Enum(
+                "OneOrMore3",
                 [
                     Variant {
                         name: "V1",

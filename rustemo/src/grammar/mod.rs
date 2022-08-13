@@ -89,6 +89,7 @@ grammar_elem!(Terminal);
 pub struct NonTerminal {
     pub idx: NonTermIndex,
     pub name: String,
+    pub action: Option<String>,
     pub productions: Vec<ProdIndex>,
 }
 grammar_elem!(NonTerminal);
@@ -416,6 +417,7 @@ impl Grammar {
                 idx: NonTermIndex(0),
                 name: "EMPTY".to_string(),
                 productions: vec![],
+                action: None,
             },
         );
 
@@ -427,6 +429,7 @@ impl Grammar {
                 idx: NonTermIndex(1),
                 name: "AUG".to_string(),
                 productions: vec![ProdIndex(0)],
+                action: None,
             },
         );
 
@@ -453,6 +456,7 @@ impl Grammar {
                         idx: last_nonterm_idx,
                         name: rule.name.to_string(),
                         productions: vec![],
+                        action: rule.action
                     }
                 });
 

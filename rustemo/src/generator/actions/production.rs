@@ -109,7 +109,10 @@ impl ProductionActionsGenerator {
             VariantKind::Ref(ref_type) => {
                 let ref_type_var =
                     Ident::new(&to_snake_case(ref_type), Span::call_site());
-                if matches! { &ty.kind, SymbolTypeKind::OptionEnum(_, _) } {
+                if matches! { &ty.kind,
+                SymbolTypeKind::OptionEnum(_, _)
+                | SymbolTypeKind::Enum(_, _) }
+                {
                     parse_quote! {
                         #target_type::#variant_ident(#ref_type_var)
                     }

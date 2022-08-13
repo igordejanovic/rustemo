@@ -18,11 +18,14 @@ fn test_symbol_type_deduction() {
             MultiNonContent1: 'a' | 'b' | 'c';
             MultiNonContent2: 'a' | 'b' | 'c' | EMPTY;
 
+            @vec
             ZeroOrMore1: ZeroOrMore1 B | myb=B | EMPTY;
+            @vec
             ZeroOrMore2: B z=ZeroOrMore2 | B | EMPTY;
             ZeroOrMore3: B ZeroOrMore3 | EMPTY | B ;
 
             OneOrMore1: OneOrMore1 B | B;
+            @vec
             OneOrMore2: B OneOrMore2 | B;
             OneOrMore3: B | B OneOrMore3 ;
 

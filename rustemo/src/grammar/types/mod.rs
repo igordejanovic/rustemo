@@ -3,7 +3,7 @@
 
 use convert_case::{Boundary, Case, Casing};
 
-use super::{Grammar, Production};
+use super::{Grammar, Production, NonTerminal};
 
 #[cfg(test)]
 mod tests;
@@ -128,7 +128,7 @@ impl SymbolTypes {
 
             types.push(SymbolType {
                 name: nonterminal.name.clone(),
-                kind: Self::get_type_kind(&nonterminal.name, variants),
+                kind: Self::get_type_kind(&nonterminal, variants),
             });
         }
         types
@@ -140,9 +140,10 @@ impl SymbolTypes {
     /// A: <Whatever> ... | EMPTY; ---> A is Option<ANE> where ANE is
     /// enum of all variants except EMPTY.
     fn get_type_kind(
-        type_name: &String,
+        nt: &NonTerminal,
         variants: Vec<Variant>,
     ) -> SymbolTypeKind {
+        let type_name = &nt.name;
         struct Match {
             no_match: bool,
             empty: bool,
@@ -161,11 +162,13 @@ impl SymbolTypes {
             match &variant.kind {
                 VariantKind::Empty => m.empty = true,
                 VariantKind::Struct(_, fields) => match &fields[..] {
-                    [a] => if m.single.is_none() {
-                        m.single = Some(a.ty.clone())
-                    } else {
-                        m.no_match = true
-                    },
+                    [a] => {
+                        if m.single.is_none() {
+                            m.single = Some(a.ty.clone())
+                        } else {
+                            m.no_match = true
+                        }
+                    }
                     [a, b] => {
                         if m.recurse.is_none() {
                             if a.ty == *type_name {
@@ -199,7 +202,11 @@ impl SymbolTypes {
                 recurse: Some(recurse),
                 no_match: false,
                 ..
-            } if single == recurse => SymbolTypeKind::Vec(single, variants),
+            } if single == recurse
+                && matches! { nt.action, Some(ref action) if action == "vec" } =>
+            {
+                SymbolTypeKind::Vec(single, variants)
+            }
             // A: B | EMPTY;
             Match {
                 empty: true,
@@ -209,10 +216,9 @@ impl SymbolTypes {
                 ..
             } => SymbolTypeKind::Option(single, variants),
             // A: ...<Whatever>... | EMPTY;
-            Match {
-                empty: true,
-                ..
-            } => SymbolTypeKind::OptionEnum(format!("{}NE", type_name), variants),
+            Match { empty: true, .. } => {
+                SymbolTypeKind::OptionEnum(format!("{}NE", type_name), variants)
+            }
             _ => SymbolTypeKind::Enum(type_name.clone(), variants),
         }
     }

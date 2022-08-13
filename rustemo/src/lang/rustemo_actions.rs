@@ -28,7 +28,7 @@ pub fn str_const<'i>(token: Token<&'i str>) -> StrConst {
 }
 pub type Action = String;
 pub fn action<'a>(token: Token<&'a str>) -> Action {
-    token.value.into()
+    token.value[1..].into()
 }
 pub type WS = String;
 pub fn ws<'a>(token: Token<&'a str>) -> WS {
