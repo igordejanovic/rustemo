@@ -203,6 +203,7 @@ impl Production {
             .map(|(idx, a)| Assignment {
                 name: a.name.clone(),
                 symbol: res_symbol(a),
+                is_bool: a.is_bool,
                 idx,
             })
             .collect()
@@ -269,19 +270,22 @@ pub enum ResolvingSymbolIndex {
 pub struct ResolvingAssignment {
     pub name: Option<String>,
     pub symbol: ResolvingSymbolIndex,
+    pub is_bool: bool,
 }
 
 #[derive(Debug)]
 pub struct Assignment {
     pub name: Option<String>,
     pub symbol: SymbolIndex,
+    /// If this assignment is ?= variant. RHS is true if Some.
+    pub is_bool: bool,
     /// position in RHS, zero based.
     pub idx: usize,
 }
 
 /// Called for Assignment to extract resolved SymbolIndex.
 #[inline]
-pub(in crate) fn res_symbol(assign: &ResolvingAssignment) -> SymbolIndex {
+pub(crate) fn res_symbol(assign: &ResolvingAssignment) -> SymbolIndex {
     match assign.symbol {
         ResolvingSymbolIndex::Resolved(index) => index,
         ResolvingSymbolIndex::Resolving(_) => {
@@ -489,6 +493,8 @@ impl Grammar {
                             // Map all RHS elements to Assignments
                             .map(|assignment| {
                                 use rustemo_actions::Assignment::*;
+                                let is_bool =
+                                    matches! { assignment, BoolAssignment(_) };
                                 match assignment {
                                     PlainAssignment(assign)
                                     | BoolAssignment(assign) => {
@@ -501,6 +507,7 @@ impl Grammar {
                                                         .gsymbol
                                                         .unwrap(),
                                                 ),
+                                            is_bool,
                                         }
                                     }
                                     GrammarSymbolRef(reference) => {
@@ -510,6 +517,7 @@ impl Grammar {
                                                 ResolvingSymbolIndex::Resolving(
                                                     reference.gsymbol.unwrap(),
                                                 ),
+                                            is_bool: false,
                                         }
                                     }
                                 }

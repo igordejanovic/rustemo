@@ -14,6 +14,7 @@ Ok(
                             symbol: Resolved(
                                 46,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -34,6 +35,7 @@ Ok(
                             symbol: Resolved(
                                 49,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -54,12 +56,14 @@ Ok(
                             symbol: Resolved(
                                 47,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 49,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -80,18 +84,21 @@ Ok(
                             symbol: Resolved(
                                 49,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 1,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 54,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -112,24 +119,28 @@ Ok(
                             symbol: Resolved(
                                 47,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 49,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 1,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 54,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -150,12 +161,14 @@ Ok(
                             symbol: Resolved(
                                 1,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 54,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -176,12 +189,14 @@ Ok(
                             symbol: Resolved(
                                 47,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 48,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -202,6 +217,7 @@ Ok(
                             symbol: Resolved(
                                 48,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -222,6 +238,7 @@ Ok(
                             symbol: Resolved(
                                 2,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: Some(
@@ -230,6 +247,7 @@ Ok(
                             symbol: Resolved(
                                 39,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -250,6 +268,7 @@ Ok(
                             symbol: Resolved(
                                 2,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: Some(
@@ -258,18 +277,21 @@ Ok(
                             symbol: Resolved(
                                 39,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 3,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 34,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -290,12 +312,14 @@ Ok(
                             symbol: Resolved(
                                 49,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 50,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -316,6 +340,7 @@ Ok(
                             symbol: Resolved(
                                 50,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -336,18 +361,21 @@ Ok(
                             symbol: Resolved(
                                 51,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 34,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 4,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: Some(
@@ -356,12 +384,14 @@ Ok(
                             symbol: Resolved(
                                 52,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 5,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -382,18 +412,21 @@ Ok(
                             symbol: Resolved(
                                 51,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 34,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 7,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: Some(
@@ -402,18 +435,21 @@ Ok(
                             symbol: Resolved(
                                 57,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 8,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 4,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: Some(
@@ -422,12 +458,14 @@ Ok(
                             symbol: Resolved(
                                 52,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 5,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -448,6 +486,7 @@ Ok(
                             symbol: Resolved(
                                 40,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -483,18 +522,21 @@ Ok(
                             symbol: Resolved(
                                 52,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 13,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 53,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -515,6 +557,7 @@ Ok(
                             symbol: Resolved(
                                 53,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -535,6 +578,7 @@ Ok(
                             symbol: Resolved(
                                 64,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -555,12 +599,14 @@ Ok(
                             symbol: Resolved(
                                 64,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 7,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: Some(
@@ -569,12 +615,14 @@ Ok(
                             symbol: Resolved(
                                 57,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 8,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -595,12 +643,14 @@ Ok(
                             symbol: Resolved(
                                 54,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 55,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -621,6 +671,7 @@ Ok(
                             symbol: Resolved(
                                 55,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -641,30 +692,35 @@ Ok(
                             symbol: Resolved(
                                 51,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 34,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 4,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 77,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 5,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -685,24 +741,28 @@ Ok(
                             symbol: Resolved(
                                 51,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 34,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 4,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 5,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -723,30 +783,35 @@ Ok(
                             symbol: Resolved(
                                 51,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 34,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 4,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 77,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 7,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: Some(
@@ -755,18 +820,21 @@ Ok(
                             symbol: Resolved(
                                 59,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 8,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 5,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -787,24 +855,28 @@ Ok(
                             symbol: Resolved(
                                 51,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 34,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 4,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 7,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: Some(
@@ -813,18 +885,21 @@ Ok(
                             symbol: Resolved(
                                 59,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 8,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 5,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -847,6 +922,7 @@ Ok(
                             symbol: Resolved(
                                 22,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -869,6 +945,7 @@ Ok(
                             symbol: Resolved(
                                 24,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -891,6 +968,7 @@ Ok(
                             symbol: Resolved(
                                 23,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -913,6 +991,7 @@ Ok(
                             symbol: Resolved(
                                 25,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -935,6 +1014,7 @@ Ok(
                             symbol: Resolved(
                                 26,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -957,6 +1037,7 @@ Ok(
                             symbol: Resolved(
                                 27,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -979,6 +1060,7 @@ Ok(
                             symbol: Resolved(
                                 28,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1001,6 +1083,7 @@ Ok(
                             symbol: Resolved(
                                 36,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1021,6 +1104,7 @@ Ok(
                             symbol: Resolved(
                                 60,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1041,6 +1125,7 @@ Ok(
                             symbol: Resolved(
                                 61,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1063,12 +1148,14 @@ Ok(
                             symbol: Resolved(
                                 57,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 6,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: Some(
@@ -1077,6 +1164,7 @@ Ok(
                             symbol: Resolved(
                                 56,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1099,6 +1187,7 @@ Ok(
                             symbol: Resolved(
                                 56,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1121,6 +1210,7 @@ Ok(
                             symbol: Resolved(
                                 29,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1143,6 +1233,7 @@ Ok(
                             symbol: Resolved(
                                 30,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1165,6 +1256,7 @@ Ok(
                             symbol: Resolved(
                                 31,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1187,6 +1279,7 @@ Ok(
                             symbol: Resolved(
                                 26,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1209,6 +1302,7 @@ Ok(
                             symbol: Resolved(
                                 36,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1229,6 +1323,7 @@ Ok(
                             symbol: Resolved(
                                 60,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1251,12 +1346,14 @@ Ok(
                             symbol: Resolved(
                                 59,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 6,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: Some(
@@ -1265,6 +1362,7 @@ Ok(
                             symbol: Resolved(
                                 58,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1287,6 +1385,7 @@ Ok(
                             symbol: Resolved(
                                 58,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1307,12 +1406,14 @@ Ok(
                             symbol: Resolved(
                                 34,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 4,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: Some(
@@ -1321,6 +1422,7 @@ Ok(
                             symbol: Resolved(
                                 62,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1341,6 +1443,7 @@ Ok(
                             symbol: Resolved(
                                 34,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1361,6 +1464,7 @@ Ok(
                             symbol: Resolved(
                                 36,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1381,6 +1485,7 @@ Ok(
                             symbol: Resolved(
                                 37,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1401,6 +1506,7 @@ Ok(
                             symbol: Resolved(
                                 38,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1421,6 +1527,7 @@ Ok(
                             symbol: Resolved(
                                 39,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1441,6 +1548,7 @@ Ok(
                             symbol: Resolved(
                                 65,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1461,6 +1569,7 @@ Ok(
                             symbol: Resolved(
                                 66,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1481,6 +1590,7 @@ Ok(
                             symbol: Resolved(
                                 68,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1501,12 +1611,14 @@ Ok(
                             symbol: Resolved(
                                 64,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 63,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1527,6 +1639,7 @@ Ok(
                             symbol: Resolved(
                                 63,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1547,12 +1660,14 @@ Ok(
                             symbol: Resolved(
                                 34,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 20,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: Some(
@@ -1561,6 +1676,7 @@ Ok(
                             symbol: Resolved(
                                 68,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1581,12 +1697,14 @@ Ok(
                             symbol: Resolved(
                                 34,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 21,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: Some(
@@ -1595,6 +1713,7 @@ Ok(
                             symbol: Resolved(
                                 68,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1615,6 +1734,7 @@ Ok(
                             symbol: Resolved(
                                 9,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: Some(
@@ -1623,12 +1743,14 @@ Ok(
                             symbol: Resolved(
                                 52,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 10,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1651,12 +1773,14 @@ Ok(
                             symbol: Resolved(
                                 76,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 70,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1677,12 +1801,14 @@ Ok(
                             symbol: Resolved(
                                 67,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 70,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1703,12 +1829,14 @@ Ok(
                             symbol: Resolved(
                                 71,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 73,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1729,6 +1857,7 @@ Ok(
                             symbol: Resolved(
                                 69,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1764,6 +1893,7 @@ Ok(
                             symbol: Resolved(
                                 14,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1786,6 +1916,7 @@ Ok(
                             symbol: Resolved(
                                 15,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1808,6 +1939,7 @@ Ok(
                             symbol: Resolved(
                                 16,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1830,6 +1962,7 @@ Ok(
                             symbol: Resolved(
                                 17,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1852,6 +1985,7 @@ Ok(
                             symbol: Resolved(
                                 18,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1874,6 +2008,7 @@ Ok(
                             symbol: Resolved(
                                 19,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1894,18 +2029,21 @@ Ok(
                             symbol: Resolved(
                                 11,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 74,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 12,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1926,6 +2064,7 @@ Ok(
                             symbol: Resolved(
                                 72,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1959,18 +2098,21 @@ Ok(
                             symbol: Resolved(
                                 74,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 6,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 75,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -1991,6 +2133,7 @@ Ok(
                             symbol: Resolved(
                                 75,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -2011,6 +2154,7 @@ Ok(
                             symbol: Resolved(
                                 34,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -2031,6 +2175,7 @@ Ok(
                             symbol: Resolved(
                                 34,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -2051,6 +2196,7 @@ Ok(
                             symbol: Resolved(
                                 39,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -2071,6 +2217,7 @@ Ok(
                             symbol: Resolved(
                                 39,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -2091,6 +2238,7 @@ Ok(
                             symbol: Resolved(
                                 35,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -2111,6 +2259,7 @@ Ok(
                             symbol: Resolved(
                                 79,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -2131,12 +2280,14 @@ Ok(
                             symbol: Resolved(
                                 78,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 79,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -2170,6 +2321,7 @@ Ok(
                             symbol: Resolved(
                                 41,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -2190,6 +2342,7 @@ Ok(
                             symbol: Resolved(
                                 80,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -2210,18 +2363,21 @@ Ok(
                             symbol: Resolved(
                                 32,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 81,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 33,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -2242,6 +2398,7 @@ Ok(
                             symbol: Resolved(
                                 42,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -2262,6 +2419,7 @@ Ok(
                             symbol: Resolved(
                                 82,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -2282,12 +2440,14 @@ Ok(
                             symbol: Resolved(
                                 81,
                             ),
+                            is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
                                 82,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -2321,6 +2481,7 @@ Ok(
                             symbol: Resolved(
                                 80,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -2341,6 +2502,7 @@ Ok(
                             symbol: Resolved(
                                 43,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -2361,6 +2523,7 @@ Ok(
                             symbol: Resolved(
                                 41,
                             ),
+                            is_bool: false,
                         },
                     ],
                     assoc: None,
@@ -2949,11 +3112,13 @@ Ok(
                 NonTerminal {
                     idx: 0,
                     name: "EMPTY",
+                    action: None,
                     productions: [],
                 },
                 NonTerminal {
                     idx: 1,
                     name: "AUG",
+                    action: None,
                     productions: [
                         0,
                     ],
@@ -2961,6 +3126,7 @@ Ok(
                 NonTerminal {
                     idx: 2,
                     name: "PGFile",
+                    action: None,
                     productions: [
                         1,
                         2,
@@ -2972,6 +3138,7 @@ Ok(
                 NonTerminal {
                     idx: 3,
                     name: "Imports",
+                    action: None,
                     productions: [
                         6,
                         7,
@@ -2980,6 +3147,7 @@ Ok(
                 NonTerminal {
                     idx: 4,
                     name: "ImportStm",
+                    action: None,
                     productions: [
                         8,
                         9,
@@ -2988,6 +3156,7 @@ Ok(
                 NonTerminal {
                     idx: 5,
                     name: "GrammarRules",
+                    action: None,
                     productions: [
                         10,
                         11,
@@ -2996,6 +3165,7 @@ Ok(
                 NonTerminal {
                     idx: 6,
                     name: "GrammarRule",
+                    action: None,
                     productions: [
                         12,
                         13,
@@ -3004,6 +3174,7 @@ Ok(
                 NonTerminal {
                     idx: 7,
                     name: "ActionOpt",
+                    action: None,
                     productions: [
                         14,
                         15,
@@ -3012,6 +3183,7 @@ Ok(
                 NonTerminal {
                     idx: 8,
                     name: "GrammarRuleRHS",
+                    action: None,
                     productions: [
                         16,
                         17,
@@ -3020,6 +3192,7 @@ Ok(
                 NonTerminal {
                     idx: 9,
                     name: "Production",
+                    action: None,
                     productions: [
                         18,
                         19,
@@ -3028,6 +3201,7 @@ Ok(
                 NonTerminal {
                     idx: 10,
                     name: "TerminalRules",
+                    action: None,
                     productions: [
                         20,
                         21,
@@ -3036,6 +3210,7 @@ Ok(
                 NonTerminal {
                     idx: 11,
                     name: "TerminalRule",
+                    action: None,
                     productions: [
                         22,
                         23,
@@ -3046,6 +3221,7 @@ Ok(
                 NonTerminal {
                     idx: 12,
                     name: "ProdMetaData",
+                    action: None,
                     productions: [
                         26,
                         27,
@@ -3062,6 +3238,7 @@ Ok(
                 NonTerminal {
                     idx: 13,
                     name: "ProdMetaDatas",
+                    action: None,
                     productions: [
                         36,
                         37,
@@ -3070,6 +3247,7 @@ Ok(
                 NonTerminal {
                     idx: 14,
                     name: "TermMetaData",
+                    action: None,
                     productions: [
                         38,
                         39,
@@ -3082,6 +3260,7 @@ Ok(
                 NonTerminal {
                     idx: 15,
                     name: "TermMetaDatas",
+                    action: None,
                     productions: [
                         44,
                         45,
@@ -3090,6 +3269,7 @@ Ok(
                 NonTerminal {
                     idx: 16,
                     name: "UserMetaData",
+                    action: None,
                     productions: [
                         46,
                     ],
@@ -3097,6 +3277,7 @@ Ok(
                 NonTerminal {
                     idx: 17,
                     name: "ProdKind",
+                    action: None,
                     productions: [
                         47,
                     ],
@@ -3104,6 +3285,7 @@ Ok(
                 NonTerminal {
                     idx: 18,
                     name: "ConstVal",
+                    action: None,
                     productions: [
                         48,
                         49,
@@ -3114,6 +3296,7 @@ Ok(
                 NonTerminal {
                     idx: 19,
                     name: "Assignment",
+                    action: None,
                     productions: [
                         52,
                         53,
@@ -3123,6 +3306,7 @@ Ok(
                 NonTerminal {
                     idx: 20,
                     name: "Assignments",
+                    action: None,
                     productions: [
                         55,
                         56,
@@ -3131,6 +3315,7 @@ Ok(
                 NonTerminal {
                     idx: 21,
                     name: "PlainAssignment",
+                    action: None,
                     productions: [
                         57,
                     ],
@@ -3138,6 +3323,7 @@ Ok(
                 NonTerminal {
                     idx: 22,
                     name: "BoolAssignment",
+                    action: None,
                     productions: [
                         58,
                     ],
@@ -3145,6 +3331,7 @@ Ok(
                 NonTerminal {
                     idx: 23,
                     name: "ProductionGroup",
+                    action: None,
                     productions: [
                         59,
                     ],
@@ -3152,6 +3339,7 @@ Ok(
                 NonTerminal {
                     idx: 24,
                     name: "GrammarSymbolRef",
+                    action: None,
                     productions: [
                         60,
                         61,
@@ -3160,6 +3348,7 @@ Ok(
                 NonTerminal {
                     idx: 25,
                     name: "RepetitionOperator",
+                    action: None,
                     productions: [
                         62,
                     ],
@@ -3167,6 +3356,7 @@ Ok(
                 NonTerminal {
                     idx: 26,
                     name: "RepetitionOperatorOpt",
+                    action: None,
                     productions: [
                         63,
                         64,
@@ -3175,6 +3365,7 @@ Ok(
                 NonTerminal {
                     idx: 27,
                     name: "RepetitionOperatorOp",
+                    action: None,
                     productions: [
                         65,
                         66,
@@ -3187,6 +3378,7 @@ Ok(
                 NonTerminal {
                     idx: 28,
                     name: "RepetitionModifiersExp",
+                    action: None,
                     productions: [
                         71,
                     ],
@@ -3194,6 +3386,7 @@ Ok(
                 NonTerminal {
                     idx: 29,
                     name: "RepetitionModifiersExpOpt",
+                    action: None,
                     productions: [
                         72,
                         73,
@@ -3202,6 +3395,7 @@ Ok(
                 NonTerminal {
                     idx: 30,
                     name: "RepetitionModifiers",
+                    action: None,
                     productions: [
                         74,
                         75,
@@ -3210,6 +3404,7 @@ Ok(
                 NonTerminal {
                     idx: 31,
                     name: "RepetitionModifier",
+                    action: None,
                     productions: [
                         76,
                     ],
@@ -3217,6 +3412,7 @@ Ok(
                 NonTerminal {
                     idx: 32,
                     name: "GrammarSymbol",
+                    action: None,
                     productions: [
                         77,
                         78,
@@ -3225,6 +3421,7 @@ Ok(
                 NonTerminal {
                     idx: 33,
                     name: "Recognizer",
+                    action: None,
                     productions: [
                         79,
                         80,
@@ -3233,6 +3430,7 @@ Ok(
                 NonTerminal {
                     idx: 34,
                     name: "Layout",
+                    action: None,
                     productions: [
                         81,
                         82,
@@ -3242,6 +3440,7 @@ Ok(
                 NonTerminal {
                     idx: 35,
                     name: "LayoutItem",
+                    action: None,
                     productions: [
                         84,
                         85,
@@ -3250,6 +3449,7 @@ Ok(
                 NonTerminal {
                     idx: 36,
                     name: "Comment",
+                    action: None,
                     productions: [
                         86,
                         87,
@@ -3258,6 +3458,7 @@ Ok(
                 NonTerminal {
                     idx: 37,
                     name: "Corncs",
+                    action: None,
                     productions: [
                         88,
                         89,
@@ -3267,6 +3468,7 @@ Ok(
                 NonTerminal {
                     idx: 38,
                     name: "Cornc",
+                    action: None,
                     productions: [
                         91,
                         92,
