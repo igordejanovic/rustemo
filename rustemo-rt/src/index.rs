@@ -50,6 +50,10 @@ macro_rules! create_index {
                 self.0.len()
             }
 
+            pub fn is_empty(&self) -> bool {
+                self.0.is_empty()
+            }
+
             pub fn contains(&self, x: &T) -> bool
             where
                 T: PartialEq<T>,
@@ -63,6 +67,10 @@ macro_rules! create_index {
 
             pub fn push(&mut self, value: T) {
                 self.0.push(value);
+            }
+
+            pub fn extend<I: IntoIterator<Item = T>>(&mut self, value: I) {
+                self.0.extend(value);
             }
 
             pub fn iter(&self) -> Iter<'_, T> {
