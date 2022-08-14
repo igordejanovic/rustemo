@@ -17,7 +17,7 @@ use rustemo_rt::grammar::{TerminalInfo, TerminalInfos, TerminalsState};
 use rustemo_rt::debug::{log, logn};
 use super::zero_or_more_actions;
 const TERMINAL_NO: usize = 4usize;
-const NONTERMINAL_NO: usize = 4usize;
+const NONTERMINAL_NO: usize = 6usize;
 const STATE_NO: usize = 6usize;
 const MAX_ACTIONS: usize = 2usize;
 #[derive(Debug, Copy, Clone, TryFromPrimitive)]
@@ -43,14 +43,20 @@ pub enum Terminal {
 #[derive(Debug)]
 pub enum NonTerminal {
     A(zero_or_more_actions::A),
+    TC1(zero_or_more_actions::TC1),
+    TC0(zero_or_more_actions::TC0),
     B(zero_or_more_actions::B),
 }
 #[derive(Copy, Clone, TryFromPrimitive)]
 #[repr(usize)]
 pub enum ProdKind {
     AP1 = 1usize,
-    BP1 = 2usize,
-    BP2 = 3usize,
+    TC1P1 = 2usize,
+    TC1P2 = 3usize,
+    TC0P1 = 4usize,
+    TC0P2 = 5usize,
+    BP1 = 6usize,
+    BP2 = 7usize,
 }
 pub struct ZeroOrMoreParserDefinition {
     actions: [[Action; TERMINAL_NO]; STATE_NO],
@@ -63,14 +69,14 @@ pub(crate) static PARSER_DEFINITION: ZeroOrMoreParserDefinition = ZeroOrMorePars
             Error,
             Error,
             Shift(StateIndex(3usize), TermIndex(2usize)),
-            Reduce(ProdIndex(3usize), 0usize, NonTermIndex(3usize), "<?>"),
+            Reduce(ProdIndex(7usize), 0usize, NonTermIndex(5usize), "<?>"),
         ],
         [Accept, Error, Error, Error],
         [
             Error,
             Error,
             Error,
-            Reduce(ProdIndex(2usize), 1usize, NonTermIndex(3usize), "<?>"),
+            Reduce(ProdIndex(6usize), 1usize, NonTermIndex(5usize), "<?>"),
         ],
         [Error, Error, Error, Shift(StateIndex(5usize), TermIndex(3usize))],
         [
@@ -81,12 +87,12 @@ pub(crate) static PARSER_DEFINITION: ZeroOrMoreParserDefinition = ZeroOrMorePars
         ],
     ],
     gotos: [
-        [None, None, Some(StateIndex(2usize)), None],
-        [None, None, None, Some(StateIndex(4usize))],
-        [None, None, None, None],
-        [None, None, None, None],
-        [None, None, None, None],
-        [None, None, None, None],
+        [None, None, Some(StateIndex(2usize)), None, None, None],
+        [None, None, None, None, None, Some(StateIndex(4usize))],
+        [None, None, None, None, None, None],
+        [None, None, None, None, None, None],
+        [None, None, None, None, None, None],
+        [None, None, None, None, None, None],
     ],
 };
 impl ParserDefinition for ZeroOrMoreParserDefinition {
@@ -264,6 +270,44 @@ impl<'i> LRBuilder<&'i str> for ZeroOrMoreBuilder {
                 match (i.next().unwrap(), i.next().unwrap(), i.next().unwrap()) {
                     (_, Symbol::NonTerminal(NonTerminal::B(p0)), _) => {
                         NonTerminal::A(zero_or_more_actions::a_v1(p0))
+                    }
+                    _ => panic!("Invalid symbol parse stack data."),
+                }
+            }
+            ProdKind::TC1P1 => {
+                let mut i = self
+                    .res_stack
+                    .split_off(self.res_stack.len() - 2usize)
+                    .into_iter();
+                match (i.next().unwrap(), i.next().unwrap()) {
+                    (Symbol::NonTerminal(NonTerminal::TC1(p0)), _) => {
+                        NonTerminal::TC1(zero_or_more_actions::tc1_v1(p0))
+                    }
+                    _ => panic!("Invalid symbol parse stack data."),
+                }
+            }
+            ProdKind::TC1P2 => {
+                let _ = self
+                    .res_stack
+                    .split_off(self.res_stack.len() - 1usize)
+                    .into_iter();
+                NonTerminal::TC1(zero_or_more_actions::tc1_v2())
+            }
+            ProdKind::TC0P1 => {
+                let _ = self
+                    .res_stack
+                    .split_off(self.res_stack.len() - 1usize)
+                    .into_iter();
+                NonTerminal::TC0(zero_or_more_actions::tc0_v1())
+            }
+            ProdKind::TC0P2 => {
+                let mut i = self
+                    .res_stack
+                    .split_off(self.res_stack.len() - 1usize)
+                    .into_iter();
+                match i.next().unwrap() {
+                    Symbol::NonTerminal(NonTerminal::EMPTY(p0)) => {
+                        NonTerminal::TC0(zero_or_more_actions::tc0_v2(p0))
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
