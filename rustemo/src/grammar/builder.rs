@@ -9,7 +9,7 @@ use rustemo_rt::index::{
 use crate::{
     grammar::{Grammar, DEFAULT_PRIORITY},
     lang::rustemo_actions::{
-        self, ConstVal, GrammarRule, GrammarSymbol, GrammarSymbolRef, PGFile,
+        self, ConstVal, GrammarRule, GrammarSymbol, GrammarSymbolRef, File,
         Recognizer, RepetitionOperatorOp, TermMetaDatas,
     },
 };
@@ -71,7 +71,7 @@ impl GrammarBuilder {
         ret
     }
 
-    pub(crate) fn from_file(mut self, file: PGFile) -> Grammar {
+    pub(crate) fn from_file(mut self, file: File) -> Grammar {
         // Create implicit STOP terminal used to signify the end of the input.
         let term_idx = self.get_term_idx();
         self.terminals.insert(

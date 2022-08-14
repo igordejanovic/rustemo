@@ -122,7 +122,7 @@ pub enum Terminal {
 }
 #[derive(Debug)]
 pub enum NonTerminal {
-    PGFile(rustemo_actions::PGFile),
+    File(rustemo_actions::File),
     Imports(rustemo_actions::Imports),
     ImportStm(rustemo_actions::ImportStm),
     GrammarRules(rustemo_actions::GrammarRules),
@@ -163,11 +163,11 @@ pub enum NonTerminal {
 #[derive(Copy, Clone, TryFromPrimitive)]
 #[repr(usize)]
 pub enum ProdKind {
-    PGFileP1 = 1usize,
-    PGFileP2 = 2usize,
-    PGFileP3 = 3usize,
-    PGFileP4 = 4usize,
-    PGFileP5 = 5usize,
+    FileP1 = 1usize,
+    FileP2 = 2usize,
+    FileP3 = 3usize,
+    FileP4 = 4usize,
+    FileP5 = 5usize,
     ImportsP1 = 6usize,
     ImportsP2 = 7usize,
     ImportStmP1 = 8usize,
@@ -13758,13 +13758,13 @@ pub struct RustemoBuilder {
     res_stack: Vec<Symbol>,
 }
 impl Builder for RustemoBuilder {
-    type Output = rustemo_actions::PGFile;
+    type Output = rustemo_actions::File;
     fn new() -> Self {
         Self { res_stack: vec![] }
     }
     fn get_result(&mut self) -> Result<Self::Output> {
         match self.res_stack.pop().unwrap() {
-            Symbol::NonTerminal(NonTerminal::PGFile(r)) => Ok(r),
+            Symbol::NonTerminal(NonTerminal::File(r)) => Ok(r),
             _ => panic!("Invalid result on the parsing stack!"),
         }
     }
@@ -13837,19 +13837,19 @@ impl<'i> LRBuilder<&'i str> for RustemoBuilder {
         _prod_str: &'static str,
     ) {
         let prod = match ProdKind::try_from(prod_kind.0).unwrap() {
-            ProdKind::PGFileP1 => {
+            ProdKind::FileP1 => {
                 let mut i = self
                     .res_stack
                     .split_off(self.res_stack.len() - 1usize)
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::GrammarRules(p0)) => {
-                        NonTerminal::PGFile(rustemo_actions::pgfile_v1(p0))
+                        NonTerminal::File(rustemo_actions::file_v1(p0))
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
-            ProdKind::PGFileP2 => {
+            ProdKind::FileP2 => {
                 let mut i = self
                     .res_stack
                     .split_off(self.res_stack.len() - 2usize)
@@ -13858,11 +13858,11 @@ impl<'i> LRBuilder<&'i str> for RustemoBuilder {
                     (
                         Symbol::NonTerminal(NonTerminal::Imports(p0)),
                         Symbol::NonTerminal(NonTerminal::GrammarRules(p1)),
-                    ) => NonTerminal::PGFile(rustemo_actions::pgfile_v2(p0, p1)),
+                    ) => NonTerminal::File(rustemo_actions::file_v2(p0, p1)),
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
-            ProdKind::PGFileP3 => {
+            ProdKind::FileP3 => {
                 let mut i = self
                     .res_stack
                     .split_off(self.res_stack.len() - 3usize)
@@ -13872,11 +13872,11 @@ impl<'i> LRBuilder<&'i str> for RustemoBuilder {
                         Symbol::NonTerminal(NonTerminal::GrammarRules(p0)),
                         _,
                         Symbol::NonTerminal(NonTerminal::TerminalRules(p1)),
-                    ) => NonTerminal::PGFile(rustemo_actions::pgfile_v3(p0, p1)),
+                    ) => NonTerminal::File(rustemo_actions::file_v3(p0, p1)),
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
-            ProdKind::PGFileP4 => {
+            ProdKind::FileP4 => {
                 let mut i = self
                     .res_stack
                     .split_off(self.res_stack.len() - 4usize)
@@ -13892,18 +13892,18 @@ impl<'i> LRBuilder<&'i str> for RustemoBuilder {
                         Symbol::NonTerminal(NonTerminal::GrammarRules(p1)),
                         _,
                         Symbol::NonTerminal(NonTerminal::TerminalRules(p2)),
-                    ) => NonTerminal::PGFile(rustemo_actions::pgfile_v4(p0, p1, p2)),
+                    ) => NonTerminal::File(rustemo_actions::file_v4(p0, p1, p2)),
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
-            ProdKind::PGFileP5 => {
+            ProdKind::FileP5 => {
                 let mut i = self
                     .res_stack
                     .split_off(self.res_stack.len() - 2usize)
                     .into_iter();
                 match (i.next().unwrap(), i.next().unwrap()) {
                     (_, Symbol::NonTerminal(NonTerminal::TerminalRules(p0))) => {
-                        NonTerminal::PGFile(rustemo_actions::pgfile_v5(p0))
+                        NonTerminal::File(rustemo_actions::file_v5(p0))
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }

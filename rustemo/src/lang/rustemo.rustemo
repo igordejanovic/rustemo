@@ -1,8 +1,8 @@
-PGFile: GrammarRules
-      | Imports GrammarRules
-      | GrammarRules 'terminals' TerminalRules
-      | Imports GrammarRules 'terminals' TerminalRules
-      | 'terminals' TerminalRules;
+File: GrammarRules
+    | Imports GrammarRules
+    | GrammarRules 'terminals' TerminalRules
+    | Imports GrammarRules 'terminals' TerminalRules
+    | 'terminals' TerminalRules;
 
 Imports: Imports ImportStm | ImportStm;
 ImportStm: 'import' path=StrConst

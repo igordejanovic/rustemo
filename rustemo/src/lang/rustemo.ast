@@ -3125,7 +3125,7 @@ Ok(
                 },
                 NonTerminal {
                     idx: 2,
-                    name: "PGFile",
+                    name: "File",
                     action: None,
                     productions: [
                         1,
@@ -3488,6 +3488,7 @@ Ok(
             "Cornc": 82,
             "Corncs": 81,
             "EMPTY": 44,
+            "File": 46,
             "GrammarRule": 50,
             "GrammarRuleRHS": 52,
             "GrammarRules": 49,
@@ -3497,7 +3498,6 @@ Ok(
             "Imports": 47,
             "Layout": 78,
             "LayoutItem": 79,
-            "PGFile": 46,
             "PlainAssignment": 65,
             "ProdKind": 61,
             "ProdMetaData": 56,

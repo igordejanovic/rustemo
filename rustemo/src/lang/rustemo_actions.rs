@@ -43,44 +43,44 @@ pub fn not_comment<'a>(token: Token<&'a str>) -> NotComment {
     token.value.into()
 }
 #[derive(Debug, Clone, Default)]
-pub struct PGFile {
+pub struct File {
     pub imports: Option<Imports>,
     pub grammar_rules: Option<GrammarRules>,
     pub terminal_rules: Option<TerminalRules>,
 }
-pub fn pgfile_v1(grammar_rules: GrammarRules) -> PGFile {
-    PGFile {
+pub fn file_v1(grammar_rules: GrammarRules) -> File {
+    File {
         grammar_rules: Some(grammar_rules),
         ..Default::default()
     }
 }
-pub fn pgfile_v2(imports: Imports, grammar_rules: GrammarRules) -> PGFile {
-    PGFile {
+pub fn file_v2(imports: Imports, grammar_rules: GrammarRules) -> File {
+    File {
         imports: Some(imports),
         grammar_rules: Some(grammar_rules),
         terminal_rules: None,
     }
 }
-pub fn pgfile_v3(grammar_rules: GrammarRules, terminal_rules: TerminalRules) -> PGFile {
-    PGFile {
+pub fn file_v3(grammar_rules: GrammarRules, terminal_rules: TerminalRules) -> File {
+    File {
         grammar_rules: Some(grammar_rules),
         terminal_rules: Some(terminal_rules),
         imports: None,
     }
 }
-pub fn pgfile_v4(
+pub fn file_v4(
     imports: Imports,
     grammar_rules: GrammarRules,
     terminal_rules: TerminalRules,
-) -> PGFile {
-    PGFile {
+) -> File {
+    File {
         imports: Some(imports),
         grammar_rules: Some(grammar_rules),
         terminal_rules: Some(terminal_rules),
     }
 }
-pub fn pgfile_v5(terminal_rules: TerminalRules) -> PGFile {
-    PGFile {
+pub fn file_v5(terminal_rules: TerminalRules) -> File {
+    File {
         terminal_rules: Some(terminal_rules),
         ..Default::default()
     }
