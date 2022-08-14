@@ -1,0 +1,206 @@
+Grammar {
+    imports: [],
+    productions: ProdVec(
+        [
+            Production {
+                idx: 0,
+                nonterminal: 1,
+                ntidx: 0,
+                kind: None,
+                rhs: [
+                    ResolvingAssignment {
+                        name: None,
+                        symbol: Resolved(
+                            7,
+                        ),
+                        is_bool: false,
+                    },
+                ],
+                assoc: None,
+                prio: 10,
+                dynamic: false,
+                nops: false,
+                nopse: false,
+                meta: {},
+            },
+            Production {
+                idx: 1,
+                nonterminal: 2,
+                ntidx: 0,
+                kind: None,
+                rhs: [
+                    ResolvingAssignment {
+                        name: None,
+                        symbol: Resolved(
+                            1,
+                        ),
+                        is_bool: false,
+                    },
+                    ResolvingAssignment {
+                        name: None,
+                        symbol: Resolved(
+                            3,
+                        ),
+                        is_bool: false,
+                    },
+                    ResolvingAssignment {
+                        name: None,
+                        symbol: Resolved(
+                            8,
+                        ),
+                        is_bool: false,
+                    },
+                ],
+                assoc: None,
+                prio: 10,
+                dynamic: false,
+                nops: false,
+                nopse: false,
+                meta: {},
+            },
+            Production {
+                idx: 2,
+                nonterminal: 3,
+                ntidx: 0,
+                kind: None,
+                rhs: [
+                    ResolvingAssignment {
+                        name: None,
+                        symbol: Resolved(
+                            2,
+                        ),
+                        is_bool: false,
+                    },
+                    ResolvingAssignment {
+                        name: None,
+                        symbol: Resolved(
+                            4,
+                        ),
+                        is_bool: false,
+                    },
+                ],
+                assoc: None,
+                prio: 10,
+                dynamic: false,
+                nops: false,
+                nopse: false,
+                meta: {},
+            },
+        ],
+    ),
+    terminals: TermVec(
+        [
+            Terminal {
+                idx: 0,
+                name: "STOP",
+                action: None,
+                recognizer: None,
+                has_content: false,
+                prio: 10,
+                meta: {},
+            },
+            Terminal {
+                idx: 1,
+                name: "foo",
+                action: None,
+                recognizer: Some(
+                    StrConst(
+                        "foo",
+                    ),
+                ),
+                has_content: false,
+                prio: 10,
+                meta: {},
+            },
+            Terminal {
+                idx: 2,
+                name: "some",
+                action: None,
+                recognizer: Some(
+                    StrConst(
+                        "some",
+                    ),
+                ),
+                has_content: false,
+                prio: 10,
+                meta: {},
+            },
+            Terminal {
+                idx: 3,
+                name: "rmatch_term",
+                action: None,
+                recognizer: Some(
+                    RegexTerm(
+                        "\"[^\"]+\"",
+                    ),
+                ),
+                has_content: true,
+                prio: 10,
+                meta: {},
+            },
+            Terminal {
+                idx: 4,
+                name: "more_regex",
+                action: None,
+                recognizer: Some(
+                    RegexTerm(
+                        "\\d{2,5}",
+                    ),
+                ),
+                has_content: true,
+                prio: 10,
+                meta: {},
+            },
+        ],
+    ),
+    nonterminals: NonTermVec(
+        [
+            NonTerminal {
+                idx: 0,
+                name: "EMPTY",
+                action: None,
+                productions: [],
+            },
+            NonTerminal {
+                idx: 1,
+                name: "AUG",
+                action: None,
+                productions: [
+                    0,
+                ],
+            },
+            NonTerminal {
+                idx: 2,
+                name: "S",
+                action: None,
+                productions: [
+                    1,
+                ],
+            },
+            NonTerminal {
+                idx: 3,
+                name: "A",
+                action: None,
+                productions: [
+                    2,
+                ],
+            },
+        ],
+    ),
+    nonterm_by_name: {
+        "A": 8,
+        "AUG": 6,
+        "EMPTY": 5,
+        "S": 7,
+    },
+    term_by_name: {
+        "STOP": 0,
+        "foo": 1,
+        "more_regex": 4,
+        "rmatch_term": 3,
+        "some": 2,
+    },
+    empty_index: 5,
+    stop_index: 0,
+    augmented_index: 6,
+}

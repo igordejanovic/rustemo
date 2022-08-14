@@ -1,6 +1,8 @@
 use crate::{
     grammar::{Associativity, Grammar},
-    lang::rustemo_actions::Recognizer, utils::type_of,
+    lang::rustemo_actions::Recognizer,
+    output_cmp,
+    utils::type_of,
 };
 use rustemo_rt::index::ProdIndex;
 
@@ -83,6 +85,11 @@ fn create_terminals_multiple() {
             .collect::<Vec<_>>(),
         &["STOP", "first_term", "second_term", "third_term"]
     );
+
+    output_cmp!(
+        "src/grammar/tests/create_terminals_multiple.expected",
+        format!("{:#?}", grammar)
+    );
 }
 
 #[test]
@@ -120,6 +127,11 @@ fn terminals_regex() {
             Recognizer::RegexTerm(regex) => regex == term_regex,
         });
     }
+
+    output_cmp!(
+        "src/grammar/tests/terminals_regex.expected",
+        format!("{:#?}", grammar)
+    );
 }
 
 #[test]
@@ -193,5 +205,10 @@ fn productions_meta_data() {
     assert_eq!(
         grammar.productions[ProdIndex(4)].assoc,
         Associativity::Right
+    );
+
+    output_cmp!(
+        "src/grammar/tests/productions_meta_data.expected",
+        format!("{:#?}", grammar)
     );
 }

@@ -1,0 +1,213 @@
+Grammar {
+    imports: [],
+    productions: ProdVec(
+        [
+            Production {
+                idx: 0,
+                nonterminal: 1,
+                ntidx: 0,
+                kind: None,
+                rhs: [
+                    ResolvingAssignment {
+                        name: None,
+                        symbol: Resolved(
+                            4,
+                        ),
+                        is_bool: false,
+                    },
+                ],
+                assoc: None,
+                prio: 10,
+                dynamic: false,
+                nops: false,
+                nopse: false,
+                meta: {},
+            },
+            Production {
+                idx: 1,
+                nonterminal: 2,
+                ntidx: 0,
+                kind: None,
+                rhs: [
+                    ResolvingAssignment {
+                        name: None,
+                        symbol: Resolved(
+                            5,
+                        ),
+                        is_bool: false,
+                    },
+                    ResolvingAssignment {
+                        name: None,
+                        symbol: Resolved(
+                            1,
+                        ),
+                        is_bool: false,
+                    },
+                    ResolvingAssignment {
+                        name: None,
+                        symbol: Resolved(
+                            6,
+                        ),
+                        is_bool: false,
+                    },
+                ],
+                assoc: None,
+                prio: 5,
+                dynamic: false,
+                nops: false,
+                nopse: false,
+                meta: {},
+            },
+            Production {
+                idx: 2,
+                nonterminal: 2,
+                ntidx: 1,
+                kind: None,
+                rhs: [
+                    ResolvingAssignment {
+                        name: None,
+                        symbol: Resolved(
+                            6,
+                        ),
+                        is_bool: false,
+                    },
+                ],
+                assoc: None,
+                prio: 10,
+                dynamic: false,
+                nops: true,
+                nopse: false,
+                meta: {},
+            },
+            Production {
+                idx: 3,
+                nonterminal: 3,
+                ntidx: 0,
+                kind: None,
+                rhs: [
+                    ResolvingAssignment {
+                        name: None,
+                        symbol: Resolved(
+                            6,
+                        ),
+                        is_bool: false,
+                    },
+                ],
+                assoc: None,
+                prio: 10,
+                dynamic: false,
+                nops: false,
+                nopse: true,
+                meta: {
+                    "bla": Int(
+                        5,
+                    ),
+                },
+            },
+            Production {
+                idx: 4,
+                nonterminal: 4,
+                ntidx: 0,
+                kind: None,
+                rhs: [
+                    ResolvingAssignment {
+                        name: None,
+                        symbol: Resolved(
+                            1,
+                        ),
+                        is_bool: false,
+                    },
+                ],
+                assoc: Right,
+                prio: 10,
+                dynamic: false,
+                nops: false,
+                nopse: false,
+                meta: {},
+            },
+        ],
+    ),
+    terminals: TermVec(
+        [
+            Terminal {
+                idx: 0,
+                name: "STOP",
+                action: None,
+                recognizer: None,
+                has_content: false,
+                prio: 10,
+                meta: {},
+            },
+            Terminal {
+                idx: 1,
+                name: "some_term",
+                action: None,
+                recognizer: Some(
+                    StrConst(
+                        "some_term",
+                    ),
+                ),
+                has_content: false,
+                prio: 10,
+                meta: {},
+            },
+        ],
+    ),
+    nonterminals: NonTermVec(
+        [
+            NonTerminal {
+                idx: 0,
+                name: "EMPTY",
+                action: None,
+                productions: [],
+            },
+            NonTerminal {
+                idx: 1,
+                name: "AUG",
+                action: None,
+                productions: [
+                    0,
+                ],
+            },
+            NonTerminal {
+                idx: 2,
+                name: "S",
+                action: None,
+                productions: [
+                    1,
+                    2,
+                ],
+            },
+            NonTerminal {
+                idx: 3,
+                name: "A",
+                action: None,
+                productions: [
+                    3,
+                ],
+            },
+            NonTerminal {
+                idx: 4,
+                name: "B",
+                action: None,
+                productions: [
+                    4,
+                ],
+            },
+        ],
+    ),
+    nonterm_by_name: {
+        "A": 5,
+        "AUG": 3,
+        "B": 6,
+        "EMPTY": 2,
+        "S": 4,
+    },
+    term_by_name: {
+        "STOP": 0,
+        "some_term": 1,
+    },
+    empty_index: 2,
+    stop_index: 0,
+    augmented_index: 3,
+}
