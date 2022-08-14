@@ -37,6 +37,12 @@ macro_rules! create_index {
         #[derive(Debug, Clone)]
         pub struct $collection<T>(pub Vec<T>);
 
+        impl<T> Default for $collection<T> {
+            fn default() -> Self {
+                Self(vec![])
+            }
+        }
+
         impl<T> $collection<T> {
             pub const fn new() -> Self {
                 Self(Vec::new())
