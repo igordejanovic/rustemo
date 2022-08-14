@@ -591,7 +591,7 @@ impl GrammarBuilder {
                                 ]
                             } else {
                                 // with separator.
-                                let sep = modifier.unwrap().0.clone();
+                                let sep = modifier.unwrap().clone();
                                 vec![
                                     resolving!(name.clone()),
                                     resolving!(sep),

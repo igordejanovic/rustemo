@@ -1,29 +1,23 @@
-File: GrammarRules
-    | Imports GrammarRules
-    | GrammarRules 'terminals' TerminalRules
-    | Imports GrammarRules 'terminals' TerminalRules
-    | 'terminals' TerminalRules;
+File: GrammarRule+
+    | ImportStm+ GrammarRule+
+    | GrammarRule+ 'terminals' TerminalRule+
+    | ImportStm+ GrammarRule+ 'terminals' TerminalRule+
+    | 'terminals' TerminalRule+;
 
-Imports: Imports ImportStm | ImportStm;
 ImportStm: 'import' path=StrConst
          | 'import' path=StrConst 'as' Name;
 
-GrammarRules: GrammarRules GrammarRule
-            | GrammarRule;
-GrammarRule: ActionOpt Name ':' rhs=GrammarRuleRHS ';'
-           | ActionOpt Name '{' meta=ProdMetaDatas '}' ':' rhs=GrammarRuleRHS ';';
-ActionOpt: Action | EMPTY;
+GrammarRule: Action? Name ':' rhs=GrammarRuleRHS ';'
+           | Action? Name '{' meta=ProdMetaDatas '}' ':' rhs=GrammarRuleRHS ';';
 GrammarRuleRHS {left, 5}: rhs=GrammarRuleRHS '|' Production
                         | Production;
-Production: Assignments
-          | Assignments '{' meta=ProdMetaDatas '}';
+Production: Assignment+
+          | Assignment+ '{' meta=ProdMetaDatas '}';
 
-TerminalRules: TerminalRules TerminalRule
-             | TerminalRule;
-TerminalRule {left, 15}: ActionOpt Name ':' Recognizer ';'
-                       | ActionOpt Name ':' ';'
-                       | ActionOpt Name ':' Recognizer '{' meta=TermMetaDatas '}' ';'
-                       | ActionOpt Name ':' '{' meta=TermMetaDatas '}' ';';
+TerminalRule {left, 15}: Action? Name ':' Recognizer ';'
+                       | Action? Name ':' ';'
+                       | Action? Name ':' Recognizer '{' meta=TermMetaDatas '}' ';'
+                       | Action? Name ':' '{' meta=TermMetaDatas '}' ';';
 
 ProdMetaData: 'left' {Left} | 'reduce' {Reduce} | 'right' {Right} | 'shift' {Shift}
             | 'dynamic' {Dynamic} | 'nops' {NOPS} | 'nopse' {NOPSE}
@@ -45,25 +39,21 @@ ConstVal: IntConst | FloatConst | BoolConst | StrConst;
 Assignment: PlainAssignment
           | BoolAssignment
           | GrammarSymbolRef;
-Assignments: Assignments Assignment | Assignment;
 PlainAssignment: Name '=' gsymref=GrammarSymbolRef;
 BoolAssignment: Name '?=' gsymref=GrammarSymbolRef;
 
 ProductionGroup: '(' prod_rule_rhs=GrammarRuleRHS ')';
 
-GrammarSymbolRef: gsymbol=GrammarSymbol RepetitionOperatorOpt
-                | ProductionGroup RepetitionOperatorOpt;
-RepetitionOperator: RepetitionOperatorOp RepetitionModifiersExpOpt;
-RepetitionOperatorOpt: RepetitionOperator | EMPTY;
+GrammarSymbolRef: gsymbol=GrammarSymbol RepetitionOperator?
+                | ProductionGroup RepetitionOperator?;
+RepetitionOperator: RepetitionOperatorOp RepetitionModifiers?;
 RepetitionOperatorOp: '*' {ZeroOrMore}
                     | '*!' {ZeroOrMoreGreedy}
                     | '+' {OneOrMore}
                     | '+!' {OneOrMoreGreedy}
                     | '?' {Optional}
                     | '?!' {OptionalGreedy};
-RepetitionModifiersExp: '[' RepetitionModifiers ']';
-RepetitionModifiersExpOpt: RepetitionModifiersExp | EMPTY;
-RepetitionModifiers: RepetitionModifiers ',' RepetitionModifier | RepetitionModifier;
+RepetitionModifiers: '[' RepetitionModifier+[Comma] ']';
 RepetitionModifier: Name;
 
 GrammarSymbol: Name | StrConst;

@@ -85,12 +85,13 @@ pub fn file_v5(terminal_rules: TerminalRules) -> File {
         ..Default::default()
     }
 }
-pub type Imports = Vec<ImportStm>;
-pub fn imports_v1(mut imports: Imports, import_stm: ImportStm) -> Imports {
-    imports.push(import_stm);
-    imports
+pub type ImportStm1 = Vec<ImportStm>;
+pub type Imports = ImportStm1;
+pub fn import_stm1_v1(mut import_stm1: ImportStm1, import_stm: ImportStm) -> ImportStm1 {
+    import_stm1.push(import_stm);
+    import_stm1
 }
-pub fn imports_v2(import_stm: ImportStm) -> Imports {
+pub fn import_stm1_v2(import_stm: ImportStm) -> ImportStm1 {
     vec![import_stm]
 }
 #[derive(Debug, Clone)]
@@ -107,15 +108,16 @@ pub fn import_stm_v2(path: StrConst, name: Name) -> ImportStm {
         name: Some(name),
     }
 }
-pub type GrammarRules = Vec<GrammarRule>;
-pub fn grammar_rules_v1(
-    mut grammar_rules: GrammarRules,
+pub type GrammarRule1 = Vec<GrammarRule>;
+pub type GrammarRules = GrammarRule1;
+pub fn grammar_rule1_v1(
+    mut grammar_rule1: GrammarRule1,
     grammar_rule: GrammarRule,
-) -> GrammarRules {
-    grammar_rules.push(grammar_rule);
-    grammar_rules
+) -> GrammarRule1 {
+    grammar_rule1.push(grammar_rule);
+    grammar_rule1
 }
-pub fn grammar_rules_v2(grammar_rule: GrammarRule) -> GrammarRules {
+pub fn grammar_rule1_v2(grammar_rule: GrammarRule) -> GrammarRule1 {
     vec![grammar_rule]
 }
 #[derive(Debug, Clone)]
@@ -182,15 +184,16 @@ pub fn production_v1(assignments: Assignments) -> Production {
 pub fn production_v2(assignments: Assignments, meta: ProdMetaDatas) -> Production {
     Production { assignments, meta }
 }
-pub type TerminalRules = Vec<TerminalRule>;
-pub fn terminal_rules_v1(
-    mut terminal_rules: TerminalRules,
+pub type TerminalRule1 = Vec<TerminalRule>;
+pub type TerminalRules = TerminalRule1;
+pub fn terminal_rule1_v1(
+    mut terminal_rule1: TerminalRule1,
     terminal_rule: TerminalRule,
-) -> TerminalRules {
-    terminal_rules.push(terminal_rule);
-    terminal_rules
+) -> TerminalRule1 {
+    terminal_rule1.push(terminal_rule);
+    terminal_rule1
 }
-pub fn terminal_rules_v2(terminal_rule: TerminalRule) -> TerminalRules {
+pub fn terminal_rule1_v2(terminal_rule: TerminalRule) -> TerminalRule1 {
     vec![terminal_rule]
 }
 #[derive(Debug, Clone)]
@@ -364,15 +367,16 @@ pub fn assignment_v2(bool_assignment: BoolAssignment) -> Assignment {
 pub fn assignment_v3(grammar_symbol_ref: GrammarSymbolRef) -> Assignment {
     Assignment::GrammarSymbolRef(grammar_symbol_ref)
 }
-pub type Assignments = Vec<Assignment>;
-pub fn assignments_v1(
-    mut assignments: Assignments,
+pub type Assignment1 = Vec<Assignment>;
+pub type Assignments = Assignment1;
+pub fn assignment1_v1(
+    mut assignment1: Assignment1,
     assignment: Assignment,
-) -> Assignments {
-    assignments.push(assignment);
-    assignments
+) -> Assignment1 {
+    assignment1.push(assignment);
+    assignment1
 }
-pub fn assignments_v2(assignment: Assignment) -> Assignments {
+pub fn assignment1_v2(assignment: Assignment) -> Assignment1 {
     vec![assignment]
 }
 #[derive(Debug, Clone)]
@@ -422,15 +426,15 @@ pub fn grammar_symbol_ref_v2(
 #[derive(Debug, Clone)]
 pub struct RepetitionOperator {
     pub rep_op: RepetitionOperatorOp,
-    pub rep_modifiers: Option<RepetitionModifiersExp>,
+    pub rep_modifiers: Option<RepetitionModifiers>,
 }
 pub fn repetition_operator_v1(
     repetition_operator_op: RepetitionOperatorOp,
-    repetition_modifiers_exp: Option<RepetitionModifiersExp>,
+    repetition_modifiers: Option<RepetitionModifiers>,
 ) -> RepetitionOperator {
     RepetitionOperator {
         rep_op: repetition_operator_op,
-        rep_modifiers: repetition_modifiers_exp,
+        rep_modifiers: repetition_modifiers,
     }
 }
 pub type RepetitionOperatorOpt = Option<RepetitionOperator>;
@@ -469,38 +473,37 @@ pub fn repetition_operator_op_optional() -> RepetitionOperatorOp {
 pub fn repetition_operator_op_optional_greedy() -> RepetitionOperatorOp {
     RepetitionOperatorOp::OptionalGreedy
 }
-pub type RepetitionModifiersExp = RepetitionModifiers;
-pub fn repetition_modifiers_exp_v1(
+pub type RepetitionModifiersOpt = Option<RepetitionModifiers>;
+pub fn repetition_modifiers_opt_v1(
     repetition_modifiers: RepetitionModifiers,
-) -> RepetitionModifiersExp {
-    repetition_modifiers
+) -> RepetitionModifiersOpt {
+    Some(repetition_modifiers)
 }
-pub type RepetitionModifiersExpOpt = Option<RepetitionModifiers>;
-pub fn repetition_modifiers_exp_opt_v1(
-    repetition_modifiers_exp: RepetitionModifiersExp,
-) -> RepetitionModifiersExpOpt {
-    Some(repetition_modifiers_exp)
-}
-pub fn repetition_modifiers_exp_opt_empty() -> RepetitionModifiersExpOpt {
+pub fn repetition_modifiers_opt_empty() -> RepetitionModifiersOpt {
     None
 }
 pub type RepetitionModifiers = Vec<RepetitionModifier>;
 pub fn repetition_modifiers_v1(
-    mut repetition_modifiers: RepetitionModifiers,
-    repetition_modifier: RepetitionModifier,
+    repetition_modifier1: RepetitionModifier1,
 ) -> RepetitionModifiers {
-    repetition_modifiers.push(repetition_modifier);
-    repetition_modifiers
+    repetition_modifier1
 }
-pub fn repetition_modifiers_v2(
+pub type RepetitionModifier1 = Vec<RepetitionModifier>;
+pub fn repetition_modifier1_v1(
+    mut repetition_modifier1: RepetitionModifier1,
     repetition_modifier: RepetitionModifier,
-) -> RepetitionModifiers {
+) -> RepetitionModifier1 {
+    repetition_modifier1.push(repetition_modifier);
+    repetition_modifier1
+}
+pub fn repetition_modifier1_v2(
+    repetition_modifier: RepetitionModifier,
+) -> RepetitionModifier1 {
     vec![repetition_modifier]
 }
-#[derive(Debug, Clone)]
-pub struct RepetitionModifier(pub Name);
+pub type RepetitionModifier = String;
 pub fn repetition_modifier_v1(name: Name) -> RepetitionModifier {
-    RepetitionModifier(name)
+    name
 }
 #[derive(Debug, Clone)]
 pub enum GrammarSymbol {
