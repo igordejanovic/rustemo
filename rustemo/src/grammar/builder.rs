@@ -9,7 +9,7 @@ use rustemo_rt::index::{
 use crate::{
     grammar::{Grammar, DEFAULT_PRIORITY},
     lang::rustemo_actions::{
-        self, ConstVal, GrammarRule, GrammarSymbol, GrammarSymbolRef, File,
+        self, ConstVal, File, GrammarRule, GrammarSymbol, GrammarSymbolRef,
         Recognizer, RepetitionOperatorOp, TermMetaDatas,
     },
 };
@@ -381,12 +381,15 @@ impl GrammarBuilder {
                 assert!(modifiers.len() == 1);
                 modifier = Some(&modifiers[0]);
             }
+            // TODO: This unwrap may fail in case of production groups use
+            // which is still unimplemented but allowed by the grammar.
             let ref_type = match gsymref.gsymbol.as_ref().unwrap() {
                 GrammarSymbol::Name(ref name) => name.clone(),
                 GrammarSymbol::StrConst(mtch) => {
-                    // We have done terminal from strmatch extraction by now so
-                    // this unwrap is safe.
-                    self.terminals_matches.get(mtch).unwrap().0.clone()
+                    self.terminals_matches.get(mtch)
+                        .unwrap_or_else(|| {
+                            panic!("Terminal '{mtch}' is not declared in terminals section.")
+                        }).0.clone()
                 }
             };
 
@@ -423,7 +426,11 @@ impl GrammarBuilder {
                 RepetitionOperatorOp::Optional => {
                     let name = nt_name(&ref_type, &op.rep_op);
                     if !self.nonterminals.contains_key(&name) {
-                        self.create_optional(name.clone(), &ref_type, productions);
+                        self.create_optional(
+                            name.clone(),
+                            &ref_type,
+                            productions,
+                        );
                     }
                     gsymref.gsymbol = Some(GrammarSymbol::Name(name))
                 }
