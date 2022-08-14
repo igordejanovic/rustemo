@@ -212,3 +212,63 @@ fn productions_meta_data() {
         format!("{:#?}", grammar)
     );
 }
+
+#[test]
+fn regex_suggar_zero_or_more() {
+    let grammar = Grammar::from_string(
+        r#"
+        S: A* B | C* | "some"*;
+        A: Some A*;
+        B: Some | EMPTY;
+        C: A* Some;
+        terminals
+        Some: "some";
+        "#,
+    )
+    .unwrap();
+    output_cmp!(
+        "src/grammar/tests/regex_suggar_zero_or_more.expected",
+        format!("{:#?}", grammar)
+    );
+
+}
+
+#[test]
+fn regex_suggar_one_or_more() {
+    let grammar = Grammar::from_string(
+        r#"
+        S: A+ B | C+ | "some"+;
+        A: Some A+;
+        B: Some | EMPTY;
+        C: A+ Some;
+        terminals
+        Some: "some";
+        "#,
+    )
+    .unwrap();
+    output_cmp!(
+        "src/grammar/tests/regex_suggar_one_or_more.expected",
+        format!("{:#?}", grammar)
+    );
+
+}
+
+#[test]
+fn regex_suggar_optional() {
+    let grammar = Grammar::from_string(
+        r#"
+        S: A? B | C? | "some"?;
+        A: Some A?;
+        B: Some | EMPTY;
+        C: A? Some;
+        terminals
+        Some: "some";
+        "#,
+    )
+    .unwrap();
+    output_cmp!(
+        "src/grammar/tests/regex_suggar_optional.expected",
+        format!("{:#?}", grammar)
+    );
+
+}
