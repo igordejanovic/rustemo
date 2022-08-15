@@ -11,7 +11,7 @@ use rustemo::{generator::generate_parser, settings::Settings};
            clap(version = concat!(env!("CARGO_PKG_VERSION"), "-", env!("GIT_HASH"))))]
 #[clap(author, about, long_about = None)]
 struct Cli {
-    /// Regenerate output even if exists
+    /// Regenerate output actions file even if exists
     #[clap(short, long, action)]
     force: bool,
 
@@ -23,9 +23,13 @@ struct Cli {
     #[clap(value_parser, value_name="GRAMMAR FILE", value_hint = clap::ValueHint::FilePath)]
     grammar_file: PathBuf,
 
-    /// Output directory. Default is the same as input grammar file.
+    /// Output directory for the parser. Default is the same as input grammar file.
     #[clap(short, long, value_name="OUT DIR", value_hint = clap::ValueHint::DirPath)]
     outdir: Option<PathBuf>,
+
+    /// Output directory for actions. Default is the same as input grammar file.
+    #[clap(short='a', long, value_name="OUT DIR ACTIONS", value_hint = clap::ValueHint::DirPath)]
+    outdir_actions: Option<PathBuf>,
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -35,7 +39,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .with_force(cli.force)
         .with_actions(!cli.noactions);
 
-    match generate_parser(cli.grammar_file, cli.outdir, &settings) {
+    match generate_parser(cli.grammar_file, cli.outdir, cli.outdir_actions, &settings) {
         Ok(_) => println!("Parser generated successfully"),
         Err(e) => return Err(format!("Parser not generated. {e}").into()),
     }

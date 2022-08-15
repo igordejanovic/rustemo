@@ -14,7 +14,10 @@ use syn::parse_quote;
 
 use crate::{
     error::{Error, Result},
-    grammar::{types::{variant_name, to_snake_case, to_pascal_case}, Grammar, Production, NonTerminal},
+    grammar::{
+        types::{to_pascal_case, to_snake_case, variant_name},
+        Grammar, NonTerminal, Production,
+    },
     lang::rustemo_actions::Recognizer,
     settings::Settings,
     table::{lr_states_for_grammar, LRState},
@@ -22,10 +25,7 @@ use crate::{
 
 use self::actions::generate_parser_actions;
 
-fn action_name(
-    nonterminal: &NonTerminal,
-    prod: &Production,
-) -> syn::Ident {
+fn action_name(nonterminal: &NonTerminal, prod: &Production) -> syn::Ident {
     format_ident!(
         "{}",
         to_snake_case(format!("{}_{}", nonterminal.name, variant_name(prod)))
@@ -44,27 +44,34 @@ fn prod_kind(grammar: &Grammar, prod: &Production) -> syn::Ident {
     )
 }
 
-pub fn generate_parser<F>(
-    grammar_path: F,
-    out_dir: Option<F>,
+pub fn generate_parser<P>(
+    grammar_path: P,
+    out_dir: Option<P>,
+    out_dir_actions: Option<P>,
     settings: &Settings,
 ) -> Result<()>
 where
-    F: AsRef<Path> + Debug,
+    P: AsRef<Path> + Debug,
 {
     let file_name = grammar_path
         .as_ref()
         .file_name()
         .ok_or(Error::Error("Invalid grammar file name.".to_string()))?;
 
+    let grammar_dir = PathBuf::from(
+        grammar_path
+            .as_ref()
+            .parent()
+            .expect("Cannot deduce parent directory of the grammar file."),
+    );
+
     let out_dir = match out_dir {
         Some(dir) => PathBuf::from(dir.as_ref()),
-        None => PathBuf::from(
-            grammar_path
-                .as_ref()
-                .parent()
-                .expect("Cannot deduce parent directory of the grammar file."),
-        ),
+        None => grammar_dir.clone(),
+    };
+    let out_dir_actions = match out_dir_actions {
+        Some(dir) => PathBuf::from(dir.as_ref()),
+        None => grammar_dir.clone(),
     };
 
     let grammar_input = std::fs::read_to_string(grammar_path.as_ref())?;
@@ -74,12 +81,6 @@ where
 
     // Generate parser definition
     let out_file = out_dir.join(file_name).with_extension("rs");
-    if !settings.force && out_file.exists() {
-        return Err(Error::Error(
-            "Parser file already exists. Use --force to override.".to_string(),
-        ));
-    }
-
     let file_name = grammar_path
         .as_ref()
         .file_stem()
@@ -130,10 +131,25 @@ where
 
     // Generate actions
     if settings.actions {
-        generate_parser_actions(&grammar, &grammar_path, settings)?;
+        generate_parser_actions(
+            &grammar,
+            file_name,
+            &out_dir_actions,
+            settings,
+        )?;
     }
 
-    std::fs::write(out_file, prettyplease::unparse(&ast))?;
+    std::fs::create_dir_all(&out_file.parent().ok_or_else(|| {
+        Error::Error(format!("Cannot find parent of '{out_dir:?}'."))
+    })?)
+    .map_err(|e| {
+        Error::Error(format!(
+            "Cannot create folders for path '{out_file:?}': {e:?}."
+        ))
+    })?;
+    std::fs::write(&out_file, prettyplease::unparse(&ast)).map_err(|e| {
+        Error::Error(format!("Cannot write parser file '{out_file:?}': {e:?}."))
+    })?;
 
     Ok(())
 }

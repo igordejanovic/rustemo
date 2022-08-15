@@ -18,10 +18,8 @@ pub struct Settings {
     pub prefer_shifts_over_empty: bool,
     pub lr_table_type: LRTableType,
     pub actions: bool,
-    /// Should parser file be recreated if exists.
+    /// Should actions file be recreated if exist. Use with care.
     pub force: bool,
-    /// Should both parser and actions file be recreated if exist. Use with care.
-    pub force_all: bool,
 }
 
 impl Default for Settings {
@@ -32,7 +30,6 @@ impl Default for Settings {
             lr_table_type: Default::default(),
             actions: true,
             force: Default::default(),
-            force_all: Default::default(),
         }
     }
 }
@@ -56,11 +53,6 @@ impl Settings {
     }
     pub fn with_force(mut self, force: bool) -> Self {
         self.force = force;
-        self
-    }
-    pub fn with_force_all(mut self, force_all: bool) -> Self {
-        self.force_all = force_all;
-        self.force = force_all;
         self
     }
 }

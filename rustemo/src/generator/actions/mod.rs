@@ -13,7 +13,7 @@ use syn::{self, parse_quote};
 
 use crate::{grammar::{Grammar, NonTerminal, types::to_snake_case}, settings::Settings};
 use crate::{
-    error::{Error, Result},
+    error::Result,
     grammar::Terminal,
 };
 
@@ -49,22 +49,19 @@ pub(crate) trait ActionsGenerator {
 
 pub(crate) fn generate_parser_actions<F>(
     grammar: &Grammar,
-    grammar_path: F,
+    file_name: &str,
+    out_dir_actions: F,
     settings: &Settings,
 ) -> Result<()>
 where
     F: AsRef<Path> + core::fmt::Debug,
 {
-    let mut file_name = grammar_path
-        .as_ref()
-        .file_stem()
-        .ok_or(Error::Error("Invalid file name.".into()))?
-        .to_os_string();
-    file_name.push("_actions.rs");
+    let mut file_name = String::from(file_name);
+    file_name.push_str("_actions.rs");
     let action_file =
-        PathBuf::from(grammar_path.as_ref()).with_file_name(file_name);
+        PathBuf::from(out_dir_actions.as_ref()).join(file_name);
 
-    let mut ast = if action_file.exists() && !settings.force_all {
+    let mut ast = if action_file.exists() && !settings.force {
         log!("Parsing action file with Syn: {:?}", action_file);
         syn::parse_file(&std::fs::read_to_string(&action_file)?)?
     } else {
