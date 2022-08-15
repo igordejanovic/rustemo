@@ -1,7 +1,7 @@
 // FIXME: Use these stuff from rustemo crate
 pub(crate) fn string_difference(
-    a: &String,
-    b: &String,
+    a: &str,
+    b: &str,
 ) -> Option<(usize, (char, char))> {
     Some(
         a.chars()

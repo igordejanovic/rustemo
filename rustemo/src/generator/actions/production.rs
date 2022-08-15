@@ -64,7 +64,7 @@ impl ProductionActionsGenerator {
     fn get_action_body(
         &self,
         ty: &SymbolType,
-        target_type: &String,
+        target_type: &str,
         variant: &Variant,
         variants_len: usize,
         optional: bool,

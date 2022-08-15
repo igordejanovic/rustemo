@@ -3,8 +3,8 @@ pub fn type_of<T>(_: &T) -> &'static str {
 }
 
 pub fn string_difference(
-    a: &String,
-    b: &String,
+    a: &str,
+    b: &str,
 ) -> Option<(usize, (char, char))> {
     Some(
         a.chars()

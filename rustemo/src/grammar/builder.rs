@@ -358,7 +358,7 @@ impl GrammarBuilder {
         gsymref: &mut GrammarSymbolRef,
         productions: &mut Vec<Production>,
     ) {
-        fn nt_name(name: &String, rep_op: &RepetitionOperatorOp) -> String {
+        fn nt_name(name: &str, rep_op: &RepetitionOperatorOp) -> String {
             format!(
                 "{}{}",
                 &name,
@@ -535,7 +535,7 @@ impl GrammarBuilder {
     fn create_optional(
         &mut self,
         name: String,
-        ref_name: &String,
+        ref_name: &str,
         productions: &mut Vec<Production>,
     ) {
         let nt_index = self.get_nonterm_idx();
@@ -551,7 +551,7 @@ impl GrammarBuilder {
                             idx: prod_idx,
                             nonterminal: nt_index,
                             ntidx: idx,
-                            rhs: vec![resolving!(ref_name.clone())],
+                            rhs: vec![resolving!(ref_name.to_string())],
                             ..Default::default()
                         });
                     } else {
@@ -573,7 +573,7 @@ impl GrammarBuilder {
     fn create_one(
         &mut self,
         name: String,
-        ref_name: &String,
+        ref_name: &str,
         modifier: &Option<&rustemo_actions::RepetitionModifier>,
         productions: &mut Vec<Production>,
     ) {
@@ -594,7 +594,7 @@ impl GrammarBuilder {
                                 // without separator
                                 vec![
                                     resolving!(name.clone()),
-                                    resolving!(ref_name.clone()),
+                                    resolving!(ref_name.to_string()),
                                 ]
                             } else {
                                 // with separator.
@@ -602,7 +602,7 @@ impl GrammarBuilder {
                                 vec![
                                     resolving!(name.clone()),
                                     resolving!(sep),
-                                    resolving!(ref_name.clone()),
+                                    resolving!(ref_name.to_string()),
                                 ]
                             },
                             ..Default::default()
@@ -612,7 +612,7 @@ impl GrammarBuilder {
                             idx: prod_idx,
                             nonterminal: nt_idx,
                             ntidx: idx,
-                            rhs: vec![resolving!(ref_name.clone())],
+                            rhs: vec![resolving!(ref_name.to_string())],
                             ..Default::default()
                         });
                     }
@@ -626,7 +626,7 @@ impl GrammarBuilder {
     fn create_zero(
         &mut self,
         name: String,
-        one_name: &String,
+        one_name: &str,
         productions: &mut Vec<Production>,
     ) {
         let nt_idx = self.get_nonterm_idx();
@@ -642,7 +642,7 @@ impl GrammarBuilder {
                             idx: prod_idx,
                             nonterminal: nt_idx,
                             ntidx: idx,
-                            rhs: vec![resolving!(one_name.clone())],
+                            rhs: vec![resolving!(one_name.to_string())],
                             ..Default::default()
                         });
                     } else {
