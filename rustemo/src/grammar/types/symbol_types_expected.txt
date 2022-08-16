@@ -51,7 +51,7 @@ SymbolTypes {
                     Choice {
                         name: "MyKind",
                         kind: Struct(
-                            "AMyKind",
+                            "MyKind",
                             [
                                 Field {
                                     name: "myb",

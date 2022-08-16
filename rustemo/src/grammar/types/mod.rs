@@ -116,8 +116,12 @@ impl SymbolTypes {
                             })
                         }
 
-                        let struct_type =
-                            format!("{}{}", &nonterminal.name, choice_name);
+                        let struct_type = if production.kind.is_some() {
+                            choice_name.clone()
+                        } else {
+                            format!("{}{}", &nonterminal.name, choice_name)
+                        };
+
                         Choice {
                             name: choice_name.clone(),
                             kind: ChoiceKind::Struct(struct_type, fields),
