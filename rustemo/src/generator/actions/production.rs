@@ -95,7 +95,7 @@ impl ProductionActionsGenerator {
                     }
                 } else {
                     parse_quote! {
-                        #struct_ty {
+                        #target_type {
                             #(#fields),*
                         }
                     }
@@ -139,35 +139,54 @@ impl ActionsGenerator for ProductionActionsGenerator {
         let ty = self.types.get_type(&nonterminal.name);
         let type_ident = Ident::new(&ty.name, Span::call_site());
 
-        fn get_choice_types(choices: &Vec<Choice>) -> Vec<syn::Item> {
-            // Derived struct types
-            choices.iter().filter_map(|v| {
-                match &v.kind {
-                    ChoiceKind::Struct(type_name, fields) => {
-                        let type_ident = Ident::new(&type_name, Span::call_site());
-                        let fields: Vec<syn::Field> = fields.iter().map(|f| {
-                            let field_name = Ident::new(&f.name, Span::call_site());
-                            let field_type = Ident::new(&f.ty, Span::call_site());
+        fn get_choice_type(
+            choice: &Choice,
+            type_name: Option<&String>,
+        ) -> Option<syn::Item> {
+            match &choice.kind {
+                ChoiceKind::Struct(struct_type, fields) => {
+                    let type_ident = if let Some(type_name) = type_name {
+                        Ident::new(&type_name, Span::call_site())
+                    } else {
+                        Ident::new(&struct_type, Span::call_site())
+                    };
+
+                    let fields: Vec<syn::Field> = fields
+                        .iter()
+                        .map(|f| {
+                            let field_name =
+                                Ident::new(&f.name, Span::call_site());
+                            let field_type =
+                                Ident::new(&f.ty, Span::call_site());
                             syn::Field::parse_named
-                                .parse2(
-                                    if f.recursive {
-                                        // Handle direct recursion
-                                        quote! { pub #field_name: Box<#field_type> }
-                                    } else {
-                                        quote! {pub #field_name: #field_type}
-                                    }
-                                ).unwrap()
-                        }).collect();
-                        Some(parse_quote! {
-                            #[derive(Debug, Clone)]
-                            pub struct #type_ident {
-                                #(#fields),*
-                            }
+                                .parse2(if f.recursive {
+                                    // Handle direct recursion
+                                    quote! { pub #field_name: Box<#field_type> }
+                                } else {
+                                    quote! {pub #field_name: #field_type}
+                                })
+                                .unwrap()
                         })
-                    },
-                    _ => None,
+                        .collect();
+                    Some(parse_quote! {
+                        #[derive(Debug, Clone)]
+                        pub struct #type_ident {
+                            #(#fields),*
+                        }
+                    })
                 }
-            }).collect()
+                _ => None,
+            }
+        }
+
+        fn get_choice_types(
+            choices: &Vec<Choice>,
+            type_name: Option<&String>,
+        ) -> Vec<syn::Item> {
+            choices
+                .iter()
+                .filter_map(|choice| get_choice_type(choice, type_name))
+                .collect()
         }
 
         fn get_variants(choices: &Vec<Choice>) -> Vec<syn::Variant> {
@@ -196,8 +215,12 @@ impl ActionsGenerator for ProductionActionsGenerator {
         }
 
         match &ty.kind {
-            SymbolTypeKind::Enum{ name: ref_type, choices, optional } => {
-                let mut types = get_choice_types(choices);
+            SymbolTypeKind::Enum {
+                name: ref_type,
+                choices,
+                optional,
+            } => {
+                let mut types = get_choice_types(choices, None);
                 let variants = get_variants(choices);
                 let ref_type = Ident::new(&ref_type, Span::call_site());
 
@@ -221,25 +244,35 @@ impl ActionsGenerator for ProductionActionsGenerator {
                 }
                 types
             }
-            SymbolTypeKind::Struct { name: ref_type, choices, optional } => {
-                let mut types = get_choice_types(choices);
-                let ref_type = Ident::new(&ref_type, Span::call_site());
+            SymbolTypeKind::Struct {
+                name: struct_type,
+                choices,
+                optional,
+            } => {
+                let mut types = get_choice_types(choices, Some(&struct_type));
+                let struct_type = Ident::new(&struct_type, Span::call_site());
                 if *optional {
                     types.push(
-                        parse_quote! {pub type #type_ident = Option<#ref_type>;},
+                        parse_quote! {pub type #type_ident = Option<#struct_type>;},
                     );
                 }
                 types
-            },
-            SymbolTypeKind::Ref{ name: ref_type, optional, .. } => {
+            }
+            SymbolTypeKind::Ref {
+                name: ref_type,
+                optional,
+                ..
+            } => {
                 let ref_type = Ident::new(&ref_type, Span::call_site());
                 if *optional {
-                    vec![parse_quote! { pub type #type_ident = Option<#ref_type>; }]
+                    vec![
+                        parse_quote! { pub type #type_ident = Option<#ref_type>; },
+                    ]
                 } else {
                     vec![parse_quote! { pub type #type_ident = #ref_type; }]
                 }
             }
-            SymbolTypeKind::Vec{ name: ref_type, .. } => {
+            SymbolTypeKind::Vec { name: ref_type, .. } => {
                 let ref_type = Ident::new(&ref_type, Span::call_site());
                 vec![parse_quote! { pub type #type_ident = Vec<#ref_type>; }]
             }
