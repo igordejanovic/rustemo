@@ -1,4 +1,7 @@
-use crate::{grammar::{Grammar, types::SymbolTypes}, output_cmp};
+use crate::{
+    grammar::{types::SymbolTypes, Grammar},
+    output_cmp,
+};
 
 #[test]
 fn test_symbol_type_deduction() {

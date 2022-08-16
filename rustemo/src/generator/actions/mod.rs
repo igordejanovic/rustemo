@@ -11,11 +11,11 @@ use std::{
 use proc_macro2::{Ident, Span};
 use syn::{self, parse_quote};
 
-use crate::{grammar::{Grammar, NonTerminal, types::to_snake_case}, api::settings::Settings};
 use crate::{
-    error::Result,
-    grammar::Terminal,
+    api::settings::Settings,
+    grammar::{types::to_snake_case, Grammar, NonTerminal},
 };
+use crate::{error::Result, grammar::Terminal};
 
 mod production;
 
@@ -58,8 +58,7 @@ where
 {
     let mut file_name = String::from(file_name);
     file_name.push_str("_actions.rs");
-    let action_file =
-        PathBuf::from(out_dir_actions.as_ref()).join(file_name);
+    let action_file = PathBuf::from(out_dir_actions.as_ref()).join(file_name);
 
     let mut ast = if action_file.exists() && !settings.force {
         log!("Parsing action file with Syn: {:?}", action_file);

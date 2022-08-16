@@ -230,7 +230,6 @@ fn regex_suggar_zero_or_more() {
         "src/grammar/tests/regex_suggar_zero_or_more.expected",
         format!("{:#?}", grammar)
     );
-
 }
 
 #[test]
@@ -250,7 +249,6 @@ fn regex_suggar_one_or_more() {
         "src/grammar/tests/regex_suggar_one_or_more.expected",
         format!("{:#?}", grammar)
     );
-
 }
 
 #[test]
@@ -270,5 +268,4 @@ fn regex_suggar_optional() {
         "src/grammar/tests/regex_suggar_optional.expected",
         format!("{:#?}", grammar)
     );
-
 }

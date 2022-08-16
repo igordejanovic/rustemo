@@ -1,4 +1,4 @@
-use std::{path::PathBuf, process::exit, env};
+use std::{env, path::PathBuf, process::exit};
 
 fn main() {
     let root_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));

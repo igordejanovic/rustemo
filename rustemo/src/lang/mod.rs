@@ -7,15 +7,14 @@
 pub(crate) mod rustemo;
 
 #[allow(non_camel_case_types)]
-#[cfg(not(feature="bootstrap"))]
+#[cfg(not(feature = "bootstrap"))]
 pub(crate) mod rustemo_actions;
 
+#[cfg(feature = "bootstrap")]
+rustemo_parser! {pub(crate) rustemo, "/src/lang"}
 
-#[cfg(feature="bootstrap")]
-rustemo_parser!{pub(crate) rustemo, "/src/lang"}
-
-#[cfg(feature="bootstrap")]
-rustemo_parser!{pub(crate) rustemo_actions, "/src/lang"}
+#[cfg(feature = "bootstrap")]
+rustemo_parser! {pub(crate) rustemo_actions, "/src/lang"}
 
 #[cfg(test)]
 mod tests;

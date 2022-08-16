@@ -8,7 +8,9 @@ pub fn name<'a>(token: Token<&'a str>) -> Name {
 }
 pub type RegexTerm = String;
 pub fn regex_term<'a>(token: Token<&'a str>) -> RegexTerm {
-    token.value[1..token.value.len() - 1].replace(r"\/", "/").into()
+    token.value[1..token.value.len() - 1]
+        .replace(r"\/", "/")
+        .into()
 }
 pub type IntConst = u32;
 pub fn int_const<'a>(token: Token<&'a str>) -> IntConst {
@@ -20,7 +22,11 @@ pub fn float_const<'a>(token: Token<&'a str>) -> FloatConst {
 }
 pub type BoolConst = bool;
 pub fn bool_const<'a>(token: Token<&'a str>) -> BoolConst {
-    if token.value == "true" { true } else { false }
+    if token.value == "true" {
+        true
+    } else {
+        false
+    }
 }
 pub type StrConst = String;
 pub fn str_const<'i>(token: Token<&'i str>) -> StrConst {
@@ -61,7 +67,10 @@ pub fn file_v2(imports: Imports, grammar_rules: GrammarRules) -> File {
         terminal_rules: None,
     }
 }
-pub fn file_v3(grammar_rules: GrammarRules, terminal_rules: TerminalRules) -> File {
+pub fn file_v3(
+    grammar_rules: GrammarRules,
+    terminal_rules: TerminalRules,
+) -> File {
     File {
         grammar_rules: Some(grammar_rules),
         terminal_rules: Some(terminal_rules),
@@ -87,7 +96,10 @@ pub fn file_v5(terminal_rules: TerminalRules) -> File {
 }
 pub type ImportStm1 = Vec<ImportStm>;
 pub type Imports = ImportStm1;
-pub fn import_stm1_v1(mut import_stm1: ImportStm1, import_stm: ImportStm) -> ImportStm1 {
+pub fn import_stm1_v1(
+    mut import_stm1: ImportStm1,
+    import_stm: ImportStm,
+) -> ImportStm1 {
     import_stm1.push(import_stm);
     import_stm1
 }
@@ -181,7 +193,10 @@ pub fn production_v1(assignments: Assignments) -> Production {
         meta: ProdMetaDatas::new(),
     }
 }
-pub fn production_v2(assignments: Assignments, meta: ProdMetaDatas) -> Production {
+pub fn production_v2(
+    assignments: Assignments,
+    meta: ProdMetaDatas,
+) -> Production {
     Production { assignments, meta }
 }
 pub type TerminalRule1 = Vec<TerminalRule>;
@@ -385,11 +400,17 @@ pub struct NamedAssignment {
     pub gsymref: GrammarSymbolRef,
 }
 pub type PlainAssignment = NamedAssignment;
-pub fn plain_assignment_v1(name: Name, gsymref: GrammarSymbolRef) -> PlainAssignment {
+pub fn plain_assignment_v1(
+    name: Name,
+    gsymref: GrammarSymbolRef,
+) -> PlainAssignment {
     PlainAssignment { name, gsymref }
 }
 pub type BoolAssignment = NamedAssignment;
-pub fn bool_assignment_v1(name: Name, gsymref: GrammarSymbolRef) -> BoolAssignment {
+pub fn bool_assignment_v1(
+    name: Name,
+    gsymref: GrammarSymbolRef,
+) -> BoolAssignment {
     BoolAssignment { name, gsymref }
 }
 #[derive(Debug, Clone)]

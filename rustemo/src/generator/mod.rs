@@ -12,13 +12,13 @@ use std::{
 use syn::parse_quote;
 
 use crate::{
+    api::settings::Settings,
     error::{Error, Result},
     grammar::{
-        types::{to_pascal_case, to_snake_case, choice_name},
+        types::{choice_name, to_pascal_case, to_snake_case},
         Grammar, NonTerminal, Production,
     },
     lang::rustemo_actions::Recognizer,
-    api::settings::Settings,
     table::{lr_states_for_grammar, LRState},
 };
 
@@ -48,8 +48,7 @@ pub fn generate_parser(
     out_dir: Option<&Path>,
     out_dir_actions: Option<&Path>,
     settings: &Settings,
-) -> Result<()>
-{
+) -> Result<()> {
     let file_name = grammar_path
         .file_name()
         .ok_or(Error::Error("Invalid grammar file name.".to_string()))?;

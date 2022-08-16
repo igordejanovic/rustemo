@@ -2,10 +2,7 @@ pub fn type_of<T>(_: &T) -> &'static str {
     std::any::type_name::<T>()
 }
 
-pub fn string_difference(
-    a: &str,
-    b: &str,
-) -> Option<(usize, (char, char))> {
+pub fn string_difference(a: &str, b: &str) -> Option<(usize, (char, char))> {
     Some(
         a.chars()
             .zip(b.chars())
@@ -44,8 +41,8 @@ macro_rules! output_cmp {
             [env!("CARGO_MANIFEST_DIR"), $path].iter().collect();
 
         if t_path.exists() {
-            let content: String = fs::read_to_string(&t_path)
-                .unwrap_or_else(|err| {
+            let content: String =
+                fs::read_to_string(&t_path).unwrap_or_else(|err| {
                     panic!("Cannot load output file {:?}: {}", t_path, err)
                 });
             if let Some(diff) = string_difference(&content, &$out_str) {

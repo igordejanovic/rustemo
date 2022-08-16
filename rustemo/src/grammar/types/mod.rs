@@ -142,10 +142,7 @@ impl SymbolTypes {
     /// A: B | EMPTY ---> A is Option<B>
     /// A: A B | B; or A: A B | B | EMPTY; ---> A is Vec<B>
     /// A: <Whatever> ... | EMPTY; ---> A optional Enum
-    fn get_type_kind(
-        nt: &NonTerminal,
-        choices: Vec<Choice>,
-    ) -> SymbolTypeKind {
+    fn get_type_kind(nt: &NonTerminal, choices: Vec<Choice>) -> SymbolTypeKind {
         let type_name = &nt.name;
         struct Match {
             no_match: bool,
@@ -242,10 +239,10 @@ impl SymbolTypes {
                 } else {
                     SymbolTypeKind::Enum {
                         name: if empty {
-                                format!("{}NO", type_name)
-                            } else {
-                                type_name.clone()
-                            },
+                            format!("{}NO", type_name)
+                        } else {
+                            type_name.clone()
+                        },
                         choices,
                         optional: empty,
                     }

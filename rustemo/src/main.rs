@@ -35,9 +35,7 @@ struct Cli {
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cli = Cli::parse();
 
-    let settings = with_settings()
-        .force(cli.force)
-        .actions(!cli.noactions);
+    let settings = with_settings().force(cli.force).actions(!cli.noactions);
 
     let result = if cli.grammar_file_or_dir.is_file() {
         settings.process_grammar(&cli.grammar_file_or_dir)

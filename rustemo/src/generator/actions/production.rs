@@ -85,7 +85,7 @@ impl ProductionActionsGenerator {
                     })
                     .collect();
 
-                if matches!(ty.kind, SymbolTypeKind::Enum {..}) {
+                if matches!(ty.kind, SymbolTypeKind::Enum { .. }) {
                     parse_quote! {
                         #target_type::#choice_ident(
                             #struct_ty {
@@ -104,7 +104,7 @@ impl ProductionActionsGenerator {
             ChoiceKind::Ref(ref_type) => {
                 let ref_type_var =
                     Ident::new(&to_snake_case(ref_type), Span::call_site());
-                if matches!(&ty.kind, SymbolTypeKind::Ref{..}) {
+                if matches!(&ty.kind, SymbolTypeKind::Ref { .. }) {
                     parse_quote! {
                         #ref_type_var
                     }
@@ -114,19 +114,17 @@ impl ProductionActionsGenerator {
                     }
                 }
             }
-            ChoiceKind::Empty => parse_quote! { None }
+            ChoiceKind::Empty => parse_quote! { None },
         };
 
         let optional = match ty.kind {
             SymbolTypeKind::Ref { optional: o, .. }
-            | SymbolTypeKind::Vec { optional: o , .. }
-            | SymbolTypeKind::Struct { optional: o , .. }
-            | SymbolTypeKind::Enum { optional: o , .. } => {
-                o
-            },
+            | SymbolTypeKind::Vec { optional: o, .. }
+            | SymbolTypeKind::Struct { optional: o, .. }
+            | SymbolTypeKind::Enum { optional: o, .. } => o,
             SymbolTypeKind::Terminal => unreachable!(),
         };
-        if optional && !matches!(choice.kind, ChoiceKind::Empty){
+        if optional && !matches!(choice.kind, ChoiceKind::Empty) {
             parse_quote! { Some(#expr) }
         } else {
             expr
@@ -288,19 +286,28 @@ impl ActionsGenerator for ProductionActionsGenerator {
         let ret_type = Ident::new(&nonterminal.name, Span::call_site());
 
         match &ty.kind {
-            SymbolTypeKind::Enum{ name: target_type, choices, .. }
-            | SymbolTypeKind::Struct{ name: target_type, choices, ..}
-            | SymbolTypeKind::Ref{ name: target_type, choices, ..} => choices
+            SymbolTypeKind::Enum {
+                name: target_type,
+                choices,
+                ..
+            }
+            | SymbolTypeKind::Struct {
+                name: target_type,
+                choices,
+                ..
+            }
+            | SymbolTypeKind::Ref {
+                name: target_type,
+                choices,
+                ..
+            } => choices
                 .iter()
                 .map(|v| {
                     let action_name =
                         to_snake_case(format!("{}_{}", ty.name, v.name));
                     let action = Ident::new(&action_name, Span::call_site());
                     let args = self.get_action_args(ty, v);
-                    let body = self.get_action_body(
-                        ty,
-                        target_type,
-                        v);
+                    let body = self.get_action_body(ty, target_type, v);
 
                     (
                         action_name,
@@ -312,7 +319,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
                     )
                 })
                 .collect(),
-            SymbolTypeKind::Vec{choices, ..} => choices
+            SymbolTypeKind::Vec { choices, .. } => choices
                 .iter()
                 .map(|v| {
                     let action_name =

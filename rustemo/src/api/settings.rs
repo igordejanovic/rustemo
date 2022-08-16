@@ -1,5 +1,5 @@
-use std::path::PathBuf;
 use crate::table::TableType;
+use std::path::PathBuf;
 
 #[derive(Debug)]
 pub struct Settings {
