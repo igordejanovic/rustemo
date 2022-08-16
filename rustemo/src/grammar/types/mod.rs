@@ -3,7 +3,7 @@
 
 use convert_case::{Boundary, Case, Casing};
 
-use super::{Grammar, Production, NonTerminal};
+use super::{Grammar, NonTerminal, Production};
 
 #[cfg(test)]
 mod tests;
@@ -23,13 +23,13 @@ pub(crate) fn to_pascal_case<S: AsRef<str>>(s: S) -> String {
     s.as_ref().to_case(Case::Pascal)
 }
 
-pub(crate) fn variant_name(prod: &Production) -> String {
+pub(crate) fn choice_name(prod: &Production) -> String {
     if let Some(ref kind) = prod.kind {
         kind.clone()
     } else if prod.rhs.len() == 0 {
         String::from("Empty")
     } else {
-        format!("V{}", prod.ntidx + 1)
+        format!("C{}", prod.ntidx + 1)
     }
 }
 
@@ -57,32 +57,32 @@ impl SymbolTypes {
 
         // Each non-terminal produces Enum type
         for nonterminal in &grammar.nonterminals {
-            let mut variants = vec![];
+            let mut choices = vec![];
 
             for production in nonterminal.productions(grammar) {
-                let variant_name = variant_name(production);
+                let choice_name = choice_name(production);
 
-                // Enum variants are deduced by the following rules:
-                // - No content references => plain variant without inner content
-                // - A single content. ref and no assig LHS => variant with
+                // Choices are deduced by the following rules:
+                // - No content references => plain choice without inner content
+                // - A single content. ref and no assig LHS => choice with
                 //   a referred NT type as its content
-                // - Multiple content. refs => Variant with a new struct type
+                // - Multiple content. refs => Choice with a new struct type
                 //   where fields types are types of the referred symbols.
                 let rhs = production.rhs_with_content(grammar);
-                variants.push(match rhs.iter().count() {
-                    0 if production.rhs.len() == 0 => Variant {
-                        name: variant_name,
-                        kind: VariantKind::Empty,
+                choices.push(match rhs.iter().count() {
+                    0 if production.rhs.len() == 0 => Choice {
+                        name: choice_name,
+                        kind: ChoiceKind::Empty,
                     },
-                    0 => Variant {
-                        name: variant_name,
-                        kind: VariantKind::Plain,
+                    0 => Choice {
+                        name: choice_name,
+                        kind: ChoiceKind::Plain,
                     },
                     1 if rhs[0].name.is_none() => {
                         let ref_type = grammar.symbol_name(rhs[0].symbol);
-                        Variant {
-                            name: variant_name,
-                            kind: VariantKind::Ref(ref_type),
+                        Choice {
+                            name: choice_name,
+                            kind: ChoiceKind::Ref(ref_type),
                         }
                     }
                     _ => {
@@ -103,7 +103,7 @@ impl SymbolTypes {
                                     .count()
                                     > 1
                                 {
-                                    // Not a unique type
+                                    // Not a unique rule ref inside this choice
                                     format!("_{}", assign.idx + 1)
                                 } else {
                                     "".into()
@@ -117,10 +117,10 @@ impl SymbolTypes {
                         }
 
                         let struct_type =
-                            format!("{}{}", &nonterminal.name, variant_name);
-                        Variant {
-                            name: variant_name.clone(),
-                            kind: VariantKind::Struct(struct_type, fields),
+                            format!("{}{}", &nonterminal.name, choice_name);
+                        Choice {
+                            name: choice_name.clone(),
+                            kind: ChoiceKind::Struct(struct_type, fields),
                         }
                     }
                 });
@@ -128,7 +128,7 @@ impl SymbolTypes {
 
             types.push(SymbolType {
                 name: nonterminal.name.clone(),
-                kind: Self::get_type_kind(&nonterminal, variants),
+                kind: Self::get_type_kind(&nonterminal, choices),
             });
         }
         types
@@ -137,15 +137,15 @@ impl SymbolTypes {
     /// Recognize different rule patters:
     /// A: B | EMPTY ---> A is Option<B>
     /// A: A B | B; or A: A B | B | EMPTY; ---> A is Vec<B>
-    /// A: <Whatever> ... | EMPTY; ---> A is Option<ANE> where ANE is
-    /// enum of all variants except EMPTY.
+    /// A: <Whatever> ... | EMPTY; ---> A optional Enum
     fn get_type_kind(
         nt: &NonTerminal,
-        variants: Vec<Variant>,
+        choices: Vec<Choice>,
     ) -> SymbolTypeKind {
         let type_name = &nt.name;
         struct Match {
             no_match: bool,
+
             empty: bool,
             single: Option<String>,
             recurse: Option<String>,
@@ -158,10 +158,11 @@ impl SymbolTypes {
             recurse: None,
         };
 
-        for variant in &variants {
-            match &variant.kind {
-                VariantKind::Empty => m.empty = true,
-                VariantKind::Struct(_, fields) => match &fields[..] {
+        // For regex-like op. patter recognition
+        for choice in &choices {
+            match &choice.kind {
+                ChoiceKind::Empty => m.empty = true,
+                ChoiceKind::Struct(_, fields) => match &fields[..] {
                     [a] => {
                         if m.single.is_none() {
                             m.single = Some(a.ty.clone())
@@ -171,9 +172,9 @@ impl SymbolTypes {
                     }
                     [a, b] => {
                         if m.recurse.is_none() {
-                            if a.ty == *type_name {
+                            if a.ty == *type_name && b.ty != *type_name {
                                 m.recurse = Some(b.ty.clone())
-                            } else if b.ty == *type_name {
+                            } else if b.ty == *type_name && a.ty != *type_name {
                                 m.recurse = Some(a.ty.clone())
                             } else {
                                 m.no_match = true
@@ -184,42 +185,60 @@ impl SymbolTypes {
                     }
                     _ => m.no_match = true,
                 },
-                VariantKind::Ref(ref_type) => m.single = Some(ref_type.clone()),
-                VariantKind::Plain => m.no_match = true,
+                ChoiceKind::Ref(ref_type) => m.single = Some(ref_type.clone()),
+                ChoiceKind::Plain => m.no_match = true,
             }
         }
 
+        let choices_noe = choices
+            .iter()
+            .filter(|c| !matches! {c.kind, ChoiceKind::Empty})
+            .collect::<Vec<_>>();
+
         match m {
-            Match {
-                no_match: true,
-                empty: false,
-                ..
-            } => SymbolTypeKind::Enum(type_name.clone(), variants),
             // A: A B | B | EMPTY; or
             // A: A B | B;
             Match {
                 single: Some(single),
                 recurse: Some(recurse),
                 no_match: false,
+                empty,
                 ..
             } if single == recurse
                 && matches! { nt.action, Some(ref action) if action == "vec" } =>
             {
-                SymbolTypeKind::Vec(single, variants)
+                SymbolTypeKind::Vec {
+                    name: single,
+                    choices,
+                    optional: empty,
+                }
             }
-            // A: B | EMPTY;
-            Match {
-                empty: true,
-                single: Some(single),
-                recurse: None,
-                no_match: false,
-                ..
-            } => SymbolTypeKind::Option(single, variants),
-            // A: ...<Whatever>... | EMPTY;
-            Match { empty: true, .. } => {
-                SymbolTypeKind::OptionEnum(format!("{}NE", type_name), variants)
+            Match { empty, .. } => {
+                if choices_noe.len() == 1
+                    && !matches! {choices_noe[0].kind, ChoiceKind::Plain}
+                {
+                    // Promote
+                    match &choices_noe[0].kind {
+                        ChoiceKind::Ref(ref_type) => SymbolTypeKind::Ref {
+                            name: ref_type.to_string(),
+                            choices,
+                            optional: empty,
+                        },
+                        ChoiceKind::Struct(_, _) => SymbolTypeKind::Struct {
+                            name: type_name.clone(),
+                            choices,
+                            optional: empty,
+                        },
+                        ChoiceKind::Plain | ChoiceKind::Empty => unreachable!(),
+                    }
+                } else {
+                    SymbolTypeKind::Enum {
+                        name: type_name.clone(),
+                        choices,
+                        optional: empty,
+                    }
+                }
             }
-            _ => SymbolTypeKind::Enum(type_name.clone(), variants),
         }
     }
 }
@@ -232,30 +251,73 @@ pub(crate) struct SymbolType {
 
 #[derive(Debug)]
 pub(crate) enum SymbolTypeKind {
-    Option(String, Vec<Variant>),
-    Vec(String, Vec<Variant>),
-    OptionEnum(String, Vec<Variant>),
-    Enum(String, Vec<Variant>),
+    /// Just a single choice with plain ref. as in "B: A;"
+    /// This will be type alias.
+    /// Can be optional: B: A | EMPTY;
+    Ref {
+        name: String,
+        choices: Vec<Choice>,
+        optional: bool,
+    },
+
+    /// Zero or more, one or more patterns
+    Vec {
+        name: String,
+        choices: Vec<Choice>,
+        optional: bool,
+    },
+
+    /// Just a single choice as in "B: A C;"
+    /// choices must be a single element of Struct kind and
+    /// optionally element of Empty kind.
+    /// Can be optional as in "B: A C | EMPTY;"
+    Struct {
+        name: String,
+        choices: Vec<Choice>,
+        optional: bool,
+    },
+
+    /// All other non-empty rules. Can be optional if
+    /// <Whatever>... | EMPTY
+    Enum {
+        name: String,
+        choices: Vec<Choice>,
+        optional: bool,
+    },
+
     Terminal,
 }
 
 #[derive(Debug)]
-pub(crate) struct Variant {
+pub(crate) struct Choice {
     pub name: String,
-    pub kind: VariantKind,
+    pub kind: ChoiceKind,
 }
 
 #[derive(Debug)]
-pub(crate) enum VariantKind {
+pub(crate) enum ChoiceKind {
+    /// EMPTY
     Empty,
+
+    /// Just non-content refs. e.g. string match terminals.
     Plain,
-    Struct(String, Vec<Field>),
+
+    /// Just a single content ref. E.g. B: A;
+    /// but not B: a=A; <- This will be struct.
     Ref(String),
+
+    /// Multiple content refs or named assignments.
+    Struct(String, Vec<Field>),
 }
 
 #[derive(Debug)]
 pub(crate) struct Field {
     pub name: String,
+
+    /// Referenced type name.
     pub ty: String,
+
+    /// Used to break recursive type references. Currently only direct recursion
+    /// is detected but in the future versions indirect will be detected too.
     pub recursive: bool,
 }

@@ -4,8 +4,8 @@ use syn::{parse::Parser, parse_quote};
 
 use crate::grammar::{
     types::{
-        to_snake_case, SymbolType, SymbolTypeKind, SymbolTypes, Variant,
-        VariantKind,
+        to_snake_case, Choice, ChoiceKind, SymbolType, SymbolTypeKind,
+        SymbolTypes,
     },
     Grammar, NonTerminal,
 };
@@ -26,37 +26,35 @@ impl ProductionActionsGenerator {
     fn get_action_args(
         &self,
         ty: &SymbolType,
-        variant: &Variant,
+        choice: &Choice,
     ) -> Vec<syn::FnArg> {
         let mut fn_args: Vec<syn::FnArg> = vec![];
 
-        match &variant.kind {
-            VariantKind::Plain => (), // No args for plain enum
-            VariantKind::Struct(_, fields) => {
+        match &choice.kind {
+            ChoiceKind::Plain => (), // No args for plain enum
+            ChoiceKind::Struct(_, fields) => {
                 for field in fields {
                     let f_name = Ident::new(&field.name, Span::call_site());
                     let f_type = Ident::new(&field.ty, Span::call_site());
 
                     // If this type is Vec and ref type is recursion make it
                     // mutable to support *, +...
-                    if matches! { ty.kind, SymbolTypeKind::Vec(_, _) } {
-                        if ty.name == field.ty {
-                            fn_args.push(parse_quote! { mut #f_name: #f_type });
-                        } else {
-                            fn_args.push(parse_quote! { #f_name: #f_type });
-                        }
+                    if matches! { ty.kind, SymbolTypeKind::Vec{ .. } }
+                        && ty.name == field.ty
+                    {
+                        fn_args.push(parse_quote! { mut #f_name: #f_type });
                     } else {
                         fn_args.push(parse_quote! { #f_name: #f_type });
                     }
                 }
             }
-            VariantKind::Ref(ref_type) => {
+            ChoiceKind::Ref(ref_type) => {
                 let ty = Ident::new(&ref_type, Span::call_site());
                 let name =
                     Ident::new(&to_snake_case(ref_type), Span::call_site());
                 fn_args.push(parse_quote! { #name: #ty });
             }
-            VariantKind::Empty => (),
+            ChoiceKind::Empty => (),
         };
         fn_args
     }
@@ -65,18 +63,16 @@ impl ProductionActionsGenerator {
         &self,
         ty: &SymbolType,
         target_type: &str,
-        variant: &Variant,
-        variants_len: usize,
-        optional: bool,
+        choice: &Choice,
     ) -> syn::Expr {
         let target_type = Ident::new(target_type, Span::call_site());
-        let variant_ident = Ident::new(&variant.name, Span::call_site());
-        let expr: syn::Expr = match &variant.kind {
-            VariantKind::Plain => {
-                parse_quote! { #target_type::#variant_ident }
+        let choice_ident = Ident::new(&choice.name, Span::call_site());
+        let expr: syn::Expr = match &choice.kind {
+            ChoiceKind::Plain => {
+                parse_quote! { #target_type::#choice_ident }
             }
-            VariantKind::Struct(name, fields) => {
-                let struct_ty = Ident::new(&name, Span::call_site());
+            ChoiceKind::Struct(type_name, fields) => {
+                let struct_ty = Ident::new(&type_name, Span::call_site());
                 let fields: Vec<syn::FieldValue> = fields
                     .iter()
                     .map(|f| {
@@ -89,43 +85,48 @@ impl ProductionActionsGenerator {
                     })
                     .collect();
 
-                if variants_len == 1 {
-                    // Promote to struct
+                if matches!(ty.kind, SymbolTypeKind::Enum {..}) {
                     parse_quote! {
-                        #struct_ty {
-                            #(#fields),*
-                        }
-                    }
-                } else {
-                    parse_quote! {
-                        #target_type::#variant_ident(
+                        #target_type::#choice_ident(
                             #struct_ty {
                                 #(#fields),*
                             }
                         )
                     }
+                } else {
+                    parse_quote! {
+                        #struct_ty {
+                            #(#fields),*
+                        }
+                    }
                 }
             }
-            VariantKind::Ref(ref_type) => {
+            ChoiceKind::Ref(ref_type) => {
                 let ref_type_var =
                     Ident::new(&to_snake_case(ref_type), Span::call_site());
-                if matches! { &ty.kind,
-                SymbolTypeKind::OptionEnum(_, _)
-                | SymbolTypeKind::Enum(_, _) }
-                {
-                    parse_quote! {
-                        #target_type::#variant_ident(#ref_type_var)
-                    }
-                } else {
+                if matches!(&ty.kind, SymbolTypeKind::Ref{..}) {
                     parse_quote! {
                         #ref_type_var
                     }
+                } else {
+                    parse_quote! {
+                        #target_type::#choice_ident(#ref_type_var)
+                    }
                 }
             }
-            VariantKind::Empty => parse_quote! { None },
+            ChoiceKind::Empty => parse_quote! { None }
         };
 
-        if optional && !matches! { variant.kind, VariantKind::Empty } {
+        let optional = match ty.kind {
+            SymbolTypeKind::Ref { optional: o, .. }
+            | SymbolTypeKind::Vec { optional: o , .. }
+            | SymbolTypeKind::Struct { optional: o , .. }
+            | SymbolTypeKind::Enum { optional: o , .. } => {
+                o
+            },
+            SymbolTypeKind::Terminal => unreachable!(),
+        };
+        if optional && !matches!(choice.kind, ChoiceKind::Empty){
             parse_quote! { Some(#expr) }
         } else {
             expr
@@ -136,13 +137,13 @@ impl ProductionActionsGenerator {
 impl ActionsGenerator for ProductionActionsGenerator {
     fn nonterminal_types(&self, nonterminal: &NonTerminal) -> Vec<syn::Item> {
         let ty = self.types.get_type(&nonterminal.name);
-        let type_ident = Ident::new(&nonterminal.name, Span::call_site());
+        let type_ident = Ident::new(&ty.name, Span::call_site());
 
-        fn get_variant_types(variants: &Vec<Variant>) -> Vec<syn::Item> {
+        fn get_choice_types(choices: &Vec<Choice>) -> Vec<syn::Item> {
             // Derived struct types
-            variants.iter().filter_map(|v| {
+            choices.iter().filter_map(|v| {
                 match &v.kind {
-                    VariantKind::Struct(type_name, fields) => {
+                    ChoiceKind::Struct(type_name, fields) => {
                         let type_ident = Ident::new(&type_name, Span::call_site());
                         let fields: Vec<syn::Field> = fields.iter().map(|f| {
                             let field_name = Ident::new(&f.name, Span::call_site());
@@ -169,70 +170,80 @@ impl ActionsGenerator for ProductionActionsGenerator {
             }).collect()
         }
 
-        fn get_variants(variants: &Vec<Variant>) -> Vec<syn::Variant> {
-            variants
+        fn get_variants(choices: &Vec<Choice>) -> Vec<syn::Variant> {
+            choices
                 .iter()
                 .filter_map(|v| {
                     let variant_ident = Ident::new(&v.name, Span::call_site());
                     match &v.kind {
-                        VariantKind::Plain => {
+                        ChoiceKind::Plain => {
                             Some(parse_quote! { #variant_ident })
                         }
-                        VariantKind::Struct(type_name, _) => {
+                        ChoiceKind::Struct(type_name, _) => {
                             let type_ident =
                                 Ident::new(&type_name, Span::call_site());
                             Some(parse_quote! { #variant_ident(#type_ident) })
                         }
-                        VariantKind::Ref(ref_type) => {
+                        ChoiceKind::Ref(ref_type) => {
                             let ref_type =
                                 Ident::new(&ref_type, Span::call_site());
                             Some(parse_quote! { #variant_ident(#ref_type) })
                         }
-                        VariantKind::Empty => None,
+                        ChoiceKind::Empty => None,
                     }
                 })
                 .collect()
         }
 
         match &ty.kind {
-            SymbolTypeKind::Enum(ref_type, variants) => {
-                let mut types = get_variant_types(variants);
-                let variants = get_variants(variants);
+            SymbolTypeKind::Enum{ name: ref_type, choices, optional } => {
+                let mut types = get_choice_types(choices);
+                let variants = get_variants(choices);
                 let ref_type = Ident::new(&ref_type, Span::call_site());
 
-                types.push(parse_quote! {
-                    #[derive(Debug, Clone)]
-                    pub enum #ref_type {
-                        #(#variants),*
-                    }
-                });
+                if *optional {
+                    types.push(
+                        parse_quote! {pub type #type_ident = Option<#ref_type>;},
+                    );
+                    types.push(parse_quote! {
+                        #[derive(Debug, Clone)]
+                        pub enum #ref_type {
+                            #(#variants),*
+                        }
+                    });
+                } else {
+                    types.push(parse_quote! {
+                        #[derive(Debug, Clone)]
+                        pub enum #type_ident {
+                            #(#variants),*
+                        }
+                    });
+                }
                 types
             }
-            SymbolTypeKind::Terminal => unreachable!(),
-            SymbolTypeKind::Option(ref_type, _) => {
+            SymbolTypeKind::Struct { name: ref_type, choices, optional } => {
+                let mut types = get_choice_types(choices);
                 let ref_type = Ident::new(&ref_type, Span::call_site());
-                vec![parse_quote! { pub type #type_ident = Option<#ref_type>; }]
+                if *optional {
+                    types.push(
+                        parse_quote! {pub type #type_ident = Option<#ref_type>;},
+                    );
+                }
+                types
+            },
+            SymbolTypeKind::Ref{ name: ref_type, optional, .. } => {
+                let ref_type = Ident::new(&ref_type, Span::call_site());
+                if *optional {
+                    vec![parse_quote! { pub type #type_ident = Option<#ref_type>; }]
+                } else {
+                    vec![parse_quote! { pub type #type_ident = #ref_type; }]
+                }
             }
-            SymbolTypeKind::Vec(ref_type, _) => {
+            SymbolTypeKind::Vec{ name: ref_type, .. } => {
                 let ref_type = Ident::new(&ref_type, Span::call_site());
                 vec![parse_quote! { pub type #type_ident = Vec<#ref_type>; }]
             }
-            SymbolTypeKind::OptionEnum(enum_type_name, variants) => {
-                let mut types = get_variant_types(variants);
-                let variants = get_variants(variants);
-                let enum_type = Ident::new(&enum_type_name, Span::call_site());
-
-                types.push(
-                    parse_quote! {pub type #type_ident = Option<#enum_type>;},
-                );
-                types.push(parse_quote! {
-                    #[derive(Debug, Clone)]
-                    pub enum #enum_type {
-                        #(#variants),*
-                    }
-                });
-                types
-            }
+            SymbolTypeKind::Terminal => unreachable!(),
         }
     }
 
@@ -244,9 +255,9 @@ impl ActionsGenerator for ProductionActionsGenerator {
         let ret_type = Ident::new(&nonterminal.name, Span::call_site());
 
         match &ty.kind {
-            SymbolTypeKind::Enum(target_type, variants)
-            | SymbolTypeKind::Option(target_type, variants)
-            | SymbolTypeKind::OptionEnum(target_type, variants) => variants
+            SymbolTypeKind::Enum{ name: target_type, choices, .. }
+            | SymbolTypeKind::Struct{ name: target_type, choices, ..}
+            | SymbolTypeKind::Ref{ name: target_type, choices, ..} => choices
                 .iter()
                 .map(|v| {
                     let action_name =
@@ -256,12 +267,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
                     let body = self.get_action_body(
                         ty,
                         target_type,
-                        v,
-                        variants.len(),
-                        matches! {ty.kind,
-                        SymbolTypeKind::Option(..) |
-                        SymbolTypeKind::OptionEnum(..)},
-                    );
+                        v);
 
                     (
                         action_name,
@@ -273,7 +279,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
                     )
                 })
                 .collect(),
-            SymbolTypeKind::Vec(_, variants) => variants
+            SymbolTypeKind::Vec{choices, ..} => choices
                 .iter()
                 .map(|v| {
                     let action_name =
@@ -284,10 +290,8 @@ impl ActionsGenerator for ProductionActionsGenerator {
                     let mut body: Vec<syn::Expr> = vec![];
 
                     match &v.kind {
-                        VariantKind::Empty => {
-                            body.push(parse_quote! { vec![] })
-                        }
-                        VariantKind::Struct(_, fields) => {
+                        ChoiceKind::Empty => body.push(parse_quote! { vec![] }),
+                        ChoiceKind::Struct(_, fields) => {
                             match &fields[..] {
                                 [a, b] => {
                                     let a_i =
@@ -317,14 +321,14 @@ impl ActionsGenerator for ProductionActionsGenerator {
                                 _ => unreachable!(),
                             }
                         }
-                        VariantKind::Ref(ref_type) => {
+                        ChoiceKind::Ref(ref_type) => {
                             let i = Ident::new(
                                 &to_snake_case(ref_type),
                                 Span::call_site(),
                             );
                             body.push(parse_quote! { vec![#i] });
                         }
-                        VariantKind::Plain => unreachable!(),
+                        ChoiceKind::Plain => unreachable!(),
                     };
 
                     (

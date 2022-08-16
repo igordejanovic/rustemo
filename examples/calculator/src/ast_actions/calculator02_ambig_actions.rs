@@ -6,72 +6,72 @@ pub fn num<'a>(token: Token<&'a str>) -> Num {
     token.value.into()
 }
 #[derive(Debug, Clone)]
-pub struct EV1 {
+pub struct EC1 {
     pub e_1: Box<E>,
     pub e_3: Box<E>,
 }
 #[derive(Debug, Clone)]
-pub struct EV2 {
+pub struct EC2 {
     pub e_1: Box<E>,
     pub e_3: Box<E>,
 }
 #[derive(Debug, Clone)]
-pub struct EV3 {
+pub struct EC3 {
     pub e_1: Box<E>,
     pub e_3: Box<E>,
 }
 #[derive(Debug, Clone)]
-pub struct EV4 {
+pub struct EC4 {
     pub e_1: Box<E>,
     pub e_3: Box<E>,
 }
 #[derive(Debug, Clone)]
-pub struct EV5 {
+pub struct EC5 {
     pub e_1: Box<E>,
     pub e_3: Box<E>,
 }
 #[derive(Debug, Clone)]
 pub enum E {
-    V1(EV1),
-    V2(EV2),
-    V3(EV3),
-    V4(EV4),
-    V5(EV5),
-    V6(Box<E>),
+    C1(EC1),
+    C2(EC2),
+    C3(EC3),
+    C4(EC4),
+    C5(EC5),
+    C6(Box<E>),
     Num(Num),
 }
-pub fn e_v1(e_1: E, e_3: E) -> E {
-    E::V1(EV1 {
+pub fn e_c1(e_1: E, e_3: E) -> E {
+    E::C1(EC1 {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
-pub fn e_v2(e_1: E, e_3: E) -> E {
-    E::V2(EV2 {
+pub fn e_c2(e_1: E, e_3: E) -> E {
+    E::C2(EC2 {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
-pub fn e_v3(e_1: E, e_3: E) -> E {
-    E::V3(EV3 {
+pub fn e_c3(e_1: E, e_3: E) -> E {
+    E::C3(EC3 {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
-pub fn e_v4(e_1: E, e_3: E) -> E {
-    E::V4(EV4 {
+pub fn e_c4(e_1: E, e_3: E) -> E {
+    E::C4(EC4 {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
-pub fn e_v5(e_1: E, e_3: E) -> E {
-    E::V5(EV5 {
+pub fn e_c5(e_1: E, e_3: E) -> E {
+    E::C5(EC5 {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
-pub fn e_v6(e: E) -> E {
-    E::V6(Box::new(e))
+pub fn e_c6(e: E) -> E {
+    E::C6(Box::new(e))
 }
 pub fn e_num(num: Num) -> E {
     E::Num(num)

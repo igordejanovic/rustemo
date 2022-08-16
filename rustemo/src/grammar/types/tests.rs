@@ -10,13 +10,26 @@ fn test_symbol_type_deduction() {
             D: a=A b=B  | mya=A B D | EMPTY;
             F: a=A F | D;
 
-            Optional1: A | EMPTY;
-            Optional2: EMPTY | A;
+            OptionalRef1: A | EMPTY;
+            OptionalRef2: EMPTY | A;
+            OptionalRef3: EMPTY | A 'c';
 
-            Alias: A;
+            Ref1: A;
+            Ref2: A 'b';
 
-            MultiNonContent1: 'a' | 'b' | 'c';
-            MultiNonContent2: 'a' | 'b' | 'c' | EMPTY;
+            OptionalStruct1: A B | EMPTY;
+            OptionalStruct2: EMPTY | mya=A B;
+            Struct: A B;
+
+
+            OptionalEnum1: A B | C | EMPTY;
+            OptionalEnum2: A B | EMPTY | myc=C;
+            Enum1: A B | myc=C;
+            Enum2: A B | myc=C | 'a' 'b';
+
+
+            MultiNonContent: 'a' | 'b' | 'c';
+            MultiNonContentOptional: 'a' | 'b' | 'c' | EMPTY;
 
             @vec
             ZeroOrMore1: ZeroOrMore1 B | myb=B | EMPTY;
@@ -29,8 +42,23 @@ fn test_symbol_type_deduction() {
             OneOrMore2: B OneOrMore2 | B;
             OneOrMore3: B | B OneOrMore3 ;
 
+            ZeroOrMoreSuggar1: Tc*;
+            ZeroOrMoreSuggar2: A*;
+            ZeroOrMoreSuggar3: A* | B C;
+            ZeroOrMoreSuggar4: A* B | B C;
+
+            OneOrMoreSuggar1: Tc+;
+            OneOrMoreSuggar2: A+;
+            OneOrMoreSuggar3: A+ | B C;
+            OneOrMoreSuggar4: A+ B | B C;
+
+            OptionalSuggar1: Tc?;
+            OptionalSuggar2: A?;
+            OptionalSuggar3: A? | B C;
+            OptionalSuggar4: A? B | B C;
+
             terminals
-            Num: "42";
+            Num: /\d+/;
             Ta: 'a';
             Tb: 'b';
             Tc: 'c';

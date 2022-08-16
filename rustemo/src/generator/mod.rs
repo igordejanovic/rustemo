@@ -14,7 +14,7 @@ use syn::parse_quote;
 use crate::{
     error::{Error, Result},
     grammar::{
-        types::{to_pascal_case, to_snake_case, variant_name},
+        types::{to_pascal_case, to_snake_case, choice_name},
         Grammar, NonTerminal, Production,
     },
     lang::rustemo_actions::Recognizer,
@@ -27,7 +27,7 @@ use self::actions::generate_parser_actions;
 fn action_name(nonterminal: &NonTerminal, prod: &Production) -> syn::Ident {
     format_ident!(
         "{}",
-        to_snake_case(format!("{}_{}", nonterminal.name, variant_name(prod)))
+        to_snake_case(format!("{}_{}", nonterminal.name, choice_name(prod)))
     )
 }
 

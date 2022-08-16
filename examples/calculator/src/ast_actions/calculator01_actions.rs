@@ -6,45 +6,45 @@ pub fn num<'a>(token: Token<&'a str>) -> Num {
     token.value.into()
 }
 #[derive(Debug, Clone)]
-pub struct EV1 {
+pub struct EC1 {
     pub e: Box<E>,
     pub t: T,
 }
 #[derive(Debug, Clone)]
 pub enum E {
-    V1(EV1),
-    V2(T),
+    C1(EC1),
+    C2(T),
 }
-pub fn e_v1(e: E, t: T) -> E {
-    E::V1(EV1 { e: Box::new(e), t })
+pub fn e_c1(e: E, t: T) -> E {
+    E::C1(EC1 { e: Box::new(e), t })
 }
-pub fn e_v2(t: T) -> E {
-    E::V2(t)
+pub fn e_c2(t: T) -> E {
+    E::C2(t)
 }
 #[derive(Debug, Clone)]
-pub struct TV1 {
+pub struct TC1 {
     pub t: Box<T>,
     pub f: F,
 }
 #[derive(Debug, Clone)]
 pub enum T {
-    V1(TV1),
-    V2(F),
+    C1(TC1),
+    C2(F),
 }
-pub fn t_v1(t: T, f: F) -> T {
-    T::V1(TV1 { t: Box::new(t), f })
+pub fn t_c1(t: T, f: F) -> T {
+    T::C1(TC1 { t: Box::new(t), f })
 }
-pub fn t_v2(f: F) -> T {
-    T::V2(f)
+pub fn t_c2(f: F) -> T {
+    T::C2(f)
 }
 #[derive(Debug, Clone)]
 pub enum F {
-    V1(Box<E>),
-    V2(Num),
+    C1(Box<E>),
+    C2(Num),
 }
-pub fn f_v1(e: E) -> F {
-    F::V1(Box::new(e))
+pub fn f_c1(e: E) -> F {
+    F::C1(Box::new(e))
 }
-pub fn f_v2(num: Num) -> F {
-    F::V2(num)
+pub fn f_c2(num: Num) -> F {
+    F::C2(num)
 }
