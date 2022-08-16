@@ -1,5 +1,7 @@
 mod calculator01_ast_tests {
 
+    use rustemo::output_cmp;
+
     use crate::{
         ast_actions::{
             calculator01::Calculator01Parser,
@@ -7,7 +9,6 @@ mod calculator01_ast_tests {
             calculator03_ambig_prodkind::Calculator03AmbigProdkindParser,
             calculator04_ambig_lhs::Calculator04AmbigLhsParser,
         },
-        output_cmp,
     };
 
     #[test]
