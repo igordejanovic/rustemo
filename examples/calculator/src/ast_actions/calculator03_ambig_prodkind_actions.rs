@@ -6,66 +6,66 @@ pub fn num<'a>(token: Token<&'a str>) -> Num {
     token.value.into()
 }
 #[derive(Debug, Clone)]
-pub struct EAdd {
+pub struct Add {
     pub e_1: Box<E>,
     pub e_3: Box<E>,
 }
 #[derive(Debug, Clone)]
-pub struct ESub {
+pub struct Sub {
     pub e_1: Box<E>,
     pub e_3: Box<E>,
 }
 #[derive(Debug, Clone)]
-pub struct EMul {
+pub struct Mul {
     pub e_1: Box<E>,
     pub e_3: Box<E>,
 }
 #[derive(Debug, Clone)]
-pub struct EDiv {
+pub struct Div {
     pub e_1: Box<E>,
     pub e_3: Box<E>,
 }
 #[derive(Debug, Clone)]
-pub struct EPow {
+pub struct Pow {
     pub e_1: Box<E>,
     pub e_3: Box<E>,
 }
 #[derive(Debug, Clone)]
 pub enum E {
-    Add(EAdd),
-    Sub(ESub),
-    Mul(EMul),
-    Div(EDiv),
-    Pow(EPow),
+    Add(Add),
+    Sub(Sub),
+    Mul(Mul),
+    Div(Div),
+    Pow(Pow),
     Paren(Box<E>),
     Num(Num),
 }
 pub fn e_add(e_1: E, e_3: E) -> E {
-    E::Add(EAdd {
+    E::Add(Add {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
 pub fn e_sub(e_1: E, e_3: E) -> E {
-    E::Sub(ESub {
+    E::Sub(Sub {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
 pub fn e_mul(e_1: E, e_3: E) -> E {
-    E::Mul(EMul {
+    E::Mul(Mul {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
 pub fn e_div(e_1: E, e_3: E) -> E {
-    E::Div(EDiv {
+    E::Div(Div {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
 pub fn e_pow(e_1: E, e_3: E) -> E {
-    E::Pow(EPow {
+    E::Pow(Pow {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })

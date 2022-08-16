@@ -1,13 +1,13 @@
 Ok(
     Add(
-        EAdd {
+        Add {
             e_1: Add(
-                EAdd {
+                Add {
                     e_1: Num(
                         "2",
                     ),
                     e_3: Mul(
-                        EMul {
+                        Mul {
                             e_1: Num(
                                 "3",
                             ),
@@ -19,7 +19,7 @@ Ok(
                 },
             ),
             e_3: Mul(
-                EMul {
+                Mul {
                     e_1: Num(
                         "6",
                     ),
