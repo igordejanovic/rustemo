@@ -11,7 +11,7 @@ use std::{
 use proc_macro2::{Ident, Span};
 use syn::{self, parse_quote};
 
-use crate::{grammar::{Grammar, NonTerminal, types::to_snake_case}, settings::Settings};
+use crate::{grammar::{Grammar, NonTerminal, types::to_snake_case}, api::settings::Settings};
 use crate::{
     error::Result,
     grammar::Terminal,

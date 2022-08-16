@@ -23,10 +23,24 @@ use rustemo_rt::{
 use crate::{
     grammar::{Associativity, Priority, Terminal, DEFAULT_PRIORITY},
     lang::rustemo_actions::Recognizer,
-    settings::{LRTableType, Settings},
+    api::settings::Settings,
 };
 
 use super::grammar::{res_symbol, Grammar};
+
+#[allow(non_camel_case_types)]
+#[derive(Debug, PartialEq)]
+pub enum TableType {
+    LALR, // http://publications.csail.mit.edu/lcs/pubs/pdf/MIT-LCS-TR-065.pdf
+    LALR_PAGERW, // https://doi.org/10.1007/BF00290336
+    LALR_RN, // https://doi.org/10.1145/1146809.1146810
+}
+
+impl Default for TableType {
+    fn default() -> Self {
+        TableType::LALR_PAGERW
+    }
+}
 
 type Firsts = BTreeSet<SymbolIndex>;
 type FirstSets = SymbolVec<Firsts>;
@@ -375,7 +389,7 @@ fn merge_state(
     )
     .collect();
 
-    if settings.lr_table_type != LRTableType::LALR {
+    if settings.table_type != TableType::LALR {
         // If this is not pure LALR check to see if merging would introduce R/R.
         // In case it would, do not merge but keep these states split.
         for (old, new) in &item_pairs {
@@ -968,11 +982,11 @@ mod tests {
     use std::cell::RefCell;
     use std::collections::BTreeSet;
 
-    use crate::table::{first_sets, ItemIndex};
+    use crate::table::{first_sets, ItemIndex, TableType};
     use crate::{
         grammar::Grammar,
         output_cmp,
-        settings::Settings,
+        api::settings::Settings,
         table::{Follow, LRItem},
     };
     use rustemo_rt::{
@@ -1372,7 +1386,7 @@ mod tests {
         let grammar = test_grammar_2();
 
         let settings = Settings {
-            lr_table_type: crate::settings::LRTableType::LALR,
+            table_type: TableType::LALR,
             ..Settings::default()
         };
 
@@ -1393,7 +1407,7 @@ mod tests {
         // recognized in the input. There are two R/R conflicts, for inputs 'a'
         // and 'c'. In both case parser may reduce both A and B.
         let settings = Settings {
-            lr_table_type: crate::settings::LRTableType::LALR,
+            table_type: TableType::LALR,
             ..Settings::default()
         };
 
@@ -1413,7 +1427,7 @@ mod tests {
         // In this case we have 13 states while in previous LALR case there was
         // 12 states.
         let settings = Settings {
-            lr_table_type: crate::settings::LRTableType::LALR_PAGERW,
+            table_type: TableType::LALR_PAGERW,
             ..Settings::default()
         };
 
@@ -1439,7 +1453,7 @@ mod tests {
         .unwrap();
 
         let settings = Settings {
-            lr_table_type: crate::settings::LRTableType::LALR_PAGERW,
+            table_type: TableType::LALR_PAGERW,
             ..Settings::default()
         };
 

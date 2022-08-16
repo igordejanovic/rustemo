@@ -6,7 +6,6 @@ use rustemo_rt::{
     lr::parser::Action,
 };
 use std::{
-    fmt::Debug,
     iter::repeat,
     path::{Path, PathBuf},
 };
@@ -19,7 +18,7 @@ use crate::{
         Grammar, NonTerminal, Production,
     },
     lang::rustemo_actions::Recognizer,
-    settings::Settings,
+    api::settings::Settings,
     table::{lr_states_for_grammar, LRState},
 };
 
@@ -44,37 +43,33 @@ fn prod_kind(grammar: &Grammar, prod: &Production) -> syn::Ident {
     )
 }
 
-pub fn generate_parser<P>(
-    grammar_path: P,
-    out_dir: Option<P>,
-    out_dir_actions: Option<P>,
+pub fn generate_parser(
+    grammar_path: &Path,
+    out_dir: Option<&Path>,
+    out_dir_actions: Option<&Path>,
     settings: &Settings,
 ) -> Result<()>
-where
-    P: AsRef<Path> + Debug,
 {
     let file_name = grammar_path
-        .as_ref()
         .file_name()
         .ok_or(Error::Error("Invalid grammar file name.".to_string()))?;
 
     let grammar_dir = PathBuf::from(
         grammar_path
-            .as_ref()
             .parent()
             .expect("Cannot deduce parent directory of the grammar file."),
     );
 
     let out_dir = match out_dir {
-        Some(dir) => PathBuf::from(dir.as_ref()),
-        None => grammar_dir.clone(),
+        Some(dir) => dir,
+        None => &grammar_dir,
     };
     let out_dir_actions = match out_dir_actions {
-        Some(dir) => PathBuf::from(dir.as_ref()),
-        None => grammar_dir.clone(),
+        Some(dir) => dir,
+        None => &grammar_dir,
     };
 
-    let grammar_input = std::fs::read_to_string(grammar_path.as_ref())?;
+    let grammar_input = std::fs::read_to_string(grammar_path)?;
     let grammar = Grammar::from_string(grammar_input)?;
 
     let states = lr_states_for_grammar(&grammar, &Settings::default());
@@ -82,7 +77,6 @@ where
     // Generate parser definition
     let out_file = out_dir.join(file_name).with_extension("rs");
     let file_name = grammar_path
-        .as_ref()
         .file_stem()
         .ok_or(Error::Error(format!(
             "Cannot deduce base file name from {:?}",

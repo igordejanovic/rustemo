@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use clap::Parser;
-use rustemo::{generator::generate_parser, settings::Settings};
+use rustemo::api::with_settings;
 
 #[derive(Parser)]
 #[cfg_attr(feature="bootstrap",
@@ -19,9 +19,9 @@ struct Cli {
     #[clap(short, long, action)]
     noactions: bool,
 
-    /// Rustemo grammar file to parse
-    #[clap(value_parser, value_name="GRAMMAR FILE", value_hint = clap::ValueHint::FilePath)]
-    grammar_file: PathBuf,
+    /// Grammar file or directory to process
+    #[clap(value_parser, value_name="GRAMMAR FILE/DIR", value_hint = clap::ValueHint::AnyPath)]
+    grammar_file_or_dir: PathBuf,
 
     /// Output directory for the parser. Default is the same as input grammar file.
     #[clap(short, long, value_name="OUT DIR", value_hint = clap::ValueHint::DirPath)]
@@ -35,14 +35,20 @@ struct Cli {
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cli = Cli::parse();
 
-    let settings = Settings::default()
-        .with_force(cli.force)
-        .with_actions(!cli.noactions);
+    let settings = with_settings()
+        .force(cli.force)
+        .actions(!cli.noactions);
 
-    match generate_parser(cli.grammar_file, cli.outdir, cli.outdir_actions, &settings) {
-        Ok(_) => println!("Parser generated successfully"),
-        Err(e) => return Err(format!("Parser not generated. {e}").into()),
+    let result = if cli.grammar_file_or_dir.is_file() {
+        settings.process_grammar(&cli.grammar_file_or_dir)
+    } else {
+        settings.process_dir(&cli.grammar_file_or_dir)
+    };
+
+    if let Err(e) = result {
+        Err(format!("Parser not generated. {e}").into())
+    } else {
+        println!("Parser generated successfully");
+        Ok(())
     }
-
-    Ok(())
 }

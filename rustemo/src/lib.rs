@@ -1,19 +1,17 @@
 #[macro_use]
 extern crate rustemo_rt;
 
-pub mod build;
+pub mod api;
 pub mod error;
 pub mod generator;
 pub mod grammar;
-pub mod settings;
 
 mod lang;
 mod table;
 
 pub mod utils;
 
-pub use crate::build::generate_parsers;
-pub use crate::generator::generate_parser;
+pub use crate::api::{process_dir, process_grammar, with_settings};
 
 pub use crate::error::Error;
 pub use crate::error::Result;

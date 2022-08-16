@@ -1,7 +1,8 @@
+use rustemo_rt::rustemo_parser;
+
 use self::zero_or_more::ZeroOrMoreParser;
 
-#[allow(unused_imports)]
-mod zero_or_more;
+rustemo_parser!(zero_or_more, "/src/suggar");
 #[allow(unused_imports)]
 mod zero_or_more_actions;
 
