@@ -229,7 +229,11 @@ impl SymbolTypes {
                             optional: empty,
                         },
                         ChoiceKind::Struct(_, _) => SymbolTypeKind::Struct {
-                            name: type_name.clone(),
+                            name: if empty {
+                                format!("{}NO", type_name)
+                            } else {
+                                type_name.clone()
+                            },
                             choices,
                             optional: empty,
                         },
@@ -237,7 +241,11 @@ impl SymbolTypes {
                     }
                 } else {
                     SymbolTypeKind::Enum {
-                        name: type_name.clone(),
+                        name: if empty {
+                                format!("{}NO", type_name)
+                            } else {
+                                type_name.clone()
+                            },
                         choices,
                         optional: empty,
                     }
