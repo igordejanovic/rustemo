@@ -35,12 +35,12 @@ impl ProductionActionsGenerator {
             ChoiceKind::Struct(_, fields) => {
                 for field in fields {
                     let f_name = Ident::new(&field.name, Span::call_site());
-                    let f_type = Ident::new(&field.ty, Span::call_site());
+                    let f_type = Ident::new(&field.ref_type, Span::call_site());
 
                     // If this type is Vec and ref type is recursion make it
                     // mutable to support *, +...
                     if matches! { ty.kind, SymbolTypeKind::Vec{ .. } }
-                        && ty.name == field.ty
+                        && ty.name == field.ref_type
                     {
                         fn_args.push(parse_quote! { mut #f_name: #f_type });
                     } else {
@@ -48,7 +48,7 @@ impl ProductionActionsGenerator {
                     }
                 }
             }
-            ChoiceKind::Ref(ref_type) => {
+            ChoiceKind::Ref{ ref_type, .. } => {
                 let ty = Ident::new(&ref_type, Span::call_site());
                 let name =
                     Ident::new(&to_snake_case(ref_type), Span::call_site());
@@ -101,9 +101,12 @@ impl ProductionActionsGenerator {
                     }
                 }
             }
-            ChoiceKind::Ref(ref_type) => {
-                let ref_type_var =
+            ChoiceKind::Ref{ ref_type, recursive } => {
+                let mut ref_type_var =
                     Ident::new(&to_snake_case(ref_type), Span::call_site());
+                 if *recursive {
+                    ref_type_var = parse_quote!{ Box::new(#ref_type_var) }
+                }
                 if matches!(&ty.kind, SymbolTypeKind::Ref { .. }) {
                     parse_quote! {
                         #ref_type_var
@@ -117,14 +120,7 @@ impl ProductionActionsGenerator {
             ChoiceKind::Empty => parse_quote! { None },
         };
 
-        let optional = match ty.kind {
-            SymbolTypeKind::Ref { optional: o, .. }
-            | SymbolTypeKind::Vec { optional: o, .. }
-            | SymbolTypeKind::Struct { optional: o, .. }
-            | SymbolTypeKind::Enum { optional: o, .. } => o,
-            SymbolTypeKind::Terminal => unreachable!(),
-        };
-        if optional && !matches!(choice.kind, ChoiceKind::Empty) {
+        if ty.optional && !matches!(choice.kind, ChoiceKind::Empty) {
             parse_quote! { Some(#expr) }
         } else {
             expr
@@ -155,7 +151,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
                             let field_name =
                                 Ident::new(&f.name, Span::call_site());
                             let field_type =
-                                Ident::new(&f.ty, Span::call_site());
+                                Ident::new(&f.ref_type, Span::call_site());
                             syn::Field::parse_named
                                 .parse2(if f.recursive {
                                     // Handle direct recursion
@@ -201,9 +197,12 @@ impl ActionsGenerator for ProductionActionsGenerator {
                                 Ident::new(&type_name, Span::call_site());
                             Some(parse_quote! { #variant_ident(#type_ident) })
                         }
-                        ChoiceKind::Ref(ref_type) => {
-                            let ref_type =
+                        ChoiceKind::Ref{ ref_type, recursive } => {
+                            let mut ref_type =
                                 Ident::new(&ref_type, Span::call_site());
+                            if *recursive {
+                                ref_type = parse_quote!{ Box<#ref_type> };
+                            }
                             Some(parse_quote! { #variant_ident(#ref_type) })
                         }
                         ChoiceKind::Empty => None,
@@ -214,42 +213,31 @@ impl ActionsGenerator for ProductionActionsGenerator {
 
         match &ty.kind {
             SymbolTypeKind::Enum {
-                name: ref_type,
-                choices,
-                optional,
+                type_name: enum_type,
             } => {
-                let mut types = get_choice_types(choices, None);
-                let variants = get_variants(choices);
-                let ref_type = Ident::new(&ref_type, Span::call_site());
+                let mut types = get_choice_types(&ty.choices, None);
+                let variants = get_variants(&ty.choices);
+                let enum_type = Ident::new(&enum_type, Span::call_site());
 
-                if *optional {
+                if ty.optional {
                     types.push(
-                        parse_quote! {pub type #type_ident = Option<#ref_type>;},
+                        parse_quote! {pub type #type_ident = Option<#enum_type>;},
                     );
-                    types.push(parse_quote! {
-                        #[derive(Debug, Clone)]
-                        pub enum #ref_type {
-                            #(#variants),*
-                        }
-                    });
-                } else {
-                    types.push(parse_quote! {
-                        #[derive(Debug, Clone)]
-                        pub enum #type_ident {
-                            #(#variants),*
-                        }
-                    });
                 }
+                types.push(parse_quote! {
+                    #[derive(Debug, Clone)]
+                    pub enum #enum_type {
+                        #(#variants),*
+                    }
+                });
                 types
             }
             SymbolTypeKind::Struct {
-                name: struct_type,
-                choices,
-                optional,
+                type_name: struct_type,
             } => {
-                let mut types = get_choice_types(choices, Some(&struct_type));
+                let mut types = get_choice_types(&ty.choices, Some(&struct_type));
                 let struct_type = Ident::new(&struct_type, Span::call_site());
-                if *optional {
+                if ty.optional {
                     types.push(
                         parse_quote! {pub type #type_ident = Option<#struct_type>;},
                     );
@@ -257,12 +245,14 @@ impl ActionsGenerator for ProductionActionsGenerator {
                 types
             }
             SymbolTypeKind::Ref {
-                name: ref_type,
-                optional,
-                ..
+                ref_type,
+                recursive,
             } => {
-                let ref_type = Ident::new(&ref_type, Span::call_site());
-                if *optional {
+                let mut ref_type = Ident::new(&ref_type, Span::call_site());
+                if *recursive {
+                    ref_type = parse_quote! { Box<#ref_type> }
+                }
+                if ty.optional {
                     vec![
                         parse_quote! { pub type #type_ident = Option<#ref_type>; },
                     ]
@@ -270,9 +260,13 @@ impl ActionsGenerator for ProductionActionsGenerator {
                     vec![parse_quote! { pub type #type_ident = #ref_type; }]
                 }
             }
-            SymbolTypeKind::Vec { name: ref_type, .. } => {
+            SymbolTypeKind::Vec { ref_type, recursive } => {
                 let ref_type = Ident::new(&ref_type, Span::call_site());
-                vec![parse_quote! { pub type #type_ident = Vec<#ref_type>; }]
+                if *recursive {
+                    vec![parse_quote! { pub type #type_ident = Vec<Box<#ref_type>>; }]
+                } else {
+                    vec![parse_quote! { pub type #type_ident = Vec<#ref_type>; }]
+                }
             }
             SymbolTypeKind::Terminal => unreachable!(),
         }
@@ -287,20 +281,15 @@ impl ActionsGenerator for ProductionActionsGenerator {
 
         match &ty.kind {
             SymbolTypeKind::Enum {
-                name: target_type,
-                choices,
-                ..
+                type_name: target_type
             }
             | SymbolTypeKind::Struct {
-                name: target_type,
-                choices,
-                ..
+                type_name: target_type,
             }
             | SymbolTypeKind::Ref {
-                name: target_type,
-                choices,
+                ref_type: target_type,
                 ..
-            } => choices
+            } => ty.choices
                 .iter()
                 .map(|v| {
                     let action_name =
@@ -319,7 +308,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
                     )
                 })
                 .collect(),
-            SymbolTypeKind::Vec { choices, .. } => choices
+            SymbolTypeKind::Vec { .. } => ty.choices
                 .iter()
                 .map(|v| {
                     let action_name =
@@ -334,12 +323,18 @@ impl ActionsGenerator for ProductionActionsGenerator {
                         ChoiceKind::Struct(_, fields) => {
                             match &fields[..] {
                                 [a, b] => {
-                                    let a_i =
+                                    let mut a_i =
                                         Ident::new(&a.name, Span::call_site());
-                                    let b_i =
+                                    if a.recursive {
+                                        a_i = parse_quote! { Box::new(#a_i) }
+                                    }
+                                    let mut b_i =
                                         Ident::new(&b.name, Span::call_site());
+                                    if b.recursive {
+                                        b_i = parse_quote! { Box::new(#b_i) }
+                                    }
                                     // Find which one is a vector
-                                    if a.ty == nonterminal.name {
+                                    if a.ref_type == nonterminal.name {
                                         body.push(
                                             parse_quote! { #a_i.push(#b_i) },
                                         );
@@ -361,11 +356,14 @@ impl ActionsGenerator for ProductionActionsGenerator {
                                 _ => unreachable!(),
                             }
                         }
-                        ChoiceKind::Ref(ref_type) => {
-                            let i = Ident::new(
+                        ChoiceKind::Ref{ ref_type, recursive } => {
+                            let mut i = Ident::new(
                                 &to_snake_case(ref_type),
                                 Span::call_site(),
                             );
+                            if *recursive {
+                                i = parse_quote! { Box::new(#i) }
+                            }
                             body.push(parse_quote! { vec![#i] });
                         }
                         ChoiceKind::Plain => unreachable!(),
