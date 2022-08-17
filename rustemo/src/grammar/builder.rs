@@ -109,6 +109,7 @@ impl GrammarBuilder {
             productions: self.productions,
             empty_index: term_len.into(), // Right after the last terminal
             augmented_index: (term_len + 1).into(), // skip EMPTY
+            start_index: (term_len + 2).into(),
             stop_index: 0.into(),
             term_by_name: self
                 .terminals

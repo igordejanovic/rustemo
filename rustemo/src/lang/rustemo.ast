@@ -3577,5 +3577,6 @@ Ok(
         empty_index: 44,
         stop_index: 0,
         augmented_index: 45,
+        start_index: 46,
     },
 )

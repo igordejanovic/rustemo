@@ -203,4 +203,5 @@ Grammar {
     empty_index: 5,
     stop_index: 0,
     augmented_index: 6,
+    start_index: 7,
 }

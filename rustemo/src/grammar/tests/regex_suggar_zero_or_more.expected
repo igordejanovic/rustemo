@@ -600,4 +600,5 @@ Grammar {
     empty_index: 2,
     stop_index: 0,
     augmented_index: 3,
+    start_index: 4,
 }

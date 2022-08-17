@@ -30,12 +30,14 @@ pub struct Grammar {
     pub nonterminals: NonTermVec<NonTerminal>,
     pub nonterm_by_name: BTreeMap<String, SymbolIndex>,
     pub term_by_name: BTreeMap<String, SymbolIndex>,
-    // Index of EMPTY symbol
+    /// Index of EMPTY symbol
     pub empty_index: SymbolIndex,
-    // Index of STOP symbol
+    /// Index of STOP symbol
     pub stop_index: SymbolIndex,
-    // Index of grammar augmented symbol
+    /// Index of grammar augmented symbol
     pub augmented_index: SymbolIndex,
+    /// A symbol of the start symbol. First non-terminal or terminal of the grammar.
+    pub start_index: SymbolIndex,
 }
 
 macro_rules! grammar_elem {

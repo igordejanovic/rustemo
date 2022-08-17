@@ -1,6 +1,11 @@
 //! Inferring types from rustemo grammars.
 //! This is a base support for auto AST inference.
 
+use std::{
+    cell::RefCell,
+    collections::{HashMap, HashSet},
+};
+
 use convert_case::{Boundary, Case, Casing};
 
 use super::{Grammar, NonTerminal, Production};
@@ -36,7 +41,10 @@ pub(crate) fn choice_name(prod: &Production) -> String {
 impl SymbolTypes {
     pub fn new(grammar: &Grammar) -> Self {
         Self {
-            symbol_types: Self::symbol_types(grammar),
+            symbol_types: Self::symbol_types(
+                grammar,
+                grammar.symbol_name(grammar.start_index),
+            ),
         }
     }
 
@@ -45,7 +53,7 @@ impl SymbolTypes {
     }
 
     /// Returns a vector of all types inferred from the provided grammar.
-    pub(crate) fn symbol_types(grammar: &Grammar) -> Vec<SymbolType> {
+    pub(crate) fn symbol_types(grammar: &Grammar, start_symbol: String) -> Vec<SymbolType> {
         let mut types = vec![];
         for terminal in &grammar.terminals {
             // Each terminal produces `Terminal` kind which maps to String by default
@@ -79,7 +87,7 @@ impl SymbolTypes {
                             name: choice_name,
                             kind: ChoiceKind::Empty,
                         }
-                    },
+                    }
                     0 => Choice {
                         name: choice_name,
                         kind: ChoiceKind::Plain,
@@ -90,7 +98,7 @@ impl SymbolTypes {
                             name: choice_name,
                             kind: ChoiceKind::Ref {
                                 ref_type,
-                                recursive: false,
+                                recursive: RefCell::new(false),
                             },
                         }
                     }
@@ -121,7 +129,7 @@ impl SymbolTypes {
                             fields.push(Field {
                                 name: name.clone(),
                                 ref_type: ref_type.clone(),
-                                recursive: false,
+                                recursive: RefCell::new(false),
                             })
                         }
 
@@ -146,6 +154,7 @@ impl SymbolTypes {
                 optional,
             });
         }
+        Self::find_recursions(&mut types, start_symbol);
         types
     }
 
@@ -153,7 +162,10 @@ impl SymbolTypes {
     /// A: B | EMPTY ---> A is Option<B>
     /// A: A B | B; or A: A B | B | EMPTY; ---> A is Vec<B>
     /// A: <Whatever> ... | EMPTY; ---> A optional Enum
-    fn get_type_kind(nt: &NonTerminal, choices: &Vec<Choice>) -> SymbolTypeKind {
+    fn get_type_kind(
+        nt: &NonTerminal,
+        choices: &Vec<Choice>,
+    ) -> SymbolTypeKind {
         let type_name = &nt.name;
         struct Match {
             no_match: bool,
@@ -226,7 +238,7 @@ impl SymbolTypes {
             {
                 SymbolTypeKind::Vec {
                     ref_type: single,
-                    recursive: false,
+                    recursive: RefCell::new(false),
                 }
             }
             Match { empty, .. } => {
@@ -238,7 +250,7 @@ impl SymbolTypes {
                         ChoiceKind::Ref { ref_type, .. } => {
                             SymbolTypeKind::Ref {
                                 ref_type: ref_type.to_string(),
-                                recursive: false,
+                                recursive: RefCell::new(false),
                             }
                         }
                         ChoiceKind::Struct(_, _) => SymbolTypeKind::Struct {
@@ -262,6 +274,88 @@ impl SymbolTypes {
             }
         }
     }
+
+    /// Flags recursive types by performing a DFS over the types reference graph.
+    fn find_recursions(symbol_types: &mut Vec<SymbolType>, start_symbol: String) {
+        let types: HashMap<String, &SymbolType> =
+            symbol_types.iter().map(|t| (t.name.clone(), t)).collect();
+        fn dfs(
+            ty: &SymbolType,
+            visited: &mut HashSet<String>,
+            types: &HashMap<String, &SymbolType>,
+        ) {
+            match &ty.kind {
+                SymbolTypeKind::Ref {
+                    ref recursive,
+                    ref_type,
+                }
+                | SymbolTypeKind::Vec {
+                    ref recursive,
+                    ref_type,
+                } => {
+                    if visited.contains(ref_type) {
+                        *recursive.borrow_mut() = true
+                    } else {
+                        visited.insert(ref_type.clone());
+                        dfs(
+                            types.get(ref_type).unwrap(),
+                            visited,
+                            types,
+                        );
+                        visited.remove(ref_type);
+                    }
+                }
+                SymbolTypeKind::Struct { .. }
+                | SymbolTypeKind::Enum { .. } => {
+                    for choice in &ty.choices {
+                        match &choice.kind {
+                            ChoiceKind::Ref {
+                                ref_type,
+                                ref recursive,
+                            } => {
+                                if visited.contains(ref_type) {
+                                    *recursive.borrow_mut() = true
+                                } else {
+                                    visited.insert(ref_type.clone());
+                                    dfs(
+                                        types.get(ref_type).unwrap(),
+                                        visited,
+                                        types,
+                                    );
+                                    visited.remove(ref_type);
+                                }
+                            }
+                            ChoiceKind::Struct(_, ref fields) => {
+                                for field in fields {
+                                    if visited.contains(&field.ref_type) {
+                                        *field.recursive.borrow_mut() =
+                                            true;
+                                    } else {
+                                        visited
+                                            .insert(field.ref_type.clone());
+                                        dfs(
+                                            types
+                                                .get(&field.ref_type)
+                                                .unwrap(),
+                                            visited,
+                                            types,
+                                        );
+                                        visited.remove(&field.ref_type);
+                                    }
+                                }
+                            }
+                            ChoiceKind::Empty | ChoiceKind::Plain => (),
+                        }
+                    }
+                }
+                SymbolTypeKind::Terminal => (),
+            }
+        }
+        log!("Start symbol: {start_symbol:#?}");
+        log!("Symbol types: {symbol_types:#?}");
+
+        dfs(types.get(&start_symbol).unwrap(), &mut HashSet::new(), &types);
+    }
 }
 
 #[derive(Debug)]
@@ -279,13 +373,13 @@ pub(crate) enum SymbolTypeKind {
     /// Can be optional: B: A | EMPTY;
     Ref {
         ref_type: String,
-        recursive: bool,
+        recursive: RefCell<bool>,
     },
 
     /// Zero or more, one or more patterns
     Vec {
         ref_type: String,
-        recursive: bool,
+        recursive: RefCell<bool>,
     },
 
     /// Just a single choice as in "B: A C;"
@@ -293,13 +387,13 @@ pub(crate) enum SymbolTypeKind {
     /// optionally element of Empty kind.
     /// Can be optional as in "B: A C | EMPTY;"
     Struct {
-        type_name: String
+        type_name: String,
     },
 
     /// All other non-empty rules. Can be optional if
     /// <Whatever>... | EMPTY
     Enum {
-        type_name: String
+        type_name: String,
     },
 
     Terminal,
@@ -321,7 +415,10 @@ pub(crate) enum ChoiceKind {
 
     /// Just a single content ref. E.g. B: A;
     /// but not B: a=A; <- This will be struct.
-    Ref { ref_type: String, recursive: bool },
+    Ref {
+        ref_type: String,
+        recursive: RefCell<bool>,
+    },
 
     /// Multiple content refs or named assignments.
     Struct(String, Vec<Field>),
@@ -335,5 +432,5 @@ pub(crate) struct Field {
     pub ref_type: String,
 
     /// Used to break recursive type references.
-    pub recursive: bool,
+    pub recursive: RefCell<bool>,
 }
