@@ -1,13 +1,13 @@
 use rustemo::output_cmp;
-use rustemo_rt::rustemo_parser;
+use rustemo_rt::rustemo_mod;
 
 use self::one_or_more_1::OneOrMore1Parser;
 use self::one_or_more_2::OneOrMore2Parser;
 
-rustemo_parser!(one_or_more_1, "/src/sugar/one_or_more");
-rustemo_parser!(one_or_more_1_actions, "/src/sugar/one_or_more");
-rustemo_parser!(one_or_more_2, "/src/sugar/one_or_more");
-rustemo_parser!(one_or_more_2_actions, "/src/sugar/one_or_more");
+rustemo_mod!(one_or_more_1, "/src/sugar/one_or_more");
+rustemo_mod!(one_or_more_1_actions, "/src/sugar/one_or_more");
+rustemo_mod!(one_or_more_2, "/src/sugar/one_or_more");
+rustemo_mod!(one_or_more_2_actions, "/src/sugar/one_or_more");
 
 #[test]
 fn one_or_more_1_1() {

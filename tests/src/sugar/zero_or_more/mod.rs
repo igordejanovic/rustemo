@@ -1,10 +1,10 @@
 use rustemo::output_cmp;
-use rustemo_rt::rustemo_parser;
+use rustemo_rt::rustemo_mod;
 
 use self::zero_or_more_1::ZeroOrMore1Parser;
 
-rustemo_parser!(zero_or_more_1, "/src/sugar/zero_or_more");
-rustemo_parser!(zero_or_more_1_actions, "/src/sugar/zero_or_more");
+rustemo_mod!(zero_or_more_1, "/src/sugar/zero_or_more");
+rustemo_mod!(zero_or_more_1_actions, "/src/sugar/zero_or_more");
 
 #[test]
 fn zero_or_more_1_1() {

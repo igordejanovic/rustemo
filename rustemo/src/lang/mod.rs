@@ -11,10 +11,10 @@ pub(crate) mod rustemo;
 pub(crate) mod rustemo_actions;
 
 #[cfg(feature = "bootstrap")]
-rustemo_parser! {pub(crate) rustemo, "/src/lang"}
+rustemo_mod! {pub(crate) rustemo, "/src/lang"}
 
 #[cfg(feature = "bootstrap")]
-rustemo_parser! {pub(crate) rustemo_actions, "/src/lang"}
+rustemo_mod! {pub(crate) rustemo_actions, "/src/lang"}
 
 #[cfg(test)]
 mod tests;
