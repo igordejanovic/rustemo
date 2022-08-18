@@ -1,0 +1,8 @@
+A: 'c' B? Ta?;
+B: Num;
+
+terminals
+
+Ta: 'a';
+Tc: 'c';
+Num: /\d+/;

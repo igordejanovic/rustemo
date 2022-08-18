@@ -1,0 +1,9 @@
+Ok(
+    A {
+        tc_opt: Some(
+            C1,
+        ),
+        b: C1,
+        num_opt: None,
+    },
+)
