@@ -42,7 +42,7 @@ SymbolTypes {
             name: "AUG",
             kind: Ref {
                 ref_type: "A",
-                recursive: RefCell {
+                recursive: Cell {
                     value: false,
                 },
             },
@@ -51,7 +51,7 @@ SymbolTypes {
                     name: "C1",
                     kind: Ref {
                         ref_type: "A",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: false,
                         },
                     },
@@ -73,14 +73,14 @@ SymbolTypes {
                             Field {
                                 name: "myb",
                                 ref_type: "B",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
                             Field {
                                 name: "c",
                                 ref_type: "C",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -95,14 +95,14 @@ SymbolTypes {
                             Field {
                                 name: "b",
                                 ref_type: "B",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
                             Field {
                                 name: "c",
                                 ref_type: "C",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -113,7 +113,7 @@ SymbolTypes {
                     name: "MyD",
                     kind: Ref {
                         ref_type: "D",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: true,
                         },
                     },
@@ -122,7 +122,7 @@ SymbolTypes {
                     name: "C4",
                     kind: Ref {
                         ref_type: "Num",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: false,
                         },
                     },
@@ -134,7 +134,7 @@ SymbolTypes {
             name: "B",
             kind: Ref {
                 ref_type: "C",
-                recursive: RefCell {
+                recursive: Cell {
                     value: true,
                 },
             },
@@ -143,7 +143,7 @@ SymbolTypes {
                     name: "C1",
                     kind: Ref {
                         ref_type: "C",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: false,
                         },
                     },
@@ -169,7 +169,7 @@ SymbolTypes {
                             Field {
                                 name: "b",
                                 ref_type: "B",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: true,
                                 },
                             },
@@ -193,14 +193,14 @@ SymbolTypes {
                             Field {
                                 name: "a",
                                 ref_type: "A",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
                             Field {
                                 name: "b",
                                 ref_type: "B",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -215,21 +215,21 @@ SymbolTypes {
                             Field {
                                 name: "mya",
                                 ref_type: "A",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
                             Field {
                                 name: "b",
                                 ref_type: "B",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
                             Field {
                                 name: "d",
                                 ref_type: "D",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: true,
                                 },
                             },
@@ -257,14 +257,14 @@ SymbolTypes {
                             Field {
                                 name: "a",
                                 ref_type: "A",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
                             Field {
                                 name: "f",
                                 ref_type: "F",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -275,7 +275,7 @@ SymbolTypes {
                     name: "C2",
                     kind: Ref {
                         ref_type: "D",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: false,
                         },
                     },
@@ -287,7 +287,7 @@ SymbolTypes {
             name: "OptionalRef1",
             kind: Ref {
                 ref_type: "A",
-                recursive: RefCell {
+                recursive: Cell {
                     value: false,
                 },
             },
@@ -296,7 +296,7 @@ SymbolTypes {
                     name: "C1",
                     kind: Ref {
                         ref_type: "A",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: false,
                         },
                     },
@@ -312,7 +312,7 @@ SymbolTypes {
             name: "OptionalRef2",
             kind: Ref {
                 ref_type: "A",
-                recursive: RefCell {
+                recursive: Cell {
                     value: false,
                 },
             },
@@ -325,7 +325,7 @@ SymbolTypes {
                     name: "C2",
                     kind: Ref {
                         ref_type: "A",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: false,
                         },
                     },
@@ -337,7 +337,7 @@ SymbolTypes {
             name: "OptionalRef3",
             kind: Ref {
                 ref_type: "A",
-                recursive: RefCell {
+                recursive: Cell {
                     value: false,
                 },
             },
@@ -350,7 +350,7 @@ SymbolTypes {
                     name: "C2",
                     kind: Ref {
                         ref_type: "A",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: false,
                         },
                     },
@@ -362,7 +362,7 @@ SymbolTypes {
             name: "Ref1",
             kind: Ref {
                 ref_type: "A",
-                recursive: RefCell {
+                recursive: Cell {
                     value: false,
                 },
             },
@@ -371,7 +371,7 @@ SymbolTypes {
                     name: "C1",
                     kind: Ref {
                         ref_type: "A",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: false,
                         },
                     },
@@ -383,7 +383,7 @@ SymbolTypes {
             name: "Ref2",
             kind: Ref {
                 ref_type: "A",
-                recursive: RefCell {
+                recursive: Cell {
                     value: false,
                 },
             },
@@ -392,7 +392,7 @@ SymbolTypes {
                     name: "C1",
                     kind: Ref {
                         ref_type: "A",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: false,
                         },
                     },
@@ -414,14 +414,14 @@ SymbolTypes {
                             Field {
                                 name: "a",
                                 ref_type: "A",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
                             Field {
                                 name: "b",
                                 ref_type: "B",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -453,14 +453,14 @@ SymbolTypes {
                             Field {
                                 name: "mya",
                                 ref_type: "A",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
                             Field {
                                 name: "b",
                                 ref_type: "B",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -484,14 +484,14 @@ SymbolTypes {
                             Field {
                                 name: "a",
                                 ref_type: "A",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
                             Field {
                                 name: "b",
                                 ref_type: "B",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -515,14 +515,14 @@ SymbolTypes {
                             Field {
                                 name: "a",
                                 ref_type: "A",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
                             Field {
                                 name: "b",
                                 ref_type: "B",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -533,7 +533,7 @@ SymbolTypes {
                     name: "C2",
                     kind: Ref {
                         ref_type: "C",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: false,
                         },
                     },
@@ -559,14 +559,14 @@ SymbolTypes {
                             Field {
                                 name: "a",
                                 ref_type: "A",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
                             Field {
                                 name: "b",
                                 ref_type: "B",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -585,7 +585,7 @@ SymbolTypes {
                             Field {
                                 name: "myc",
                                 ref_type: "C",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -609,14 +609,14 @@ SymbolTypes {
                             Field {
                                 name: "a",
                                 ref_type: "A",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
                             Field {
                                 name: "b",
                                 ref_type: "B",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -631,7 +631,7 @@ SymbolTypes {
                             Field {
                                 name: "myc",
                                 ref_type: "C",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -655,14 +655,14 @@ SymbolTypes {
                             Field {
                                 name: "a",
                                 ref_type: "A",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
                             Field {
                                 name: "b",
                                 ref_type: "B",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -677,7 +677,7 @@ SymbolTypes {
                             Field {
                                 name: "myc",
                                 ref_type: "C",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -741,7 +741,7 @@ SymbolTypes {
             name: "ZeroOrMore1",
             kind: Vec {
                 ref_type: "B",
-                recursive: RefCell {
+                recursive: Cell {
                     value: false,
                 },
             },
@@ -754,14 +754,14 @@ SymbolTypes {
                             Field {
                                 name: "zero_or_more1",
                                 ref_type: "ZeroOrMore1",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
                             Field {
                                 name: "b",
                                 ref_type: "B",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -776,7 +776,7 @@ SymbolTypes {
                             Field {
                                 name: "myb",
                                 ref_type: "B",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -794,7 +794,7 @@ SymbolTypes {
             name: "ZeroOrMore2",
             kind: Vec {
                 ref_type: "B",
-                recursive: RefCell {
+                recursive: Cell {
                     value: false,
                 },
             },
@@ -807,14 +807,14 @@ SymbolTypes {
                             Field {
                                 name: "b",
                                 ref_type: "B",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
                             Field {
                                 name: "z",
                                 ref_type: "ZeroOrMore2",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -825,7 +825,7 @@ SymbolTypes {
                     name: "C2",
                     kind: Ref {
                         ref_type: "B",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: false,
                         },
                     },
@@ -851,14 +851,14 @@ SymbolTypes {
                             Field {
                                 name: "b",
                                 ref_type: "B",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
                             Field {
                                 name: "zero_or_more3",
                                 ref_type: "ZeroOrMore3",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -873,7 +873,7 @@ SymbolTypes {
                     name: "C3",
                     kind: Ref {
                         ref_type: "B",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: false,
                         },
                     },
@@ -895,14 +895,14 @@ SymbolTypes {
                             Field {
                                 name: "one_or_more1",
                                 ref_type: "OneOrMore1",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
                             Field {
                                 name: "b",
                                 ref_type: "B",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -913,7 +913,7 @@ SymbolTypes {
                     name: "C2",
                     kind: Ref {
                         ref_type: "B",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: false,
                         },
                     },
@@ -925,7 +925,7 @@ SymbolTypes {
             name: "OneOrMore2",
             kind: Vec {
                 ref_type: "B",
-                recursive: RefCell {
+                recursive: Cell {
                     value: false,
                 },
             },
@@ -938,14 +938,14 @@ SymbolTypes {
                             Field {
                                 name: "b",
                                 ref_type: "B",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
                             Field {
                                 name: "one_or_more2",
                                 ref_type: "OneOrMore2",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -956,7 +956,7 @@ SymbolTypes {
                     name: "C2",
                     kind: Ref {
                         ref_type: "B",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: false,
                         },
                     },
@@ -974,7 +974,7 @@ SymbolTypes {
                     name: "C1",
                     kind: Ref {
                         ref_type: "B",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: false,
                         },
                     },
@@ -987,14 +987,14 @@ SymbolTypes {
                             Field {
                                 name: "b",
                                 ref_type: "B",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
                             Field {
                                 name: "one_or_more3",
                                 ref_type: "OneOrMore3",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -1008,7 +1008,7 @@ SymbolTypes {
             name: "ZeroOrMoreSuggar1",
             kind: Ref {
                 ref_type: "Tc0",
-                recursive: RefCell {
+                recursive: Cell {
                     value: false,
                 },
             },
@@ -1017,7 +1017,7 @@ SymbolTypes {
                     name: "C1",
                     kind: Ref {
                         ref_type: "Tc0",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: false,
                         },
                     },
@@ -1035,7 +1035,7 @@ SymbolTypes {
                     name: "C1",
                     kind: Ref {
                         ref_type: "Tc1",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: false,
                         },
                     },
@@ -1051,7 +1051,7 @@ SymbolTypes {
             name: "Tc0",
             kind: Ref {
                 ref_type: "Tc1",
-                recursive: RefCell {
+                recursive: Cell {
                     value: false,
                 },
             },
@@ -1060,7 +1060,7 @@ SymbolTypes {
                     name: "C1",
                     kind: Ref {
                         ref_type: "Tc1",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: false,
                         },
                     },
@@ -1076,7 +1076,7 @@ SymbolTypes {
             name: "ZeroOrMoreSuggar2",
             kind: Ref {
                 ref_type: "A0",
-                recursive: RefCell {
+                recursive: Cell {
                     value: false,
                 },
             },
@@ -1085,7 +1085,7 @@ SymbolTypes {
                     name: "C1",
                     kind: Ref {
                         ref_type: "A0",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: false,
                         },
                     },
@@ -1097,7 +1097,7 @@ SymbolTypes {
             name: "A1",
             kind: Vec {
                 ref_type: "A",
-                recursive: RefCell {
+                recursive: Cell {
                     value: false,
                 },
             },
@@ -1110,14 +1110,14 @@ SymbolTypes {
                             Field {
                                 name: "a1",
                                 ref_type: "A1",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
                             Field {
                                 name: "a",
                                 ref_type: "A",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -1128,7 +1128,7 @@ SymbolTypes {
                     name: "C2",
                     kind: Ref {
                         ref_type: "A",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: false,
                         },
                     },
@@ -1140,7 +1140,7 @@ SymbolTypes {
             name: "A0",
             kind: Ref {
                 ref_type: "A1",
-                recursive: RefCell {
+                recursive: Cell {
                     value: false,
                 },
             },
@@ -1149,7 +1149,7 @@ SymbolTypes {
                     name: "C1",
                     kind: Ref {
                         ref_type: "A1",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: false,
                         },
                     },
@@ -1171,7 +1171,7 @@ SymbolTypes {
                     name: "C1",
                     kind: Ref {
                         ref_type: "A0",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: false,
                         },
                     },
@@ -1184,14 +1184,14 @@ SymbolTypes {
                             Field {
                                 name: "b",
                                 ref_type: "B",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
                             Field {
                                 name: "c",
                                 ref_type: "C",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -1215,14 +1215,14 @@ SymbolTypes {
                             Field {
                                 name: "a0",
                                 ref_type: "A0",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
                             Field {
                                 name: "b",
                                 ref_type: "B",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -1237,14 +1237,14 @@ SymbolTypes {
                             Field {
                                 name: "b",
                                 ref_type: "B",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
                             Field {
                                 name: "c",
                                 ref_type: "C",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -1258,7 +1258,7 @@ SymbolTypes {
             name: "OneOrMoreSuggar1",
             kind: Ref {
                 ref_type: "Tc1",
-                recursive: RefCell {
+                recursive: Cell {
                     value: false,
                 },
             },
@@ -1267,7 +1267,7 @@ SymbolTypes {
                     name: "C1",
                     kind: Ref {
                         ref_type: "Tc1",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: false,
                         },
                     },
@@ -1279,7 +1279,7 @@ SymbolTypes {
             name: "OneOrMoreSuggar2",
             kind: Ref {
                 ref_type: "A1",
-                recursive: RefCell {
+                recursive: Cell {
                     value: false,
                 },
             },
@@ -1288,7 +1288,7 @@ SymbolTypes {
                     name: "C1",
                     kind: Ref {
                         ref_type: "A1",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: false,
                         },
                     },
@@ -1306,7 +1306,7 @@ SymbolTypes {
                     name: "C1",
                     kind: Ref {
                         ref_type: "A1",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: false,
                         },
                     },
@@ -1319,14 +1319,14 @@ SymbolTypes {
                             Field {
                                 name: "b",
                                 ref_type: "B",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
                             Field {
                                 name: "c",
                                 ref_type: "C",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -1350,14 +1350,14 @@ SymbolTypes {
                             Field {
                                 name: "a1",
                                 ref_type: "A1",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
                             Field {
                                 name: "b",
                                 ref_type: "B",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -1372,14 +1372,14 @@ SymbolTypes {
                             Field {
                                 name: "b",
                                 ref_type: "B",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
                             Field {
                                 name: "c",
                                 ref_type: "C",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -1393,7 +1393,7 @@ SymbolTypes {
             name: "OptionalSuggar1",
             kind: Ref {
                 ref_type: "TcOpt",
-                recursive: RefCell {
+                recursive: Cell {
                     value: false,
                 },
             },
@@ -1402,7 +1402,7 @@ SymbolTypes {
                     name: "C1",
                     kind: Ref {
                         ref_type: "TcOpt",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: false,
                         },
                     },
@@ -1431,7 +1431,7 @@ SymbolTypes {
             name: "OptionalSuggar2",
             kind: Ref {
                 ref_type: "AOpt",
-                recursive: RefCell {
+                recursive: Cell {
                     value: false,
                 },
             },
@@ -1440,7 +1440,7 @@ SymbolTypes {
                     name: "C1",
                     kind: Ref {
                         ref_type: "AOpt",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: false,
                         },
                     },
@@ -1452,7 +1452,7 @@ SymbolTypes {
             name: "AOpt",
             kind: Ref {
                 ref_type: "A",
-                recursive: RefCell {
+                recursive: Cell {
                     value: false,
                 },
             },
@@ -1461,7 +1461,7 @@ SymbolTypes {
                     name: "C1",
                     kind: Ref {
                         ref_type: "A",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: false,
                         },
                     },
@@ -1483,7 +1483,7 @@ SymbolTypes {
                     name: "C1",
                     kind: Ref {
                         ref_type: "AOpt",
-                        recursive: RefCell {
+                        recursive: Cell {
                             value: false,
                         },
                     },
@@ -1496,14 +1496,14 @@ SymbolTypes {
                             Field {
                                 name: "b",
                                 ref_type: "B",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
                             Field {
                                 name: "c",
                                 ref_type: "C",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -1527,14 +1527,14 @@ SymbolTypes {
                             Field {
                                 name: "aopt",
                                 ref_type: "AOpt",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
                             Field {
                                 name: "b",
                                 ref_type: "B",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
@@ -1549,14 +1549,14 @@ SymbolTypes {
                             Field {
                                 name: "b",
                                 ref_type: "B",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },
                             Field {
                                 name: "c",
                                 ref_type: "C",
-                                recursive: RefCell {
+                                recursive: Cell {
                                     value: false,
                                 },
                             },

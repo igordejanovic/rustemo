@@ -77,7 +77,7 @@ impl ProductionActionsGenerator {
                     .iter()
                     .map(|f| {
                         let field = Ident::new(&f.name, Span::call_site());
-                        if *f.recursive.borrow() {
+                        if f.recursive.get() {
                             parse_quote! { #field: Box::new(#field) }
                         } else {
                             parse_quote! { #field }
@@ -110,7 +110,7 @@ impl ProductionActionsGenerator {
                 let mut ref_type_var: syn::Expr =
                     parse_quote! { #ref_type_var_ident };
 
-                if *recursive.borrow() {
+                if recursive.get() {
                     ref_type_var = parse_quote! { Box::new(#ref_type_var) }
                 }
                 if matches!(&ty.kind, SymbolTypeKind::Ref { .. }) {
@@ -159,7 +159,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
                             let field_type =
                                 Ident::new(&f.ref_type, Span::call_site());
                             syn::Field::parse_named
-                                .parse2(if *f.recursive.borrow() {
+                                .parse2(if f.recursive.get() {
                                     // Handle direct recursion
                                     quote! { pub #field_name: Box<#field_type> }
                                 } else {
@@ -211,7 +211,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
                                 Ident::new(&ref_type, Span::call_site());
                             let mut ref_type: syn::Type =
                                 parse_quote! { #ref_type_ident };
-                            if *recursive.borrow() {
+                            if recursive.get() {
                                 ref_type = parse_quote! { Box<#ref_type> };
                             }
                             Some(parse_quote! { #variant_ident(#ref_type) })
@@ -261,7 +261,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
                 recursive,
             } => {
                 let mut ref_type = Ident::new(&ref_type, Span::call_site());
-                if *recursive.borrow() {
+                if recursive.get() {
                     ref_type = parse_quote! { Box<#ref_type> }
                 }
                 if ty.optional {
@@ -277,7 +277,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
                 recursive,
             } => {
                 let ref_type = Ident::new(&ref_type, Span::call_site());
-                if *recursive.borrow() {
+                if recursive.get() {
                     vec![
                         parse_quote! { pub type #type_ident = Vec<Box<#ref_type>>; },
                     ]
@@ -346,12 +346,12 @@ impl ActionsGenerator for ProductionActionsGenerator {
                                 [a, b] => {
                                     let mut a_i =
                                         Ident::new(&a.name, Span::call_site());
-                                    if *a.recursive.borrow() {
+                                    if a.recursive.get() {
                                         a_i = parse_quote! { Box::new(#a_i) }
                                     }
                                     let mut b_i =
                                         Ident::new(&b.name, Span::call_site());
-                                    if *b.recursive.borrow() {
+                                    if b.recursive.get() {
                                         b_i = parse_quote! { Box::new(#b_i) }
                                     }
                                     // Find which one is a vector
@@ -385,7 +385,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
                                 &to_snake_case(ref_type),
                                 Span::call_site(),
                             );
-                            if *recursive.borrow() {
+                            if recursive.get() {
                                 i = parse_quote! { Box::new(#i) }
                             }
                             body.push(parse_quote! { vec![#i] });

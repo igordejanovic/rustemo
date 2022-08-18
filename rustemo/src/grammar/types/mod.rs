@@ -2,7 +2,7 @@
 //! This is a base support for auto AST inference.
 
 use std::{
-    cell::RefCell,
+    cell::Cell,
     collections::{HashMap, HashSet},
 };
 
@@ -98,7 +98,7 @@ impl SymbolTypes {
                             name: choice_name,
                             kind: ChoiceKind::Ref {
                                 ref_type,
-                                recursive: RefCell::new(false),
+                                recursive: Cell::new(false),
                             },
                         }
                     }
@@ -129,7 +129,7 @@ impl SymbolTypes {
                             fields.push(Field {
                                 name: name.clone(),
                                 ref_type: ref_type.clone(),
-                                recursive: RefCell::new(false),
+                                recursive: Cell::new(false),
                             })
                         }
 
@@ -238,7 +238,7 @@ impl SymbolTypes {
             {
                 SymbolTypeKind::Vec {
                     ref_type: single,
-                    recursive: RefCell::new(false),
+                    recursive: Cell::new(false),
                 }
             }
             Match { empty, .. } => {
@@ -250,7 +250,7 @@ impl SymbolTypes {
                         ChoiceKind::Ref { ref_type, .. } => {
                             SymbolTypeKind::Ref {
                                 ref_type: ref_type.to_string(),
-                                recursive: RefCell::new(false),
+                                recursive: Cell::new(false),
                             }
                         }
                         ChoiceKind::Struct(_, _) => SymbolTypeKind::Struct {
@@ -294,7 +294,7 @@ impl SymbolTypes {
                     ref_type,
                 } => {
                     if visited.contains(ref_type) {
-                        *recursive.borrow_mut() = true
+                        recursive.set(true);
                     } else {
                         visited.insert(ref_type.clone());
                         dfs(
@@ -314,7 +314,7 @@ impl SymbolTypes {
                                 ref recursive,
                             } => {
                                 if visited.contains(ref_type) {
-                                    *recursive.borrow_mut() = true
+                                    recursive.set(true);
                                 } else {
                                     visited.insert(ref_type.clone());
                                     dfs(
@@ -328,8 +328,7 @@ impl SymbolTypes {
                             ChoiceKind::Struct(_, ref fields) => {
                                 for field in fields {
                                     if visited.contains(&field.ref_type) {
-                                        *field.recursive.borrow_mut() =
-                                            true;
+                                        field.recursive.set(true);
                                     } else {
                                         visited
                                             .insert(field.ref_type.clone());
@@ -373,13 +372,13 @@ pub(crate) enum SymbolTypeKind {
     /// Can be optional: B: A | EMPTY;
     Ref {
         ref_type: String,
-        recursive: RefCell<bool>,
+        recursive: Cell<bool>,
     },
 
     /// Zero or more, one or more patterns
     Vec {
         ref_type: String,
-        recursive: RefCell<bool>,
+        recursive: Cell<bool>,
     },
 
     /// Just a single choice as in "B: A C;"
@@ -417,7 +416,7 @@ pub(crate) enum ChoiceKind {
     /// but not B: a=A; <- This will be struct.
     Ref {
         ref_type: String,
-        recursive: RefCell<bool>,
+        recursive: Cell<bool>,
     },
 
     /// Multiple content refs or named assignments.
@@ -432,5 +431,5 @@ pub(crate) struct Field {
     pub ref_type: String,
 
     /// Used to break recursive type references.
-    pub recursive: RefCell<bool>,
+    pub recursive: Cell<bool>,
 }
