@@ -13,7 +13,7 @@ use syn::{self, parse_quote};
 
 use crate::{
     api::settings::Settings,
-    grammar::{types::to_snake_case, Grammar, NonTerminal},
+    grammar::{types::to_snake_case, Grammar, NonTerminal}, Error,
 };
 use crate::{error::Result, grammar::Terminal};
 
@@ -149,6 +149,11 @@ where
     }
 
     log!("Writing action file {:?}", action_file);
+    std::fs::create_dir_all(&out_dir_actions).map_err(|e| {
+        Error::Error(format!(
+            "Cannot create folders for path '{out_dir_actions:?}': {e:?}."
+        ))
+    })?;
     std::fs::write(action_file, prettyplease::unparse(&ast))?;
 
     Ok(())

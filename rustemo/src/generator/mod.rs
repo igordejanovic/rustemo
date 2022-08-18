@@ -132,12 +132,9 @@ pub fn generate_parser(
         )?;
     }
 
-    std::fs::create_dir_all(&out_file.parent().ok_or_else(|| {
-        Error::Error(format!("Cannot find parent of '{out_dir:?}'."))
-    })?)
-    .map_err(|e| {
+    std::fs::create_dir_all(&out_dir).map_err(|e| {
         Error::Error(format!(
-            "Cannot create folders for path '{out_file:?}': {e:?}."
+            "Cannot create folders for path '{out_dir:?}': {e:?}."
         ))
     })?;
     std::fs::write(&out_file, prettyplease::unparse(&ast)).map_err(|e| {
