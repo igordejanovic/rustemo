@@ -1,0 +1,5 @@
+@vec
+A: A Num | Num;
+
+terminals
+Num: /\d+/;

@@ -11,6 +11,7 @@ fn main() {
         .out_dir_actions(&out_dir)
         // TODO: Temporary exclude ambiguities tests until issues solved
         .exclude(vec!["ambiguity".into()])
+        .force(true)
         .process_dir(&root_dir)
     {
         eprintln!("{}", e);

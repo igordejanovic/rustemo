@@ -1,0 +1,7 @@
+@vec
+A: A1 | EMPTY;
+@vec
+A1: A1 Num | Num;
+
+terminals
+Num: /\d+/;
