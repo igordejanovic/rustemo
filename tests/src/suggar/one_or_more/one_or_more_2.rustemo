@@ -1,0 +1,8 @@
+A: 'c' B+ Ta;
+B: 'b';
+
+terminals
+
+Ta: 'a';
+Tb: 'b';
+Tc: 'c';

@@ -1,0 +1,15 @@
+Err(
+    ParseError {
+        message: "Error at position <str>:1:7 \"c b b b-->\". Expected one of Ta, Tb.",
+        file: "<str>",
+        location: Location {
+            start: LineBased(
+                LineBased {
+                    line: 1,
+                    column: 7,
+                },
+            ),
+            end: None,
+        },
+    },
+)
