@@ -293,16 +293,18 @@ impl SymbolTypes {
                     ref recursive,
                     ref_type,
                 } => {
-                    if visited.contains(ref_type) {
-                        recursive.set(true);
-                    } else {
-                        visited.insert(ref_type.clone());
-                        dfs(
-                            types.get(ref_type).unwrap(),
-                            visited,
-                            types,
-                        );
-                        visited.remove(ref_type);
+                    if !recursive.get() {
+                        if visited.contains(ref_type) {
+                            recursive.set(true);
+                        } else {
+                            visited.insert(ref_type.clone());
+                            dfs(
+                                types.get(ref_type).unwrap(),
+                                visited,
+                                types,
+                            );
+                            visited.remove(ref_type);
+                        }
                     }
                 }
                 SymbolTypeKind::Struct { .. }
@@ -313,33 +315,37 @@ impl SymbolTypes {
                                 ref_type,
                                 ref recursive,
                             } => {
-                                if visited.contains(ref_type) {
-                                    recursive.set(true);
-                                } else {
-                                    visited.insert(ref_type.clone());
-                                    dfs(
-                                        types.get(ref_type).unwrap(),
-                                        visited,
-                                        types,
-                                    );
-                                    visited.remove(ref_type);
+                                if !recursive.get() {
+                                    if visited.contains(ref_type) {
+                                        recursive.set(true);
+                                    } else {
+                                        visited.insert(ref_type.clone());
+                                        dfs(
+                                            types.get(ref_type).unwrap(),
+                                            visited,
+                                            types,
+                                        );
+                                        visited.remove(ref_type);
+                                    }
                                 }
                             }
                             ChoiceKind::Struct(_, ref fields) => {
                                 for field in fields {
-                                    if visited.contains(&field.ref_type) {
-                                        field.recursive.set(true);
-                                    } else {
-                                        visited
-                                            .insert(field.ref_type.clone());
-                                        dfs(
-                                            types
-                                                .get(&field.ref_type)
-                                                .unwrap(),
-                                            visited,
-                                            types,
-                                        );
-                                        visited.remove(&field.ref_type);
+                                    if !field.recursive.get() {
+                                        if visited.contains(&field.ref_type) {
+                                            field.recursive.set(true);
+                                        } else {
+                                            visited
+                                                .insert(field.ref_type.clone());
+                                            dfs(
+                                                types
+                                                    .get(&field.ref_type)
+                                                    .unwrap(),
+                                                visited,
+                                                types,
+                                            );
+                                            visited.remove(&field.ref_type);
+                                        }
                                     }
                                 }
                             }

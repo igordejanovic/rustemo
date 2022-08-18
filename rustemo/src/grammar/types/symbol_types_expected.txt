@@ -135,7 +135,7 @@ SymbolTypes {
             kind: Ref {
                 ref_type: "C",
                 recursive: Cell {
-                    value: true,
+                    value: false,
                 },
             },
             choices: [
