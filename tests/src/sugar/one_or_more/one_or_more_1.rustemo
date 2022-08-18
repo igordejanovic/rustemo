@@ -1,8 +1,8 @@
-A: 'c' B Ta+;
+A: 'c' B Num+;
 B: 'b' | EMPTY;
 
 terminals
 
-Ta: 'a';
+Num: /\d+/;
 Tb: 'b';
 Tc: 'c';

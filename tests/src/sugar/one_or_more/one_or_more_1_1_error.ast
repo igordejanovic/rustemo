@@ -1,6 +1,6 @@
 Err(
     ParseError {
-        message: "Error at position <str>:1:0 \"-->a a a a\". Expected one of Tc.",
+        message: "Error at position <str>:1:0 \"-->1 2 3 4\". Expected one of Tc.",
         file: "<str>",
         location: Location {
             start: LineBased(
