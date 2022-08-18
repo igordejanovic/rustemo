@@ -7,7 +7,10 @@ fn main() {
         PathBuf::from(env::var("OUT_DIR").expect("Cargo didn't set OUT_DIR"));
 
     if let Err(e) = rustemo::with_settings()
-        .out_dir(out_dir)
+        .out_dir(&out_dir)
+        .out_dir_actions(&out_dir)
+        // TODO: Temporary exclude ambiguities tests until issues solved
+        .exclude(vec!["ambiguity".into()])
         .process_dir(&root_dir)
     {
         eprintln!("{}", e);

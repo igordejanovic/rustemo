@@ -1,0 +1,4 @@
+A: B+;
+B: Tb*;
+terminals
+Tb: 'b';
