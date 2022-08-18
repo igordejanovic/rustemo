@@ -1005,7 +1005,7 @@ SymbolTypes {
             optional: false,
         },
         SymbolType {
-            name: "ZeroOrMoreSuggar1",
+            name: "ZeroOrMoreSugar1",
             kind: Ref {
                 ref_type: "Tc0",
                 recursive: Cell {
@@ -1073,7 +1073,7 @@ SymbolTypes {
             optional: true,
         },
         SymbolType {
-            name: "ZeroOrMoreSuggar2",
+            name: "ZeroOrMoreSugar2",
             kind: Ref {
                 ref_type: "A0",
                 recursive: Cell {
@@ -1162,9 +1162,9 @@ SymbolTypes {
             optional: true,
         },
         SymbolType {
-            name: "ZeroOrMoreSuggar3",
+            name: "ZeroOrMoreSugar3",
             kind: Enum {
-                type_name: "ZeroOrMoreSuggar3",
+                type_name: "ZeroOrMoreSugar3",
             },
             choices: [
                 Choice {
@@ -1179,7 +1179,7 @@ SymbolTypes {
                 Choice {
                     name: "C2",
                     kind: Struct(
-                        "ZeroOrMoreSuggar3C2",
+                        "ZeroOrMoreSugar3C2",
                         [
                             Field {
                                 name: "b",
@@ -1202,15 +1202,15 @@ SymbolTypes {
             optional: false,
         },
         SymbolType {
-            name: "ZeroOrMoreSuggar4",
+            name: "ZeroOrMoreSugar4",
             kind: Enum {
-                type_name: "ZeroOrMoreSuggar4",
+                type_name: "ZeroOrMoreSugar4",
             },
             choices: [
                 Choice {
                     name: "C1",
                     kind: Struct(
-                        "ZeroOrMoreSuggar4C1",
+                        "ZeroOrMoreSugar4C1",
                         [
                             Field {
                                 name: "a0",
@@ -1232,7 +1232,7 @@ SymbolTypes {
                 Choice {
                     name: "C2",
                     kind: Struct(
-                        "ZeroOrMoreSuggar4C2",
+                        "ZeroOrMoreSugar4C2",
                         [
                             Field {
                                 name: "b",
@@ -1255,7 +1255,7 @@ SymbolTypes {
             optional: false,
         },
         SymbolType {
-            name: "OneOrMoreSuggar1",
+            name: "OneOrMoreSugar1",
             kind: Ref {
                 ref_type: "Tc1",
                 recursive: Cell {
@@ -1276,7 +1276,7 @@ SymbolTypes {
             optional: false,
         },
         SymbolType {
-            name: "OneOrMoreSuggar2",
+            name: "OneOrMoreSugar2",
             kind: Ref {
                 ref_type: "A1",
                 recursive: Cell {
@@ -1297,9 +1297,9 @@ SymbolTypes {
             optional: false,
         },
         SymbolType {
-            name: "OneOrMoreSuggar3",
+            name: "OneOrMoreSugar3",
             kind: Enum {
-                type_name: "OneOrMoreSuggar3",
+                type_name: "OneOrMoreSugar3",
             },
             choices: [
                 Choice {
@@ -1314,7 +1314,7 @@ SymbolTypes {
                 Choice {
                     name: "C2",
                     kind: Struct(
-                        "OneOrMoreSuggar3C2",
+                        "OneOrMoreSugar3C2",
                         [
                             Field {
                                 name: "b",
@@ -1337,15 +1337,15 @@ SymbolTypes {
             optional: false,
         },
         SymbolType {
-            name: "OneOrMoreSuggar4",
+            name: "OneOrMoreSugar4",
             kind: Enum {
-                type_name: "OneOrMoreSuggar4",
+                type_name: "OneOrMoreSugar4",
             },
             choices: [
                 Choice {
                     name: "C1",
                     kind: Struct(
-                        "OneOrMoreSuggar4C1",
+                        "OneOrMoreSugar4C1",
                         [
                             Field {
                                 name: "a1",
@@ -1367,7 +1367,7 @@ SymbolTypes {
                 Choice {
                     name: "C2",
                     kind: Struct(
-                        "OneOrMoreSuggar4C2",
+                        "OneOrMoreSugar4C2",
                         [
                             Field {
                                 name: "b",
@@ -1390,7 +1390,7 @@ SymbolTypes {
             optional: false,
         },
         SymbolType {
-            name: "OptionalSuggar1",
+            name: "OptionalSugar1",
             kind: Ref {
                 ref_type: "TcOpt",
                 recursive: Cell {
@@ -1428,7 +1428,7 @@ SymbolTypes {
             optional: true,
         },
         SymbolType {
-            name: "OptionalSuggar2",
+            name: "OptionalSugar2",
             kind: Ref {
                 ref_type: "AOpt",
                 recursive: Cell {
@@ -1474,9 +1474,9 @@ SymbolTypes {
             optional: true,
         },
         SymbolType {
-            name: "OptionalSuggar3",
+            name: "OptionalSugar3",
             kind: Enum {
-                type_name: "OptionalSuggar3",
+                type_name: "OptionalSugar3",
             },
             choices: [
                 Choice {
@@ -1491,7 +1491,7 @@ SymbolTypes {
                 Choice {
                     name: "C2",
                     kind: Struct(
-                        "OptionalSuggar3C2",
+                        "OptionalSugar3C2",
                         [
                             Field {
                                 name: "b",
@@ -1514,15 +1514,15 @@ SymbolTypes {
             optional: false,
         },
         SymbolType {
-            name: "OptionalSuggar4",
+            name: "OptionalSugar4",
             kind: Enum {
-                type_name: "OptionalSuggar4",
+                type_name: "OptionalSugar4",
             },
             choices: [
                 Choice {
                     name: "C1",
                     kind: Struct(
-                        "OptionalSuggar4C1",
+                        "OptionalSugar4C1",
                         [
                             Field {
                                 name: "aopt",
@@ -1544,7 +1544,7 @@ SymbolTypes {
                 Choice {
                     name: "C2",
                     kind: Struct(
-                        "OptionalSuggar4C2",
+                        "OptionalSugar4C2",
                         [
                             Field {
                                 name: "b",

@@ -214,7 +214,7 @@ fn productions_meta_data() {
 }
 
 #[test]
-fn regex_suggar_zero_or_more() {
+fn regex_sugar_zero_or_more() {
     let grammar = Grammar::from_string(
         r#"
         S: A* B | C* | "some"*;
@@ -227,13 +227,13 @@ fn regex_suggar_zero_or_more() {
     )
     .unwrap();
     output_cmp!(
-        "src/grammar/tests/regex_suggar_zero_or_more.expected",
+        "src/grammar/tests/regex_sugar_zero_or_more.expected",
         format!("{:#?}", grammar)
     );
 }
 
 #[test]
-fn regex_suggar_one_or_more() {
+fn regex_sugar_one_or_more() {
     let grammar = Grammar::from_string(
         r#"
         S: A+ B | C+ | "some"+;
@@ -246,13 +246,13 @@ fn regex_suggar_one_or_more() {
     )
     .unwrap();
     output_cmp!(
-        "src/grammar/tests/regex_suggar_one_or_more.expected",
+        "src/grammar/tests/regex_sugar_one_or_more.expected",
         format!("{:#?}", grammar)
     );
 }
 
 #[test]
-fn regex_suggar_optional() {
+fn regex_sugar_optional() {
     let grammar = Grammar::from_string(
         r#"
         S: A? B | C? | "some"?;
@@ -265,7 +265,7 @@ fn regex_suggar_optional() {
     )
     .unwrap();
     output_cmp!(
-        "src/grammar/tests/regex_suggar_optional.expected",
+        "src/grammar/tests/regex_sugar_optional.expected",
         format!("{:#?}", grammar)
     );
 }

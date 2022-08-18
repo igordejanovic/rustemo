@@ -236,9 +236,9 @@ impl GrammarBuilder {
             }
 
             // Gather productions, create indexes. Transform RHS to mark
-            // resolving references. Desuggar regex-like references.
+            // resolving references. Desugar regex-like references.
             for (prod_ntidx, production) in rule.rhs.into_iter().enumerate() {
-                let mut desuggar_productions: Vec<Production> = vec![];
+                let mut desugar_productions: Vec<Production> = vec![];
                 let prod_idx = self.get_prod_idx();
 
                 let mut new_production = Production {
@@ -271,9 +271,9 @@ impl GrammarBuilder {
                                 match assignment {
                                     PlainAssignment(mut assign)
                                     | BoolAssignment(mut assign) => {
-                                        self.desuggar_regex(
+                                        self.desugar_regex(
                                             &mut assign.gsymref,
-                                            &mut desuggar_productions,
+                                            &mut desugar_productions,
                                         );
                                         ResolvingAssignment {
                                             name: Some(assign.name),
@@ -288,9 +288,9 @@ impl GrammarBuilder {
                                         }
                                     }
                                     GrammarSymbolRef(mut reference) => {
-                                        self.desuggar_regex(
+                                        self.desugar_regex(
                                             &mut reference,
-                                            &mut desuggar_productions,
+                                            &mut desugar_productions,
                                         );
                                         ResolvingAssignment {
                                             name: None,
@@ -337,7 +337,7 @@ impl GrammarBuilder {
                 }
 
                 self.productions.push(new_production);
-                self.productions.extend(desuggar_productions);
+                self.productions.extend(desugar_productions);
                 let nonterminal = self
                     .nonterminals
                     .entry(rule.name.clone())
@@ -352,9 +352,9 @@ impl GrammarBuilder {
         }
     }
 
-    /// Support for regex-like syntax suggar. E.g: A+, A*, A? and greedy
+    /// Support for regex-like syntax sugar. E.g: A+, A*, A? and greedy
     /// variants with ! suffix: A*!...
-    fn desuggar_regex(
+    fn desugar_regex(
         &mut self,
         gsymref: &mut GrammarSymbolRef,
         productions: &mut Vec<Production>,

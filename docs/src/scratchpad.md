@@ -21,7 +21,7 @@ will recognize this but you need to annotate the rule in order to use `Vec`.
 A: As A | A | EMPTY;
 ```
 
-When syntax suggar for regex-like operators is finished this will just be:
+When syntax sugar for regex-like operators is finished this will just be:
 
 ```
 A*

@@ -45,20 +45,20 @@ fn test_symbol_type_deduction() {
             OneOrMore2: B OneOrMore2 | B;
             OneOrMore3: B | B OneOrMore3 ;
 
-            ZeroOrMoreSuggar1: Tc*;
-            ZeroOrMoreSuggar2: A*;
-            ZeroOrMoreSuggar3: A* | B C;
-            ZeroOrMoreSuggar4: A* B | B C;
+            ZeroOrMoreSugar1: Tc*;
+            ZeroOrMoreSugar2: A*;
+            ZeroOrMoreSugar3: A* | B C;
+            ZeroOrMoreSugar4: A* B | B C;
 
-            OneOrMoreSuggar1: Tc+;
-            OneOrMoreSuggar2: A+;
-            OneOrMoreSuggar3: A+ | B C;
-            OneOrMoreSuggar4: A+ B | B C;
+            OneOrMoreSugar1: Tc+;
+            OneOrMoreSugar2: A+;
+            OneOrMoreSugar3: A+ | B C;
+            OneOrMoreSugar4: A+ B | B C;
 
-            OptionalSuggar1: Tc?;
-            OptionalSuggar2: A?;
-            OptionalSuggar3: A? | B C;
-            OptionalSuggar4: A? B | B C;
+            OptionalSugar1: Tc?;
+            OptionalSugar2: A?;
+            OptionalSugar3: A? | B C;
+            OptionalSugar4: A? B | B C;
 
             terminals
             Num: /\d+/;
