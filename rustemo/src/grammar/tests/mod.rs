@@ -214,6 +214,56 @@ fn productions_meta_data() {
 }
 
 #[test]
+fn productions_meta_data_inheritance() {
+    let grammar = Grammar::from_string(
+        r#"
+        S {15, nopse}: A "some_term" B {5} | B {nops};
+        A {bla: 10}: B {nopse, bla: 5} | B {7};
+        B {left}: some_term {right} | some_term;
+        terminals
+        some_term: "some_term";
+        "#,
+    )
+    .unwrap();
+    assert_eq!(grammar.productions.len(), 7);
+
+    assert_eq!(grammar.productions[ProdIndex(1)].prio, 5);
+    // Inherited
+    assert!(grammar.productions[ProdIndex(1)].nopse);
+    assert_eq!(grammar.productions[ProdIndex(1)].meta.len(), 0);
+
+    // Inherited
+    assert_eq!(grammar.productions[ProdIndex(2)].prio, 15);
+    assert!(grammar.productions[ProdIndex(2)].nops);
+    // Inherited
+    assert!(grammar.productions[ProdIndex(2)].nopse);
+
+    match grammar.productions[ProdIndex(3)].meta.get("bla").unwrap() {
+        crate::lang::rustemo_actions::ConstVal::Int(i) => *i == 5u32,
+        _ => unreachable!()
+    };
+    assert_eq!(grammar.productions[ProdIndex(3)].meta.len(), 1);
+
+    // Inherited
+    assert_eq!(grammar.productions[ProdIndex(4)].prio, 7);
+    match grammar.productions[ProdIndex(4)].meta.get("bla").unwrap() {
+        crate::lang::rustemo_actions::ConstVal::Int(i) => *i == 10u32,
+        _ => unreachable!()
+    };
+
+    assert_eq!(
+        grammar.productions[ProdIndex(5)].assoc,
+        Associativity::Right
+    );
+
+    // Inherited
+    assert_eq!(
+        grammar.productions[ProdIndex(6)].assoc,
+        Associativity::Left
+    );
+}
+
+#[test]
 fn regex_sugar_zero_or_more() {
     let grammar = Grammar::from_string(
         r#"

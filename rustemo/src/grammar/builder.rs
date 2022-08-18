@@ -308,6 +308,13 @@ impl GrammarBuilder {
                     ..Production::default()
                 };
 
+                // Inherit meta-data from Rule.
+                for (key, data) in &rule.meta {
+                    if !new_production.meta.contains_key(key) {
+                        new_production.meta.insert(key.clone(), data.clone());
+                    }
+                }
+
                 // Map meta-data to production fields for easier access
                 if let Some(meta) = new_production.meta.remove("priority") {
                     new_production.prio = match meta {
