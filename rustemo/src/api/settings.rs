@@ -8,6 +8,7 @@ pub struct Settings {
     pub prefer_shifts: bool,
     pub prefer_shifts_over_empty: bool,
     pub table_type: TableType,
+    pub exclude: Vec<String>,
     pub actions: bool,
     /// Should actions file be recreated if exist. Use with care.
     pub force: bool,
@@ -23,6 +24,7 @@ impl Default for Settings {
             table_type: Default::default(),
             actions: true,
             force: false,
+            exclude: vec![],
         }
     }
 }

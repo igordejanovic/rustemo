@@ -30,12 +30,28 @@ struct Cli {
     /// Output directory for actions. Default is the same as input grammar file.
     #[clap(short='a', long, value_name="OUT DIR ACTIONS", value_hint = clap::ValueHint::DirPath)]
     outdir_actions: Option<PathBuf>,
+
+    /// Exclude dirs containing these parts. Used with dir processing.
+    #[clap(short, long, value_parser)]
+    exclude: Vec<String>,
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cli = Cli::parse();
 
-    let settings = with_settings().force(cli.force).actions(!cli.noactions);
+    let mut settings = with_settings()
+        .force(cli.force)
+        .actions(!cli.noactions)
+        .exclude(cli.exclude);
+
+    if let Some(outdir) = cli.outdir {
+        settings = settings.out_dir(&outdir);
+    }
+
+    if let Some(outdir) = cli.outdir_actions {
+        settings = settings.out_dir_actions(&outdir);
+    }
+
 
     let result = if cli.grammar_file_or_dir.is_file() {
         settings.process_grammar(&cli.grammar_file_or_dir)
@@ -44,9 +60,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     if let Err(e) = result {
-        Err(format!("Parser not generated. {e}").into())
+        Err(format!("Parser(s) not generated. {e}").into())
     } else {
-        println!("Parser generated successfully");
         Ok(())
     }
 }

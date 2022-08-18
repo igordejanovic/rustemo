@@ -44,12 +44,16 @@ pub fn process_grammar<P: AsRef<Path>>(grammar: P) -> Result<()> {
 }
 
 impl RustemoSettings {
-    pub fn out_dir(mut self, out_dir: PathBuf) -> Self {
-        self.0.out_dir = Some(out_dir);
+    pub fn out_dir(mut self, out_dir: &Path) -> Self {
+        self.0.out_dir = Some(out_dir.to_path_buf());
         self
     }
-    pub fn out_dir_actions(mut self, out_dir: PathBuf) -> Self {
-        self.0.out_dir_actions = Some(out_dir);
+    pub fn out_dir_actions(mut self, out_dir: &Path) -> Self {
+        self.0.out_dir_actions = Some(out_dir.to_path_buf());
+        self
+    }
+    pub fn exclude(mut self, exclude: Vec<String>) -> Self {
+        self.0.exclude = exclude;
         self
     }
     pub fn prefer_shifts(mut self, prefer: bool) -> Self {
@@ -106,7 +110,7 @@ impl RustemoSettings {
             )
         };
 
-        Self::visit_dirs(&root_dir.as_ref(), &visitor)
+        self.visit_dirs(&root_dir.as_ref(), &visitor)
     }
 
     pub fn process_grammar(&self, grammar_file: &Path) -> Result<()> {
@@ -119,6 +123,7 @@ impl RustemoSettings {
     }
 
     fn visit_dirs(
+        &self,
         dir: &Path,
         visitor: &dyn Fn(&Path) -> Result<()>,
     ) -> Result<()> {
@@ -126,8 +131,16 @@ impl RustemoSettings {
             for entry in fs::read_dir(dir)? {
                 let entry = entry?;
                 let path = entry.path();
+
+                // Check excluded paths
+                let path_name = path.to_string_lossy();
+                if self.0.exclude.iter().any(|e| path_name.contains(e)) {
+                    println!("Excluding path: {path_name:?}");
+                    continue
+                }
+
                 if path.is_dir() {
-                    Self::visit_dirs(&path, visitor)?;
+                    self.visit_dirs(&path, visitor)?;
                 } else {
                     match path.extension() {
                         Some(ext) if ext == "rustemo" => visitor(&path)?,
