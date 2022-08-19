@@ -20,7 +20,7 @@ impl Default for Settings {
             out_dir: None,
             out_dir_actions: None,
             prefer_shifts: false,
-            prefer_shifts_over_empty: false,
+            prefer_shifts_over_empty: true,
             table_type: Default::default(),
             actions: true,
             force: false,
