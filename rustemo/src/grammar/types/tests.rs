@@ -4,7 +4,7 @@ use crate::{
 };
 
 #[test]
-fn test_symbol_type_deduction() {
+fn symbols_type_deduction() {
     let grammar = Grammar::from_string(
         r#"
             A: myb=B c=C {MyKind}| B c=C | D {MyD} | Num;
@@ -71,7 +71,7 @@ fn test_symbol_type_deduction() {
 
     let symbol_types = SymbolTypes::new(&grammar);
     output_cmp!(
-        "src/grammar/types/symbol_types_expected.txt",
+        "src/grammar/types/symbols_type_deduction.expected",
         format!("{:#?}", symbol_types)
     );
 }
