@@ -549,9 +549,11 @@ fn calculate_reductions(
                             _ => state.max_prior_for_term[&follow_term],
                         };
                         if prod.prio == shift_prio {
+                            // If priorities are the same use associativity
                             match prod.assoc {
                                 Associativity::Left => {
                                     // Override SHIFT with this REDUCE
+                                    assert!(actions.len() == 1);
                                     actions.pop();
                                 }
                                 Associativity::Right => {
@@ -579,6 +581,7 @@ fn calculate_reductions(
                         } else if prod.prio > shift_prio {
                             // This item operation priority is higher =>
                             // override with reduce
+                            assert!(actions.len() == 1);
                             actions.pop();
                         } else {
                             // If priority of existing SHIFT action is
