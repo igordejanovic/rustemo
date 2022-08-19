@@ -234,6 +234,12 @@ impl Production {
     pub fn nonterminal<'a>(&self, grammar: &'a Grammar) -> &'a NonTerminal {
         &grammar.nonterminals[self.nonterminal]
     }
+
+    pub fn to_string(&self, grammar: &Grammar) -> String {
+        format!("{}: {}",
+                self.nonterminal(grammar).name,
+                grammar.symbol_names(self.rhs_symbols()).join(" "))
+    }
 }
 
 impl Display for Production {

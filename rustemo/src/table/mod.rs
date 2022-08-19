@@ -14,10 +14,9 @@ use rustemo_rt::{
     create_index,
     index::{
         NonTermVec, ProdIndex, StateIndex, StateVec, SymbolIndex, SymbolVec,
-        TermIndex, TermVec,
+        TermIndex, TermVec, NonTermIndex,
     },
     log,
-    lr::parser::Action,
 };
 
 use crate::{
@@ -27,6 +26,14 @@ use crate::{
 };
 
 use super::grammar::{res_symbol, Grammar};
+
+
+#[derive(Debug, Clone)]
+pub enum Action {
+    Shift(StateIndex, TermIndex),
+    Reduce(ProdIndex, usize, NonTermIndex, String),
+    Accept,
+}
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, PartialEq)]
@@ -507,11 +514,12 @@ fn calculate_reductions(
                 continue;
             }
 
+            let r_prod = &grammar.productions[item.prod];
             let new_reduce = Action::Reduce(
                 item.prod,
                 item.prod_len,
-                grammar.productions[item.prod].nonterminal,
-                "<?>",
+                r_prod.nonterminal,
+                r_prod.to_string(grammar),
             );
             for follow_symbol in item.follow.borrow().iter() {
                 let follow_term = grammar.symbol_to_term_index(*follow_symbol);
@@ -519,7 +527,7 @@ fn calculate_reductions(
                 if actions.is_empty() {
                     // No other action are possible for this follow terminal.
                     // Just register this reduction.
-                    actions.push(new_reduce);
+                    actions.push(new_reduce.clone());
                 } else {
                     // Conflict. Try to resolve.
                     let (shifts, reduces): (Vec<_>, Vec<_>) =
@@ -582,7 +590,7 @@ fn calculate_reductions(
 
                     if should_reduce {
                         if reduces.is_empty() {
-                            actions.push(new_reduce)
+                            actions.push(new_reduce.clone())
                         } else {
                             // REDUCE/REDUCE conflicts. Try to resolve using
                             // priorities.
@@ -612,11 +620,11 @@ fn calculate_reductions(
                                     Action::Reduce(..) => false,
                                     _ => true,
                                 });
-                                actions.push(new_reduce)
+                                actions.push(new_reduce.clone())
                             } else {
                                 // This R/R conflict can't be resolved. Just add
                                 // the reduction.
-                                actions.push(new_reduce)
+                                actions.push(new_reduce.clone())
                             }
                         }
                     }

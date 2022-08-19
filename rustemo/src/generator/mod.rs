@@ -3,7 +3,6 @@ pub(crate) mod actions;
 use quote::format_ident;
 use rustemo_rt::{
     index::{NonTermIndex, StateVec, TermIndex},
-    lr::parser::Action,
 };
 use std::{
     iter::repeat,
@@ -19,7 +18,7 @@ use crate::{
         Grammar, NonTerminal, Production,
     },
     lang::rustemo_actions::Recognizer,
-    table::{lr_states_for_grammar, LRState},
+    table::{lr_states_for_grammar, LRState, Action},
 };
 
 use self::actions::generate_parser_actions;
@@ -732,6 +731,5 @@ fn action_to_syntax(action: &Action) -> syn::Expr {
             parse_quote! { Reduce(ProdIndex(#prod), #len, NonTermIndex(#nonterm), #prod_desc) }
         }
         Action::Accept => parse_quote! { Accept },
-        Action::Error => parse_quote! { Error },
     }
 }
