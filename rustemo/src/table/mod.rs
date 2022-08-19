@@ -13,8 +13,8 @@ use std::{
 use rustemo_rt::{
     create_index,
     index::{
-        NonTermVec, ProdIndex, StateIndex, StateVec, SymbolIndex, SymbolVec,
-        TermIndex, TermVec, NonTermIndex,
+        NonTermIndex, NonTermVec, ProdIndex, StateIndex, StateVec, SymbolIndex,
+        SymbolVec, TermIndex, TermVec,
     },
     log,
 };
@@ -26,7 +26,6 @@ use crate::{
 };
 
 use super::grammar::{res_symbol, Grammar};
-
 
 #[derive(Debug, Clone)]
 pub enum Action {
@@ -142,6 +141,19 @@ impl LRState {
     fn kernel_items(&self) -> Vec<&LRItem> {
         self.items.iter().filter(|i| i.is_kernel()).collect()
     }
+
+    pub fn to_string(&self, grammar: &Grammar) -> String {
+        format!(
+            "State {}:{}\n{}",
+            self.idx,
+            grammar.symbol_name(self.symbol),
+            self.items
+                .iter()
+                .map(|i| i.to_string(grammar))
+                .collect::<Vec<_>>()
+                .join("\n")
+        )
+    }
 }
 
 /// Represents an item in the items set. Item is defined by a production and a
@@ -253,6 +265,28 @@ impl LRItem {
 
     fn is_reducing(&self) -> bool {
         self.position == self.prod_len
+    }
+
+    fn to_string(&self, grammar: &Grammar) -> String {
+        let prod = &grammar.productions[self.prod];
+        let mut rhs = prod
+            .rhs_symbols()
+            .iter()
+            .map(|s| grammar.symbol_name(*s))
+            .collect::<Vec<_>>();
+        rhs.insert(self.position, ".".into());
+        format!(
+            "{}: {} {{{}}}",
+            grammar
+                .symbol_name(grammar.nonterm_to_symbol_index(prod.nonterminal)),
+            rhs.join(" "),
+            self.follow
+                .borrow()
+                .iter()
+                .map(|f| grammar.symbol_name(*f))
+                .collect::<Vec<_>>()
+                .join(", ")
+        )
     }
 }
 

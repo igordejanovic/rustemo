@@ -36,7 +36,7 @@ struct Cli {
     exclude: Vec<String>,
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() {
     let cli = Cli::parse();
 
     let mut settings = with_settings()
@@ -60,8 +60,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     if let Err(e) = result {
-        Err(format!("Parser(s) not generated. {e}").into())
-    } else {
-        Ok(())
+        println!("{e}");
+        println!("Parser(s) not generated.");
     }
 }

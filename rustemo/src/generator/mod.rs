@@ -1,9 +1,7 @@
 pub(crate) mod actions;
 
 use quote::format_ident;
-use rustemo_rt::{
-    index::{NonTermIndex, StateVec, TermIndex},
-};
+use rustemo_rt::index::{NonTermIndex, StateVec, TermIndex};
 use std::{
     iter::repeat,
     path::{Path, PathBuf},
@@ -14,11 +12,12 @@ use crate::{
     api::settings::Settings,
     error::{Error, Result},
     grammar::{
+        conflicts::{get_conflicts, print_conflicts_report},
         types::{choice_name, to_pascal_case, to_snake_case},
         Grammar, NonTerminal, Production,
     },
     lang::rustemo_actions::Recognizer,
-    table::{lr_states_for_grammar, LRState, Action},
+    table::{lr_states_for_grammar, Action, LRState},
 };
 
 use self::actions::generate_parser_actions;
@@ -71,6 +70,14 @@ pub fn generate_parser(
     let grammar = Grammar::from_string(grammar_input)?;
 
     let states = lr_states_for_grammar(&grammar, &Settings::default());
+
+    let conflicts = get_conflicts(&states);
+    if !conflicts.is_empty() {
+        print_conflicts_report(&conflicts, &grammar);
+        return Err(Error::Error(
+            "Grammar is not deterministic. There are conflicts.".to_string(),
+        ));
+    }
 
     // Generate parser definition
     let out_file = out_dir.join(file_name).with_extension("rs");
