@@ -540,11 +540,10 @@ fn calculate_reductions(
                     assert!(shifts.len() <= 1);
 
                     let mut should_reduce = true;
-                    if !shifts.is_empty() {
+                    if let Some(shift) = shifts.get(0) {
                         // Shift/Reduce conflict. Use assoc and priority to
                         // resolve. For disambiguation treat ACCEPT action the
                         // same as SHIFT.
-                        let shift = &shifts[0];
                         let shift_prio = match shift {
                             Action::Accept => DEFAULT_PRIORITY,
                             _ => state.max_prior_for_term[&follow_term],
