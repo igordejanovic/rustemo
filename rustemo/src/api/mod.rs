@@ -1,5 +1,5 @@
 use crate::table::TableType;
-use crate::Result;
+use crate::{Result, Error};
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -77,6 +77,9 @@ impl RustemoSettings {
         self
     }
     pub fn process_dir(&self, root_dir: &Path) -> Result<()> {
+        if !root_dir.exists() {
+            return Err(Error::Error("Folder doesn't exist.".to_string()));
+        }
         let visitor = |grammar: &Path| -> Result<()> {
             println!("Generating parser for grammar {:?}", grammar);
 
