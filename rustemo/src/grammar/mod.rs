@@ -21,7 +21,6 @@ pub(crate) mod builder;
 #[cfg(test)]
 mod tests;
 pub(crate) mod types;
-pub(crate) mod conflicts;
 
 #[derive(Debug)]
 pub struct Grammar {

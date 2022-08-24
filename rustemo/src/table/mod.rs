@@ -1,5 +1,4 @@
 //! Calculating LR tables
-
 use std::{
     cell::RefCell,
     cmp::{self, Ordering},
@@ -54,8 +53,10 @@ type FirstSets = SymbolVec<Firsts>;
 create_index!(ItemIndex, ItemVec);
 
 /// LR State is a set of LR items and a dict of LR automata actions and gotos.
-#[derive(Debug, Clone)]
-pub struct LRState {
+#[derive(Clone)]
+pub struct LRState<'g> {
+    grammar: &'g Grammar,
+
     /// The index of this state.
     pub idx: StateIndex,
 
@@ -93,7 +94,7 @@ pub struct LRState {
 }
 
 /// Two LR states are equal if they contain the same kernel items.
-impl PartialEq for LRState {
+impl<'g> PartialEq for LRState<'g> {
     fn eq(&self, other: &Self) -> bool {
         let self_ki = self.kernel_items();
         let other_ki = other.kernel_items();
@@ -101,11 +102,46 @@ impl PartialEq for LRState {
             && self_ki.iter().zip(other_ki.iter()).all(|(x, y)| x == y)
     }
 }
-impl Eq for LRState {}
+impl<'g> Eq for LRState<'g> {}
 
-impl LRState {
-    fn new(grammar: &Grammar, index: StateIndex, symbol: SymbolIndex) -> Self {
+impl<'g> Display for LRState<'g> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "State {}:{}\n{}",
+            self.idx,
+            self.grammar.symbol_name(self.symbol),
+            self.items
+                .iter()
+                .map(|i| i.to_string(self.grammar))
+                .collect::<Vec<_>>()
+                .join("\n")
+        )
+    }
+}
+
+impl<'g> std::fmt::Debug for LRState<'g> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("LRState")
+            .field("idx", &self.idx)
+            .field("symbol", &self.symbol)
+            .field("items", &self.items)
+            .field("actions", &self.actions)
+            .field("gotos", &self.gotos)
+            .field("sorted_terminals", &self.sorted_terminals)
+            .field("max_prior_for_term", &self.max_prior_for_term)
+            .finish()
+    }
+}
+
+impl<'g> LRState<'g> {
+    fn new(
+        grammar: &'g Grammar,
+        index: StateIndex,
+        symbol: SymbolIndex,
+    ) -> Self {
         Self {
+            grammar,
             idx: index,
             symbol,
             items: ItemVec::new(),
@@ -117,12 +153,13 @@ impl LRState {
     }
 
     fn new_with_items(
-        grammar: &Grammar,
+        grammar: &'g Grammar,
         index: StateIndex,
         symbol: SymbolIndex,
         items: ItemVec<LRItem>,
     ) -> Self {
         Self {
+            grammar,
             idx: index,
             symbol,
             items,
@@ -142,17 +179,113 @@ impl LRState {
         self.items.iter().filter(|i| i.is_kernel()).collect()
     }
 
-    pub fn to_string(&self, grammar: &Grammar) -> String {
-        format!(
-            "State {}:{}\n{}",
-            self.idx,
-            grammar.symbol_name(self.symbol),
-            self.items
-                .iter()
-                .map(|i| i.to_string(grammar))
-                .collect::<Vec<_>>()
-                .join("\n")
-        )
+    /// Closes over LR items of the LRState.
+    ///
+    /// Starting from the given items (usually just kernel items), for each
+    /// item, if right of the dot is a non-terminal, adds all items where LHS is
+    /// a given non-terminal and the dot is at the beginning. In other words,
+    /// adds all missing non-kernel items.
+    fn closure(&mut self, first_sets: &FirstSets) {
+        loop {
+            let mut new_items: BTreeSet<LRItem> = BTreeSet::new();
+
+            for item in &self.items {
+                if let Some(symbol) = item.symbol_at_position(self.grammar) {
+                    if self.grammar.is_nonterm(symbol) {
+                        let mut new_follow;
+                        // Find first set of substring that follow symbol at
+                        // position
+                        if item.position + 1
+                            < self.grammar.productions[item.prod].rhs.len()
+                        {
+                            new_follow = firsts(
+                                &self.grammar,
+                                &first_sets,
+                                &self.grammar.production_rhs_symbols(item.prod)
+                                    [item.position + 1..],
+                            );
+                            // If symbols that follows the current nonterminal
+                            // can derive EMPTY add follows of current item.
+                            if new_follow.contains(&self.grammar.empty_index) {
+                                new_follow.remove(&self.grammar.empty_index);
+                                new_follow.extend(item.follow.borrow().iter());
+                            }
+                        } else {
+                            // If current item position is at the end add all of
+                            // its follow to the next item.
+                            new_follow = Follow::new();
+                            new_follow.extend(item.follow.borrow().iter());
+                        }
+
+                        // Get all productions of the current non-terminal and
+                        // create LR items with the calculated follow.
+                        let nonterm =
+                            self.grammar.symbol_to_nonterm_index(symbol);
+                        for prod in
+                            &self.grammar.nonterminals[nonterm].productions
+                        {
+                            new_items.insert(LRItem::with_follow(
+                                &self.grammar,
+                                *prod,
+                                new_follow.clone(),
+                            ));
+                        }
+                    }
+                }
+            }
+
+            // Add all new items to state.items. If item is already there update
+            // follow. If there is no change break from the loop.
+            let mut change = false;
+            for new_item in new_items {
+                match self.items.iter_mut().find(|x| *x == &new_item) {
+                    Some(item) => {
+                        // Item already exists, update follows
+                        let l = item.follow.borrow().len();
+                        item.follow
+                            .borrow_mut()
+                            .extend(new_item.follow.borrow().iter());
+                        if item.follow.borrow().len() > l {
+                            change = true;
+                        }
+                    }
+                    None => {
+                        self.items.push(new_item);
+                        change = true;
+                    }
+                }
+            }
+            if !change {
+                break;
+            }
+        }
+    }
+
+    /// Group LR items per grammar symbol right of the dot, and calculate
+    /// terminal max priorities.
+    fn group_per_next_symbol(
+        &mut self,
+    ) -> BTreeMap<SymbolIndex, Vec<ItemIndex>> {
+        let mut per_next_symbol = BTreeMap::new();
+
+        for (idx, item) in self.items.iter().enumerate() {
+            let symbol = item.symbol_at_position(self.grammar);
+            if let Some(symbol) = symbol {
+                per_next_symbol
+                    .entry(symbol)
+                    .or_insert(vec![])
+                    .push(idx.into());
+                if self.grammar.is_term(symbol) {
+                    let symbol = self.grammar.symbol_to_term_index(symbol);
+                    let prod_prio = self.grammar.productions[item.prod].prio;
+                    self.max_prior_for_term
+                        .entry(symbol)
+                        .and_modify(|v| *v = cmp::max(*v, prod_prio))
+                        .or_insert(prod_prio);
+                }
+            }
+        }
+        per_next_symbol
     }
 }
 
@@ -276,7 +409,7 @@ impl LRItem {
             .collect::<Vec<_>>();
         rhs.insert(self.position, ".".into());
         format!(
-            "{}: {} {{{}}}",
+            "{}: {}    {{{}}}",
             grammar
                 .symbol_name(grammar.nonterm_to_symbol_index(prod.nonterminal)),
             rhs.join(" "),
@@ -290,377 +423,422 @@ impl LRItem {
     }
 }
 
-/// Calculate LR states with GOTOs and ACTIONs for the given Grammar.
-///
-/// This collection of states is used to generate LR/GLR parser tables.
-pub fn lr_states_for_grammar(
-    grammar: &Grammar,
-    settings: &Settings,
-) -> StateVec<LRState> {
-    let first_sets = first_sets(grammar);
-    check_empty_sets(grammar, &first_sets);
+pub enum ConflictKind {
+    ShiftReduce(ProdIndex),
+    ReduceReduce(ProdIndex, ProdIndex),
+}
 
-    // Create a state for the first production (augmented)
-    let state = LRState::new(grammar, StateIndex(0), grammar.augmented_index)
-        .add_item(LRItem::with_follow(
+pub struct Conflict<'g, 's> {
+    state: &'s LRState<'g>,
+    follow: TermIndex,
+    kind: ConflictKind,
+}
+
+impl<'g, 's> Display for Conflict<'g, 's> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "")?;
+        Ok(())
+    }
+}
+
+pub struct LRTable<'g, 's> {
+    pub states: StateVec<LRState<'g>>,
+    grammar: &'g Grammar,
+    settings: &'s Settings,
+    first_sets: FirstSets,
+}
+
+impl<'g, 's> LRTable<'g, 's> {
+    pub fn new(grammar: &'g Grammar, settings: &'s Settings) -> Self {
+        let mut table = Self {
             grammar,
+            settings,
+            states: StateVec::new(),
+            first_sets: first_sets(grammar),
+        };
+        table.calc_states();
+        table
+    }
+
+    /// Calculate LR states with GOTOs and ACTIONs for the given Grammar.
+    ///
+    /// This collection of states is used to generate LR/GLR parser tables.
+    pub fn calc_states(&mut self) {
+        self.check_empty_sets();
+
+        // Create a state for the first production (augmented)
+        let state = LRState::new(
+            self.grammar,
+            StateIndex(0),
+            self.grammar.augmented_index,
+        )
+        .add_item(LRItem::with_follow(
+            self.grammar,
             ProdIndex(0),
-            Follow::from([grammar.stop_index]),
+            Follow::from([self.grammar.stop_index]),
         ));
 
-    // States to be processed.
-    let mut state_queue = VecDeque::from([state]);
-    // Finished states.
-    let mut states = StateVec::new();
+        // States to be processed.
+        let mut state_queue = VecDeque::from([state]);
 
-    let mut current_state_idx: usize = 1;
+        let mut current_state_idx: usize = 1;
 
-    log!("Calculating LR automaton states.");
-    while let Some(mut state) = state_queue.pop_front() {
-        // For each state calculate its closure first, i.e. starting from a so
-        // called "kernel items" expand collection with non-kernel items. We
-        // will also calculate GOTO and ACTIONS dicts for each state. These
-        // dicts will be keyed by a grammar symbol.
-        closure(&mut state, grammar, &first_sets);
+        log!("Calculating LR automaton states.");
+        while let Some(mut state) = state_queue.pop_front() {
+            // For each state calculate its closure first, i.e. starting from a so
+            // called "kernel items" expand collection with non-kernel items. We
+            // will also calculate GOTO and ACTIONS dicts for each state. These
+            // dicts will be keyed by a grammar symbol.
+            state.closure(&self.first_sets);
 
-        // To find out other states we examine following grammar symbols in the
-        // current state (symbols following current position/"dot") and group
-        // all items by a grammar symbol.
-        let per_next_symbol = group_per_next_symbol(grammar, &mut state);
+            // To find out other states we examine following grammar symbols in the
+            // current state (symbols following current position/"dot") and group
+            // all items by a grammar symbol.
+            let per_next_symbol = state.group_per_next_symbol();
 
-        // Create accept action if possible.
-        for (&symbol, _) in &per_next_symbol {
-            if symbol == grammar.stop_index {
-                state.actions[grammar.symbol_to_term_index(symbol)] =
-                    vec![Action::Accept];
-                break;
-            }
-        }
-
-        // Create new states reachable from the current state.
-        let new_states = create_new_states(&grammar, &state, per_next_symbol);
-
-        // Find states that already exists and try to merge. If not possible to
-        // merge or not found push state to state queue.
-        for mut new_state in new_states {
-            let mut new_state_found = true;
-            let mut target_state_symbol = new_state.symbol;
-            let mut target_state_idx = StateIndex(current_state_idx);
-            if let Some(mut old_state) = states
-                .iter_mut()
-                .chain(state_queue.iter_mut())
-                .chain(iter::once(&mut state))
-                .find(|x| **x == new_state)
-            {
-                // If the same state already exists try to merge.
-                if merge_state(&mut old_state, &new_state, settings) {
-                    new_state_found = false;
-                    target_state_symbol = old_state.symbol;
-                    target_state_idx = old_state.idx;
+            // Create accept action if possible.
+            for (&symbol, _) in &per_next_symbol {
+                if symbol == self.grammar.stop_index {
+                    state.actions[self.grammar.symbol_to_term_index(symbol)] =
+                        vec![Action::Accept];
+                    break;
                 }
             }
 
-            // Create GOTO for non-terminal or Shift Action for terminal.
-            if grammar.is_nonterm(target_state_symbol) {
-                state.gotos
-                    [grammar.symbol_to_nonterm_index(target_state_symbol)] =
-                    Some(target_state_idx);
-            } else {
-                let term = grammar.symbol_to_term_index(new_state.symbol);
-                state.actions[term].push(Action::Shift(target_state_idx, term));
+            // Create new states reachable from the current state.
+            let new_states =
+                Self::create_new_states(self.grammar, &state, per_next_symbol);
+
+            // Find states that already exists and try to merge. If not possible to
+            // merge or not found push state to state queue.
+            for mut new_state in new_states {
+                let mut new_state_found = true;
+                let mut target_state_symbol = new_state.symbol;
+                let mut target_state_idx = StateIndex(current_state_idx);
+                if let Some(mut old_state) = self
+                    .states
+                    .iter_mut()
+                    .chain(state_queue.iter_mut())
+                    .chain(iter::once(&mut state))
+                    .find(|x| **x == new_state)
+                {
+                    // If the same state already exists try to merge.
+                    if Self::merge_state(
+                        self.settings,
+                        &mut old_state,
+                        &new_state,
+                    ) {
+                        new_state_found = false;
+                        target_state_symbol = old_state.symbol;
+                        target_state_idx = old_state.idx;
+                    }
+                }
+
+                // Create GOTO for non-terminal or Shift Action for terminal.
+                if self.grammar.is_nonterm(target_state_symbol) {
+                    state.gotos[self
+                        .grammar
+                        .symbol_to_nonterm_index(target_state_symbol)] =
+                        Some(target_state_idx);
+                } else {
+                    let term =
+                        self.grammar.symbol_to_term_index(new_state.symbol);
+                    state.actions[term]
+                        .push(Action::Shift(target_state_idx, term));
+                }
+
+                if new_state_found {
+                    // Merge is not possible. Create new state.
+                    new_state.idx = StateIndex(current_state_idx);
+
+                    state_queue.push_back(new_state);
+                    current_state_idx += 1;
+                }
             }
 
-            if new_state_found {
-                // Merge is not possible. Create new state.
-                new_state.idx = StateIndex(current_state_idx);
-
-                state_queue.push_back(new_state);
-                current_state_idx += 1;
-            }
+            self.states.push(state);
         }
 
-        states.push(state);
+        log!("LR states constructed. Updating follows.");
+        self.propagate_follows();
+
+        log!(
+            "Calculate REDUCTION entries in ACTION tables and resolve \
+            possible conflicts."
+        );
+        self.calculate_reductions();
+
+        log!("Sort terminals for lexical disambiguation");
+        self.sort_terminals();
+
+        log!("States:");
+        for _state in &self.states {
+            log!("{_state:#?}");
+        }
     }
 
-    log!("LR states constructed. Updating follows.");
-    propagate_follows(&mut states, grammar, &first_sets);
+    /// Try to merge new_state to old_state if possible. If not possible return
+    /// false.
+    ///
+    /// If old state has no R/R conflicts additional check is made and merging is
+    /// not done if it would add R/R conflict.
+    fn merge_state(
+        settings: &Settings,
+        old_state: &mut LRState<'g>,
+        new_state: &LRState<'g>,
+    ) -> bool {
+        // States with different kernel sets cannot be merged.
+        if old_state != new_state {
+            return false;
+        }
 
-    log!(
-        "Calculate REDUCTION entries in ACTION tables and resolve \
-          possible conflicts."
-    );
-    calculate_reductions(&mut states, grammar, &settings);
+        let old_state_items = old_state
+            .items
+            .clone()
+            .into_iter()
+            .filter(|item| item.is_kernel());
 
-    log!("Sort terminals for lexical disambiguation");
-    sort_terminals(grammar, &mut states);
+        // Item pairs of item from an old state and corresponding item from the new state.
+        let item_pairs: Vec<(&mut LRItem, &LRItem)> = iter::zip(
+            old_state.items.iter_mut().filter(|item| item.is_kernel()),
+            old_state_items
+                .map(|x| new_state.items.iter().find(|&i| *i == x).unwrap()),
+        )
+        .collect();
 
-    log!("States:");
-    for _state in &states {
-        log!("{_state:#?}");
-    }
-    states
-}
-
-/// Try to merge new_state to old_state if possible. If not possible return
-/// false.
-///
-/// If old state has no R/R conflicts additional check is made and merging is
-/// not done if it would add R/R conflict.
-fn merge_state(
-    old_state: &mut LRState,
-    new_state: &LRState,
-    settings: &Settings,
-) -> bool {
-    // States with different kernel sets cannot be merged.
-    if old_state != new_state {
-        return false;
-    }
-
-    let old_state_items = old_state
-        .items
-        .clone()
-        .into_iter()
-        .filter(|item| item.is_kernel());
-
-    // Item pairs of item from an old state and corresponding item from the new state.
-    let item_pairs: Vec<(&mut LRItem, &LRItem)> = iter::zip(
-        old_state.items.iter_mut().filter(|item| item.is_kernel()),
-        old_state_items
-            .map(|x| new_state.items.iter().find(|&i| *i == x).unwrap()),
-    )
-    .collect();
-
-    if settings.table_type != TableType::LALR {
-        // If this is not pure LALR check to see if merging would introduce R/R.
-        // In case it would, do not merge but keep these states split.
-        for (old, new) in &item_pairs {
-            if !old.is_reducing() {
-                continue;
-            }
-            for (old_in, new_in) in &item_pairs {
-                if old == old_in {
+        if settings.table_type != TableType::LALR {
+            // If this is not pure LALR check to see if merging would introduce R/R.
+            // In case it would, do not merge but keep these states split.
+            for (old, new) in &item_pairs {
+                if !old.is_reducing() {
                     continue;
                 }
-                // Check if any of the current follow terminals exists in any other
-                // new follow but not in the same item old follow.
-                if old
-                    .follow
-                    .borrow()
-                    .iter()
-                    .find(|&x| {
-                        new_in.follow.borrow().contains(x)
-                            && !old_in.follow.borrow().contains(x)
-                            && !new.follow.borrow().contains(x) // If conflict exist in new, merge anyway
-                    })
-                    .is_some()
-                {
-                    return false;
+                for (old_in, new_in) in &item_pairs {
+                    if old == old_in {
+                        continue;
+                    }
+                    // Check if any of the current follow terminals exists in any other
+                    // new follow but not in the same item old follow.
+                    if old
+                        .follow
+                        .borrow()
+                        .iter()
+                        .find(|&x| {
+                            new_in.follow.borrow().contains(x)
+                                && !old_in.follow.borrow().contains(x)
+                                && !new.follow.borrow().contains(x) // If conflict exist in new, merge anyway
+                        })
+                        .is_some()
+                    {
+                        return false;
+                    }
                 }
             }
         }
-    }
 
-    // Do the merge by updating old items follow sets.
-    for (old, new) in item_pairs {
-        old.follow.borrow_mut().extend(new.follow.borrow().iter())
-    }
-    true
-}
-
-/// Propagate LR items follows.
-///
-/// This is needed due to state merging. Whenever merge occurs, target state
-/// follows might get updated so we have to propagate those changes to other
-/// states.
-fn propagate_follows(
-    states: &mut StateVec<LRState>,
-    grammar: &Grammar,
-    first_sets: &FirstSets,
-) {
-    let mut changed = true;
-    while changed {
-        changed = false;
-        for state in states.iter_mut() {
-            // Refresh closure to propagate follows from kernel items to
-            // non-kernel of the same state as the merge is done only for kernel
-            // items.
-            closure(state, grammar, first_sets);
+        // Do the merge by updating old items follow sets.
+        for (old, new) in item_pairs {
+            old.follow.borrow_mut().extend(new.follow.borrow().iter())
         }
-
-        for state in states.iter() {
-            // Use GOTOs and ACTIONS to propagate follows between states.
-            state
-                .gotos
-                .iter()
-                .filter_map(|x| x.as_ref())
-                .chain(state.actions.iter().flat_map(|x| {
-                    x.iter().filter_map(|a| match a {
-                        Action::Shift(state, _) => Some(state),
-                        _ => None,
-                    })
-                }))
-                .for_each(|&target_state| {
-                    for target_item in &mut states[target_state]
-                        .items
-                        .iter()
-                        .filter(|x| x.is_kernel())
-                    {
-                        // Find corresponding item in state
-                        if let Some(source_item) =
-                            state.items.iter().find(|&x| {
-                                x.prod == target_item.prod
-                                    && x.position == target_item.position - 1
-                            })
-                        {
-                            // Update follow of target item with item from state
-                            let follow_len = target_item.follow.borrow().len();
-                            target_item
-                                .follow
-                                .borrow_mut()
-                                .extend(source_item.follow.borrow().iter());
-
-                            // if target item follow was changed set changed to true
-                            if target_item.follow.borrow().len() > follow_len {
-                                changed = true
-                            }
-                        }
-                    }
-                })
-        }
+        true
     }
-}
 
-/// Calculate reductions entries in action tables and resolve possible
-/// conflicts.
-fn calculate_reductions(
-    states: &mut StateVec<LRState>,
-    grammar: &Grammar,
-    settings: &Settings,
-) {
-    for state in states {
-        for item in state.items.iter().filter(|x| x.is_reducing()) {
-            let prod = &grammar.productions[item.prod];
-
-            // Accept if reducing by augmented production for STOP lookahead
-            if prod.idx == ProdIndex(0) {
-                let actions = &mut state.actions[TermIndex(0)];
-                actions.push(Action::Accept);
-                continue;
+    /// Propagate LR items follows.
+    ///
+    /// This is needed due to state merging. Whenever merge occurs, target state
+    /// follows might get updated so we have to propagate those changes to other
+    /// states.
+    fn propagate_follows(&mut self) {
+        let mut changed = true;
+        while changed {
+            changed = false;
+            for state in self.states.iter_mut() {
+                // Refresh closure to propagate follows from kernel items to
+                // non-kernel of the same state as the merge is done only for kernel
+                // items.
+                state.closure(&self.first_sets);
             }
 
-            let r_prod = &grammar.productions[item.prod];
-            let new_reduce = Action::Reduce(
-                item.prod,
-                item.prod_len,
-                r_prod.nonterminal,
-                r_prod.to_string(grammar),
-            );
-            for follow_symbol in item.follow.borrow().iter() {
-                let follow_term = grammar.symbol_to_term_index(*follow_symbol);
-                let actions = &mut state.actions[follow_term];
-                if actions.is_empty() {
-                    // No other action are possible for this follow terminal.
-                    // Just register this reduction.
-                    actions.push(new_reduce.clone());
-                } else {
-                    // Conflict. Try to resolve.
-                    let (shifts, reduces): (Vec<_>, Vec<_>) =
-                        actions.clone().into_iter().partition(|x| match x {
-                            Action::Shift(..) | Action::Accept => true,
-                            _ => false,
-                        });
-                    // Only one SHIFT or ACCEPT might exists for a single
-                    // terminal but many REDUCEs might exist.
-                    assert!(shifts.len() <= 1);
+            for state in self.states.iter() {
+                // Use GOTOs and ACTIONS to propagate follows between states.
+                state
+                    .gotos
+                    .iter()
+                    .filter_map(|x| x.as_ref())
+                    .chain(state.actions.iter().flat_map(|x| {
+                        x.iter().filter_map(|a| match a {
+                            Action::Shift(state, _) => Some(state),
+                            _ => None,
+                        })
+                    }))
+                    .for_each(|&target_state| {
+                        for target_item in &mut self.states[target_state]
+                            .items
+                            .iter()
+                            .filter(|x| x.is_kernel())
+                        {
+                            // Find corresponding item in state
+                            if let Some(source_item) =
+                                state.items.iter().find(|&x| {
+                                    x.prod == target_item.prod
+                                        && x.position
+                                            == target_item.position - 1
+                                })
+                            {
+                                // Update follow of target item with item from state
+                                let follow_len =
+                                    target_item.follow.borrow().len();
+                                target_item
+                                    .follow
+                                    .borrow_mut()
+                                    .extend(source_item.follow.borrow().iter());
 
-                    let mut should_reduce = true;
-                    if let Some(shift) = shifts.get(0) {
-                        // Shift/Reduce conflict. Use assoc and priority to
-                        // resolve. For disambiguation treat ACCEPT action the
-                        // same as SHIFT.
-                        let shift_prio = match shift {
-                            Action::Accept => DEFAULT_PRIORITY,
-                            _ => state.max_prior_for_term[&follow_term],
-                        };
-                        if prod.prio == shift_prio {
-                            // If priorities are the same use associativity
-                            match prod.assoc {
-                                Associativity::Left => {
-                                    // Override SHIFT with this REDUCE
-                                    assert!(actions.len() == 1);
-                                    actions.pop();
-                                }
-                                Associativity::Right => {
-                                    // If associativity is right leave SHIFT
-                                    // action as "stronger" and don't consider
-                                    // this reduction any more. Right
-                                    // associative reductions can't be in the
-                                    // same set of actions together with SHIFTs.
-                                    should_reduce = false;
-                                }
-                                Associativity::None => {
-                                    // If priorities are the same and no
-                                    // associativity defined use preferred
-                                    // strategy.
-                                    let empty = prod.rhs.len() == 0;
-                                    let prod_pse = empty
-                                        && settings.prefer_shifts_over_empty
-                                        && !prod.nopse;
-                                    let prod_ps = !empty
-                                        && settings.prefer_shifts
-                                        && !prod.nops;
-                                    should_reduce = !(prod_pse || prod_ps);
+                                // if target item follow was changed set changed to true
+                                if target_item.follow.borrow().len()
+                                    > follow_len
+                                {
+                                    changed = true
                                 }
                             }
-                        } else if prod.prio > shift_prio {
-                            // This item operation priority is higher =>
-                            // override with reduce
-                            assert!(actions.len() == 1);
-                            actions.pop();
-                        } else {
-                            // If priority of existing SHIFT action is
-                            // higher then leave it instead
-                            should_reduce = false
                         }
-                    }
+                    })
+            }
+        }
+    }
 
-                    if should_reduce {
-                        if reduces.is_empty() {
-                            actions.push(new_reduce.clone())
-                        } else {
-                            // REDUCE/REDUCE conflicts. Try to resolve using
-                            // priorities.
-                            let reduces_prio = reduces
-                                .iter()
-                                .map(|x| match x {
-                                    Action::Reduce(prod, ..) => {
-                                        grammar.productions[*prod].prio
+    /// Calculate reductions entries in action tables and resolve possible
+    /// conflicts.
+    fn calculate_reductions(&mut self) {
+        for state in &mut self.states {
+            for item in state.items.iter().filter(|x| x.is_reducing()) {
+                let prod = &self.grammar.productions[item.prod];
+
+                // Accept if reducing by augmented production for STOP lookahead
+                if prod.idx == ProdIndex(0) {
+                    let actions = &mut state.actions[TermIndex(0)];
+                    actions.push(Action::Accept);
+                    continue;
+                }
+
+                let r_prod = &self.grammar.productions[item.prod];
+                let new_reduce = Action::Reduce(
+                    item.prod,
+                    item.prod_len,
+                    r_prod.nonterminal,
+                    r_prod.to_string(self.grammar),
+                );
+                for follow_symbol in item.follow.borrow().iter() {
+                    let follow_term =
+                        self.grammar.symbol_to_term_index(*follow_symbol);
+                    let actions = &mut state.actions[follow_term];
+                    if actions.is_empty() {
+                        // No other action are possible for this follow terminal.
+                        // Just register this reduction.
+                        actions.push(new_reduce.clone());
+                    } else {
+                        // Conflict. Try to resolve.
+                        let (shifts, reduces): (Vec<_>, Vec<_>) = actions
+                            .clone()
+                            .into_iter()
+                            .partition(|x| match x {
+                                Action::Shift(..) | Action::Accept => true,
+                                _ => false,
+                            });
+                        // Only one SHIFT or ACCEPT might exists for a single
+                        // terminal but many REDUCEs might exist.
+                        assert!(shifts.len() <= 1);
+
+                        let mut should_reduce = true;
+                        if let Some(shift) = shifts.get(0) {
+                            // Shift/Reduce conflict. Use assoc and priority to
+                            // resolve. For disambiguation treat ACCEPT action the
+                            // same as SHIFT.
+                            let shift_prio = match shift {
+                                Action::Accept => DEFAULT_PRIORITY,
+                                _ => state.max_prior_for_term[&follow_term],
+                            };
+                            if prod.prio == shift_prio {
+                                // If priorities are the same use associativity
+                                match prod.assoc {
+                                    Associativity::Left => {
+                                        // Override SHIFT with this REDUCE
+                                        assert!(actions.len() == 1);
+                                        actions.pop();
                                     }
-                                    other => panic!(
-                                        "This should not happen. Got {:?}",
-                                        other
-                                    ),
-                                })
-                                .collect::<Vec<_>>();
-                            if reduces_prio.iter().all(|x| prod.prio < *x) {
-                                // Current product priority is less than all
-                                // other reductions. Do not add this reduction.
-                            } else if reduces_prio
-                                .iter()
-                                .all(|x| prod.prio > *x)
-                            {
-                                // Current product priority is greater than all
-                                // other reductions. This reduction should
-                                // replace all others.
-                                actions.retain(|x| match x {
-                                    Action::Reduce(..) => false,
-                                    _ => true,
-                                });
+                                    Associativity::Right => {
+                                        // If associativity is right leave SHIFT
+                                        // action as "stronger" and don't consider
+                                        // this reduction any more. Right
+                                        // associative reductions can't be in the
+                                        // same set of actions together with SHIFTs.
+                                        should_reduce = false;
+                                    }
+                                    Associativity::None => {
+                                        // If priorities are the same and no
+                                        // associativity defined use preferred
+                                        // strategy.
+                                        let empty = prod.rhs.len() == 0;
+                                        let prod_pse = empty
+                                            && self
+                                                .settings
+                                                .prefer_shifts_over_empty
+                                            && !prod.nopse;
+                                        let prod_ps = !empty
+                                            && self.settings.prefer_shifts
+                                            && !prod.nops;
+                                        should_reduce = !(prod_pse || prod_ps);
+                                    }
+                                }
+                            } else if prod.prio > shift_prio {
+                                // This item operation priority is higher =>
+                                // override with reduce
+                                assert!(actions.len() == 1);
+                                actions.pop();
+                            } else {
+                                // If priority of existing SHIFT action is
+                                // higher then leave it instead
+                                should_reduce = false
+                            }
+                        }
+
+                        if should_reduce {
+                            if reduces.is_empty() {
                                 actions.push(new_reduce.clone())
                             } else {
-                                // This R/R conflict can't be resolved. Just add
-                                // the reduction.
-                                actions.push(new_reduce.clone())
+                                // REDUCE/REDUCE conflicts. Try to resolve using
+                                // priorities.
+                                let reduces_prio = reduces
+                                    .iter()
+                                    .map(|x| match x {
+                                        Action::Reduce(prod, ..) => {
+                                            self.grammar.productions[*prod].prio
+                                        }
+                                        other => panic!(
+                                            "This should not happen. Got {:?}",
+                                            other
+                                        ),
+                                    })
+                                    .collect::<Vec<_>>();
+                                if reduces_prio.iter().all(|x| prod.prio < *x) {
+                                    // Current product priority is less than all
+                                    // other reductions. Do not add this reduction.
+                                } else if reduces_prio
+                                    .iter()
+                                    .all(|x| prod.prio > *x)
+                                {
+                                    // Current product priority is greater than all
+                                    // other reductions. This reduction should
+                                    // replace all others.
+                                    actions.retain(|x| match x {
+                                        Action::Reduce(..) => false,
+                                        _ => true,
+                                    });
+                                    actions.push(new_reduce.clone())
+                                } else {
+                                    // This R/R conflict can't be resolved. Just add
+                                    // the reduction.
+                                    actions.push(new_reduce.clone())
+                                }
                             }
                         }
                     }
@@ -668,128 +846,185 @@ fn calculate_reductions(
             }
         }
     }
-}
 
-/// Sort terminals for each state according to explicit priority and terminal
-/// recognizer type. String recognizers have precedence over regex recognizers.
-/// Longer string recognizers have precedence over shorter.
-fn sort_terminals(grammar: &Grammar, states: &mut StateVec<LRState>) {
-    for state in states {
-        let mut terminals = state
-            .actions
-            .iter()
-            .enumerate()
-            .filter(|(_, actions)| !actions.is_empty())
-            .map(|(idx, _)| TermIndex(idx))
-            .collect::<Vec<_>>();
+    /// Sort terminals for each state according to explicit priority and terminal
+    /// recognizer type. String recognizers have precedence over regex recognizers.
+    /// Longer string recognizers have precedence over shorter.
+    fn sort_terminals(&mut self) {
+        for state in &mut self.states {
+            let mut terminals = state
+                .actions
+                .iter()
+                .enumerate()
+                .filter(|(_, actions)| !actions.is_empty())
+                .map(|(idx, _)| TermIndex(idx))
+                .collect::<Vec<_>>();
 
-        let term_prio = |term: &Terminal| -> u32 {
-            // Make STOP the first to try
-            if grammar.term_to_symbol_index(term.idx) == grammar.stop_index {
-                1e6 as u32
-            } else {
-                term.prio * 1000
-                    + match &term.recognizer {
-                        Some(recognizer) => {
-                            (match recognizer {
-                                Recognizer::StrConst(str_rec) => str_rec.len(),
-                                Recognizer::RegexTerm(_) => 0,
-                            }) as u32
+            let term_prio = |term: &Terminal| -> u32 {
+                // Make STOP the first to try
+                if self.grammar.term_to_symbol_index(term.idx)
+                    == self.grammar.stop_index
+                {
+                    1e6 as u32
+                } else {
+                    term.prio * 1000
+                        + match &term.recognizer {
+                            Some(recognizer) => {
+                                (match recognizer {
+                                    Recognizer::StrConst(str_rec) => {
+                                        str_rec.len()
+                                    }
+                                    Recognizer::RegexTerm(_) => 0,
+                                }) as u32
+                            }
+                            None => 0,
                         }
-                        None => 0,
-                    }
-            }
-        };
-        terminals.sort_by(|&l, &r| {
-            let l_term_prio = term_prio(&grammar.terminals[l]);
-            let r_term_prio = term_prio(&grammar.terminals[r]);
-            if l_term_prio > r_term_prio {
-                Ordering::Less
-            } else if l_term_prio < r_term_prio {
-                Ordering::Greater
-            } else {
-                Ordering::Equal
-            }
-        });
-        log!(
-            "SORTED: {:?}",
-            &grammar.symbol_names(
-                terminals
-                    .iter()
-                    .map(|i| grammar.term_to_symbol_index(*i))
-                    .collect::<Vec<_>>()
-            )
-        );
-        state.sorted_terminals = terminals;
-    }
-}
-
-/// Create new states that can be reached from the given state.
-fn create_new_states(
-    grammar: &Grammar,
-    state: &LRState,
-    per_next_symbol: BTreeMap<SymbolIndex, Vec<ItemIndex>>,
-) -> Vec<LRState> {
-    let mut states = Vec::new();
-    for (symbol, items) in per_next_symbol {
-        let next_state_items = items
-            .into_iter()
-            .map(|i| state.items[i].clone().inc_position())
-            .collect();
-        states.push(LRState::new_with_items(
-            &grammar,
-            StateIndex(0), // Temporary value. The caller will set the real index.
-            symbol,
-            next_state_items,
-        ));
-    }
-    states
-}
-
-/// Group LR items per grammar symbol right of the dot, and calculate
-/// terminal max priorities.
-fn group_per_next_symbol(
-    grammar: &Grammar,
-    state: &mut LRState,
-) -> BTreeMap<SymbolIndex, Vec<ItemIndex>> {
-    let mut per_next_symbol = BTreeMap::new();
-
-    for (idx, item) in state.items.iter().enumerate() {
-        let symbol = item.symbol_at_position(&grammar);
-        if let Some(symbol) = symbol {
-            per_next_symbol
-                .entry(symbol)
-                .or_insert(vec![])
-                .push(idx.into());
-            if grammar.is_term(symbol) {
-                let symbol = grammar.symbol_to_term_index(symbol);
-                let prod_prio = grammar.productions[item.prod].prio;
-                state
-                    .max_prior_for_term
-                    .entry(symbol)
-                    .and_modify(|v| *v = cmp::max(*v, prod_prio))
-                    .or_insert(prod_prio);
-            }
+                }
+            };
+            terminals.sort_by(|&l, &r| {
+                let l_term_prio = term_prio(&self.grammar.terminals[l]);
+                let r_term_prio = term_prio(&self.grammar.terminals[r]);
+                if l_term_prio > r_term_prio {
+                    Ordering::Less
+                } else if l_term_prio < r_term_prio {
+                    Ordering::Greater
+                } else {
+                    Ordering::Equal
+                }
+            });
+            log!(
+                "SORTED: {:?}",
+                &self.grammar.symbol_names(
+                    terminals
+                        .iter()
+                        .map(|i| self.grammar.term_to_symbol_index(*i))
+                        .collect::<Vec<_>>()
+                )
+            );
+            state.sorted_terminals = terminals;
         }
     }
-    per_next_symbol
-}
 
-/// Check for states with GOTO links but without SHIFT links.
-///
-/// This is invalid as GOTO links will never be traversed.
-fn check_empty_sets(grammar: &Grammar, first_sets: &FirstSets) {
-    first_sets
-        .iter()
-        .enumerate()
-        .filter(|(_, s)| s.is_empty())
-        .for_each(|(idx, _)| {
-            panic!(
-                "First set empty for grammar symbol {:?}.\n\
-                 An infinite recursion on the grammar symbol.",
-                &grammar.symbol_name(SymbolIndex(idx))
-            )
-        });
+    /// Create new states that can be reached from the given state.
+    fn create_new_states(
+        grammar: &'g Grammar,
+        state: &LRState,
+        per_next_symbol: BTreeMap<SymbolIndex, Vec<ItemIndex>>,
+    ) -> Vec<LRState<'g>> {
+        let mut states = Vec::new();
+        for (symbol, items) in per_next_symbol {
+            let next_state_items = items
+                .into_iter()
+                .map(|i| state.items[i].clone().inc_position())
+                .collect();
+            states.push(LRState::new_with_items(
+                grammar,
+                StateIndex(0), // Temporary value. The caller will set the real index.
+                symbol,
+                next_state_items,
+            ));
+        }
+        states
+    }
+
+    /// Check for states with GOTO links but without SHIFT links.
+    ///
+    /// This is invalid as GOTO links will never be traversed.
+    fn check_empty_sets(&self) {
+        self.first_sets
+            .iter()
+            .enumerate()
+            .filter(|(_, s)| s.is_empty())
+            .for_each(|(idx, _)| {
+                panic!(
+                    "First set empty for grammar symbol {:?}.\n\
+                    An infinite recursion on the grammar symbol.",
+                    &self.grammar.symbol_name(SymbolIndex(idx))
+                )
+            });
+    }
+
+    pub fn get_conflicts(&'s self) -> Vec<Conflict<'g, 's>> {
+        let mut conflicts = vec![];
+        for state in &self.states {
+            conflicts.extend(
+                state
+                    .actions
+                    .iter()
+                    .enumerate()
+                    .filter_map(|(term_index, actions)| -> Option<Conflict> {
+                        if actions.len() > 1 {
+                            // Assumtion is that only two action at most can exist
+                            // for some terminal lookahead.
+                            assert!(actions.len() == 2);
+
+                            // First figure out the type of conflict.
+                            let kind = match &actions[..] {
+                                // Shift/Reduce
+                                [Action::Shift(..), Action::Reduce(prod, ..)]
+                                    | [Action::Reduce(prod, ..), Action::Shift(..)]=>
+                                        ConflictKind::ShiftReduce(*prod),
+                                // Reduce/Reduce
+                                [Action::Reduce(prod1, ..), Action::Reduce(prod2, ..)] =>
+                                    ConflictKind::ReduceReduce(*prod1,  *prod2),
+                                _ => unreachable!()
+                            };
+
+                            Some(Conflict {
+                                state: &state,
+                                follow: TermIndex(term_index),
+                                kind
+                            })
+                        } else {
+                            None
+                        }
+                    }),
+            );
+        }
+        conflicts
+    }
+
+    pub fn print_conflicts_report(&self, conflicts: &Vec<Conflict<'g, 's>>) {
+        for conflict in conflicts {
+            println!("In {}", conflict.state);
+            print!(
+                "When I saw {} and see token {} ahead I can't decide",
+                self.grammar.symbol_name(conflict.state.symbol),
+                self.grammar.symbol_name(
+                    self.grammar.term_to_symbol_index(conflict.follow)
+                )
+            );
+            match conflict.kind {
+                ConflictKind::ShiftReduce(prod) => {
+                    println!(
+                        " should I shift or reduce by production:\n{}",
+                        self.grammar.productions[prod].to_string(self.grammar)
+                    );
+                }
+                ConflictKind::ReduceReduce(prod1, prod2) => {
+                    println!(
+                        " should I reduce by production:\n{}\nor production:\n{}\n",
+                        self.grammar.productions[prod1].to_string(self.grammar),
+                        self.grammar.productions[prod2].to_string(self.grammar)
+                    );
+                }
+            }
+        }
+        let shift_reduce_len = conflicts
+            .iter()
+            .filter(|c| matches!(c.kind, ConflictKind::ShiftReduce(..)))
+            .count();
+        let reduce_reduce_len = conflicts
+            .iter()
+            .filter(|c| matches!(c.kind, ConflictKind::ReduceReduce(..)))
+            .count();
+        println!(
+            "{} conflicts. {} Shift/Reduce and {} Reduce/Reduce.",
+            shift_reduce_len + &reduce_reduce_len,
+            shift_reduce_len,
+            reduce_reduce_len
+        );
+    }
 }
 
 /// Calculates the sets of terminals that can start the sentence derived from all
@@ -942,91 +1177,15 @@ fn follow_sets(grammar: &Grammar, first_sets: &FirstSets) -> FollowSets {
     follow_sets
 }
 
-/// Closes over LR items of the given LRState.
-///
-/// Starting from the given items (usually just kernel items), for each item, if
-/// right of the dot is a non-terminal, adds all items where LHS is a given
-/// non-terminal and the dot is at the beginning. In other words, adds all
-/// missing non-kernel items.
-fn closure(state: &mut LRState, grammar: &Grammar, first_sets: &FirstSets) {
-    loop {
-        let mut new_items: BTreeSet<LRItem> = BTreeSet::new();
-
-        for item in &state.items {
-            if let Some(symbol) = item.symbol_at_position(grammar) {
-                if grammar.is_nonterm(symbol) {
-                    let mut new_follow;
-                    // Find first set of substring that follow symbol at position
-                    if item.position + 1
-                        < grammar.productions[item.prod].rhs.len()
-                    {
-                        new_follow = firsts(
-                            &grammar,
-                            &first_sets,
-                            &grammar.production_rhs_symbols(item.prod)
-                                [item.position + 1..],
-                        );
-                        // If symbols that follows the current nonterminal can
-                        // derive EMPTY add follows of current item.
-                        if new_follow.contains(&grammar.empty_index) {
-                            new_follow.remove(&grammar.empty_index);
-                            new_follow.extend(item.follow.borrow().iter());
-                        }
-                    } else {
-                        // If current item position is at the end add all of its
-                        // follow to the next item.
-                        new_follow = Follow::new();
-                        new_follow.extend(item.follow.borrow().iter());
-                    }
-
-                    // Get all productions of the current non-terminal and
-                    // create LR items with the calculated follow.
-                    let nonterm = grammar.symbol_to_nonterm_index(symbol);
-                    for prod in &grammar.nonterminals[nonterm].productions {
-                        new_items.insert(LRItem::with_follow(
-                            &grammar,
-                            *prod,
-                            new_follow.clone(),
-                        ));
-                    }
-                }
-            }
-        }
-
-        // Add all new items to state.items. If item is already there update
-        // follow. If there is no change break from the loop.
-        let mut change = false;
-        for new_item in new_items {
-            match state.items.iter_mut().find(|x| *x == &new_item) {
-                Some(item) => {
-                    // Item already exists, update follows
-                    let l = item.follow.borrow().len();
-                    item.follow
-                        .borrow_mut()
-                        .extend(new_item.follow.borrow().iter());
-                    if item.follow.borrow().len() > l {
-                        change = true;
-                    }
-                }
-                None => {
-                    state.items.push(new_item);
-                    change = true;
-                }
-            }
-        }
-        if !change {
-            break;
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
 
     use std::cell::RefCell;
     use std::collections::BTreeSet;
 
-    use crate::table::{first_sets, ItemIndex, TableType};
+    use crate::table::{
+        first_sets, follow_sets, ItemIndex, LRTable, TableType,
+    };
     use crate::{
         api::settings::Settings,
         grammar::Grammar,
@@ -1038,10 +1197,7 @@ mod tests {
         log,
     };
 
-    use super::{
-        closure, follow_sets, group_per_next_symbol, lr_states_for_grammar,
-        merge_state, LRState,
-    };
+    use super::LRState;
 
     fn follow<T, I>(indexes: T) -> BTreeSet<SymbolIndex>
     where
@@ -1246,7 +1402,7 @@ mod tests {
                     follow: RefCell::new(Follow::new()),
                 });
 
-        let per_next_symbol = group_per_next_symbol(&grammar, &mut lr_state);
+        let per_next_symbol = lr_state.group_per_next_symbol();
 
         // log!("Symbols: {:#?}", grammar.symbol_names(per_next_symbol.keys()));
         // Symbols: ["+", "*", ")"]
@@ -1327,7 +1483,11 @@ mod tests {
             });
         let mut old_state_1 = old_state.clone();
         let settings = Settings::default();
-        assert!(merge_state(&mut old_state_1, &new_state_1, &settings));
+        assert!(LRTable::merge_state(
+            &settings,
+            &mut old_state_1,
+            &new_state_1
+        ));
         // When the merge succeed verify that items follows are indeed extended.
         assert_eq!(
             *old_state_1.items[ItemIndex(0)].follow.borrow(),
@@ -1352,7 +1512,11 @@ mod tests {
                 ..lr_item_2
             });
         let mut old_state_2 = old_state.clone();
-        assert!(!merge_state(&mut old_state_2, &new_state_2, &settings));
+        assert!(!LRTable::merge_state(
+            &settings,
+            &mut old_state_2,
+            &new_state_2
+        ));
         // Verify that no merge happened
         assert_eq!(
             *old_state_2.items[ItemIndex(0)].follow.borrow(),
@@ -1377,7 +1541,11 @@ mod tests {
                 ..lr_item_2
             });
         let mut old_state_3 = old_state.clone();
-        assert!(merge_state(&mut old_state_3, &new_state_3, &settings));
+        assert!(LRTable::merge_state(
+            &settings,
+            &mut old_state_3,
+            &new_state_3
+        ));
         // Verify that no merge happened
         assert_eq!(
             *old_state_3.items[ItemIndex(0)].follow.borrow(),
@@ -1403,7 +1571,7 @@ mod tests {
                     follow([grammar.stop_index]),
                 ));
 
-        closure(&mut lr_state, &grammar, &firsts);
+        lr_state.closure(&firsts);
 
         let prods = [1, 4, 7, 8];
         let follow_sets = [
@@ -1434,9 +1602,11 @@ mod tests {
             ..Settings::default()
         };
 
-        let states = lr_states_for_grammar(&grammar, &settings);
-
-        output_cmp!("src/table/grammar_2.expected", format!("{states:#?}"));
+        let table = LRTable::new(&grammar, &settings);
+        output_cmp!(
+            "src/table/grammar_2.expected",
+            format!("{:#?}", table.states)
+        );
     }
 
     #[test]
@@ -1455,11 +1625,11 @@ mod tests {
             ..Settings::default()
         };
 
-        let states = lr_states_for_grammar(&grammar, &settings);
+        let table = LRTable::new(&grammar, &settings);
 
         output_cmp!(
             "src/table/grammar_nonlalr_lalr.expected",
-            format!("{grammar}\n\n{states:#?}")
+            format!("{grammar}\n\n{:#?}", table.states)
         );
 
         // In LALR_PAGERW construction method R/R conflicts are avoided during
@@ -1475,11 +1645,11 @@ mod tests {
             ..Settings::default()
         };
 
-        let states = lr_states_for_grammar(&grammar, &settings);
+        let table = LRTable::new(&grammar, &settings);
 
         output_cmp!(
             "src/table/grammar_nonlalr_lalr_pagerw.expected",
-            format!("{grammar}\n\n{states:#?}")
+            format!("{grammar}\n\n{:#?}", table.states)
         );
     }
 
@@ -1501,9 +1671,9 @@ mod tests {
             ..Settings::default()
         };
 
-        let states = lr_states_for_grammar(&grammar, &settings);
+        let table = LRTable::new(&grammar, &settings);
         assert_eq!(
-            &states[StateIndex(0)]
+            &table.states[StateIndex(0)]
                 .sorted_terminals
                 .iter()
                 .map(|i| i.0)

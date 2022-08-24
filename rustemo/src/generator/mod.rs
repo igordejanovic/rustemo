@@ -1,7 +1,7 @@
 pub(crate) mod actions;
 
 use quote::format_ident;
-use rustemo_rt::index::{NonTermIndex, StateVec, TermIndex};
+use rustemo_rt::index::{NonTermIndex, TermIndex};
 use std::{
     iter::repeat,
     path::{Path, PathBuf},
@@ -12,12 +12,11 @@ use crate::{
     api::settings::Settings,
     error::{Error, Result},
     grammar::{
-        conflicts::{get_conflicts, print_conflicts_report},
         types::{choice_name, to_pascal_case, to_snake_case},
         Grammar, NonTerminal, Production,
     },
     lang::rustemo_actions::Recognizer,
-    table::{lr_states_for_grammar, Action, LRState},
+    table::{Action, LRTable},
 };
 
 use self::actions::generate_parser_actions;
@@ -47,6 +46,9 @@ pub fn generate_parser(
     out_dir_actions: Option<&Path>,
     settings: &Settings,
 ) -> Result<()> {
+    if !grammar_path.exists() {
+        return Err(Error::Error("Grammar file doesn't exist.".to_string()));
+    }
     let file_name = grammar_path
         .file_name()
         .ok_or(Error::Error("Invalid grammar file name.".to_string()))?;
@@ -69,11 +71,11 @@ pub fn generate_parser(
     let grammar_input = std::fs::read_to_string(grammar_path)?;
     let grammar = Grammar::from_string(grammar_input)?;
 
-    let states = lr_states_for_grammar(&grammar, &Settings::default());
+    let table = LRTable::new(&grammar, settings);
 
-    let conflicts = get_conflicts(&states);
+    let conflicts = table.get_conflicts();
     if !conflicts.is_empty() {
-        print_conflicts_report(&conflicts, &grammar);
+        table.print_conflicts_report(&conflicts);
         return Err(Error::Error(
             "Grammar is not deterministic. There are conflicts.".to_string(),
         ));
@@ -103,13 +105,13 @@ pub fn generate_parser(
         grammar.symbol_name(grammar.nonterm_to_symbol_index(NonTermIndex(2)));
 
     let mut ast: syn::File =
-        generate_parser_header(&grammar, &states, &actions_file)?;
+        generate_parser_header(&grammar, &table, &actions_file)?;
 
     ast.items
         .extend(generate_parser_types(&grammar, &actions_file)?);
 
     ast.items.extend(generate_parser_definition(
-        &states,
+        &table,
         &parser,
         &parser_definition,
         &builder,
@@ -117,7 +119,7 @@ pub fn generate_parser(
 
     ast.items.extend(generate_lexer_definition(
         &grammar,
-        &states,
+        &table,
         &lexer_definition,
     )?);
 
@@ -152,10 +154,10 @@ pub fn generate_parser(
 
 fn generate_parser_header(
     grammar: &Grammar,
-    states: &StateVec<LRState>,
+    table: &LRTable,
     actions_file: &str,
 ) -> Result<syn::File> {
-    let max_actions = states
+    let max_actions = table.states
         .iter()
         .map(|x| x.actions.iter().filter(|x| !x.is_empty()).count())
         .max()
@@ -163,7 +165,7 @@ fn generate_parser_header(
 
     let term_count = grammar.terminals.len();
     let nonterm_count = grammar.nonterminals.len();
-    let states_count = states.len();
+    let states_count = table.states.len();
     let actions_file = format_ident!("{}", actions_file);
 
     let header: syn::File = parse_quote! {
@@ -295,7 +297,7 @@ fn generate_parser_types(
 }
 
 fn generate_parser_definition(
-    states: &StateVec<LRState>,
+    table: &LRTable,
     parser: &str,
     parser_definition: &str,
     builder: &str,
@@ -313,7 +315,7 @@ fn generate_parser_definition(
 
     });
 
-    let actions: Vec<syn::Expr> = states
+    let actions: Vec<syn::Expr> = table.states
         .iter()
         .map(|state| {
             let actions_for_state: Vec<syn::Expr> = state
@@ -331,7 +333,7 @@ fn generate_parser_definition(
         })
         .collect();
 
-    let gotos: Vec<syn::Expr> = states
+    let gotos: Vec<syn::Expr> = table.states
         .iter()
         .map(|state| {
             let gotos_for_state: Vec<syn::Expr> = state
@@ -423,7 +425,7 @@ fn generate_parser_definition(
 
 fn generate_lexer_definition(
     grammar: &Grammar,
-    states: &StateVec<LRState>,
+    table: &LRTable,
     lexer_definition: &str,
 ) -> Result<Vec<syn::Item>> {
     let mut ast: Vec<syn::Item> = vec![];
@@ -453,12 +455,12 @@ fn generate_lexer_definition(
         })
         .collect();
 
-    let max_actions = states
+    let max_actions = table.states
         .iter()
         .map(|x| x.actions.iter().filter(|x| !x.is_empty()).count())
         .max()
         .unwrap();
-    let terminals_for_state: Vec<syn::Expr> = states
+    let terminals_for_state: Vec<syn::Expr> = table.states
         .iter()
         .map(|state| {
             let terminals: Vec<syn::Expr> = state
