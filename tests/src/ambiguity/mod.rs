@@ -1,17 +1,22 @@
 use rustemo::output_cmp;
 use rustemo_rt::rustemo_mod;
 
-rustemo_mod!(reduce_empty_1, "/src/ambiguity/reduce_empty_1");
-rustemo_mod!(reduce_empty_1_actions, "/src/ambiguity/reduce_empty_1");
-rustemo_mod!(reduce_empty_2, "/src/ambiguity/reduce_empty_2");
-rustemo_mod!(reduce_empty_2_actions, "/src/ambiguity/reduce_empty_2");
+use self::reduce_empty_1::ReduceEmpty1Parser;
+use self::reduce_empty_2::ReduceEmpty2Parser;
 
-//#[test]
+rustemo_mod!(reduce_empty_1, "/src/ambiguity");
+rustemo_mod!(reduce_empty_1_actions, "/src/ambiguity");
+rustemo_mod!(reduce_empty_2, "/src/ambiguity");
+rustemo_mod!(reduce_empty_2_actions, "/src/ambiguity");
+
+#[test]
 fn reduce_empty_1() {
-    let result = ReduceEmptyParser::parse_str("b b b");
+    let result = ReduceEmpty1Parser::parse_str("b b b");
+    output_cmp!("src/ambiguity/reduce_empty_1.ast", format!("{:#?}", result));
 }
 
-//#[test]
+#[test]
 fn reduce_empty_2() {
-    let result = ReduceEmptyParser::parse_str("b b b");
+    let result = ReduceEmpty2Parser::parse_str("1 42 2 b");
+    output_cmp!("src/ambiguity/reduce_empty_2.ast", format!("{:#?}", result));
 }

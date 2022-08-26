@@ -9,10 +9,22 @@ fn main() {
     if let Err(e) = rustemo::with_settings()
         .out_dir(&out_dir)
         .out_dir_actions(&out_dir)
-        // TODO: Temporary exclude ambiguities tests until issues solved
         .exclude(vec!["ambiguity".into()])
         .force(true)
         .process_dir(&root_dir)
+    {
+        eprintln!("{}", e);
+        exit(1);
+    }
+
+    // Special handling of ambiguous grammars by using prefer_shifts strategy.
+    let dir = out_dir.join("src/ambiguity");
+    if let Err(e) = rustemo::with_settings()
+        .out_dir(&dir)
+        .out_dir_actions(&dir)
+        .force(true)
+        .prefer_shifts(true)
+        .process_dir(&root_dir.join("src/ambiguity"))
     {
         eprintln!("{}", e);
         exit(1);
