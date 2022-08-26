@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use clap::Parser;
-use rustemo::api::with_settings;
+use rustemo::api::{with_settings, TableType, ParserAlgo};
 
 #[derive(Parser)]
 #[cfg_attr(feature="bootstrap",
@@ -27,6 +27,22 @@ struct Cli {
     #[clap(short, long, value_name="OUT DIR", value_hint = clap::ValueHint::DirPath)]
     outdir: Option<PathBuf>,
 
+    /// Prefer shifts in case of possible shift/reduce conflicts.
+    #[clap(long)]
+    prefer_shifts: bool,
+
+    /// Do not prefer shifts over empty reductions.
+    #[clap(long)]
+    no_shifts_over_empty: bool,
+
+    /// The type of LR table
+    #[clap(short, long, arg_enum, default_value_t)]
+    table_type: TableType,
+
+    /// Parser algorithm
+    #[clap(short, long, arg_enum, default_value_t)]
+    parser_algo: ParserAlgo,
+
     /// Output directory for actions. Default is the same as input grammar file.
     #[clap(short='a', long, value_name="OUT DIR ACTIONS", value_hint = clap::ValueHint::DirPath)]
     outdir_actions: Option<PathBuf>,
@@ -34,6 +50,10 @@ struct Cli {
     /// Exclude dirs containing these parts. Used with dir processing.
     #[clap(short, long, value_parser)]
     exclude: Vec<String>,
+
+    /// Verbosity level 0-2
+    #[clap(short, long, parse(from_occurrences))]
+    verbosity: usize,
 }
 
 fn main() {
@@ -42,7 +62,11 @@ fn main() {
     let mut settings = with_settings()
         .force(cli.force)
         .actions(!cli.noactions)
-        .exclude(cli.exclude);
+        .exclude(cli.exclude)
+        .prefer_shifts(cli.prefer_shifts)
+        .prefer_shifts_over_empty(!cli.no_shifts_over_empty)
+        .table_type(cli.table_type)
+        .parser_algo(cli.parser_algo);
 
     if let Some(outdir) = cli.outdir {
         settings = settings.out_dir(&outdir);
