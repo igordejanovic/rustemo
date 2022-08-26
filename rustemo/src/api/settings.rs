@@ -1,5 +1,19 @@
+use clap::clap_derive::ArgEnum;
+
 use crate::table::TableType;
 use std::path::PathBuf;
+
+#[derive(Debug, Clone, ArgEnum)]
+pub enum ParserAlgo {
+    LR,
+    GLR,
+}
+
+impl Default for ParserAlgo {
+    fn default() -> Self {
+        ParserAlgo::LR
+    }
+}
 
 #[derive(Debug)]
 pub struct Settings {
@@ -8,8 +22,10 @@ pub struct Settings {
     pub prefer_shifts: bool,
     pub prefer_shifts_over_empty: bool,
     pub table_type: TableType,
+    pub parser_algo: ParserAlgo,
     pub exclude: Vec<String>,
     pub actions: bool,
+
     /// Should actions file be recreated if exist. Use with care.
     pub force: bool,
 }
@@ -22,6 +38,7 @@ impl Default for Settings {
             prefer_shifts: false,
             prefer_shifts_over_empty: true,
             table_type: Default::default(),
+            parser_algo: Default::default(),
             actions: true,
             force: false,
             exclude: vec![],

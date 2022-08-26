@@ -9,6 +9,7 @@ use std::{
     slice::{Iter, IterMut},
 };
 
+use clap::ValueEnum;
 use rustemo_rt::{
     create_index,
     index::{
@@ -19,7 +20,7 @@ use rustemo_rt::{
 };
 
 use crate::{
-    api::settings::Settings,
+    api::{settings::Settings, ParserAlgo},
     grammar::{Associativity, Priority, Terminal, DEFAULT_PRIORITY},
     lang::rustemo_actions::Recognizer,
 };
@@ -34,7 +35,7 @@ pub enum Action {
 }
 
 #[allow(non_camel_case_types)]
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq, ValueEnum)]
 pub enum TableType {
     LALR, // http://publications.csail.mit.edu/lcs/pubs/pdf/MIT-LCS-TR-065.pdf
     LALR_PAGERW, // https://doi.org/10.1007/BF00290336
@@ -382,6 +383,7 @@ impl LRItem {
     }
 
     /// Moves position to the right.
+    #[inline]
     fn inc_position(mut self) -> Self {
         assert!(self.position < self.prod_len);
         self.position += 1;
@@ -392,10 +394,12 @@ impl LRItem {
     ///
     /// Kernel core items are those where position is not 0 except the augmented
     /// production which by definition belongs to the core.
+    #[inline]
     fn is_kernel(&self) -> bool {
         self.position > 0 || self.prod == ProdIndex(0)
     }
 
+    #[inline]
     fn is_reducing(&self) -> bool {
         self.position == self.prod_len
     }
@@ -720,12 +724,11 @@ impl<'g, 's> LRTable<'g, 's> {
                     continue;
                 }
 
-                let r_prod = &self.grammar.productions[item.prod];
                 let new_reduce = Action::Reduce(
                     item.prod,
                     item.prod_len,
-                    r_prod.nonterminal,
-                    r_prod.to_string(self.grammar),
+                    prod.nonterminal,
+                    prod.to_string(self.grammar),
                 );
                 for follow_symbol in item.follow.borrow().iter() {
                     let follow_term =
@@ -805,8 +808,8 @@ impl<'g, 's> LRTable<'g, 's> {
                             if reduces.is_empty() {
                                 actions.push(new_reduce.clone())
                             } else {
-                                // REDUCE/REDUCE conflicts. Try to resolve using
-                                // priorities.
+                                // REDUCE/REDUCE conflicts.
+                                // Try to resolve using priorities.
                                 let reduces_prio = reduces
                                     .iter()
                                     .map(|x| match x {
@@ -835,9 +838,26 @@ impl<'g, 's> LRTable<'g, 's> {
                                     });
                                     actions.push(new_reduce.clone())
                                 } else {
-                                    // This R/R conflict can't be resolved. Just add
-                                    // the reduction.
-                                    actions.push(new_reduce.clone())
+                                    // For LR parsing non-empty reductions are
+                                    // preferred over empty...
+                                    if let ParserAlgo::LR = self.settings.parser_algo {
+                                        // ... so remove all empty reductions.
+                                        actions.retain(|x| match x {
+                                            Action::Reduce(_, len, ..) if *len == 0 => false,
+                                            _ => true
+                                        });
+
+                                        if item.prod_len > 0 || actions.is_empty() {
+                                            // If current reduction is non-empty add it.
+                                            actions.push(new_reduce.clone())
+                                        }
+                                    } else {
+                                        // This R/R conflict can't be resolved.
+                                        // Just add the new reduction and GLR
+                                        // will handle it by investigating all
+                                        // possibilities.
+                                        actions.push(new_reduce.clone())
+                                    }
                                 }
                             }
                         }
@@ -1019,7 +1039,7 @@ impl<'g, 's> LRTable<'g, 's> {
             .filter(|c| matches!(c.kind, ConflictKind::ReduceReduce(..)))
             .count();
         println!(
-            "{} conflicts. {} Shift/Reduce and {} Reduce/Reduce.",
+            "{} conflict(s). {} Shift/Reduce and {} Reduce/Reduce.",
             shift_reduce_len + &reduce_reduce_len,
             shift_reduce_len,
             reduce_reduce_len

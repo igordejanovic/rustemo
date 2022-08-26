@@ -1,14 +1,16 @@
-use crate::table::TableType;
-use crate::{Result, Error};
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use crate::generator::generate_parser;
+pub use crate::table::TableType;
+pub use crate::{Error, Result};
 
-use self::settings::Settings;
+pub use crate::generator::generate_parser;
+
+pub use self::settings::{Settings, ParserAlgo};
 
 pub(crate) mod settings;
 
+#[derive(Debug)]
 pub struct RustemoSettings(Settings);
 
 /// Used as an entry point if non-default settings are needed.
@@ -66,6 +68,10 @@ impl RustemoSettings {
     }
     pub fn table_type(mut self, table_type: TableType) -> Self {
         self.0.table_type = table_type;
+        self
+    }
+    pub fn parser_algo(mut self, parser_algo: ParserAlgo) -> Self {
+        self.0.parser_algo = parser_algo;
         self
     }
     pub fn actions(mut self, actions: bool) -> Self {
@@ -139,7 +145,7 @@ impl RustemoSettings {
                 let path_name = path.to_string_lossy();
                 if self.0.exclude.iter().any(|e| path_name.contains(e)) {
                     println!("Excluding path: {path_name:?}");
-                    continue
+                    continue;
                 }
 
                 if path.is_dir() {
