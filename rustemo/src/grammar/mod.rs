@@ -36,6 +36,8 @@ pub struct Grammar {
     pub stop_index: SymbolIndex,
     /// Index of grammar augmented symbol
     pub augmented_index: SymbolIndex,
+    /// Index of augmented symbol for Layout rule if given
+    pub augmented_layout_index: Option<SymbolIndex>,
     /// An index of the start symbol. First non-terminal or terminal of the grammar.
     pub start_index: SymbolIndex,
 }

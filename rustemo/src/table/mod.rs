@@ -460,25 +460,52 @@ impl<'g, 's> LRTable<'g, 's> {
             states: StateVec::new(),
             first_sets: first_sets(grammar),
         };
-        table.calc_states();
+
+        table.check_empty_sets();
+
+        table.calc_states(grammar.augmented_index);
+        if let Some(augmented_layout_index) = grammar.augmented_layout_index {
+            table.calc_states(augmented_layout_index)
+        }
+
+        log!("LR states constructed. Updating follows.");
+        table.propagate_follows();
+
+        log!(
+            "Calculate REDUCTION entries in ACTION tables and resolve \
+            possible conflicts."
+        );
+        table.calculate_reductions();
+
+        log!("Sort terminals for lexical disambiguation");
+        table.sort_terminals();
+
+        log!("States:");
+        for _state in &table.states {
+            log!("{_state:#?}");
+        }
         table
     }
 
     /// Calculate LR states with GOTOs and ACTIONs for the given Grammar.
     ///
     /// This collection of states is used to generate LR/GLR parser tables.
-    pub fn calc_states(&mut self) {
-        self.check_empty_sets();
+    pub fn calc_states(&mut self, start_symbol: SymbolIndex) {
+
+        let first_state = self.states.len();
+
+        let prods = &self.grammar.symbol_to_nonterm(start_symbol).productions;
+        assert_eq!(prods.len(), 1);
 
         // Create a state for the first production (augmented)
         let state = LRState::new(
             self.grammar,
-            StateIndex(0),
-            self.grammar.augmented_index,
+            StateIndex(first_state),
+            start_symbol,
         )
         .add_item(LRItem::with_follow(
             self.grammar,
-            ProdIndex(0),
+            prods[0],
             Follow::from([self.grammar.stop_index]),
         ));
 
@@ -561,23 +588,6 @@ impl<'g, 's> LRTable<'g, 's> {
             }
 
             self.states.push(state);
-        }
-
-        log!("LR states constructed. Updating follows.");
-        self.propagate_follows();
-
-        log!(
-            "Calculate REDUCTION entries in ACTION tables and resolve \
-            possible conflicts."
-        );
-        self.calculate_reductions();
-
-        log!("Sort terminals for lexical disambiguation");
-        self.sort_terminals();
-
-        log!("States:");
-        for _state in &self.states {
-            log!("{_state:#?}");
         }
     }
 

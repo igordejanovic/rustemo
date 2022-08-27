@@ -210,5 +210,6 @@ Grammar {
     empty_index: 4,
     stop_index: 0,
     augmented_index: 5,
+    augmented_layout_index: None,
     start_index: 6,
 }

@@ -12,7 +12,7 @@ Ok(
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                46,
+                                47,
                             ),
                             is_bool: false,
                         },
@@ -33,7 +33,7 @@ Ok(
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                47,
+                                79,
                             ),
                             is_bool: false,
                         },
@@ -54,14 +54,7 @@ Ok(
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                47,
-                            ),
-                            is_bool: false,
-                        },
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                51,
+                                48,
                             ),
                             is_bool: false,
                         },
@@ -75,7 +68,112 @@ Ok(
                 },
                 Production {
                     idx: 3,
+                    nonterminal: 4,
+                    ntidx: 0,
+                    kind: None,
+                    rhs: [
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                48,
+                            ),
+                            is_bool: false,
+                        },
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                52,
+                            ),
+                            is_bool: false,
+                        },
+                    ],
+                    assoc: None,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 4,
+                    nonterminal: 4,
+                    ntidx: 1,
+                    kind: None,
+                    rhs: [
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                52,
+                            ),
+                            is_bool: false,
+                        },
+                    ],
+                    assoc: None,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 5,
                     nonterminal: 3,
+                    ntidx: 1,
+                    kind: None,
+                    rhs: [
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                49,
+                            ),
+                            is_bool: false,
+                        },
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                48,
+                            ),
+                            is_bool: false,
+                        },
+                    ],
+                    assoc: None,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 6,
+                    nonterminal: 5,
+                    ntidx: 0,
+                    kind: None,
+                    rhs: [
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                49,
+                            ),
+                            is_bool: false,
+                        },
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                51,
+                            ),
+                            is_bool: false,
+                        },
+                    ],
+                    assoc: None,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 7,
+                    nonterminal: 5,
                     ntidx: 1,
                     kind: None,
                     rhs: [
@@ -95,92 +193,15 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 4,
-                    nonterminal: 2,
-                    ntidx: 1,
-                    kind: None,
-                    rhs: [
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                48,
-                            ),
-                            is_bool: false,
-                        },
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                47,
-                            ),
-                            is_bool: false,
-                        },
-                    ],
-                    assoc: None,
-                    prio: 10,
-                    dynamic: false,
-                    nops: false,
-                    nopse: false,
-                    meta: {},
-                },
-                Production {
-                    idx: 5,
-                    nonterminal: 4,
-                    ntidx: 0,
-                    kind: None,
-                    rhs: [
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                48,
-                            ),
-                            is_bool: false,
-                        },
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                50,
-                            ),
-                            is_bool: false,
-                        },
-                    ],
-                    assoc: None,
-                    prio: 10,
-                    dynamic: false,
-                    nops: false,
-                    nopse: false,
-                    meta: {},
-                },
-                Production {
-                    idx: 6,
-                    nonterminal: 4,
-                    ntidx: 1,
-                    kind: None,
-                    rhs: [
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                50,
-                            ),
-                            is_bool: false,
-                        },
-                    ],
-                    assoc: None,
-                    prio: 10,
-                    dynamic: false,
-                    nops: false,
-                    nopse: false,
-                    meta: {},
-                },
-                Production {
-                    idx: 7,
-                    nonterminal: 2,
+                    idx: 8,
+                    nonterminal: 3,
                     ntidx: 2,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                47,
+                                48,
                             ),
                             is_bool: false,
                         },
@@ -194,35 +215,7 @@ Ok(
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                49,
-                            ),
-                            is_bool: false,
-                        },
-                    ],
-                    assoc: None,
-                    prio: 10,
-                    dynamic: false,
-                    nops: false,
-                    nopse: false,
-                    meta: {},
-                },
-                Production {
-                    idx: 8,
-                    nonterminal: 5,
-                    ntidx: 0,
-                    kind: None,
-                    rhs: [
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                49,
-                            ),
-                            is_bool: false,
-                        },
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                56,
+                                50,
                             ),
                             is_bool: false,
                         },
@@ -236,14 +229,21 @@ Ok(
                 },
                 Production {
                     idx: 9,
-                    nonterminal: 5,
-                    ntidx: 1,
+                    nonterminal: 6,
+                    ntidx: 0,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                56,
+                                50,
+                            ),
+                            is_bool: false,
+                        },
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                57,
                             ),
                             is_bool: false,
                         },
@@ -257,35 +257,14 @@ Ok(
                 },
                 Production {
                     idx: 10,
-                    nonterminal: 2,
-                    ntidx: 3,
+                    nonterminal: 6,
+                    ntidx: 1,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                48,
-                            ),
-                            is_bool: false,
-                        },
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                47,
-                            ),
-                            is_bool: false,
-                        },
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                1,
-                            ),
-                            is_bool: false,
-                        },
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                49,
+                                57,
                             ),
                             is_bool: false,
                         },
@@ -299,10 +278,24 @@ Ok(
                 },
                 Production {
                     idx: 11,
-                    nonterminal: 2,
-                    ntidx: 4,
+                    nonterminal: 3,
+                    ntidx: 3,
                     kind: None,
                     rhs: [
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                49,
+                            ),
+                            is_bool: false,
+                        },
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                48,
+                            ),
+                            is_bool: false,
+                        },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
@@ -313,7 +306,7 @@ Ok(
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                49,
+                                50,
                             ),
                             is_bool: false,
                         },
@@ -327,7 +320,35 @@ Ok(
                 },
                 Production {
                     idx: 12,
-                    nonterminal: 6,
+                    nonterminal: 3,
+                    ntidx: 4,
+                    kind: None,
+                    rhs: [
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                1,
+                            ),
+                            is_bool: false,
+                        },
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                50,
+                            ),
+                            is_bool: false,
+                        },
+                    ],
+                    assoc: None,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 13,
+                    nonterminal: 7,
                     ntidx: 0,
                     kind: None,
                     rhs: [
@@ -356,8 +377,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 13,
-                    nonterminal: 6,
+                    idx: 14,
+                    nonterminal: 7,
                     ntidx: 1,
                     kind: None,
                     rhs: [
@@ -400,15 +421,15 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 14,
-                    nonterminal: 7,
+                    idx: 15,
+                    nonterminal: 8,
                     ntidx: 0,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                52,
+                                53,
                             ),
                             is_bool: false,
                         },
@@ -431,7 +452,7 @@ Ok(
                                 "rhs",
                             ),
                             symbol: Resolved(
-                                53,
+                                54,
                             ),
                             is_bool: false,
                         },
@@ -451,8 +472,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 15,
-                    nonterminal: 8,
+                    idx: 16,
+                    nonterminal: 9,
                     ntidx: 0,
                     kind: None,
                     rhs: [
@@ -472,8 +493,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 16,
-                    nonterminal: 8,
+                    idx: 17,
+                    nonterminal: 9,
                     ntidx: 1,
                     kind: None,
                     rhs: [],
@@ -485,15 +506,15 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 17,
-                    nonterminal: 7,
+                    idx: 18,
+                    nonterminal: 8,
                     ntidx: 1,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                52,
+                                53,
                             ),
                             is_bool: false,
                         },
@@ -516,7 +537,7 @@ Ok(
                                 "meta",
                             ),
                             symbol: Resolved(
-                                58,
+                                59,
                             ),
                             is_bool: false,
                         },
@@ -539,7 +560,7 @@ Ok(
                                 "rhs",
                             ),
                             symbol: Resolved(
-                                53,
+                                54,
                             ),
                             is_bool: false,
                         },
@@ -559,8 +580,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 18,
-                    nonterminal: 9,
+                    idx: 19,
+                    nonterminal: 10,
                     ntidx: 0,
                     kind: None,
                     rhs: [
@@ -569,7 +590,7 @@ Ok(
                                 "rhs",
                             ),
                             symbol: Resolved(
-                                53,
+                                54,
                             ),
                             is_bool: false,
                         },
@@ -583,28 +604,7 @@ Ok(
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                54,
-                            ),
-                            is_bool: false,
-                        },
-                    ],
-                    assoc: Left,
-                    prio: 5,
-                    dynamic: false,
-                    nops: false,
-                    nopse: false,
-                    meta: {},
-                },
-                Production {
-                    idx: 19,
-                    nonterminal: 9,
-                    ntidx: 1,
-                    kind: None,
-                    rhs: [
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                54,
+                                55,
                             ),
                             is_bool: false,
                         },
@@ -619,7 +619,7 @@ Ok(
                 Production {
                     idx: 20,
                     nonterminal: 10,
-                    ntidx: 0,
+                    ntidx: 1,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
@@ -630,8 +630,8 @@ Ok(
                             is_bool: false,
                         },
                     ],
-                    assoc: None,
-                    prio: 10,
+                    assoc: Left,
+                    prio: 5,
                     dynamic: false,
                     nops: false,
                     nopse: false,
@@ -646,14 +646,7 @@ Ok(
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                55,
-                            ),
-                            is_bool: false,
-                        },
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                64,
+                                56,
                             ),
                             is_bool: false,
                         },
@@ -667,14 +660,21 @@ Ok(
                 },
                 Production {
                     idx: 22,
-                    nonterminal: 11,
-                    ntidx: 1,
+                    nonterminal: 12,
+                    ntidx: 0,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                64,
+                                56,
+                            ),
+                            is_bool: false,
+                        },
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                65,
                             ),
                             is_bool: false,
                         },
@@ -688,14 +688,35 @@ Ok(
                 },
                 Production {
                     idx: 23,
-                    nonterminal: 10,
+                    nonterminal: 12,
                     ntidx: 1,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                55,
+                                65,
+                            ),
+                            is_bool: false,
+                        },
+                    ],
+                    assoc: None,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 24,
+                    nonterminal: 11,
+                    ntidx: 1,
+                    kind: None,
+                    rhs: [
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                56,
                             ),
                             is_bool: false,
                         },
@@ -711,7 +732,7 @@ Ok(
                                 "meta",
                             ),
                             symbol: Resolved(
-                                58,
+                                59,
                             ),
                             is_bool: false,
                         },
@@ -731,15 +752,15 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 24,
-                    nonterminal: 12,
+                    idx: 25,
+                    nonterminal: 13,
                     ntidx: 0,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                52,
+                                53,
                             ),
                             is_bool: false,
                         },
@@ -760,49 +781,7 @@ Ok(
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                77,
-                            ),
-                            is_bool: false,
-                        },
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                5,
-                            ),
-                            is_bool: false,
-                        },
-                    ],
-                    assoc: Left,
-                    prio: 15,
-                    dynamic: false,
-                    nops: false,
-                    nopse: false,
-                    meta: {},
-                },
-                Production {
-                    idx: 25,
-                    nonterminal: 12,
-                    ntidx: 1,
-                    kind: None,
-                    rhs: [
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                52,
-                            ),
-                            is_bool: false,
-                        },
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                34,
-                            ),
-                            is_bool: false,
-                        },
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                4,
+                                78,
                             ),
                             is_bool: false,
                         },
@@ -823,14 +802,14 @@ Ok(
                 },
                 Production {
                     idx: 26,
-                    nonterminal: 12,
-                    ntidx: 2,
+                    nonterminal: 13,
+                    ntidx: 1,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                52,
+                                53,
                             ),
                             is_bool: false,
                         },
@@ -845,36 +824,6 @@ Ok(
                             name: None,
                             symbol: Resolved(
                                 4,
-                            ),
-                            is_bool: false,
-                        },
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                77,
-                            ),
-                            is_bool: false,
-                        },
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                7,
-                            ),
-                            is_bool: false,
-                        },
-                        ResolvingAssignment {
-                            name: Some(
-                                "meta",
-                            ),
-                            symbol: Resolved(
-                                60,
-                            ),
-                            is_bool: false,
-                        },
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                8,
                             ),
                             is_bool: false,
                         },
@@ -895,14 +844,14 @@ Ok(
                 },
                 Production {
                     idx: 27,
-                    nonterminal: 12,
-                    ntidx: 3,
+                    nonterminal: 13,
+                    ntidx: 2,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                52,
+                                53,
                             ),
                             is_bool: false,
                         },
@@ -923,6 +872,13 @@ Ok(
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
+                                78,
+                            ),
+                            is_bool: false,
+                        },
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
                                 7,
                             ),
                             is_bool: false,
@@ -932,7 +888,7 @@ Ok(
                                 "meta",
                             ),
                             symbol: Resolved(
-                                60,
+                                61,
                             ),
                             is_bool: false,
                         },
@@ -961,6 +917,71 @@ Ok(
                 Production {
                     idx: 28,
                     nonterminal: 13,
+                    ntidx: 3,
+                    kind: None,
+                    rhs: [
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                53,
+                            ),
+                            is_bool: false,
+                        },
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                34,
+                            ),
+                            is_bool: false,
+                        },
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                4,
+                            ),
+                            is_bool: false,
+                        },
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                7,
+                            ),
+                            is_bool: false,
+                        },
+                        ResolvingAssignment {
+                            name: Some(
+                                "meta",
+                            ),
+                            symbol: Resolved(
+                                61,
+                            ),
+                            is_bool: false,
+                        },
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                8,
+                            ),
+                            is_bool: false,
+                        },
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                5,
+                            ),
+                            is_bool: false,
+                        },
+                    ],
+                    assoc: Left,
+                    prio: 15,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 29,
+                    nonterminal: 14,
                     ntidx: 0,
                     kind: Some(
                         "Left",
@@ -982,8 +1003,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 29,
-                    nonterminal: 13,
+                    idx: 30,
+                    nonterminal: 14,
                     ntidx: 1,
                     kind: Some(
                         "Reduce",
@@ -1005,8 +1026,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 30,
-                    nonterminal: 13,
+                    idx: 31,
+                    nonterminal: 14,
                     ntidx: 2,
                     kind: Some(
                         "Right",
@@ -1028,8 +1049,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 31,
-                    nonterminal: 13,
+                    idx: 32,
+                    nonterminal: 14,
                     ntidx: 3,
                     kind: Some(
                         "Shift",
@@ -1051,8 +1072,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 32,
-                    nonterminal: 13,
+                    idx: 33,
+                    nonterminal: 14,
                     ntidx: 4,
                     kind: Some(
                         "Dynamic",
@@ -1074,8 +1095,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 33,
-                    nonterminal: 13,
+                    idx: 34,
+                    nonterminal: 14,
                     ntidx: 5,
                     kind: Some(
                         "NOPS",
@@ -1097,8 +1118,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 34,
-                    nonterminal: 13,
+                    idx: 35,
+                    nonterminal: 14,
                     ntidx: 6,
                     kind: Some(
                         "NOPSE",
@@ -1120,8 +1141,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 35,
-                    nonterminal: 13,
+                    idx: 36,
+                    nonterminal: 14,
                     ntidx: 7,
                     kind: Some(
                         "Priority",
@@ -1143,30 +1164,9 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 36,
-                    nonterminal: 13,
-                    ntidx: 8,
-                    kind: None,
-                    rhs: [
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                61,
-                            ),
-                            is_bool: false,
-                        },
-                    ],
-                    assoc: None,
-                    prio: 10,
-                    dynamic: false,
-                    nops: false,
-                    nopse: false,
-                    meta: {},
-                },
-                Production {
                     idx: 37,
-                    nonterminal: 13,
-                    ntidx: 9,
+                    nonterminal: 14,
+                    ntidx: 8,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
@@ -1187,6 +1187,27 @@ Ok(
                 Production {
                     idx: 38,
                     nonterminal: 14,
+                    ntidx: 9,
+                    kind: None,
+                    rhs: [
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                63,
+                            ),
+                            is_bool: false,
+                        },
+                    ],
+                    assoc: None,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 39,
+                    nonterminal: 15,
                     ntidx: 0,
                     kind: None,
                     rhs: [
@@ -1195,7 +1216,7 @@ Ok(
                                 "metas",
                             ),
                             symbol: Resolved(
-                                58,
+                                59,
                             ),
                             is_bool: false,
                         },
@@ -1211,30 +1232,7 @@ Ok(
                                 "meta",
                             ),
                             symbol: Resolved(
-                                57,
-                            ),
-                            is_bool: false,
-                        },
-                    ],
-                    assoc: Left,
-                    prio: 10,
-                    dynamic: false,
-                    nops: false,
-                    nopse: false,
-                    meta: {},
-                },
-                Production {
-                    idx: 39,
-                    nonterminal: 14,
-                    ntidx: 1,
-                    kind: None,
-                    rhs: [
-                        ResolvingAssignment {
-                            name: Some(
-                                "meta",
-                            ),
-                            symbol: Resolved(
-                                57,
+                                58,
                             ),
                             is_bool: false,
                         },
@@ -1249,6 +1247,29 @@ Ok(
                 Production {
                     idx: 40,
                     nonterminal: 15,
+                    ntidx: 1,
+                    kind: None,
+                    rhs: [
+                        ResolvingAssignment {
+                            name: Some(
+                                "meta",
+                            ),
+                            symbol: Resolved(
+                                58,
+                            ),
+                            is_bool: false,
+                        },
+                    ],
+                    assoc: Left,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 41,
+                    nonterminal: 16,
                     ntidx: 0,
                     kind: Some(
                         "Prefer",
@@ -1270,8 +1291,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 41,
-                    nonterminal: 15,
+                    idx: 42,
+                    nonterminal: 16,
                     ntidx: 1,
                     kind: Some(
                         "Finish",
@@ -1293,8 +1314,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 42,
-                    nonterminal: 15,
+                    idx: 43,
+                    nonterminal: 16,
                     ntidx: 2,
                     kind: Some(
                         "NoFinish",
@@ -1316,8 +1337,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 43,
-                    nonterminal: 15,
+                    idx: 44,
+                    nonterminal: 16,
                     ntidx: 3,
                     kind: Some(
                         "Dynamic",
@@ -1339,8 +1360,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 44,
-                    nonterminal: 15,
+                    idx: 45,
+                    nonterminal: 16,
                     ntidx: 4,
                     kind: Some(
                         "Priority",
@@ -1362,15 +1383,15 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 45,
-                    nonterminal: 15,
+                    idx: 46,
+                    nonterminal: 16,
                     ntidx: 5,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                61,
+                                62,
                             ),
                             is_bool: false,
                         },
@@ -1383,8 +1404,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 46,
-                    nonterminal: 16,
+                    idx: 47,
+                    nonterminal: 17,
                     ntidx: 0,
                     kind: None,
                     rhs: [
@@ -1393,7 +1414,7 @@ Ok(
                                 "metas",
                             ),
                             symbol: Resolved(
-                                60,
+                                61,
                             ),
                             is_bool: false,
                         },
@@ -1409,30 +1430,7 @@ Ok(
                                 "meta",
                             ),
                             symbol: Resolved(
-                                59,
-                            ),
-                            is_bool: false,
-                        },
-                    ],
-                    assoc: None,
-                    prio: 10,
-                    dynamic: false,
-                    nops: false,
-                    nopse: false,
-                    meta: {},
-                },
-                Production {
-                    idx: 47,
-                    nonterminal: 16,
-                    ntidx: 1,
-                    kind: None,
-                    rhs: [
-                        ResolvingAssignment {
-                            name: Some(
-                                "meta",
-                            ),
-                            symbol: Resolved(
-                                59,
+                                60,
                             ),
                             is_bool: false,
                         },
@@ -1447,29 +1445,15 @@ Ok(
                 Production {
                     idx: 48,
                     nonterminal: 17,
-                    ntidx: 0,
+                    ntidx: 1,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                34,
-                            ),
-                            is_bool: false,
-                        },
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                4,
-                            ),
-                            is_bool: false,
-                        },
-                        ResolvingAssignment {
                             name: Some(
-                                "value",
+                                "meta",
                             ),
                             symbol: Resolved(
-                                63,
+                                60,
                             ),
                             is_bool: false,
                         },
@@ -1494,6 +1478,22 @@ Ok(
                             ),
                             is_bool: false,
                         },
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                4,
+                            ),
+                            is_bool: false,
+                        },
+                        ResolvingAssignment {
+                            name: Some(
+                                "value",
+                            ),
+                            symbol: Resolved(
+                                64,
+                            ),
+                            is_bool: false,
+                        },
                     ],
                     assoc: None,
                     prio: 10,
@@ -1505,6 +1505,27 @@ Ok(
                 Production {
                     idx: 50,
                     nonterminal: 19,
+                    ntidx: 0,
+                    kind: None,
+                    rhs: [
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                34,
+                            ),
+                            is_bool: false,
+                        },
+                    ],
+                    assoc: None,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 51,
+                    nonterminal: 20,
                     ntidx: 0,
                     kind: None,
                     rhs: [
@@ -1524,8 +1545,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 51,
-                    nonterminal: 19,
+                    idx: 52,
+                    nonterminal: 20,
                     ntidx: 1,
                     kind: None,
                     rhs: [
@@ -1545,8 +1566,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 52,
-                    nonterminal: 19,
+                    idx: 53,
+                    nonterminal: 20,
                     ntidx: 2,
                     kind: None,
                     rhs: [
@@ -1566,8 +1587,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 53,
-                    nonterminal: 19,
+                    idx: 54,
+                    nonterminal: 20,
                     ntidx: 3,
                     kind: None,
                     rhs: [
@@ -1587,30 +1608,9 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 54,
-                    nonterminal: 20,
-                    ntidx: 0,
-                    kind: None,
-                    rhs: [
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                65,
-                            ),
-                            is_bool: false,
-                        },
-                    ],
-                    assoc: None,
-                    prio: 10,
-                    dynamic: false,
-                    nops: false,
-                    nopse: false,
-                    meta: {},
-                },
-                Production {
                     idx: 55,
-                    nonterminal: 20,
-                    ntidx: 1,
+                    nonterminal: 21,
+                    ntidx: 0,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
@@ -1630,14 +1630,14 @@ Ok(
                 },
                 Production {
                     idx: 56,
-                    nonterminal: 20,
-                    ntidx: 2,
+                    nonterminal: 21,
+                    ntidx: 1,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                68,
+                                67,
                             ),
                             is_bool: false,
                         },
@@ -1652,29 +1652,13 @@ Ok(
                 Production {
                     idx: 57,
                     nonterminal: 21,
-                    ntidx: 0,
+                    ntidx: 2,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                34,
-                            ),
-                            is_bool: false,
-                        },
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                20,
-                            ),
-                            is_bool: false,
-                        },
-                        ResolvingAssignment {
-                            name: Some(
-                                "gsymref",
-                            ),
-                            symbol: Resolved(
-                                68,
+                                69,
                             ),
                             is_bool: false,
                         },
@@ -1702,7 +1686,7 @@ Ok(
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                21,
+                                20,
                             ),
                             is_bool: false,
                         },
@@ -1711,7 +1695,7 @@ Ok(
                                 "gsymref",
                             ),
                             symbol: Resolved(
-                                68,
+                                69,
                             ),
                             is_bool: false,
                         },
@@ -1732,6 +1716,43 @@ Ok(
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
+                                34,
+                            ),
+                            is_bool: false,
+                        },
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                21,
+                            ),
+                            is_bool: false,
+                        },
+                        ResolvingAssignment {
+                            name: Some(
+                                "gsymref",
+                            ),
+                            symbol: Resolved(
+                                69,
+                            ),
+                            is_bool: false,
+                        },
+                    ],
+                    assoc: None,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 60,
+                    nonterminal: 24,
+                    ntidx: 0,
+                    kind: None,
+                    rhs: [
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
                                 9,
                             ),
                             is_bool: false,
@@ -1741,7 +1762,7 @@ Ok(
                                 "prod_rule_rhs",
                             ),
                             symbol: Resolved(
-                                53,
+                                54,
                             ),
                             is_bool: false,
                         },
@@ -1761,8 +1782,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 60,
-                    nonterminal: 24,
+                    idx: 61,
+                    nonterminal: 25,
                     ntidx: 0,
                     kind: None,
                     rhs: [
@@ -1771,31 +1792,10 @@ Ok(
                                 "gsymbol",
                             ),
                             symbol: Resolved(
-                                76,
+                                77,
                             ),
                             is_bool: false,
                         },
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                69,
-                            ),
-                            is_bool: false,
-                        },
-                    ],
-                    assoc: None,
-                    prio: 10,
-                    dynamic: false,
-                    nops: false,
-                    nopse: false,
-                    meta: {},
-                },
-                Production {
-                    idx: 61,
-                    nonterminal: 25,
-                    ntidx: 0,
-                    kind: None,
-                    rhs: [
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
@@ -1813,34 +1813,14 @@ Ok(
                 },
                 Production {
                     idx: 62,
-                    nonterminal: 25,
-                    ntidx: 1,
-                    kind: None,
-                    rhs: [],
-                    assoc: None,
-                    prio: 10,
-                    dynamic: false,
-                    nops: false,
-                    nopse: false,
-                    meta: {},
-                },
-                Production {
-                    idx: 63,
-                    nonterminal: 24,
-                    ntidx: 1,
+                    nonterminal: 26,
+                    ntidx: 0,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                67,
-                            ),
-                            is_bool: false,
-                        },
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                69,
+                                71,
                             ),
                             is_bool: false,
                         },
@@ -1853,22 +1833,35 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 64,
+                    idx: 63,
                     nonterminal: 26,
-                    ntidx: 0,
+                    ntidx: 1,
+                    kind: None,
+                    rhs: [],
+                    assoc: None,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 64,
+                    nonterminal: 25,
+                    ntidx: 1,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                72,
+                                68,
                             ),
                             is_bool: false,
                         },
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                71,
+                                70,
                             ),
                             is_bool: false,
                         },
@@ -1893,6 +1886,13 @@ Ok(
                             ),
                             is_bool: false,
                         },
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                72,
+                            ),
+                            is_bool: false,
+                        },
                     ],
                     assoc: None,
                     prio: 10,
@@ -1903,7 +1903,28 @@ Ok(
                 },
                 Production {
                     idx: 66,
-                    nonterminal: 27,
+                    nonterminal: 28,
+                    ntidx: 0,
+                    kind: None,
+                    rhs: [
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                74,
+                            ),
+                            is_bool: false,
+                        },
+                    ],
+                    assoc: None,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 67,
+                    nonterminal: 28,
                     ntidx: 1,
                     kind: None,
                     rhs: [],
@@ -1915,8 +1936,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 67,
-                    nonterminal: 28,
+                    idx: 68,
+                    nonterminal: 29,
                     ntidx: 0,
                     kind: Some(
                         "ZeroOrMore",
@@ -1938,8 +1959,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 68,
-                    nonterminal: 28,
+                    idx: 69,
+                    nonterminal: 29,
                     ntidx: 1,
                     kind: Some(
                         "ZeroOrMoreGreedy",
@@ -1961,8 +1982,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 69,
-                    nonterminal: 28,
+                    idx: 70,
+                    nonterminal: 29,
                     ntidx: 2,
                     kind: Some(
                         "OneOrMore",
@@ -1984,8 +2005,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 70,
-                    nonterminal: 28,
+                    idx: 71,
+                    nonterminal: 29,
                     ntidx: 3,
                     kind: Some(
                         "OneOrMoreGreedy",
@@ -2007,8 +2028,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 71,
-                    nonterminal: 28,
+                    idx: 72,
+                    nonterminal: 29,
                     ntidx: 4,
                     kind: Some(
                         "Optional",
@@ -2030,8 +2051,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 72,
-                    nonterminal: 28,
+                    idx: 73,
+                    nonterminal: 29,
                     ntidx: 5,
                     kind: Some(
                         "OptionalGreedy",
@@ -2053,8 +2074,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 73,
-                    nonterminal: 29,
+                    idx: 74,
+                    nonterminal: 30,
                     ntidx: 0,
                     kind: None,
                     rhs: [
@@ -2068,7 +2089,7 @@ Ok(
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                74,
+                                75,
                             ),
                             is_bool: false,
                         },
@@ -2088,15 +2109,15 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 74,
-                    nonterminal: 30,
+                    idx: 75,
+                    nonterminal: 31,
                     ntidx: 0,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                74,
+                                75,
                             ),
                             is_bool: false,
                         },
@@ -2110,28 +2131,7 @@ Ok(
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                75,
-                            ),
-                            is_bool: false,
-                        },
-                    ],
-                    assoc: None,
-                    prio: 10,
-                    dynamic: false,
-                    nops: false,
-                    nopse: false,
-                    meta: {},
-                },
-                Production {
-                    idx: 75,
-                    nonterminal: 30,
-                    ntidx: 1,
-                    kind: None,
-                    rhs: [
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                75,
+                                76,
                             ),
                             is_bool: false,
                         },
@@ -2146,13 +2146,13 @@ Ok(
                 Production {
                     idx: 76,
                     nonterminal: 31,
-                    ntidx: 0,
+                    ntidx: 1,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                34,
+                                76,
                             ),
                             is_bool: false,
                         },
@@ -2187,14 +2187,14 @@ Ok(
                 },
                 Production {
                     idx: 78,
-                    nonterminal: 32,
-                    ntidx: 1,
+                    nonterminal: 33,
+                    ntidx: 0,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                39,
+                                34,
                             ),
                             is_bool: false,
                         },
@@ -2209,7 +2209,7 @@ Ok(
                 Production {
                     idx: 79,
                     nonterminal: 33,
-                    ntidx: 0,
+                    ntidx: 1,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
@@ -2229,14 +2229,14 @@ Ok(
                 },
                 Production {
                     idx: 80,
-                    nonterminal: 33,
-                    ntidx: 1,
+                    nonterminal: 34,
+                    ntidx: 0,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                35,
+                                39,
                             ),
                             is_bool: false,
                         },
@@ -2251,13 +2251,13 @@ Ok(
                 Production {
                     idx: 81,
                     nonterminal: 34,
-                    ntidx: 0,
+                    ntidx: 1,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                80,
+                                35,
                             ),
                             is_bool: false,
                         },
@@ -2278,13 +2278,6 @@ Ok(
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                79,
-                            ),
-                            is_bool: false,
-                        },
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
                                 81,
                             ),
                             is_bool: false,
@@ -2299,14 +2292,21 @@ Ok(
                 },
                 Production {
                     idx: 83,
-                    nonterminal: 35,
-                    ntidx: 1,
+                    nonterminal: 36,
+                    ntidx: 0,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                81,
+                                80,
+                            ),
+                            is_bool: false,
+                        },
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                82,
                             ),
                             is_bool: false,
                         },
@@ -2321,61 +2321,6 @@ Ok(
                 Production {
                     idx: 84,
                     nonterminal: 36,
-                    ntidx: 0,
-                    kind: None,
-                    rhs: [
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                79,
-                            ),
-                            is_bool: false,
-                        },
-                    ],
-                    assoc: None,
-                    prio: 10,
-                    dynamic: false,
-                    nops: false,
-                    nopse: false,
-                    meta: {},
-                },
-                Production {
-                    idx: 85,
-                    nonterminal: 36,
-                    ntidx: 1,
-                    kind: None,
-                    rhs: [],
-                    assoc: None,
-                    prio: 10,
-                    dynamic: false,
-                    nops: false,
-                    nopse: false,
-                    meta: {},
-                },
-                Production {
-                    idx: 86,
-                    nonterminal: 37,
-                    ntidx: 0,
-                    kind: None,
-                    rhs: [
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                41,
-                            ),
-                            is_bool: false,
-                        },
-                    ],
-                    assoc: None,
-                    prio: 10,
-                    dynamic: false,
-                    nops: false,
-                    nopse: false,
-                    meta: {},
-                },
-                Production {
-                    idx: 87,
-                    nonterminal: 37,
                     ntidx: 1,
                     kind: None,
                     rhs: [
@@ -2395,8 +2340,84 @@ Ok(
                     meta: {},
                 },
                 Production {
+                    idx: 85,
+                    nonterminal: 37,
+                    ntidx: 0,
+                    kind: None,
+                    rhs: [
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                80,
+                            ),
+                            is_bool: false,
+                        },
+                    ],
+                    assoc: None,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 86,
+                    nonterminal: 37,
+                    ntidx: 1,
+                    kind: None,
+                    rhs: [],
+                    assoc: None,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 87,
+                    nonterminal: 38,
+                    ntidx: 0,
+                    kind: None,
+                    rhs: [
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                41,
+                            ),
+                            is_bool: false,
+                        },
+                    ],
+                    assoc: None,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
                     idx: 88,
                     nonterminal: 38,
+                    ntidx: 1,
+                    kind: None,
+                    rhs: [
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                83,
+                            ),
+                            is_bool: false,
+                        },
+                    ],
+                    assoc: None,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 89,
+                    nonterminal: 39,
                     ntidx: 0,
                     kind: None,
                     rhs: [
@@ -2410,7 +2431,7 @@ Ok(
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                83,
+                                84,
                             ),
                             is_bool: false,
                         },
@@ -2430,8 +2451,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 89,
-                    nonterminal: 38,
+                    idx: 90,
+                    nonterminal: 39,
                     ntidx: 1,
                     kind: None,
                     rhs: [
@@ -2439,27 +2460,6 @@ Ok(
                             name: None,
                             symbol: Resolved(
                                 42,
-                            ),
-                            is_bool: false,
-                        },
-                    ],
-                    assoc: None,
-                    prio: 10,
-                    dynamic: false,
-                    nops: false,
-                    nopse: false,
-                    meta: {},
-                },
-                Production {
-                    idx: 90,
-                    nonterminal: 39,
-                    ntidx: 0,
-                    kind: None,
-                    rhs: [
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                85,
                             ),
                             is_bool: false,
                         },
@@ -2480,13 +2480,6 @@ Ok(
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                84,
-                            ),
-                            is_bool: false,
-                        },
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
                                 86,
                             ),
                             is_bool: false,
@@ -2501,14 +2494,21 @@ Ok(
                 },
                 Production {
                     idx: 92,
-                    nonterminal: 40,
-                    ntidx: 1,
+                    nonterminal: 41,
+                    ntidx: 0,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                86,
+                                85,
+                            ),
+                            is_bool: false,
+                        },
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                87,
                             ),
                             is_bool: false,
                         },
@@ -2523,13 +2523,13 @@ Ok(
                 Production {
                     idx: 93,
                     nonterminal: 41,
-                    ntidx: 0,
+                    ntidx: 1,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                84,
+                                87,
                             ),
                             is_bool: false,
                         },
@@ -2543,19 +2543,6 @@ Ok(
                 },
                 Production {
                     idx: 94,
-                    nonterminal: 41,
-                    ntidx: 1,
-                    kind: None,
-                    rhs: [],
-                    assoc: None,
-                    prio: 10,
-                    dynamic: false,
-                    nops: false,
-                    nopse: false,
-                    meta: {},
-                },
-                Production {
-                    idx: 95,
                     nonterminal: 42,
                     ntidx: 0,
                     kind: None,
@@ -2563,7 +2550,7 @@ Ok(
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                82,
+                                85,
                             ),
                             is_bool: false,
                         },
@@ -2576,8 +2563,42 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 96,
+                    idx: 95,
                     nonterminal: 42,
+                    ntidx: 1,
+                    kind: None,
+                    rhs: [],
+                    assoc: None,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 96,
+                    nonterminal: 43,
+                    ntidx: 0,
+                    kind: None,
+                    rhs: [
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                83,
+                            ),
+                            is_bool: false,
+                        },
+                    ],
+                    assoc: None,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 97,
+                    nonterminal: 43,
                     ntidx: 1,
                     kind: None,
                     rhs: [
@@ -2597,8 +2618,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 97,
-                    nonterminal: 42,
+                    idx: 98,
+                    nonterminal: 43,
                     ntidx: 2,
                     kind: None,
                     rhs: [
@@ -3209,122 +3230,129 @@ Ok(
                 },
                 NonTerminal {
                     idx: 2,
-                    name: "File",
+                    name: "AUGL",
                     action: None,
                     productions: [
                         1,
-                        4,
-                        7,
-                        10,
-                        11,
                     ],
                 },
                 NonTerminal {
                     idx: 3,
+                    name: "File",
+                    action: None,
+                    productions: [
+                        2,
+                        5,
+                        8,
+                        11,
+                        12,
+                    ],
+                },
+                NonTerminal {
+                    idx: 4,
                     name: "GrammarRule1",
                     action: Some(
                         "vec",
                     ),
                     productions: [
-                        2,
                         3,
+                        4,
                     ],
                 },
                 NonTerminal {
-                    idx: 4,
+                    idx: 5,
                     name: "ImportStm1",
                     action: Some(
                         "vec",
                     ),
                     productions: [
-                        5,
                         6,
+                        7,
                     ],
                 },
                 NonTerminal {
-                    idx: 5,
+                    idx: 6,
                     name: "TerminalRule1",
                     action: Some(
                         "vec",
                     ),
                     productions: [
-                        8,
                         9,
-                    ],
-                },
-                NonTerminal {
-                    idx: 6,
-                    name: "ImportStm",
-                    action: None,
-                    productions: [
-                        12,
-                        13,
+                        10,
                     ],
                 },
                 NonTerminal {
                     idx: 7,
-                    name: "GrammarRule",
+                    name: "ImportStm",
                     action: None,
                     productions: [
+                        13,
                         14,
-                        17,
                     ],
                 },
                 NonTerminal {
                     idx: 8,
-                    name: "ActionOpt",
+                    name: "GrammarRule",
                     action: None,
                     productions: [
                         15,
-                        16,
+                        18,
                     ],
                 },
                 NonTerminal {
                     idx: 9,
-                    name: "GrammarRuleRHS",
+                    name: "ActionOpt",
                     action: None,
                     productions: [
-                        18,
-                        19,
+                        16,
+                        17,
                     ],
                 },
                 NonTerminal {
                     idx: 10,
-                    name: "Production",
+                    name: "GrammarRuleRHS",
                     action: None,
                     productions: [
+                        19,
                         20,
-                        23,
                     ],
                 },
                 NonTerminal {
                     idx: 11,
+                    name: "Production",
+                    action: None,
+                    productions: [
+                        21,
+                        24,
+                    ],
+                },
+                NonTerminal {
+                    idx: 12,
                     name: "Assignment1",
                     action: Some(
                         "vec",
                     ),
                     productions: [
-                        21,
                         22,
-                    ],
-                },
-                NonTerminal {
-                    idx: 12,
-                    name: "TerminalRule",
-                    action: None,
-                    productions: [
-                        24,
-                        25,
-                        26,
-                        27,
+                        23,
                     ],
                 },
                 NonTerminal {
                     idx: 13,
+                    name: "TerminalRule",
+                    action: None,
+                    productions: [
+                        25,
+                        26,
+                        27,
+                        28,
+                    ],
+                },
+                NonTerminal {
+                    idx: 14,
                     name: "ProdMetaData",
                     action: None,
                     productions: [
-                        28,
                         29,
                         30,
                         31,
@@ -3334,50 +3362,43 @@ Ok(
                         35,
                         36,
                         37,
-                    ],
-                },
-                NonTerminal {
-                    idx: 14,
-                    name: "ProdMetaDatas",
-                    action: None,
-                    productions: [
                         38,
-                        39,
                     ],
                 },
                 NonTerminal {
                     idx: 15,
+                    name: "ProdMetaDatas",
+                    action: None,
+                    productions: [
+                        39,
+                        40,
+                    ],
+                },
+                NonTerminal {
+                    idx: 16,
                     name: "TermMetaData",
                     action: None,
                     productions: [
-                        40,
                         41,
                         42,
                         43,
                         44,
                         45,
-                    ],
-                },
-                NonTerminal {
-                    idx: 16,
-                    name: "TermMetaDatas",
-                    action: None,
-                    productions: [
                         46,
-                        47,
                     ],
                 },
                 NonTerminal {
                     idx: 17,
-                    name: "UserMetaData",
+                    name: "TermMetaDatas",
                     action: None,
                     productions: [
+                        47,
                         48,
                     ],
                 },
                 NonTerminal {
                     idx: 18,
-                    name: "ProdKind",
+                    name: "UserMetaData",
                     action: None,
                     productions: [
                         49,
@@ -3385,36 +3406,36 @@ Ok(
                 },
                 NonTerminal {
                     idx: 19,
-                    name: "ConstVal",
+                    name: "ProdKind",
                     action: None,
                     productions: [
                         50,
-                        51,
-                        52,
-                        53,
                     ],
                 },
                 NonTerminal {
                     idx: 20,
-                    name: "Assignment",
+                    name: "ConstVal",
                     action: None,
                     productions: [
+                        51,
+                        52,
+                        53,
                         54,
-                        55,
-                        56,
                     ],
                 },
                 NonTerminal {
                     idx: 21,
-                    name: "PlainAssignment",
+                    name: "Assignment",
                     action: None,
                     productions: [
+                        55,
+                        56,
                         57,
                     ],
                 },
                 NonTerminal {
                     idx: 22,
-                    name: "BoolAssignment",
+                    name: "PlainAssignment",
                     action: None,
                     productions: [
                         58,
@@ -3422,7 +3443,7 @@ Ok(
                 },
                 NonTerminal {
                     idx: 23,
-                    name: "ProductionGroup",
+                    name: "BoolAssignment",
                     action: None,
                     productions: [
                         59,
@@ -3430,231 +3451,240 @@ Ok(
                 },
                 NonTerminal {
                     idx: 24,
-                    name: "GrammarSymbolRef",
+                    name: "ProductionGroup",
                     action: None,
                     productions: [
                         60,
-                        63,
                     ],
                 },
                 NonTerminal {
                     idx: 25,
-                    name: "RepetitionOperatorOpt",
+                    name: "GrammarSymbolRef",
                     action: None,
                     productions: [
                         61,
-                        62,
-                    ],
-                },
-                NonTerminal {
-                    idx: 26,
-                    name: "RepetitionOperator",
-                    action: None,
-                    productions: [
                         64,
                     ],
                 },
                 NonTerminal {
+                    idx: 26,
+                    name: "RepetitionOperatorOpt",
+                    action: None,
+                    productions: [
+                        62,
+                        63,
+                    ],
+                },
+                NonTerminal {
                     idx: 27,
-                    name: "RepetitionModifiersOpt",
+                    name: "RepetitionOperator",
                     action: None,
                     productions: [
                         65,
-                        66,
                     ],
                 },
                 NonTerminal {
                     idx: 28,
+                    name: "RepetitionModifiersOpt",
+                    action: None,
+                    productions: [
+                        66,
+                        67,
+                    ],
+                },
+                NonTerminal {
+                    idx: 29,
                     name: "RepetitionOperatorOp",
                     action: None,
                     productions: [
-                        67,
                         68,
                         69,
                         70,
                         71,
                         72,
-                    ],
-                },
-                NonTerminal {
-                    idx: 29,
-                    name: "RepetitionModifiers",
-                    action: None,
-                    productions: [
                         73,
                     ],
                 },
                 NonTerminal {
                     idx: 30,
+                    name: "RepetitionModifiers",
+                    action: None,
+                    productions: [
+                        74,
+                    ],
+                },
+                NonTerminal {
+                    idx: 31,
                     name: "RepetitionModifier1",
                     action: Some(
                         "vec",
                     ),
                     productions: [
-                        74,
                         75,
-                    ],
-                },
-                NonTerminal {
-                    idx: 31,
-                    name: "RepetitionModifier",
-                    action: None,
-                    productions: [
                         76,
                     ],
                 },
                 NonTerminal {
                     idx: 32,
-                    name: "GrammarSymbol",
+                    name: "RepetitionModifier",
                     action: None,
                     productions: [
                         77,
-                        78,
                     ],
                 },
                 NonTerminal {
                     idx: 33,
-                    name: "Recognizer",
+                    name: "GrammarSymbol",
                     action: None,
                     productions: [
+                        78,
                         79,
-                        80,
                     ],
                 },
                 NonTerminal {
                     idx: 34,
-                    name: "Layout",
+                    name: "Recognizer",
                     action: None,
                     productions: [
+                        80,
                         81,
                     ],
                 },
                 NonTerminal {
                     idx: 35,
+                    name: "Layout",
+                    action: None,
+                    productions: [
+                        82,
+                    ],
+                },
+                NonTerminal {
+                    idx: 36,
                     name: "LayoutItem1",
                     action: Some(
                         "vec",
                     ),
                     productions: [
-                        82,
                         83,
+                        84,
                     ],
                 },
                 NonTerminal {
-                    idx: 36,
+                    idx: 37,
                     name: "LayoutItem0",
                     action: Some(
                         "vec",
                     ),
                     productions: [
-                        84,
                         85,
-                    ],
-                },
-                NonTerminal {
-                    idx: 37,
-                    name: "LayoutItem",
-                    action: None,
-                    productions: [
                         86,
-                        87,
                     ],
                 },
                 NonTerminal {
                     idx: 38,
-                    name: "Comment",
+                    name: "LayoutItem",
                     action: None,
                     productions: [
+                        87,
                         88,
-                        89,
                     ],
                 },
                 NonTerminal {
                     idx: 39,
-                    name: "Corncs",
+                    name: "Comment",
                     action: None,
                     productions: [
+                        89,
                         90,
                     ],
                 },
                 NonTerminal {
                     idx: 40,
+                    name: "Corncs",
+                    action: None,
+                    productions: [
+                        91,
+                    ],
+                },
+                NonTerminal {
+                    idx: 41,
                     name: "Cornc1",
                     action: Some(
                         "vec",
                     ),
                     productions: [
-                        91,
                         92,
+                        93,
                     ],
                 },
                 NonTerminal {
-                    idx: 41,
+                    idx: 42,
                     name: "Cornc0",
                     action: Some(
                         "vec",
                     ),
                     productions: [
-                        93,
                         94,
+                        95,
                     ],
                 },
                 NonTerminal {
-                    idx: 42,
+                    idx: 43,
                     name: "Cornc",
                     action: None,
                     productions: [
-                        95,
                         96,
                         97,
+                        98,
                     ],
                 },
             ],
         ),
         nonterm_by_name: {
             "AUG": 45,
-            "ActionOpt": 52,
-            "Assignment": 64,
-            "Assignment1": 55,
-            "BoolAssignment": 66,
-            "Comment": 82,
-            "ConstVal": 63,
-            "Cornc": 86,
-            "Cornc0": 85,
-            "Cornc1": 84,
-            "Corncs": 83,
+            "AUGL": 46,
+            "ActionOpt": 53,
+            "Assignment": 65,
+            "Assignment1": 56,
+            "BoolAssignment": 67,
+            "Comment": 83,
+            "ConstVal": 64,
+            "Cornc": 87,
+            "Cornc0": 86,
+            "Cornc1": 85,
+            "Corncs": 84,
             "EMPTY": 44,
-            "File": 46,
-            "GrammarRule": 51,
-            "GrammarRule1": 47,
-            "GrammarRuleRHS": 53,
-            "GrammarSymbol": 76,
-            "GrammarSymbolRef": 68,
-            "ImportStm": 50,
-            "ImportStm1": 48,
-            "Layout": 78,
-            "LayoutItem": 81,
-            "LayoutItem0": 80,
-            "LayoutItem1": 79,
-            "PlainAssignment": 65,
-            "ProdKind": 62,
-            "ProdMetaData": 57,
-            "ProdMetaDatas": 58,
-            "Production": 54,
-            "ProductionGroup": 67,
-            "Recognizer": 77,
-            "RepetitionModifier": 75,
-            "RepetitionModifier1": 74,
-            "RepetitionModifiers": 73,
-            "RepetitionModifiersOpt": 71,
-            "RepetitionOperator": 70,
-            "RepetitionOperatorOp": 72,
-            "RepetitionOperatorOpt": 69,
-            "TermMetaData": 59,
-            "TermMetaDatas": 60,
-            "TerminalRule": 56,
-            "TerminalRule1": 49,
-            "UserMetaData": 61,
+            "File": 47,
+            "GrammarRule": 52,
+            "GrammarRule1": 48,
+            "GrammarRuleRHS": 54,
+            "GrammarSymbol": 77,
+            "GrammarSymbolRef": 69,
+            "ImportStm": 51,
+            "ImportStm1": 49,
+            "Layout": 79,
+            "LayoutItem": 82,
+            "LayoutItem0": 81,
+            "LayoutItem1": 80,
+            "PlainAssignment": 66,
+            "ProdKind": 63,
+            "ProdMetaData": 58,
+            "ProdMetaDatas": 59,
+            "Production": 55,
+            "ProductionGroup": 68,
+            "Recognizer": 78,
+            "RepetitionModifier": 76,
+            "RepetitionModifier1": 75,
+            "RepetitionModifiers": 74,
+            "RepetitionModifiersOpt": 72,
+            "RepetitionOperator": 71,
+            "RepetitionOperatorOp": 73,
+            "RepetitionOperatorOpt": 70,
+            "TermMetaData": 60,
+            "TermMetaDatas": 61,
+            "TerminalRule": 57,
+            "TerminalRule1": 50,
+            "UserMetaData": 62,
         },
         term_by_name: {
             "Action": 40,
@@ -3705,6 +3735,9 @@ Ok(
         empty_index: 44,
         stop_index: 0,
         augmented_index: 45,
-        start_index: 46,
+        augmented_layout_index: Some(
+            46,
+        ),
+        start_index: 47,
     },
 )

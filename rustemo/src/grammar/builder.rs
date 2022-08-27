@@ -3,7 +3,8 @@
 use std::collections::BTreeMap;
 
 use rustemo_rt::index::{
-    NonTermIndex, NonTermVec, ProdIndex, ProdVec, TermIndex, TermVec,
+    NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, TermIndex,
+    TermVec,
 };
 
 use crate::{
@@ -38,6 +39,7 @@ pub(crate) struct GrammarBuilder {
     next_term_idx: TermIndex,
     next_nonterm_idx: NonTermIndex,
     next_prod_idx: ProdIndex,
+    start_rule_name: String,
 }
 
 impl GrammarBuilder {
@@ -50,6 +52,7 @@ impl GrammarBuilder {
             next_term_idx: TermIndex(0),
             next_nonterm_idx: NonTermIndex(0),
             next_prod_idx: ProdIndex(0),
+            start_rule_name: "".into(),
         }
     }
 
@@ -94,6 +97,7 @@ impl GrammarBuilder {
 
         if let Some(rules) = file.grammar_rules {
             // Extract productions and nonterminals from grammar rules.
+            self.start_rule_name = rules[0].name.clone();
             self.extract_productions_and_symbols(rules);
         }
 
@@ -108,8 +112,16 @@ impl GrammarBuilder {
             imports: file.imports.unwrap_or_default(),
             productions: self.productions,
             empty_index: term_len.into(), // Right after the last terminal
-            augmented_index: (term_len + 1).into(), // skip EMPTY
-            start_index: (term_len + 2).into(),
+            augmented_index: (term_len
+                + self.nonterminals.get("AUG").unwrap().idx.0)
+                .into(),
+            augmented_layout_index: self
+                .nonterminals
+                .get("AUGL")
+                .and_then(|x| Some(SymbolIndex(term_len + x.idx.0))),
+            start_index: (term_len
+                + self.nonterminals.get(&self.start_rule_name).unwrap().idx.0)
+                .into(),
             stop_index: 0.into(),
             term_by_name: self
                 .terminals
@@ -198,33 +210,13 @@ impl GrammarBuilder {
             },
         );
 
-        // Augmented non-terminal and production. by default first rule is
-        // starting rule.
-        let nt_idx = self.get_nonterm_idx();
-        self.nonterminals.insert(
-            "AUG".to_string(),
-            NonTerminal {
-                idx: nt_idx,
-                name: "AUG".to_string(),
-                productions: vec![ProdIndex(0)],
-                action: None,
-            },
-        );
+        self.create_aug_nt_and_production("AUG", &rules[0].name);
 
-        // Add augmented S' -> S production
-        let prod_idx = self.get_prod_idx();
-        self.productions.push(Production {
-            idx: prod_idx,
-            nonterminal: nt_idx,
-            rhs: vec![ResolvingAssignment {
-                name: None,
-                symbol: ResolvingSymbolIndex::Resolving(GrammarSymbol::Name(
-                    rules[0].name.to_string(),
-                )),
-                is_bool: false,
-            }],
-            ..Production::default()
-        });
+        let layout_rule =
+            rules.iter().find(|r| r.name.to_lowercase() == "layout");
+        if let Some(layout_rule) = layout_rule {
+            self.create_aug_nt_and_production("AUGL", &layout_rule.name);
+        }
 
         for rule in rules {
             // Create new nonterm index if needed
@@ -357,6 +349,40 @@ impl GrammarBuilder {
                 nonterminal.productions.push(prod_idx);
             }
         }
+    }
+
+    fn create_aug_nt_and_production(
+        &mut self,
+        nt_name: &str,
+        rhs_rule_name: &str,
+    ) {
+        // Augmented non-terminal and production.
+        let nt_idx = self.get_nonterm_idx();
+        let prod_idx = self.get_prod_idx();
+
+        self.nonterminals.insert(
+            nt_name.to_string(),
+            NonTerminal {
+                idx: nt_idx,
+                name: nt_name.to_string(),
+                productions: vec![prod_idx],
+                action: None,
+            },
+        );
+
+        // Add augmented S' -> S production
+        self.productions.push(Production {
+            idx: prod_idx,
+            nonterminal: nt_idx,
+            rhs: vec![ResolvingAssignment {
+                name: None,
+                symbol: ResolvingSymbolIndex::Resolving(GrammarSymbol::Name(
+                    rhs_rule_name.to_string(),
+                )),
+                is_bool: false,
+            }],
+            ..Production::default()
+        });
     }
 
     /// Support for regex-like syntax sugar. E.g: A+, A*, A? and greedy
