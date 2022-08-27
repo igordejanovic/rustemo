@@ -1,0 +1,7 @@
+// Numbers with some words in between that should be ignored.
+S: Num+;
+Layout: Word+;
+
+terminals
+Num: /\d+/;
+Word: /[a-zA-Z]+/;

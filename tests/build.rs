@@ -9,7 +9,11 @@ fn main() {
     if let Err(e) = rustemo::with_settings()
         .out_dir(&out_dir)
         .out_dir_actions(&out_dir)
-        .exclude(vec!["ambiguity".into()])
+        .exclude(vec![
+            "ambiguity".into(),
+            // TODO: Remove when layout is implemented
+            "layout".into(),
+        ])
         .force(true)
         .process_dir(&root_dir)
     {
