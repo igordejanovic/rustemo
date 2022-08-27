@@ -12582,7 +12582,7 @@ where
         lexer: L,
         builder: B,
     ) -> Result<B::Output> {
-        RustemoParser::default().0.parse(context, lexer, builder)
+        self.0.parse(context, lexer, builder)
     }
 }
 #[allow(dead_code)]

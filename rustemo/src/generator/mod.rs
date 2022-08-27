@@ -393,7 +393,7 @@ fn generate_parser_definition(
                 B: LRBuilder<I>,
             {
                 fn parse(&mut self, context: LRContext<I>, lexer: L, builder: B) -> Result<B::Output> {
-                    #parser::default().0.parse(context, lexer, builder)
+                    self.0.parse(context, lexer, builder)
                 }
             }
         });
