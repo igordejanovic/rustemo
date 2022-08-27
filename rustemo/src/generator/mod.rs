@@ -449,7 +449,6 @@ fn generate_lexer_definition(
                 TerminalInfo {
                     id: TermIndex(#terminal_idx),
                     name: #terminal_name,
-                    location: None,
                 }
             }
         })

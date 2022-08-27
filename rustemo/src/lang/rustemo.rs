@@ -12609,222 +12609,178 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
         TerminalInfo {
             id: TermIndex(0usize),
             name: "STOP",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(1usize),
             name: "Terminals",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(2usize),
             name: "Import",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(3usize),
             name: "As",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(4usize),
             name: "Colon",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(5usize),
             name: "SemiColon",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(6usize),
             name: "Comma",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(7usize),
             name: "OBrace",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(8usize),
             name: "CBrace",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(9usize),
             name: "OBracket",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(10usize),
             name: "CBracket",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(11usize),
             name: "OSBracket",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(12usize),
             name: "CSBracket",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(13usize),
             name: "Choice",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(14usize),
             name: "ZeroOrMore",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(15usize),
             name: "ZeroOrMoreGreedy",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(16usize),
             name: "OneOrMore",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(17usize),
             name: "OneOrMoreGreedy",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(18usize),
             name: "Optional",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(19usize),
             name: "OptionalGreedy",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(20usize),
             name: "Equals",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(21usize),
             name: "QEquals",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(22usize),
             name: "Left",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(23usize),
             name: "Right",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(24usize),
             name: "Reduce",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(25usize),
             name: "Shift",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(26usize),
             name: "Dynamic",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(27usize),
             name: "NOPS",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(28usize),
             name: "NOPSE",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(29usize),
             name: "Prefer",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(30usize),
             name: "Finish",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(31usize),
             name: "NoFinish",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(32usize),
             name: "OComment",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(33usize),
             name: "CComment",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(34usize),
             name: "Name",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(35usize),
             name: "RegexTerm",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(36usize),
             name: "IntConst",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(37usize),
             name: "FloatConst",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(38usize),
             name: "BoolConst",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(39usize),
             name: "StrConst",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(40usize),
             name: "Action",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(41usize),
             name: "WS",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(42usize),
             name: "CommentLine",
-            location: None,
         },
         TerminalInfo {
             id: TermIndex(43usize),
             name: "NotComment",
-            location: None,
         },
     ],
     terminals_for_state: [
