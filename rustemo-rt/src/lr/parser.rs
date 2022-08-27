@@ -47,8 +47,8 @@ impl Display for Action {
 
 #[derive(Debug)]
 pub struct LRParser<D: ParserDefinition + 'static> {
-    pub definition: &'static D,
-    pub parse_stack: Vec<StateIndex>,
+    definition: &'static D,
+    parse_stack: Vec<StateIndex>,
 }
 
 impl<D: ParserDefinition> LRParser<D> {
