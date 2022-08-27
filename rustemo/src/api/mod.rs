@@ -10,6 +10,9 @@ pub use self::settings::{Settings, ParserAlgo};
 
 pub(crate) mod settings;
 
+/// A wrapper type around `Settings` used for a builder pattern style
+/// configuration. It is not meant to be constructed directly but through
+/// `with_settings` function.
 #[derive(Debug)]
 pub struct RustemoSettings(Settings);
 
