@@ -549,14 +549,25 @@ pub fn recognizer_c2(regex_term: RegexTerm) -> Recognizer {
     Recognizer::RegexTerm(regex_term)
 }
 pub type Layout = String;
-pub fn layout_c1(layout_item: LayoutItem) -> Layout {
+pub fn layout_c1(layout_item0: LayoutItem0) -> Layout {
+    layout_item0
+}
+pub type LayoutItem1 = String;
+pub fn layout_item1_c1(
+    mut layout_item1: LayoutItem1,
+    layout_item: LayoutItem,
+) -> LayoutItem1 {
+    layout_item1.push_str(&layout_item);
+    layout_item1
+}
+pub fn layout_item1_c2(layout_item: LayoutItem) -> LayoutItem1 {
     layout_item
 }
-pub fn layout_c2(mut layout: Layout, layout_item: LayoutItem) -> Layout {
-    layout.push_str(&layout_item);
-    layout
+pub type LayoutItem0 = LayoutItem1;
+pub fn layout_item0_c1(layout_item1: LayoutItem1) -> LayoutItem0 {
+    layout_item1
 }
-pub fn layout_empty() -> Layout {
+pub fn layout_item0_empty() -> LayoutItem0 {
     "".into()
 }
 pub type LayoutItem = String;
@@ -573,15 +584,23 @@ pub fn comment_c1(corncs: Corncs) -> Comment {
 pub fn comment_c2(comment_line: CommentLine) -> Comment {
     comment_line
 }
-pub type Corncs = String;
-pub fn corncs_c1(cornc: Cornc) -> Corncs {
+pub type Corncs = Cornc0;
+pub fn corncs_c1(cornc0: Cornc0) -> Corncs {
+    cornc0
+}
+pub type Cornc1 = String;
+pub fn cornc1_c1(mut cornc1: Cornc1, cornc: Cornc) -> Cornc1 {
+    cornc1.push_str(&cornc);
+    cornc1
+}
+pub fn cornc1_c2(cornc: Cornc) -> Cornc1 {
     cornc
 }
-pub fn corncs_c2(mut corncs: Corncs, cornc: Cornc) -> Corncs {
-    corncs.push_str(&cornc);
-    corncs
+pub type Cornc0 = Cornc1;
+pub fn cornc0_c1(cornc1: Cornc1) -> Cornc0 {
+    cornc1
 }
-pub fn corncs_empty() -> Corncs {
+pub fn cornc0_empty() -> Cornc0 {
     "".into()
 }
 pub type Cornc = String;

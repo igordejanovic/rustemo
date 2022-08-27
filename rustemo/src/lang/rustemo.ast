@@ -2257,7 +2257,7 @@ Ok(
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                79,
+                                80,
                             ),
                             is_bool: false,
                         },
@@ -2271,17 +2271,59 @@ Ok(
                 },
                 Production {
                     idx: 82,
-                    nonterminal: 34,
+                    nonterminal: 35,
+                    ntidx: 0,
+                    kind: None,
+                    rhs: [
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                79,
+                            ),
+                            is_bool: false,
+                        },
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                81,
+                            ),
+                            is_bool: false,
+                        },
+                    ],
+                    assoc: None,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 83,
+                    nonterminal: 35,
                     ntidx: 1,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                78,
+                                81,
                             ),
                             is_bool: false,
                         },
+                    ],
+                    assoc: None,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 84,
+                    nonterminal: 36,
+                    ntidx: 0,
+                    kind: None,
+                    rhs: [
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
@@ -2298,9 +2340,9 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 83,
-                    nonterminal: 34,
-                    ntidx: 2,
+                    idx: 85,
+                    nonterminal: 36,
+                    ntidx: 1,
                     kind: None,
                     rhs: [],
                     assoc: None,
@@ -2311,8 +2353,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 84,
-                    nonterminal: 35,
+                    idx: 86,
+                    nonterminal: 37,
                     ntidx: 0,
                     kind: None,
                     rhs: [
@@ -2332,15 +2374,15 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 85,
-                    nonterminal: 35,
+                    idx: 87,
+                    nonterminal: 37,
                     ntidx: 1,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                80,
+                                82,
                             ),
                             is_bool: false,
                         },
@@ -2353,8 +2395,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 86,
-                    nonterminal: 36,
+                    idx: 88,
+                    nonterminal: 38,
                     ntidx: 0,
                     kind: None,
                     rhs: [
@@ -2368,7 +2410,7 @@ Ok(
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                81,
+                                83,
                             ),
                             is_bool: false,
                         },
@@ -2388,8 +2430,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 87,
-                    nonterminal: 36,
+                    idx: 89,
+                    nonterminal: 38,
                     ntidx: 1,
                     kind: None,
                     rhs: [
@@ -2409,60 +2451,19 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 88,
-                    nonterminal: 37,
+                    idx: 90,
+                    nonterminal: 39,
                     ntidx: 0,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                82,
+                                85,
                             ),
                             is_bool: false,
                         },
                     ],
-                    assoc: None,
-                    prio: 10,
-                    dynamic: false,
-                    nops: false,
-                    nopse: false,
-                    meta: {},
-                },
-                Production {
-                    idx: 89,
-                    nonterminal: 37,
-                    ntidx: 1,
-                    kind: None,
-                    rhs: [
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                81,
-                            ),
-                            is_bool: false,
-                        },
-                        ResolvingAssignment {
-                            name: None,
-                            symbol: Resolved(
-                                82,
-                            ),
-                            is_bool: false,
-                        },
-                    ],
-                    assoc: None,
-                    prio: 10,
-                    dynamic: false,
-                    nops: false,
-                    nopse: false,
-                    meta: {},
-                },
-                Production {
-                    idx: 90,
-                    nonterminal: 37,
-                    ntidx: 2,
-                    kind: None,
-                    rhs: [],
                     assoc: None,
                     prio: 10,
                     dynamic: false,
@@ -2472,14 +2473,21 @@ Ok(
                 },
                 Production {
                     idx: 91,
-                    nonterminal: 38,
+                    nonterminal: 40,
                     ntidx: 0,
                     kind: None,
                     rhs: [
                         ResolvingAssignment {
                             name: None,
                             symbol: Resolved(
-                                80,
+                                84,
+                            ),
+                            is_bool: false,
+                        },
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                86,
                             ),
                             is_bool: false,
                         },
@@ -2493,7 +2501,83 @@ Ok(
                 },
                 Production {
                     idx: 92,
-                    nonterminal: 38,
+                    nonterminal: 40,
+                    ntidx: 1,
+                    kind: None,
+                    rhs: [
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                86,
+                            ),
+                            is_bool: false,
+                        },
+                    ],
+                    assoc: None,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 93,
+                    nonterminal: 41,
+                    ntidx: 0,
+                    kind: None,
+                    rhs: [
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                84,
+                            ),
+                            is_bool: false,
+                        },
+                    ],
+                    assoc: None,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 94,
+                    nonterminal: 41,
+                    ntidx: 1,
+                    kind: None,
+                    rhs: [],
+                    assoc: None,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 95,
+                    nonterminal: 42,
+                    ntidx: 0,
+                    kind: None,
+                    rhs: [
+                        ResolvingAssignment {
+                            name: None,
+                            symbol: Resolved(
+                                82,
+                            ),
+                            is_bool: false,
+                        },
+                    ],
+                    assoc: None,
+                    prio: 10,
+                    dynamic: false,
+                    nops: false,
+                    nopse: false,
+                    meta: {},
+                },
+                Production {
+                    idx: 96,
+                    nonterminal: 42,
                     ntidx: 1,
                     kind: None,
                     rhs: [
@@ -2513,8 +2597,8 @@ Ok(
                     meta: {},
                 },
                 Production {
-                    idx: 93,
-                    nonterminal: 38,
+                    idx: 97,
+                    nonterminal: 42,
                     ntidx: 2,
                     kind: None,
                     rhs: [
@@ -3443,22 +3527,33 @@ Ok(
                     action: None,
                     productions: [
                         81,
+                    ],
+                },
+                NonTerminal {
+                    idx: 35,
+                    name: "LayoutItem1",
+                    action: Some(
+                        "vec",
+                    ),
+                    productions: [
                         82,
                         83,
                     ],
                 },
                 NonTerminal {
-                    idx: 35,
-                    name: "LayoutItem",
-                    action: None,
+                    idx: 36,
+                    name: "LayoutItem0",
+                    action: Some(
+                        "vec",
+                    ),
                     productions: [
                         84,
                         85,
                     ],
                 },
                 NonTerminal {
-                    idx: 36,
-                    name: "Comment",
+                    idx: 37,
+                    name: "LayoutItem",
                     action: None,
                     productions: [
                         86,
@@ -3466,23 +3561,52 @@ Ok(
                     ],
                 },
                 NonTerminal {
-                    idx: 37,
-                    name: "Corncs",
+                    idx: 38,
+                    name: "Comment",
                     action: None,
                     productions: [
                         88,
                         89,
+                    ],
+                },
+                NonTerminal {
+                    idx: 39,
+                    name: "Corncs",
+                    action: None,
+                    productions: [
                         90,
                     ],
                 },
                 NonTerminal {
-                    idx: 38,
-                    name: "Cornc",
-                    action: None,
+                    idx: 40,
+                    name: "Cornc1",
+                    action: Some(
+                        "vec",
+                    ),
                     productions: [
                         91,
                         92,
+                    ],
+                },
+                NonTerminal {
+                    idx: 41,
+                    name: "Cornc0",
+                    action: Some(
+                        "vec",
+                    ),
+                    productions: [
                         93,
+                        94,
+                    ],
+                },
+                NonTerminal {
+                    idx: 42,
+                    name: "Cornc",
+                    action: None,
+                    productions: [
+                        95,
+                        96,
+                        97,
                     ],
                 },
             ],
@@ -3493,10 +3617,12 @@ Ok(
             "Assignment": 64,
             "Assignment1": 55,
             "BoolAssignment": 66,
-            "Comment": 80,
+            "Comment": 82,
             "ConstVal": 63,
-            "Cornc": 82,
-            "Corncs": 81,
+            "Cornc": 86,
+            "Cornc0": 85,
+            "Cornc1": 84,
+            "Corncs": 83,
             "EMPTY": 44,
             "File": 46,
             "GrammarRule": 51,
@@ -3507,7 +3633,9 @@ Ok(
             "ImportStm": 50,
             "ImportStm1": 48,
             "Layout": 78,
-            "LayoutItem": 79,
+            "LayoutItem": 81,
+            "LayoutItem0": 80,
+            "LayoutItem1": 79,
             "PlainAssignment": 65,
             "ProdKind": 62,
             "ProdMetaData": 57,
