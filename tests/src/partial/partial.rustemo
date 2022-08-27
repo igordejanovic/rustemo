@@ -1,0 +1,4 @@
+S: 'Numbers:' Num+;
+terminals
+Num: /\d+/;
+Numbers: 'Numbers:';

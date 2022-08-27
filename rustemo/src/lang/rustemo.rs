@@ -12589,7 +12589,7 @@ where
 impl RustemoParser {
     pub fn parse_str<'i>(input: &'i str) -> Result<<RustemoBuilder as Builder>::Output> {
         let context = LRContext::new("<str>".to_string(), input);
-        let lexer = LRStringLexer::new(&LEXER_DEFINITION);
+        let lexer = LRStringLexer::new(&LEXER_DEFINITION, false);
         let builder = RustemoBuilder::new();
         RustemoParser::default().0.parse(context, lexer, builder)
     }

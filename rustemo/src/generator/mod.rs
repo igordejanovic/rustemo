@@ -115,6 +115,7 @@ pub fn generate_parser(
         &parser,
         &parser_definition,
         &builder,
+        settings,
     )?);
 
     ast.items.extend(generate_lexer_definition(
@@ -157,7 +158,8 @@ fn generate_parser_header(
     table: &LRTable,
     actions_file: &str,
 ) -> Result<syn::File> {
-    let max_actions = table.states
+    let max_actions = table
+        .states
         .iter()
         .map(|x| x.actions.iter().filter(|x| !x.is_empty()).count())
         .max()
@@ -301,6 +303,7 @@ fn generate_parser_definition(
     parser: &str,
     parser_definition: &str,
     builder: &str,
+    settings: &Settings,
 ) -> Result<Vec<syn::Item>> {
     let mut ast: Vec<syn::Item> = vec![];
     let parser = format_ident!("{}", parser);
@@ -315,7 +318,8 @@ fn generate_parser_definition(
 
     });
 
-    let actions: Vec<syn::Expr> = table.states
+    let actions: Vec<syn::Expr> = table
+        .states
         .iter()
         .map(|state| {
             let actions_for_state: Vec<syn::Expr> = state
@@ -333,7 +337,8 @@ fn generate_parser_definition(
         })
         .collect();
 
-    let gotos: Vec<syn::Expr> = table.states
+    let gotos: Vec<syn::Expr> = table
+        .states
         .iter()
         .map(|state| {
             let gotos_for_state: Vec<syn::Expr> = state
@@ -398,6 +403,12 @@ fn generate_parser_definition(
             }
         });
 
+    let partial_parse: syn::Expr = if settings.partial_parse {
+        parse_quote! { true }
+    } else {
+        parse_quote! { false }
+    };
+
     ast.push(
         parse_quote! {
             #[allow(dead_code)]
@@ -405,7 +416,7 @@ fn generate_parser_definition(
             {
                 pub fn parse_str<'i>(input: &'i str) -> Result<<#builder as Builder>::Output> {
                     let context = LRContext::new("<str>".to_string(), input);
-                    let lexer = LRStringLexer::new(&LEXER_DEFINITION);
+                    let lexer = LRStringLexer::new(&LEXER_DEFINITION, #partial_parse);
                     let builder = #builder::new();
                     #parser::default().0.parse(context, lexer, builder)
                 }
@@ -454,12 +465,14 @@ fn generate_lexer_definition(
         })
         .collect();
 
-    let max_actions = table.states
+    let max_actions = table
+        .states
         .iter()
         .map(|x| x.actions.iter().filter(|x| !x.is_empty()).count())
         .max()
         .unwrap();
-    let terminals_for_state: Vec<syn::Expr> = table.states
+    let terminals_for_state: Vec<syn::Expr> = table
+        .states
         .iter()
         .map(|state| {
             let terminals: Vec<syn::Expr> = state

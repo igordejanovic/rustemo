@@ -26,6 +26,11 @@ pub struct Settings {
     pub exclude: Vec<String>,
     pub actions: bool,
 
+    /// If partial parse is allowed parsing can succeed even if the parser
+    /// didn't reach the end of the input. Use with care, especially with GLR
+    /// parsing as it may lead to a large number of partial solutions.
+    pub partial_parse: bool,
+
     /// Should actions file be recreated if exist. Use with care.
     pub force: bool,
 }
@@ -40,6 +45,7 @@ impl Default for Settings {
             table_type: Default::default(),
             parser_algo: Default::default(),
             actions: true,
+            partial_parse: false,
             force: false,
             exclude: vec![],
         }

@@ -3,7 +3,7 @@ use std::cmp::min;
 use crate::debug::log;
 use crate::error::{Error, Result};
 use crate::grammar::TerminalInfo;
-use crate::index::StateIndex;
+use crate::index::{StateIndex, TermIndex};
 use crate::lexer::{Context, Lexer, Token};
 use crate::location::{LineBased, Location, Position};
 
@@ -144,15 +144,16 @@ impl<I> From<&mut LRContext<I>> for Location {
 /// A lexer that operates over string inputs and uses generated string and regex
 /// recognizers provided by the parser table.
 pub struct LRStringLexer<D: 'static> {
-    pub(crate) definition: &'static D,
+    definition: &'static D,
+    partial_parse: bool,
 }
 
 impl<D> LRStringLexer<D>
 where
     D: LexerDefinition<Recognizer = for<'a> fn(&'a str) -> Option<&'a str>>,
 {
-    pub fn new(definition: &'static D) -> Self {
-        Self { definition }
+    pub fn new(definition: &'static D, partial_parse: bool) -> Self {
+        Self { definition, partial_parse }
     }
 
     fn skip<'i>(context: &mut LRContext<&'i str>) {
@@ -214,22 +215,38 @@ where
                 Ok(t)
             }
             None => {
-                let expected = self
-                    .definition
-                    .recognizers(context.state())
-                    .map(|(_, terminal_info)| terminal_info.name)
-                    .collect::<Vec<_>>()
-                    .join(", ");
-                Err(Error::ParseError {
-                    message: format!(
-                        r#"Error at position {} "{}". Expected one of {}."#,
-                        context.location_str(),
-                        context.context_str(),
-                        expected
-                    ),
-                    file: context.file(),
-                    location: Location::from(context),
-                })
+                if self.partial_parse {
+                    // If partial parse is configured we shall return STOP when
+                    // no new tokens can be found to try to complete what we
+                    // have seen so far.
+                    Ok(Token {
+                        terminal: &TerminalInfo {
+                            id: TermIndex(0),
+                            name: "STOP",
+                        },
+                        value: "",
+                        location: None,
+                        layout: None,
+                        layout_location: None,
+                    })
+                } else {
+                    let expected = self
+                        .definition
+                        .recognizers(context.state())
+                        .map(|(_, terminal_info)| terminal_info.name)
+                        .collect::<Vec<_>>()
+                        .join(", ");
+                    Err(Error::ParseError {
+                        message: format!(
+                            r#"Error at position {} "{}". Expected one of {}."#,
+                            context.location_str(),
+                            context.context_str(),
+                            expected
+                        ),
+                        file: context.file(),
+                        location: Location::from(context),
+                    })
+                }
             }
         }
     }

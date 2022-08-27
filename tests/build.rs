@@ -18,13 +18,29 @@ fn main() {
     }
 
     // Special handling of ambiguous grammars by using prefer_shifts strategy.
-    let dir = out_dir.join("src/ambiguity");
+    let p = "src/ambiguity";
+    let dir = out_dir.join(p);
     if let Err(e) = rustemo::with_settings()
         .out_dir(&dir)
         .out_dir_actions(&dir)
         .force(true)
         .prefer_shifts(true)
-        .process_dir(&root_dir.join("src/ambiguity"))
+        .process_dir(&root_dir.join(p))
+    {
+        eprintln!("{}", e);
+        exit(1);
+    }
+
+    // Partial parse
+    let p = "src/partial";
+    let dir = out_dir.join(p);
+    if let Err(e) = rustemo::with_settings()
+        .out_dir(&dir)
+        .out_dir_actions(&dir)
+        .force(true)
+        .prefer_shifts(true)
+        .partial_parse(true)
+        .process_dir(&root_dir.join(p))
     {
         eprintln!("{}", e);
         exit(1);

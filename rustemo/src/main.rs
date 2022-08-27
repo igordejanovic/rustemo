@@ -43,6 +43,10 @@ struct Cli {
     #[clap(short, long, arg_enum, default_value_t)]
     parser_algo: ParserAlgo,
 
+    /// Parser can succeed without consuming the whole input.
+    #[clap(long)]
+    partial_parse: bool,
+
     /// Output directory for actions. Default is the same as input grammar file.
     #[clap(short='a', long, value_name="OUT DIR ACTIONS", value_hint = clap::ValueHint::DirPath)]
     outdir_actions: Option<PathBuf>,
@@ -65,6 +69,7 @@ fn main() {
         .exclude(cli.exclude)
         .prefer_shifts(cli.prefer_shifts)
         .prefer_shifts_over_empty(!cli.no_shifts_over_empty)
+        .partial_parse(cli.partial_parse)
         .table_type(cli.table_type)
         .parser_algo(cli.parser_algo);
 
