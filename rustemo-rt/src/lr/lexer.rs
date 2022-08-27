@@ -153,7 +153,10 @@ where
     D: LexerDefinition<Recognizer = for<'a> fn(&'a str) -> Option<&'a str>>,
 {
     pub fn new(definition: &'static D, partial_parse: bool) -> Self {
-        Self { definition, partial_parse }
+        Self {
+            definition,
+            partial_parse,
+        }
     }
 
     fn skip<'i>(context: &mut LRContext<&'i str>) {

@@ -491,23 +491,19 @@ impl<'g, 's> LRTable<'g, 's> {
     ///
     /// This collection of states is used to generate LR/GLR parser tables.
     pub fn calc_states(&mut self, start_symbol: SymbolIndex) {
-
         let first_state = self.states.len();
 
         let prods = &self.grammar.symbol_to_nonterm(start_symbol).productions;
         assert_eq!(prods.len(), 1);
 
         // Create a state for the first production (augmented)
-        let state = LRState::new(
-            self.grammar,
-            StateIndex(first_state),
-            start_symbol,
-        )
-        .add_item(LRItem::with_follow(
-            self.grammar,
-            prods[0],
-            Follow::from([self.grammar.stop_index]),
-        ));
+        let state =
+            LRState::new(self.grammar, StateIndex(first_state), start_symbol)
+                .add_item(LRItem::with_follow(
+                    self.grammar,
+                    prods[0],
+                    Follow::from([self.grammar.stop_index]),
+                ));
 
         // States to be processed.
         let mut state_queue = VecDeque::from([state]);
@@ -850,14 +846,22 @@ impl<'g, 's> LRTable<'g, 's> {
                                 } else {
                                     // For LR parsing non-empty reductions are
                                     // preferred over empty...
-                                    if let ParserAlgo::LR = self.settings.parser_algo {
+                                    if let ParserAlgo::LR =
+                                        self.settings.parser_algo
+                                    {
                                         // ... so remove all empty reductions.
                                         actions.retain(|x| match x {
-                                            Action::Reduce(_, len, ..) if *len == 0 => false,
-                                            _ => true
+                                            Action::Reduce(_, len, ..)
+                                                if *len == 0 =>
+                                            {
+                                                false
+                                            }
+                                            _ => true,
                                         });
 
-                                        if item.prod_len > 0 || actions.is_empty() {
+                                        if item.prod_len > 0
+                                            || actions.is_empty()
+                                        {
                                             // If current reduction is non-empty add it.
                                             actions.push(new_reduce.clone())
                                         }

@@ -6,7 +6,7 @@ pub use crate::{Error, Result};
 
 pub use crate::generator::generate_parser;
 
-pub use self::settings::{Settings, ParserAlgo};
+pub use self::settings::{ParserAlgo, Settings};
 
 pub(crate) mod settings;
 

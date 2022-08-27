@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use clap::Parser;
-use rustemo::api::{with_settings, TableType, ParserAlgo};
+use rustemo::api::{with_settings, ParserAlgo, TableType};
 
 #[derive(Parser)]
 #[cfg_attr(feature="bootstrap",
@@ -80,7 +80,6 @@ fn main() {
     if let Some(outdir) = cli.outdir_actions {
         settings = settings.out_dir_actions(&outdir);
     }
-
 
     let result = if cli.grammar_file_or_dir.is_file() {
         settings.process_grammar(&cli.grammar_file_or_dir)

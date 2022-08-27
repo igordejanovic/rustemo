@@ -240,7 +240,7 @@ fn productions_meta_data_inheritance() {
 
     match grammar.productions[ProdIndex(3)].meta.get("bla").unwrap() {
         crate::lang::rustemo_actions::ConstVal::Int(i) => *i == 5u32,
-        _ => unreachable!()
+        _ => unreachable!(),
     };
     assert_eq!(grammar.productions[ProdIndex(3)].meta.len(), 1);
 
@@ -248,7 +248,7 @@ fn productions_meta_data_inheritance() {
     assert_eq!(grammar.productions[ProdIndex(4)].prio, 7);
     match grammar.productions[ProdIndex(4)].meta.get("bla").unwrap() {
         crate::lang::rustemo_actions::ConstVal::Int(i) => *i == 10u32,
-        _ => unreachable!()
+        _ => unreachable!(),
     };
 
     assert_eq!(
@@ -257,10 +257,7 @@ fn productions_meta_data_inheritance() {
     );
 
     // Inherited
-    assert_eq!(
-        grammar.productions[ProdIndex(6)].assoc,
-        Associativity::Left
-    );
+    assert_eq!(grammar.productions[ProdIndex(6)].assoc, Associativity::Left);
 }
 
 #[test]

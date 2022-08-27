@@ -1,8 +1,8 @@
 #![allow(unused_imports)]
-mod rule_patterns;
-mod sugar;
 mod ambiguity;
 mod partial;
+mod rule_patterns;
+mod sugar;
 //mod layout;
 
 // For output_cmp macro

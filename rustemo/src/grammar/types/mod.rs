@@ -53,7 +53,10 @@ impl SymbolTypes {
     }
 
     /// Returns a vector of all types inferred from the provided grammar.
-    pub(crate) fn symbol_types(grammar: &Grammar, start_symbol: String) -> Vec<SymbolType> {
+    pub(crate) fn symbol_types(
+        grammar: &Grammar,
+        start_symbol: String,
+    ) -> Vec<SymbolType> {
         let mut types = vec![];
         for terminal in &grammar.terminals {
             // Each terminal produces `Terminal` kind which maps to String by default
@@ -276,7 +279,10 @@ impl SymbolTypes {
     }
 
     /// Flags recursive types by performing a DFS over the types reference graph.
-    fn find_recursions(symbol_types: &mut Vec<SymbolType>, start_symbol: String) {
+    fn find_recursions(
+        symbol_types: &mut Vec<SymbolType>,
+        start_symbol: String,
+    ) {
         let types: HashMap<String, &SymbolType> =
             symbol_types.iter().map(|t| (t.name.clone(), t)).collect();
         fn dfs(
@@ -298,17 +304,12 @@ impl SymbolTypes {
                             recursive.set(true);
                         } else {
                             visited.insert(ref_type.clone());
-                            dfs(
-                                types.get(ref_type).unwrap(),
-                                visited,
-                                types,
-                            );
+                            dfs(types.get(ref_type).unwrap(), visited, types);
                             visited.remove(ref_type);
                         }
                     }
                 }
-                SymbolTypeKind::Struct { .. }
-                | SymbolTypeKind::Enum { .. } => {
+                SymbolTypeKind::Struct { .. } | SymbolTypeKind::Enum { .. } => {
                     for choice in &ty.choices {
                         match &choice.kind {
                             ChoiceKind::Ref {
@@ -359,7 +360,11 @@ impl SymbolTypes {
         log!("Start symbol: {start_symbol:#?}");
         log!("Symbol types: {symbol_types:#?}");
 
-        dfs(types.get(&start_symbol).unwrap(), &mut HashSet::new(), &types);
+        dfs(
+            types.get(&start_symbol).unwrap(),
+            &mut HashSet::new(),
+            &types,
+        );
     }
 }
 

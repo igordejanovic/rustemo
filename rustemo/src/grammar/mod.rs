@@ -238,9 +238,11 @@ impl Production {
     }
 
     pub fn to_string(&self, grammar: &Grammar) -> String {
-        format!("{}: {}",
-                self.nonterminal(grammar).name,
-                grammar.symbol_names(self.rhs_symbols()).join(" "))
+        format!(
+            "{}: {}",
+            self.nonterminal(grammar).name,
+            grammar.symbol_names(self.rhs_symbols()).join(" ")
+        )
     }
 }
 

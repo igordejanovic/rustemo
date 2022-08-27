@@ -13,7 +13,8 @@ use syn::{self, parse_quote};
 
 use crate::{
     api::settings::Settings,
-    grammar::{types::to_snake_case, Grammar, NonTerminal}, Error,
+    grammar::{types::to_snake_case, Grammar, NonTerminal},
+    Error,
 };
 use crate::{error::Result, grammar::Terminal};
 

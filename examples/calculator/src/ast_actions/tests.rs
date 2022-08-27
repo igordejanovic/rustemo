@@ -2,13 +2,11 @@ mod calculator01_ast_tests {
 
     use rustemo::output_cmp;
 
-    use crate::{
-        ast_actions::{
-            calculator01::Calculator01Parser,
-            calculator02_ambig::Calculator02AmbigParser,
-            calculator03_ambig_prodkind::Calculator03AmbigProdkindParser,
-            calculator04_ambig_lhs::Calculator04AmbigLhsParser,
-        },
+    use crate::ast_actions::{
+        calculator01::Calculator01Parser,
+        calculator02_ambig::Calculator02AmbigParser,
+        calculator03_ambig_prodkind::Calculator03AmbigProdkindParser,
+        calculator04_ambig_lhs::Calculator04AmbigLhsParser,
     };
 
     #[test]
