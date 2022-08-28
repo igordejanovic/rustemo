@@ -1,8 +1,7 @@
 use crate::debug::log;
 use crate::error::Result;
 use crate::index::{NonTermIndex, ProdIndex, StateIndex, TermIndex};
-use crate::lexer::Lexer;
-use crate::lr::lexer::LRContext;
+use crate::lexer::{Lexer, Context};
 use crate::parser::Parser;
 use std::fmt::{Debug, Display};
 
@@ -60,33 +59,33 @@ impl<D: ParserDefinition> LRParser<D> {
     }
 
     #[inline]
-    fn to_state<I>(&mut self, context: &mut LRContext<I>, state: StateIndex) {
+    fn to_state<I, LO>(&mut self, context: &mut Context<I, LO, StateIndex>, state: StateIndex) {
         self.parse_stack.push(state);
         context.set_state(state);
     }
 
     #[inline]
-    fn pop_states<I>(
+    fn pop_states<I, LO>(
         &mut self,
-        context: &mut LRContext<I>,
+        context: &mut Context<I, LO, StateIndex>,
         states: usize,
     ) -> StateIndex {
         let _ = self.parse_stack.split_off(self.parse_stack.len() - states);
         context.set_state(*self.parse_stack.last().unwrap());
-        context.state()
+        *context.state()
     }
 }
 
-impl<I, D, L, B> Parser<I, LRContext<I>, L, B> for LRParser<D>
+impl<I, D, L, B, LO> Parser<I, L, B, LO, StateIndex> for LRParser<D>
 where
     I: Debug,
     D: ParserDefinition,
-    L: Lexer<I, LRContext<I>>,
+    L: Lexer<I, LO, StateIndex>,
     B: LRBuilder<I>,
 {
     fn parse(
         &mut self,
-        mut context: LRContext<I>,
+        mut context: Context<I, LO, StateIndex>,
         lexer: L,
         mut builder: B,
     ) -> Result<B::Output> {

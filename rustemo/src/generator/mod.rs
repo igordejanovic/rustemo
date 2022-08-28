@@ -179,11 +179,11 @@ fn generate_parser_header(
             fmt::Debug,
         };
 
-        use rustemo_rt::lexer::{Lexer, Token};
+        use rustemo_rt::lexer::{Lexer, Token, Context};
         use rustemo_rt::parser::Parser;
         use rustemo_rt::builder::Builder;
         use rustemo_rt::Result;
-        use rustemo_rt::lr::lexer::{LRStringLexer, LRContext, LexerDefinition, RecognizerIterator};
+        use rustemo_rt::lr::lexer::{LRStringLexer, LexerDefinition, RecognizerIterator};
         use rustemo_rt::lr::builder::LRBuilder;
         use rustemo_rt::lr::parser::{LRParser, ParserDefinition};
         use rustemo_rt::lr::parser::Action::{self, Shift, Reduce, Accept, Error};
@@ -391,13 +391,13 @@ fn generate_parser_definition(
 
     ast.push(
         parse_quote! {
-            impl<I, L, B> Parser<I, LRContext<I>, L, B> for #parser
+            impl<I, L, B, LO> Parser<I, L, B, LO, StateIndex> for #parser
             where
                 I: Debug,
-                L: Lexer<I, LRContext<I>>,
+                L: Lexer<I, LO, StateIndex>,
                 B: LRBuilder<I>,
             {
-                fn parse(&mut self, context: LRContext<I>, lexer: L, builder: B) -> Result<B::Output> {
+                fn parse(&mut self, context: Context<I, LO, StateIndex>, lexer: L, builder: B) -> Result<B::Output> {
                     self.0.parse(context, lexer, builder)
                 }
             }
@@ -415,7 +415,7 @@ fn generate_parser_definition(
             impl #parser
             {
                 pub fn parse_str<'i>(input: &'i str) -> Result<<#builder as Builder>::Output> {
-                    let context = LRContext::new("<str>".to_string(), input);
+                    let context = Context::new("<str>".to_string(), input);
                     let lexer = LRStringLexer::new(&LEXER_DEFINITION, #partial_parse);
                     let builder = #builder::new();
                     #parser::default().0.parse(context, lexer, builder)

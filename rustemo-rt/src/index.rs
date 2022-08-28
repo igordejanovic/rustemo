@@ -34,6 +34,12 @@ macro_rules! create_index {
             }
         }
 
+        impl Default for $index {
+            fn default() -> Self {
+                Self(0)
+            }
+        }
+
         #[derive(Debug, Clone)]
         pub struct $collection<T>(pub Vec<T>);
 

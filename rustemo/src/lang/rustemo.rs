@@ -2,12 +2,12 @@
 use regex::Regex;
 use num_enum::TryFromPrimitive;
 use std::{convert::TryFrom, fmt::Debug};
-use rustemo_rt::lexer::{Lexer, Token};
+use rustemo_rt::lexer::{Lexer, Token, Context};
 use rustemo_rt::parser::Parser;
 use rustemo_rt::builder::Builder;
 use rustemo_rt::Result;
 use rustemo_rt::lr::lexer::{
-    LRStringLexer, LRContext, LexerDefinition, RecognizerIterator,
+    LRStringLexer, LexerDefinition, RecognizerIterator,
 };
 use rustemo_rt::lr::builder::LRBuilder;
 use rustemo_rt::lr::parser::{LRParser, ParserDefinition};
@@ -13066,15 +13066,15 @@ impl ParserDefinition for RustemoParserDefinition {
     }
 }
 pub struct RustemoParser(LRParser<RustemoParserDefinition>);
-impl<I, L, B> Parser<I, LRContext<I>, L, B> for RustemoParser
+impl<I, L, B, LO> Parser<I, L, B, LO, StateIndex> for RustemoParser
 where
     I: Debug,
-    L: Lexer<I, LRContext<I>>,
+    L: Lexer<I, LO, StateIndex>,
     B: LRBuilder<I>,
 {
     fn parse(
         &mut self,
-        context: LRContext<I>,
+        context: Context<I, LO, StateIndex>,
         lexer: L,
         builder: B,
     ) -> Result<B::Output> {
@@ -13084,7 +13084,7 @@ where
 #[allow(dead_code)]
 impl RustemoParser {
     pub fn parse_str<'i>(input: &'i str) -> Result<<RustemoBuilder as Builder>::Output> {
-        let context = LRContext::new("<str>".to_string(), input);
+        let context = Context::new("<str>".to_string(), input);
         let lexer = LRStringLexer::new(&LEXER_DEFINITION, false);
         let builder = RustemoBuilder::new();
         RustemoParser::default().0.parse(context, lexer, builder)

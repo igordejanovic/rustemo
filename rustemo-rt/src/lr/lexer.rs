@@ -1,145 +1,9 @@
-use std::cmp::min;
-
 use crate::debug::log;
 use crate::error::{Error, Result};
 use crate::grammar::TerminalInfo;
 use crate::index::{StateIndex, TermIndex};
 use crate::lexer::{Context, Lexer, Token};
-use crate::location::{LineBased, Location, Position};
-
-#[derive(Debug)]
-pub struct LRContext<I> {
-    file: String,
-    input: I,
-    position: usize,
-    location: Option<Location>,
-    layout: Option<I>,
-    state: StateIndex,
-}
-
-impl<I> LRContext<I> {
-    pub fn new(file: String, input: I) -> Self {
-        Self {
-            file,
-            input,
-            position: 0,
-            location: None,
-            layout: None,
-            state: StateIndex(0),
-        }
-    }
-}
-
-impl<I> Context<I> for LRContext<I> {
-    #[inline]
-    fn file(&self) -> String {
-        self.file.clone()
-    }
-
-    #[inline]
-    fn location_str(&self) -> String {
-        match self.location() {
-            Some(location) => {
-                format!("{}:{}", self.file(), location)
-            }
-            None => format!("{}:{}", self.file(), self.position()),
-        }
-    }
-
-    #[inline]
-    fn position(&self) -> usize {
-        self.position
-    }
-
-    #[inline]
-    fn set_position(&mut self, position: usize) {
-        self.position = position
-    }
-
-    #[inline]
-    fn input(&self) -> &I {
-        &self.input
-    }
-
-    #[inline]
-    fn location(&self) -> &Option<Location> {
-        &self.location
-    }
-
-    #[inline]
-    fn set_location(&mut self, location: Location) {
-        self.location = Some(location);
-    }
-
-    #[inline]
-    fn layout(&self) -> &Option<I> {
-        &self.layout
-    }
-
-    #[inline]
-    fn set_layout(&mut self, layout: I) {
-        self.layout = Some(layout);
-    }
-}
-
-impl<I> LRContext<I> {
-    pub fn state(&self) -> StateIndex {
-        self.state
-    }
-
-    pub fn set_state(&mut self, state: StateIndex) {
-        self.state = state
-    }
-}
-
-impl<'i> LRContext<&'i str> {
-    fn context_str(&self) -> String {
-        self.input()
-            [self.position() - min(15, self.position())..self.position()]
-            .chars()
-            .chain("-->".chars())
-            .chain(self.input()[self.position()..].chars().take(15))
-            .collect::<String>()
-    }
-
-    fn update_location<C: AsRef<str>>(&mut self, content: C) {
-        let content = content.as_ref();
-        let (mut line, mut column) =
-            self.location().map_or((1, 0), |l| match l {
-                Location {
-                    start: Position::LineBased(lb),
-                    ..
-                } => (lb.line, lb.column),
-                _ => panic!(),
-            });
-        let newlines =
-            content.as_bytes().iter().filter(|&c| *c == b'\n').count();
-        let newcolumn = content.len()
-            - content
-                .as_bytes()
-                .iter()
-                .rposition(|&c| c == b'\n')
-                .unwrap_or(0);
-        line += newlines;
-        column += newcolumn;
-
-        self.set_location(Location {
-            start: Position::LineBased(LineBased { line, column }),
-            end: None,
-        });
-        self.set_position(self.position() + content.len());
-        log!("Position: {}", self.position());
-    }
-}
-
-impl<I> From<&mut LRContext<I>> for Location {
-    fn from(context: &mut LRContext<I>) -> Self {
-        context.location().unwrap_or(Self {
-            start: Position::Position(context.position()),
-            end: None,
-        })
-    }
-}
+use crate::location::Location;
 
 /// A lexer that operates over string inputs and uses generated string and regex
 /// recognizers provided by the parser table.
@@ -159,7 +23,7 @@ where
         }
     }
 
-    fn skip<'i>(context: &mut LRContext<&'i str>) {
+    fn skip<'i>(context: &mut Context<&'i str, &'i str, StateIndex>) {
         let skipped = context.input()[context.position()..]
             .chars()
             .take_while(|x| x.is_whitespace())
@@ -173,26 +37,26 @@ where
     }
 }
 
-impl<'i, D> Lexer<&'i str, LRContext<&'i str>> for LRStringLexer<D>
+impl<'i, D> Lexer<&'i str, &'i str, StateIndex> for LRStringLexer<D>
 where
     D: LexerDefinition<Recognizer = for<'a> fn(&'a str) -> Option<&'a str>>,
 {
     fn next_token(
         &self,
-        context: &mut LRContext<&'i str>,
+        context: &mut Context<&'i str, &'i str, StateIndex>,
     ) -> Result<Token<&'i str>> {
         Self::skip(context);
         log!("Context: {}", context.context_str());
         log!(
             "Trying recognizers: {:?}",
             self.definition
-                .recognizers(context.state())
+                .recognizers(*context.state())
                 .map(|(_, terminal_info)| terminal_info.name)
                 .collect::<Vec<_>>()
         );
         let token: Option<Token<&'i str>> = self
             .definition
-            .recognizers(context.state())
+            .recognizers(*context.state())
             .map(|(recognizer, terminal_info)| {
                 (
                     recognizer(&context.input()[context.position()..]),
@@ -206,8 +70,6 @@ where
                 terminal: terminal_info,
                 value: recognized.unwrap(),
                 location: None,
-                layout: None,
-                layout_location: None,
             })
             // Take the first token or return None if no tokens are found.
             .next();
@@ -229,13 +91,11 @@ where
                         },
                         value: "",
                         location: None,
-                        layout: None,
-                        layout_location: None,
                     })
                 } else {
                     let expected = self
                         .definition
-                        .recognizers(context.state())
+                        .recognizers(*context.state())
                         .map(|(_, terminal_info)| terminal_info.name)
                         .collect::<Vec<_>>()
                         .join(", ");
