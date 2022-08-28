@@ -127,10 +127,7 @@ where
     }
 
     // Generate types and actions for non-terminals
-    for nonterminal in grammar.nonterminals.iter().filter(|&nt| {
-        let nt_symbol = grammar.nonterm_to_symbol_index(nt.idx);
-        nt_symbol != grammar.augmented_index && nt_symbol != grammar.empty_index
-    }) {
+    for nonterminal in grammar.nonterminals() {
         // Add non-terminal type
         if !type_names.contains(&nonterminal.name) {
             log!("Creating types for non-terminal '{}'.", nonterminal.name);

@@ -1,7 +1,7 @@
 pub(crate) mod actions;
 
 use quote::format_ident;
-use rustemo_rt::index::{NonTermIndex, TermIndex};
+use rustemo_rt::index::TermIndex;
 use std::{
     iter::repeat,
     path::{Path, PathBuf},
@@ -101,8 +101,7 @@ pub fn generate_parser(
     let lexer = format!("{}Lexer", parser_name);
     let lexer_definition = format!("{}Definition", lexer);
     let actions_file = format!("{}_actions", file_name);
-    let root_symbol =
-        grammar.symbol_name(grammar.nonterm_to_symbol_index(NonTermIndex(2)));
+    let root_symbol = grammar.symbol_name(grammar.start_index);
 
     let mut ast: syn::File =
         generate_parser_header(&grammar, &table, &actions_file)?;
@@ -259,7 +258,7 @@ fn generate_parser_types(
         }
     });
 
-    let nonterm_variants: Vec<syn::Variant> = grammar.nonterminals[2..]
+    let nonterm_variants: Vec<syn::Variant> = grammar.nonterminals()
         .iter()
         .map(|nt| {
             let name = format_ident!("{}", nt.name);
@@ -276,7 +275,7 @@ fn generate_parser_types(
         }
     });
 
-    let prodkind_variants: Vec<syn::Variant> = grammar.productions[1..]
+    let prodkind_variants: Vec<syn::Variant> = grammar.productions()
         .iter()
         .map(|prod| {
             let prod_kind = prod_kind(grammar, prod);
@@ -637,7 +636,7 @@ fn generate_builder(
         }
     }).collect();
 
-    let reduce_match_arms: Vec<syn::Arm> = grammar.productions[1..].iter().map(|production| {
+    let reduce_match_arms: Vec<syn::Arm> = grammar.productions().iter().map(|production| {
         let nonterminal = &grammar.nonterminals[production.nonterminal];
         let rhs_len = production.rhs.len();
         let action = action_name(nonterminal, production);

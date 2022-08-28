@@ -448,6 +448,25 @@ impl Grammar {
             .collect()
     }
 
+    /// Returns all productions except special AUG and AUGL.
+    pub fn productions(&self) -> Vec<&Production> {
+        self.productions.iter().filter(|&p| {
+            let nt_symbol = self.nonterm_to_symbol_index(p.nonterminal);
+            nt_symbol != self.augmented_index
+                && self.augmented_layout_index.map_or(true, |li| li != nt_symbol)
+        }).collect()
+    }
+
+    /// Returns all nonterminals except special EMPTY, AUG and AUGL.
+    pub fn nonterminals(&self) -> Vec<&NonTerminal> {
+        self.nonterminals.iter().filter( |&n| {
+            let nt_symbol = self.nonterm_to_symbol_index(n.idx);
+            nt_symbol != self.empty_index
+            && nt_symbol != self.augmented_index
+                && self.augmented_layout_index.map_or(true, |li| li != nt_symbol)
+        }).collect()
+    }
+
     #[inline]
     pub fn is_enum(&self, nonterminal: &NonTerminal) -> bool {
         let prods = nonterminal.productions(self);
