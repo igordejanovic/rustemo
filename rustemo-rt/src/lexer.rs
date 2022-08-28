@@ -53,6 +53,10 @@ pub struct Context<I, LO, ST> {
     /// The input must be indexable type.
     pub position: usize,
 
+    /// Start position of token/non-terminal during shift/reduce operation.
+    pub start_pos: usize,
+    /// End position of token/non-terminal during shift/reduce operation.
+    pub end_pos: usize,
 
     /// Location in the input if the input is line/column based.
     ///
@@ -79,6 +83,8 @@ impl<I, LO, ST: Default> Context<I, LO, ST> {
             location: None,
             layout: None,
             state: ST::default(),
+            start_pos: 0,
+            end_pos: 0,
         }
     }
 
@@ -132,7 +138,9 @@ impl<'i, LO, ST: Default> Context<&'i str, LO, ST> {
             start: Position::LineBased(LineBased { line, column }),
             end: None,
         });
+        self.start_pos = self.position;
         self.position = self.position + content.len();
+        self.end_pos = self.position;
         log!("Position: {}", self.position);
     }
 }

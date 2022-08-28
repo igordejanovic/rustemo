@@ -25,6 +25,13 @@ pub enum Action {
     Error,
 }
 
+#[derive(Debug)]
+struct StackItem {
+    state: StateIndex,
+    start_pos: usize,
+    end_pos: usize,
+}
+
 impl Display for Action {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -47,14 +54,18 @@ impl Display for Action {
 #[derive(Debug)]
 pub struct LRParser<D: ParserDefinition + 'static> {
     definition: &'static D,
-    parse_stack: Vec<StateIndex>,
+    parse_stack: Vec<StackItem>,
 }
 
 impl<D: ParserDefinition> LRParser<D> {
     pub fn new(definition: &'static D) -> Self {
         Self {
             definition,
-            parse_stack: vec![StateIndex(0)],
+            parse_stack: vec![StackItem {
+                state: StateIndex(0),
+                start_pos: 0,
+                end_pos: 0,
+            }],
         }
     }
 
@@ -63,8 +74,14 @@ impl<D: ParserDefinition> LRParser<D> {
         &mut self,
         context: &mut Context<I, LO, StateIndex>,
         state: StateIndex,
+        start_pos: usize,
+        end_pos: usize,
     ) {
-        self.parse_stack.push(state);
+        self.parse_stack.push(StackItem {
+            state,
+            start_pos,
+            end_pos,
+        });
         context.state = state;
     }
 
@@ -73,10 +90,22 @@ impl<D: ParserDefinition> LRParser<D> {
         &mut self,
         context: &mut Context<I, LO, StateIndex>,
         states: usize,
-    ) -> StateIndex {
-        let _ = self.parse_stack.split_off(self.parse_stack.len() - states);
-        context.state = *self.parse_stack.last().unwrap();
-        context.state
+    ) -> (StateIndex, usize, usize) {
+        let states_removed =
+            self.parse_stack.split_off(self.parse_stack.len() - states);
+        context.state = self.parse_stack.last().unwrap().state;
+
+        let start_pos;
+        let end_pos;
+        if states == 0 {
+            // EMPTY reduction
+            start_pos = context.position;
+            end_pos = context.position;
+        } else {
+            start_pos = states_removed[0].start_pos;
+            end_pos = states_removed.last().unwrap().end_pos;
+        }
+        (context.state, start_pos, end_pos)
     }
 }
 
@@ -96,13 +125,13 @@ where
         use Action::*;
         let mut next_token = lexer.next_token(&mut context)?;
         loop {
-            let current_state = self.parse_stack.last().unwrap();
+            let current_state = self.parse_stack.last().unwrap().state;
             log!("Stack: {:?}", self.parse_stack);
             log!("Current state: {:?}", current_state);
             log!("Token ahead: {:?}", next_token);
 
             let action =
-                self.definition.action(*current_state, next_token.index());
+                self.definition.action(current_state, next_token.index());
 
             log!("Action: {:?}", action);
 
@@ -113,7 +142,10 @@ where
                         state_id,
                         next_token
                     );
-                    self.to_state(&mut context, state_id);
+                    // Lexer should set start/end pos
+                    let start_pos = context.start_pos;
+                    let end_pos = context.end_pos;
+                    self.to_state(&mut context, state_id, start_pos, end_pos);
                     builder.shift_action(&context, term_idx, next_token);
                     next_token = lexer.next_token(&mut context)?;
                 }
@@ -124,9 +156,12 @@ where
                         prod_len,
                         nonterm_id
                     );
-                    let from_state = self.pop_states(&mut context, prod_len);
+                    let (from_state, start_pos, end_pos) =
+                        self.pop_states(&mut context, prod_len);
+                    context.start_pos = start_pos;
+                    context.end_pos = end_pos;
                     let to_state = self.definition.goto(from_state, nonterm_id);
-                    self.to_state(&mut context, to_state);
+                    self.to_state(&mut context, to_state, start_pos, end_pos);
                     log!("GOTO {:?} -> {:?}", from_state, to_state);
                     builder
                         .reduce_action(&context, prod_idx, prod_len, prod_str);

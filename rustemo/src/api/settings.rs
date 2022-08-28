@@ -31,6 +31,8 @@ pub struct Settings {
     /// parsing as it may lead to a large number of partial solutions.
     pub partial_parse: bool,
 
+    // /// Should parse context be passed to actions if AST output is generated.
+    // pub pass_context: bool,
     /// Should actions file be recreated if exist. Use with care.
     pub force: bool,
 }
