@@ -1,5 +1,9 @@
 use crate::{
-    error::Result, grammar::TerminalInfo, index::TermIndex, location::{Location, Position, LineBased}, log,
+    error::Result,
+    grammar::TerminalInfo,
+    index::TermIndex,
+    location::{LineBased, Location, Position},
+    log,
 };
 use core::fmt::Debug;
 use std::cmp::min;
@@ -38,7 +42,6 @@ impl<I> Token<I> {
 /// information to parsers and actions.
 #[derive(Debug)]
 pub struct Context<I, LO, ST> {
-
     /// File path of the parsed content. "<str>" In case of static string.
     pub file: String,
 
@@ -93,13 +96,11 @@ impl<I, LO, ST: Default> Context<I, LO, ST> {
             None => format!("{}:{}", self.file(), self.position),
         }
     }
-
 }
 
 impl<'i, LO, ST: Default> Context<&'i str, LO, ST> {
     pub fn context_str(&self) -> String {
-        self.input
-            [self.position - min(15, self.position)..self.position]
+        self.input[self.position - min(15, self.position)..self.position]
             .chars()
             .chain("-->".chars())
             .chain(self.input[self.position..].chars().take(15))

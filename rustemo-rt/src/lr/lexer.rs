@@ -29,9 +29,9 @@ where
             .take_while(|x| x.is_whitespace())
             .collect::<String>();
         log!("Skipped ws: {}", skipped.len());
-        context.layout =
-            Some(&context.input
-                [context.position..context.position + skipped.len()]);
+        context.layout = Some(
+            &context.input[context.position..context.position + skipped.len()],
+        );
         context.update_location(skipped);
     }
 }

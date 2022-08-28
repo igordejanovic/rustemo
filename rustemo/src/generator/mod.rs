@@ -258,7 +258,8 @@ fn generate_parser_types(
         }
     });
 
-    let nonterm_variants: Vec<syn::Variant> = grammar.nonterminals()
+    let nonterm_variants: Vec<syn::Variant> = grammar
+        .nonterminals()
         .iter()
         .map(|nt| {
             let name = format_ident!("{}", nt.name);
@@ -275,7 +276,8 @@ fn generate_parser_types(
         }
     });
 
-    let prodkind_variants: Vec<syn::Variant> = grammar.productions()
+    let prodkind_variants: Vec<syn::Variant> = grammar
+        .productions()
         .iter()
         .map(|prod| {
             let prod_kind = prod_kind(grammar, prod);
