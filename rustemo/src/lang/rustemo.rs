@@ -15108,7 +15108,7 @@ impl<I, L, B, LO> Parser<I, L, B, LO, StateIndex> for RustemoParser
 where
     I: Debug,
     L: Lexer<I, LO, StateIndex>,
-    B: LRBuilder<I>,
+    B: LRBuilder<I, LO>,
 {
     fn parse(
         &mut self,
@@ -18262,9 +18262,9 @@ impl Builder for RustemoBuilder {
         }
     }
 }
-impl<'i> LRBuilder<&'i str> for RustemoBuilder {
+impl<'i, LO> LRBuilder<&'i str, LO> for RustemoBuilder {
     #![allow(unused_variables)]
-    fn shift_action(&mut self, term_idx: TermIndex, token: Token<&'i str>) {
+    fn shift_action(&mut self, _context: &Context<&'i str, LO, StateIndex>, term_idx: TermIndex, token: Token<&'i str>) {
         let termval = match TermKind::try_from(term_idx.0).unwrap() {
             TermKind::STOP => Terminal::STOP,
             TermKind::Terminals => Terminal::Terminals,
@@ -18325,6 +18325,7 @@ impl<'i> LRBuilder<&'i str> for RustemoBuilder {
     }
     fn reduce_action(
         &mut self,
+        _context: &Context<&'i str, LO, StateIndex>,
         prod_kind: ProdIndex,
         _prod_len: usize,
         _prod_str: &'static str,

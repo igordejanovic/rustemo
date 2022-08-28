@@ -394,7 +394,7 @@ fn generate_parser_definition(
             where
                 I: Debug,
                 L: Lexer<I, LO, StateIndex>,
-                B: LRBuilder<I>,
+                B: LRBuilder<I, LO>,
             {
                 fn parse(&mut self, context: Context<I, LO, StateIndex>, lexer: L, builder: B) -> Result<B::Output> {
                     self.0.parse(context, lexer, builder)
@@ -714,17 +714,22 @@ fn generate_builder(
 
     ast.push(
         parse_quote! {
-            impl<'i> LRBuilder<&'i str> for #builder {
+            impl<'i, LO> LRBuilder<&'i str, LO> for #builder {
 
                 #![allow(unused_variables)]
-                fn shift_action(&mut self, term_idx: TermIndex, token: Token<&'i str>) {
+                fn shift_action(&mut self, _context: &Context<&'i str, LO, StateIndex>, term_idx: TermIndex, token: Token<&'i str>) {
                     let termval = match TermKind::try_from(term_idx.0).unwrap() {
                         #(#shift_match_arms),*
                     };
                     self.res_stack.push(Symbol::Terminal(termval));
                 }
 
-                fn reduce_action(&mut self, prod_kind: ProdIndex, _prod_len: usize, _prod_str: &'static str) {
+                fn reduce_action(
+                    &mut self,
+                    _context: &Context<&'i str, LO, StateIndex>,
+                    prod_kind: ProdIndex,
+                    _prod_len: usize,
+                    _prod_str: &'static str) {
                     let prod = match ProdKind::try_from(prod_kind.0).unwrap() {
                         #(#reduce_match_arms),*
                     };

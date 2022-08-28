@@ -1,7 +1,7 @@
 use crate::debug::log;
 use crate::error::Result;
 use crate::index::{NonTermIndex, ProdIndex, StateIndex, TermIndex};
-use crate::lexer::{Lexer, Context};
+use crate::lexer::{Context, Lexer};
 use crate::parser::Parser;
 use std::fmt::{Debug, Display};
 
@@ -59,7 +59,11 @@ impl<D: ParserDefinition> LRParser<D> {
     }
 
     #[inline]
-    fn to_state<I, LO>(&mut self, context: &mut Context<I, LO, StateIndex>, state: StateIndex) {
+    fn to_state<I, LO>(
+        &mut self,
+        context: &mut Context<I, LO, StateIndex>,
+        state: StateIndex,
+    ) {
         self.parse_stack.push(state);
         context.state = state;
     }
@@ -81,7 +85,7 @@ where
     I: Debug,
     D: ParserDefinition,
     L: Lexer<I, LO, StateIndex>,
-    B: LRBuilder<I>,
+    B: LRBuilder<I, LO>,
 {
     fn parse(
         &mut self,
@@ -110,7 +114,7 @@ where
                         next_token
                     );
                     self.to_state(&mut context, state_id);
-                    builder.shift_action(term_idx, next_token);
+                    builder.shift_action(&context, term_idx, next_token);
                     next_token = lexer.next_token(&mut context)?;
                 }
                 Reduce(prod_idx, prod_len, nonterm_id, prod_str) => {
@@ -124,7 +128,8 @@ where
                     let to_state = self.definition.goto(from_state, nonterm_id);
                     self.to_state(&mut context, to_state);
                     log!("GOTO {:?} -> {:?}", from_state, to_state);
-                    builder.reduce_action(prod_idx, prod_len, prod_str);
+                    builder
+                        .reduce_action(&context, prod_idx, prod_len, prod_str);
                 }
                 Accept => break,
                 Error => panic!("Error!"),

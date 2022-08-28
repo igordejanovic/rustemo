@@ -1,22 +1,27 @@
 use crate::{
     builder::Builder,
     error::Result,
-    index::{ProdIndex, TermIndex},
-    lexer::Token,
+    index::{ProdIndex, StateIndex, TermIndex},
+    lexer::{Context, Token},
 };
 
 /// A builder variant for LR parsing.
 ///
 /// Builder should keep its internal stack of subresults, similar to the way LR
 /// parsing operates.
-pub trait LRBuilder<I>: Builder {
+pub trait LRBuilder<I, LO>: Builder {
     /// Called when LR shifting is taking place.
     ///
     /// # Arguments
     ///
     /// * `term_idx` - A terminal unique identifier - index.
     /// * `token` - A token recognized in the input.
-    fn shift_action(&mut self, term_idx: TermIndex, token: Token<I>);
+    fn shift_action(
+        &mut self,
+        context: &Context<I, LO, StateIndex>,
+        term_idx: TermIndex,
+        token: Token<I>,
+    );
 
     /// Called when LR reduce is taking place.
     ///
@@ -28,6 +33,7 @@ pub trait LRBuilder<I>: Builder {
     ///                subresults from the stack
     fn reduce_action(
         &mut self,
+        context: &Context<I, LO, StateIndex>,
         prod_idx: ProdIndex,
         prod_len: usize,
         prod_str: &'static str,
@@ -51,13 +57,19 @@ impl<I> Builder for TreeBuilder<I> {
     }
 }
 
-impl<I> LRBuilder<I> for TreeBuilder<I> {
-    fn shift_action(&mut self, _term_idx: TermIndex, token: Token<I>) {
+impl<I, LO> LRBuilder<I, LO> for TreeBuilder<I> {
+    fn shift_action(
+        &mut self,
+        _context: &Context<I, LO, StateIndex>,
+        _term_idx: TermIndex,
+        token: Token<I>,
+    ) {
         self.res_stack.push(TreeNode::TermNode(token))
     }
 
     fn reduce_action(
         &mut self,
+        _context: &Context<I, LO, StateIndex>,
         _prod_idx: ProdIndex,
         prod_len: usize,
         prod_str: &'static str,
