@@ -40,15 +40,16 @@ impl<I> Token<I> {
 pub struct Context<I, LO, ST> {
 
     /// File path of the parsed content. "<str>" In case of static string.
-    file: String,
+    pub file: String,
 
     /// The input being parsed. Should be set when the context is created.
-    input: I,
+    pub input: I,
 
     /// An absolute position in the input sequence
     ///
     /// The input must be indexable type.
-    position: usize,
+    pub position: usize,
+
 
     /// Location in the input if the input is line/column based.
     ///
@@ -56,14 +57,14 @@ pub struct Context<I, LO, ST> {
     /// the current location is always kept in the context. As location tracking
     /// incurs an overhead it should be configurable. In case of an error, lexer
     /// can calculate location information based on the absolute position.
-    location: Option<Location>,
+    pub location: Option<Location>,
 
     /// Layout before the current token ahead (e.g. whitespaces, comments...)
-    layout: Option<LO>,
+    pub layout: Option<LO>,
 
     /// An arbitrary state used by the parser. E.g. for LR it is the current
     /// state of the autmaton.
-    state: ST,
+    pub state: ST,
 }
 
 impl<I, LO, ST: Default> Context<I, LO, ST> {
@@ -85,74 +86,30 @@ impl<I, LO, ST: Default> Context<I, LO, ST> {
 
     #[inline]
     pub fn location_str(&self) -> String {
-        match self.location() {
+        match self.location {
             Some(location) => {
                 format!("{}:{}", self.file(), location)
             }
-            None => format!("{}:{}", self.file(), self.position()),
+            None => format!("{}:{}", self.file(), self.position),
         }
     }
 
-    #[inline]
-    pub fn position(&self) -> usize {
-        self.position
-    }
-
-    #[inline]
-    pub fn set_position(&mut self, position: usize) {
-        self.position = position
-    }
-
-    #[inline]
-    pub fn input(&self) -> &I {
-        &self.input
-    }
-
-    #[inline]
-    pub fn location(&self) -> &Option<Location> {
-        &self.location
-    }
-
-    #[inline]
-    pub fn set_location(&mut self, location: Location) {
-        self.location = Some(location);
-    }
-
-    #[inline]
-    pub fn layout(&self) -> &Option<LO> {
-        &self.layout
-    }
-
-    #[inline]
-    pub fn set_layout(&mut self, layout: LO) {
-        self.layout = Some(layout);
-    }
-
-    #[inline]
-    pub fn state(&self) -> &ST {
-        &self.state
-    }
-
-    #[inline]
-    pub fn set_state(&mut self, state: ST) {
-        self.state = state
-    }
 }
 
 impl<'i, LO, ST: Default> Context<&'i str, LO, ST> {
     pub fn context_str(&self) -> String {
-        self.input()
-            [self.position() - min(15, self.position())..self.position()]
+        self.input
+            [self.position - min(15, self.position)..self.position]
             .chars()
             .chain("-->".chars())
-            .chain(self.input()[self.position()..].chars().take(15))
+            .chain(self.input[self.position..].chars().take(15))
             .collect::<String>()
     }
 
     pub fn update_location<C: AsRef<str>>(&mut self, content: C) {
         let content = content.as_ref();
         let (mut line, mut column) =
-            self.location().map_or((1, 0), |l| match l {
+            self.location.map_or((1, 0), |l| match l {
                 Location {
                     start: Position::LineBased(lb),
                     ..
@@ -170,19 +127,19 @@ impl<'i, LO, ST: Default> Context<&'i str, LO, ST> {
         line += newlines;
         column += newcolumn;
 
-        self.set_location(Location {
+        self.location = Some(Location {
             start: Position::LineBased(LineBased { line, column }),
             end: None,
         });
-        self.set_position(self.position() + content.len());
-        log!("Position: {}", self.position());
+        self.position = self.position + content.len();
+        log!("Position: {}", self.position);
     }
 }
 
 impl<I, LO, ST: Default> From<&mut Context<I, LO, ST>> for Location {
     fn from(context: &mut Context<I, LO, ST>) -> Self {
-        context.location().unwrap_or(Self {
-            start: Position::Position(context.position()),
+        context.location.unwrap_or(Self {
+            start: Position::Position(context.position),
             end: None,
         })
     }

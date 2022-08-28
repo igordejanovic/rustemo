@@ -61,7 +61,7 @@ impl<D: ParserDefinition> LRParser<D> {
     #[inline]
     fn to_state<I, LO>(&mut self, context: &mut Context<I, LO, StateIndex>, state: StateIndex) {
         self.parse_stack.push(state);
-        context.set_state(state);
+        context.state = state;
     }
 
     #[inline]
@@ -71,8 +71,8 @@ impl<D: ParserDefinition> LRParser<D> {
         states: usize,
     ) -> StateIndex {
         let _ = self.parse_stack.split_off(self.parse_stack.len() - states);
-        context.set_state(*self.parse_stack.last().unwrap());
-        *context.state()
+        context.state = *self.parse_stack.last().unwrap();
+        context.state
     }
 }
 

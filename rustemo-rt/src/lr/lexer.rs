@@ -24,15 +24,14 @@ where
     }
 
     fn skip<'i>(context: &mut Context<&'i str, &'i str, StateIndex>) {
-        let skipped = context.input()[context.position()..]
+        let skipped = context.input[context.position..]
             .chars()
             .take_while(|x| x.is_whitespace())
             .collect::<String>();
         log!("Skipped ws: {}", skipped.len());
-        context.set_layout(
-            &context.input()
-                [context.position()..context.position() + skipped.len()],
-        );
+        context.layout =
+            Some(&context.input
+                [context.position..context.position + skipped.len()]);
         context.update_location(skipped);
     }
 }
@@ -50,16 +49,16 @@ where
         log!(
             "Trying recognizers: {:?}",
             self.definition
-                .recognizers(*context.state())
+                .recognizers(context.state)
                 .map(|(_, terminal_info)| terminal_info.name)
                 .collect::<Vec<_>>()
         );
         let token: Option<Token<&'i str>> = self
             .definition
-            .recognizers(*context.state())
+            .recognizers(context.state)
             .map(|(recognizer, terminal_info)| {
                 (
-                    recognizer(&context.input()[context.position()..]),
+                    recognizer(&context.input[context.position..]),
                     terminal_info,
                 )
             })
@@ -95,7 +94,7 @@ where
                 } else {
                     let expected = self
                         .definition
-                        .recognizers(*context.state())
+                        .recognizers(context.state)
                         .map(|(_, terminal_info)| terminal_info.name)
                         .collect::<Vec<_>>()
                         .join(", ");
