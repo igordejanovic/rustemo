@@ -10,6 +10,8 @@ The name is a tribute to the awesome and ever growing Rust community.
 
 ## Goals
 
+- Both LR and GLR parsing with the same grammar. E.g. start with GLR for easier
+  development and refactor to LR for performance.
 - Excellent usability and error reporting. Rustemo should be easy to use. Each
   error should be caught and explained with sufficient details. The docs should
   always be up-to-date and all docs examples should be tested by CI.
@@ -21,35 +23,38 @@ The name is a tribute to the awesome and ever growing Rust community.
   optional(`?`), groups (`()`), multiple match with a separator etc.
 - A tool for automatic porting of grammars from other popular parsers (e.g.
   ANTLR).
-- Clean separation between lexer, parser and builder. Parser asks lexer for next
-  tokens during parsing and provides what is expected due to the current parsing
-  context. This avoids certain classes of lexical ambiguities. Parser calls
-  builder to produce the result on each parser operation.
+- Clean separation between lexer, parser and builder. A parser asks a lexer for
+  next tokens during parsing while telling the lexer what is expected due to the
+  current parsing context. This avoids certain classes of lexical ambiguities.
+  The parser calls builder to produce the result on each parser operation.
 - Lexer and builder can be provided by the user or auto-generated. When provided
-  by user Rustemo can be used to parse virtually any kind of sequence and also
-  build anything.
+  by the user Rustemo can be used to parse virtually any kind of sequence and
+  also build anything.
 - Multiple builders can be called by providing a macro builder. E.g. you can
   construct an AST and a full/concrete syntax tree (for example, if you are
   implementing refactoring engine) where AST nodes keep relations to CST.
-- There are a reasonable number of tests. I usually write tests before
-  implementing each new feature (TDD). Tests are a good source of info until the
-  docs are improved.
+- High test coverage. There are a reasonable number of tests. I usually write
+  tests before implementing each new feature (TDD). Tests are a good source of
+  info until the docs are improved.
 
 ## Roadmap
 
 - [x] LR parsing.
-- [x] Bootstrapping. Rustemo is implemented in itself.
+- [x] Bootstrapping. Rustemo is [implemented in itself](./src/lang/).
 - [x] Actions providing AST build are auto-generated but can be manually
       modified. Manual modifications are preserved on code re-generation while
       new types/actions are added to the file. This allow for fast development
       while keeping full control over the AST.
-- [x] Regex-like syntax sugar
+- [x] Regex-like syntax sugar. See [the tests](../tests/src/sugar/).
 - [ ] Parenthesized groups. Still not sure if this is a good thing to have.
       Sometimes it can nicely reduce clutter but if used too much it lowers
       readability.
 - [x] Disambiguation filters: priorities, associativities.
 - [x] Rule/production meta-data. E.g. production kinds.
-- [x] CLI and API
+- [x] CLI and API. A `rustemo` is available that can be called on Rustemo
+      grammars. Also an API enables integrating parser compiling into Rust
+      `build.rs` scripts. See [the calculator example](../examples/calculator/)
+      or [integration tests](../tests/).
 - [x] Tracking of position and reporting error with line/column works.
 - [ ] Support for a layout (comments, whitespaces given as CFG). It'll be
       implemented as a special grammar rule and parsed by the LR parser. Result
@@ -60,6 +65,7 @@ The name is a tribute to the awesome and ever growing Rust community.
       info.
 - [ ] Macro builder.
 - [ ] Docs (will mostly be based on parglare docs for the grammar language).
+      There are some WIP in the docs folder but still not usable.
 - [ ] GLR parsing based on Right-Nulled GLR algorithm (RNGLR).
 
 ## License
