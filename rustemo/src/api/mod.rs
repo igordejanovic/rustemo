@@ -13,7 +13,7 @@ pub(crate) mod settings;
 /// A wrapper type around `Settings` used for a builder pattern style
 /// configuration. It is not meant to be constructed directly but through
 /// `with_settings` function.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct RustemoSettings(Settings);
 
 /// Used as an entry point if non-default settings are needed.

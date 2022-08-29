@@ -15,7 +15,7 @@ impl Default for ParserAlgo {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Settings {
     pub out_dir: Option<PathBuf>,
     pub out_dir_actions: Option<PathBuf>,

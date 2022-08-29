@@ -1,52 +1,33 @@
 use std::{env, path::PathBuf, process::exit};
 
+use rustemo::api::RustemoSettings;
+
 fn main() {
     let root_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
 
     let out_dir =
         PathBuf::from(env::var("OUT_DIR").expect("Cargo didn't set OUT_DIR"));
 
-    if let Err(e) = rustemo::with_settings()
-        .out_dir(&out_dir)
-        .out_dir_actions(&out_dir)
-        .exclude(vec![
-            "ambiguity".into(),
-            // TODO: Remove when layout is implemented
-            "layout".into(),
-        ])
-        .force(true)
-        .process_dir(&root_dir)
-    {
-        eprintln!("{}", e);
-        exit(1);
-    }
+    let settings = rustemo::with_settings().force(true);
 
-    // Special handling of ambiguous grammars by using prefer_shifts strategy.
-    let p = "src/ambiguity";
-    let dir = out_dir.join(p);
-    if let Err(e) = rustemo::with_settings()
-        .out_dir(&dir)
-        .out_dir_actions(&dir)
-        .force(true)
-        .prefer_shifts(true)
-        .process_dir(&root_dir.join(p))
-    {
-        eprintln!("{}", e);
-        exit(1);
-    }
+    let tests: &[(&str, Box<dyn Fn(RustemoSettings) -> RustemoSettings>)] = &[
+        ("rule_patterns", Box::new(|s| {s})),
+        ("sugar", Box::new(|s| {s})),
+        ("ambiguity", Box::new(|s| {s.prefer_shifts(true)})),
+        ("partial", Box::new(|s| {s.prefer_shifts(true).partial_parse(true)})),
+//        ("layout", Box::new(|s| {s})),
+    ];
 
-    // Partial parse
-    let p = "src/partial";
-    let dir = out_dir.join(p);
-    if let Err(e) = rustemo::with_settings()
-        .out_dir(&dir)
-        .out_dir_actions(&dir)
-        .force(true)
-        .prefer_shifts(true)
-        .partial_parse(true)
-        .process_dir(&root_dir.join(p))
-    {
-        eprintln!("{}", e);
-        exit(1);
+    for (test, config) in tests {
+        let p = format!("src/{test}");
+        let dir = out_dir.join(&p);
+        if let Err(e) = config(settings.clone())
+            .out_dir(&dir)
+            .out_dir_actions(&dir)
+            .process_dir(&root_dir.join(p))
+        {
+            eprintln!("{}", e);
+            exit(1);
+        }
     }
 }
