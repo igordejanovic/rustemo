@@ -38,14 +38,14 @@ pub(crate) trait ActionsGenerator {
         let action_name_ident = Ident::new(&action_name, Span::call_site());
         if settings.pass_context {
             parse_quote! {
-                pub fn #action_name_ident<'i>(_context: &Context<&'i str>, token: Token<&'i str>) -> #type_name_ident {
-                    token.value.into()
+                pub fn #action_name_ident<I: AsRef<Input>>(_context: &Context<I>, token: Token<I>) -> #type_name_ident {
+                    token.value.as_ref().into()
                 }
             }
         } else {
             parse_quote! {
-                pub fn #action_name_ident<'i>(token: Token<&'i str>) -> #type_name_ident {
-                    token.value.into()
+                pub fn #action_name_ident<I: AsRef<Input>>(token: Token<I>) -> #type_name_ident {
+                    token.value.as_ref().into()
                 }
             }
         }
@@ -92,6 +92,7 @@ where
                 ///! This file is maintained by rustemo but can be modified manually.
                 ///! All manual changes will be preserved except non-doc comments.
                 use rustemo_rt::lexer::Token;
+                use super::Input;
                 use super::#parser_mod::Context;
             }
         } else {
@@ -99,6 +100,7 @@ where
                 ///! This file is maintained by rustemo but can be modified manually.
                 ///! All manual changes will be preserved except non-doc comments.
                 use rustemo_rt::lexer::Token;
+                use super::Input;
             }
         }
     };

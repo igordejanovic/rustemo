@@ -6,6 +6,8 @@ use self::partial::PartialParser;
 rustemo_mod!(partial, "/src/partial");
 rustemo_mod!(partial_actions, "/src/partial");
 
+pub type Input = str;
+
 #[test]
 fn partial_parse() {
     let result =

@@ -3,50 +3,44 @@
 use rustemo_rt::lexer::Token;
 use std::collections::BTreeMap;
 pub type Name = String;
-pub fn name<'a>(token: Token<&'a str>) -> Name {
-    token.value.into()
+pub fn name<I: AsRef<super::Input>>(token: Token<I>) -> Name {
+    token.value.as_ref().into()
 }
 pub type RegexTerm = String;
-pub fn regex_term<'a>(token: Token<&'a str>) -> RegexTerm {
-    token.value[1..token.value.len() - 1]
-        .replace(r"\/", "/")
-        .into()
+pub fn regex_term<I: AsRef<super::Input>>(token: Token<I>) -> RegexTerm {
+    token.value.as_ref()[1..token.value.as_ref().len() - 1].replace(r"\/", "/").into()
 }
 pub type IntConst = u32;
-pub fn int_const<'a>(token: Token<&'a str>) -> IntConst {
-    token.value.parse().unwrap()
+pub fn int_const<I: AsRef<super::Input>>(token: Token<I>) -> IntConst {
+    token.value.as_ref().parse().unwrap()
 }
 pub type FloatConst = f32;
-pub fn float_const<'a>(token: Token<&'a str>) -> FloatConst {
-    token.value.parse().unwrap()
+pub fn float_const<I: AsRef<super::Input>>(token: Token<I>) -> FloatConst {
+    token.value.as_ref().parse().unwrap()
 }
 pub type BoolConst = bool;
-pub fn bool_const<'a>(token: Token<&'a str>) -> BoolConst {
-    if token.value == "true" {
-        true
-    } else {
-        false
-    }
+pub fn bool_const<I: AsRef<super::Input>>(token: Token<I>) -> BoolConst {
+    if token.value.as_ref() == "true" { true } else { false }
 }
 pub type StrConst = String;
-pub fn str_const<'i>(token: Token<&'i str>) -> StrConst {
-    token.value.trim_matches('\'').trim_matches('"').into()
+pub fn str_const<I: AsRef<super::Input>>(token: Token<I>) -> StrConst {
+    token.value.as_ref().trim_matches('\'').trim_matches('"').into()
 }
 pub type Action = String;
-pub fn action<'a>(token: Token<&'a str>) -> Action {
-    token.value[1..].into()
+pub fn action<I: AsRef<super::Input>>(token: Token<I>) -> Action {
+    token.value.as_ref()[1..].into()
 }
 pub type WS = String;
-pub fn ws<'a>(token: Token<&'a str>) -> WS {
-    token.value.into()
+pub fn ws<I: AsRef<super::Input>>(token: Token<I>) -> WS {
+    token.value.as_ref().into()
 }
 pub type CommentLine = String;
-pub fn comment_line<'a>(token: Token<&'a str>) -> CommentLine {
-    token.value.into()
+pub fn comment_line<I: AsRef<super::Input>>(token: Token<I>) -> CommentLine {
+    token.value.as_ref().into()
 }
 pub type NotComment = String;
-pub fn not_comment<'a>(token: Token<&'a str>) -> NotComment {
-    token.value.into()
+pub fn not_comment<I: AsRef<super::Input>>(token: Token<I>) -> NotComment {
+    token.value.as_ref().into()
 }
 #[derive(Debug, Clone, Default)]
 pub struct File {
@@ -67,10 +61,7 @@ pub fn file_c2(imports: Imports, grammar_rules: GrammarRules) -> File {
         terminal_rules: None,
     }
 }
-pub fn file_c3(
-    grammar_rules: GrammarRules,
-    terminal_rules: TerminalRules,
-) -> File {
+pub fn file_c3(grammar_rules: GrammarRules, terminal_rules: TerminalRules) -> File {
     File {
         grammar_rules: Some(grammar_rules),
         terminal_rules: Some(terminal_rules),
@@ -96,10 +87,7 @@ pub fn file_c5(terminal_rules: TerminalRules) -> File {
 }
 pub type ImportStm1 = Vec<ImportStm>;
 pub type Imports = ImportStm1;
-pub fn import_stm1_c1(
-    mut import_stm1: ImportStm1,
-    import_stm: ImportStm,
-) -> ImportStm1 {
+pub fn import_stm1_c1(mut import_stm1: ImportStm1, import_stm: ImportStm) -> ImportStm1 {
     import_stm1.push(import_stm);
     import_stm1
 }
@@ -193,10 +181,7 @@ pub fn production_c1(assignments: Assignments) -> Production {
         meta: ProdMetaDatas::new(),
     }
 }
-pub fn production_c2(
-    assignments: Assignments,
-    meta: ProdMetaDatas,
-) -> Production {
+pub fn production_c2(assignments: Assignments, meta: ProdMetaDatas) -> Production {
     Production { assignments, meta }
 }
 pub type TerminalRule1 = Vec<TerminalRule>;
@@ -400,17 +385,11 @@ pub struct NamedAssignment {
     pub gsymref: GrammarSymbolRef,
 }
 pub type PlainAssignment = NamedAssignment;
-pub fn plain_assignment_c1(
-    name: Name,
-    gsymref: GrammarSymbolRef,
-) -> PlainAssignment {
+pub fn plain_assignment_c1(name: Name, gsymref: GrammarSymbolRef) -> PlainAssignment {
     PlainAssignment { name, gsymref }
 }
 pub type BoolAssignment = NamedAssignment;
-pub fn bool_assignment_c1(
-    name: Name,
-    gsymref: GrammarSymbolRef,
-) -> BoolAssignment {
+pub fn bool_assignment_c1(name: Name, gsymref: GrammarSymbolRef) -> BoolAssignment {
     BoolAssignment { name, gsymref }
 }
 #[derive(Debug, Clone)]

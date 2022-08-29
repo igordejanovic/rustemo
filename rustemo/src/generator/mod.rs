@@ -779,10 +779,12 @@ fn generate_builder(
 
     ast.push(
         parse_quote! {
-            impl<'i> LRBuilder<&'i str, Layout> for #builder {
+            impl<I> LRBuilder<I, Layout> for #builder
+            where I: AsRef<super::Input>
+            {
 
                 #![allow(unused_variables)]
-                fn shift_action(&mut self, #context_var: &Context<&'i str>, term_idx: TermIndex, token: Token<&'i str>) {
+                fn shift_action(&mut self, #context_var: &Context<I>, term_idx: TermIndex, token: Token<I>) {
                     let termval = match TermKind::try_from(term_idx.0).unwrap() {
                         #(#shift_match_arms),*
                     };
@@ -791,7 +793,7 @@ fn generate_builder(
 
                 fn reduce_action(
                     &mut self,
-                    #context_var: &Context<&'i str>,
+                    #context_var: &Context<I>,
                     prod_kind: ProdIndex,
                     _prod_len: usize,
                     _prod_str: &'static str) {

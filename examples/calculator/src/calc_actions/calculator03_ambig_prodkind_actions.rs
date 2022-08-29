@@ -2,8 +2,8 @@
 ///! All manual changes will be preserved except non-doc comments.
 use rustemo_rt::lexer::Token;
 pub type Num = f32;
-pub fn num<'a>(token: Token<&'a str>) -> Num {
-    token.value.parse().unwrap()
+pub fn num<I: AsRef<super::Input>>(token: Token<I>) -> Num {
+    token.value.as_ref().parse().unwrap()
 }
 pub type E = f32;
 pub fn e_add(e_1: E, e_3: E) -> E {
