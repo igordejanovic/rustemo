@@ -2,7 +2,7 @@
 use regex::Regex;
 use num_enum::TryFromPrimitive;
 use std::{convert::TryFrom, fmt::Debug};
-use rustemo_rt::lexer::{Lexer, Token, Context};
+use rustemo_rt::lexer::{self, Lexer, Token};
 use rustemo_rt::parser::Parser;
 use rustemo_rt::builder::Builder;
 use rustemo_rt::Result;
@@ -18,6 +18,8 @@ const TERMINAL_NO: usize = 44usize;
 const NONTERMINAL_NO: usize = 44usize;
 const STATE_NO: usize = 141usize;
 const MAX_ACTIONS: usize = 15usize;
+pub type Layout = Option<rustemo_actions::Layout>;
+pub type Context<I> = lexer::Context<I, Layout, StateIndex>;
 #[derive(Debug, Copy, Clone, TryFromPrimitive)]
 #[repr(usize)]
 pub enum TermKind {
@@ -15104,25 +15106,23 @@ impl ParserDefinition for RustemoParserDefinition {
     }
 }
 pub struct RustemoParser(LRParser<RustemoParserDefinition>);
-impl<I, L, B, LO> Parser<I, L, B, LO, StateIndex> for RustemoParser
+impl<I, L, B> Parser<I, L, B, Layout, StateIndex> for RustemoParser
 where
     I: Debug,
-    L: Lexer<I, LO, StateIndex>,
-    B: LRBuilder<I, LO>,
+    L: Lexer<I, Layout, StateIndex>,
+    B: LRBuilder<I, Layout>,
 {
-    fn parse(
-        &mut self,
-        context: Context<I, LO, StateIndex>,
-        lexer: L,
-        builder: B,
-    ) -> Result<B::Output> {
+    fn parse(&mut self, context: Context<I>, lexer: L, builder: B) -> Result<B::Output> {
         self.0.parse(context, lexer, builder)
     }
 }
 #[allow(dead_code)]
 impl RustemoParser {
     pub fn parse_str<'i>(input: &'i str) -> Result<<RustemoBuilder as Builder>::Output> {
-        let context = Context::new("<str>".to_string(), input);
+        let context: rustemo_rt::lexer::Context<&str, Layout, StateIndex> = Context::new(
+            "<str>".to_string(),
+            input,
+        );
         let lexer = LRStringLexer::new(&LEXER_DEFINITION, false);
         let builder = RustemoBuilder::new();
         RustemoParser::default().0.parse(context, lexer, builder)
@@ -18262,9 +18262,14 @@ impl Builder for RustemoBuilder {
         }
     }
 }
-impl<'i, LO> LRBuilder<&'i str, LO> for RustemoBuilder {
+impl<'i> LRBuilder<&'i str, Layout> for RustemoBuilder {
     #![allow(unused_variables)]
-    fn shift_action(&mut self, _context: &Context<&'i str, LO, StateIndex>, term_idx: TermIndex, token: Token<&'i str>) {
+    fn shift_action(
+        &mut self,
+        _context: &Context<&'i str>,
+        term_idx: TermIndex,
+        token: Token<&'i str>,
+    ) {
         let termval = match TermKind::try_from(term_idx.0).unwrap() {
             TermKind::STOP => Terminal::STOP,
             TermKind::Terminals => Terminal::Terminals,
@@ -18325,7 +18330,7 @@ impl<'i, LO> LRBuilder<&'i str, LO> for RustemoBuilder {
     }
     fn reduce_action(
         &mut self,
-        _context: &Context<&'i str, LO, StateIndex>,
+        _context: &Context<&'i str>,
         prod_kind: ProdIndex,
         _prod_len: usize,
         _prod_str: &'static str,

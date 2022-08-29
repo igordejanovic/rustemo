@@ -1,0 +1,5 @@
+A: 'a' Num+ Tb;
+terminals
+Ta: 'a';
+Num: /\d+/;
+Tb: 'b';

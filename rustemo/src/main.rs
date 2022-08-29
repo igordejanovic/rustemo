@@ -47,6 +47,10 @@ struct Cli {
     #[clap(long)]
     partial_parse: bool,
 
+    /// Should parse context be passed to actions if AST output is generated.
+    #[clap(long)]
+    pass_context: bool,
+
     /// Output directory for actions. Default is the same as input grammar file.
     #[clap(short='a', long, value_name="OUT DIR ACTIONS", value_hint = clap::ValueHint::DirPath)]
     outdir_actions: Option<PathBuf>,
@@ -63,23 +67,18 @@ struct Cli {
 fn main() {
     let cli = Cli::parse();
 
-    let mut settings = with_settings()
+    let settings = with_settings()
         .force(cli.force)
         .actions(!cli.noactions)
         .exclude(cli.exclude)
         .prefer_shifts(cli.prefer_shifts)
         .prefer_shifts_over_empty(!cli.no_shifts_over_empty)
         .partial_parse(cli.partial_parse)
+        .pass_context(cli.pass_context)
         .table_type(cli.table_type)
-        .parser_algo(cli.parser_algo);
-
-    if let Some(outdir) = cli.outdir {
-        settings = settings.out_dir(&outdir);
-    }
-
-    if let Some(outdir) = cli.outdir_actions {
-        settings = settings.out_dir_actions(&outdir);
-    }
+        .parser_algo(cli.parser_algo)
+        .out_dir(cli.outdir)
+        .out_dir_actions(cli.outdir_actions);
 
     let result = if cli.grammar_file_or_dir.is_file() {
         settings.process_grammar(&cli.grammar_file_or_dir)

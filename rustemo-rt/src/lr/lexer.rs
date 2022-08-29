@@ -23,26 +23,26 @@ where
         }
     }
 
-    fn skip<'i>(context: &mut Context<&'i str, &'i str, StateIndex>) {
+    fn skip<'i, LO>(context: &mut Context<&'i str, LO, StateIndex>) {
         let skipped = context.input[context.position..]
             .chars()
             .take_while(|x| x.is_whitespace())
             .collect::<String>();
         log!("Skipped ws: {}", skipped.len());
-        context.layout = Some(
-            &context.input[context.position..context.position + skipped.len()],
-        );
+        // context.layout = Some(
+        //     &context.input[context.position..context.position + skipped.len()],
+        // );
         context.update_location(skipped);
     }
 }
 
-impl<'i, D> Lexer<&'i str, &'i str, StateIndex> for LRStringLexer<D>
+impl<'i, D, LO> Lexer<&'i str, LO, StateIndex> for LRStringLexer<D>
 where
     D: LexerDefinition<Recognizer = for<'a> fn(&'a str) -> Option<&'a str>>,
 {
     fn next_token(
         &self,
-        context: &mut Context<&'i str, &'i str, StateIndex>,
+        context: &mut Context<&'i str, LO, StateIndex>,
     ) -> Result<Token<&'i str>> {
         Self::skip(context);
         log!("Context: {}", context.context_str());

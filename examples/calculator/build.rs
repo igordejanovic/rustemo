@@ -7,7 +7,7 @@ fn main() {
         PathBuf::from(env::var("OUT_DIR").expect("Cargo didn't set OUT_DIR"));
 
     if let Err(e) = rustemo::with_settings()
-        .out_dir(&out_dir)
+        .out_dir(Some(out_dir))
         .process_dir(&root_dir)
     {
         eprintln!("{}", e);

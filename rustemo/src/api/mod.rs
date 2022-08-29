@@ -49,12 +49,12 @@ pub fn process_grammar<P: AsRef<Path>>(grammar: P) -> Result<()> {
 }
 
 impl RustemoSettings {
-    pub fn out_dir(mut self, out_dir: &Path) -> Self {
-        self.0.out_dir = Some(out_dir.to_path_buf());
+    pub fn out_dir(mut self, out_dir: Option<PathBuf>) -> Self {
+        self.0.out_dir = out_dir;
         self
     }
-    pub fn out_dir_actions(mut self, out_dir: &Path) -> Self {
-        self.0.out_dir_actions = Some(out_dir.to_path_buf());
+    pub fn out_dir_actions(mut self, out_dir: Option<PathBuf>) -> Self {
+        self.0.out_dir_actions = out_dir;
         self
     }
     pub fn exclude(mut self, exclude: Vec<String>) -> Self {
@@ -83,6 +83,10 @@ impl RustemoSettings {
     }
     pub fn actions(mut self, actions: bool) -> Self {
         self.0.actions = actions;
+        self
+    }
+    pub fn pass_context(mut self, pass_context: bool) -> Self {
+        self.0.pass_context = pass_context;
         self
     }
     pub fn force(mut self, force: bool) -> Self {

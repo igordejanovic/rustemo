@@ -2,13 +2,13 @@ use proc_macro2::{Ident, Span};
 use quote::quote;
 use syn::{parse::Parser, parse_quote};
 
-use crate::grammar::{
+use crate::{grammar::{
     types::{
         to_snake_case, Choice, ChoiceKind, SymbolType, SymbolTypeKind,
         SymbolTypes,
     },
     Grammar, NonTerminal,
-};
+}, api::Settings};
 
 use super::ActionsGenerator;
 
@@ -294,6 +294,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
     fn nonterminal_actions(
         &self,
         nonterminal: &NonTerminal,
+        settings: &Settings
     ) -> Vec<(String, syn::Item)> {
         let ty = self.types.get_type(&nonterminal.name);
         let ret_type = Ident::new(&nonterminal.name, Span::call_site());
@@ -320,11 +321,19 @@ impl ActionsGenerator for ProductionActionsGenerator {
 
                     (
                         action_name,
-                        parse_quote! {
-                            pub fn #action(#(#args),*) -> #ret_type {
-                                #body
+                        if settings.pass_context{
+                            parse_quote! {
+                                pub fn #action<'i>(_context: &Context<&'i str>, #(#args),*) -> #ret_type {
+                                    #body
+                                }
                             }
-                        },
+                        } else {
+                            parse_quote! {
+                                pub fn #action(#(#args),*) -> #ret_type {
+                                    #body
+                                }
+                            }
+                        }
                     )
                 })
                 .collect(),
@@ -395,11 +404,19 @@ impl ActionsGenerator for ProductionActionsGenerator {
 
                     (
                         action_name,
-                        parse_quote! {
-                            pub fn #action(#(#args),*) -> #ret_type {
-                                #(#body);*
+                        if settings.pass_context {
+                            parse_quote! {
+                                pub fn #action<'i>(_context: &Context<&'i str>, #(#args),*) -> #ret_type {
+                                    #(#body);*
+                                }
                             }
-                        },
+                        } else {
+                            parse_quote! {
+                                pub fn #action(#(#args),*) -> #ret_type {
+                                    #(#body);*
+                                }
+                            }
+                        }
                     )
                 })
                 .collect(),

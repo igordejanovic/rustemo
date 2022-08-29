@@ -9,6 +9,7 @@ use std::{
 };
 
 use proc_macro2::{Ident, Span};
+use quote::format_ident;
 use syn::{self, parse_quote};
 
 use crate::{
@@ -27,13 +28,25 @@ pub(crate) trait ActionsGenerator {
             pub type #type_name_ident = String;
         }
     }
-    fn terminal_action(&self, terminal: &Terminal) -> syn::Item {
+    fn terminal_action(
+        &self,
+        terminal: &Terminal,
+        settings: &Settings,
+    ) -> syn::Item {
         let type_name_ident = Ident::new(&terminal.name, Span::call_site());
         let action_name = to_snake_case(&terminal.name);
         let action_name_ident = Ident::new(&action_name, Span::call_site());
-        parse_quote! {
-            pub fn #action_name_ident<'a>(token: Token<&'a str>) -> #type_name_ident {
-                token.value.into()
+        if settings.pass_context {
+            parse_quote! {
+                pub fn #action_name_ident<'i>(_context: &Context<&'i str>, token: Token<&'i str>) -> #type_name_ident {
+                    token.value.into()
+                }
+            }
+        } else {
+            parse_quote! {
+                pub fn #action_name_ident<'i>(token: Token<&'i str>) -> #type_name_ident {
+                    token.value.into()
+                }
             }
         }
     }
@@ -45,6 +58,7 @@ pub(crate) trait ActionsGenerator {
     fn nonterminal_actions(
         &self,
         nonterminal: &NonTerminal,
+        settings: &Settings,
     ) -> Vec<(String, syn::Item)>;
 }
 
@@ -57,6 +71,11 @@ pub(crate) fn generate_parser_actions<F>(
 where
     F: AsRef<Path> + core::fmt::Debug,
 {
+    let parser_mod = PathBuf::from(file_name)
+        .file_stem()
+        .unwrap()
+        .to_string_lossy()
+        .to_string();
     let mut file_name = String::from(file_name);
     file_name.push_str("_actions.rs");
     let action_file = PathBuf::from(out_dir_actions.as_ref()).join(file_name);
@@ -67,10 +86,20 @@ where
     } else {
         // Create new empty file with common uses statements.
         log!("Creating: {:?}", action_file);
-        parse_quote! {
-            ///! This file is maintained by rustemo but can be modified manually.
-            ///! All manual changes will be preserved except non-doc comments.
-            use rustemo_rt::lexer::Token;
+        if settings.pass_context {
+            let parser_mod = format_ident!("{}", parser_mod);
+            parse_quote! {
+                ///! This file is maintained by rustemo but can be modified manually.
+                ///! All manual changes will be preserved except non-doc comments.
+                use rustemo_rt::lexer::Token;
+                use super::#parser_mod::Context;
+            }
+        } else {
+            parse_quote! {
+                ///! This file is maintained by rustemo but can be modified manually.
+                ///! All manual changes will be preserved except non-doc comments.
+                use rustemo_rt::lexer::Token;
+            }
         }
     };
 
@@ -122,7 +151,8 @@ where
         let action_name = to_snake_case(&terminal.name);
         if !action_names.contains(&action_name) {
             log!("Create action function for terminal '{type_name}'.");
-            ast.items.push(generator.terminal_action(terminal))
+            ast.items
+                .push(generator.terminal_action(terminal, settings))
         }
     }
 
@@ -137,7 +167,8 @@ where
         }
 
         // Add non-terminal actions
-        for (action_name, action) in generator.nonterminal_actions(nonterminal)
+        for (action_name, action) in
+            generator.nonterminal_actions(nonterminal, settings)
         {
             if !action_names.contains(&action_name) {
                 log!("Creating action '{action_name}'.");
