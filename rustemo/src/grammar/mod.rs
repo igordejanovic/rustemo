@@ -310,7 +310,7 @@ impl Grammar {
     /// Parses given string and constructs a Grammar instance
     pub fn from_string<G: AsRef<str>>(grammar_str: G) -> Result<Self> {
         Ok(GrammarBuilder::new()
-            .from_file(RustemoParser::parse_str(grammar_str.as_ref())?))
+            .from_file(RustemoParser::parse(grammar_str.as_ref())?))
     }
 
     /// Parses given file and constructs a Grammar instance
@@ -481,6 +481,11 @@ impl Grammar {
     pub fn is_enum(&self, nonterminal: &NonTerminal) -> bool {
         let prods = nonterminal.productions(self);
         prods.iter().filter(|x| x.rhs.len() == 1).count() == prods.len()
+    }
+
+    #[inline]
+    pub fn has_layout(&self) -> bool {
+        self.augmented_layout_index.is_some()
     }
 
     #[inline]

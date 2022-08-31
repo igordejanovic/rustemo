@@ -2,44 +2,45 @@
 ///! All manual changes will be preserved except non-doc comments.
 use rustemo_rt::lexer::Token;
 use std::collections::BTreeMap;
+use super::Input;
 pub type Name = String;
-pub fn name<I: AsRef<super::Input>>(token: Token<I>) -> Name {
+pub fn name<I: AsRef<Input>>(token: Token<I>) -> Name {
     token.value.as_ref().into()
 }
 pub type RegexTerm = String;
-pub fn regex_term<I: AsRef<super::Input>>(token: Token<I>) -> RegexTerm {
+pub fn regex_term<I: AsRef<Input>>(token: Token<I>) -> RegexTerm {
     token.value.as_ref()[1..token.value.as_ref().len() - 1].replace(r"\/", "/").into()
 }
 pub type IntConst = u32;
-pub fn int_const<I: AsRef<super::Input>>(token: Token<I>) -> IntConst {
+pub fn int_const<I: AsRef<Input>>(token: Token<I>) -> IntConst {
     token.value.as_ref().parse().unwrap()
 }
 pub type FloatConst = f32;
-pub fn float_const<I: AsRef<super::Input>>(token: Token<I>) -> FloatConst {
+pub fn float_const<I: AsRef<Input>>(token: Token<I>) -> FloatConst {
     token.value.as_ref().parse().unwrap()
 }
 pub type BoolConst = bool;
-pub fn bool_const<I: AsRef<super::Input>>(token: Token<I>) -> BoolConst {
+pub fn bool_const<I: AsRef<Input>>(token: Token<I>) -> BoolConst {
     if token.value.as_ref() == "true" { true } else { false }
 }
 pub type StrConst = String;
-pub fn str_const<I: AsRef<super::Input>>(token: Token<I>) -> StrConst {
+pub fn str_const<I: AsRef<Input>>(token: Token<I>) -> StrConst {
     token.value.as_ref().trim_matches('\'').trim_matches('"').into()
 }
 pub type Action = String;
-pub fn action<I: AsRef<super::Input>>(token: Token<I>) -> Action {
+pub fn action<I: AsRef<Input>>(token: Token<I>) -> Action {
     token.value.as_ref()[1..].into()
 }
 pub type WS = String;
-pub fn ws<I: AsRef<super::Input>>(token: Token<I>) -> WS {
+pub fn ws<I: AsRef<Input>>(token: Token<I>) -> WS {
     token.value.as_ref().into()
 }
 pub type CommentLine = String;
-pub fn comment_line<I: AsRef<super::Input>>(token: Token<I>) -> CommentLine {
+pub fn comment_line<I: AsRef<Input>>(token: Token<I>) -> CommentLine {
     token.value.as_ref().into()
 }
 pub type NotComment = String;
-pub fn not_comment<I: AsRef<super::Input>>(token: Token<I>) -> NotComment {
+pub fn not_comment<I: AsRef<Input>>(token: Token<I>) -> NotComment {
     token.value.as_ref().into()
 }
 #[derive(Debug, Clone, Default)]

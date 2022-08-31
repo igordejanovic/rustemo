@@ -58,11 +58,11 @@ pub struct LRParser<D: ParserDefinition + 'static> {
 }
 
 impl<D: ParserDefinition> LRParser<D> {
-    pub fn new(definition: &'static D) -> Self {
+    pub fn new(definition: &'static D, state: StateIndex) -> Self {
         Self {
             definition,
             parse_stack: vec![StackItem {
-                state: StateIndex(0),
+                state,
                 start_pos: 0,
                 end_pos: 0,
             }],
@@ -118,12 +118,13 @@ where
 {
     fn parse(
         &mut self,
-        mut context: Context<I, LO, StateIndex>,
-        lexer: L,
-        mut builder: B,
+        context: &mut Context<I, LO, StateIndex>,
+        lexer: &L,
+        builder: &mut B,
     ) -> Result<B::Output> {
         use Action::*;
-        let mut next_token = lexer.next_token(&mut context)?;
+        context.state = self.parse_stack.last().unwrap().state;
+        let mut next_token = lexer.next_token(context)?;
         loop {
             let current_state = self.parse_stack.last().unwrap().state;
             log!("Stack: {:?}", self.parse_stack);
@@ -145,9 +146,9 @@ where
                     // Lexer should set start/end pos
                     let start_pos = context.start_pos;
                     let end_pos = context.end_pos;
-                    self.to_state(&mut context, state_id, start_pos, end_pos);
+                    self.to_state(context, state_id, start_pos, end_pos);
                     builder.shift_action(&context, term_idx, next_token);
-                    next_token = lexer.next_token(&mut context)?;
+                    next_token = lexer.next_token(context)?;
                 }
                 Reduce(prod_idx, prod_len, nonterm_id, prod_str) => {
                     log!(
@@ -157,20 +158,23 @@ where
                         nonterm_id
                     );
                     let (from_state, start_pos, end_pos) =
-                        self.pop_states(&mut context, prod_len);
+                        self.pop_states(context, prod_len);
                     context.start_pos = start_pos;
                     context.end_pos = end_pos;
                     let to_state = self.definition.goto(from_state, nonterm_id);
-                    self.to_state(&mut context, to_state, start_pos, end_pos);
+                    self.to_state(context, to_state, start_pos, end_pos);
                     log!("GOTO {:?} -> {:?}", from_state, to_state);
                     builder
                         .reduce_action(&context, prod_idx, prod_len, prod_str);
                 }
                 Accept => break,
-                Error => panic!("Error!"),
+                // This can't happen for context-aware lexing.
+                // If there is no action for a lookahead then the lookahead would
+                // not be found.
+                Error => unreachable!(),
             }
         }
-        builder.get_result()
+        Ok(builder.get_result())
     }
 }
 

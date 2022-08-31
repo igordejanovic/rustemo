@@ -11,8 +11,8 @@ where
 {
     fn parse(
         &mut self,
-        context: Context<I, LO, ST>,
-        lexer: L,
-        builder: B,
+        context: &mut Context<I, LO, ST>,
+        lexer: &L,
+        builder: &mut B,
     ) -> Result<B::Output>;
 }

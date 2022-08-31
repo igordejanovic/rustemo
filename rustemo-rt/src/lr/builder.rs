@@ -1,6 +1,5 @@
 use crate::{
     builder::Builder,
-    error::Result,
     index::{ProdIndex, StateIndex, TermIndex},
     lexer::{Context, Token},
 };
@@ -52,8 +51,8 @@ impl<I> Builder for TreeBuilder<I> {
         Self { res_stack: vec![] }
     }
 
-    fn get_result(&mut self) -> Result<Self::Output> {
-        Ok(self.res_stack.pop().unwrap())
+    fn get_result(&mut self) -> Self::Output {
+        self.res_stack.pop().unwrap()
     }
 }
 

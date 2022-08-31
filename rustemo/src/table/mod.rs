@@ -447,6 +447,7 @@ impl<'g, 's> Display for Conflict<'g, 's> {
 
 pub struct LRTable<'g, 's> {
     pub states: StateVec<LRState<'g>>,
+    pub layout_state: Option<StateIndex>,
     grammar: &'g Grammar,
     settings: &'s Settings,
     first_sets: FirstSets,
@@ -458,6 +459,7 @@ impl<'g, 's> LRTable<'g, 's> {
             grammar,
             settings,
             states: StateVec::new(),
+            layout_state: None,
             first_sets: first_sets(grammar),
         };
 
@@ -465,6 +467,7 @@ impl<'g, 's> LRTable<'g, 's> {
 
         table.calc_states(grammar.augmented_index);
         if let Some(augmented_layout_index) = grammar.augmented_layout_index {
+            table.layout_state = Some(StateIndex(table.states.len()));
             table.calc_states(augmented_layout_index)
         }
 
@@ -491,24 +494,24 @@ impl<'g, 's> LRTable<'g, 's> {
     ///
     /// This collection of states is used to generate LR/GLR parser tables.
     pub fn calc_states(&mut self, start_symbol: SymbolIndex) {
-        let first_state = self.states.len();
+        let mut current_state_idx = self.states.len();
 
         let prods = &self.grammar.symbol_to_nonterm(start_symbol).productions;
         assert_eq!(prods.len(), 1);
 
         // Create a state for the first production (augmented)
         let state =
-            LRState::new(self.grammar, StateIndex(first_state), start_symbol)
+            LRState::new(self.grammar, StateIndex(current_state_idx), start_symbol)
                 .add_item(LRItem::with_follow(
                     self.grammar,
                     prods[0],
                     Follow::from([self.grammar.stop_index]),
                 ));
+        current_state_idx += 1;
 
         // States to be processed.
         let mut state_queue = VecDeque::from([state]);
 
-        let mut current_state_idx: usize = 1;
 
         log!("Calculating LR automaton states.");
         while let Some(mut state) = state_queue.pop_front() {
@@ -719,12 +722,17 @@ impl<'g, 's> LRTable<'g, 's> {
     /// Calculate reductions entries in action tables and resolve possible
     /// conflicts.
     fn calculate_reductions(&mut self) {
+
+        let mut aug_symbols = vec![self.grammar.augmented_index];
+        if let Some(layout_index) = self.grammar.augmented_layout_index {
+            aug_symbols.push(layout_index);
+        }
         for state in &mut self.states {
             for item in state.items.iter().filter(|x| x.is_reducing()) {
                 let prod = &self.grammar.productions[item.prod];
 
-                // Accept if reducing by augmented production for STOP lookahead
-                if prod.idx == ProdIndex(0) {
+                // Accept if reducing by augmented productions for STOP lookahead
+                if aug_symbols.contains(&self.grammar.nonterm_to_symbol_index(prod.nonterminal)) {
                     let actions = &mut state.actions[TermIndex(0)];
                     actions.push(Action::Accept);
                     continue;

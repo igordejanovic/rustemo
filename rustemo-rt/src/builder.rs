@@ -1,5 +1,3 @@
-use crate::Result;
-
 /// Building output during semantic actions.
 ///
 /// This trait is implemented by types that are in charge of building output of
@@ -12,5 +10,5 @@ pub trait Builder {
 
     /// Returns the product of parsing. Usually the one and only element left on
     /// the result stack.
-    fn get_result(&mut self) -> Result<Self::Output>;
+    fn get_result(&mut self) -> Self::Output;
 }

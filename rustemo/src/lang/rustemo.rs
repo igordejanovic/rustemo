@@ -2,7 +2,7 @@
 use regex::Regex;
 use num_enum::TryFromPrimitive;
 use std::{convert::TryFrom, fmt::Debug};
-use rustemo_rt::lexer::{self, Lexer, Token};
+use rustemo_rt::lexer::{self, Token};
 use rustemo_rt::parser::Parser;
 use rustemo_rt::builder::Builder;
 use rustemo_rt::Result;
@@ -18,7 +18,7 @@ const TERMINAL_NO: usize = 44usize;
 const NONTERMINAL_NO: usize = 44usize;
 const STATE_NO: usize = 141usize;
 const MAX_ACTIONS: usize = 15usize;
-pub type Layout = Option<rustemo_actions::Layout>;
+pub type Layout = rustemo_actions::Layout;
 pub type Context<I> = lexer::Context<I, Layout, StateIndex>;
 #[derive(Debug, Copy, Clone, TryFromPrimitive)]
 #[repr(usize)]
@@ -7596,7 +7596,7 @@ pub(crate) static PARSER_DEFINITION: RustemoParserDefinition = RustemoParserDefi
             Error,
             Error,
             Error,
-            Shift(StateIndex(1usize), TermIndex(32usize)),
+            Shift(StateIndex(123usize), TermIndex(32usize)),
             Error,
             Error,
             Error,
@@ -7605,8 +7605,8 @@ pub(crate) static PARSER_DEFINITION: RustemoParserDefinition = RustemoParserDefi
             Error,
             Error,
             Error,
-            Shift(StateIndex(2usize), TermIndex(41usize)),
-            Shift(StateIndex(3usize), TermIndex(42usize)),
+            Shift(StateIndex(124usize), TermIndex(41usize)),
+            Shift(StateIndex(125usize), TermIndex(42usize)),
             Error,
         ],
         [
@@ -7642,7 +7642,7 @@ pub(crate) static PARSER_DEFINITION: RustemoParserDefinition = RustemoParserDefi
             Error,
             Error,
             Error,
-            Shift(StateIndex(1usize), TermIndex(32usize)),
+            Shift(StateIndex(123usize), TermIndex(32usize)),
             Reduce(ProdIndex(95usize), 0usize, NonTermIndex(42usize), "Cornc0: "),
             Error,
             Error,
@@ -7651,9 +7651,9 @@ pub(crate) static PARSER_DEFINITION: RustemoParserDefinition = RustemoParserDefi
             Error,
             Error,
             Error,
-            Shift(StateIndex(9usize), TermIndex(41usize)),
-            Shift(StateIndex(3usize), TermIndex(42usize)),
-            Shift(StateIndex(10usize), TermIndex(43usize)),
+            Shift(StateIndex(131usize), TermIndex(41usize)),
+            Shift(StateIndex(125usize), TermIndex(42usize)),
+            Shift(StateIndex(132usize), TermIndex(43usize)),
         ],
         [
             Reduce(ProdIndex(87usize), 1usize, NonTermIndex(38usize), "LayoutItem: WS"),
@@ -7778,7 +7778,7 @@ pub(crate) static PARSER_DEFINITION: RustemoParserDefinition = RustemoParserDefi
             ),
         ],
         [
-            Reduce(ProdIndex(1usize), 1usize, NonTermIndex(2usize), "AUGL: Layout"),
+            Accept,
             Error,
             Error,
             Error,
@@ -7861,7 +7861,7 @@ pub(crate) static PARSER_DEFINITION: RustemoParserDefinition = RustemoParserDefi
             Error,
             Error,
             Error,
-            Shift(StateIndex(1usize), TermIndex(32usize)),
+            Shift(StateIndex(123usize), TermIndex(32usize)),
             Error,
             Error,
             Error,
@@ -7870,8 +7870,8 @@ pub(crate) static PARSER_DEFINITION: RustemoParserDefinition = RustemoParserDefi
             Error,
             Error,
             Error,
-            Shift(StateIndex(2usize), TermIndex(41usize)),
-            Shift(StateIndex(3usize), TermIndex(42usize)),
+            Shift(StateIndex(124usize), TermIndex(41usize)),
+            Shift(StateIndex(125usize), TermIndex(42usize)),
             Error,
         ],
         [
@@ -8254,7 +8254,7 @@ pub(crate) static PARSER_DEFINITION: RustemoParserDefinition = RustemoParserDefi
             Error,
             Error,
             Error,
-            Shift(StateIndex(17usize), TermIndex(33usize)),
+            Shift(StateIndex(139usize), TermIndex(33usize)),
             Error,
             Error,
             Error,
@@ -8299,7 +8299,7 @@ pub(crate) static PARSER_DEFINITION: RustemoParserDefinition = RustemoParserDefi
             Error,
             Error,
             Error,
-            Shift(StateIndex(1usize), TermIndex(32usize)),
+            Shift(StateIndex(123usize), TermIndex(32usize)),
             Reduce(ProdIndex(94usize), 1usize, NonTermIndex(42usize), "Cornc0: Cornc1"),
             Error,
             Error,
@@ -8308,9 +8308,9 @@ pub(crate) static PARSER_DEFINITION: RustemoParserDefinition = RustemoParserDefi
             Error,
             Error,
             Error,
-            Shift(StateIndex(9usize), TermIndex(41usize)),
-            Shift(StateIndex(3usize), TermIndex(42usize)),
-            Shift(StateIndex(10usize), TermIndex(43usize)),
+            Shift(StateIndex(131usize), TermIndex(41usize)),
+            Shift(StateIndex(125usize), TermIndex(42usize)),
+            Shift(StateIndex(132usize), TermIndex(43usize)),
         ],
         [
             Error,
@@ -8514,7 +8514,12 @@ pub(crate) static PARSER_DEFINITION: RustemoParserDefinition = RustemoParserDefi
                 NonTermIndex(39usize),
                 "Comment: OComment Corncs CComment",
             ),
-            Error,
+            Reduce(
+                ProdIndex(89usize),
+                3usize,
+                NonTermIndex(39usize),
+                "Comment: OComment Corncs CComment",
+            ),
             Error,
             Error,
             Error,
@@ -8534,7 +8539,12 @@ pub(crate) static PARSER_DEFINITION: RustemoParserDefinition = RustemoParserDefi
                 NonTermIndex(39usize),
                 "Comment: OComment Corncs CComment",
             ),
-            Error,
+            Reduce(
+                ProdIndex(89usize),
+                3usize,
+                NonTermIndex(39usize),
+                "Comment: OComment Corncs CComment",
+            ),
         ],
         [
             Error,
@@ -14257,11 +14267,11 @@ pub(crate) static PARSER_DEFINITION: RustemoParserDefinition = RustemoParserDefi
             None,
             None,
             None,
-            Some(StateIndex(4usize)),
-            Some(StateIndex(5usize)),
-            Some(StateIndex(6usize)),
-            Some(StateIndex(7usize)),
-            Some(StateIndex(8usize)),
+            Some(StateIndex(126usize)),
+            Some(StateIndex(127usize)),
+            Some(StateIndex(128usize)),
+            Some(StateIndex(129usize)),
+            Some(StateIndex(130usize)),
             None,
             None,
             None,
@@ -14307,57 +14317,11 @@ pub(crate) static PARSER_DEFINITION: RustemoParserDefinition = RustemoParserDefi
             None,
             None,
             None,
-            Some(StateIndex(11usize)),
-            Some(StateIndex(12usize)),
-            Some(StateIndex(13usize)),
-            Some(StateIndex(14usize)),
-            Some(StateIndex(15usize)),
-        ],
-        [
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
+            Some(StateIndex(133usize)),
+            Some(StateIndex(134usize)),
+            Some(StateIndex(135usize)),
+            Some(StateIndex(136usize)),
+            Some(StateIndex(137usize)),
         ],
         [
             None,
@@ -14490,8 +14454,8 @@ pub(crate) static PARSER_DEFINITION: RustemoParserDefinition = RustemoParserDefi
             None,
             None,
             None,
-            Some(StateIndex(16usize)),
-            Some(StateIndex(8usize)),
+            None,
+            None,
             None,
             None,
             None,
@@ -14536,8 +14500,8 @@ pub(crate) static PARSER_DEFINITION: RustemoParserDefinition = RustemoParserDefi
             None,
             None,
             None,
-            None,
-            None,
+            Some(StateIndex(138usize)),
+            Some(StateIndex(130usize)),
             None,
             None,
             None,
@@ -14859,11 +14823,57 @@ pub(crate) static PARSER_DEFINITION: RustemoParserDefinition = RustemoParserDefi
             None,
             None,
             None,
-            Some(StateIndex(11usize)),
             None,
             None,
             None,
-            Some(StateIndex(18usize)),
+            None,
+            None,
+        ],
+        [
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            Some(StateIndex(133usize)),
+            None,
+            None,
+            None,
+            Some(StateIndex(140usize)),
         ],
         [
             None,
@@ -15106,31 +15116,54 @@ impl ParserDefinition for RustemoParserDefinition {
     }
 }
 pub struct RustemoParser(LRParser<RustemoParserDefinition>);
-impl<I, L, B> Parser<I, L, B, Layout, StateIndex> for RustemoParser
-where
-    I: Debug,
-    L: Lexer<I, Layout, StateIndex>,
-    B: LRBuilder<I, Layout>,
-{
-    fn parse(&mut self, context: Context<I>, lexer: L, builder: B) -> Result<B::Output> {
-        self.0.parse(context, lexer, builder)
-    }
-}
 #[allow(dead_code)]
 impl RustemoParser {
-    pub fn parse_str<'i>(input: &'i str) -> Result<<RustemoBuilder as Builder>::Output> {
-        let context: rustemo_rt::lexer::Context<&str, Layout, StateIndex> = Context::new(
-            "<str>".to_string(),
-            input,
-        );
+    pub fn parse<'i>(input: &'i str) -> Result<rustemo_actions::File> {
+        let mut context = Context::new("<str>".to_string(), input);
         let lexer = LRStringLexer::new(&LEXER_DEFINITION, false);
-        let builder = RustemoBuilder::new();
-        RustemoParser::default().0.parse(context, lexer, builder)
+        let mut builder = RustemoBuilder::new();
+        let mut parser = RustemoParser::default();
+        loop {
+            let result = parser.0.parse(&mut context, &lexer, &mut builder);
+            if result.is_err() {
+                let pos = context.position;
+                log!("Parsing layout.");
+                let layout = RustemoLayoutParser::parse_layout(&mut context)?;
+                if context.position > pos {
+                    context.layout = Some(layout);
+                    continue;
+                }
+            }
+            return result
+                .map(|r| match r {
+                    RustemoBuilderOutput::File(r) => r,
+                    _ => unreachable!(),
+                });
+        }
     }
 }
 impl Default for RustemoParser {
     fn default() -> Self {
-        Self(LRParser::new(&PARSER_DEFINITION))
+        Self(LRParser::new(&PARSER_DEFINITION, StateIndex(0)))
+    }
+}
+pub struct RustemoLayoutParser(LRParser<RustemoParserDefinition>);
+#[allow(dead_code)]
+impl RustemoLayoutParser {
+    pub fn parse_layout<'i>(
+        context: &mut Context<&'i str>,
+    ) -> Result<rustemo_actions::Layout> {
+        let lexer = LRStringLexer::new(&LEXER_DEFINITION, true);
+        let mut builder = RustemoBuilder::new();
+        match RustemoLayoutParser::default().0.parse(context, &lexer, &mut builder)? {
+            RustemoBuilderOutput::Layout(l) => Ok(l),
+            _ => panic!("Invalid layout parsing result."),
+        }
+    }
+}
+impl Default for RustemoLayoutParser {
+    fn default() -> Self {
+        Self(LRParser::new(&PARSER_DEFINITION, StateIndex(122usize)))
     }
 }
 pub struct RustemoLexerDefinition {
@@ -17684,10 +17717,10 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
         [
             Some(0usize),
             Some(32usize),
+            Some(33usize),
             Some(41usize),
             Some(42usize),
-            None,
-            None,
+            Some(43usize),
             None,
             None,
             None,
@@ -18247,18 +18280,25 @@ impl LexerDefinition for RustemoLexerDefinition {
         }
     }
 }
-pub struct RustemoBuilder {
+struct RustemoBuilder {
     res_stack: Vec<Symbol>,
 }
+enum RustemoBuilderOutput {
+    File(rustemo_actions::File),
+    Layout(rustemo_actions::Layout),
+}
 impl Builder for RustemoBuilder {
-    type Output = rustemo_actions::File;
+    type Output = RustemoBuilderOutput;
     fn new() -> Self {
         Self { res_stack: vec![] }
     }
-    fn get_result(&mut self) -> Result<Self::Output> {
+    fn get_result(&mut self) -> Self::Output {
         match self.res_stack.pop().unwrap() {
-            Symbol::NonTerminal(NonTerminal::File(r)) => Ok(r),
-            _ => panic!("Invalid result on the parsing stack!"),
+            Symbol::NonTerminal(NonTerminal::File(r)) => RustemoBuilderOutput::File(r),
+            Symbol::NonTerminal(NonTerminal::Layout(r)) => {
+                RustemoBuilderOutput::Layout(r)
+            }
+            _ => panic!("Invalid result on the parse stack!"),
         }
     }
 }

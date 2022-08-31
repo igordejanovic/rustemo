@@ -1,7 +1,7 @@
 pub(crate) mod actions;
 
 use quote::format_ident;
-use rustemo_rt::index::TermIndex;
+use rustemo_rt::index::{TermIndex, StateIndex};
 use std::{
     iter::repeat,
     path::{Path, PathBuf},
@@ -96,7 +96,9 @@ pub fn generate_parser(
         )))?;
     let parser_name = to_pascal_case(file_name);
     let parser = format!("{}Parser", parser_name);
+    let layout_parser = format!("{}LayoutParser", parser_name);
     let builder = format!("{}Builder", parser_name);
+    let builder_output = format!("{}BuilderOutput", parser_name);
     let parser_definition = format!("{}Definition", parser);
     let lexer = format!("{}Lexer", parser_name);
     let lexer_definition = format!("{}Definition", lexer);
@@ -110,12 +112,28 @@ pub fn generate_parser(
         .extend(generate_parser_types(&grammar, &actions_file)?);
 
     ast.items.extend(generate_parser_definition(
+        &grammar,
         &table,
         &parser,
+        &layout_parser,
         &parser_definition,
         &builder,
+        &builder_output,
+        &actions_file,
+        &root_symbol,
         settings,
     )?);
+
+    if grammar.has_layout() {
+        ast.items.extend(generate_layout_parser(
+            &actions_file,
+            &layout_parser,
+            &parser_definition,
+            &builder,
+            &builder_output,
+            table.layout_state.unwrap(),
+        )?);
+    }
 
     ast.items.extend(generate_lexer_definition(
         &grammar,
@@ -179,7 +197,7 @@ fn generate_parser_header(
             fmt::Debug,
         };
 
-        use rustemo_rt::lexer::{self, Lexer, Token};
+        use rustemo_rt::lexer::{self, Token};
         use rustemo_rt::parser::Parser;
         use rustemo_rt::builder::Builder;
         use rustemo_rt::Result;
@@ -201,14 +219,13 @@ fn generate_parser_header(
     };
 
     header.items.push(
-        if grammar.augmented_layout_index.is_some() {
-            // Layout is used in the grammar
+        if grammar.has_layout() {
             parse_quote! {
-                pub type Layout = Option<#actions_file::Layout>;
+                pub type Layout = #actions_file::Layout;
             }
         } else {
             parse_quote! {
-                pub type Layout = Option<()>;
+                pub type Layout = ();
             }
         }
     );
@@ -321,16 +338,25 @@ fn generate_parser_types(
 }
 
 fn generate_parser_definition(
+    grammar: &Grammar,
     table: &LRTable,
     parser: &str,
+    layout_parser: &str,
     parser_definition: &str,
     builder: &str,
+    builder_output: &str,
+    actions_file: &str,
+    root_symbol: &str,
     settings: &Settings,
 ) -> Result<Vec<syn::Item>> {
     let mut ast: Vec<syn::Item> = vec![];
     let parser = format_ident!("{}", parser);
+    let layout_parser = format_ident!("{}", layout_parser);
     let parser_definition = format_ident!("{}", parser_definition);
     let builder = format_ident!("{}", builder);
+    let builder_output = format_ident!("{}", builder_output);
+    let actions_file = format_ident!("{}", actions_file);
+    let root_symbol = format_ident!("{}", root_symbol);
 
     ast.push(parse_quote! {
         pub struct #parser_definition {
@@ -400,30 +426,9 @@ fn generate_parser_definition(
             }
         });
 
-    // geni!(
-    //     out,
-    //     "// State {}:{}\n",
-    //     state.idx,
-    //     grammar.symbol_name(state.symbol)
-    // );
-
     ast.push(parse_quote! {
         pub struct #parser(LRParser<#parser_definition>);
     });
-
-    ast.push(
-        parse_quote! {
-            impl<I, L, B> Parser<I, L, B, Layout, StateIndex> for #parser
-            where
-                I: Debug,
-                L: Lexer<I, Layout, StateIndex>,
-                B: LRBuilder<I, Layout>,
-            {
-                fn parse(&mut self, context: Context<I>, lexer: L, builder: B) -> Result<B::Output> {
-                    self.0.parse(context, lexer, builder)
-                }
-            }
-        });
 
     let partial_parse: syn::Expr = if settings.partial_parse {
         parse_quote! { true }
@@ -431,16 +436,47 @@ fn generate_parser_definition(
         parse_quote! { false }
     };
 
+    let mut parse_stmt: Vec<syn::Stmt> = vec![];
+    if grammar.has_layout() {
+        parse_stmt.push(parse_quote!{
+            let mut parser = #parser::default();
+        });
+        parse_stmt.push(parse_quote!{
+            loop {
+                let result = parser.0.parse(&mut context, &lexer, &mut builder);
+                if result.is_err() {
+                    let pos = context.position;
+                    log!("Parsing layout.");
+                    let layout = #layout_parser::parse_layout(&mut context)?;
+
+                    if context.position > pos {
+                        context.layout = Some(layout);
+                        continue;
+                    }
+                }
+                return result.map(|r| match r {
+                        #builder_output::#root_symbol(r) => r,
+                        _ => unreachable!()
+                    }
+                );
+            }
+        });
+    } else {
+        parse_stmt.push(parse_quote! {
+            return #parser::default().0.parse(&mut context, &lexer, &mut builder);
+        });
+    }
+
     ast.push(
         parse_quote! {
             #[allow(dead_code)]
             impl #parser
             {
-                pub fn parse_str<'i>(input: &'i str) -> Result<<#builder as Builder>::Output> {
-                    let context: rustemo_rt::lexer::Context<&str, Layout, StateIndex> = Context::new("<str>".to_string(), input);
+                pub fn parse<'i>(input: &'i str) -> Result<#actions_file::#root_symbol> {
+                    let mut context = Context::new("<str>".to_string(), input);
                     let lexer = LRStringLexer::new(&LEXER_DEFINITION, #partial_parse);
-                    let builder = #builder::new();
-                    #parser::default().0.parse(context, lexer, builder)
+                    let mut builder = #builder::new();
+                    #(#parse_stmt)*
                 }
             }
         });
@@ -448,11 +484,58 @@ fn generate_parser_definition(
     ast.push(parse_quote! {
         impl Default for #parser {
             fn default() -> Self {
-                Self(LRParser::new(&PARSER_DEFINITION))
+                Self(LRParser::new(&PARSER_DEFINITION, StateIndex(0)))
             }
         }
     });
 
+    Ok(ast)
+}
+
+fn generate_layout_parser(
+    actions_file: &str,
+    layout_parser: &str,
+    parser_definition: &str,
+    builder: &str,
+    builder_output: &str,
+    layout_state: StateIndex,
+) -> Result<Vec<syn::Item>> {
+    let mut ast: Vec<syn::Item> = vec![];
+    let actions_file = format_ident!("{}", actions_file);
+    let layout_parser = format_ident!("{}", layout_parser);
+    let parser_definition = format_ident!("{}", parser_definition);
+    let builder = format_ident!("{}", builder);
+    let builder_output = format_ident!("{}", builder_output);
+    let layout_state = layout_state.0;
+    let layout_state: syn::Expr = parse_quote!{ StateIndex(#layout_state) };
+
+    ast.push(parse_quote! {
+        pub struct #layout_parser(LRParser<#parser_definition>);
+    });
+
+    ast.push(
+        parse_quote! {
+            #[allow(dead_code)]
+            impl #layout_parser
+            {
+                pub fn parse_layout<'i>(context: &mut Context<&'i str>) -> Result<#actions_file::Layout> {
+                    let lexer = LRStringLexer::new(&LEXER_DEFINITION, true);
+                    let mut builder = #builder::new();
+                    match #layout_parser::default().0.parse(context, &lexer, &mut builder)? {
+                        #builder_output::Layout(l) => Ok(l),
+                        _ => panic!("Invalid layout parsing result.")
+                    }
+                }
+            }
+        });
+
+    ast.push(parse_quote! {
+        impl Default for #layout_parser {
+            fn default() -> Self {
+                Self(LRParser::new(&PARSER_DEFINITION, #layout_state))
+            }
+        }
+    });
     Ok(ast)
 }
 
@@ -616,6 +699,7 @@ fn generate_builder(
     settings: &Settings,
 ) -> Result<Vec<syn::Item>> {
     let mut ast: Vec<syn::Item> = vec![];
+    let builder_output = format_ident!("{}Output", builder);
     let builder = format_ident!("{}", builder);
     let actions_file = format_ident!("{}", actions_file);
     let root_symbol = format_ident!("{}", root_symbol);
@@ -626,15 +710,44 @@ fn generate_builder(
     };
 
     ast.push(parse_quote! {
-        pub struct #builder {
+        struct #builder {
             res_stack: Vec<Symbol>,
         }
     });
 
+    ast.push(
+        if grammar.has_layout() {
+            parse_quote! {
+                enum #builder_output {
+                    #root_symbol(#actions_file::#root_symbol),
+                    Layout(rustemo_actions::Layout)
+                }
+            }
+        } else {
+            parse_quote! {
+                type #builder_output = #actions_file::#root_symbol;
+            }
+        }
+    );
+
+    let mut get_result_arms: Vec<syn::Arm> = vec![];
+    if grammar.has_layout() {
+        get_result_arms.push(parse_quote!{
+            Symbol::NonTerminal(NonTerminal::#root_symbol(r)) => #builder_output::#root_symbol(r)
+        });
+        get_result_arms.push(parse_quote!{
+            Symbol::NonTerminal(NonTerminal::Layout(r)) => #builder_output::Layout(r)
+        });
+    } else {
+        get_result_arms.push(parse_quote!{
+            Symbol::NonTerminal(NonTerminal::#root_symbol(r)) => r
+        });
+    }
+
     ast.push(parse_quote! {
         impl Builder for #builder
         {
-            type Output = #actions_file::#root_symbol;
+            type Output = #builder_output;
 
             fn new() -> Self {
                 Self {
@@ -642,10 +755,10 @@ fn generate_builder(
                 }
             }
 
-            fn get_result(&mut self) -> Result<Self::Output> {
+            fn get_result(&mut self) -> Self::Output {
                 match self.res_stack.pop().unwrap() {
-                    Symbol::NonTerminal(NonTerminal::#root_symbol(r)) => Ok(r),
-                    _ => panic!("Invalid result on the parsing stack!"),
+                    #(#get_result_arms),*,
+                    _ => panic!("Invalid result on the parse stack!"),
                 }
             }
         }
