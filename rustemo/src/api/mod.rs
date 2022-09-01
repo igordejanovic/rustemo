@@ -77,6 +77,10 @@ impl RustemoSettings {
         self.0.parser_algo = parser_algo;
         self
     }
+    pub fn print_table(mut self, print_table: bool) -> Self {
+        self.0.print_table = print_table;
+        self
+    }
     pub fn partial_parse(mut self, partial_parse: bool) -> Self {
         self.0.partial_parse = partial_parse;
         self

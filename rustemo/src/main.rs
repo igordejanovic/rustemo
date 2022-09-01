@@ -51,6 +51,10 @@ struct Cli {
     #[clap(long)]
     pass_context: bool,
 
+    /// Print LR table
+    #[clap(long)]
+    print_table: bool,
+
     /// Output directory for actions. Default is the same as input grammar file.
     #[clap(short='a', long, value_name="OUT DIR ACTIONS", value_hint = clap::ValueHint::DirPath)]
     outdir_actions: Option<PathBuf>,
@@ -76,6 +80,7 @@ fn main() {
         .partial_parse(cli.partial_parse)
         .pass_context(cli.pass_context)
         .table_type(cli.table_type)
+        .print_table(cli.print_table)
         .parser_algo(cli.parser_algo)
         .out_dir(cli.outdir)
         .out_dir_actions(cli.outdir_actions);

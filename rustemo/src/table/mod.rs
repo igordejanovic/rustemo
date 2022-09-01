@@ -4,7 +4,7 @@ use std::{
     cmp::{self, Ordering},
     collections::{BTreeMap, BTreeSet, VecDeque},
     fmt::{self, Display},
-    iter,
+    iter::{self, repeat},
     ops::{Index, IndexMut},
     slice::{Iter, IterMut},
 };
@@ -483,10 +483,11 @@ impl<'g, 's> LRTable<'g, 's> {
         log!("Sort terminals for lexical disambiguation");
         table.sort_terminals();
 
-        log!("States:");
-        for _state in &table.states {
-            log!("{_state:#?}");
+        if settings.print_table {
+            println!("LR TABLE:");
+            println!("{}", table);
         }
+
         table
     }
 
@@ -500,18 +501,20 @@ impl<'g, 's> LRTable<'g, 's> {
         assert_eq!(prods.len(), 1);
 
         // Create a state for the first production (augmented)
-        let state =
-            LRState::new(self.grammar, StateIndex(current_state_idx), start_symbol)
-                .add_item(LRItem::with_follow(
-                    self.grammar,
-                    prods[0],
-                    Follow::from([self.grammar.stop_index]),
-                ));
+        let state = LRState::new(
+            self.grammar,
+            StateIndex(current_state_idx),
+            start_symbol,
+        )
+        .add_item(LRItem::with_follow(
+            self.grammar,
+            prods[0],
+            Follow::from([self.grammar.stop_index]),
+        ));
         current_state_idx += 1;
 
         // States to be processed.
         let mut state_queue = VecDeque::from([state]);
-
 
         log!("Calculating LR automaton states.");
         while let Some(mut state) = state_queue.pop_front() {
@@ -722,7 +725,6 @@ impl<'g, 's> LRTable<'g, 's> {
     /// Calculate reductions entries in action tables and resolve possible
     /// conflicts.
     fn calculate_reductions(&mut self) {
-
         let mut aug_symbols = vec![self.grammar.augmented_index];
         if let Some(layout_index) = self.grammar.augmented_layout_index {
             aug_symbols.push(layout_index);
@@ -732,7 +734,9 @@ impl<'g, 's> LRTable<'g, 's> {
                 let prod = &self.grammar.productions[item.prod];
 
                 // Accept if reducing by augmented productions for STOP lookahead
-                if aug_symbols.contains(&self.grammar.nonterm_to_symbol_index(prod.nonterminal)) {
+                if aug_symbols.contains(
+                    &self.grammar.nonterm_to_symbol_index(prod.nonterminal),
+                ) {
                     let actions = &mut state.actions[TermIndex(0)];
                     actions.push(Action::Accept);
                     continue;
@@ -1066,6 +1070,72 @@ impl<'g, 's> LRTable<'g, 's> {
             shift_reduce_len,
             reduce_reduce_len
         );
+    }
+}
+
+impl<'g, 's> Display for LRTable<'g, 's> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        for state in &self.states {
+            writeln!(
+                f,
+                "\nState {}:{}",
+                state.idx,
+                self.grammar.symbol_name(state.symbol),
+            )?;
+            let actions = state
+                .actions
+                .iter()
+                .enumerate()
+                .filter(|(_, a)| !a.is_empty())
+                .flat_map(|(i, a)| repeat(i).zip(a.iter()))
+                .map(|(i, a)| {
+                    (
+                        self.grammar.terminals[TermIndex(i)].name.clone(),
+                        match a {
+                            Action::Shift(s, _) => format!("Shift to {s}"),
+                            Action::Reduce(_, l, _, s) => {
+                                format!("Reduce for len {l} by:   {s}")
+                            }
+                            Action::Accept => "Accept".into(),
+                        },
+                    )
+                })
+                .collect::<Vec<_>>();
+
+            if !actions.is_empty() {
+                writeln!(f, "\tACTIONS:")?;
+                for (term, action) in actions {
+                    writeln!(f, "\t\t{term} => {action}")?;
+                }
+            }
+
+            // GOTOs
+            let gotos = state
+                .gotos
+                .iter()
+                .enumerate()
+                .filter(|(_, g)| g.is_some())
+                .map(|(idx, g)| {
+                    let g = g.unwrap();
+                    (
+                        self.grammar.nonterminals[NonTermIndex(idx)].name.clone(),
+                        format!(
+                            "State {}:{}",
+                            self.grammar.symbol_name(self.states[g].symbol),
+                            g.0
+                        ),
+                    )
+                })
+                .collect::<Vec<_>>();
+
+            if !gotos.is_empty() {
+                writeln!(f, "\tGOTOs:")?;
+                for (nonterm, goto) in gotos {
+                    writeln!(f, "\t\t{nonterm} => {goto}")?;
+                }
+            }
+        }
+        Ok(())
     }
 }
 

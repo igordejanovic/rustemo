@@ -23,6 +23,7 @@ pub struct Settings {
     pub prefer_shifts_over_empty: bool,
     pub table_type: TableType,
     pub parser_algo: ParserAlgo,
+    pub print_table: bool,
     pub exclude: Vec<String>,
     pub actions: bool,
 
@@ -47,6 +48,7 @@ impl Default for Settings {
             prefer_shifts_over_empty: true,
             table_type: Default::default(),
             parser_algo: Default::default(),
+            print_table: false,
             actions: true,
             pass_context: false,
             partial_parse: false,
