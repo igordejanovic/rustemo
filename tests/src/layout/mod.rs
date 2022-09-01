@@ -10,6 +10,6 @@ pub type Input = str;
 
 #[test]
 fn layout() {
-    let result = LayoutParser::parse_str("1 42 This 6 should be 89 ignored 8");
+    let result = LayoutParser::parse("1 42 This 6 should be 89 ignored 8");
     output_cmp!("src/layout/layout.ast", format!("{:#?}", result))
 }

@@ -4,19 +4,19 @@ mod calculator01_calc_tests {
 
     #[test]
     fn test_calculator01_1() {
-        let result = Calculator01Parser::parse_str("2 + 3 * 7 + 6 * 3");
+        let result = Calculator01Parser::parse("2 + 3 * 7 + 6 * 3");
         assert_eq!(result.unwrap(), 41f32);
     }
 
     #[test]
     fn test_calculator01_2() {
-        let result = Calculator01Parser::parse_str("2 + ( 3  * 7 ) + 2 * 4");
+        let result = Calculator01Parser::parse("2 + ( 3  * 7 ) + 2 * 4");
         assert_eq!(result.unwrap(), 31f32);
     }
 
     #[test]
     fn test_calculator01_error() {
-        let result = Calculator01Parser::parse_str("2 + ( 3  *  + 7 ) + 2 * 4");
+        let result = Calculator01Parser::parse("2 + ( 3  *  + 7 ) + 2 * 4");
         assert!(result.is_err());
         assert_eq!(
             r#"Error at position <str>:1:12 "2 + ( 3  *  -->+ 7 ) + 2 * 4". Expected one of LParen, Num."#,
@@ -37,7 +37,7 @@ mod calculator02_tests {
 
     #[test]
     fn test_calculator2_1() {
-        let result = Calculator02AmbigParser::parse_str(
+        let result = Calculator02AmbigParser::parse(
             "7 + 56.4 / 3 + 5 / 2 * (7 - 1)",
         );
         assert_eq!(result.unwrap(), 40.800003f32);
@@ -49,7 +49,7 @@ mod calculator03_tests {
 
     #[test]
     fn test_calculator2_1() {
-        let result = Calculator03AmbigProdkindParser::parse_str(
+        let result = Calculator03AmbigProdkindParser::parse(
             "7 + 56.4 / 3 + 5 / 2 * (7 - 1)",
         );
         assert_eq!(result.unwrap(), 40.800003f32);
@@ -61,7 +61,7 @@ mod calculator04_tests {
 
     #[test]
     fn test_calculator2_1() {
-        let result = Calculator04AmbigLhsParser::parse_str(
+        let result = Calculator04AmbigLhsParser::parse(
             "7 + 56.4 / 3 + 5 / 2 * (7 - 1)",
         );
         assert_eq!(result.unwrap(), 40.800003f32);

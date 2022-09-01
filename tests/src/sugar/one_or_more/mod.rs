@@ -13,7 +13,7 @@ rustemo_mod!(one_or_more_2_actions, "/src/sugar/one_or_more");
 
 #[test]
 fn one_or_more_1_1() {
-    let result = OneOrMore1Parser::parse_str("c b 1 2 3 4");
+    let result = OneOrMore1Parser::parse("c b 1 2 3 4");
     output_cmp!(
         "src/sugar/one_or_more/one_or_more_1_1.ast",
         format!("{result:#?}")
@@ -22,7 +22,7 @@ fn one_or_more_1_1() {
 
 #[test]
 fn one_or_more_1_2() {
-    let result = OneOrMore1Parser::parse_str("c 1");
+    let result = OneOrMore1Parser::parse("c 1");
     output_cmp!(
         "src/sugar/one_or_more/one_or_more_1_2.ast",
         format!("{result:#?}")
@@ -31,7 +31,7 @@ fn one_or_more_1_2() {
 
 #[test]
 fn one_or_more_1_1_error() {
-    let result = OneOrMore1Parser::parse_str("1 2 3 4");
+    let result = OneOrMore1Parser::parse("1 2 3 4");
     output_cmp!(
         "src/sugar/one_or_more/one_or_more_1_1_error.ast",
         format!("{result:#?}")
@@ -40,7 +40,7 @@ fn one_or_more_1_1_error() {
 
 #[test]
 fn one_or_more_1_2_error() {
-    let result = OneOrMore1Parser::parse_str("c b b 1 2 3 4");
+    let result = OneOrMore1Parser::parse("c b b 1 2 3 4");
     output_cmp!(
         "src/sugar/one_or_more/one_or_more_1_2_error.ast",
         format!("{result:#?}")
@@ -49,7 +49,7 @@ fn one_or_more_1_2_error() {
 
 #[test]
 fn one_or_more_1_3_error() {
-    let result = OneOrMore1Parser::parse_str("c b");
+    let result = OneOrMore1Parser::parse("c b");
     output_cmp!(
         "src/sugar/one_or_more/one_or_more_1_3_error.ast",
         format!("{result:#?}")
@@ -58,7 +58,7 @@ fn one_or_more_1_3_error() {
 
 #[test]
 fn one_or_more_2_1() {
-    let result = OneOrMore2Parser::parse_str("c 1 a");
+    let result = OneOrMore2Parser::parse("c 1 a");
     output_cmp!(
         "src/sugar/one_or_more/one_or_more_2_1.ast",
         format!("{result:#?}")
@@ -67,7 +67,7 @@ fn one_or_more_2_1() {
 
 #[test]
 fn one_or_more_2_2() {
-    let result = OneOrMore2Parser::parse_str("c 1 2 3 4 a");
+    let result = OneOrMore2Parser::parse("c 1 2 3 4 a");
     output_cmp!(
         "src/sugar/one_or_more/one_or_more_2_2.ast",
         format!("{result:#?}")
@@ -76,7 +76,7 @@ fn one_or_more_2_2() {
 
 #[test]
 fn one_or_more_2_1_error() {
-    let result = OneOrMore2Parser::parse_str("c 1 2 3");
+    let result = OneOrMore2Parser::parse("c 1 2 3");
     output_cmp!(
         "src/sugar/one_or_more/one_or_more_2_1_error.ast",
         format!("{result:#?}")
@@ -85,7 +85,7 @@ fn one_or_more_2_1_error() {
 
 #[test]
 fn one_or_more_2_2_error() {
-    let result = OneOrMore2Parser::parse_str("c a");
+    let result = OneOrMore2Parser::parse("c a");
     output_cmp!(
         "src/sugar/one_or_more/one_or_more_2_2_error.ast",
         format!("{result:#?}")
@@ -94,7 +94,7 @@ fn one_or_more_2_2_error() {
 
 #[test]
 fn one_or_more_2_3_error() {
-    let result = OneOrMore2Parser::parse_str("c 1 2 a 3");
+    let result = OneOrMore2Parser::parse("c 1 2 a 3");
     output_cmp!(
         "src/sugar/one_or_more/one_or_more_2_3_error.ast",
         format!("{result:#?}")

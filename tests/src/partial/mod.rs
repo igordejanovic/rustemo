@@ -11,6 +11,6 @@ pub type Input = str;
 #[test]
 fn partial_parse() {
     let result =
-        PartialParser::parse_str("Numbers: 1 7 42 b b whatever .... bla bla");
+        PartialParser::parse("Numbers: 1 7 42 b b whatever .... bla bla");
     output_cmp!("src/partial/partial.ast", format!("{:#?}", result));
 }

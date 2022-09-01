@@ -14,7 +14,7 @@ rustemo_mod!(optional_2_actions, "/src/sugar/optional");
 
 #[test]
 fn optional_1_1() {
-    let result = Optional1Parser::parse_str("c b 1");
+    let result = Optional1Parser::parse("c b 1");
     output_cmp!(
         "src/sugar/optional/optional_1_1.ast",
         format!("{result:#?}")
@@ -23,7 +23,7 @@ fn optional_1_1() {
 
 #[test]
 fn optional_1_2() {
-    let result = Optional1Parser::parse_str("c b");
+    let result = Optional1Parser::parse("c b");
     output_cmp!(
         "src/sugar/optional/optional_1_2.ast",
         format!("{result:#?}")
@@ -32,7 +32,7 @@ fn optional_1_2() {
 
 #[test]
 fn optional_1_3() {
-    let result = Optional1Parser::parse_str("b 1");
+    let result = Optional1Parser::parse("b 1");
     output_cmp!(
         "src/sugar/optional/optional_1_3.ast",
         format!("{result:#?}")
@@ -41,7 +41,7 @@ fn optional_1_3() {
 
 #[test]
 fn optional_1_1_error() {
-    let result = Optional1Parser::parse_str("c 1");
+    let result = Optional1Parser::parse("c 1");
     output_cmp!(
         "src/sugar/optional/optional_1_1_error.ast",
         format!("{result:#?}")
@@ -50,7 +50,7 @@ fn optional_1_1_error() {
 
 #[test]
 fn optional_1_2_error() {
-    let result = Optional1Parser::parse_str("c b 1 2");
+    let result = Optional1Parser::parse("c b 1 2");
     output_cmp!(
         "src/sugar/optional/optional_1_2_error.ast",
         format!("{result:#?}")
@@ -59,7 +59,7 @@ fn optional_1_2_error() {
 
 #[test]
 fn optional_2_1() {
-    let result = Optional1Parser::parse_str("c 1");
+    let result = Optional1Parser::parse("c 1");
     output_cmp!(
         "src/sugar/optional/optional_2_1.ast",
         format!("{result:#?}")
@@ -68,7 +68,7 @@ fn optional_2_1() {
 
 #[test]
 fn optional_2_2() {
-    let result = Optional1Parser::parse_str("c 1 a");
+    let result = Optional1Parser::parse("c 1 a");
     output_cmp!(
         "src/sugar/optional/optional_2_2.ast",
         format!("{result:#?}")
@@ -77,7 +77,7 @@ fn optional_2_2() {
 
 #[test]
 fn optional_2_3() {
-    let result = Optional1Parser::parse_str("c a");
+    let result = Optional1Parser::parse("c a");
     output_cmp!(
         "src/sugar/optional/optional_2_3.ast",
         format!("{result:#?}")
@@ -86,7 +86,7 @@ fn optional_2_3() {
 
 #[test]
 fn optional_2_1_error() {
-    let result = Optional1Parser::parse_str("c 1 2");
+    let result = Optional1Parser::parse("c 1 2");
     output_cmp!(
         "src/sugar/optional/optional_2_1_error.ast",
         format!("{result:#?}")
@@ -95,7 +95,7 @@ fn optional_2_1_error() {
 
 #[test]
 fn optional_2_2_error() {
-    let result = Optional1Parser::parse_str("c a a");
+    let result = Optional1Parser::parse("c a a");
     output_cmp!(
         "src/sugar/optional/optional_2_2_error.ast",
         format!("{result:#?}")

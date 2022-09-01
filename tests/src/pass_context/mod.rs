@@ -9,6 +9,6 @@ pub type Input = str;
 
 #[test]
 fn pass_context(){
-    let result = PassContextParser::parse_str("a 1 42 b");
+    let result = PassContextParser::parse("a 1 42 b");
     output_cmp!("src/pass_context/pass_context.ast", format!("{:#?}", result));
 }
