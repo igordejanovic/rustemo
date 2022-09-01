@@ -725,7 +725,7 @@ fn generate_builder(
             parse_quote! {
                 enum #builder_output {
                     #root_symbol(#actions_file::#root_symbol),
-                    Layout(rustemo_actions::Layout)
+                    Layout(#actions_file::Layout)
                 }
             }
         } else {
