@@ -3125,7 +3125,7 @@ Ok(
                     action: None,
                     recognizer: Some(
                         RegexTerm(
-                            "[+-]?(\\d+\\.\\d*|\\.\\d+)([eE][+-]?\\d+)?(?<=[\\w\\.])(?![\\w\\.])",
+                            "[+-]?[0-9]+[.][0-9]*([e][+-]?[0-9]+)?",
                         ),
                     ),
                     has_content: true,

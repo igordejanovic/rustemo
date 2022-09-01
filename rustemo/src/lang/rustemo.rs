@@ -18143,12 +18143,7 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
         },
         |input: &str| {
             logn!("Recognizing <{}> -- ", "FloatConst");
-            let regex = Regex::new(
-                    concat!(
-                        "^",
-                        "[+-]?(\\d+\\.\\d*|\\.\\d+)([eE][+-]?\\d+)?(?<=[\\w\\.])(?![\\w\\.])"
-                    ),
-                )
+            let regex = Regex::new(concat!("^", "[+-]?[0-9]+[.][0-9]*([e][+-]?[0-9]+)?"))
                 .unwrap();
             let match_str = regex.find(input);
             match match_str {
