@@ -1118,7 +1118,9 @@ impl<'g, 's> Display for LRTable<'g, 's> {
                 .map(|(idx, g)| {
                     let g = g.unwrap();
                     (
-                        self.grammar.nonterminals[NonTermIndex(idx)].name.clone(),
+                        self.grammar.nonterminals[NonTermIndex(idx)]
+                            .name
+                            .clone(),
                         format!(
                             "State {}:{}",
                             self.grammar.symbol_name(self.states[g].symbol),

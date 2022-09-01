@@ -17,7 +17,11 @@ impl<D> LRStringLexer<D>
 where
     D: LexerDefinition<Recognizer = for<'a> fn(&'a str) -> Option<&'a str>>,
 {
-    pub fn new(definition: &'static D, partial_parse: bool, skip_ws: bool) -> Self {
+    pub fn new(
+        definition: &'static D,
+        partial_parse: bool,
+        skip_ws: bool,
+    ) -> Self {
         Self {
             definition,
             partial_parse,

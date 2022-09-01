@@ -1,7 +1,7 @@
 use crate::{
     builder::Builder,
     error::Result,
-    lexer::{Context, Lexer, Input},
+    lexer::{Context, Input, Lexer},
 };
 
 pub trait Parser<I, L, B, LO, ST>

@@ -1,7 +1,7 @@
 pub(crate) mod actions;
 
 use quote::format_ident;
-use rustemo_rt::index::{TermIndex, StateIndex};
+use rustemo_rt::index::{StateIndex, TermIndex};
 use std::{
     iter::repeat,
     path::{Path, PathBuf},
@@ -218,23 +218,19 @@ fn generate_parser_header(
 
     };
 
-    header.items.push(
-        if grammar.has_layout() {
-            parse_quote! {
-                pub type Layout = #actions_file::Layout;
-            }
-        } else {
-            parse_quote! {
-                pub type Layout = ();
-            }
+    header.items.push(if grammar.has_layout() {
+        parse_quote! {
+            pub type Layout = #actions_file::Layout;
         }
-    );
+    } else {
+        parse_quote! {
+            pub type Layout = ();
+        }
+    });
 
-    header.items.push(
-        parse_quote!{
-            pub type Context<I> = lexer::Context<I, Layout, StateIndex>;
-        }
-    );
+    header.items.push(parse_quote! {
+        pub type Context<I> = lexer::Context<I, Layout, StateIndex>;
+    });
 
     Ok(header)
 }
@@ -438,10 +434,10 @@ fn generate_parser_definition(
 
     let mut parse_stmt: Vec<syn::Stmt> = vec![];
     if grammar.has_layout() {
-        parse_stmt.push(parse_quote!{
+        parse_stmt.push(parse_quote! {
             let mut parser = #parser::default();
         });
-        parse_stmt.push(parse_quote!{
+        parse_stmt.push(parse_quote! {
             loop {
                 log!("** Parsing content");
                 let result = parser.0.parse(&mut context, &lexer, &mut builder);
@@ -512,7 +508,7 @@ fn generate_layout_parser(
     let builder = format_ident!("{}", builder);
     let builder_output = format_ident!("{}", builder_output);
     let layout_state = layout_state.0;
-    let layout_state: syn::Expr = parse_quote!{ StateIndex(#layout_state) };
+    let layout_state: syn::Expr = parse_quote! { StateIndex(#layout_state) };
 
     ast.push(parse_quote! {
         pub struct #layout_parser(LRParser<#parser_definition>);
@@ -720,20 +716,18 @@ fn generate_builder(
         }
     });
 
-    ast.push(
-        if grammar.has_layout() {
-            parse_quote! {
-                enum #builder_output {
-                    #root_symbol(#actions_file::#root_symbol),
-                    Layout(#actions_file::Layout)
-                }
-            }
-        } else {
-            parse_quote! {
-                type #builder_output = #actions_file::#root_symbol;
+    ast.push(if grammar.has_layout() {
+        parse_quote! {
+            enum #builder_output {
+                #root_symbol(#actions_file::#root_symbol),
+                Layout(#actions_file::Layout)
             }
         }
-    );
+    } else {
+        parse_quote! {
+            type #builder_output = #actions_file::#root_symbol;
+        }
+    });
 
     let mut get_result_arms: Vec<syn::Arm> = vec![];
     if grammar.has_layout() {
@@ -744,7 +738,7 @@ fn generate_builder(
             Symbol::NonTerminal(NonTerminal::Layout(r)) => #builder_output::Layout(r)
         });
     } else {
-        get_result_arms.push(parse_quote!{
+        get_result_arms.push(parse_quote! {
             Symbol::NonTerminal(NonTerminal::#root_symbol(r)) => r
         });
     }

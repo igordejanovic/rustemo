@@ -131,16 +131,14 @@ impl<'i> Input for &'i str {
     }
 
     fn new_location(&self, location: Option<Location>) -> Location {
-        let (mut line, mut column) =
-            location.map_or((1, 0), |l| match l {
-                Location {
-                    start: Position::LineBased(lb),
-                    ..
-                } => (lb.line, lb.column),
-                _ => panic!(),
-            });
-        let newlines =
-            self.as_bytes().iter().filter(|&c| *c == b'\n').count();
+        let (mut line, mut column) = location.map_or((1, 0), |l| match l {
+            Location {
+                start: Position::LineBased(lb),
+                ..
+            } => (lb.line, lb.column),
+            _ => panic!(),
+        });
+        let newlines = self.as_bytes().iter().filter(|&c| *c == b'\n').count();
         let newcolumn = self.len()
             - self
                 .as_bytes()

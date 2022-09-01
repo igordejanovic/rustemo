@@ -2,13 +2,16 @@ use proc_macro2::{Ident, Span};
 use quote::quote;
 use syn::{parse::Parser, parse_quote};
 
-use crate::{grammar::{
-    types::{
-        to_snake_case, Choice, ChoiceKind, SymbolType, SymbolTypeKind,
-        SymbolTypes,
+use crate::{
+    api::Settings,
+    grammar::{
+        types::{
+            to_snake_case, Choice, ChoiceKind, SymbolType, SymbolTypeKind,
+            SymbolTypes,
+        },
+        Grammar, NonTerminal,
     },
-    Grammar, NonTerminal,
-}, api::Settings};
+};
 
 use super::ActionsGenerator;
 
@@ -294,7 +297,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
     fn nonterminal_actions(
         &self,
         nonterminal: &NonTerminal,
-        settings: &Settings
+        settings: &Settings,
     ) -> Vec<(String, syn::Item)> {
         let ty = self.types.get_type(&nonterminal.name);
         let ret_type = Ident::new(&nonterminal.name, Span::call_site());

@@ -1,7 +1,7 @@
 use crate::{
     builder::Builder,
     index::{ProdIndex, StateIndex, TermIndex},
-    lexer::{Context, Token, Input},
+    lexer::{Context, Input, Token},
 };
 
 /// A builder variant for LR parsing.

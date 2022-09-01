@@ -37,9 +37,8 @@ mod calculator02_tests {
 
     #[test]
     fn test_calculator2_1() {
-        let result = Calculator02AmbigParser::parse(
-            "7 + 56.4 / 3 + 5 / 2 * (7 - 1)",
-        );
+        let result =
+            Calculator02AmbigParser::parse("7 + 56.4 / 3 + 5 / 2 * (7 - 1)");
         assert_eq!(result.unwrap(), 40.800003f32);
     }
 }
@@ -61,9 +60,8 @@ mod calculator04_tests {
 
     #[test]
     fn test_calculator2_1() {
-        let result = Calculator04AmbigLhsParser::parse(
-            "7 + 56.4 / 3 + 5 / 2 * (7 - 1)",
-        );
+        let result =
+            Calculator04AmbigLhsParser::parse("7 + 56.4 / 3 + 5 / 2 * (7 - 1)");
         assert_eq!(result.unwrap(), 40.800003f32);
     }
 }
