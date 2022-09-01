@@ -9,8 +9,6 @@ rustemo_mod!(reduce_empty_1_actions, "/src/ambiguity");
 rustemo_mod!(reduce_empty_2, "/src/ambiguity");
 rustemo_mod!(reduce_empty_2_actions, "/src/ambiguity");
 
-pub type Input = str;
-
 #[test]
 fn reduce_empty_1() {
     let result = ReduceEmpty1Parser::parse("b b b");

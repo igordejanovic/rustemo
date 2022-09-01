@@ -1,10 +1,9 @@
 ///! This file is maintained by rustemo but can be modified manually.
 ///! All manual changes will be preserved except non-doc comments.
 use rustemo_rt::lexer::Token;
-pub type Input = str;
 pub type Num = String;
-pub fn num<I: AsRef<Input>>(token: Token<I>) -> Num {
-    token.value.as_ref().into()
+pub fn num<'i>(token: Token<&'i str>) -> Num {
+    token.value.into()
 }
 #[derive(Debug, Clone)]
 pub struct EC1 {

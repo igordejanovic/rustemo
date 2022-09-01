@@ -4,8 +4,6 @@ use rustemo_rt::rustemo_mod;
 use self::zero_or_more_1::ZeroOrMore1Parser;
 use self::zero_or_more_2::ZeroOrMore2Parser;
 
-pub type Input = str;
-
 rustemo_mod!(zero_or_more_1, "/src/sugar/zero_or_more");
 rustemo_mod!(zero_or_more_1_actions, "/src/sugar/zero_or_more");
 

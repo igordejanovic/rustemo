@@ -12,7 +12,5 @@ mod calculator03_ambig_prodkind_actions;
 rustemo_mod!(calculator04_ambig_lhs, "/src/calc_actions");
 mod calculator04_ambig_lhs_actions;
 
-pub type Input = str;
-
 #[cfg(test)]
 mod tests;

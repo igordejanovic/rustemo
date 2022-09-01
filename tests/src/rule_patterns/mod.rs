@@ -1,8 +1,6 @@
 use rustemo::output_cmp;
 use rustemo_rt::rustemo_mod;
 
-pub type Input = str;
-
 rustemo_mod!(zero_or_more_1, "/src/rule_patterns");
 rustemo_mod!(zero_or_more_1_actions, "/src/rule_patterns");
 use self::zero_or_more_1::ZeroOrMore1Parser;

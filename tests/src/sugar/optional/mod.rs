@@ -1,8 +1,6 @@
 use rustemo::output_cmp;
 use rustemo_rt::rustemo_mod;
 
-pub type Input = str;
-
 use self::optional_1::Optional1Parser;
 use self::optional_2::Optional2Parser;
 

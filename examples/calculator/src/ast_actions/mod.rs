@@ -1,7 +1,5 @@
 use rustemo_rt::rustemo_mod;
 
-pub type Input = str;
-
 rustemo_mod!(calculator01, "/src/ast_actions");
 mod calculator01_actions;
 

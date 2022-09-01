@@ -5,7 +5,6 @@ mod pass_context_actions;
 rustemo_mod!(pass_context, "/src/pass_context");
 
 use self::pass_context::PassContextParser;
-pub type Input = str;
 
 #[test]
 fn pass_context(){
