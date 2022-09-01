@@ -1,3 +1,4 @@
+use crate::Error;
 use crate::debug::log;
 use crate::error::Result;
 use crate::index::{NonTermIndex, ProdIndex, StateIndex, TermIndex};
@@ -122,7 +123,6 @@ where
         lexer: &L,
         builder: &mut B,
     ) -> Result<B::Output> {
-        use Action::*;
         context.state = self.parse_stack.last().unwrap().state;
         let mut next_token = lexer.next_token(context)?;
         loop {
@@ -137,7 +137,7 @@ where
             log!("Action: {:?}", action);
 
             match action {
-                Shift(state_id, term_idx) => {
+                Action::Shift(state_id, term_idx) => {
                     log!(
                         "Shifting to state {:?} with token {:?}",
                         state_id,
@@ -150,7 +150,7 @@ where
                     builder.shift_action(&context, term_idx, next_token);
                     next_token = lexer.next_token(context)?;
                 }
-                Reduce(prod_idx, prod_len, nonterm_id, prod_str) => {
+                Action::Reduce(prod_idx, prod_len, nonterm_id, prod_str) => {
                     log!(
                         "Reduce by production '{:?}', size {:?}, non-terminal {:?}",
                         prod_str,
@@ -167,11 +167,16 @@ where
                     builder
                         .reduce_action(&context, prod_idx, prod_len, prod_str);
                 }
-                Accept => break,
-                // This can't happen for context-aware lexing.
-                // If there is no action for a lookahead then the lookahead would
-                // not be found.
-                Error => unreachable!(),
+                Action::Accept => break,
+                // This can't happen for context-aware lexing. If there is no
+                // action for a lookahead then the lookahead would not be found.
+                // The only place where this can trigger is when parsing layout.
+                // It may happen that a wrong recognition is done in the content
+                // after a layout. Also, in the future, if parser composition
+                // would be done similar problem may arise.
+                Action::Error => Err(
+                    Error::Error(
+                        format!("Can't continue in state {current_state} with lookahead {next_token:?}.")))?,
             }
         }
         Ok(builder.get_result())

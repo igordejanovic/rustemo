@@ -15124,14 +15124,17 @@ impl RustemoParser {
         let mut builder = RustemoBuilder::new();
         let mut parser = RustemoParser::default();
         loop {
+            log!("** Parsing content");
             let result = parser.0.parse(&mut context, &lexer, &mut builder);
             if result.is_err() {
                 let pos = context.position;
-                log!("Parsing layout.");
-                let layout = RustemoLayoutParser::parse_layout(&mut context)?;
-                if context.position > pos {
-                    context.layout = Some(layout);
-                    continue;
+                log!("** Parsing layout");
+                let layout = RustemoLayoutParser::parse_layout(&mut context);
+                if let Ok(layout) = layout {
+                    if context.position > pos {
+                        context.layout = Some(layout);
+                        continue;
+                    }
                 }
             }
             return result

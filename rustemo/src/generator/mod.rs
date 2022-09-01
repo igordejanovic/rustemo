@@ -443,15 +443,18 @@ fn generate_parser_definition(
         });
         parse_stmt.push(parse_quote!{
             loop {
+                log!("** Parsing content");
                 let result = parser.0.parse(&mut context, &lexer, &mut builder);
                 if result.is_err() {
                     let pos = context.position;
-                    log!("Parsing layout.");
-                    let layout = #layout_parser::parse_layout(&mut context)?;
+                    log!("** Parsing layout");
+                    let layout = #layout_parser::parse_layout(&mut context);
 
-                    if context.position > pos {
-                        context.layout = Some(layout);
-                        continue;
+                    if let Ok(layout) = layout {
+                        if context.position > pos {
+                            context.layout = Some(layout);
+                            continue;
+                        }
                     }
                 }
                 return result.map(|r| match r {
