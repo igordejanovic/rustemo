@@ -4,7 +4,7 @@ use rustemo_rt::rustemo_mod;
 use self::layout::LayoutParser;
 
 rustemo_mod!(layout, "/src/layout");
-rustemo_mod!(layout_actions, "/src/layout_actions");
+rustemo_mod!(layout_actions, "/src/layout");
 
 #[test]
 fn layout() {

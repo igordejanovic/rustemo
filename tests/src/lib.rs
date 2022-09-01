@@ -3,7 +3,7 @@ mod ambiguity;
 mod partial;
 mod rule_patterns;
 mod sugar;
-//mod layout;
+mod layout;
 mod pass_context;
 
 // For output_cmp macro
