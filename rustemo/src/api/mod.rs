@@ -85,6 +85,10 @@ impl RustemoSettings {
         self.0.partial_parse = partial_parse;
         self
     }
+    pub fn skip_ws(mut self, skip_ws: bool) -> Self {
+        self.0.skip_ws = skip_ws;
+        self
+    }
     pub fn actions(mut self, actions: bool) -> Self {
         self.0.actions = actions;
         self

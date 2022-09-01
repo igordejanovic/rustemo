@@ -32,6 +32,9 @@ pub struct Settings {
     /// parsing as it may lead to a large number of partial solutions.
     pub partial_parse: bool,
 
+    /// Should whitespace be skipped. Not used if Layout rule exists in the Grammar.
+    pub skip_ws: bool,
+
     /// Should parse context be passed to actions if AST output is generated.
     pub pass_context: bool,
 
@@ -52,6 +55,7 @@ impl Default for Settings {
             actions: true,
             pass_context: false,
             partial_parse: false,
+            skip_ws: true,
             force: false,
             exclude: vec![],
         }

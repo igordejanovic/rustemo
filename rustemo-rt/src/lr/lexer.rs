@@ -10,16 +10,18 @@ use crate::location::Location;
 pub struct LRStringLexer<D: 'static> {
     definition: &'static D,
     partial_parse: bool,
+    skip_ws: bool,
 }
 
 impl<D> LRStringLexer<D>
 where
     D: LexerDefinition<Recognizer = for<'a> fn(&'a str) -> Option<&'a str>>,
 {
-    pub fn new(definition: &'static D, partial_parse: bool) -> Self {
+    pub fn new(definition: &'static D, partial_parse: bool, skip_ws: bool) -> Self {
         Self {
             definition,
             partial_parse,
+            skip_ws,
         }
     }
 
@@ -34,6 +36,7 @@ where
         // );
         context.location =
             Some(skipped.as_str().new_location(context.location));
+        context.position += skipped.len();
     }
 }
 
@@ -45,7 +48,9 @@ where
         &self,
         context: &mut Context<&'i str, LO, StateIndex>,
     ) -> Result<Token<&'i str>> {
-        Self::skip(context);
+        if self.skip_ws {
+            Self::skip(context);
+        }
         log!(
             "Trying recognizers: {:?}",
             self.definition

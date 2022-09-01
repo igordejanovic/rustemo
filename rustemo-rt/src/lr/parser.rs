@@ -1,7 +1,7 @@
 use crate::debug::log;
 use crate::error::Result;
 use crate::index::{NonTermIndex, ProdIndex, StateIndex, TermIndex};
-use crate::lexer::{Context, Lexer, Input};
+use crate::lexer::{Context, Input, Lexer};
 use crate::parser::Parser;
 use crate::Error;
 use std::fmt::{Debug, Display};
@@ -123,17 +123,17 @@ where
         lexer: &L,
         builder: &mut B,
     ) -> Result<B::Output> {
+        log!(
+            "Position={}: {}",
+            context.position,
+            context.input.context_str(context.position)
+        );
         context.state = self.parse_stack.last().unwrap().state;
         let mut next_token = lexer.next_token(context)?;
         loop {
             let current_state = self.parse_stack.last().unwrap().state;
             log!("Stack: {:?}", self.parse_stack);
             log!("Current state: {:?}", current_state);
-            log!(
-                "Position={}: {}",
-                context.position,
-                context.input.context_str(context.position)
-            );
             log!("Token ahead: {:?}", next_token);
 
             let action =
@@ -154,6 +154,11 @@ where
                     builder.shift_action(&context, term_idx, next_token);
 
                     context.position = end_pos;
+                    log!(
+                        "Position={}: {}",
+                        context.position,
+                        context.input.context_str(context.position)
+                    );
                     next_token = lexer.next_token(context)?;
                 }
                 Action::Reduce(prod_idx, prod_len, nonterm_id, prod_str) => {

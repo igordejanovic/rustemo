@@ -15120,7 +15120,7 @@ pub struct RustemoParser(LRParser<RustemoParserDefinition>);
 impl RustemoParser {
     pub fn parse<'i>(input: &'i str) -> Result<rustemo_actions::File> {
         let mut context = Context::new("<str>".to_string(), input);
-        let lexer = LRStringLexer::new(&LEXER_DEFINITION, false);
+        let lexer = LRStringLexer::new(&LEXER_DEFINITION, false, true);
         let mut builder = RustemoBuilder::new();
         let mut parser = RustemoParser::default();
         loop {
@@ -15156,7 +15156,7 @@ impl RustemoLayoutParser {
     pub fn parse_layout<'i>(
         context: &mut Context<&'i str>,
     ) -> Result<rustemo_actions::Layout> {
-        let lexer = LRStringLexer::new(&LEXER_DEFINITION, true);
+        let lexer = LRStringLexer::new(&LEXER_DEFINITION, true, false);
         let mut builder = RustemoBuilder::new();
         match RustemoLayoutParser::default().0.parse(context, &lexer, &mut builder)? {
             RustemoBuilderOutput::Layout(l) => Ok(l),
@@ -18305,8 +18305,7 @@ impl Builder for RustemoBuilder {
         }
     }
 }
-impl<'i> LRBuilder<&'i str, Layout> for RustemoBuilder
-{
+impl<'i> LRBuilder<&'i str, Layout> for RustemoBuilder {
     #![allow(unused_variables)]
     fn shift_action(
         &mut self,

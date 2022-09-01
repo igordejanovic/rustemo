@@ -51,6 +51,10 @@ struct Cli {
     #[clap(long)]
     pass_context: bool,
 
+    /// Should whitespace be skipped. Not used if Layout rule exists in the Grammar.
+    #[clap(long)]
+    no_skip_ws: bool,
+
     /// Print LR table
     #[clap(long)]
     print_table: bool,
@@ -79,6 +83,7 @@ fn main() {
         .prefer_shifts_over_empty(!cli.no_shifts_over_empty)
         .partial_parse(cli.partial_parse)
         .pass_context(cli.pass_context)
+        .skip_ws(!cli.no_skip_ws)
         .table_type(cli.table_type)
         .print_table(cli.print_table)
         .parser_algo(cli.parser_algo)

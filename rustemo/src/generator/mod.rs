@@ -230,6 +230,12 @@ fn generate_parser_header(
         }
     );
 
+    header.items.push(
+        parse_quote!{
+            pub type Context<I> = lexer::Context<I, Layout, StateIndex>;
+        }
+    );
+
     Ok(header)
 }
 
@@ -464,6 +470,8 @@ fn generate_parser_definition(
         });
     }
 
+    let skip_ws = settings.skip_ws;
+
     ast.push(
         parse_quote! {
             #[allow(dead_code)]
@@ -471,7 +479,7 @@ fn generate_parser_definition(
             {
                 pub fn parse<'i>(input: &'i str) -> Result<#actions_file::#root_symbol> {
                     let mut context = Context::new("<str>".to_string(), input);
-                    let lexer = LRStringLexer::new(&LEXER_DEFINITION, #partial_parse);
+                    let lexer = LRStringLexer::new(&LEXER_DEFINITION, #partial_parse, #skip_ws);
                     let mut builder = #builder::new();
                     #(#parse_stmt)*
                 }
@@ -516,7 +524,7 @@ fn generate_layout_parser(
             impl #layout_parser
             {
                 pub fn parse_layout<'i>(context: &mut Context<&'i str>) -> Result<#actions_file::Layout> {
-                    let lexer = LRStringLexer::new(&LEXER_DEFINITION, true);
+                    let lexer = LRStringLexer::new(&LEXER_DEFINITION, true, false);
                     let mut builder = #builder::new();
                     match #layout_parser::default().0.parse(context, &lexer, &mut builder)? {
                         #builder_output::Layout(l) => Ok(l),
