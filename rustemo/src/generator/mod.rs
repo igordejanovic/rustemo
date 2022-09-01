@@ -230,12 +230,6 @@ fn generate_parser_header(
         }
     );
 
-    header.items.push(
-        parse_quote!{
-            pub type Context<I> = lexer::Context<I, Layout, StateIndex>;
-        }
-    );
-
     Ok(header)
 }
 
@@ -895,12 +889,11 @@ fn generate_builder(
 
     ast.push(
         parse_quote! {
-            impl<I> LRBuilder<I, Layout> for #builder
-            where I: AsRef<super::Input>
+            impl<'i> LRBuilder<&'i str, Layout> for #builder
             {
 
                 #![allow(unused_variables)]
-                fn shift_action(&mut self, #context_var: &Context<I>, term_idx: TermIndex, token: Token<I>) {
+                fn shift_action(&mut self, #context_var: &Context<&'i str>, term_idx: TermIndex, token: Token<&'i str>) {
                     let termval = match TermKind::try_from(term_idx.0).unwrap() {
                         #(#shift_match_arms),*
                     };
@@ -909,7 +902,7 @@ fn generate_builder(
 
                 fn reduce_action(
                     &mut self,
-                    #context_var: &Context<I>,
+                    #context_var: &Context<&'i str>,
                     prod_kind: ProdIndex,
                     _prod_len: usize,
                     _prod_str: &'static str) {

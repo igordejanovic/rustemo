@@ -18305,16 +18305,14 @@ impl Builder for RustemoBuilder {
         }
     }
 }
-impl<I> LRBuilder<I, Layout> for RustemoBuilder
-where
-    I: AsRef<super::Input>,
+impl<'i> LRBuilder<&'i str, Layout> for RustemoBuilder
 {
     #![allow(unused_variables)]
     fn shift_action(
         &mut self,
-        _context: &Context<I>,
+        _context: &Context<&'i str>,
         term_idx: TermIndex,
-        token: Token<I>,
+        token: Token<&'i str>,
     ) {
         let termval = match TermKind::try_from(term_idx.0).unwrap() {
             TermKind::STOP => Terminal::STOP,
@@ -18376,7 +18374,7 @@ where
     }
     fn reduce_action(
         &mut self,
-        _context: &Context<I>,
+        _context: &Context<&'i str>,
         prod_kind: ProdIndex,
         _prod_len: usize,
         _prod_str: &'static str,

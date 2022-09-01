@@ -1,14 +1,14 @@
 use crate::{
     builder::Builder,
     index::{ProdIndex, StateIndex, TermIndex},
-    lexer::{Context, Token},
+    lexer::{Context, Token, Input},
 };
 
 /// A builder variant for LR parsing.
 ///
 /// Builder should keep its internal stack of subresults, similar to the way LR
 /// parsing operates.
-pub trait LRBuilder<I, LO>: Builder {
+pub trait LRBuilder<I: Input, LO>: Builder {
     /// Called when LR shifting is taking place.
     ///
     /// # Arguments
@@ -40,11 +40,11 @@ pub trait LRBuilder<I, LO>: Builder {
 }
 
 /// TreeBuilder is the default builder that builds the parse tree.
-pub struct TreeBuilder<I> {
+pub struct TreeBuilder<I: Input> {
     res_stack: Vec<TreeNode<I>>,
 }
 
-impl<I> Builder for TreeBuilder<I> {
+impl<I: Input> Builder for TreeBuilder<I> {
     type Output = TreeNode<I>;
 
     fn new() -> Self {
@@ -56,7 +56,7 @@ impl<I> Builder for TreeBuilder<I> {
     }
 }
 
-impl<I, LO> LRBuilder<I, LO> for TreeBuilder<I> {
+impl<I: Input, LO> LRBuilder<I, LO> for TreeBuilder<I> {
     fn shift_action(
         &mut self,
         _context: &Context<I, LO, StateIndex>,
@@ -83,7 +83,7 @@ impl<I, LO> LRBuilder<I, LO> for TreeBuilder<I> {
 }
 
 #[derive(Debug)]
-pub enum TreeNode<I> {
+pub enum TreeNode<I: Input> {
     TermNode(Token<I>),
     NonTermNode {
         prod: &'static str,

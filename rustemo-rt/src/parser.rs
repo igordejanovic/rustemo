@@ -1,11 +1,12 @@
 use crate::{
     builder::Builder,
     error::Result,
-    lexer::{Context, Lexer},
+    lexer::{Context, Lexer, Input},
 };
 
 pub trait Parser<I, L, B, LO, ST>
 where
+    I: Input,
     L: Lexer<I, LO, ST>,
     B: Builder,
 {

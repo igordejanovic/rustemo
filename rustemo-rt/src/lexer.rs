@@ -3,7 +3,6 @@ use crate::{
     grammar::TerminalInfo,
     index::TermIndex,
     location::{LineBased, Location, Position},
-    log,
 };
 use core::fmt::Debug;
 use std::cmp::min;
@@ -12,16 +11,30 @@ use std::cmp::min;
 ///
 /// Lexer is stateless and its job is to produce next token given the current
 /// context.
-pub trait Lexer<I, LO, ST> {
+pub trait Lexer<I: Input, LO, ST> {
     /// Given the current context, this method should return RustemoResult with
     /// token found ahead of the current location or error indicating what is
     /// expected.
     fn next_token(&self, context: &mut Context<I, LO, ST>) -> Result<Token<I>>;
 }
 
+/// This trait must be implemented by all types that should be parsed by
+/// Rustemo. Input is a sequence-like type with a concept of length.
+pub trait Input {
+    /// Returns a string context for the given position. Used in debugging outputs.
+    fn context_str(&self, position: usize) -> String;
+
+    /// Returns the length of the input.
+    fn len(&self) -> usize;
+
+    /// Given the current location returns the location at the end of self.
+    /// Location is an input-specific concept. E.g. for text it is line/column.
+    fn new_location(&self, location: Option<Location>) -> Location;
+}
+
 /// `Token` represent a single token from the input stream.
 #[derive(Debug)]
-pub struct Token<I> {
+pub struct Token<I: Input> {
     pub terminal: &'static TerminalInfo,
 
     /// The part of the input stream that this token represents.
@@ -31,7 +44,7 @@ pub struct Token<I> {
     pub location: Option<Location>,
 }
 
-impl<I> Token<I> {
+impl<I: Input> Token<I> {
     #[inline]
     pub fn index(&self) -> TermIndex {
         self.terminal.id
@@ -41,7 +54,7 @@ impl<I> Token<I> {
 /// Lexer context is used to keep the lexing state. It provides necessary
 /// information to parsers and actions.
 #[derive(Debug)]
-pub struct Context<I, LO, ST> {
+pub struct Context<I: Input, LO, ST> {
     /// File path of the parsed content. "<str>" In case of static string.
     pub file: String,
 
@@ -74,7 +87,7 @@ pub struct Context<I, LO, ST> {
     pub state: ST,
 }
 
-impl<I, LO, ST: Default> Context<I, LO, ST> {
+impl<I: Input, LO, ST: Default> Context<I, LO, ST> {
     pub fn new(file: String, input: I) -> Self {
         Self {
             file,
@@ -104,19 +117,22 @@ impl<I, LO, ST: Default> Context<I, LO, ST> {
     }
 }
 
-impl<'i, LO, ST: Default> Context<&'i str, LO, ST> {
-    pub fn context_str(&self) -> String {
-        self.input[self.position - min(15, self.position)..self.position]
+impl<'i> Input for &'i str {
+    fn context_str(&self, position: usize) -> String {
+        self[position - min(15, position)..position]
             .chars()
             .chain("-->".chars())
-            .chain(self.input[self.position..].chars().take(15))
+            .chain(self[position..].chars().take(15))
             .collect::<String>()
     }
 
-    pub fn update_location<C: AsRef<str>>(&mut self, content: C) {
-        let content = content.as_ref();
+    fn len(&self) -> usize {
+        str::len(self)
+    }
+
+    fn new_location(&self, location: Option<Location>) -> Location {
         let (mut line, mut column) =
-            self.location.map_or((1, 0), |l| match l {
+            location.map_or((1, 0), |l| match l {
                 Location {
                     start: Position::LineBased(lb),
                     ..
@@ -124,9 +140,9 @@ impl<'i, LO, ST: Default> Context<&'i str, LO, ST> {
                 _ => panic!(),
             });
         let newlines =
-            content.as_bytes().iter().filter(|&c| *c == b'\n').count();
-        let newcolumn = content.len()
-            - content
+            self.as_bytes().iter().filter(|&c| *c == b'\n').count();
+        let newcolumn = self.len()
+            - self
                 .as_bytes()
                 .iter()
                 .rposition(|&c| c == b'\n')
@@ -134,18 +150,14 @@ impl<'i, LO, ST: Default> Context<&'i str, LO, ST> {
         line += newlines;
         column += newcolumn;
 
-        self.location = Some(Location {
+        Location {
             start: Position::LineBased(LineBased { line, column }),
             end: None,
-        });
-        self.start_pos = self.position;
-        self.position = self.position + content.len();
-        self.end_pos = self.position;
-        log!("Position: {}", self.position);
+        }
     }
 }
 
-impl<I, LO, ST: Default> From<&mut Context<I, LO, ST>> for Location {
+impl<I: Input, LO, ST: Default> From<&mut Context<I, LO, ST>> for Location {
     fn from(context: &mut Context<I, LO, ST>) -> Self {
         context.location.unwrap_or(Self {
             start: Position::Position(context.position),

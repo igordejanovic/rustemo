@@ -16,8 +16,5 @@ rustemo_mod! {pub(crate) rustemo, "/src/lang"}
 #[cfg(feature = "bootstrap")]
 rustemo_mod! {pub(crate) rustemo_actions, "/src/lang"}
 
-// The type of the input for rustemo parser
-pub type Input = str;
-
 #[cfg(test)]
 mod tests;

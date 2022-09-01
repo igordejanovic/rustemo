@@ -323,7 +323,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
                         action_name,
                         if settings.pass_context{
                             parse_quote! {
-                                pub fn #action<I: AsRef<Input>>(_context: &Context<I>, #(#args),*) -> #ret_type {
+                                pub fn #action<'i>(_context: &Context<&'i str>, #(#args),*) -> #ret_type {
                                     #body
                                 }
                             }
@@ -406,7 +406,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
                         action_name,
                         if settings.pass_context {
                             parse_quote! {
-                                pub fn #action<I: AsRef<Input>>(_context: &Context<I>, #(#args),*) -> #ret_type {
+                                pub fn #action<'i>(_context: &Context<&'i str>, #(#args),*) -> #ret_type {
                                     #(#body);*
                                 }
                             }

@@ -2,7 +2,7 @@ use crate::debug::log;
 use crate::error::{Error, Result};
 use crate::grammar::TerminalInfo;
 use crate::index::{StateIndex, TermIndex};
-use crate::lexer::{Context, Lexer, Token};
+use crate::lexer::{Context, Input, Lexer, Token};
 use crate::location::Location;
 
 /// A lexer that operates over string inputs and uses generated string and regex
@@ -32,7 +32,8 @@ where
         // context.layout = Some(
         //     &context.input[context.position..context.position + skipped.len()],
         // );
-        context.update_location(skipped);
+        context.location =
+            Some(skipped.as_str().new_location(context.location));
     }
 }
 
@@ -45,7 +46,6 @@ where
         context: &mut Context<&'i str, LO, StateIndex>,
     ) -> Result<Token<&'i str>> {
         Self::skip(context);
-        log!("Context: {}", context.context_str());
         log!(
             "Trying recognizers: {:?}",
             self.definition
@@ -75,7 +75,7 @@ where
 
         match token {
             Some(t) => {
-                context.update_location(t.value);
+                context.location = Some(t.value.new_location(context.location));
                 Ok(t)
             }
             None => {
@@ -102,7 +102,7 @@ where
                         message: format!(
                             r#"Error at position {} "{}". Expected one of {}."#,
                             context.location_str(),
-                            context.context_str(),
+                            context.input.context_str(context.position),
                             expected
                         ),
                         file: context.file(),

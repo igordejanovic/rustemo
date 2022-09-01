@@ -1,9 +1,9 @@
-use crate::Error;
 use crate::debug::log;
 use crate::error::Result;
 use crate::index::{NonTermIndex, ProdIndex, StateIndex, TermIndex};
-use crate::lexer::{Context, Lexer};
+use crate::lexer::{Context, Lexer, Input};
 use crate::parser::Parser;
+use crate::Error;
 use std::fmt::{Debug, Display};
 
 use super::builder::LRBuilder;
@@ -71,7 +71,7 @@ impl<D: ParserDefinition> LRParser<D> {
     }
 
     #[inline]
-    fn to_state<I, LO>(
+    fn to_state<I: Input, LO>(
         &mut self,
         context: &mut Context<I, LO, StateIndex>,
         state: StateIndex,
@@ -87,7 +87,7 @@ impl<D: ParserDefinition> LRParser<D> {
     }
 
     #[inline]
-    fn pop_states<I, LO>(
+    fn pop_states<I: Input, LO>(
         &mut self,
         context: &mut Context<I, LO, StateIndex>,
         states: usize,
@@ -112,7 +112,7 @@ impl<D: ParserDefinition> LRParser<D> {
 
 impl<I, D, L, B, LO> Parser<I, L, B, LO, StateIndex> for LRParser<D>
 where
-    I: Debug,
+    I: Debug + Input,
     D: ParserDefinition,
     L: Lexer<I, LO, StateIndex>,
     B: LRBuilder<I, LO>,
@@ -129,6 +129,11 @@ where
             let current_state = self.parse_stack.last().unwrap().state;
             log!("Stack: {:?}", self.parse_stack);
             log!("Current state: {:?}", current_state);
+            log!(
+                "Position={}: {}",
+                context.position,
+                context.input.context_str(context.position)
+            );
             log!("Token ahead: {:?}", next_token);
 
             let action =
@@ -143,11 +148,12 @@ where
                         state_id,
                         next_token
                     );
-                    // Lexer should set start/end pos
-                    let start_pos = context.start_pos;
-                    let end_pos = context.end_pos;
+                    let start_pos = context.position;
+                    let end_pos = context.position + next_token.value.len();
                     self.to_state(context, state_id, start_pos, end_pos);
                     builder.shift_action(&context, term_idx, next_token);
+
+                    context.position = end_pos;
                     next_token = lexer.next_token(context)?;
                 }
                 Action::Reduce(prod_idx, prod_len, nonterm_id, prod_str) => {
