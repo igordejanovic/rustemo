@@ -11,6 +11,8 @@ mod pass_context;
 mod rule_patterns;
 #[cfg(test)]
 mod sugar;
+#[cfg(test)]
+mod generic_tree;
 
 // For output_cmp macro
 #[cfg(test)]

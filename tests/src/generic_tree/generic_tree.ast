@@ -1,0 +1,121 @@
+Ok(
+    NonTermNode {
+        prod_idx: 1,
+        position: 0,
+        children: [
+            NonTermNode {
+                prod_idx: 2,
+                position: 0,
+                children: [
+                    NonTermNode {
+                        prod_idx: 2,
+                        position: 0,
+                        children: [
+                            NonTermNode {
+                                prod_idx: 3,
+                                position: 0,
+                                children: [
+                                    NonTermNode {
+                                        prod_idx: 4,
+                                        position: 0,
+                                        children: [
+                                            TermNode {
+                                                token: Token {
+                                                    terminal: TerminalInfo {
+                                                        id: 2,
+                                                        name: "Ta",
+                                                    },
+                                                    value: "a",
+                                                    location: None,
+                                                },
+                                                position: 0,
+                                            },
+                                            TermNode {
+                                                token: Token {
+                                                    terminal: TerminalInfo {
+                                                        id: 3,
+                                                        name: "Num",
+                                                    },
+                                                    value: "1",
+                                                    location: None,
+                                                },
+                                                position: 2,
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                            NonTermNode {
+                                prod_idx: 4,
+                                position: 4,
+                                children: [
+                                    TermNode {
+                                        token: Token {
+                                            terminal: TerminalInfo {
+                                                id: 2,
+                                                name: "Ta",
+                                            },
+                                            value: "a",
+                                            location: None,
+                                        },
+                                        position: 4,
+                                    },
+                                    TermNode {
+                                        token: Token {
+                                            terminal: TerminalInfo {
+                                                id: 3,
+                                                name: "Num",
+                                            },
+                                            value: "3",
+                                            location: None,
+                                        },
+                                        position: 6,
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    NonTermNode {
+                        prod_idx: 4,
+                        position: 8,
+                        children: [
+                            TermNode {
+                                token: Token {
+                                    terminal: TerminalInfo {
+                                        id: 2,
+                                        name: "Ta",
+                                    },
+                                    value: "a",
+                                    location: None,
+                                },
+                                position: 8,
+                            },
+                            TermNode {
+                                token: Token {
+                                    terminal: TerminalInfo {
+                                        id: 3,
+                                        name: "Num",
+                                    },
+                                    value: "42",
+                                    location: None,
+                                },
+                                position: 10,
+                            },
+                        ],
+                    },
+                ],
+            },
+            TermNode {
+                token: Token {
+                    terminal: TerminalInfo {
+                        id: 1,
+                        name: "B",
+                    },
+                    value: "b",
+                    location: None,
+                },
+                position: 13,
+            },
+        ],
+    },
+)

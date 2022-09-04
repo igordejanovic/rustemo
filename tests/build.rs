@@ -1,6 +1,6 @@
 use std::{env, path::PathBuf, process::exit};
 
-use rustemo::api::RustemoSettings;
+use rustemo::api::{RustemoSettings, BuilderType};
 
 fn main() {
     let root_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
@@ -21,10 +21,12 @@ fn main() {
         (
             "pass_context",
             Box::new(|s| {
+                // We want actions generated in the source tree.
                 s.pass_context(true).force(false).out_dir_actions(None)
             }),
         ),
         ("layout", Box::new(|s| s)),
+        ("generic_tree", Box::new(|s| s.builder_type(BuilderType::Generic))),
     ];
 
     for (test, config) in tests {

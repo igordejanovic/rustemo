@@ -38,7 +38,7 @@ pub trait LRBuilder<I: Input, LO>: Builder {
     );
 }
 
-/// TreeBuilder is the default builder that builds the parse tree.
+/// TreeBuilder is a builder that builds a generic parse tree.
 pub struct TreeBuilder<I: Input> {
     res_stack: Vec<TreeNode<I>>,
 }
@@ -58,16 +58,19 @@ impl<I: Input> Builder for TreeBuilder<I> {
 impl<I: Input, LO> LRBuilder<I, LO> for TreeBuilder<I> {
     fn shift_action(
         &mut self,
-        _context: &Context<I, LO, StateIndex>,
+        context: &Context<I, LO, StateIndex>,
         _term_idx: TermIndex,
         token: Token<I>,
     ) {
-        self.res_stack.push(TreeNode::TermNode(token))
+        self.res_stack.push(TreeNode::TermNode {
+            token,
+            position: context.start_pos,
+        })
     }
 
     fn reduce_action(
         &mut self,
-        _context: &Context<I, LO, StateIndex>,
+        context: &Context<I, LO, StateIndex>,
         prod_idx: ProdIndex,
         prod_len: usize,
     ) {
@@ -75,16 +78,21 @@ impl<I: Input, LO> LRBuilder<I, LO> for TreeBuilder<I> {
             self.res_stack.split_off(self.res_stack.len() - prod_len);
         self.res_stack.push(TreeNode::NonTermNode {
             children,
-            prod_idx
+            prod_idx,
+            position: context.start_pos,
         });
     }
 }
 
 #[derive(Debug)]
 pub enum TreeNode<I: Input> {
-    TermNode(Token<I>),
+    TermNode {
+        token: Token<I>,
+        position: usize,
+    },
     NonTermNode {
         prod_idx: ProdIndex,
+        position: usize,
         children: Vec<TreeNode<I>>,
     },
 }

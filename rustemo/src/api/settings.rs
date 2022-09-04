@@ -15,6 +15,20 @@ impl Default for ParserAlgo {
     }
 }
 
+#[derive(Debug, Clone, ArgEnum)]
+pub enum BuilderType {
+    Default,
+    Generic,
+    Custom,
+}
+
+impl Default for BuilderType {
+    fn default() -> Self {
+        BuilderType::Default
+    }
+}
+
+
 #[derive(Debug, Clone)]
 pub struct Settings {
     pub out_dir: Option<PathBuf>,
@@ -26,6 +40,9 @@ pub struct Settings {
     pub print_table: bool,
     pub exclude: Vec<String>,
     pub actions: bool,
+
+    /// What builder should be generated.
+    pub builder_type: BuilderType,
 
     /// If partial parse is allowed parsing can succeed even if the parser
     /// didn't reach the end of the input. Use with care, especially with GLR
@@ -53,6 +70,7 @@ impl Default for Settings {
             parser_algo: Default::default(),
             print_table: false,
             actions: true,
+            builder_type: Default::default(),
             pass_context: false,
             partial_parse: false,
             skip_ws: true,

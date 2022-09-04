@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use clap::Parser;
-use rustemo::api::{with_settings, ParserAlgo, TableType};
+use rustemo::api::{with_settings, ParserAlgo, BuilderType, TableType};
 
 #[derive(Parser)]
 #[cfg_attr(feature="bootstrap",
@@ -42,6 +42,10 @@ struct Cli {
     /// Parser algorithm
     #[clap(short, long, arg_enum, default_value_t)]
     parser_algo: ParserAlgo,
+
+    /// Generated builder type.
+    #[clap(short, long, arg_enum, default_value_t)]
+    builder_type: BuilderType,
 
     /// Parser can succeed without consuming the whole input.
     #[clap(long)]
@@ -87,6 +91,7 @@ fn main() {
         .table_type(cli.table_type)
         .print_table(cli.print_table)
         .parser_algo(cli.parser_algo)
+        .builder_type(cli.builder_type)
         .out_dir(cli.outdir)
         .out_dir_actions(cli.outdir_actions);
 

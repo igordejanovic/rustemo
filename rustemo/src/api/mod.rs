@@ -6,7 +6,7 @@ pub use crate::{Error, Result};
 
 pub use crate::generator::generate_parser;
 
-pub use self::settings::{ParserAlgo, Settings};
+pub use self::settings::{BuilderType, ParserAlgo, Settings};
 
 pub(crate) mod settings;
 
@@ -75,6 +75,10 @@ impl RustemoSettings {
     }
     pub fn parser_algo(mut self, parser_algo: ParserAlgo) -> Self {
         self.0.parser_algo = parser_algo;
+        self
+    }
+    pub fn builder_type(mut self, builder_type: BuilderType) -> Self {
+        self.0.builder_type = builder_type;
         self
     }
     pub fn print_table(mut self, print_table: bool) -> Self {
