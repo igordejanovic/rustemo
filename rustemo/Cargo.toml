@@ -16,9 +16,6 @@ doctest = false
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-rustemo-rt = { path = "../rustemo-rt", version = "0.1"}
-regex = { version = "1", default_features = false, features = ["std", "unicode-perl"] }
-num_enum = { version = "0.5", default_features = false }
 itertools = { version = "0.10", default_features = false, features = ["use_std"] }
 convert_case = { version = "0.5.0", default_features = false }
 clap = { version = "3.2.13", features = ["derive"] }
@@ -27,11 +24,17 @@ syn = { version = "1.0.98", features = ["parsing", "full", "printing"] }
 proc-macro2 = "1.0.43"
 prettyplease = "0.1.18"
 
+# Needed by rustemo generated parsers.
+rustemo-rt = { path = "../rustemo-rt", version = "0.1"}
+num_enum = { version = "0.5", default_features = false }
+# Default string lexer uses regexes and lazy_static to init regexes only once.
+lazy_static = { version = "1.4.0"}
+regex = { version = "1", default_features = false, features = ["std", "unicode-perl"] }
+
 [dev-dependencies]
 criterion = "0.3.5"
 
 [features]
-
 
 # ----- Features used when developing Rustemo.
 # Used for bootstrapping process.

@@ -6,10 +6,17 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+# Needed by rustemo generated parsers.
 rustemo-rt = { path = "../../rustemo-rt", version = "0.1" }
-rustemo = { path = "../../rustemo", version = "0.1"}
-regex = { version = "1", default_features = false, features = ["std", "unicode-perl"] }
 num_enum = { version = "0.5", default_features = false }
+
+# Default string lexer uses regexes and lazy_static to init regexes only once.
+regex = { version = "1", default_features = false, features = ["std", "unicode-perl"] }
+lazy_static = { version = "1.4.0"}
+
+[dev-dependencies]
+# For output_cmp for testing
+rustemo = { path = "../../rustemo", version = "0.1"}
 
 [build-dependencies]
 rustemo = { path = "../../rustemo", version = "0.1"}
