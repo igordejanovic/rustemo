@@ -20,6 +20,22 @@ const STATE_NO: usize = 141usize;
 const MAX_ACTIONS: usize = 15usize;
 pub type Layout = rustemo_actions::Layout;
 pub type Context<I> = lexer::Context<I, Layout, StateIndex>;
+use lazy_static::lazy_static;
+lazy_static! {
+    static ref REGEX_NAME : Regex = Regex::new(concat!("^", "[a-zA-Z_][a-zA-Z0-9_\\.]*"))
+    .unwrap(); static ref REGEX_REGEXTERM : Regex = Regex::new(concat!("^",
+    "/(\\\\.|[^/\\\\])*/")).unwrap(); static ref REGEX_INTCONST : Regex =
+    Regex::new(concat!("^", "\\d+")).unwrap(); static ref REGEX_FLOATCONST : Regex =
+    Regex::new(concat!("^", "[+-]?[0-9]+[.][0-9]*([e][+-]?[0-9]+)?")).unwrap(); static
+    ref REGEX_BOOLCONST : Regex = Regex::new(concat!("^", "true|false")).unwrap(); static
+    ref REGEX_STRCONST : Regex = Regex::new(concat!("^",
+    "(?s)(^'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')|(^\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\")"))
+    .unwrap(); static ref REGEX_ACTION : Regex = Regex::new(concat!("^",
+    "@[a-zA-Z0-9_]+")).unwrap(); static ref REGEX_WS : Regex = Regex::new(concat!("^",
+    "\\s+")).unwrap(); static ref REGEX_COMMENTLINE : Regex = Regex::new(concat!("^",
+    "//.*")).unwrap(); static ref REGEX_NOTCOMMENT : Regex = Regex::new(concat!("^",
+    "((\\*[^/])|[^\\s*/]|/[^\\*])+")).unwrap();
+}
 #[derive(Debug, Copy, Clone, TryFromPrimitive)]
 #[repr(usize)]
 pub enum TermKind {
@@ -18095,8 +18111,7 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
         },
         |input: &str| {
             logn!("Recognizing <{}> -- ", "Name");
-            let regex = Regex::new(concat!("^", "[a-zA-Z_][a-zA-Z0-9_\\.]*")).unwrap();
-            let match_str = regex.find(input);
+            let match_str = REGEX_NAME.find(input);
             match match_str {
                 Some(x) => {
                     let x_str = x.as_str();
@@ -18111,8 +18126,7 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
         },
         |input: &str| {
             logn!("Recognizing <{}> -- ", "RegexTerm");
-            let regex = Regex::new(concat!("^", "/(\\\\.|[^/\\\\])*/")).unwrap();
-            let match_str = regex.find(input);
+            let match_str = REGEX_REGEXTERM.find(input);
             match match_str {
                 Some(x) => {
                     let x_str = x.as_str();
@@ -18127,8 +18141,7 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
         },
         |input: &str| {
             logn!("Recognizing <{}> -- ", "IntConst");
-            let regex = Regex::new(concat!("^", "\\d+")).unwrap();
-            let match_str = regex.find(input);
+            let match_str = REGEX_INTCONST.find(input);
             match match_str {
                 Some(x) => {
                     let x_str = x.as_str();
@@ -18143,9 +18156,7 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
         },
         |input: &str| {
             logn!("Recognizing <{}> -- ", "FloatConst");
-            let regex = Regex::new(concat!("^", "[+-]?[0-9]+[.][0-9]*([e][+-]?[0-9]+)?"))
-                .unwrap();
-            let match_str = regex.find(input);
+            let match_str = REGEX_FLOATCONST.find(input);
             match match_str {
                 Some(x) => {
                     let x_str = x.as_str();
@@ -18160,8 +18171,7 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
         },
         |input: &str| {
             logn!("Recognizing <{}> -- ", "BoolConst");
-            let regex = Regex::new(concat!("^", "true|false")).unwrap();
-            let match_str = regex.find(input);
+            let match_str = REGEX_BOOLCONST.find(input);
             match match_str {
                 Some(x) => {
                     let x_str = x.as_str();
@@ -18176,14 +18186,7 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
         },
         |input: &str| {
             logn!("Recognizing <{}> -- ", "StrConst");
-            let regex = Regex::new(
-                    concat!(
-                        "^",
-                        "(?s)(^'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')|(^\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\")"
-                    ),
-                )
-                .unwrap();
-            let match_str = regex.find(input);
+            let match_str = REGEX_STRCONST.find(input);
             match match_str {
                 Some(x) => {
                     let x_str = x.as_str();
@@ -18198,8 +18201,7 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
         },
         |input: &str| {
             logn!("Recognizing <{}> -- ", "Action");
-            let regex = Regex::new(concat!("^", "@[a-zA-Z0-9_]+")).unwrap();
-            let match_str = regex.find(input);
+            let match_str = REGEX_ACTION.find(input);
             match match_str {
                 Some(x) => {
                     let x_str = x.as_str();
@@ -18214,8 +18216,7 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
         },
         |input: &str| {
             logn!("Recognizing <{}> -- ", "WS");
-            let regex = Regex::new(concat!("^", "\\s+")).unwrap();
-            let match_str = regex.find(input);
+            let match_str = REGEX_WS.find(input);
             match match_str {
                 Some(x) => {
                     let x_str = x.as_str();
@@ -18230,8 +18231,7 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
         },
         |input: &str| {
             logn!("Recognizing <{}> -- ", "CommentLine");
-            let regex = Regex::new(concat!("^", "//.*")).unwrap();
-            let match_str = regex.find(input);
+            let match_str = REGEX_COMMENTLINE.find(input);
             match match_str {
                 Some(x) => {
                     let x_str = x.as_str();
@@ -18246,9 +18246,7 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
         },
         |input: &str| {
             logn!("Recognizing <{}> -- ", "NotComment");
-            let regex = Regex::new(concat!("^", "((\\*[^/])|[^\\s*/]|/[^\\*])+"))
-                .unwrap();
-            let match_str = regex.find(input);
+            let match_str = REGEX_NOTCOMMENT.find(input);
             match match_str {
                 Some(x) => {
                     let x_str = x.as_str();

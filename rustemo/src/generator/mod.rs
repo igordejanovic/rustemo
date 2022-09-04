@@ -232,6 +232,28 @@ fn generate_parser_header(
         pub type Context<I> = lexer::Context<I, Layout, StateIndex>;
     });
 
+    // Lazy init of regexes
+    let (regex_names, regex_matches): (Vec<_>, Vec<_>) = grammar
+        .terminals
+        .iter()
+        .filter_map(|t| if let Some(Recognizer::RegexTerm(regex_match)) = &t.recognizer {
+                let regex_name = format_ident!("REGEX_{}", t.name.to_uppercase());
+                Some((regex_name, regex_match))
+            } else {
+                None
+            }).unzip();
+    if !regex_names.is_empty() {
+        header.items.push(parse_quote! {
+            use lazy_static::lazy_static;
+        });
+        header.items.push(parse_quote! {
+           lazy_static! {
+               #(static ref #regex_names: Regex = Regex::new(concat!("^", #regex_matches)).unwrap();
+               )*
+           }
+        })
+    }
+
     Ok(header)
 }
 
@@ -604,6 +626,7 @@ fn generate_lexer_definition(
     let mut recognizers: Vec<syn::Expr> = vec![];
     for terminal in &grammar.terminals {
         let term_name = &terminal.name;
+        let term_ident = format_ident!("REGEX_{}", term_name.to_uppercase());
         if let Some(recognizer) = &terminal.recognizer {
             match recognizer {
                 Recognizer::StrConst(str_match) => {
@@ -620,12 +643,11 @@ fn generate_lexer_definition(
                         }
                     });
                 }
-                Recognizer::RegexTerm(regex_match) => {
+                Recognizer::RegexTerm(_) => {
                     recognizers.push(parse_quote! {
                         |input: &str| {
                             logn!("Recognizing <{}> -- ", #term_name);
-                            let regex = Regex::new(concat!("^", #regex_match)).unwrap();
-                            let match_str = regex.find(input);
+                            let match_str = #term_ident.find(input);
                             match match_str {
                                 Some(x) => {
                                     let x_str = x.as_str();
