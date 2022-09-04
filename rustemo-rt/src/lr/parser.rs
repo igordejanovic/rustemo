@@ -151,6 +151,8 @@ where
                     let start_pos = context.position;
                     let end_pos = context.position + next_token.value.len();
                     self.to_state(context, state_id, start_pos, end_pos);
+
+                    let new_location = next_token.value.new_location(context.location);
                     builder.shift_action(&context, term_idx, next_token);
 
                     context.position = end_pos;
@@ -159,6 +161,7 @@ where
                         context.position,
                         context.input.context_str(context.position)
                     );
+                    context.location = Some(new_location);
                     next_token = lexer.next_token(context)?;
                 }
                 Action::Reduce(prod_idx, prod_len, nonterm_id, prod_str) => {

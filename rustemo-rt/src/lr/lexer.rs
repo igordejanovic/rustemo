@@ -83,10 +83,7 @@ where
             .next();
 
         match token {
-            Some(t) => {
-                context.location = Some(t.value.new_location(context.location));
-                Ok(t)
-            }
+            Some(t) => Ok(t),
             None => {
                 if self.partial_parse {
                     // If partial parse is configured we shall return STOP when
