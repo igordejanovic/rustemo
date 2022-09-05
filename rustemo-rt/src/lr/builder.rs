@@ -35,7 +35,6 @@ pub trait LRBuilder<I: Input, LO>: Builder {
         context: &Context<I, LO, StateIndex>,
         prod_idx: ProdIndex,
         prod_len: usize,
-        prod_str: &'static str,
     );
 }
 
@@ -69,15 +68,14 @@ impl<I: Input, LO> LRBuilder<I, LO> for TreeBuilder<I> {
     fn reduce_action(
         &mut self,
         _context: &Context<I, LO, StateIndex>,
-        _prod_idx: ProdIndex,
+        prod_idx: ProdIndex,
         prod_len: usize,
-        prod_str: &'static str,
     ) {
         let children =
             self.res_stack.split_off(self.res_stack.len() - prod_len);
         self.res_stack.push(TreeNode::NonTermNode {
             children,
-            prod: prod_str,
+            prod_idx
         });
     }
 }
@@ -86,7 +84,7 @@ impl<I: Input, LO> LRBuilder<I, LO> for TreeBuilder<I> {
 pub enum TreeNode<I: Input> {
     TermNode(Token<I>),
     NonTermNode {
-        prod: &'static str,
+        prod_idx: ProdIndex,
         children: Vec<TreeNode<I>>,
     },
 }

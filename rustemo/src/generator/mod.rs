@@ -28,16 +28,18 @@ fn action_name(nonterminal: &NonTerminal, prod: &Production) -> syn::Ident {
     )
 }
 
-fn prod_kind(grammar: &Grammar, prod: &Production) -> syn::Ident {
-    format_ident!(
-        "{}{}",
+fn prod_kind(grammar: &Grammar, prod: &Production) -> String {
+    format!("{}{}",
         prod.nonterminal(grammar).name,
         if let Some(ref kind) = prod.kind {
             kind.clone()
         } else {
             format!("P{}", prod.ntidx + 1)
-        }
-    )
+        })
+}
+
+fn prod_kind_ident(grammar: &Grammar, prod: &Production) -> syn::Ident {
+    format_ident!("{}", prod_kind(grammar, prod))
 }
 
 pub fn generate_parser(
@@ -277,7 +279,7 @@ fn generate_parser_types(
         }
     });
 
-    let display_arms: Vec<syn::Arm> = grammar
+    let as_str_arms: Vec<syn::Arm> = grammar
         .terminals
         .iter()
         .map(|t| {
@@ -287,12 +289,12 @@ fn generate_parser_types(
 
         }).collect();
     ast.push(parse_quote! {
-        impl std::fmt::Display for TermKind {
-            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                let name = match self {
-                    #(#display_arms),*
-                };
-                write!(f, "{}", name)
+        impl TermKind {
+            #[allow(dead_code)]
+            pub fn as_str(&self) -> &'static str {
+                match self {
+                    #(#as_str_arms),*
+                }
             }
         }
     });
@@ -320,7 +322,7 @@ fn generate_parser_types(
         .productions()
         .iter()
         .map(|prod| {
-            let prod_kind = prod_kind(grammar, prod);
+            let prod_kind = prod_kind_ident(grammar, prod);
             parse_quote! {#prod_kind}
         })
         .collect();
@@ -332,15 +334,26 @@ fn generate_parser_types(
         }
     });
 
-    let display_arms: Vec<syn::Arm> = grammar
+    let (as_str_arms, display_arms): (Vec<syn::Arm>, Vec<syn::Arm>) = grammar
         .productions()
         .iter()
         .map(|&prod| {
             let prod_kind = prod_kind(grammar, prod);
+            let prod_kind_ident = prod_kind_ident(grammar, prod);
             let prod_str = prod.to_string(grammar);
-            parse_quote! { ProdKind::#prod_kind => #prod_str }
-
-        }).collect();
+            (parse_quote! { ProdKind::#prod_kind_ident => #prod_kind },
+             parse_quote! { ProdKind::#prod_kind_ident => #prod_str })
+        }).collect::<Vec<_>>().into_iter().unzip();
+    ast.push(parse_quote! {
+        impl ProdKind {
+            #[allow(dead_code)]
+            pub fn as_str(&self) -> &'static str {
+                match self {
+                    #(#as_str_arms),*
+                }
+            }
+        }
+    });
     ast.push(parse_quote! {
         impl std::fmt::Display for ProdKind {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -356,7 +369,7 @@ fn generate_parser_types(
         .productions()
         .iter()
         .map(|&prod| {
-            let prod_kind = prod_kind(grammar, prod);
+            let prod_kind = prod_kind_ident(grammar, prod);
             let idx = prod.idx.0;
             parse_quote! { #idx => ProdKind::#prod_kind }
         }).collect();
@@ -880,7 +893,7 @@ fn generate_builder(
         let nonterminal = &grammar.nonterminals[production.nonterminal];
         let rhs_len = production.rhs.len();
         let action = action_name(nonterminal, production);
-        let prod_kind = prod_kind(grammar, production);
+        let prod_kind = prod_kind_ident(grammar, production);
         let nonterminal = format_ident!("{}", nonterminal.name);
 
         if rhs_len == 0 {
@@ -998,8 +1011,7 @@ fn generate_builder(
                     &mut self,
                     #context_var: &Context<&'i str>,
                     prod_kind: ProdIndex,
-                    _prod_len: usize,
-                    _prod_str: &'static str) {
+                    _prod_len: usize) {
                     let prod = match ProdKind::from(prod_kind) {
                         #(#reduce_match_arms),*
                     };
@@ -1020,10 +1032,10 @@ fn action_to_syntax(action: &Action) -> syn::Expr {
             let term = term.0;
             parse_quote! { Shift(StateIndex(#state), TermIndex(#term)) }
         }
-        Action::Reduce(prod, len, nonterm, prod_desc) => {
+        Action::Reduce(prod, len, nonterm) => {
             let prod = prod.0;
             let nonterm = nonterm.0;
-            parse_quote! { Reduce(ProdIndex(#prod), #len, NonTermIndex(#nonterm), #prod_desc) }
+            parse_quote! { Reduce(ProdIndex(#prod), #len, NonTermIndex(#nonterm)) }
         }
         Action::Accept => parse_quote! { Accept },
     }

@@ -22,7 +22,7 @@ use rustemo_rt::{
 use crate::{
     api::{settings::Settings, ParserAlgo},
     grammar::{Associativity, Priority, Terminal, DEFAULT_PRIORITY},
-    lang::rustemo_actions::Recognizer,
+    lang::{rustemo_actions::Recognizer, rustemo::ProdKind},
 };
 
 use super::grammar::{res_symbol, Grammar};
@@ -30,7 +30,7 @@ use super::grammar::{res_symbol, Grammar};
 #[derive(Debug, Clone)]
 pub enum Action {
     Shift(StateIndex, TermIndex),
-    Reduce(ProdIndex, usize, NonTermIndex, String),
+    Reduce(ProdIndex, usize, NonTermIndex),
     Accept,
 }
 
@@ -746,7 +746,6 @@ impl<'g, 's> LRTable<'g, 's> {
                     item.prod,
                     item.prod_len,
                     prod.nonterminal,
-                    prod.to_string(self.grammar),
                 );
                 for follow_symbol in item.follow.borrow().iter() {
                     let follow_term =
@@ -1093,8 +1092,8 @@ impl<'g, 's> Display for LRTable<'g, 's> {
                         self.grammar.terminals[TermIndex(i)].name.clone(),
                         match a {
                             Action::Shift(s, _) => format!("Shift to {s}"),
-                            Action::Reduce(_, l, _, s) => {
-                                format!("Reduce for len {l} by:   {s}")
+                            Action::Reduce(p, l, ..) => {
+                                format!("Reduce for len {l} by:   {}", ProdKind::from(*p))
                             }
                             Action::Accept => "Accept".into(),
                         },

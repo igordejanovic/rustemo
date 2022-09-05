@@ -21,7 +21,7 @@ pub trait ParserDefinition {
 #[derive(Debug, Copy, Clone)]
 pub enum Action {
     Shift(StateIndex, TermIndex),
-    Reduce(ProdIndex, usize, NonTermIndex, &'static str),
+    Reduce(ProdIndex, usize, NonTermIndex),
     Accept,
     Error,
 }
@@ -39,11 +39,11 @@ impl Display for Action {
             Action::Shift(state, term) => {
                 write!(f, "Shift(StateIndex({}), TermIndex({}))", state, term)
             }
-            Action::Reduce(prod, len, nonterm, prod_desc) => {
+            Action::Reduce(prod, len, nonterm) => {
                 write!(
                     f,
-                    "Reduce(ProdIndex({}), {}, NonTermIndex({}), \"{}\")",
-                    prod, len, nonterm, prod_desc
+                    "Reduce(ProdIndex({}), {}, NonTermIndex({}))",
+                    prod, len, nonterm
                 )
             }
             Action::Accept => write!(f, "Accept"),
@@ -164,10 +164,10 @@ where
                     context.location = Some(new_location);
                     next_token = lexer.next_token(context)?;
                 }
-                Action::Reduce(prod_idx, prod_len, nonterm_id, prod_str) => {
+                Action::Reduce(prod_idx, prod_len, nonterm_id) => {
                     log!(
-                        "Reduce by production '{:?}', size {:?}, non-terminal {:?}",
-                        prod_str,
+                        "Reduce by production '{}', size {:?}, non-terminal {:?}",
+                        prod_idx,
                         prod_len,
                         nonterm_id
                     );
@@ -178,8 +178,7 @@ where
                     let to_state = self.definition.goto(from_state, nonterm_id);
                     self.to_state(context, to_state, start_pos, end_pos);
                     log!("GOTO {:?} -> {:?}", from_state, to_state);
-                    builder
-                        .reduce_action(&context, prod_idx, prod_len, prod_str);
+                    builder.reduce_action(&context, prod_idx, prod_len);
                 }
                 Action::Accept => break,
                 // This can't happen for context-aware lexing. If there is no
