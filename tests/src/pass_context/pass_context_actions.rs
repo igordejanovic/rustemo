@@ -11,11 +11,7 @@ pub fn a_c1<'i>(_context: &Context<&'i str>, num1: Num1) -> A {
     num1
 }
 pub type Num1 = Vec<Num>;
-pub fn num1_c1<'i>(
-    _context: &Context<&'i str>,
-    mut num1: Num1,
-    num: Num,
-) -> Num1 {
+pub fn num1_c1<'i>(_context: &Context<&'i str>, mut num1: Num1, num: Num) -> Num1 {
     num1.push(num);
     num1
 }
