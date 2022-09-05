@@ -75,13 +75,11 @@ impl<D: ParserDefinition> LRParser<D> {
         &mut self,
         context: &mut Context<I, LO, StateIndex>,
         state: StateIndex,
-        start_pos: usize,
-        end_pos: usize,
     ) {
         self.parse_stack.push(StackItem {
             state,
-            start_pos,
-            end_pos,
+            start_pos: context.start_pos,
+            end_pos: context.end_pos,
         });
         context.state = state;
     }
@@ -148,14 +146,14 @@ where
                         state_id,
                         next_token
                     );
-                    let start_pos = context.position;
-                    let end_pos = context.position + next_token.value.len();
-                    self.to_state(context, state_id, start_pos, end_pos);
+                    context.start_pos = context.position;
+                    context.end_pos = context.position + next_token.value.len();
+                    self.to_state(context, state_id);
 
                     let new_location = next_token.value.new_location(context.location);
                     builder.shift_action(&context, term_idx, next_token);
 
-                    context.position = end_pos;
+                    context.position = context.end_pos;
                     log!(
                         "Position={}: {}",
                         context.position,
@@ -176,7 +174,7 @@ where
                     context.start_pos = start_pos;
                     context.end_pos = end_pos;
                     let to_state = self.definition.goto(from_state, nonterm_id);
-                    self.to_state(context, to_state, start_pos, end_pos);
+                    self.to_state(context, to_state);
                     log!("GOTO {:?} -> {:?}", from_state, to_state);
                     builder.reduce_action(&context, prod_idx, prod_len);
                 }
