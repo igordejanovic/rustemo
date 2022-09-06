@@ -1,45 +1,47 @@
 ///! This file is maintained by rustemo but can be modified manually.
 ///! All manual changes will be preserved except non-doc comments.
-use rustemo_rt::lexer::Token;
+use rustemo_rt::lexer;
 use std::collections::BTreeMap;
+use super::rustemo::TokenKind;
 pub type Name = String;
-pub fn name<'i>(token: Token<&'i str>) -> Name {
+pub type Token<'i> = lexer::Token<&'i str, lexer::TokenKind<TokenKind>>;
+pub fn name<'i>(token: Token<'i>) -> Name {
     token.value.into()
 }
 pub type RegexTerm = String;
-pub fn regex_term<'i>(token: Token<&'i str>) -> RegexTerm {
+pub fn regex_term<'i>(token: Token<'i>) -> RegexTerm {
     token.value[1..token.value.len() - 1].replace(r"\/", "/").into()
 }
 pub type IntConst = u32;
-pub fn int_const<'i>(token: Token<&'i str>) -> IntConst {
+pub fn int_const<'i>(token: Token<'i>) -> IntConst {
     token.value.parse().unwrap()
 }
 pub type FloatConst = f32;
-pub fn float_const<'i>(token: Token<&'i str>) -> FloatConst {
+pub fn float_const<'i>(token: Token<'i>) -> FloatConst {
     token.value.parse().unwrap()
 }
 pub type BoolConst = bool;
-pub fn bool_const<'i>(token: Token<&'i str>) -> BoolConst {
+pub fn bool_const<'i>(token: Token<'i>) -> BoolConst {
     if token.value == "true" { true } else { false }
 }
 pub type StrConst = String;
-pub fn str_const<'i>(token: Token<&'i str>) -> StrConst {
+pub fn str_const<'i>(token: Token<'i>) -> StrConst {
     token.value.trim_matches('\'').trim_matches('"').into()
 }
 pub type Action = String;
-pub fn action<'i>(token: Token<&'i str>) -> Action {
+pub fn action<'i>(token: Token<'i>) -> Action {
     token.value[1..].into()
 }
 pub type WS = String;
-pub fn ws<'i>(token: Token<&'i str>) -> WS {
+pub fn ws<'i>(token: Token<'i>) -> WS {
     token.value.into()
 }
 pub type CommentLine = String;
-pub fn comment_line<'i>(token: Token<&'i str>) -> CommentLine {
+pub fn comment_line<'i>(token: Token<'i>) -> CommentLine {
     token.value.into()
 }
 pub type NotComment = String;
-pub fn not_comment<'i>(token: Token<&'i str>) -> NotComment {
+pub fn not_comment<'i>(token: Token<'i>) -> NotComment {
     token.value.into()
 }
 #[derive(Debug, Clone, Default)]
