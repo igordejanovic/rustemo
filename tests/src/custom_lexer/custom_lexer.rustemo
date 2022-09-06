@@ -1,0 +1,9 @@
+// This grammar defines a language which consists of a sequence of VarInts
+// https://developers.google.com/protocol-buffers/docs/encoding#varints
+
+VarInts: VarInt+;
+
+terminals
+// We don't provide a body of this terminal def. as we are not parsing text.
+// Lexer will do the recognition of a single VarInt from the input stream.
+VarInt:;

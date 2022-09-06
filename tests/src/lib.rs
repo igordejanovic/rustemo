@@ -15,6 +15,8 @@ mod sugar;
 mod generic_tree;
 #[cfg(test)]
 mod custom_builder;
+#[cfg(test)]
+mod custom_lexer;
 
 // For output_cmp macro
 #[cfg(test)]
