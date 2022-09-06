@@ -38,13 +38,13 @@ pub(crate) trait ActionsGenerator {
         let action_name_ident = Ident::new(&action_name, Span::call_site());
         if settings.pass_context {
             parse_quote! {
-                pub fn #action_name_ident<'i>(_context: &Context<&'i str>, token: Token<&'i str>) -> #type_name_ident {
+                pub fn #action_name_ident<'i>(_context: &Context<&'i str>, token: Token<'i>) -> #type_name_ident {
                     token.value.into()
                 }
             }
         } else {
             parse_quote! {
-                pub fn #action_name_ident<'i>(token: Token<&'i str>) -> #type_name_ident {
+                pub fn #action_name_ident<'i>(token: Token<'i>) -> #type_name_ident {
                     token.value.into()
                 }
             }
@@ -86,19 +86,23 @@ where
     } else {
         // Create new empty file with common uses statements.
         log!("Creating: {:?}", action_file);
+        let parser_mod = format_ident!("{}", parser_mod);
         if settings.pass_context {
-            let parser_mod = format_ident!("{}", parser_mod);
             parse_quote! {
                 ///! This file is maintained by rustemo but can be modified manually.
                 ///! All manual changes will be preserved except non-doc comments.
-                use rustemo_rt::lexer::Token;
+                use rustemo_rt::lexer;
                 use super::#parser_mod::Context;
+                use super::#parser_mod::TokenKind;
+                pub type Token<'i> = lexer::Token<&'i str, lexer::TokenKind<TokenKind>>;
             }
         } else {
             parse_quote! {
                 ///! This file is maintained by rustemo but can be modified manually.
                 ///! All manual changes will be preserved except non-doc comments.
-                use rustemo_rt::lexer::Token;
+                use rustemo_rt::lexer;
+                use super::#parser_mod::TokenKind;
+                pub type Token<'i> = lexer::Token<&'i str, lexer::TokenKind<TokenKind>>;
             }
         }
     };

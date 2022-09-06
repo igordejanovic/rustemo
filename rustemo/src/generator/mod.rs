@@ -9,7 +9,7 @@ use std::{
 use syn::parse_quote;
 
 use crate::{
-    api::{settings::Settings, BuilderType},
+    api::{settings::Settings, BuilderType, LexerType},
     error::{Error, Result},
     grammar::{
         types::{choice_name, to_pascal_case, to_snake_case},
@@ -105,6 +105,7 @@ pub fn generate_parser(
     let lexer = format!("{}Lexer", parser_name);
     let lexer_definition = format!("{}Definition", lexer);
     let actions_file = format!("{}_actions", file_name);
+    let lexer_file = format!("{}_lexer", file_name);
     let builder_file = format!("{}_builder", file_name);
     let root_symbol = grammar.symbol_name(grammar.start_index);
 
@@ -112,6 +113,8 @@ pub fn generate_parser(
         &grammar,
         &table,
         &actions_file,
+        &lexer_file,
+        &lexer,
         &builder_file,
         &builder,
         settings,
@@ -130,6 +133,7 @@ pub fn generate_parser(
         &parser,
         &layout_parser,
         &parser_definition,
+        &lexer,
         &builder_file,
         &builder,
         &builder_output,
@@ -149,11 +153,13 @@ pub fn generate_parser(
         )?);
     }
 
-    ast.items.extend(generate_lexer_definition(
-        &grammar,
-        &table,
-        &lexer_definition,
-    )?);
+    if let LexerType::Default = settings.lexer_type {
+        ast.items.extend(generate_lexer_definition(
+            &grammar,
+            &table,
+            &lexer_definition,
+        )?);
+    }
 
     if let BuilderType::Default = settings.builder_type {
         ast.items.extend(generate_builder(
@@ -192,6 +198,8 @@ fn generate_parser_header(
     grammar: &Grammar,
     table: &LRTable,
     actions_file: &str,
+    lexer_file: &str,
+    lexer: &str,
     builder_file: &str,
     builder: &str,
     settings: &Settings,
@@ -207,6 +215,8 @@ fn generate_parser_header(
     let nonterm_count = grammar.nonterminals.len();
     let states_count = table.states.len();
     let actions_file = format_ident!("{}", actions_file);
+    let lexer_file = format_ident!("{}", lexer_file);
+    let lexer = format_ident!("{}", lexer);
     let builder_file = format_ident!("{}", builder_file);
     let builder = format_ident!("{}", builder);
 
@@ -215,7 +225,7 @@ fn generate_parser_header(
         use regex::Regex;
         use std::fmt::Debug;
 
-        use rustemo_rt::lexer::{self, Token};
+        use rustemo_rt::lexer::{self, Token, AsStr};
         use rustemo_rt::parser::Parser;
         use rustemo_rt::builder::Builder;
         use rustemo_rt::Result;
@@ -224,7 +234,7 @@ fn generate_parser_header(
         use rustemo_rt::lr::parser::{LRParser, ParserDefinition};
         use rustemo_rt::lr::parser::Action::{self, Shift, Reduce, Accept, Error};
         use rustemo_rt::index::{StateIndex, TermIndex, NonTermIndex, ProdIndex};
-        use rustemo_rt::grammar::{TerminalInfo, TerminalInfos, TerminalsState};
+        use rustemo_rt::grammar::TerminalsState;
         use rustemo_rt::debug::{log, logn};
 
         const TERMINAL_NO: usize = #term_count;
@@ -233,6 +243,12 @@ fn generate_parser_header(
         const MAX_ACTIONS: usize = #max_actions;
 
     };
+
+    if let LexerType::Custom = settings.lexer_type {
+        header.items.push(parse_quote! {
+            use super::#lexer_file::#lexer;
+        });
+    }
 
     header.items.push(match settings.builder_type {
         BuilderType::Default => parse_quote! {
@@ -295,7 +311,7 @@ fn generate_parser_types(
     let mut ast: Vec<syn::Item> = vec![];
 
     let term_kind_variants: Vec<syn::Variant> = grammar
-        .terminals
+        .terminals[1..]
         .iter()
         .map(|t| {
             let name = format_ident!("{}", t.name);
@@ -305,25 +321,24 @@ fn generate_parser_types(
 
     ast.push(parse_quote! {
         #[derive(Debug, Copy, Clone)]
-        #[repr(usize)]
-        pub enum TermKind {
+        pub enum TokenKind {
             #(#term_kind_variants),*
         }
     });
 
     let as_str_arms: Vec<syn::Arm> = grammar
-        .terminals
+        .terminals[1..]
         .iter()
         .map(|t| {
             let name = format_ident!("{}", t.name);
             let name_str = &t.name;
-            parse_quote! { TermKind::#name => #name_str }
+            parse_quote! { TokenKind::#name => #name_str }
 
         }).collect();
     ast.push(parse_quote! {
-        impl TermKind {
+        impl AsStr for TokenKind {
             #[allow(dead_code)]
-            pub fn as_str(&self) -> &'static str {
+            fn as_str(&self) -> &'static str {
                 match self {
                     #(#as_str_arms),*
                 }
@@ -331,20 +346,30 @@ fn generate_parser_types(
         }
     });
 
-    let from_arms: Vec<syn::Arm> = grammar
-        .terminals
+    let (from_arms, into_arms): (Vec<syn::Arm>, Vec<syn::Arm>) = grammar
+        .terminals[1..]
         .iter()
         .map(|t| {
             let name = format_ident!("{}", t.name);
             let idx = t.idx.0;
-            parse_quote! { #idx => TermKind::#name }
-        }).collect();
+            (parse_quote! { #idx => TokenKind::#name },
+             parse_quote! { TokenKind::#name => TermIndex(#idx) })
+        }).collect::<Vec<_>>().into_iter().unzip();
     ast.push(parse_quote! {
-        impl From<TermIndex> for TermKind {
+        impl From<TermIndex> for TokenKind {
             fn from(term_index: TermIndex) -> Self {
                 match term_index.0 {
                     #(#from_arms),*,
                     _ => unreachable!()
+                }
+            }
+        }
+    });
+    ast.push(parse_quote! {
+        impl From<TokenKind> for TermIndex {
+            fn from(token_kind: TokenKind) -> Self {
+                match token_kind {
+                    #(#into_arms),*
                 }
             }
         }
@@ -360,7 +385,6 @@ fn generate_parser_types(
         .collect();
     ast.push(parse_quote! {
         #[derive(Copy, Clone)]
-        #[repr(usize)]
         pub enum ProdKind {
             #(#prodkind_variants),*
         }
@@ -377,9 +401,9 @@ fn generate_parser_types(
              parse_quote! { ProdKind::#prod_kind_ident => #prod_str })
         }).collect::<Vec<_>>().into_iter().unzip();
     ast.push(parse_quote! {
-        impl ProdKind {
+        impl AsStr for ProdKind {
             #[allow(dead_code)]
-            pub fn as_str(&self) -> &'static str {
+            fn as_str(&self) -> &'static str {
                 match self {
                     #(#as_str_arms),*
                 }
@@ -435,7 +459,7 @@ fn generate_parser_symbols(
     });
 
     let term_variants: Vec<syn::Variant> = grammar
-        .terminals
+        .terminals[1..]
         .iter()
         .map(|t| {
             let name = format_ident!("{}", t.name);
@@ -485,6 +509,7 @@ fn generate_parser_definition(
     parser: &str,
     layout_parser: &str,
     parser_definition: &str,
+    lexer: &str,
     builder_file: &str,
     builder: &str,
     builder_output: &str,
@@ -496,6 +521,7 @@ fn generate_parser_definition(
     let parser = format_ident!("{}", parser);
     let layout_parser = format_ident!("{}", layout_parser);
     let parser_definition = format_ident!("{}", parser_definition);
+    let lexer = format_ident!("{}", lexer);
     let builder_file = format_ident!("{}", builder_file);
     let builder = format_ident!("{}", builder);
     let builder_output = format_ident!("{}", builder_output);
@@ -629,17 +655,31 @@ fn generate_parser_definition(
     };
 
     ast.push(
-        parse_quote! {
-            #[allow(dead_code)]
-            impl #parser
-            {
-                pub fn parse<'i>(input: &'i str) -> #parse_result {
-                    let mut context = Context::new("<str>".to_string(), input);
-                    let lexer = LRStringLexer::new(&LEXER_DEFINITION, #partial_parse, #skip_ws);
-                    let mut builder = #builder::new();
-                    #(#parse_stmt)*
+        match settings.lexer_type {
+            LexerType::Default => parse_quote! {
+                #[allow(dead_code)]
+                impl #parser
+                {
+                    pub fn parse<'i>(input: &'i str) -> #parse_result {
+                        let mut context = Context::new("<str>".to_string(), input);
+                        let lexer = LRStringLexer::new(&LEXER_DEFINITION, #partial_parse, #skip_ws);
+                        let mut builder = #builder::new();
+                        #(#parse_stmt)*
+                    }
                 }
-            }
+            },
+            LexerType::Custom => parse_quote! {
+                #[allow(dead_code)]
+                impl #parser
+                {
+                    pub fn parse<I>(input: I) -> #parse_result {
+                        let mut context = Context::new("<str>".to_string(), input);
+                        let lexer = #lexer::new();
+                        let mut builder = #builder::new();
+                        #(#parse_stmt)*
+                    }
+                }
+            },
         });
 
     ast.push(parse_quote! {
@@ -710,26 +750,10 @@ fn generate_lexer_definition(
 
     ast.push(parse_quote! {
         pub struct #lexer_definition {
-            terminals: TerminalInfos<TERMINAL_NO>,
             terminals_for_state: TerminalsState<MAX_ACTIONS, STATE_NO>,
             recognizers: [fn(&str) -> Option<&str>; TERMINAL_NO]
         }
     });
-
-    let terminals: Vec<syn::Expr> = grammar
-        .terminals
-        .iter()
-        .map(|t| {
-            let terminal_idx = t.idx.0;
-            let terminal_name = &t.name;
-            parse_quote! {
-                TerminalInfo {
-                    id: TermIndex(#terminal_idx),
-                    name: #terminal_name,
-                }
-            }
-        })
-        .collect();
 
     let max_actions = table
         .states
@@ -825,7 +849,6 @@ fn generate_lexer_definition(
     ast.push(
         parse_quote!{
             pub(in crate) static LEXER_DEFINITION: #lexer_definition = #lexer_definition {
-                terminals: [#(#terminals),*],
                 terminals_for_state: [#(#terminals_for_state),*],
                 recognizers: [#(#recognizers),*],
             };
@@ -839,7 +862,6 @@ fn generate_lexer_definition(
 
                 fn recognizers(&self, state_index: StateIndex) -> RecognizerIterator<Self::Recognizer> {
                     RecognizerIterator {
-                        terminals: &LEXER_DEFINITION.terminals,
                         terminals_for_state: &LEXER_DEFINITION.terminals_for_state[state_index.0][..],
                         recognizers: &LEXER_DEFINITION.recognizers,
                         index: 0
@@ -923,23 +945,23 @@ fn generate_builder(
         }
     });
 
-    let shift_match_arms: Vec<syn::Arm> = grammar.terminals.iter().map(|terminal| {
+    let shift_match_arms: Vec<syn::Arm> = grammar.terminals[1..].iter().map(|terminal| {
         let action = format_ident!("{}", to_snake_case(&terminal.name));
         let term = format_ident!("{}", terminal.name);
         if let Some(Recognizer::RegexTerm(_)) = terminal.recognizer {
             if settings.pass_context {
                 parse_quote!{
-                    TermKind::#term => Terminal::#term(#actions_file::#action(context, token))
+                    TokenKind::#term => Terminal::#term(#actions_file::#action(context, token))
                 }
 
             } else {
                 parse_quote!{
-                    TermKind::#term => Terminal::#term(#actions_file::#action(token))
+                    TokenKind::#term => Terminal::#term(#actions_file::#action(token))
                 }
             }
         } else {
             parse_quote!{
-                TermKind::#term => Terminal::#term
+                TokenKind::#term => Terminal::#term
             }
         }
     }).collect();
@@ -1051,15 +1073,18 @@ fn generate_builder(
 
     ast.push(
         parse_quote! {
-            impl<'i> LRBuilder<&'i str, Layout> for #builder
+            impl<'i> LRBuilder<&'i str, Layout, lexer::TokenKind<TokenKind>> for #builder
             {
 
                 #![allow(unused_variables)]
-                fn shift_action(&mut self, #context_var: &Context<&'i str>, term_idx: TermIndex, token: Token<&'i str>) {
-                    let termval = match TermKind::from(term_idx) {
+                fn shift_action(
+                    &mut self,
+                    #context_var: &Context<&'i str>,
+                    term_idx: TermIndex, token: Token<&'i str, lexer::TokenKind<TokenKind>>) {
+                    let val = match TokenKind::from(term_idx) {
                         #(#shift_match_arms),*
                     };
-                    self.res_stack.push(Symbol::Terminal(termval));
+                    self.res_stack.push(Symbol::Terminal(val));
                 }
 
                 fn reduce_action(
