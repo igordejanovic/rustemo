@@ -1,8 +1,10 @@
 ///! This file is maintained by rustemo but can be modified manually.
 ///! All manual changes will be preserved except non-doc comments.
-use rustemo_rt::lexer::Token;
+use rustemo_rt::lexer;
+use super::calculator04_ambig_lhs::TokenKind;
+pub type Token<'i> = lexer::Token<&'i str, TokenKind>;
 pub type Num = String;
-pub fn num<'i>(token: Token<&'i str>) -> Num {
+pub fn num<'i>(token: Token<'i>) -> Num {
     token.value.into()
 }
 #[derive(Debug, Clone)]

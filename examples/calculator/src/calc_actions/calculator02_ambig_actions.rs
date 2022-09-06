@@ -1,8 +1,10 @@
 ///! This file is maintained by rustemo but can be modified manually.
 ///! All manual changes will be preserved except non-doc comments.
-use rustemo_rt::lexer::Token;
+use rustemo_rt::lexer;
+use super::calculator02_ambig::TokenKind;
+pub type Token<'i> = lexer::Token<&'i str, TokenKind>;
 pub type Num = f32;
-pub fn num<'i>(token: Token<&'i str>) -> Num {
+pub fn num<'i>(token: Token<'i>) -> Num {
     token.value.parse().unwrap()
 }
 pub type E = f32;
