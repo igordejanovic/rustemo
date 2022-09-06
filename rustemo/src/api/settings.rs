@@ -16,6 +16,18 @@ impl Default for ParserAlgo {
 }
 
 #[derive(Debug, Clone, ArgEnum)]
+pub enum LexerType {
+    Default,
+    Custom,
+}
+
+impl Default for LexerType {
+    fn default() -> Self {
+        LexerType::Default
+    }
+}
+
+#[derive(Debug, Clone, ArgEnum)]
 pub enum BuilderType {
     Default,
     Generic,
@@ -40,6 +52,9 @@ pub struct Settings {
     pub print_table: bool,
     pub exclude: Vec<String>,
     pub actions: bool,
+
+    /// What kind of lexer should be used.
+    pub lexer_type: LexerType,
 
     /// What builder should be generated.
     pub builder_type: BuilderType,
@@ -70,6 +85,7 @@ impl Default for Settings {
             parser_algo: Default::default(),
             print_table: false,
             actions: true,
+            lexer_type: Default::default(),
             builder_type: Default::default(),
             pass_context: false,
             partial_parse: false,
