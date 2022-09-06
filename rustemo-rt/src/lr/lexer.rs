@@ -1,8 +1,7 @@
 use crate::debug::log;
 use crate::error::{Error, Result};
-use crate::grammar::TerminalInfo;
 use crate::index::{StateIndex, TermIndex};
-use crate::lexer::{Context, Input, Lexer, Token};
+use crate::lexer::{Context, Input, Lexer, Token, TokenKind, AsStr};
 use crate::location::Location;
 
 /// A lexer that operates over string inputs and uses generated string and regex
@@ -44,14 +43,15 @@ where
     }
 }
 
-impl<'i, D, LO> Lexer<&'i str, LO, StateIndex> for LRStringLexer<D>
+impl<'i, D, LO, TK> Lexer<&'i str, LO, StateIndex, TK> for LRStringLexer<D>
 where
     D: LexerDefinition<Recognizer = for<'a> fn(&'a str) -> Option<&'a str>>,
+    TK: From<TermIndex> + AsStr + Copy,
 {
     fn next_token(
         &self,
         context: &mut Context<&'i str, LO, StateIndex>,
-    ) -> Result<Token<&'i str>> {
+    ) -> Result<Token<&'i str, TK>> {
         if self.skip_ws {
             Self::skip(context);
         }
@@ -59,23 +59,20 @@ where
             "Trying recognizers: {:?}",
             self.definition
                 .recognizers(context.state)
-                .map(|(_, terminal_info)| terminal_info.name)
+                .map(|(_, term_idx)| TK::from(term_idx).as_str())
                 .collect::<Vec<_>>()
         );
-        let token: Option<Token<&'i str>> = self
+        let token: Option<Token<&'i str, TK>> = self
             .definition
             .recognizers(context.state)
-            .map(|(recognizer, terminal_info)| {
-                (
-                    recognizer(&context.input[context.position..]),
-                    terminal_info,
-                )
+            .map(|(recognizer, token_kind)| {
+                (recognizer(&context.input[context.position..]), token_kind)
             })
             // Skip unsuccesful recognition
             .skip_while(|(recognized, _)| recognized.is_none())
             // Create tokens
-            .map(|(recognized, terminal_info)| Token {
-                terminal: terminal_info,
+            .map(|(recognized, token_kind)| Token {
+                kind: token_kind.into(),
                 value: recognized.unwrap(),
                 location: None,
             })
@@ -90,10 +87,7 @@ where
                     // no new tokens can be found to try to complete what we
                     // have seen so far.
                     Ok(Token {
-                        terminal: &TerminalInfo {
-                            id: TermIndex(0),
-                            name: "STOP",
-                        },
+                        kind: TokenKind::STOP,
                         value: "",
                         location: None,
                     })
@@ -101,7 +95,7 @@ where
                     let expected = self
                         .definition
                         .recognizers(context.state)
-                        .map(|(_, terminal_info)| terminal_info.name)
+                        .map(|(_, term_idx)| TK::from(term_idx).as_str())
                         .collect::<Vec<_>>()
                         .join(", ");
                     Err(Error::ParseError {
@@ -131,24 +125,20 @@ pub trait LexerDefinition {
 }
 
 pub struct RecognizerIterator<R: 'static> {
-    pub terminals: &'static [TerminalInfo],
     pub terminals_for_state: &'static [Option<usize>],
     pub recognizers: &'static [R],
     pub index: usize,
 }
 
 impl<R> Iterator for RecognizerIterator<R> {
-    type Item = (&'static R, &'static TerminalInfo);
+    type Item = (&'static R, TermIndex);
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.index < self.terminals_for_state.len() {
             match self.terminals_for_state[self.index] {
                 Some(term_idx) => {
                     self.index += 1;
-                    Some((
-                        &self.recognizers[term_idx],
-                        &self.terminals[term_idx],
-                    ))
+                    Some((&self.recognizers[term_idx], TermIndex(term_idx)))
                 }
                 None => None,
             }

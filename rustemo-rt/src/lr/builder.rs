@@ -8,7 +8,7 @@ use crate::{
 ///
 /// Builder should keep its internal stack of subresults, similar to the way LR
 /// parsing operates.
-pub trait LRBuilder<I: Input, LO>: Builder {
+pub trait LRBuilder<I: Input, LO, TK: Copy>: Builder {
     /// Called when LR shifting is taking place.
     ///
     /// # Arguments
@@ -19,7 +19,7 @@ pub trait LRBuilder<I: Input, LO>: Builder {
         &mut self,
         context: &Context<I, LO, StateIndex>,
         term_idx: TermIndex,
-        token: Token<I>,
+        token: Token<I, TK>,
     );
 
     /// Called when LR reduce is taking place.
@@ -39,12 +39,12 @@ pub trait LRBuilder<I: Input, LO>: Builder {
 }
 
 /// TreeBuilder is a builder that builds a generic parse tree.
-pub struct TreeBuilder<I: Input> {
-    res_stack: Vec<TreeNode<I>>,
+pub struct TreeBuilder<I: Input, TK: Copy> {
+    res_stack: Vec<TreeNode<I, TK>>,
 }
 
-impl<I: Input> Builder for TreeBuilder<I> {
-    type Output = TreeNode<I>;
+impl<I: Input, TK: Copy> Builder for TreeBuilder<I, TK> {
+    type Output = TreeNode<I, TK>;
 
     fn new() -> Self {
         Self { res_stack: vec![] }
@@ -55,12 +55,12 @@ impl<I: Input> Builder for TreeBuilder<I> {
     }
 }
 
-impl<I: Input, LO> LRBuilder<I, LO> for TreeBuilder<I> {
+impl<I: Input, LO, TK: Clone + Copy> LRBuilder<I, LO, TK> for TreeBuilder<I, TK> {
     fn shift_action(
         &mut self,
         context: &Context<I, LO, StateIndex>,
         _term_idx: TermIndex,
-        token: Token<I>,
+        token: Token<I, TK>,
     ) {
         self.res_stack.push(TreeNode::TermNode {
             token,
@@ -85,14 +85,14 @@ impl<I: Input, LO> LRBuilder<I, LO> for TreeBuilder<I> {
 }
 
 #[derive(Debug)]
-pub enum TreeNode<I: Input> {
+pub enum TreeNode<I: Input, TK: Copy> {
     TermNode {
-        token: Token<I>,
+        token: Token<I, TK>,
         position: usize,
     },
     NonTermNode {
         prod_idx: ProdIndex,
         position: usize,
-        children: Vec<TreeNode<I>>,
+        children: Vec<TreeNode<I, TK>>,
     },
 }

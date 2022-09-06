@@ -4,11 +4,12 @@ use crate::{
     lexer::{Context, Input, Lexer},
 };
 
-pub trait Parser<I, L, B, LO, ST>
+pub trait Parser<I, L, B, LO, ST, TK>
 where
     I: Input,
-    L: Lexer<I, LO, ST>,
+    L: Lexer<I, LO, ST, TK>,
     B: Builder,
+    TK: Copy,
 {
     fn parse(
         &mut self,

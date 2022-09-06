@@ -108,12 +108,13 @@ impl<D: ParserDefinition> LRParser<D> {
     }
 }
 
-impl<I, D, L, B, LO> Parser<I, L, B, LO, StateIndex> for LRParser<D>
+impl<I, D, L, B, LO, TK> Parser<I, L, B, LO, StateIndex, TK> for LRParser<D>
 where
     I: Debug + Input,
     D: ParserDefinition,
-    L: Lexer<I, LO, StateIndex>,
-    B: LRBuilder<I, LO>,
+    L: Lexer<I, LO, StateIndex, TK>,
+    B: LRBuilder<I, LO, TK>,
+    TK: Debug + Into<TermIndex> + Copy,
 {
     fn parse(
         &mut self,
@@ -135,7 +136,7 @@ where
             log!("Token ahead: {:?}", next_token);
 
             let action =
-                self.definition.action(current_state, next_token.index());
+                self.definition.action(current_state, next_token.kind.clone().into());
 
             log!("Action: {:?}", action);
 

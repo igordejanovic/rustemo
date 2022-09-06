@@ -1,6 +1,5 @@
 use crate::{
     error::Result,
-    grammar::TerminalInfo,
     index::TermIndex,
     location::{LineBased, Location, Position},
 };
@@ -11,11 +10,11 @@ use std::cmp::min;
 ///
 /// Lexer is stateless and its job is to produce next token given the current
 /// context.
-pub trait Lexer<I: Input, LO, ST> {
+pub trait Lexer<I: Input, LO, ST, TK: Clone + Copy> {
     /// Given the current context, this method should return RustemoResult with
     /// token found ahead of the current location or error indicating what is
     /// expected.
-    fn next_token(&self, context: &mut Context<I, LO, ST>) -> Result<Token<I>>;
+    fn next_token(&self, context: &mut Context<I, LO, ST>) -> Result<Token<I, TK>>;
 }
 
 /// This trait must be implemented by all types that should be parsed by
@@ -32,23 +31,54 @@ pub trait Input {
     fn new_location(&self, location: Option<Location>) -> Location;
 }
 
+#[derive(Debug, Clone, Copy)]
+pub enum TokenKind<K: Clone + Copy> {
+    STOP,
+    Kind(K),
+}
+
+pub trait AsStr {
+    fn as_str(&self) -> &'static str;
+}
+
+impl<K: AsStr + Clone + Copy> AsStr for TokenKind<K> {
+    fn as_str(&self) -> &'static str {
+        match self {
+            TokenKind::STOP => "STOP",
+            TokenKind::Kind(k) => k.as_str(),
+        }
+    }
+}
+
+impl<K: From<TermIndex> + Clone + Copy> From<TermIndex> for TokenKind<K> {
+    fn from(idx: TermIndex) -> Self {
+        if idx.0 == 0 {
+            TokenKind::STOP
+        } else {
+            TokenKind::Kind(K::from(idx))
+        }
+    }
+}
+
+impl<K: Into<TermIndex> + Clone + Copy> From<TokenKind<K>> for TermIndex {
+    fn from(token_kind: TokenKind<K>) -> Self {
+        match token_kind {
+            TokenKind::STOP => TermIndex(0),
+            TokenKind::Kind(k) => k.into(),
+        }
+    }
+}
+
 /// `Token` represent a single token from the input stream.
 #[derive(Debug)]
-pub struct Token<I: Input> {
-    pub terminal: &'static TerminalInfo,
+pub struct Token<I: Input, TK: Clone + Copy> {
+    pub kind: TokenKind<TK>,
 
     /// The part of the input stream that this token represents.
     pub value: I,
 
     /// Location (with span) in the input file where this token is found.
     pub location: Option<Location>,
-}
-
-impl<I: Input> Token<I> {
-    #[inline]
-    pub fn index(&self) -> TermIndex {
-        self.terminal.id
-    }
 }
 
 /// Lexer context is used to keep the lexing state. It provides necessary
