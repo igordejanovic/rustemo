@@ -13,6 +13,8 @@ mod rule_patterns;
 mod sugar;
 #[cfg(test)]
 mod generic_tree;
+#[cfg(test)]
+mod custom_builder;
 
 // For output_cmp macro
 #[cfg(test)]

@@ -117,9 +117,11 @@ pub fn generate_parser(
         settings,
     )?;
 
+    ast.items.extend(generate_parser_types(&grammar)?);
+
     if let BuilderType::Default = settings.builder_type {
         ast.items
-            .extend(generate_parser_types(&grammar, &actions_file)?);
+            .extend(generate_parser_symbols(&grammar, &actions_file)?);
     }
 
     ast.items.extend(generate_parser_definition(
@@ -240,7 +242,7 @@ fn generate_parser_header(
             use rustemo_rt::lr::builder::{TreeNode, TreeBuilder as #builder};
         },
         BuilderType::Custom => parse_quote! {
-            use super::#builder_file::#builder;
+            use super::#builder_file::{self, #builder};
         },
     });
 
@@ -289,10 +291,8 @@ fn generate_parser_header(
 
 fn generate_parser_types(
     grammar: &Grammar,
-    actions_file: &str,
 ) -> Result<Vec<syn::Item>> {
     let mut ast: Vec<syn::Item> = vec![];
-    let actions_file = format_ident!("{}", actions_file);
 
     let term_kind_variants: Vec<syn::Variant> = grammar
         .terminals
@@ -416,6 +416,15 @@ fn generate_parser_types(
         }
     });
 
+    Ok(ast)
+}
+
+fn generate_parser_symbols(
+    grammar: &Grammar,
+    actions_file: &str,
+) -> Result<Vec<syn::Item>> {
+    let mut ast: Vec<syn::Item> = vec![];
+    let actions_file = format_ident!("{}", actions_file);
 
     ast.push(parse_quote! {
         #[derive(Debug)]
@@ -487,6 +496,7 @@ fn generate_parser_definition(
     let parser = format_ident!("{}", parser);
     let layout_parser = format_ident!("{}", layout_parser);
     let parser_definition = format_ident!("{}", parser_definition);
+    let builder_file = format_ident!("{}", builder_file);
     let builder = format_ident!("{}", builder);
     let builder_output = format_ident!("{}", builder_output);
     let actions_file = format_ident!("{}", actions_file);

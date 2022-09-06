@@ -1,0 +1,8 @@
+E: E '+' E {Add, 1, left}
+ | E '*' E {Mul, 2, left}
+ | Num {Num};
+
+terminals
+Plus: '+';
+Mul: '*';
+Num: /\d+/;

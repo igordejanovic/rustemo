@@ -26,7 +26,9 @@ fn main() {
             }),
         ),
         ("layout", Box::new(|s| s)),
+        // Builders
         ("generic_tree", Box::new(|s| s.builder_type(BuilderType::Generic))),
+        ("custom_builder", Box::new(|s| s.builder_type(BuilderType::Custom))),
     ];
 
     for (test, config) in tests {
