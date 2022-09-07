@@ -1,13 +1,14 @@
 use rustemo_rt::{
     builder::Builder,
     index::{ProdIndex, StateIndex, TermIndex},
-    lexer::{self, Context, Token},
+    lexer::{self, Token},
     lr::builder::LRBuilder,
 };
 
 use super::custom_builder::{ProdKind, TokenKind};
 
 pub type E = i32;
+pub type Context<'i> = lexer::Context<'i, str, (), StateIndex>;
 
 /// Custom builder that perform arithmetic operations.
 pub struct CustomBuilderBuilder {
@@ -29,13 +30,13 @@ impl Builder for CustomBuilderBuilder {
     }
 }
 
-impl<'i> LRBuilder<&'i str, (), TokenKind>
+impl<'i> LRBuilder<'i, str, (), TokenKind>
     for CustomBuilderBuilder
 {
     fn shift_action(
         &mut self,
-        _context: &Context<&'i str, (), StateIndex>,
-        token: Token<&'i str, TokenKind>,
+        _context: &Context<'i>,
+        token: Token<'i, str, TokenKind>,
     ) {
         let kind = match token.kind {
             lexer::TokenKind::Kind(kind) => kind,
@@ -51,7 +52,7 @@ impl<'i> LRBuilder<&'i str, (), TokenKind>
 
     fn reduce_action(
         &mut self,
-        _context: &Context<&'i str, (), StateIndex>,
+        _context: &Context<'i>,
         prod_idx: ProdIndex,
         _prod_len: usize,
     ) {
