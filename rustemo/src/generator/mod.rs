@@ -226,7 +226,7 @@ fn generate_parser_header(
         use regex::Regex;
         use std::fmt::Debug;
 
-        use rustemo_rt::lexer::{self, Token, AsStr};
+        use rustemo_rt::lexer::{self, Token, AsStr, Input};
         use rustemo_rt::parser::Parser;
         use rustemo_rt::builder::Builder;
         use rustemo_rt::Result;
@@ -675,7 +675,7 @@ fn generate_parser_definition(
                 #[allow(dead_code)]
                 impl #parser
                 {
-                    pub fn parse<'i, I>(input: &'i I) -> #parse_result {
+                    pub fn parse<'i, I: Input + ?Sized>(input: &'i I) -> #parse_result {
                         let mut context = Context::new("<str>".to_string(), input);
                         let lexer = #lexer::new();
                         let mut builder = #builder::new();
@@ -951,7 +951,11 @@ fn generate_builder(
     let shift_match_arms: Vec<syn::Arm> = grammar.terminals[1..].iter().map(|terminal| {
         let action = format_ident!("{}", to_snake_case(&terminal.name));
         let term = format_ident!("{}", terminal.name);
-        if let Some(Recognizer::RegexTerm(_)) = terminal.recognizer {
+        if let Some(Recognizer::StrConst(_)) = terminal.recognizer {
+            parse_quote!{
+                TokenKind::#term => Terminal::#term
+            }
+        } else {
             if settings.pass_context {
                 parse_quote!{
                     TokenKind::#term => Terminal::#term(#actions_file::#action(context, token))
@@ -961,10 +965,6 @@ fn generate_builder(
                 parse_quote!{
                     TokenKind::#term => Terminal::#term(#actions_file::#action(token))
                 }
-            }
-        } else {
-            parse_quote!{
-                TokenKind::#term => Terminal::#term
             }
         }
     }).collect();
