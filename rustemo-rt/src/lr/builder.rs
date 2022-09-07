@@ -8,7 +8,7 @@ use crate::{
 ///
 /// Builder should keep its internal stack of subresults, similar to the way LR
 /// parsing operates.
-pub trait LRBuilder<'i, I: Input<'i>, LO, TK: Copy>: Builder {
+pub trait LRBuilder<'i, I: Input + ?Sized, LO, TK: Copy>: Builder {
     /// Called when LR shifting is taking place.
     ///
     /// # Arguments
@@ -17,8 +17,8 @@ pub trait LRBuilder<'i, I: Input<'i>, LO, TK: Copy>: Builder {
     /// * `token` - A token recognized in the input.
     fn shift_action(
         &mut self,
-        context: &Context<I, LO, StateIndex>,
-        token: Token<I, TK>,
+        context: &Context<'i, I, LO, StateIndex>,
+        token: Token<'i, I, TK>,
     );
 
     /// Called when LR reduce is taking place.
@@ -31,19 +31,19 @@ pub trait LRBuilder<'i, I: Input<'i>, LO, TK: Copy>: Builder {
     ///                subresults from the stack
     fn reduce_action(
         &mut self,
-        context: &Context<I, LO, StateIndex>,
+        context: &Context<'i, I, LO, StateIndex>,
         prod_idx: ProdIndex,
         prod_len: usize,
     );
 }
 
 /// TreeBuilder is a builder that builds a generic parse tree.
-pub struct TreeBuilder<'i, I: Input<'i>, TK: Copy> {
-    res_stack: Vec<TreeNode<I, TK>>,
+pub struct TreeBuilder<'i, I: Input + ?Sized, TK: Copy> {
+    res_stack: Vec<TreeNode<'i, I, TK>>,
 }
 
-impl<'i, I: Input<'i>, TK: Copy> Builder for TreeBuilder<'i, I, TK> {
-    type Output = TreeNode<I, TK>;
+impl<'i, I: Input + ?Sized, TK: Copy> Builder for TreeBuilder<'i, I, TK> {
+    type Output = TreeNode<'i, I, TK>;
 
     fn new() -> Self {
         Self { res_stack: vec![] }
@@ -54,11 +54,11 @@ impl<'i, I: Input<'i>, TK: Copy> Builder for TreeBuilder<'i, I, TK> {
     }
 }
 
-impl<'i, I: Input<'i>, LO, TK: Clone + Copy> LRBuilder<'i, I, LO, TK> for TreeBuilder<'i, I, TK> {
+impl<'i, I: Input + ?Sized, LO, TK: Clone + Copy> LRBuilder<'i, I, LO, TK> for TreeBuilder<'i, I, TK> {
     fn shift_action(
         &mut self,
-        context: &Context<I, LO, StateIndex>,
-        token: Token<I, TK>,
+        context: &Context<'i, I, LO, StateIndex>,
+        token: Token<'i, I, TK>,
     ) {
         self.res_stack.push(TreeNode::TermNode {
             token,
@@ -68,7 +68,7 @@ impl<'i, I: Input<'i>, LO, TK: Clone + Copy> LRBuilder<'i, I, LO, TK> for TreeBu
 
     fn reduce_action(
         &mut self,
-        context: &Context<I, LO, StateIndex>,
+        context: &Context<'i, I, LO, StateIndex>,
         prod_idx: ProdIndex,
         prod_len: usize,
     ) {
@@ -83,7 +83,7 @@ impl<'i, I: Input<'i>, LO, TK: Clone + Copy> LRBuilder<'i, I, LO, TK> for TreeBu
 }
 
 #[derive(Debug)]
-pub enum TreeNode<'i, I: Input<'i>, TK: Copy> {
+pub enum TreeNode<'i, I: Input + ?Sized, TK: Copy> {
     TermNode {
         token: Token<'i, I, TK>,
         position: usize,

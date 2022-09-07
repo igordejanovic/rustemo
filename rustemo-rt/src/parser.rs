@@ -6,14 +6,14 @@ use crate::{
 
 pub trait Parser<'i, I, L, B, LO, ST, TK>
 where
-    I: Input<'i>,
+    I: Input + ?Sized,
     L: Lexer<'i, I, LO, ST, TK>,
     B: Builder,
     TK: Copy,
 {
     fn parse(
         &mut self,
-        context: &mut Context<I, LO, ST>,
+        context: &mut Context<'i, I, LO, ST>,
         lexer: &L,
         builder: &mut B,
     ) -> Result<B::Output>;

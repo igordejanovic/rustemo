@@ -28,7 +28,7 @@ where
         }
     }
 
-    fn skip<'i, LO>(context: &mut Context<&'i str, LO, StateIndex>) {
+    fn skip<'i, LO>(context: &mut Context<'i, str, LO, StateIndex>) {
         let skipped = context.input[context.position..]
             .chars()
             .take_while(|x| x.is_whitespace())
@@ -43,15 +43,15 @@ where
     }
 }
 
-impl<'i, D, LO, TK> Lexer<&'i str, LO, StateIndex, TK> for LRStringLexer<D>
+impl<'i, D, LO, TK> Lexer<'i, str, LO, StateIndex, TK> for LRStringLexer<D>
 where
     D: LexerDefinition<Recognizer = for<'a> fn(&'a str) -> Option<&'a str>>,
     TK: From<TermIndex> + AsStr + Copy,
 {
     fn next_token(
         &self,
-        context: &mut Context<&'i str, LO, StateIndex>,
-    ) -> Result<Token<&'i str, TK>> {
+        context: &mut Context<'i, str, LO, StateIndex>,
+    ) -> Result<Token<'i, str, TK>> {
         if self.skip_ws {
             Self::skip(context);
         }
@@ -62,7 +62,7 @@ where
                 .map(|(_, term_idx)| TokenKind::<TK>::from(term_idx).as_str())
                 .collect::<Vec<_>>()
         );
-        let token: Option<Token<&'i str, TK>> = self
+        let token: Option<Token<'i, str, TK>> = self
             .definition
             .recognizers(context.state)
             .map(|(recognizer, token_kind)| {

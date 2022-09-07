@@ -10,16 +10,16 @@ use std::cmp::min;
 ///
 /// Lexer is stateless and its job is to produce next token given the current
 /// context.
-pub trait Lexer<'i, I: Input<'i>, LO, ST, TK: Clone + Copy> {
+pub trait Lexer<'i, I: Input + ?Sized, LO, ST, TK: Clone + Copy> {
     /// Given the current context, this method should return RustemoResult with
     /// token found ahead of the current location or error indicating what is
     /// expected.
-    fn next_token(&self, context: &mut Context<I, LO, ST>) -> Result<Token<I, TK>>;
+    fn next_token(&self, context: &mut Context<'i, I, LO, ST>) -> Result<Token<'i, I, TK>>;
 }
 
 /// This trait must be implemented by all types that should be parsed by
 /// Rustemo. Input is a sequence-like type with a concept of length.
-pub trait Input<'i>: 'i {
+pub trait Input {
     /// Returns a string context for the given position. Used in debugging outputs.
     fn context_str(&self, position: usize) -> String;
 
@@ -71,11 +71,11 @@ impl<K: Into<TermIndex> + Clone + Copy> From<TokenKind<K>> for TermIndex {
 
 /// `Token` represent a single token from the input stream.
 #[derive(Debug)]
-pub struct Token<'i, I: Input<'i>, TK: Clone + Copy> {
+pub struct Token<'i, I: Input + ?Sized, TK: Clone + Copy> {
     pub kind: TokenKind<TK>,
 
     /// The part of the input stream that this token represents.
-    pub value: I,
+    pub value: &'i I,
 
     /// Location (with span) in the input file where this token is found.
     pub location: Option<Location>,
@@ -84,12 +84,12 @@ pub struct Token<'i, I: Input<'i>, TK: Clone + Copy> {
 /// Lexer context is used to keep the lexing state. It provides necessary
 /// information to parsers and actions.
 #[derive(Debug)]
-pub struct Context<'i, I: Input<'i>, LO, ST> {
+pub struct Context<'i, I: Input + ?Sized, LO, ST> {
     /// File path of the parsed content. "<str>" In case of static string.
     pub file: String,
 
     /// The input being parsed. Should be set when the context is created.
-    pub input: I,
+    pub input: &'i I,
 
     /// An absolute position in the input sequence
     ///
@@ -117,8 +117,8 @@ pub struct Context<'i, I: Input<'i>, LO, ST> {
     pub state: ST,
 }
 
-impl<'i, I: Input<'i>, LO, ST: Default> Context<'i, I, LO, ST> {
-    pub fn new(file: String, input: I) -> Self {
+impl<'i, I: Input + ?Sized, LO, ST: Default> Context<'i, I, LO, ST> {
+    pub fn new(file: String, input: &'i I) -> Self {
         Self {
             file,
             input,
@@ -147,7 +147,7 @@ impl<'i, I: Input<'i>, LO, ST: Default> Context<'i, I, LO, ST> {
     }
 }
 
-impl<'i> Input<'i> for &'i str {
+impl Input for str {
     fn context_str(&self, position: usize) -> String {
         self[position - min(15, position)..position]
             .chars()
@@ -185,7 +185,7 @@ impl<'i> Input<'i> for &'i str {
     }
 }
 
-impl<'i, I: Input<'i>, LO, ST: Default> From<&mut Context<'i, I, LO, ST>> for Location {
+impl<'i, I: Input + ?Sized, LO, ST: Default> From<&mut Context<'i, I, LO, ST>> for Location {
     fn from(context: &mut Context<I, LO, ST>) -> Self {
         context.location.unwrap_or(Self {
             start: Position::Position(context.position),

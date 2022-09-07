@@ -2,7 +2,8 @@
 ///! All manual changes will be preserved except non-doc comments.
 use rustemo_rt::lexer;
 use super::calculator01::TokenKind;
-pub type Token<'i> = lexer::Token<&'i str, TokenKind>;
+#[allow(dead_code)]
+pub type Token<'i> = lexer::Token<'i, str, TokenKind>;
 pub type Num = String;
 pub fn num<'i>(token: Token<'i>) -> Num {
     token.value.into()

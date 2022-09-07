@@ -18,7 +18,7 @@ const STATE_NO: usize = 141usize;
 const MAX_ACTIONS: usize = 15usize;
 use super::rustemo_actions;
 pub type Layout = rustemo_actions::Layout;
-pub type Context<I> = lexer::Context<I, Layout, StateIndex>;
+pub type Context<'i, I> = lexer::Context<'i, I, Layout, StateIndex>;
 use lazy_static::lazy_static;
 lazy_static! {
     static ref REGEX_NAME : Regex = Regex::new(concat!("^", "[a-zA-Z_][a-zA-Z0-9_\\.]*"))
@@ -13816,7 +13816,7 @@ pub struct RustemoLayoutParser(LRParser<RustemoParserDefinition>);
 #[allow(dead_code)]
 impl RustemoLayoutParser {
     pub fn parse_layout<'i>(
-        context: &mut Context<&'i str>,
+        context: &mut Context<'i, str>,
     ) -> Result<rustemo_actions::Layout> {
         let lexer = LRStringLexer::new(&LEXER_DEFINITION, true, false);
         let mut builder = RustemoBuilder::new();
@@ -16764,12 +16764,12 @@ impl Builder for RustemoBuilder {
         }
     }
 }
-impl<'i> LRBuilder<&'i str, Layout, TokenKind> for RustemoBuilder {
+impl<'i> LRBuilder<'i, str, Layout, TokenKind> for RustemoBuilder {
     #![allow(unused_variables)]
     fn shift_action(
         &mut self,
-        _context: &Context<&'i str>,
-        token: Token<&'i str, TokenKind>,
+        _context: &Context<'i, str>,
+        token: Token<'i, str, TokenKind>,
     ) {
         let kind = match token.kind {
             lexer::TokenKind::Kind(kind) => kind,
@@ -16834,7 +16834,7 @@ impl<'i> LRBuilder<&'i str, Layout, TokenKind> for RustemoBuilder {
     }
     fn reduce_action(
         &mut self,
-        _context: &Context<&'i str>,
+        _context: &Context<'i, str>,
         prod_idx: ProdIndex,
         _prod_len: usize,
     ) {
