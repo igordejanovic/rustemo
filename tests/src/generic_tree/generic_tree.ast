@@ -21,10 +21,9 @@ Ok(
                                         children: [
                                             TermNode {
                                                 token: Token {
-                                                    terminal: TerminalInfo {
-                                                        id: 2,
-                                                        name: "Ta",
-                                                    },
+                                                    kind: Kind(
+                                                        Ta,
+                                                    ),
                                                     value: "a",
                                                     location: None,
                                                 },
@@ -32,10 +31,9 @@ Ok(
                                             },
                                             TermNode {
                                                 token: Token {
-                                                    terminal: TerminalInfo {
-                                                        id: 3,
-                                                        name: "Num",
-                                                    },
+                                                    kind: Kind(
+                                                        Num,
+                                                    ),
                                                     value: "1",
                                                     location: None,
                                                 },
@@ -51,10 +49,9 @@ Ok(
                                 children: [
                                     TermNode {
                                         token: Token {
-                                            terminal: TerminalInfo {
-                                                id: 2,
-                                                name: "Ta",
-                                            },
+                                            kind: Kind(
+                                                Ta,
+                                            ),
                                             value: "a",
                                             location: None,
                                         },
@@ -62,10 +59,9 @@ Ok(
                                     },
                                     TermNode {
                                         token: Token {
-                                            terminal: TerminalInfo {
-                                                id: 3,
-                                                name: "Num",
-                                            },
+                                            kind: Kind(
+                                                Num,
+                                            ),
                                             value: "3",
                                             location: None,
                                         },
@@ -81,10 +77,9 @@ Ok(
                         children: [
                             TermNode {
                                 token: Token {
-                                    terminal: TerminalInfo {
-                                        id: 2,
-                                        name: "Ta",
-                                    },
+                                    kind: Kind(
+                                        Ta,
+                                    ),
                                     value: "a",
                                     location: None,
                                 },
@@ -92,10 +87,9 @@ Ok(
                             },
                             TermNode {
                                 token: Token {
-                                    terminal: TerminalInfo {
-                                        id: 3,
-                                        name: "Num",
-                                    },
+                                    kind: Kind(
+                                        Num,
+                                    ),
                                     value: "42",
                                     location: None,
                                 },
@@ -107,10 +101,9 @@ Ok(
             },
             TermNode {
                 token: Token {
-                    terminal: TerminalInfo {
-                        id: 1,
-                        name: "B",
-                    },
+                    kind: Kind(
+                        B,
+                    ),
                     value: "b",
                     location: None,
                 },
