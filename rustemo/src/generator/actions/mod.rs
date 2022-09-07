@@ -13,7 +13,7 @@ use quote::format_ident;
 use syn::{self, parse_quote};
 
 use crate::{
-    api::settings::Settings,
+    api::{settings::Settings, LexerType},
     grammar::{types::to_snake_case, Grammar, NonTerminal},
     Error,
 };
@@ -86,7 +86,16 @@ where
     } else {
         // Create new empty file with common uses statements.
         log!("Creating: {:?}", action_file);
+        let lexer_mod = format_ident!("{parser_mod}_lexer");
         let parser_mod = format_ident!("{}", parser_mod);
+        let input_type: syn::Stmt = match settings.lexer_type {
+            LexerType::Default => parse_quote! {
+                pub type Input = str;
+            },
+            LexerType::Custom => parse_quote! {
+                use super::#lexer_mod::Input;
+            },
+        };
         if settings.pass_context {
             parse_quote! {
                 ///! This file is maintained by rustemo but can be modified manually.
@@ -94,8 +103,9 @@ where
                 use rustemo_rt::lexer;
                 use super::#parser_mod::Context;
                 use super::#parser_mod::TokenKind;
+                #input_type
                 #[allow(dead_code)]
-                pub type Token<'i> = lexer::Token<'i, str, TokenKind>;
+                pub type Token<'i> = lexer::Token<'i, Input, TokenKind>;
             }
         } else {
             parse_quote! {
@@ -103,8 +113,9 @@ where
                 ///! All manual changes will be preserved except non-doc comments.
                 use rustemo_rt::lexer;
                 use super::#parser_mod::TokenKind;
+                #input_type
                 #[allow(dead_code)]
-                pub type Token<'i> = lexer::Token<'i, str, TokenKind>;
+                pub type Token<'i> = lexer::Token<'i, Input, TokenKind>;
             }
         }
     };

@@ -226,7 +226,7 @@ fn generate_parser_header(
         use regex::Regex;
         use std::fmt::Debug;
 
-        use rustemo_rt::lexer::{self, Token, AsStr, Input};
+        use rustemo_rt::lexer::{self, Token, AsStr};
         use rustemo_rt::parser::Parser;
         use rustemo_rt::builder::Builder;
         use rustemo_rt::Result;
@@ -241,6 +241,7 @@ fn generate_parser_header(
         const TERMINAL_NO: usize = #term_count;
         const NONTERMINAL_NO: usize = #nonterm_count;
         const STATE_NO: usize = #states_count;
+        #[allow(dead_code)]
         const MAX_ACTIONS: usize = #max_actions;
 
     };
@@ -273,8 +274,17 @@ fn generate_parser_header(
         }
     });
 
+    header.items.push(match settings.lexer_type {
+        LexerType::Default => parse_quote!{
+            pub type Input = str;
+        },
+        LexerType::Custom => parse_quote! {
+            use super::#lexer_file::Input;
+        },
+    });
+
     header.items.push(parse_quote! {
-        pub type Context<'i, I> = lexer::Context<'i, I, Layout, StateIndex>;
+        pub type Context<'i> = lexer::Context<'i, Input, Layout, StateIndex>;
     });
 
     // Lazy init of regexes
@@ -657,33 +667,27 @@ fn generate_parser_definition(
         },
     };
 
-    ast.push(
-        match settings.lexer_type {
-            LexerType::Default => parse_quote! {
-                #[allow(dead_code)]
-                impl #parser
-                {
-                    pub fn parse<'i>(input: &'i str) -> #parse_result {
-                        let mut context = Context::new("<str>".to_string(), input);
-                        let lexer = LRStringLexer::new(&LEXER_DEFINITION, #partial_parse, #skip_ws);
-                        let mut builder = #builder::new();
-                        #(#parse_stmt)*
-                    }
-                }
-            },
-            LexerType::Custom => parse_quote! {
-                #[allow(dead_code)]
-                impl #parser
-                {
-                    pub fn parse<'i, I: Input + ?Sized>(input: &'i I) -> #parse_result {
-                        let mut context = Context::new("<str>".to_string(), input);
-                        let lexer = #lexer::new();
-                        let mut builder = #builder::new();
-                        #(#parse_stmt)*
-                    }
-                }
-            },
-        });
+    let lexer_instance: syn::Stmt = match settings.lexer_type {
+        LexerType::Default => parse_quote! {
+            let lexer = LRStringLexer::new(&LEXER_DEFINITION, #partial_parse, #skip_ws);
+        },
+        LexerType::Custom => parse_quote! {
+            let lexer = #lexer::new();
+        },
+    };
+
+    ast.push(parse_quote! {
+        #[allow(dead_code)]
+        impl #parser
+        {
+            pub fn parse<'i>(input: &'i Input) -> #parse_result {
+                let mut context = Context::new("<str>".to_string(), input);
+                #lexer_instance
+                let mut builder = #builder::new();
+                #(#parse_stmt)*
+            }
+        }
+    });
 
     ast.push(parse_quote! {
         impl Default for #parser {
@@ -722,7 +726,7 @@ fn generate_layout_parser(
             #[allow(dead_code)]
             impl #layout_parser
             {
-                pub fn parse_layout<'i>(context: &mut Context<'i, str>) -> Result<#actions_file::Layout> {
+                pub fn parse_layout<'i>(context: &mut Context<'i>) -> Result<#actions_file::Layout> {
                     let lexer = LRStringLexer::new(&LEXER_DEFINITION, true, false);
                     let mut builder = #builder::new();
                     match #layout_parser::default().0.parse(context, &lexer, &mut builder)? {
@@ -1076,14 +1080,14 @@ fn generate_builder(
 
     ast.push(
         parse_quote! {
-            impl<'i> LRBuilder<'i, str, Layout, TokenKind> for #builder
+            impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for #builder
             {
 
                 #![allow(unused_variables)]
                 fn shift_action(
                     &mut self,
-                    #context_var: &Context<'i, str>,
-                    token: Token<'i, str, TokenKind>) {
+                    #context_var: &Context<'i>,
+                    token: Token<'i, Input, TokenKind>) {
                     let kind = match token.kind {
                         lexer::TokenKind::Kind(kind) => kind,
                         lexer::TokenKind::STOP => panic!("Cannot shift STOP token!"),
@@ -1096,7 +1100,7 @@ fn generate_builder(
 
                 fn reduce_action(
                     &mut self,
-                    #context_var: &Context<'i, str>,
+                    #context_var: &Context<'i>,
                     prod_idx: ProdIndex,
                     _prod_len: usize) {
                     let prod = match ProdKind::from(prod_idx) {

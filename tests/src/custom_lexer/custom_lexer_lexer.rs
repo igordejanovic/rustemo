@@ -2,9 +2,11 @@ use super::custom_lexer::TokenKind;
 use rustemo_rt::{
     error::Result,
     index::StateIndex,
-    lexer::{self, Context, Input, Lexer, Token},
+    lexer::{self, Context, Lexer, Token},
     location::{Location, Position},
 };
+
+pub type Input = [u8];
 
 pub struct CustomLexerLexer();
 
@@ -14,14 +16,14 @@ impl CustomLexerLexer {
     }
 }
 
-impl<'i> Lexer<'i, [u8], (), StateIndex, TokenKind> for CustomLexerLexer {
+impl<'i> Lexer<'i, Input, (), StateIndex, TokenKind> for CustomLexerLexer {
     fn next_token(
         &self,
-        context: &mut Context<'i, [u8], (), StateIndex>,
-    ) -> Result<Token<'i, [u8], TokenKind>> {
+        context: &mut Context<'i, Input, (), StateIndex>,
+    ) -> Result<Token<'i, Input, TokenKind>> {
         let value;
         let kind: lexer::TokenKind<TokenKind>;
-        let pos = context.position;
+        let mut pos = context.position;
         if context.position >= context.input.len() {
             value = &[][..];
             kind = lexer::TokenKind::STOP;
@@ -29,7 +31,7 @@ impl<'i> Lexer<'i, [u8], (), StateIndex, TokenKind> for CustomLexerLexer {
             while (context.input[pos] & 0b1000_0000) != 0 {
                 pos += 1;
             }
-            let value = &context.input[context.position..=pos];
+            value = &context.input[context.position..=pos];
             kind = lexer::TokenKind::Kind(TokenKind::VarInt);
         }
 

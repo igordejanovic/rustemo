@@ -9,7 +9,7 @@ use self::custom_lexer::CustomLexerParser;
 mod custom_lexer_lexer;
 
 rustemo_mod!(custom_lexer, "/src/custom_lexer");
-rustemo_mod!(custom_lexer_actions, "/src/custom_lexer");
+mod custom_lexer_actions;
 // rustemo_mod!(custom_lexer_2, "/src/custom_lexer");
 // rustemo_mod!(custom_lexer_2_actions, "/src/custom_lexer");
 
