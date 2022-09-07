@@ -4,7 +4,7 @@ use crate::{
     location::{LineBased, Location, Position},
 };
 use core::fmt::Debug;
-use std::cmp::min;
+use std::{cmp::min, iter::once, fmt::Display};
 
 /// The `Lexer` trait allows input tokenization
 ///
@@ -14,7 +14,10 @@ pub trait Lexer<'i, I: Input + ?Sized, LO, ST, TK: Clone + Copy> {
     /// Given the current context, this method should return RustemoResult with
     /// token found ahead of the current location or error indicating what is
     /// expected.
-    fn next_token(&self, context: &mut Context<'i, I, LO, ST>) -> Result<Token<'i, I, TK>>;
+    fn next_token(
+        &self,
+        context: &mut Context<'i, I, LO, ST>,
+    ) -> Result<Token<'i, I, TK>>;
 }
 
 /// This trait must be implemented by all types that should be parsed by
@@ -185,7 +188,50 @@ impl Input for str {
     }
 }
 
-impl<'i, I: Input + ?Sized, LO, ST: Default> From<&mut Context<'i, I, LO, ST>> for Location {
+impl<T> Input for [T]
+where
+    T: Display,
+{
+    fn context_str(&self, position: usize) -> String {
+        format!(
+            "{:?}",
+            self[position - min(15, position)..position]
+                .iter()
+                .map(|x| format!("{x}"))
+                .chain(once("-->".to_string()))
+                .chain(
+                    self[position..].iter().map(|x| format!("{x}")).take(15)
+                )
+                .collect::<Vec<_>>()
+        )
+    }
+
+    fn len(&self) -> usize {
+        self.len()
+    }
+
+    fn new_location(&self, location: Option<Location>) -> Location {
+        if let Some(Location {
+            start: Position::Position(p),
+            ..
+        }) = location
+        {
+            Location {
+                start: Position::Position(p + self.len()),
+                end: None,
+            }
+        } else {
+            Location {
+                start: Position::Position(self.len()),
+                end: None,
+            }
+        }
+    }
+}
+
+impl<'i, I: Input + ?Sized, LO, ST: Default> From<&mut Context<'i, I, LO, ST>>
+    for Location
+{
     fn from(context: &mut Context<I, LO, ST>) -> Self {
         context.location.unwrap_or(Self {
             start: Position::Position(context.position),
