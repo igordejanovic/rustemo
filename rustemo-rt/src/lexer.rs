@@ -10,7 +10,7 @@ use std::cmp::min;
 ///
 /// Lexer is stateless and its job is to produce next token given the current
 /// context.
-pub trait Lexer<I: Input, LO, ST, TK: Clone + Copy> {
+pub trait Lexer<'i, I: Input<'i>, LO, ST, TK: Clone + Copy> {
     /// Given the current context, this method should return RustemoResult with
     /// token found ahead of the current location or error indicating what is
     /// expected.
@@ -19,7 +19,7 @@ pub trait Lexer<I: Input, LO, ST, TK: Clone + Copy> {
 
 /// This trait must be implemented by all types that should be parsed by
 /// Rustemo. Input is a sequence-like type with a concept of length.
-pub trait Input {
+pub trait Input<'i>: 'i {
     /// Returns a string context for the given position. Used in debugging outputs.
     fn context_str(&self, position: usize) -> String;
 
@@ -71,7 +71,7 @@ impl<K: Into<TermIndex> + Clone + Copy> From<TokenKind<K>> for TermIndex {
 
 /// `Token` represent a single token from the input stream.
 #[derive(Debug)]
-pub struct Token<I: Input, TK: Clone + Copy> {
+pub struct Token<'i, I: Input<'i>, TK: Clone + Copy> {
     pub kind: TokenKind<TK>,
 
     /// The part of the input stream that this token represents.
@@ -84,7 +84,7 @@ pub struct Token<I: Input, TK: Clone + Copy> {
 /// Lexer context is used to keep the lexing state. It provides necessary
 /// information to parsers and actions.
 #[derive(Debug)]
-pub struct Context<I: Input, LO, ST> {
+pub struct Context<'i, I: Input<'i>, LO, ST> {
     /// File path of the parsed content. "<str>" In case of static string.
     pub file: String,
 
@@ -117,7 +117,7 @@ pub struct Context<I: Input, LO, ST> {
     pub state: ST,
 }
 
-impl<I: Input, LO, ST: Default> Context<I, LO, ST> {
+impl<'i, I: Input<'i>, LO, ST: Default> Context<'i, I, LO, ST> {
     pub fn new(file: String, input: I) -> Self {
         Self {
             file,
@@ -147,7 +147,7 @@ impl<I: Input, LO, ST: Default> Context<I, LO, ST> {
     }
 }
 
-impl<'i> Input for &'i str {
+impl<'i> Input<'i> for &'i str {
     fn context_str(&self, position: usize) -> String {
         self[position - min(15, position)..position]
             .chars()
@@ -185,7 +185,7 @@ impl<'i> Input for &'i str {
     }
 }
 
-impl<I: Input, LO, ST: Default> From<&mut Context<I, LO, ST>> for Location {
+impl<'i, I: Input<'i>, LO, ST: Default> From<&mut Context<'i, I, LO, ST>> for Location {
     fn from(context: &mut Context<I, LO, ST>) -> Self {
         context.location.unwrap_or(Self {
             start: Position::Position(context.position),

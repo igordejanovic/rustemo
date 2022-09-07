@@ -8,7 +8,7 @@ use crate::{
 ///
 /// Builder should keep its internal stack of subresults, similar to the way LR
 /// parsing operates.
-pub trait LRBuilder<I: Input, LO, TK: Copy>: Builder {
+pub trait LRBuilder<'i, I: Input<'i>, LO, TK: Copy>: Builder {
     /// Called when LR shifting is taking place.
     ///
     /// # Arguments
@@ -38,11 +38,11 @@ pub trait LRBuilder<I: Input, LO, TK: Copy>: Builder {
 }
 
 /// TreeBuilder is a builder that builds a generic parse tree.
-pub struct TreeBuilder<I: Input, TK: Copy> {
+pub struct TreeBuilder<'i, I: Input<'i>, TK: Copy> {
     res_stack: Vec<TreeNode<I, TK>>,
 }
 
-impl<I: Input, TK: Copy> Builder for TreeBuilder<I, TK> {
+impl<'i, I: Input<'i>, TK: Copy> Builder for TreeBuilder<'i, I, TK> {
     type Output = TreeNode<I, TK>;
 
     fn new() -> Self {
@@ -54,7 +54,7 @@ impl<I: Input, TK: Copy> Builder for TreeBuilder<I, TK> {
     }
 }
 
-impl<I: Input, LO, TK: Clone + Copy> LRBuilder<I, LO, TK> for TreeBuilder<I, TK> {
+impl<'i, I: Input<'i>, LO, TK: Clone + Copy> LRBuilder<'i, I, LO, TK> for TreeBuilder<'i, I, TK> {
     fn shift_action(
         &mut self,
         context: &Context<I, LO, StateIndex>,
@@ -83,14 +83,14 @@ impl<I: Input, LO, TK: Clone + Copy> LRBuilder<I, LO, TK> for TreeBuilder<I, TK>
 }
 
 #[derive(Debug)]
-pub enum TreeNode<I: Input, TK: Copy> {
+pub enum TreeNode<'i, I: Input<'i>, TK: Copy> {
     TermNode {
-        token: Token<I, TK>,
+        token: Token<'i, I, TK>,
         position: usize,
     },
     NonTermNode {
         prod_idx: ProdIndex,
         position: usize,
-        children: Vec<TreeNode<I, TK>>,
+        children: Vec<TreeNode<'i, I, TK>>,
     },
 }

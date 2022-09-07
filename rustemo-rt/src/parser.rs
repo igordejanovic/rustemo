@@ -4,10 +4,10 @@ use crate::{
     lexer::{Context, Input, Lexer},
 };
 
-pub trait Parser<I, L, B, LO, ST, TK>
+pub trait Parser<'i, I, L, B, LO, ST, TK>
 where
-    I: Input,
-    L: Lexer<I, LO, ST, TK>,
+    I: Input<'i>,
+    L: Lexer<'i, I, LO, ST, TK>,
     B: Builder,
     TK: Copy,
 {
