@@ -4,7 +4,7 @@ use rustemo_rt::lexer;
 use std::collections::BTreeMap;
 use super::rustemo::TokenKind;
 pub type Name = String;
-pub type Token<'i> = lexer::Token<&'i str, lexer::TokenKind<TokenKind>>;
+pub type Token<'i> = lexer::Token<&'i str, TokenKind>;
 pub fn name<'i>(token: Token<'i>) -> Name {
     token.value.into()
 }

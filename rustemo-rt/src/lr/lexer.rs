@@ -59,7 +59,7 @@ where
             "Trying recognizers: {:?}",
             self.definition
                 .recognizers(context.state)
-                .map(|(_, term_idx)| TK::from(term_idx).as_str())
+                .map(|(_, term_idx)| TokenKind::<TK>::from(term_idx).as_str())
                 .collect::<Vec<_>>()
         );
         let token: Option<Token<&'i str, TK>> = self
@@ -95,7 +95,7 @@ where
                     let expected = self
                         .definition
                         .recognizers(context.state)
-                        .map(|(_, term_idx)| TK::from(term_idx).as_str())
+                        .map(|(_, term_idx)| TokenKind::<TK>::from(term_idx).as_str())
                         .collect::<Vec<_>>()
                         .join(", ");
                     Err(Error::ParseError {

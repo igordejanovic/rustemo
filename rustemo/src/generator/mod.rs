@@ -133,6 +133,7 @@ pub fn generate_parser(
         &parser,
         &layout_parser,
         &parser_definition,
+        &file_name,
         &lexer,
         &builder_file,
         &builder,
@@ -509,6 +510,7 @@ fn generate_parser_definition(
     parser: &str,
     layout_parser: &str,
     parser_definition: &str,
+    parser_file: &str,
     lexer: &str,
     builder_file: &str,
     builder: &str,
@@ -518,15 +520,16 @@ fn generate_parser_definition(
     settings: &Settings,
 ) -> Result<Vec<syn::Item>> {
     let mut ast: Vec<syn::Item> = vec![];
-    let parser = format_ident!("{}", parser);
-    let layout_parser = format_ident!("{}", layout_parser);
-    let parser_definition = format_ident!("{}", parser_definition);
-    let lexer = format_ident!("{}", lexer);
-    let builder_file = format_ident!("{}", builder_file);
-    let builder = format_ident!("{}", builder);
-    let builder_output = format_ident!("{}", builder_output);
-    let actions_file = format_ident!("{}", actions_file);
-    let root_symbol = format_ident!("{}", root_symbol);
+    let parser = format_ident!("{parser}");
+    let layout_parser = format_ident!("{layout_parser}");
+    let parser_definition = format_ident!("{parser_definition}");
+    let parser_file = format_ident!("{parser_file}");
+    let lexer = format_ident!("{lexer}");
+    let builder_file = format_ident!("{builder_file}");
+    let builder = format_ident!("{builder}");
+    let builder_output = format_ident!("{builder_output}");
+    let actions_file = format_ident!("{actions_file}");
+    let root_symbol = format_ident!("{root_symbol}");
 
     ast.push(parse_quote! {
         pub struct #parser_definition {
@@ -647,7 +650,7 @@ fn generate_parser_definition(
             Result<#actions_file::#root_symbol>
         },
         BuilderType::Generic => parse_quote! {
-            Result<TreeNode<&'i str>>
+            Result<TreeNode<&'i str, super::#parser_file::TokenKind>>
         },
         BuilderType::Custom => parse_quote! {
             Result<#builder_file::#root_symbol>
@@ -1073,15 +1076,19 @@ fn generate_builder(
 
     ast.push(
         parse_quote! {
-            impl<'i> LRBuilder<&'i str, Layout, lexer::TokenKind<TokenKind>> for #builder
+            impl<'i> LRBuilder<&'i str, Layout, TokenKind> for #builder
             {
 
                 #![allow(unused_variables)]
                 fn shift_action(
                     &mut self,
                     #context_var: &Context<&'i str>,
-                    term_idx: TermIndex, token: Token<&'i str, lexer::TokenKind<TokenKind>>) {
-                    let val = match TokenKind::from(term_idx) {
+                    token: Token<&'i str, TokenKind>) {
+                    let kind = match token.kind {
+                        lexer::TokenKind::Kind(kind) => kind,
+                        lexer::TokenKind::STOP => panic!("Cannot shift STOP token!"),
+                    };
+                    let val = match kind {
                         #(#shift_match_arms),*
                     };
                     self.res_stack.push(Symbol::Terminal(val));
@@ -1107,10 +1114,9 @@ fn generate_builder(
 
 fn action_to_syntax(action: &Action) -> syn::Expr {
     match action {
-        Action::Shift(state, term) => {
+        Action::Shift(state) => {
             let state = state.0;
-            let term = term.0;
-            parse_quote! { Shift(StateIndex(#state), TermIndex(#term)) }
+            parse_quote! { Shift(StateIndex(#state)) }
         }
         Action::Reduce(prod, len, nonterm) => {
             let prod = prod.0;

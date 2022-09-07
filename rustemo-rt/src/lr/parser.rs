@@ -20,7 +20,7 @@ pub trait ParserDefinition {
 
 #[derive(Debug, Copy, Clone)]
 pub enum Action {
-    Shift(StateIndex, TermIndex),
+    Shift(StateIndex),
     Reduce(ProdIndex, usize, NonTermIndex),
     Accept,
     Error,
@@ -36,8 +36,8 @@ struct StackItem {
 impl Display for Action {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Action::Shift(state, term) => {
-                write!(f, "Shift(StateIndex({}), TermIndex({}))", state, term)
+            Action::Shift(state) => {
+                write!(f, "Shift(StateIndex({state}))")
             }
             Action::Reduce(prod, len, nonterm) => {
                 write!(
@@ -141,7 +141,7 @@ where
             log!("Action: {:?}", action);
 
             match action {
-                Action::Shift(state_id, term_idx) => {
+                Action::Shift(state_id) => {
                     log!(
                         "Shifting to state {:?} with token {:?}",
                         state_id,
@@ -152,7 +152,7 @@ where
                     self.to_state(context, state_id);
 
                     let new_location = next_token.value.new_location(context.location);
-                    builder.shift_action(&context, term_idx, next_token);
+                    builder.shift_action(&context, next_token);
 
                     context.position = context.end_pos;
                     log!(

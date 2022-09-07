@@ -94,7 +94,8 @@ where
                 use rustemo_rt::lexer;
                 use super::#parser_mod::Context;
                 use super::#parser_mod::TokenKind;
-                pub type Token<'i> = lexer::Token<&'i str, lexer::TokenKind<TokenKind>>;
+                #[allow(dead_code)]
+                pub type Token<'i> = lexer::Token<&'i str, TokenKind>;
             }
         } else {
             parse_quote! {
@@ -102,7 +103,8 @@ where
                 ///! All manual changes will be preserved except non-doc comments.
                 use rustemo_rt::lexer;
                 use super::#parser_mod::TokenKind;
-                pub type Token<'i> = lexer::Token<&'i str, lexer::TokenKind<TokenKind>>;
+                #[allow(dead_code)]
+                pub type Token<'i> = lexer::Token<&'i str, TokenKind>;
             }
         }
     };

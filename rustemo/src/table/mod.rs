@@ -29,7 +29,7 @@ use super::grammar::{res_symbol, Grammar};
 
 #[derive(Debug, Clone)]
 pub enum Action {
-    Shift(StateIndex, TermIndex),
+    Shift(StateIndex),
     Reduce(ProdIndex, usize, NonTermIndex),
     Accept,
 }
@@ -577,7 +577,7 @@ impl<'g, 's> LRTable<'g, 's> {
                     let term =
                         self.grammar.symbol_to_term_index(new_state.symbol);
                     state.actions[term]
-                        .push(Action::Shift(target_state_idx, term));
+                        .push(Action::Shift(target_state_idx));
                 }
 
                 if new_state_found {
@@ -683,7 +683,7 @@ impl<'g, 's> LRTable<'g, 's> {
                     .filter_map(|x| x.as_ref())
                     .chain(state.actions.iter().flat_map(|x| {
                         x.iter().filter_map(|a| match a {
-                            Action::Shift(state, _) => Some(state),
+                            Action::Shift(state) => Some(state),
                             _ => None,
                         })
                     }))
@@ -761,7 +761,7 @@ impl<'g, 's> LRTable<'g, 's> {
                             .clone()
                             .into_iter()
                             .partition(|x| match x {
-                                Action::Shift(..) | Action::Accept => true,
+                                Action::Shift(_) | Action::Accept => true,
                                 _ => false,
                             });
                         // Only one SHIFT or ACCEPT might exists for a single
@@ -1006,8 +1006,8 @@ impl<'g, 's> LRTable<'g, 's> {
                             // First figure out the type of conflict.
                             let kind = match &actions[..] {
                                 // Shift/Reduce
-                                [Action::Shift(..), Action::Reduce(prod, ..)]
-                                    | [Action::Reduce(prod, ..), Action::Shift(..)]=>
+                                [Action::Shift(_), Action::Reduce(prod, ..)]
+                                    | [Action::Reduce(prod, ..), Action::Shift(_)]=>
                                         ConflictKind::ShiftReduce(*prod),
                                 // Reduce/Reduce
                                 [Action::Reduce(prod1, ..), Action::Reduce(prod2, ..)] =>
@@ -1091,7 +1091,7 @@ impl<'g, 's> Display for LRTable<'g, 's> {
                     (
                         self.grammar.terminals[TermIndex(i)].name.clone(),
                         match a {
-                            Action::Shift(s, _) => format!("Shift to {s}"),
+                            Action::Shift(s) => format!("Shift to {s}"),
                             Action::Reduce(p, l, ..) => {
                                 format!("Reduce for len {l} by:   {}", ProdKind::from(*p))
                             }

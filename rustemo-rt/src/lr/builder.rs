@@ -1,6 +1,6 @@
 use crate::{
     builder::Builder,
-    index::{ProdIndex, StateIndex, TermIndex},
+    index::{ProdIndex, StateIndex},
     lexer::{Context, Input, Token},
 };
 
@@ -18,7 +18,6 @@ pub trait LRBuilder<I: Input, LO, TK: Copy>: Builder {
     fn shift_action(
         &mut self,
         context: &Context<I, LO, StateIndex>,
-        term_idx: TermIndex,
         token: Token<I, TK>,
     );
 
@@ -59,7 +58,6 @@ impl<I: Input, LO, TK: Clone + Copy> LRBuilder<I, LO, TK> for TreeBuilder<I, TK>
     fn shift_action(
         &mut self,
         context: &Context<I, LO, StateIndex>,
-        _term_idx: TermIndex,
         token: Token<I, TK>,
     ) {
         self.res_stack.push(TreeNode::TermNode {
