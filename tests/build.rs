@@ -1,6 +1,6 @@
 use std::{env, path::PathBuf, process::exit};
 
-use rustemo::api::{RustemoSettings, BuilderType, LexerType};
+use rustemo::api::{BuilderType, LexerType, RustemoSettings};
 
 fn main() {
     let root_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
@@ -27,10 +27,23 @@ fn main() {
         ),
         ("layout", Box::new(|s| s)),
         // Builders
-        ("generic_tree", Box::new(|s| s.builder_type(BuilderType::Generic))),
-        ("custom_builder", Box::new(|s| s.builder_type(BuilderType::Custom))),
+        (
+            "generic_tree",
+            Box::new(|s| s.builder_type(BuilderType::Generic)),
+        ),
+        (
+            "custom_builder",
+            Box::new(|s| s.builder_type(BuilderType::Custom)),
+        ),
         // Custom lexer
-        ("custom_lexer", Box::new(|s| s.lexer_type(LexerType::Custom))),
+        (
+            "custom_lexer",
+            Box::new(|s| {
+                s.lexer_type(LexerType::Custom)
+                    .force(false)
+                    .out_dir_actions(None)
+            }),
+        ),
     ];
 
     for (test, config) in tests {
