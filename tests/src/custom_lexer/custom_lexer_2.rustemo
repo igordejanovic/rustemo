@@ -1,5 +1,6 @@
 // This grammar defines a language which consists of a sequence of VarInts
 // https://developers.google.com/protocol-buffers/docs/encoding#varints
+//
 // In this variant we are doing more work in the parser. The lexer will
 // just recognize if the current byte is MSB or not.
 

@@ -1,11 +1,12 @@
 ///! This file is maintained by rustemo but can be modified manually.
 ///! All manual changes will be preserved except non-doc comments.
 use rustemo_rt::lexer;
-use super::custom_lexer::TokenKind;
-use super::custom_lexer_lexer::Input;
+use super::custom_lexer_1::TokenKind;
+use super::custom_lexer_1_lexer::Input;
 #[allow(dead_code)]
 pub type Token<'i> = lexer::Token<'i, Input, TokenKind>;
 pub type VarInt = i128;
+/// Here we convert varint slice of u8 to i128
 pub fn var_int<'i>(token: Token<'i>) -> VarInt {
     let mut res: VarInt = 0;
     token
@@ -14,7 +15,7 @@ pub fn var_int<'i>(token: Token<'i>) -> VarInt {
         .rev()
         .for_each(|b| {
             res <<= 7;
-            res &= (b & 0b0111_1111) as i128;
+            res |= (b & 0b0111_1111) as i128;
         });
     res
 }

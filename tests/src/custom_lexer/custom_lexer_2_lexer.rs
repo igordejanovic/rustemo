@@ -1,4 +1,4 @@
-use super::custom_lexer::TokenKind;
+use super::custom_lexer_2::TokenKind;
 use rustemo_rt::{
     error::Result,
     index::StateIndex,
@@ -8,31 +8,31 @@ use rustemo_rt::{
 
 pub type Input = [u8];
 
-pub struct CustomLexerLexer();
+pub struct CustomLexer2Lexer();
 
-impl CustomLexerLexer {
+impl CustomLexer2Lexer {
     pub fn new() -> Self {
-        CustomLexerLexer()
+        CustomLexer2Lexer()
     }
 }
 
-impl<'i> Lexer<'i, Input, (), StateIndex, TokenKind> for CustomLexerLexer {
+impl<'i> Lexer<'i, Input, (), StateIndex, TokenKind> for CustomLexer2Lexer {
     fn next_token(
         &self,
         context: &mut Context<'i, Input, (), StateIndex>,
     ) -> Result<Token<'i, Input, TokenKind>> {
         let value;
         let kind: lexer::TokenKind<TokenKind>;
-        let mut pos = context.position;
         if context.position >= context.input.len() {
             value = &[][..];
             kind = lexer::TokenKind::STOP;
         } else {
-            while (context.input[pos] & 0b1000_0000) != 0 {
-                pos += 1;
-            }
-            value = &context.input[context.position..=pos];
-            kind = lexer::TokenKind::Kind(TokenKind::VarInt);
+            value = &context.input[context.position..=context.position];
+            if value[0] & 0b1000_0000 != 0 {
+                kind = lexer::TokenKind::Kind(TokenKind::MSBByte);
+            } else {
+                kind = lexer::TokenKind::Kind(TokenKind::NonMSBByte);
+            };
         }
 
         Ok(Token {
@@ -40,7 +40,7 @@ impl<'i> Lexer<'i, Input, (), StateIndex, TokenKind> for CustomLexerLexer {
             value,
             location: Some(Location {
                 start: Position::Position(context.position),
-                end: Some(Position::Position(pos)),
+                end: Some(Position::Position(context.position)),
             }),
         })
     }

@@ -3,26 +3,41 @@ use rustemo_rt::rustemo_mod;
 use std::fs;
 use std::path::PathBuf;
 
-use self::custom_lexer::CustomLexerParser;
-//use self::custom_lexer_2::CustomLexerParser2;
+use self::custom_lexer_1::CustomLexer1Parser;
+use self::custom_lexer_2::CustomLexer2Parser;
 
-mod custom_lexer_lexer;
+mod custom_lexer_1_lexer;
+mod custom_lexer_2_lexer;
 
-rustemo_mod!(custom_lexer, "/src/custom_lexer");
-mod custom_lexer_actions;
-// rustemo_mod!(custom_lexer_2, "/src/custom_lexer");
-// rustemo_mod!(custom_lexer_2_actions, "/src/custom_lexer");
+rustemo_mod!(custom_lexer_1, "/src/custom_lexer");
+mod custom_lexer_1_actions;
+rustemo_mod!(custom_lexer_2, "/src/custom_lexer");
+mod custom_lexer_2_actions;
 
 #[test]
-fn custom_lexer() {
-    let bytes_file = PathBuf::from(file!())
-        .parent()
-        .unwrap()
-        .join("custom_lexer.bytes");
+fn custom_lexer_1() {
+    let bytes_file = &[env!("CARGO_MANIFEST_DIR"),
+                       "src/custom_lexer/custom_lexer.bytes"]
+        .iter()
+        .collect::<PathBuf>();
     let bytes = std::fs::read(bytes_file).unwrap();
-    let result = CustomLexerParser::parse(&*bytes);
+    let result = CustomLexer1Parser::parse(&*bytes);
     output_cmp!(
-        "src/custom_lexer/custom_lexer.ast",
+        "src/custom_lexer/custom_lexer_1.ast",
+        format!("{:#?}", result)
+    );
+}
+
+#[test]
+fn custom_lexer_2() {
+    let bytes_file = &[env!("CARGO_MANIFEST_DIR"),
+                       "src/custom_lexer/custom_lexer.bytes"]
+        .iter()
+        .collect::<PathBuf>();
+    let bytes = std::fs::read(bytes_file).unwrap();
+    let result = CustomLexer2Parser::parse(&*bytes);
+    output_cmp!(
+        "src/custom_lexer/custom_lexer_2.ast",
         format!("{:#?}", result)
     );
 }
