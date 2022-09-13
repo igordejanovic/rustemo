@@ -25,9 +25,9 @@ pub fn var_int1_c1(mut var_int1: VarInt1, var_int: VarInt) -> VarInt1 {
 pub fn var_int1_c2(var_int: VarInt) -> VarInt1 {
     vec![var_int]
 }
-/// We are doing a conversion.
-/// msbbyte0 is an option containing first bytes of the VarInt
-/// non_msbbyte contains the last byte
+/// We are doing a conversion in this action. Other actions are generated.
+/// msbbyte0 is an option containing first bytes of the VarInt non_msbbyte
+/// contains the last byte
 pub type VarInt = i128;
 pub fn var_int_c1(msbbyte0: MSBByte0, non_msbbyte: NonMSBByte) -> VarInt {
     let mut res: i128 = non_msbbyte as i128;

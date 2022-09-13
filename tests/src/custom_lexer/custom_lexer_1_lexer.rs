@@ -6,6 +6,7 @@ use rustemo_rt::{
     location::{Location, Position},
 };
 
+/// We are parsing a slice of bytes.
 pub type Input = [u8];
 
 pub struct CustomLexer1Lexer();
@@ -16,6 +17,9 @@ impl CustomLexer1Lexer {
     }
 }
 
+/// This custom lexer will recognize a VarInt in the input by returning a slice
+/// of the input where first bytes has highest bit set while the last byte
+/// highest bit is .
 impl<'i> Lexer<'i, Input, (), StateIndex, TokenKind> for CustomLexer1Lexer {
     fn next_token(
         &self,
@@ -28,9 +32,11 @@ impl<'i> Lexer<'i, Input, (), StateIndex, TokenKind> for CustomLexer1Lexer {
             value = &[][..];
             kind = lexer::TokenKind::STOP;
         } else {
+            // Increase position as long as the highest bit is set.
             while (context.input[pos] & 0b1000_0000) != 0 {
                 pos += 1;
             }
+            // Token value is the slice of the input where VarInt is reconized.
             value = &context.input[context.position..=pos];
             kind = lexer::TokenKind::Kind(TokenKind::VarInt);
         }
