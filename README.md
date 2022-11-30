@@ -1,12 +1,8 @@
 # Rustemo
 
-LR/GLR parser generator for Rust (currently only LR). In the early phase of
-the development.
+LR/GLR parser generator for Rust (currently only LR). 
 
-## Why this name?
-
-Rustemo is pronounced the same as Serbian word "растемо" which means "we grow".
-The name is a tribute to the awesome and ever growing Rust community.
+**In the early phase of development. DO NOT USE IN PRODUCTION!**
 
 ## Goals
 
@@ -30,6 +26,7 @@ The name is a tribute to the awesome and ever growing Rust community.
 - Lexer and builder can be provided by the user or auto-generated. When provided
   by the user Rustemo can be used to parse virtually any kind of sequence and
   also build anything.
+- AST node types should be deduced from the grammar and auto-generated.
 - Multiple builders can be called by providing a macro builder. E.g. you can
   construct an AST and a full/concrete syntax tree (for example, if you are
   implementing refactoring engine) where AST nodes keep relations to CST.
@@ -104,3 +101,8 @@ I have found a lot of inspiration and ideas in the following projects:
   architecture and nicely designed traits.
 - [pest](https://github.com/pest-parser/pest) - PEG parser for Rust. Seems nice
   and well maintained.
+
+## Why this name?
+
+Rustemo is pronounced the same as Serbian word "растемо" which means "we grow".
+The name is a tribute to the awesome and ever growing Rust community.
