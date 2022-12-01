@@ -1,5 +1,8 @@
 #+title: Rustemo book
 
+This document is ported from [[https://github.com/igordejanovic/parglare][the parglare project]]. Rustemo and this doc are
+still work in progress and not all features of parglare are implemented yet.
+
 * Export settings :noexport:
 #+EXPORT_FILE_NAME: rustemo
 #+STARTUP: overview
@@ -79,11 +82,6 @@ end
 :END:
 
 This section describe the grammar language, its syntax and semantics rules.
-
-#+begin_warning
-This document is ported from [[https://github.com/igordejanovic/parglare][the parglare project]]. Rustemo and this doc are
-still work in progress and not all features of parglare are implemented yet.
-#+end_warning
 
 The Rustemo grammar specification language is based on [[https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form][BNF]] with [[#syntactic-sugar-bnf-extensions][syntactic sugar
 extensions]] which are optional and builds on top of a pure BNF. Rustemo is
