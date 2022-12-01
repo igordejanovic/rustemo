@@ -85,37 +85,6 @@ This document is ported from [[https://github.com/igordejanovic/parglare][the pa
 still work in progress and not all features of parglare are implemented yet.
 #+end_warning
 
-#+begin_src plantuml :exports results :file test-plant.png
-:<math>int_0^1f(x)dx</math>;
-:<math>x^2+y_1+z_12^34</math>;
-note right
-Try also
-<math>d/dxf(x)=lim_(h->0)(f(x+h)-f(x))/h</math>
-<math>P(y|bb"x") or f(bb"x")+epsilon</math>
-end note
-#+end_src
-
-#+RESULTS:
-[[file:test-plant.png]]
-
-
-#+begin_src mermaid :file test-mermaid.png :exports results
-sequenceDiagram
-    participant Alice
-    participant Bob
-    Alice->>John: Hello John, how are you?
-    loop Healthcheck
-        John->>John: Fight against hypochondria
-    end
-    Note right of John: Rational thoughts <br/>prevail!
-    John-->>Alice: Great!
-    John->>Bob: How about you?
-    Bob-->>John: Jolly good!
-#+end_src
-
-#+RESULTS:
-[[file:test-mermaid.png]]
-
 The Rustemo grammar specification language is based on [[https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form][BNF]] with [[#syntactic-sugar-bnf-extensions][syntactic sugar
 extensions]] which are optional and builds on top of a pure BNF. Rustemo is
 based on [[https://en.wikipedia.org/wiki/Context-free_grammar][Context-Free Grammars (CFGs)]] and a grammar is written declaratively.
