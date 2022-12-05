@@ -37,12 +37,12 @@ LR/GLR parser generator for Rust (currently only LR).
 ## Roadmap
 
 - [x] LR parsing.
-- [x] Bootstrapping. Rustemo is [implemented in itself](./src/lang/).
+- [x] Bootstrapping. Rustemo is [implemented in itself](./rustemo/src/lang/).
 - [x] Actions providing AST build are auto-generated but can be manually
       modified. Manual modifications are preserved on code re-generation while
       new types/actions are added to the file. This allow for fast development
       while keeping full control over the AST.
-- [x] Regex-like syntax sugar. See [the tests](../tests/src/sugar/).
+- [x] Regex-like syntax sugar. See [the tests](./tests/src/sugar/).
 - [ ] Parenthesized groups. Still not sure if this is a good thing to have.
       Sometimes it can nicely reduce clutter but if used too much it lowers
       readability.
@@ -50,8 +50,8 @@ LR/GLR parser generator for Rust (currently only LR).
 - [x] Rule/production meta-data. E.g. production kinds.
 - [x] CLI and API. A `rustemo` is available that can be called on Rustemo
       grammars. Also an API enables integrating parser compiling into Rust
-      `build.rs` scripts. See [the calculator example](../examples/calculator/)
-      or [integration tests](../tests/).
+      `build.rs` scripts. See [the calculator example](./examples/calculator/)
+      or [integration tests](./tests/).
 - [x] Tracking of position and reporting error with line/column works.
 - [ ] Support for a layout (comments, whitespaces given as CFG). It'll be
       implemented as a special grammar rule and parsed by the LR parser. Result
