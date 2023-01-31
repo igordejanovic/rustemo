@@ -15,10 +15,12 @@ use rustemo_rt::debug::{log, logn};
 const TERMINAL_NO: usize = 44usize;
 const NONTERMINAL_NO: usize = 44usize;
 const STATE_NO: usize = 141usize;
+#[allow(dead_code)]
 const MAX_ACTIONS: usize = 15usize;
 use super::rustemo_actions;
 pub type Layout = rustemo_actions::Layout;
-pub type Context<'i, I> = lexer::Context<'i, I, Layout, StateIndex>;
+pub type Input = str;
+pub type Context<'i> = lexer::Context<'i, Input, Layout, StateIndex>;
 use lazy_static::lazy_static;
 lazy_static! {
     static ref REGEX_NAME : Regex = Regex::new(concat!("^", "[a-zA-Z_][a-zA-Z0-9_\\.]*"))
@@ -35,6 +37,7 @@ lazy_static! {
     "//.*")).unwrap(); static ref REGEX_NOTCOMMENT : Regex = Regex::new(concat!("^",
     "((\\*[^/])|[^\\s*/]|/[^\\*])+")).unwrap();
 }
+#[allow(clippy::upper_case_acronyms)]
 #[derive(Debug, Copy, Clone)]
 pub enum TokenKind {
     Terminals,
@@ -697,6 +700,7 @@ pub enum Symbol {
     Terminal(Terminal),
     NonTerminal(NonTerminal),
 }
+#[allow(clippy::upper_case_acronyms)]
 #[derive(Debug)]
 pub enum Terminal {
     Terminals,
@@ -13780,7 +13784,7 @@ impl ParserDefinition for RustemoParserDefinition {
 pub struct RustemoParser(LRParser<RustemoParserDefinition>);
 #[allow(dead_code)]
 impl RustemoParser {
-    pub fn parse<'i>(input: &'i str) -> Result<rustemo_actions::File> {
+    pub fn parse(input: &Input) -> Result<rustemo_actions::File> {
         let mut context = Context::new("<str>".to_string(), input);
         let lexer = LRStringLexer::new(&LEXER_DEFINITION, false, true);
         let mut builder = RustemoBuilder::new();
@@ -13815,9 +13819,7 @@ impl Default for RustemoParser {
 pub struct RustemoLayoutParser(LRParser<RustemoParserDefinition>);
 #[allow(dead_code)]
 impl RustemoLayoutParser {
-    pub fn parse_layout<'i>(
-        context: &mut Context<'i, str>,
-    ) -> Result<rustemo_actions::Layout> {
+    pub fn parse_layout(context: &mut Context) -> Result<rustemo_actions::Layout> {
         let lexer = LRStringLexer::new(&LEXER_DEFINITION, true, false);
         let mut builder = RustemoBuilder::new();
         match RustemoLayoutParser::default().0.parse(context, &lexer, &mut builder)? {
@@ -13835,6 +13837,7 @@ pub struct RustemoLexerDefinition {
     terminals_for_state: TerminalsState<MAX_ACTIONS, STATE_NO>,
     recognizers: [fn(&str) -> Option<&str>; TERMINAL_NO],
 }
+#[allow(clippy::single_char_pattern)]
 pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinition {
     terminals_for_state: [
         [
@@ -16238,7 +16241,7 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
     recognizers: [
         |input: &str| {
             logn!("Recognizing <STOP> -- ");
-            if input.len() == 0 {
+            if input.is_empty() {
                 log!("recognized");
                 Some("")
             } else {
@@ -16764,12 +16767,12 @@ impl Builder for RustemoBuilder {
         }
     }
 }
-impl<'i> LRBuilder<'i, str, Layout, TokenKind> for RustemoBuilder {
+impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
     #![allow(unused_variables)]
     fn shift_action(
         &mut self,
-        _context: &Context<'i, str>,
-        token: Token<'i, str, TokenKind>,
+        _context: &Context<'i>,
+        token: Token<'i, Input, TokenKind>,
     ) {
         let kind = match token.kind {
             lexer::TokenKind::Kind(kind) => kind,
@@ -16834,7 +16837,7 @@ impl<'i> LRBuilder<'i, str, Layout, TokenKind> for RustemoBuilder {
     }
     fn reduce_action(
         &mut self,
-        _context: &Context<'i, str>,
+        _context: &Context<'i>,
         prod_idx: ProdIndex,
         _prod_len: usize,
     ) {
