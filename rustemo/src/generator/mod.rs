@@ -403,6 +403,7 @@ fn generate_parser_types(grammar: &Grammar) -> Result<Vec<syn::Item>> {
         })
         .collect();
     ast.push(parse_quote! {
+        #[allow(clippy::enum_variant_names)]
         #[derive(Copy, Clone)]
         pub enum ProdKind {
             #(#prodkind_variants),*
@@ -663,9 +664,10 @@ fn generate_parser_definition(
             }
         });
     } else {
-        parse_stmt.push(parse_quote! {
-            return #parser::default().0.parse(&mut context, &lexer, &mut builder);
-        });
+        let ret_expr: syn::Expr = parse_quote! {
+            #parser::default().0.parse(&mut context, &lexer, &mut builder)
+        };
+        parse_stmt.push(syn::Stmt::Expr(ret_expr));
     }
 
     let skip_ws = settings.skip_ws;
