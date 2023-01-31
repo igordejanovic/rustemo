@@ -20,7 +20,7 @@ fn main() {
     // Setting environment with current head git hash to include in the version.
     // See: https://stackoverflow.com/questions/43753491/include-git-commit-hash-as-string-into-rust-program
     let output = Command::new("git")
-        .args(&["rev-parse", "HEAD"])
+        .args(["rev-parse", "HEAD"])
         .output()
         .unwrap();
     let git_hash = String::from_utf8(output.stdout)
@@ -44,9 +44,9 @@ fn bootstrap() -> Result<(), Box<dyn Error>> {
         "rustemo/src/lang/rustemo_actions.rs",
     ] {
         let output = Command::new("git")
-            .args(&["show", &format!("main:{}", f)])
+            .args(["show", &format!("main:{}", f)])
             .output()
-            .expect(&format!("Cannot checkout file {:?}", f));
+            .unwrap_or_else(|_| panic!("Cannot checkout file {:?}", f));
 
         if !output.status.success() {
             panic!("git command execution failed!");
@@ -58,7 +58,7 @@ fn bootstrap() -> Result<(), Box<dyn Error>> {
         println!("{:?}", out_file);
 
         fs::write(&out_file, output.stdout)
-            .expect(&format!("Cannot write to file {:?}.", out_file));
+            .unwrap_or_else(|_| panic!("Cannot write to file {:?}.", out_file));
     }
 
     println!("Git checkout complete!");

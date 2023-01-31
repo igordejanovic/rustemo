@@ -3,12 +3,10 @@ pub fn type_of<T>(_: &T) -> &'static str {
 }
 
 pub fn string_difference(a: &str, b: &str) -> Option<(usize, (char, char))> {
-    Some(
-        a.chars()
-            .zip(b.chars())
-            .enumerate()
-            .find(|(_, (a, b))| a != b)?,
-    )
+    a.chars()
+        .zip(b.chars())
+        .enumerate()
+        .find(|(_, (a, b))| a != b)
 }
 
 /// Used in tests for storing and comparing string representations in files.

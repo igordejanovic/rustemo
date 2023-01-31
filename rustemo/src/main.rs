@@ -1,7 +1,9 @@
 use std::path::PathBuf;
 
 use clap::Parser;
-use rustemo::api::{with_settings, ParserAlgo, LexerType, BuilderType, TableType};
+use rustemo::api::{
+    with_settings, BuilderType, LexerType, ParserAlgo, TableType,
+};
 
 #[derive(Parser)]
 #[cfg_attr(feature="bootstrap",

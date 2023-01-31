@@ -2,6 +2,12 @@
 #[cfg(test)]
 mod ambiguity;
 #[cfg(test)]
+mod custom_builder;
+#[cfg(test)]
+mod custom_lexer;
+#[cfg(test)]
+mod generic_tree;
+#[cfg(test)]
 mod layout;
 #[cfg(test)]
 mod partial;
@@ -11,12 +17,6 @@ mod pass_context;
 mod rule_patterns;
 #[cfg(test)]
 mod sugar;
-#[cfg(test)]
-mod generic_tree;
-#[cfg(test)]
-mod custom_builder;
-#[cfg(test)]
-mod custom_lexer;
 
 // For output_cmp macro
 #[cfg(test)]

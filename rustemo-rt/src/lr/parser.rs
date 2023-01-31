@@ -71,7 +71,7 @@ impl<D: ParserDefinition> LRParser<D> {
     }
 
     #[inline]
-    fn to_state<'i, I: Input + ?Sized, LO>(
+    fn push_state<'i, I: Input + ?Sized, LO>(
         &mut self,
         context: &mut Context<'i, I, LO, StateIndex>,
         state: StateIndex,
@@ -108,7 +108,8 @@ impl<D: ParserDefinition> LRParser<D> {
     }
 }
 
-impl<'i, I, D, L, B, LO, TK> Parser<'i, I, L, B, LO, StateIndex, TK> for LRParser<D>
+impl<'i, I, D, L, B, LO, TK> Parser<'i, I, L, B, LO, StateIndex, TK>
+    for LRParser<D>
 where
     I: Debug + Input + ?Sized,
     D: ParserDefinition,
@@ -135,8 +136,9 @@ where
             log!("Current state: {:?}", current_state);
             log!("Token ahead: {:?}", next_token);
 
-            let action =
-                self.definition.action(current_state, next_token.kind.clone().into());
+            let action = self
+                .definition
+                .action(current_state, next_token.kind.into());
 
             log!("Action: {:?}", action);
 
@@ -149,10 +151,10 @@ where
                     );
                     context.start_pos = context.position;
                     context.end_pos = context.position + next_token.value.len();
-                    self.to_state(context, state_id);
+                    self.push_state(context, state_id);
 
                     let new_location = next_token.value.new_location(context.location);
-                    builder.shift_action(&context, next_token);
+                    builder.shift_action(context, next_token);
 
                     context.position = context.end_pos;
                     log!(
@@ -175,9 +177,9 @@ where
                     context.start_pos = start_pos;
                     context.end_pos = end_pos;
                     let to_state = self.definition.goto(from_state, nonterm_id);
-                    self.to_state(context, to_state);
+                    self.push_state(context, to_state);
                     log!("GOTO {:?} -> {:?}", from_state, to_state);
-                    builder.reduce_action(&context, prod_idx, prod_len);
+                    builder.reduce_action(context, prod_idx, prod_len);
                 }
                 Action::Accept => break,
                 // This can't happen for context-aware lexing. If there is no

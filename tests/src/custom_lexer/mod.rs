@@ -16,10 +16,12 @@ mod custom_lexer_2_actions;
 
 #[test]
 fn custom_lexer_1() {
-    let bytes_file = &[env!("CARGO_MANIFEST_DIR"),
-                       "src/custom_lexer/custom_lexer.bytes"]
-        .iter()
-        .collect::<PathBuf>();
+    let bytes_file = &[
+        env!("CARGO_MANIFEST_DIR"),
+        "src/custom_lexer/custom_lexer.bytes",
+    ]
+    .iter()
+    .collect::<PathBuf>();
     let bytes = std::fs::read(bytes_file).unwrap();
     let result = CustomLexer1Parser::parse(&*bytes);
     output_cmp!(
@@ -30,10 +32,12 @@ fn custom_lexer_1() {
 
 #[test]
 fn custom_lexer_2() {
-    let bytes_file = &[env!("CARGO_MANIFEST_DIR"),
-                       "src/custom_lexer/custom_lexer.bytes"]
-        .iter()
-        .collect::<PathBuf>();
+    let bytes_file = &[
+        env!("CARGO_MANIFEST_DIR"),
+        "src/custom_lexer/custom_lexer.bytes",
+    ]
+    .iter()
+    .collect::<PathBuf>();
     let bytes = std::fs::read(bytes_file).unwrap();
     let result = CustomLexer2Parser::parse(&*bytes);
     output_cmp!(

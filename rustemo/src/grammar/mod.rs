@@ -132,14 +132,14 @@ impl Display for Grammar {
             for assignment in &production.rhs {
                 write!(f, "{} ", self.symbol_name(res_symbol(assignment)))?;
             }
-            writeln!(f, "")?;
+            writeln!(f)?;
         }
 
         writeln!(f, "\n] GRAMMAR")
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum Associativity {
     None,
     Left,
@@ -194,7 +194,7 @@ impl Default for Production {
 impl Production {
     #[inline]
     pub fn rhs_symbols(&self) -> Vec<SymbolIndex> {
-        self.rhs.iter().map(|a| res_symbol(a)).collect()
+        self.rhs.iter().map(res_symbol).collect()
     }
 
     /// Returns resolved RHS assignments
@@ -441,11 +441,7 @@ impl Grammar {
 
     #[inline]
     pub fn production_rhs_symbols(&self, prod: ProdIndex) -> Vec<SymbolIndex> {
-        self.productions[prod]
-            .rhs
-            .iter()
-            .map(|assgn| res_symbol(assgn))
-            .collect()
+        self.productions[prod].rhs.iter().map(res_symbol).collect()
     }
 
     /// Returns all productions except special AUG and AUGL.

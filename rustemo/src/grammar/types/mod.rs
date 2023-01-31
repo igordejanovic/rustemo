@@ -31,7 +31,7 @@ pub(crate) fn to_pascal_case<S: AsRef<str>>(s: S) -> String {
 pub(crate) fn choice_name(prod: &Production) -> String {
     if let Some(ref kind) = prod.kind {
         kind.clone()
-    } else if prod.rhs.len() == 0 {
+    } else if prod.rhs.is_empty() {
         String::from("Empty")
     } else {
         format!("C{}", prod.ntidx + 1)
@@ -83,8 +83,8 @@ impl SymbolTypes {
                 // - Multiple content. refs => Choice with a new struct type
                 //   where fields types are types of the referred symbols.
                 let rhs = production.rhs_with_content(grammar);
-                choices.push(match rhs.iter().count() {
-                    0 if production.rhs.len() == 0 => {
+                choices.push(match rhs.len() {
+                    0 if production.rhs.is_empty() => {
                         optional = true;
                         Choice {
                             name: choice_name,
@@ -152,7 +152,7 @@ impl SymbolTypes {
 
             types.push(SymbolType {
                 name: nonterminal.name.clone(),
-                kind: Self::get_type_kind(&nonterminal, &choices),
+                kind: Self::get_type_kind(nonterminal, &choices),
                 choices,
                 optional,
             });

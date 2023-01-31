@@ -29,13 +29,15 @@ fn action_name(nonterminal: &NonTerminal, prod: &Production) -> syn::Ident {
 }
 
 fn prod_kind(grammar: &Grammar, prod: &Production) -> String {
-    format!("{}{}",
+    format!(
+        "{}{}",
         prod.nonterminal(grammar).name,
         if let Some(ref kind) = prod.kind {
             kind.clone()
         } else {
             format!("P{}", prod.ntidx + 1)
-        })
+        }
+    )
 }
 
 fn prod_kind_ident(grammar: &Grammar, prod: &Production) -> syn::Ident {
@@ -51,9 +53,9 @@ pub fn generate_parser(
     if !grammar_path.exists() {
         return Err(Error::Error("Grammar file doesn't exist.".to_string()));
     }
-    let file_name = grammar_path
-        .file_name()
-        .ok_or(Error::Error("Invalid grammar file name.".to_string()))?;
+    let file_name = grammar_path.file_name().ok_or_else(|| {
+        Error::Error("Invalid grammar file name.".to_string())
+    })?;
 
     let grammar_dir = PathBuf::from(
         grammar_path
@@ -87,15 +89,19 @@ pub fn generate_parser(
     let out_file = out_dir.join(file_name).with_extension("rs");
     let file_name = grammar_path
         .file_stem()
-        .ok_or(Error::Error(format!(
-            "Cannot deduce base file name from {:?}",
-            grammar_path
-        )))?
+        .ok_or_else(|| {
+            Error::Error(format!(
+                "Cannot deduce base file name from {:?}",
+                grammar_path
+            ))
+        })?
         .to_str()
-        .ok_or(Error::Error(format!(
-            "Cannot deduce base file name from {:?}",
-            grammar_path
-        )))?;
+        .ok_or_else(|| {
+            Error::Error(format!(
+                "Cannot deduce base file name from {:?}",
+                grammar_path
+            ))
+        })?;
     let parser_name = to_pascal_case(file_name);
     let parser = format!("{}Parser", parser_name);
     let layout_parser = format!("{}LayoutParser", parser_name);
@@ -133,7 +139,7 @@ pub fn generate_parser(
         &parser,
         &layout_parser,
         &parser_definition,
-        &file_name,
+        file_name,
         &lexer,
         &builder_file,
         &builder,
@@ -176,14 +182,13 @@ pub fn generate_parser(
             generate_parser_actions(
                 &grammar,
                 file_name,
-                &out_dir_actions,
+                out_dir_actions,
                 settings,
             )?;
         }
     }
 
-
-    std::fs::create_dir_all(&out_dir).map_err(|e| {
+    std::fs::create_dir_all(out_dir).map_err(|e| {
         Error::Error(format!(
             "Cannot create folders for path '{out_dir:?}': {e:?}."
         ))
@@ -195,6 +200,7 @@ pub fn generate_parser(
     Ok(())
 }
 
+#[allow(clippy::too_many_arguments)]
 fn generate_parser_header(
     grammar: &Grammar,
     table: &LRTable,
@@ -275,7 +281,7 @@ fn generate_parser_header(
     });
 
     header.items.push(match settings.lexer_type {
-        LexerType::Default => parse_quote!{
+        LexerType::Default => parse_quote! {
             pub type Input = str;
         },
         LexerType::Custom => parse_quote! {
@@ -316,13 +322,10 @@ fn generate_parser_header(
     Ok(header)
 }
 
-fn generate_parser_types(
-    grammar: &Grammar,
-) -> Result<Vec<syn::Item>> {
+fn generate_parser_types(grammar: &Grammar) -> Result<Vec<syn::Item>> {
     let mut ast: Vec<syn::Item> = vec![];
 
-    let term_kind_variants: Vec<syn::Variant> = grammar
-        .terminals[1..]
+    let term_kind_variants: Vec<syn::Variant> = grammar.terminals[1..]
         .iter()
         .map(|t| {
             let name = format_ident!("{}", t.name);
@@ -331,21 +334,21 @@ fn generate_parser_types(
         .collect();
 
     ast.push(parse_quote! {
+        #[allow(clippy::upper_case_acronyms)]
         #[derive(Debug, Copy, Clone)]
         pub enum TokenKind {
             #(#term_kind_variants),*
         }
     });
 
-    let as_str_arms: Vec<syn::Arm> = grammar
-        .terminals[1..]
+    let as_str_arms: Vec<syn::Arm> = grammar.terminals[1..]
         .iter()
         .map(|t| {
             let name = format_ident!("{}", t.name);
             let name_str = &t.name;
             parse_quote! { TokenKind::#name => #name_str }
-
-        }).collect();
+        })
+        .collect();
     ast.push(parse_quote! {
         impl AsStr for TokenKind {
             #[allow(dead_code)]
@@ -363,9 +366,14 @@ fn generate_parser_types(
         .map(|t| {
             let name = format_ident!("{}", t.name);
             let idx = t.idx.0;
-            (parse_quote! { #idx => TokenKind::#name },
-             parse_quote! { TokenKind::#name => TermIndex(#idx) })
-        }).collect::<Vec<_>>().into_iter().unzip();
+            (
+                parse_quote! { #idx => TokenKind::#name },
+                parse_quote! { TokenKind::#name => TermIndex(#idx) },
+            )
+        })
+        .collect::<Vec<_>>()
+        .into_iter()
+        .unzip();
     ast.push(parse_quote! {
         impl From<TermIndex> for TokenKind {
             fn from(term_index: TermIndex) -> Self {
@@ -408,9 +416,14 @@ fn generate_parser_types(
             let prod_kind = prod_kind(grammar, prod);
             let prod_kind_ident = prod_kind_ident(grammar, prod);
             let prod_str = prod.to_string(grammar);
-            (parse_quote! { ProdKind::#prod_kind_ident => #prod_kind },
-             parse_quote! { ProdKind::#prod_kind_ident => #prod_str })
-        }).collect::<Vec<_>>().into_iter().unzip();
+            (
+                parse_quote! { ProdKind::#prod_kind_ident => #prod_kind },
+                parse_quote! { ProdKind::#prod_kind_ident => #prod_str },
+            )
+        })
+        .collect::<Vec<_>>()
+        .into_iter()
+        .unzip();
     ast.push(parse_quote! {
         impl AsStr for ProdKind {
             #[allow(dead_code)]
@@ -439,7 +452,8 @@ fn generate_parser_types(
             let prod_kind = prod_kind_ident(grammar, prod);
             let idx = prod.idx.0;
             parse_quote! { #idx => ProdKind::#prod_kind }
-        }).collect();
+        })
+        .collect();
     ast.push(parse_quote! {
         impl From<ProdIndex> for ProdKind {
             fn from(prod_index: ProdIndex) -> Self {
@@ -469,8 +483,7 @@ fn generate_parser_symbols(
         }
     });
 
-    let term_variants: Vec<syn::Variant> = grammar
-        .terminals[1..]
+    let term_variants: Vec<syn::Variant> = grammar.terminals[1..]
         .iter()
         .map(|t| {
             let name = format_ident!("{}", t.name);
@@ -487,6 +500,7 @@ fn generate_parser_symbols(
         .collect();
 
     ast.push(parse_quote! {
+        #[allow(clippy::upper_case_acronyms)]
         #[derive(Debug)]
         pub enum Terminal {
             #(#term_variants),*
@@ -514,6 +528,7 @@ fn generate_parser_symbols(
     Ok(ast)
 }
 
+#[allow(clippy::too_many_arguments)]
 fn generate_parser_definition(
     grammar: &Grammar,
     table: &LRTable,
@@ -660,7 +675,7 @@ fn generate_parser_definition(
             Result<#actions_file::#root_symbol>
         },
         BuilderType::Generic => parse_quote! {
-            Result<TreeNode<'i, str, super::#parser_file::TokenKind>>
+            Result<TreeNode<str, super::#parser_file::TokenKind>>
         },
         BuilderType::Custom => parse_quote! {
             Result<#builder_file::#root_symbol>
@@ -680,7 +695,7 @@ fn generate_parser_definition(
         #[allow(dead_code)]
         impl #parser
         {
-            pub fn parse<'i>(input: &'i Input) -> #parse_result {
+            pub fn parse(input: &Input) -> #parse_result {
                 let mut context = Context::new("<str>".to_string(), input);
                 #lexer_instance
                 let mut builder = #builder::new();
@@ -726,7 +741,7 @@ fn generate_layout_parser(
             #[allow(dead_code)]
             impl #layout_parser
             {
-                pub fn parse_layout<'i>(context: &mut Context<'i>) -> Result<#actions_file::Layout> {
+                pub fn parse_layout(context: &mut Context) -> Result<#actions_file::Layout> {
                     let lexer = LRStringLexer::new(&LEXER_DEFINITION, true, false);
                     let mut builder = #builder::new();
                     match #layout_parser::default().0.parse(context, &lexer, &mut builder)? {
@@ -782,7 +797,7 @@ fn generate_lexer_definition(
                 .chain(
                     // Fill the rest with "None"
                     repeat(parse_quote! {None})
-                        .take(max_actions - &state.sorted_terminals.len()),
+                        .take(max_actions - state.sorted_terminals.len()),
                 )
                 .collect();
 
@@ -832,29 +847,28 @@ fn generate_lexer_definition(
                     });
                 }
             }
-        } else {
-            if terminal.idx == TermIndex(0) {
-                recognizers.push(parse_quote! {
-                    |input: &str| {
-                        logn!("Recognizing <STOP> -- ");
-                        if input.len() == 0 {
-                            log!("recognized");
-                            Some("")
-                        } else {
-                            log!("not recognized");
-                            None
-                        }
+        } else if terminal.idx == TermIndex(0) {
+            recognizers.push(parse_quote! {
+                |input: &str| {
+                    logn!("Recognizing <STOP> -- ");
+                    if input.is_empty() {
+                        log!("recognized");
+                        Some("")
+                    } else {
+                        log!("not recognized");
+                        None
                     }
-                });
-            } else {
-                // TODO: Custom recognizers?
-                unreachable!()
-            }
+                }
+            });
+        } else {
+            // TODO: Custom recognizers?
+            unreachable!()
         }
     }
 
     ast.push(
         parse_quote!{
+            #[allow(clippy::single_char_pattern)]
             pub(in crate) static LEXER_DEFINITION: #lexer_definition = #lexer_definition {
                 terminals_for_state: [#(#terminals_for_state),*],
                 recognizers: [#(#recognizers),*],
@@ -959,16 +973,13 @@ fn generate_builder(
             parse_quote!{
                 TokenKind::#term => Terminal::#term
             }
+        } else if settings.pass_context {
+            parse_quote!{
+                TokenKind::#term => Terminal::#term(#actions_file::#action(context, token))
+            }
         } else {
-            if settings.pass_context {
-                parse_quote!{
-                    TokenKind::#term => Terminal::#term(#actions_file::#action(context, token))
-                }
-
-            } else {
-                parse_quote!{
-                    TokenKind::#term => Terminal::#term(#actions_file::#action(token))
-                }
+            parse_quote!{
+                TokenKind::#term => Terminal::#term(#actions_file::#action(token))
             }
         }
     }).collect();
@@ -993,12 +1004,12 @@ fn generate_builder(
             }
         } else {
             // Special handling of production with only str match terms in RHS
-            if production.rhs_with_content(grammar).iter().count() == 0 {
+            if production.rhs_with_content(grammar).is_empty() {
                 if settings.pass_context {
                     parse_quote! {
                         ProdKind::#prod_kind => {
                             let _ = self.res_stack.split_off(self.res_stack.len()-#rhs_len).into_iter();
-                            NonTerminal::#nonterminal(#actions_file::#action())
+                            NonTerminal::#nonterminal(#actions_file::#action(#context_var))
                         }
                     }
                 } else {
@@ -1039,16 +1050,13 @@ fn generate_builder(
                     }
                 }).collect();
 
-                let match_lhs: syn::Expr;
-                if rhs_len > 1 {
-                    match_lhs = parse_quote! { (#(#match_lhs_items),*) };
+                let match_lhs: syn::Expr = if rhs_len > 1 {
+                    parse_quote! { (#(#match_lhs_items),*) }
                 } else {
-                    match_lhs = parse_quote! { #(#match_lhs_items),* };
-                }
+                    parse_quote! { #(#match_lhs_items),* }
+                };
 
-                let params: Vec<syn::Ident> = (0..production.rhs_with_content(grammar)
-                                        .iter()
-                                        .count())
+                let params: Vec<syn::Ident> = (0..production.rhs_with_content(grammar).len())
                     .map( |idx| format_ident! { "p{}", idx }).collect();
 
                 if settings.pass_context {

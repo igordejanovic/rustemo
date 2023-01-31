@@ -6,7 +6,7 @@ pub use crate::{Error, Result};
 
 pub use crate::generator::generate_parser;
 
-pub use self::settings::{LexerType, BuilderType, ParserAlgo, Settings};
+pub use self::settings::{BuilderType, LexerType, ParserAlgo, Settings};
 
 pub(crate) mod settings;
 
@@ -120,16 +120,15 @@ impl RustemoSettings {
                 p.join(
                     grammar
                         .parent()
-                        .expect(&format!("Cannot find parent of '{grammar:?}' file."))
+                        .unwrap_or_else(|| panic!("Cannot find parent of '{grammar:?}' file."))
                         .strip_prefix(root_dir)
-                        .expect(&format!(
-                            "Cannot remove prefix '{root_dir:?}' from '{grammar:?}'.")),
+                        .unwrap_or_else(|_| panic!("Cannot remove prefix '{root_dir:?}' from '{grammar:?}'."))
                     )
             };
 
-            let out_dir = self.0.out_dir.as_ref().map(|p| relative_outdir(&p));
+            let out_dir = self.0.out_dir.as_ref().map(|p| relative_outdir(p));
             let out_dir_actions =
-                self.0.out_dir_actions.as_ref().map(|p| relative_outdir(&p));
+                self.0.out_dir_actions.as_ref().map(|p| relative_outdir(p));
 
             if let Some(ref dir) = out_dir {
                 println!("Parser out dir: {dir:?}");
@@ -146,7 +145,7 @@ impl RustemoSettings {
             )
         };
 
-        self.visit_dirs(&root_dir.as_ref(), &visitor)
+        self.visit_dirs(root_dir.as_ref(), &visitor)
     }
 
     pub fn process_grammar(&self, grammar_file: &Path) -> Result<()> {

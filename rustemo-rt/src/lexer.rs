@@ -4,7 +4,7 @@ use crate::{
     location::{LineBased, Location, Position},
 };
 use core::fmt::Debug;
-use std::{cmp::min, iter::once, fmt::Display};
+use std::{cmp::min, fmt::Display, iter::once};
 
 /// The `Lexer` trait allows input tokenization
 ///
@@ -28,6 +28,10 @@ pub trait Input {
 
     /// Returns the length of the input.
     fn len(&self) -> usize;
+
+    fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
 
     /// Given the current location returns the location at the end of self.
     /// Location is an input-specific concept. E.g. for text it is line/column.
@@ -199,9 +203,7 @@ where
                 .iter()
                 .map(|x| format!("{x}"))
                 .chain(once("-->".to_string()))
-                .chain(
-                    self[position..].iter().map(|x| format!("{x}")).take(15)
-                )
+                .chain(self[position..].iter().map(|x| format!("{x}")).take(15))
                 .collect::<Vec<_>>()
         )
     }

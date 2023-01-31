@@ -40,7 +40,6 @@ impl Default for BuilderType {
     }
 }
 
-
 #[derive(Debug, Clone)]
 pub struct Settings {
     pub out_dir: Option<PathBuf>,

@@ -1,7 +1,7 @@
 use crate::debug::log;
 use crate::error::{Error, Result};
 use crate::index::{StateIndex, TermIndex};
-use crate::lexer::{Context, Input, Lexer, Token, TokenKind, AsStr};
+use crate::lexer::{AsStr, Context, Input, Lexer, Token, TokenKind};
 use crate::location::Location;
 
 /// A lexer that operates over string inputs and uses generated string and regex
@@ -28,7 +28,7 @@ where
         }
     }
 
-    fn skip<'i, LO>(context: &mut Context<'i, str, LO, StateIndex>) {
+    fn skip<LO>(context: &mut Context<str, LO, StateIndex>) {
         let skipped = context.input[context.position..]
             .chars()
             .take_while(|x| x.is_whitespace())
@@ -95,7 +95,9 @@ where
                     let expected = self
                         .definition
                         .recognizers(context.state)
-                        .map(|(_, term_idx)| TokenKind::<TK>::from(term_idx).as_str())
+                        .map(|(_, term_idx)| {
+                            TokenKind::<TK>::from(term_idx).as_str()
+                        })
                         .collect::<Vec<_>>()
                         .join(", ");
                     Err(Error::ParseError {

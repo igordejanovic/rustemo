@@ -52,7 +52,7 @@ impl ProductionActionsGenerator {
                 }
             }
             ChoiceKind::Ref { ref_type, .. } => {
-                let ty = Ident::new(&ref_type, Span::call_site());
+                let ty = Ident::new(ref_type, Span::call_site());
                 let name =
                     Ident::new(&to_snake_case(ref_type), Span::call_site());
                 fn_args.push(parse_quote! { #name: #ty });
@@ -75,7 +75,7 @@ impl ProductionActionsGenerator {
                 parse_quote! { #target_type::#choice_ident }
             }
             ChoiceKind::Struct(type_name, fields) => {
-                let struct_ty = Ident::new(&type_name, Span::call_site());
+                let struct_ty = Ident::new(type_name, Span::call_site());
                 let fields: Vec<syn::FieldValue> = fields
                     .iter()
                     .map(|f| {
@@ -149,9 +149,9 @@ impl ActionsGenerator for ProductionActionsGenerator {
             match &choice.kind {
                 ChoiceKind::Struct(struct_type, fields) => {
                     let type_ident = if let Some(type_name) = type_name {
-                        Ident::new(&type_name, Span::call_site())
+                        Ident::new(type_name, Span::call_site())
                     } else {
-                        Ident::new(&struct_type, Span::call_site())
+                        Ident::new(struct_type, Span::call_site())
                     };
 
                     let fields: Vec<syn::Field> = fields
@@ -183,7 +183,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
         }
 
         fn get_choice_types(
-            choices: &Vec<Choice>,
+            choices: &[Choice],
             type_name: Option<&String>,
         ) -> Vec<syn::Item> {
             choices
@@ -192,7 +192,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
                 .collect()
         }
 
-        fn get_variants(choices: &Vec<Choice>) -> Vec<syn::Variant> {
+        fn get_variants(choices: &[Choice]) -> Vec<syn::Variant> {
             choices
                 .iter()
                 .filter_map(|v| {
@@ -203,7 +203,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
                         }
                         ChoiceKind::Struct(type_name, _) => {
                             let type_ident =
-                                Ident::new(&type_name, Span::call_site());
+                                Ident::new(type_name, Span::call_site());
                             Some(parse_quote! { #variant_ident(#type_ident) })
                         }
                         ChoiceKind::Ref {
@@ -211,7 +211,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
                             recursive,
                         } => {
                             let ref_type_ident =
-                                Ident::new(&ref_type, Span::call_site());
+                                Ident::new(ref_type, Span::call_site());
                             let mut ref_type: syn::Type =
                                 parse_quote! { #ref_type_ident };
                             if recursive.get() {
@@ -231,7 +231,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
             } => {
                 let mut types = get_choice_types(&ty.choices, None);
                 let variants = get_variants(&ty.choices);
-                let enum_type = Ident::new(&enum_type, Span::call_site());
+                let enum_type = Ident::new(enum_type, Span::call_site());
 
                 if ty.optional {
                     types.push(
@@ -250,8 +250,8 @@ impl ActionsGenerator for ProductionActionsGenerator {
                 type_name: struct_type,
             } => {
                 let mut types =
-                    get_choice_types(&ty.choices, Some(&struct_type));
-                let struct_type = Ident::new(&struct_type, Span::call_site());
+                    get_choice_types(&ty.choices, Some(struct_type));
+                let struct_type = Ident::new(struct_type, Span::call_site());
                 if ty.optional {
                     types.push(
                         parse_quote! {pub type #type_ident = Option<#struct_type>;},
@@ -263,7 +263,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
                 ref_type,
                 recursive,
             } => {
-                let mut ref_type = Ident::new(&ref_type, Span::call_site());
+                let mut ref_type = Ident::new(ref_type, Span::call_site());
                 if recursive.get() {
                     ref_type = parse_quote! { Box<#ref_type> }
                 }
@@ -279,7 +279,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
                 ref_type,
                 recursive,
             } => {
-                let ref_type = Ident::new(&ref_type, Span::call_site());
+                let ref_type = Ident::new(ref_type, Span::call_site());
                 if recursive.get() {
                     vec![
                         parse_quote! { pub type #type_ident = Vec<Box<#ref_type>>; },

@@ -1,12 +1,12 @@
 use std::fmt::Display;
 
-#[derive(PartialEq, Debug, Copy, Clone)]
+#[derive(PartialEq, Eq, Debug, Copy, Clone)]
 pub struct LineBased {
     pub line: usize,
     pub column: usize,
 }
 
-#[derive(PartialEq, Debug, Copy, Clone)]
+#[derive(PartialEq, Eq, Debug, Copy, Clone)]
 pub enum Position {
     Position(usize),
     LineBased(LineBased),
@@ -66,7 +66,7 @@ impl Display for Position {
 ///
 /// The path is kept on the parsing context and there is the method on the
 /// context to produce the display of the location with the full file path.
-#[derive(PartialEq, Debug, Clone, Copy)]
+#[derive(PartialEq, Eq, Debug, Clone, Copy)]
 pub struct Location {
     /// The start position of the range.
     pub start: Position,

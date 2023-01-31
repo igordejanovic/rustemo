@@ -30,9 +30,7 @@ impl Builder for CustomBuilderBuilder {
     }
 }
 
-impl<'i> LRBuilder<'i, str, (), TokenKind>
-    for CustomBuilderBuilder
-{
+impl<'i> LRBuilder<'i, str, (), TokenKind> for CustomBuilderBuilder {
     fn shift_action(
         &mut self,
         _context: &Context<'i>,

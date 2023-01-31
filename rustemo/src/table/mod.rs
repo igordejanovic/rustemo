@@ -22,7 +22,7 @@ use rustemo_rt::{
 use crate::{
     api::{settings::Settings, ParserAlgo},
     grammar::{Associativity, Priority, Terminal, DEFAULT_PRIORITY},
-    lang::{rustemo_actions::Recognizer, rustemo::ProdKind},
+    lang::{rustemo::ProdKind, rustemo_actions::Recognizer},
 };
 
 use super::grammar::{res_symbol, Grammar};
@@ -35,7 +35,7 @@ pub enum Action {
 }
 
 #[allow(non_camel_case_types)]
-#[derive(Debug, Clone, PartialEq, ValueEnum)]
+#[derive(Debug, Clone, PartialEq, Eq, ValueEnum)]
 pub enum TableType {
     LALR, // http://publications.csail.mit.edu/lcs/pubs/pdf/MIT-LCS-TR-065.pdf
     LALR_PAGERW, // https://doi.org/10.1007/BF00290336
@@ -200,8 +200,8 @@ impl<'g> LRState<'g> {
                             < self.grammar.productions[item.prod].rhs.len()
                         {
                             new_follow = firsts(
-                                &self.grammar,
-                                &first_sets,
+                                self.grammar,
+                                first_sets,
                                 &self.grammar.production_rhs_symbols(item.prod)
                                     [item.position + 1..],
                             );
@@ -226,7 +226,7 @@ impl<'g> LRState<'g> {
                             &self.grammar.nonterminals[nonterm].productions
                         {
                             new_items.insert(LRItem::with_follow(
-                                &self.grammar,
+                                self.grammar,
                                 *prod,
                                 new_follow.clone(),
                             ));
@@ -267,15 +267,13 @@ impl<'g> LRState<'g> {
     fn group_per_next_symbol(
         &mut self,
     ) -> BTreeMap<SymbolIndex, Vec<ItemIndex>> {
-        let mut per_next_symbol = BTreeMap::new();
+        let mut per_next_symbol: BTreeMap<SymbolIndex, Vec<ItemIndex>> =
+            BTreeMap::new();
 
         for (idx, item) in self.items.iter().enumerate() {
             let symbol = item.symbol_at_position(self.grammar);
             if let Some(symbol) = symbol {
-                per_next_symbol
-                    .entry(symbol)
-                    .or_insert(vec![])
-                    .push(idx.into());
+                per_next_symbol.entry(symbol).or_default().push(idx.into());
                 if self.grammar.is_term(symbol) {
                     let symbol = self.grammar.symbol_to_term_index(symbol);
                     let prod_prio = self.grammar.productions[item.prod].prio;
@@ -530,7 +528,7 @@ impl<'g, 's> LRTable<'g, 's> {
             let per_next_symbol = state.group_per_next_symbol();
 
             // Create accept action if possible.
-            for (&symbol, _) in &per_next_symbol {
+            for &symbol in per_next_symbol.keys() {
                 if symbol == self.grammar.stop_index {
                     state.actions[self.grammar.symbol_to_term_index(symbol)] =
                         vec![Action::Accept];
@@ -548,7 +546,7 @@ impl<'g, 's> LRTable<'g, 's> {
                 let mut new_state_found = true;
                 let mut target_state_symbol = new_state.symbol;
                 let mut target_state_idx = StateIndex(current_state_idx);
-                if let Some(mut old_state) = self
+                if let Some(old_state) = self
                     .states
                     .iter_mut()
                     .chain(state_queue.iter_mut())
@@ -556,11 +554,7 @@ impl<'g, 's> LRTable<'g, 's> {
                     .find(|x| **x == new_state)
                 {
                     // If the same state already exists try to merge.
-                    if Self::merge_state(
-                        self.settings,
-                        &mut old_state,
-                        &new_state,
-                    ) {
+                    if Self::merge_state(self.settings, old_state, &new_state) {
                         new_state_found = false;
                         target_state_symbol = old_state.symbol;
                         target_state_idx = old_state.idx;
@@ -576,8 +570,7 @@ impl<'g, 's> LRTable<'g, 's> {
                 } else {
                     let term =
                         self.grammar.symbol_to_term_index(new_state.symbol);
-                    state.actions[term]
-                        .push(Action::Shift(target_state_idx));
+                    state.actions[term].push(Action::Shift(target_state_idx));
                 }
 
                 if new_state_found {
@@ -635,17 +628,11 @@ impl<'g, 's> LRTable<'g, 's> {
                     }
                     // Check if any of the current follow terminals exists in any other
                     // new follow but not in the same item old follow.
-                    if old
-                        .follow
-                        .borrow()
-                        .iter()
-                        .find(|&x| {
-                            new_in.follow.borrow().contains(x)
-                                && !old_in.follow.borrow().contains(x)
-                                && !new.follow.borrow().contains(x) // If conflict exist in new, merge anyway
-                        })
-                        .is_some()
-                    {
+                    if old.follow.borrow().iter().any(|x| {
+                        new_in.follow.borrow().contains(x)
+                            && !old_in.follow.borrow().contains(x)
+                            && !new.follow.borrow().contains(x) // If conflict exist in new, merge anyway
+                    }) {
                         return false;
                     }
                 }
@@ -742,11 +729,8 @@ impl<'g, 's> LRTable<'g, 's> {
                     continue;
                 }
 
-                let new_reduce = Action::Reduce(
-                    item.prod,
-                    item.prod_len,
-                    prod.nonterminal,
-                );
+                let new_reduce =
+                    Action::Reduce(item.prod, item.prod_len, prod.nonterminal);
                 for follow_symbol in item.follow.borrow().iter() {
                     let follow_term =
                         self.grammar.symbol_to_term_index(*follow_symbol);
@@ -757,12 +741,9 @@ impl<'g, 's> LRTable<'g, 's> {
                         actions.push(new_reduce.clone());
                     } else {
                         // Conflict. Try to resolve.
-                        let (shifts, reduces): (Vec<_>, Vec<_>) = actions
-                            .clone()
-                            .into_iter()
-                            .partition(|x| match x {
-                                Action::Shift(_) | Action::Accept => true,
-                                _ => false,
+                        let (shifts, reduces): (Vec<_>, Vec<_>) =
+                            actions.clone().into_iter().partition(|x| {
+                                matches!(x, Action::Shift(_) | Action::Accept)
                             });
                         // Only one SHIFT or ACCEPT might exists for a single
                         // terminal but many REDUCEs might exist.
@@ -777,47 +758,52 @@ impl<'g, 's> LRTable<'g, 's> {
                                 Action::Accept => DEFAULT_PRIORITY,
                                 _ => state.max_prior_for_term[&follow_term],
                             };
-                            if prod.prio == shift_prio {
-                                // If priorities are the same use associativity
-                                match prod.assoc {
-                                    Associativity::Left => {
-                                        // Override SHIFT with this REDUCE
-                                        assert!(actions.len() == 1);
-                                        actions.pop();
-                                    }
-                                    Associativity::Right => {
-                                        // If associativity is right leave SHIFT
-                                        // action as "stronger" and don't consider
-                                        // this reduction any more. Right
-                                        // associative reductions can't be in the
-                                        // same set of actions together with SHIFTs.
-                                        should_reduce = false;
-                                    }
-                                    Associativity::None => {
-                                        // If priorities are the same and no
-                                        // associativity defined use preferred
-                                        // strategy.
-                                        let empty = prod.rhs.len() == 0;
-                                        let prod_pse = empty
-                                            && self
-                                                .settings
-                                                .prefer_shifts_over_empty
-                                            && !prod.nopse;
-                                        let prod_ps = !empty
-                                            && self.settings.prefer_shifts
-                                            && !prod.nops;
-                                        should_reduce = !(prod_pse || prod_ps);
+                            match prod.prio.cmp(&shift_prio) {
+                                Ordering::Less => {
+                                    // If priority of existing SHIFT action is
+                                    // higher then leave it instead
+                                    should_reduce = false
+                                }
+                                Ordering::Equal => {
+                                    // If priorities are the same use associativity
+                                    match prod.assoc {
+                                        Associativity::Left => {
+                                            // Override SHIFT with this REDUCE
+                                            assert!(actions.len() == 1);
+                                            actions.pop();
+                                        }
+                                        Associativity::Right => {
+                                            // If associativity is right leave SHIFT
+                                            // action as "stronger" and don't consider
+                                            // this reduction any more. Right
+                                            // associative reductions can't be in the
+                                            // same set of actions together with SHIFTs.
+                                            should_reduce = false;
+                                        }
+                                        Associativity::None => {
+                                            // If priorities are the same and no
+                                            // associativity defined use preferred
+                                            // strategy.
+                                            let empty = prod.rhs.is_empty();
+                                            let prod_pse = empty
+                                                && self
+                                                    .settings
+                                                    .prefer_shifts_over_empty
+                                                && !prod.nopse;
+                                            let prod_ps = !empty
+                                                && self.settings.prefer_shifts
+                                                && !prod.nops;
+                                            should_reduce =
+                                                !(prod_pse || prod_ps);
+                                        }
                                     }
                                 }
-                            } else if prod.prio > shift_prio {
-                                // This item operation priority is higher =>
-                                // override with reduce
-                                assert!(actions.len() == 1);
-                                actions.pop();
-                            } else {
-                                // If priority of existing SHIFT action is
-                                // higher then leave it instead
-                                should_reduce = false
+                                Ordering::Greater => {
+                                    // This item operation priority is higher =>
+                                    // override with reduce
+                                    assert!(actions.len() == 1);
+                                    actions.pop();
+                                }
                             }
                         }
 
@@ -849,9 +835,8 @@ impl<'g, 's> LRTable<'g, 's> {
                                     // Current product priority is greater than all
                                     // other reductions. This reduction should
                                     // replace all others.
-                                    actions.retain(|x| match x {
-                                        Action::Reduce(..) => false,
-                                        _ => true,
+                                    actions.retain(|x| {
+                                        !matches!(x, Action::Reduce(..))
                                     });
                                     actions.push(new_reduce.clone())
                                 } else {
@@ -861,14 +846,7 @@ impl<'g, 's> LRTable<'g, 's> {
                                         self.settings.parser_algo
                                     {
                                         // ... so remove all empty reductions.
-                                        actions.retain(|x| match x {
-                                            Action::Reduce(_, len, ..)
-                                                if *len == 0 =>
-                                            {
-                                                false
-                                            }
-                                            _ => true,
-                                        });
+                                        actions.retain(|x| !matches!(x, Action::Reduce(_, len, ..) if *len == 0));
 
                                         if item.prod_len > 0
                                             || actions.is_empty()
@@ -929,13 +907,7 @@ impl<'g, 's> LRTable<'g, 's> {
             terminals.sort_by(|&l, &r| {
                 let l_term_prio = term_prio(&self.grammar.terminals[l]);
                 let r_term_prio = term_prio(&self.grammar.terminals[r]);
-                if l_term_prio > r_term_prio {
-                    Ordering::Less
-                } else if l_term_prio < r_term_prio {
-                    Ordering::Greater
-                } else {
-                    Ordering::Equal
-                }
+                r_term_prio.cmp(&l_term_prio)
             });
             log!(
                 "SORTED: {:?}",
@@ -1016,7 +988,7 @@ impl<'g, 's> LRTable<'g, 's> {
                             };
 
                             Some(Conflict {
-                                state: &state,
+                                state,
                                 follow: TermIndex(term_index),
                                 kind
                             })
@@ -1065,7 +1037,7 @@ impl<'g, 's> LRTable<'g, 's> {
             .count();
         println!(
             "{} conflict(s). {} Shift/Reduce and {} Reduce/Reduce.",
-            shift_reduce_len + &reduce_reduce_len,
+            shift_reduce_len + reduce_reduce_len,
             shift_reduce_len,
             reduce_reduce_len
         );
@@ -1093,7 +1065,10 @@ impl<'g, 's> Display for LRTable<'g, 's> {
                         match a {
                             Action::Shift(s) => format!("Shift to {s}"),
                             Action::Reduce(p, l, ..) => {
-                                format!("Reduce for len {l} by:   {}", ProdKind::from(*p))
+                                format!(
+                                    "Reduce for len {l} by:   {}",
+                                    ProdKind::from(*p)
+                                )
                             }
                             Action::Accept => "Accept".into(),
                         },
@@ -1171,7 +1146,7 @@ fn first_sets(grammar: &Grammar) -> FirstSets {
                 grammar.nonterm_to_symbol_index(production.nonterminal);
 
             let rhs_firsts =
-                firsts(&grammar, &first_sets, &production.rhs_symbols());
+                firsts(grammar, &first_sets, &production.rhs_symbols());
 
             let lhs_len = first_sets[lhs_nonterm].len();
 

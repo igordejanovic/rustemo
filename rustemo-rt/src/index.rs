@@ -7,7 +7,7 @@ use std::{
 #[macro_export]
 macro_rules! create_index {
     ($index:ident, $collection:ident) => {
-        #[derive(Copy, Clone, Hash, PartialEq, Eq, PartialOrd)]
+        #[derive(Copy, Clone, Hash, PartialEq, Eq, PartialOrd, Ord)]
         pub struct $index(pub usize);
 
         impl Display for $index {
@@ -25,12 +25,6 @@ macro_rules! create_index {
         impl From<usize> for $index {
             fn from(a: usize) -> Self {
                 Self(a)
-            }
-        }
-
-        impl Ord for $index {
-            fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-                self.0.cmp(&other.0)
             }
         }
 

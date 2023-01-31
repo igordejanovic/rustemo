@@ -44,7 +44,7 @@ pub(crate) trait ActionsGenerator {
             }
         } else {
             parse_quote! {
-                pub fn #action_name_ident<'i>(token: Token<'i>) -> #type_name_ident {
+                pub fn #action_name_ident(token: Token) -> #type_name_ident {
                     token.value.into()
                 }
             }

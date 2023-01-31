@@ -118,7 +118,7 @@ impl GrammarBuilder {
             augmented_layout_index: self
                 .nonterminals
                 .get("AUGL")
-                .and_then(|x| Some(SymbolIndex(term_len + x.idx.0))),
+                .map(|x| SymbolIndex(term_len + x.idx.0)),
             start_index: (term_len
                 + self.nonterminals.get(&self.start_rule_name).unwrap().idx.0)
                 .into(),
@@ -237,65 +237,56 @@ impl GrammarBuilder {
                     idx: prod_idx,
                     nonterminal: nt_idx,
                     ntidx: prod_ntidx,
-                    rhs:
-                        production
-                            .assignments
-                            .into_iter()
-                            // Remove EMPTY from production RHS
-                            .filter(|assignment| {
-                                use rustemo_actions::Assignment;
-                                match assignment {
-                                    Assignment::GrammarSymbolRef(
+                    rhs: production
+                        .assignments
+                        .into_iter()
+                        // Remove EMPTY from production RHS
+                        .filter(|assignment| {
+                            use rustemo_actions::Assignment;
+                            !matches!(assignment, Assignment::GrammarSymbolRef(
                                         GrammarSymbolRef {
                                             gsymbol:
                                                 Some(GrammarSymbol::Name(name)),
                                             ..
                                         },
-                                    ) if name.as_str() == "EMPTY" => false,
-                                    _ => true,
-                                }
-                            })
-                            // Map all RHS elements to Assignments
-                            .map(|assignment| {
-                                use rustemo_actions::Assignment::*;
-                                let is_bool =
-                                    matches! { assignment, BoolAssignment(_) };
-                                match assignment {
-                                    PlainAssignment(mut assign)
-                                    | BoolAssignment(mut assign) => {
-                                        self.desugar_regex(
-                                            &mut assign.gsymref,
-                                            &mut desugar_productions,
-                                        );
-                                        ResolvingAssignment {
-                                            name: Some(assign.name),
-                                            symbol:
-                                                ResolvingSymbolIndex::Resolving(
-                                                    assign
-                                                        .gsymref
-                                                        .gsymbol
-                                                        .unwrap(),
-                                                ),
-                                            is_bool,
-                                        }
-                                    }
-                                    GrammarSymbolRef(mut reference) => {
-                                        self.desugar_regex(
-                                            &mut reference,
-                                            &mut desugar_productions,
-                                        );
-                                        ResolvingAssignment {
-                                            name: None,
-                                            symbol:
-                                                ResolvingSymbolIndex::Resolving(
-                                                    reference.gsymbol.unwrap(),
-                                                ),
-                                            is_bool: false,
-                                        }
+                                    ) if name.as_str() == "EMPTY")
+                        })
+                        // Map all RHS elements to Assignments
+                        .map(|assignment| {
+                            use rustemo_actions::Assignment::*;
+                            let is_bool =
+                                matches! { assignment, BoolAssignment(_) };
+                            match assignment {
+                                PlainAssignment(mut assign)
+                                | BoolAssignment(mut assign) => {
+                                    self.desugar_regex(
+                                        &mut assign.gsymref,
+                                        &mut desugar_productions,
+                                    );
+                                    ResolvingAssignment {
+                                        name: Some(assign.name),
+                                        symbol: ResolvingSymbolIndex::Resolving(
+                                            assign.gsymref.gsymbol.unwrap(),
+                                        ),
+                                        is_bool,
                                     }
                                 }
-                            })
-                            .collect(),
+                                GrammarSymbolRef(mut reference) => {
+                                    self.desugar_regex(
+                                        &mut reference,
+                                        &mut desugar_productions,
+                                    );
+                                    ResolvingAssignment {
+                                        name: None,
+                                        symbol: ResolvingSymbolIndex::Resolving(
+                                            reference.gsymbol.unwrap(),
+                                        ),
+                                        is_bool: false,
+                                    }
+                                }
+                            }
+                        })
+                        .collect(),
                     meta: production.meta,
                     ..Production::default()
                 };
@@ -322,16 +313,16 @@ impl GrammarBuilder {
                     }
                 }
 
-                if let Some(_) = new_production.meta.remove("left") {
+                if new_production.meta.remove("left").is_some() {
                     new_production.assoc = Associativity::Left;
                 }
-                if let Some(_) = new_production.meta.remove("right") {
+                if new_production.meta.remove("right").is_some() {
                     new_production.assoc = Associativity::Right;
                 }
-                if let Some(_) = new_production.meta.remove("nops") {
+                if new_production.meta.remove("nops").is_some() {
                     new_production.nops = true;
                 }
-                if let Some(_) = new_production.meta.remove("nopse") {
+                if new_production.meta.remove("nopse").is_some() {
                     new_production.nopse = true;
                 }
 
@@ -486,23 +477,26 @@ impl GrammarBuilder {
         for production in &mut self.productions {
             let production_str = format!("{}", production);
             for assign in &mut production.rhs {
-                if let ResolvingSymbolIndex::Resolving(symbol) = &assign.symbol
+                if let ResolvingSymbolIndex::Resolving(
+                    GrammarSymbol::StrConst(mtch),
+                ) = &assign.symbol
                 {
-                    if let GrammarSymbol::StrConst(mtch) = symbol {
-                        if self.terminals_matches.contains_key(mtch) {
-                            assign.symbol = ResolvingSymbolIndex::Resolved(
-                                self.terminals_matches
-                                    .get(mtch)
-                                    .unwrap()
-                                    .1
-                                    .to_symbol_index(),
-                            );
-                        } else {
-                            panic!(
-                                concat!("terminal \"{}\" used in production \"{}\" ",
-                                        "is not defined in the 'terminals' section!."),
-                                mtch, production_str)
-                        }
+                    if self.terminals_matches.contains_key(mtch) {
+                        assign.symbol = ResolvingSymbolIndex::Resolved(
+                            self.terminals_matches
+                                .get(mtch)
+                                .unwrap()
+                                .1
+                                .to_symbol_index(),
+                        );
+                    } else {
+                        panic!(
+                            concat!(
+                                "terminal \"{}\" used in production \"{}\" ",
+                                "is not defined in the 'terminals' section!."
+                            ),
+                            mtch, production_str
+                        )
                     }
                 }
             }
@@ -601,7 +595,7 @@ impl GrammarBuilder {
                 })
                 .collect(),
         };
-        self.nonterminals.insert(name.clone(), nt);
+        self.nonterminals.insert(name, nt);
     }
 
     fn create_one(
@@ -654,7 +648,7 @@ impl GrammarBuilder {
                 })
                 .collect(),
         };
-        self.nonterminals.insert(name.clone(), nt);
+        self.nonterminals.insert(name, nt);
     }
 
     fn create_zero(
@@ -692,6 +686,6 @@ impl GrammarBuilder {
                 })
                 .collect(),
         };
-        self.nonterminals.insert(name.clone(), nt);
+        self.nonterminals.insert(name, nt);
     }
 }

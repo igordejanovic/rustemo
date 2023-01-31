@@ -6,7 +6,6 @@ use rustemo_rt::{
     location::{Location, Position},
 };
 
-
 /// We are parsing a slice of bytes.
 pub type Input = [u8];
 
@@ -17,7 +16,6 @@ impl CustomLexer2Lexer {
         CustomLexer2Lexer()
     }
 }
-
 
 /// In this custom lexer we are not recognizing a full VarInts but only its
 /// constituents: MSBByte (if highest bit is set), NonMSBByte (highest bit is

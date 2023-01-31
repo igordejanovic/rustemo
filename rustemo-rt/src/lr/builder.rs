@@ -54,7 +54,9 @@ impl<'i, I: Input + ?Sized, TK: Copy> Builder for TreeBuilder<'i, I, TK> {
     }
 }
 
-impl<'i, I: Input + ?Sized, LO, TK: Clone + Copy> LRBuilder<'i, I, LO, TK> for TreeBuilder<'i, I, TK> {
+impl<'i, I: Input + ?Sized, LO, TK: Clone + Copy> LRBuilder<'i, I, LO, TK>
+    for TreeBuilder<'i, I, TK>
+{
     fn shift_action(
         &mut self,
         context: &Context<'i, I, LO, StateIndex>,
