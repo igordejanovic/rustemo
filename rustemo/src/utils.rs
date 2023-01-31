@@ -32,7 +32,7 @@ pub fn string_difference(a: &str, b: &str) -> Option<(usize, (char, char))> {
 macro_rules! output_cmp {
     ($path:expr, $out_str:expr) => {{
         use {
-            crate::string_difference,
+            $crate::utils::string_difference,
             std::{fs, path::PathBuf},
         };
         let t_path: PathBuf =
