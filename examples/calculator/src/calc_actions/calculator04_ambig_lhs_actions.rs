@@ -4,7 +4,7 @@ use super::calculator04_ambig_lhs::TokenKind;
 use rustemo_rt::lexer;
 pub type Token<'i> = lexer::Token<'i, str, TokenKind>;
 pub type Num = f32;
-pub fn num<'i>(token: Token<'i>) -> Num {
+pub fn num(token: Token) -> Num {
     token.value.parse().unwrap()
 }
 pub type E = f32;
