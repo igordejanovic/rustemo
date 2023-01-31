@@ -233,6 +233,7 @@ impl From<TokenKind> for TermIndex {
         }
     }
 }
+#[allow(clippy::enum_variant_names)]
 #[derive(Copy, Clone)]
 pub enum ProdKind {
     FileP1,
