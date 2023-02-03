@@ -62,12 +62,13 @@ participant Lexer
 participant Builder
 loop until no more tokens
     loop until reduction not possible
-        Parser -> Parser: Reduce if possible
+        Parser -> Parser: Reduce
         Parser -> Builder: Execute Reduce action
     end
-    Parser -> Lexer: Shift next token
+    Parser -> Lexer: Shift/get next token
     Parser -> Builder: Execute Shift action
 end
+Parser -> Builder: Get build product
 #+end_src
 
 #+RESULTS:
