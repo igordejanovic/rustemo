@@ -84,10 +84,10 @@ end
 This section describe the grammar language, its syntax and semantics rules.
 
 The Rustemo grammar specification language is based on [[https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form][BNF]] with [[#syntactic-sugar-bnf-extensions][syntactic sugar
-extensions]] which are optional and builds on top of a pure BNF. Rustemo is
-based on [[https://en.wikipedia.org/wiki/Context-free_grammar][Context-Free Grammars (CFGs)]] and a grammar is written declaratively.
-You don't have to think about the parsing process like in e.g. [[https://en.wikipedia.org/wiki/Parsing_expression_grammar][PEGs]]. Ambiguities
-are dealt with explicitly (see the [[#resolving-lr-conflicts][section on conflicts]]).
+extensions]] which are optional and build on top of a pure BNF. Rustemo is based
+on [[https://en.wikipedia.org/wiki/Context-free_grammar][Context-Free Grammars (CFGs)]] and a grammar is written declaratively. You
+don't have to think about the parsing process like in e.g. [[https://en.wikipedia.org/wiki/Parsing_expression_grammar][PEGs]]. Ambiguities are
+dealt with explicitly (see the [[#resolving-lr-conflicts][section on conflicts]]).
 
 ** The structure of the grammar
 :PROPERTIES:
@@ -1326,11 +1326,11 @@ But, if you do need to change the rustemo grammar or parser code generator you
 should install bootstrapping binary with the following command.
 
 #+begin_src sh
-$ cargo install --path rustemo --features boostrap --debug
+$ cargo install --path rustemo --features bootstrap --debug
 #+end_src
 
 The =--debug= switch is optional but will provide faster build and the built
-binary will provide better error repors in case of problems.
+binary will provide better error reports in case of problems.
 
 Note the use of =--features bootstrap=. This command will checkout rustemo parser
 files (parser and actions) from the git =main= branch, do the build with the rest
