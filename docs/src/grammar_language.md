@@ -2,29 +2,29 @@
 
 This section describe the grammar language, its syntax and semantics rules.
 
-
-
 The Rustemo grammar specification language is based on
 [BNF](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form) with [syntactic
 sugar extensions](#syntactic-sugar-bnf-extensions) which are optional and build
 on top of a pure BNF. Rustemo is based on [Context-Free Grammars
 (CFGs)](https://en.wikipedia.org/wiki/Context-free_grammar) and a grammar is
-written declaratively. You don&rsquo;t have to think about the parsing process
-like in e.g. [PEGs](https://en.wikipedia.org/wiki/Parsing_expression_grammar).
-Ambiguities are dealt with explicitly (see the [section on
+written declaratively. This meands you don't have to think about the parsing
+process like in e.g.
+[PEGs](https://en.wikipedia.org/wiki/Parsing_expression_grammar). Ambiguities
+are dealt with explicitly (see the [section on
 conflicts](#resolving-lr-conflicts)).
-
 
 ## The structure of the grammar
 
-Each grammar file consists of two parts: - derivation/production rules -
-optional terminal definitions which are written after the keyword `terminals`.
+Each grammar file consists of two parts: 
+
+- derivation/production rules,
+- optional terminal definitions which are written after the keyword `terminals`.
 
 Each derivation/production rule is of the form:
 
     <symbol>: <expression> ;
 
-where `<symbol>` is grammar non-terminal and `<expression>` is one or more
+where `<symbol>` is a grammar non-terminal and `<expression>` is one or more
 sequences of grammar symbol references separated by choice operator `|`.
 
 For example:
@@ -43,8 +43,8 @@ Or it could be defined as a terminal in terminals section:
     terminals
     Field: /[A-Z]*/;
 
-This terminal definition uses regular expression recognizer.
-
+This terminal definition uses [regular expression
+recognizer](#regular-expression-recognizer).
 
 ## Terminals
 
