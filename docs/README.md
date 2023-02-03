@@ -11,6 +11,7 @@ once to install `mdbook`):
    cargo install mdbook-bib
    cargo install mdbook-theme
    cargo install mdbook-plantuml
+   cargo install mdbook-linkcheck
    ```
 
 Optional:

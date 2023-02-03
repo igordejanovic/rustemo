@@ -15,6 +15,11 @@ title = "Rustemo book"
 additional-css = ["./mdbook-admonish.css", "theme/pagetoc.css"] #, "style.css"]
 additional-js = ["theme/pagetoc.js"] # , "sidebar.js"]
 
+[output.linkcheck]
+follow-web-links = false
+traverse-parent-directories = false
+warning-policy = "error"
+
 [preprocessor]
 
 [preprocessor.theme]
