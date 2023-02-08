@@ -11,7 +11,7 @@
 - [CLI](cli.md)
 - [Handling errors](handling_errors.md)
   - [Disambiguation](disambiguation.md)
-- [Tutorials]()
+- [Tutorials](./tutorials/index.md)
   - [Calculator](./tutorials/calculator.md)
 - [Contributing](../../CONTRIBUTING.md)
 - [Bootstrapping](bootstrapping.md)
