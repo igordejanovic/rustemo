@@ -6,7 +6,8 @@
 #[cfg(not(feature="bootstrap"))]
 pub(crate) mod rustemo;
 
-#[allow(non_camel_case_types)]
+// Relax these checks as we have generated code from the grammar.
+#[allow(non_camel_case_types, clippy::enum_variant_names)]
 #[cfg(not(feature = "bootstrap"))]
 pub(crate) mod rustemo_actions;
 

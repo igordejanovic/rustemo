@@ -10,6 +10,7 @@ fn main() {
 
     let settings = rustemo::with_settings().force(true);
 
+    #[allow(clippy::type_complexity)]
     let tests: &[(&str, Box<dyn Fn(RustemoSettings) -> RustemoSettings>)] = &[
         ("rule_patterns", Box::new(|s| s)),
         ("sugar", Box::new(|s| s)),

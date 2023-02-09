@@ -188,6 +188,9 @@ impl<'g> LRState<'g> {
     /// adds all missing non-kernel items.
     fn closure(&mut self, first_sets: &FirstSets) {
         loop {
+            // This is OK as Hash uses only non-interior-mutable part of the
+            // LRItem type.
+            #[allow(clippy::mutable_key_type)]
             let mut new_items: BTreeSet<LRItem> = BTreeSet::new();
 
             for item in &self.items {

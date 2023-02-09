@@ -74,6 +74,8 @@ impl GrammarBuilder {
         ret
     }
 
+    // TODO: Think of a better API which is aligned with conventions
+    #[allow(clippy::wrong_self_convention)]
     pub(crate) fn from_file(mut self, file: File) -> Grammar {
         // Create implicit STOP terminal used to signify the end of the input.
         let term_idx = self.get_term_idx();
