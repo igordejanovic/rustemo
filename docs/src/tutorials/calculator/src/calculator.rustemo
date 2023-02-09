@@ -1,0 +1,5 @@
+Expression: Operand Operator Operand;
+
+terminals
+Operand: /\d+(\.\d+)?/;
+Operator: /\+|-|\*|\//;

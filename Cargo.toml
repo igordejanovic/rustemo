@@ -5,3 +5,6 @@ members = [
         "tests",
         "examples/calculator",
 ]
+exclude = [
+        "docs",
+]
