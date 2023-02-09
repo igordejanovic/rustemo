@@ -537,10 +537,10 @@ succeed, i.e. it is empty recognition.
 
 ## Named matches (*assignments*)
 
-In section on [actions](components/builders.pre-processed.md) youcan see that
-semantic action (Python callable) connected to a rule will be called with two
-parameters: a context and a list of sub-expressions evaluation results. This
-require you to use positional access in the list of sub-expressions.
+In section on [builders](builders.md) you can see that semantic action (Python
+callable) connected to a rule will be called with two parameters: a context and
+a list of sub-expressions evaluation results. This require you to use positional
+access in the list of sub-expressions.
 
 `Named matches` (a.k.a `assignments`) enable giving a name to the sub-expression
 directly in the grammar.
@@ -570,10 +570,10 @@ There are two kind of assignments:
     non-empty result. If the result of RHS is empty the assignment will result
     in `False` being passed to the action.
 
-Each rule using named matches result in a dynamically created Python class named
-after the rule. These classes are kept in a dictionary `grammar.classes` and
-used to instantiate Python objects during parsing by an implicitly set [built-in
-`obj` action](./actions.md#built-in-actions).
+<!-- Each rule using named matches result in a dynamically created Python class named -->
+<!-- after the rule. These classes are kept in a dictionary `grammar.classes` and -->
+<!-- used to instantiate Python objects during parsing by an implicitly set [built-in -->
+<!-- `obj` action](./actions.md#built-in-actions). -->
 
 Thus, for rules using named matches, default action is to create object with
 attributes whose names are those of LHS of the assignments and values are from
@@ -591,11 +591,10 @@ See the next section.
 
 ## Referencing semantic actions from a grammar
 
-By default [action](./actions.md) with the name same as the rule name will be
-searched in the accompanying `<grammar>_actions.py` file or [`actions`
-dict](./parser.md#actions). You can override this by specifying action name for
-the rule directly in the grammar using `@` syntax. In that case a name given
-after `@` will be used instead of a rule name.
+By default action with the name same as the rule name will be searched in the
+accompanying `<grammar>_actions.py` file or `actions` dict. You can override
+this by specifying action name for the rule directly in the grammar using `@`
+syntax. In that case a name given after `@` will be used instead of a rule name.
 
 For example:
 
@@ -603,11 +602,10 @@ For example:
     some_rule: first second;
 
 For rule `some_rule` action with the name `myaction` will be searched in the
-`<grammar>_actions.py` module, `actions` dict or [built-in
-actions](./actions.md/#built-in-actions) provided by the `parglare.actions`
-module. This is helpful if you have some common action that can be used for
-multiple rules in your grammar. Also this can be used to specify built-in action
-to be used for a rule directly in the grammar.
+`<grammar>_actions.py` module, `actions` dict or built-in actions provided by
+the `parglare.actions` module. This is helpful if you have some common action
+that can be used for multiple rules in your grammar. Also this can be used to
+specify built-in action to be used for a rule directly in the grammar.
 
 
 ## User meta-data
@@ -791,9 +789,8 @@ separated from the surrounding tokens.
 
 ## Handling whitespaces and comments in your language
 
-By default parser will skip whitespaces. Whitespace skipping is
-controlled by [`ws` parameter to the parser](./parser.md#ws) which is
-by default set to `'\n\t '`.
+By default parser will skip whitespaces. Whitespace skipping is controlled by
+`ws` parameter to the parser which is by default set to `'\n\t '`.
 
 If you need more control of the layout, i.e. handling of not only
 whitespaces but comments also, you can use a special rule `LAYOUT`:
