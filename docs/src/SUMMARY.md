@@ -12,7 +12,7 @@
 - [Handling errors](handling_errors.md)
   - [Disambiguation](disambiguation.md)
 - [Tutorials](./tutorials/index.md)
-  - [Calculator](./tutorials/calculator.md)
+  - [Calculator](./tutorials/calculator/calculator.md)
 - [Contributing](../../CONTRIBUTING.md)
 - [Bootstrapping](bootstrapping.md)
 - [Random notes](random_notes.md)
