@@ -41,5 +41,6 @@ bibliography = "references.bib"
 [preprocessor.plantuml]
 
 [preprocessor.graphviz]
+after = ["links"]
 output-to-file = true # defaults to false, change to true to create SVG files
                       # instead of rendering them inline
