@@ -1,5 +1,5 @@
 use super::custom_lexer_1::TokenKind;
-use rustemo_rt::{
+use rustemo::{
     error::Result,
     index::StateIndex,
     lexer::{self, Context, Lexer, Token},

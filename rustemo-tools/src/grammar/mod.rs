@@ -4,7 +4,7 @@ use std::{
     hash::{Hash, Hasher},
 };
 
-use rustemo_rt::index::{
+use rustemo::index::{
     NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, SymbolVec,
     TermIndex, TermVec,
 };

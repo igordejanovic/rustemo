@@ -4,7 +4,7 @@ use crate::{
     output_cmp,
     utils::type_of,
 };
-use rustemo_rt::index::ProdIndex;
+use rustemo::index::ProdIndex;
 
 #[test]
 fn grammar_from_string() {
@@ -17,7 +17,7 @@ fn grammar_from_string() {
         "#,
     )
     .unwrap();
-    assert!(type_of(&grammar) == "rustemo::grammar::Grammar");
+    assert!(type_of(&grammar) == "rustemo_tools::grammar::Grammar");
 }
 
 #[test]

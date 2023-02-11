@@ -1,4 +1,4 @@
-use rustemo_rt::{
+use rustemo::{
     builder::Builder,
     index::{ProdIndex, StateIndex, TermIndex},
     lexer::{self, Token},

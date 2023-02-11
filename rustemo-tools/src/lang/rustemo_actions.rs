@@ -1,7 +1,7 @@
 use super::rustemo::TokenKind;
 ///! This file is maintained by rustemo but can be modified manually.
 ///! All manual changes will be preserved except non-doc comments.
-use rustemo_rt::lexer;
+use rustemo::lexer;
 use std::collections::BTreeMap;
 pub type Name = String;
 pub type Token<'i> = lexer::Token<'i, str, TokenKind>;

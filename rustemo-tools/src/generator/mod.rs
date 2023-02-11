@@ -1,7 +1,7 @@
 pub(crate) mod actions;
 
 use quote::format_ident;
-use rustemo_rt::index::{StateIndex, TermIndex};
+use rustemo::index::{StateIndex, TermIndex};
 use std::{
     iter::repeat,
     path::{Path, PathBuf},
@@ -232,17 +232,17 @@ fn generate_parser_header(
         use regex::Regex;
         use std::fmt::Debug;
 
-        use rustemo_rt::lexer::{self, Token, AsStr};
-        use rustemo_rt::parser::Parser;
-        use rustemo_rt::builder::Builder;
-        use rustemo_rt::Result;
-        use rustemo_rt::lr::lexer::{LRStringLexer, LexerDefinition, RecognizerIterator};
-        use rustemo_rt::lr::builder::LRBuilder;
-        use rustemo_rt::lr::parser::{LRParser, ParserDefinition};
-        use rustemo_rt::lr::parser::Action::{self, Shift, Reduce, Accept, Error};
-        use rustemo_rt::index::{StateIndex, TermIndex, NonTermIndex, ProdIndex};
-        use rustemo_rt::grammar::TerminalsState;
-        use rustemo_rt::debug::{log, logn};
+        use rustemo::lexer::{self, Token, AsStr};
+        use rustemo::parser::Parser;
+        use rustemo::builder::Builder;
+        use rustemo::Result;
+        use rustemo::lr::lexer::{LRStringLexer, LexerDefinition, RecognizerIterator};
+        use rustemo::lr::builder::LRBuilder;
+        use rustemo::lr::parser::{LRParser, ParserDefinition};
+        use rustemo::lr::parser::Action::{self, Shift, Reduce, Accept, Error};
+        use rustemo::index::{StateIndex, TermIndex, NonTermIndex, ProdIndex};
+        use rustemo::grammar::TerminalsState;
+        use rustemo::debug::{log, logn};
 
         const TERMINAL_NO: usize = #term_count;
         const NONTERMINAL_NO: usize = #nonterm_count;
@@ -263,7 +263,7 @@ fn generate_parser_header(
             use super::#actions_file;
         },
         BuilderType::Generic => parse_quote! {
-            use rustemo_rt::lr::builder::{TreeNode, TreeBuilder as #builder};
+            use rustemo::lr::builder::{TreeNode, TreeBuilder as #builder};
         },
         BuilderType::Custom => parse_quote! {
             use super::#builder_file::{self, #builder};

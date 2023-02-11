@@ -1,6 +1,6 @@
 mod calculator01_ast_tests {
 
-    use rustemo::output_cmp;
+    use rustemo_tools::output_cmp;
 
     use crate::ast_actions::{
         calculator01::Calculator01Parser,

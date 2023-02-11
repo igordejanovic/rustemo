@@ -1,4 +1,4 @@
-use rustemo_rt::rustemo_mod;
+use rustemo::rustemo_mod;
 
 rustemo_mod!(calculator01, "/src/ast_actions");
 mod calculator01_actions;

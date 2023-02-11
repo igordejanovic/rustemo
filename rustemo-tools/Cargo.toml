@@ -1,0 +1,45 @@
+[package]
+name = "rustemo-tools"
+version = "0.1.0"
+edition = "2021"
+description = "Rustemo development tools"
+keywords = ["parser", "generator", "LR", "grammar"]
+repository = "https://github.com/igordejanovic/rustemo"
+categories = ["parsing"]
+license = "MIT OR Apache-2.0"
+authors = ["Igor Dejanović <igor.dejanovic@gmail.com>"]
+readme = "../README.md"
+
+[lib]
+doctest = false
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+itertools = { version = "0.10", default_features = false, features = ["use_std"] }
+convert_case = { version = "0.5.0", default_features = false }
+clap = { version = "3.2.13", features = ["derive"] }
+quote = "1.0.20"
+syn = { version = "1.0.98", features = ["parsing", "full", "printing"] }
+proc-macro2 = "1.0.43"
+prettyplease = "0.1.18"
+
+# Needed by rustemo generated parsers.
+rustemo = { path = "../rustemo", version = "0.1"}
+
+# Default string lexer uses regexes and lazy_static to init regexes only once.
+lazy_static = { version = "1.4.0"}
+regex = { version = "1", default_features = false, features = ["std", "unicode-perl"] }
+
+[dev-dependencies]
+criterion = "0.3.5"
+
+[features]
+
+# ----- Features used when developing Rustemo.
+# Used for bootstrapping process.
+bootstrap = []
+
+[package.metadata.docs.rs]
+rustdoc-args = [ "--html-in-header", "docs-header.html" ]
+

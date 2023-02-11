@@ -2,7 +2,7 @@ use super::custom_lexer_2::TokenKind;
 use super::custom_lexer_2_lexer::Input;
 ///! This file is maintained by rustemo but can be modified manually.
 ///! All manual changes will be preserved except non-doc comments.
-use rustemo_rt::lexer;
+use rustemo::lexer;
 #[allow(dead_code)]
 pub type Token<'i> = lexer::Token<'i, Input, TokenKind>;
 pub type MSBByte = u8;

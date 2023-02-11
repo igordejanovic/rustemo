@@ -1,5 +1,5 @@
-use rustemo::output_cmp;
-use rustemo_rt::rustemo_mod;
+use rustemo_tools::output_cmp;
+use rustemo::rustemo_mod;
 
 use self::reduce_empty_1::ReduceEmpty1Parser;
 use self::reduce_empty_2::ReduceEmpty2Parser;

@@ -1,6 +1,6 @@
 mod calculator01_calc_tests {
     use crate::calc_actions::calculator01::Calculator01Parser;
-    use rustemo_rt::Error;
+    use rustemo::Error;
 
     #[test]
     fn test_calculator01_1() {

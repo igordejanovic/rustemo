@@ -10,7 +10,7 @@ use std::{
 };
 
 use clap::ValueEnum;
-use rustemo_rt::{
+use rustemo::{
     create_index,
     index::{
         NonTermIndex, NonTermVec, ProdIndex, StateIndex, StateVec, SymbolIndex,
@@ -1283,7 +1283,7 @@ mod tests {
         output_cmp,
         table::{Follow, LRItem},
     };
-    use rustemo_rt::{
+    use rustemo::{
         index::{ProdIndex, StateIndex, SymbolIndex},
         log,
     };

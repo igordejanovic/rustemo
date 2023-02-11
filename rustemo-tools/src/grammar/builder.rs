@@ -2,7 +2,7 @@
 
 use std::collections::BTreeMap;
 
-use rustemo_rt::index::{
+use rustemo::index::{
     NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, TermIndex,
     TermVec,
 };

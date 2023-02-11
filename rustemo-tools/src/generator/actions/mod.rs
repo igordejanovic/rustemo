@@ -100,7 +100,7 @@ where
             parse_quote! {
                 ///! This file is maintained by rustemo but can be modified manually.
                 ///! All manual changes will be preserved except non-doc comments.
-                use rustemo_rt::lexer;
+                use rustemo::lexer;
                 use super::#parser_mod::Context;
                 use super::#parser_mod::TokenKind;
                 #input_type
@@ -111,7 +111,7 @@ where
             parse_quote! {
                 ///! This file is maintained by rustemo but can be modified manually.
                 ///! All manual changes will be preserved except non-doc comments.
-                use rustemo_rt::lexer;
+                use rustemo::lexer;
                 use super::#parser_mod::TokenKind;
                 #input_type
                 #[allow(dead_code)]

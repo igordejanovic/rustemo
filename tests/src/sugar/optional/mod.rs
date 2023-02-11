@@ -1,5 +1,5 @@
-use rustemo::output_cmp;
-use rustemo_rt::rustemo_mod;
+use rustemo_tools::output_cmp;
+use rustemo::rustemo_mod;
 
 use self::optional_1::Optional1Parser;
 use self::optional_2::Optional2Parser;

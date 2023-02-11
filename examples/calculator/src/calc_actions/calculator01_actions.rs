@@ -1,7 +1,7 @@
 use super::calculator01::TokenKind;
 ///! This file is maintained by rustemo but can be modified manually.
 ///! All manual changes will be preserved except non-doc comments.
-use rustemo_rt::lexer;
+use rustemo::lexer;
 pub type Token<'i> = lexer::Token<'i, str, TokenKind>;
 pub type Num = f32;
 pub fn num(token: Token) -> Num {

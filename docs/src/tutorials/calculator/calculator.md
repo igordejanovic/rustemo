@@ -138,14 +138,14 @@ have a working parser with default AST output which can be later tuned.
 
 ## Adding dependencies
 
-Our generated parser code calls Rustemo code so we must add `rustemo-rt` crate
+Our generated parser code calls Rustemo code so we must add `rustemo` crate
 as a dependency. Since we are using regular expressions in our grammar we also
 need `regex` and `lazy_static`.
 
-Let's add `rustemo-rt`. 
+Let's add `rustemo`. 
 
 ```sh
-cargo add rustemo-rt --path ~/repos/rust/rustemo/rustemo-rt/
+cargo add rustemo --path ~/repos/rust/rustemo/rustemo/
 ```
 
 ```admonish todo
