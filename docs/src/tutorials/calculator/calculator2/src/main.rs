@@ -4,6 +4,7 @@ use crate::calculator::CalculatorParser;
 
 // Include generated modules
 mod calculator;
+#[allow(unused)]
 mod calculator_actions;
 
 fn main() {

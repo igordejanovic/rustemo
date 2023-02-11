@@ -1,0 +1,12 @@
+E: E '+' E {Add, 1, left}
+ | E '-' E {Sub, 1, left}
+ | E '*' E {Mul, 2, left}
+ | E '/' E {Div, 2, left}
+ | Number;
+
+terminals
+Number: /\d+(\.\d+)?/;
+Plus: '+';
+Minus: '-';
+Mul: '*';
+Div: '/';

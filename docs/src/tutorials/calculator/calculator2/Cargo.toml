@@ -8,4 +8,4 @@ edition = "2021"
 [dependencies]
 lazy_static = "1.4.0"
 regex = { version = "1.7.1", default-features = false, features = ["std", "unicode-perl"] }
-rustemo = { version = "0.1.0", path = "../../../../rustemo" }
+rustemo = { version = "0.1.0", path = "../../../../../rustemo" }

@@ -2,10 +2,10 @@ E: E '+' E {1}
  | E '-' E {1}
  | E '*' E {2}
  | E '/' E {2}
- | number;
+ | Number;
 
 terminals
-number: /\d+(\.\d+)?/;
+Number: /\d+(\.\d+)?/;
 Plus: '+';
 Minus: '-';
 Mul: '*';
