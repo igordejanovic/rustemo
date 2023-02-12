@@ -2,15 +2,11 @@
 
 This section describe the grammar language, its syntax and semantics rules.
 
-The Rustemo grammar specification language is based on
-[BNF](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form) with [syntactic
-sugar extensions](#syntactic-sugar-bnf-extensions) which are optional and build
-on top of a pure BNF. Rustemo is based on [Context-Free Grammars
-(CFGs)](https://en.wikipedia.org/wiki/Context-free_grammar) and a grammar is
-written declaratively. This meands you don't have to think about the parsing
-process like in e.g.
-[PEGs](https://en.wikipedia.org/wiki/Parsing_expression_grammar). Ambiguities
-are dealt with explicitly (see the [section on
+The Rustemo grammar specification language is based on [BNF](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form) with [syntactic
+sugar extensions](#syntactic-sugar-bnf-extensions) which are optional and build on top of a pure BNF. Rustemo
+grammars are based on [Context-Free Grammars (CFGs)](https://en.wikipedia.org/wiki/Context-free_grammar) and are written
+declaratively. This means you don't have to think about the parsing process like
+in e.g. [PEGs](https://en.wikipedia.org/wiki/Parsing_expression_grammar). Ambiguities are dealt with explicitly (see the [section on
 conflicts](#resolving-lr-conflicts)).
 
 ## The structure of the grammar
@@ -18,7 +14,7 @@ conflicts](#resolving-lr-conflicts)).
 Each grammar file consists of two parts: 
 
 - derivation/production rules,
-- optional terminal definitions which are written after the keyword `terminals`.
+- terminal definitions which are written after the keyword `terminals`.
 
 Each derivation/production rule is of the form:
 
@@ -43,51 +39,56 @@ Or it could be defined as a terminal in terminals section:
     terminals
     Field: /[A-Z]*/;
 
-This terminal definition uses [regular expression
-recognizer](#regular-expression-recognizer).
+This terminal definition uses [regular expression recognizer](#regular-expression-recognizer).
+
 
 ## Terminals
 
 Terminal symbols of the grammar define the fundamental or atomic elements of
-your language &#x2013; tokens or lexemes (e.g. keywords, numbers).
+your language, tokens or lexemes (e.g. keywords, numbers).
 
 Terminals are given at the end of the grammar file, after production rules,
 following the keyword `terminals`.
 
 Tokens are recognized from the input by a component called `lexer`. Rustemo
-provides a string lexer out-of-the-box. If more control is needed, or if
-non-textual context has been parsed a custom lexer must be provided. See the
-[lexers section](./lexers.md) for more.
+provides a string lexer out-of-the-box which enable. If more control is needed,
+or if non-textual context has been parsed a custom lexer must be provided. See
+the [lexers section](./lexers.md) for more.
 
-The grammar language enables specification of two kinds of terminal
-matches: - string match - regex match
+Each terminal definition is in the form:
+
+    <terminal name>: <recognizer>;
+    
+where `<recognizer>` can be omitted if custom lexer is used.
+
+The default string lexer enables specification of two kinds of terminal
+recognizers:
+
+- String recognizer
+- Regex recognizer
 
 
 ### String recognizer
 
 String recognizer is defined as a plain string inside of double quotes:
 
-    my_rule: "start" other_rule "end";
+    MyRule: "start" OtherRule "end";
 
 In this example `"start"` and `"end"` will be terminals with string recognizers
 that match exactly the words `start` and `end`.
 
-You can write string recognizing terminal directly in the rule expression or you
-can define terminal separately and reference it by name, like:
+For each string recognizer you must provide its definition in the `terminals`
+section in order to define a terminal name.
 
-    my_rule: start other_rule end;
+    MyRule: Start OtherRule End;
     
     terminals
-    start: "start";
-    end: "end";
-
-Either way it will be the same terminal. You can't mix those two approaches for
-a single terminal. If you defined a terminal in the `terminals` section than you
-can&rsquo;t use inline string matches for that terminal.
-
-You will usually write it as a separate terminal if the terminal is used at
-multiple places in the grammar or to provide disambiguation information for a
-terminal (priority, `prefer` etc.).
+    Start: "start";
+    End: "end";
+    
+You can reference the terminal from the grammar rule or use the same string
+recognizer inlined in the grammar rules. It is your choice. Sometimes it is more
+readable to use string recognizers directly.
 
 
 ### Regular expression recognizer
@@ -97,51 +98,17 @@ Or regex recognizer for short is a regex pattern written inside slashes
 
 For example:
 
-    number: /\d+/;
+    Number: /\d+/;
 
-This rule defines terminal symbol `number` which has a regex recognizer and will
+This rule defines terminal symbol `Number` which has a regex recognizer and will
 recognize one or more digits as a number.
 
 ```admonish note
 You cannot write regex recognizers inline like you can do with string
-recognizers. This constraint is introduced because there is no sane way to
-deduce terminal name given its regex. Thus, you must write all regex
-recognizers/terminals in the `terminals` section at the end of the grammar
-file.
+recognizers. This constraint is introduced because regexes are not that easy to
+write and they don't add to readability so it is always better to reference
+terminal by name in grammar rules.
 ```
-
-
-### Custom recognizers
-
-If you are parsing arbitrary input (non-textual) you'll have to provide your own
-recognizers. In the grammar, you just have to provide terminal symbol without
-body, i.e. without string or regex recognizer. You will provide missing
-recognizers during grammar instantiation from Python. Although you don't supply
-body of the terminal you can define [disambiguation rules](./disambiguation.md)
-as usual.
-
-Lets say that we have a list of integers (real list of Python ints, not a text
-with numbers) and we have some weird requirement to break those numbers
-according to the following grammar:
-
-    Numbers: all_less_than_five  ascending  all_less_than_five;
-    all_less_than_five: all_less_than_five  int_less_than_five
-                      | int_less_than_five;
-    
-    
-    terminals
-    // These terminals have no recognizers defined in the grammar
-    ascending: ;
-    int_less_than_five: ;
-
-So, we should first match all numbers less than five and collect those, than we
-should match a list of ascending numbers and than list of less than five again.
-`int_less_than_five` and `ascending` are terminals/recognizers that will be
-defined in Python and passed to grammar construction. `int_less_than_five` will
-recognize Python integer that is, well, less than five. `ascending` will
-recognize a sublist of integers in ascending order.
-
-More on this topic can be found in [a separate section](./recognizers.md).
 
 
 ## Usual patterns
@@ -151,12 +118,12 @@ a plain BNF notation.
 
 ### One or more
 
-    // sections rule below will match one or more section.
-    sections: sections section | section;
+    // Sections rule below will match one or more Section.
+    Sections: Sections Section | Section;
 
-In this example `sections` will match one or more `section`. Notice the
-recursive definition of the rule. You can read this as *`sections` is either a
-single section or `sections` and a `section`*.
+In this example `Sections` will match one or more `Section`. Notice the
+recursive definition of the rule. You can read this as *`Sections` is either a
+single Section or `Sections` and a `Section`*.
 
 ```admonish note
 Please note that you could do the same with this rule:
@@ -726,6 +693,9 @@ comments:
 
 ## Handling keywords in your language
 
+```admonish danger "Not implemented"
+This is currently not implemented.
+```
 By default parser will match given string recognizer even if it is part of some
 larger word, i.e. it will not require matching on the word boundary. This is not
 the desired behavior for language keywords.
@@ -789,48 +759,51 @@ separated from the surrounding tokens.
 
 ## Handling whitespaces and comments in your language
 
-By default parser will skip whitespaces. Whitespace skipping is controlled by
-`ws` parameter to the parser which is by default set to `'\n\t '`.
+By default parser will skip whitespaces. You can take control over this process
+by defining a special grammar rule `Layout`. If this rule is found in the
+grammar the parser will use it to parse layout before each token. This is
+usually used to parse whitespaces, comments, or anything that is not relevant
+for the semantics analysis of the language.
 
-If you need more control of the layout, i.e. handling of not only
-whitespaces but comments also, you can use a special rule `LAYOUT`:
+For example, given the grammar:
 
-    LAYOUT: LayoutItem | LAYOUT LayoutItem | EMPTY;
-    LayoutItem: WS | Comment;
-    
-    terminals
-    WS: /\s+/;
-    Comment: /\/\/.*/;
+```
+{{#include ../../tests/src/layout/layout.rustemo}}
+```
 
-This will form a separate layout parser that will parse in-between each
-matched tokens. In this example whitespaces and line-comments will be
-consumed by the layout parser.
+We can parse an input consisting of numbers and words but we will get only numbers as an output.
 
-If this special rule is found in the grammar `ws` parser parameter is
-ignored.
+```rust
+{{#include ../../tests/src/layout/mod.rs:input}}
+```
+The result will be:
+
+```
+{{#include ../../tests/src/layout/layout.ast}}
+
+```
 
 Here is another example that gives support for both line comments and
 block comments like the one used in the grammar language itself:
 
-    LAYOUT: LayoutItem | LAYOUT LayoutItem | EMPTY;
-    LayoutItem: WS | Comment;
-    Comment: '/*' CorNCs '*/' | LineComment;
-    CorNCs: CorNC | CorNCs CorNC | EMPTY;
-    CorNC: Comment | NotComment | WS;
-    
-    terminals
-    WS: /\s+/;
-    LineComment: /\/\/.*/;
-    NotComment: /((\*[^\/])|[^\s*\/]|\/[^\*])+/;
+```
+Layout: LayoutItem*;
+LayoutItem: WS | Comment;
+Comment: '/*' Corncs '*/' | CommentLine;
+Corncs: Cornc*;
+Cornc: Comment | NotComment | WS;
 
-!!! tip
+terminals
+WS: /\s+/;
+CommentLine: /\/\/.*/;
+NotComment: /((\*[^\/])|[^\s*\/]|\/[^\*])+/;
+```
 
-    If `LAYOUT` is provided it *must* match before the first token, between any
-    two tokens in the input, and after the last token. If layout cannot be
-    empty, the input cannot start or end with a token. If this is not desired,
-    make sure to include `EMPTY` in the layout as one of its alternatives like
-    in the previous examples.
-
-
-<a id="handling-keywords-in-your-language"></a>
+```admonish note
+If `Layout` is provided it *must* match before the first token, between any two
+tokens in the input, and after the last token. If layout cannot be empty, the
+input cannot start or end with a token. If this is not desired, make sure that
+`Layout` parsing is optional by including `EMPTY` in the layout as one of its
+alternatives or using e.g. zero-or-more (`*`) like in the previous example.
+```
 

@@ -59,11 +59,13 @@ RepetitionModifier: Name;
 GrammarSymbol: Name | StrConst;
 Recognizer: StrConst | RegexTerm;
 
+// ANCHOR: layout
 Layout: LayoutItem*;
 LayoutItem: WS | Comment;
 Comment: '/*' Corncs '*/' | CommentLine;
 Corncs: Cornc*;
 Cornc: Comment | NotComment | WS;
+// ANCHOR_END: layout
 
 terminals
 

@@ -8,6 +8,8 @@ rustemo_mod!(layout_actions, "/src/layout");
 
 #[test]
 fn layout() {
+    // ANCHOR: input
     let result = LayoutParser::parse("1 42 This 6 should be 89 ignored 8");
+    // ANCHOR_END: input
     output_cmp!("src/layout/layout.ast", format!("{:#?}", result))
 }
