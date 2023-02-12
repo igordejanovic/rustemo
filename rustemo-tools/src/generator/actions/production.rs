@@ -20,7 +20,6 @@ pub(crate) struct ProductionActionsGenerator {
 }
 
 impl ProductionActionsGenerator {
-
     // TODO: Rework this to be aligned with conventions
     #[allow(clippy::new_ret_no_self)]
     pub fn new(grammar: &Grammar) -> Box<dyn ActionsGenerator> {

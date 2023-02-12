@@ -1,5 +1,5 @@
-use rustemo_tools::output_cmp;
 use rustemo::rustemo_mod;
+use rustemo_tools::output_cmp;
 
 use self::one_or_more_1::OneOrMore1Parser;
 use self::one_or_more_2::OneOrMore2Parser;

@@ -1,7 +1,7 @@
 ///! This file is maintained by rustemo but can be modified manually.
 ///! All manual changes will be preserved except non-doc comments.
-use rustemo::lexer;
 use super::calculator03_ambig_prodkind::TokenKind;
+use rustemo::lexer;
 pub type Input = str;
 #[allow(dead_code)]
 pub type Token<'i> = lexer::Token<'i, Input, TokenKind>;

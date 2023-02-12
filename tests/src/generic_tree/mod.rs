@@ -1,5 +1,5 @@
-use rustemo_tools::output_cmp;
 use rustemo::rustemo_mod;
+use rustemo_tools::output_cmp;
 
 use self::generic_tree::GenericTreeParser;
 

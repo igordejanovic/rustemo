@@ -1,5 +1,5 @@
-use rustemo_tools::output_cmp;
 use rustemo::rustemo_mod;
+use rustemo_tools::output_cmp;
 
 use self::zero_or_more_1::ZeroOrMore1Parser;
 use self::zero_or_more_2::ZeroOrMore2Parser;

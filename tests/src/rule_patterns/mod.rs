@@ -1,5 +1,5 @@
-use rustemo_tools::output_cmp;
 use rustemo::rustemo_mod;
+use rustemo_tools::output_cmp;
 
 rustemo_mod!(zero_or_more_1, "/src/rule_patterns");
 rustemo_mod!(zero_or_more_1_actions, "/src/rule_patterns");

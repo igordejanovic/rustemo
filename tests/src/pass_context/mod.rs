@@ -1,5 +1,5 @@
-use rustemo_tools::output_cmp;
 use rustemo::rustemo_mod;
+use rustemo_tools::output_cmp;
 mod pass_context_actions;
 
 rustemo_mod!(pass_context, "/src/pass_context");

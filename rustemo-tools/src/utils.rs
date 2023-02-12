@@ -32,8 +32,8 @@ pub fn string_difference(a: &str, b: &str) -> Option<(usize, (char, char))> {
 macro_rules! output_cmp {
     ($path:expr, $out_str:expr) => {{
         use {
-            $crate::utils::string_difference,
             std::{fs, path::PathBuf},
+            $crate::utils::string_difference,
         };
         let t_path: PathBuf =
             [env!("CARGO_MANIFEST_DIR"), $path].iter().collect();
