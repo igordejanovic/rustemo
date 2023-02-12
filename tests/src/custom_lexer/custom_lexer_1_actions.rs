@@ -9,10 +9,14 @@ pub type VarInt = i128;
 /// Here we convert varint slice of u8 to i128
 pub fn var_int<'i>(token: Token<'i>) -> VarInt {
     let mut res: VarInt = 0;
-    token.value.iter().rev().for_each(|b| {
-        res <<= 7;
-        res |= (b & 0b0111_1111) as i128;
-    });
+    token
+        .value
+        .iter()
+        .rev()
+        .for_each(|b| {
+            res <<= 7;
+            res |= (b & 0b0111_1111) as i128;
+        });
     res
 }
 pub type VarInts = VarInt1;

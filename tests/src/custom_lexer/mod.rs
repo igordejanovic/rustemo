@@ -10,8 +10,10 @@ mod custom_lexer_1_lexer;
 mod custom_lexer_2_lexer;
 
 rustemo_mod!(custom_lexer_1, "/src/custom_lexer");
+#[rustfmt::skip]
 mod custom_lexer_1_actions;
 rustemo_mod!(custom_lexer_2, "/src/custom_lexer");
+#[rustfmt::skip]
 mod custom_lexer_2_actions;
 
 #[test]

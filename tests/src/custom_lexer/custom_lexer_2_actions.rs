@@ -32,10 +32,13 @@ pub type VarInt = i128;
 pub fn var_int_c1(msbbyte0: MSBByte0, non_msbbyte: NonMSBByte) -> VarInt {
     let mut res: i128 = non_msbbyte as i128;
     if let Some(bytes) = msbbyte0 {
-        bytes.iter().rev().for_each(|b| {
-            res <<= 7;
-            res |= (b & 0b0111_1111) as i128;
-        });
+        bytes
+            .iter()
+            .rev()
+            .for_each(|b| {
+                res <<= 7;
+                res |= (b & 0b0111_1111) as i128;
+            });
     }
     res
 }
