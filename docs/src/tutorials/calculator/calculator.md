@@ -214,8 +214,6 @@ Congrats! You have made your first Rustemo parser!
 Although, it still have many issues which we'll fix in the rest of the tutorial.
 
 
-
-
 ## Extending the grammar
 
 Ok, let's see can we parse the example expression from the beginning of the tutorial:
@@ -565,7 +563,8 @@ kept in the AST.
 Add link to the section on assignments.
 ```
 
-To change field names add assignments for `left` and `right` operands in each operation:
+To change field names add assignments for `left` and `right` operands in each
+operation:
 
 ```rust
 {{#include calculator4/src/calculator.rustemo}}
@@ -579,9 +578,9 @@ have nicely named fields.
 ```
 Much easier to work with!
 
-In general, it is good to use assignments and production kinds from the
-beginning as they represent valuable information (a sort of docs). The AST types
-generator uses those information as you have seen.
+In general, it is a good practice to use assignments and production kinds from
+the start as they represent valuable information (a sort of docs). The AST types
+generator uses those information, as you have seen.
 
 Let's run our calculator just to make sure it works:
 
@@ -602,8 +601,8 @@ Everything is fine. Let's move on.
 
 ## Calculating expressions
 
-The last piece of the puzzle is to make our calculator really useful by doing
-the actual calculation.
+The last piece of the puzzle is to make our calculator useful by doing the
+actual calculation.
 
 When we are parsing input we are doing what we call "semantic analysis" which
 purpose is to transform the input to some other form which is of use in the
@@ -616,7 +615,9 @@ parsing is a single number which represents the result.
 
 Semantic analysis is done by the actions in `calculator_actions.rs`. The actions
 are Rust functions which are called during reductions to reduce a production
-(right-hand side) to the sub-result (left-hand side of the grammar rule). In our case, each reduction should basically be a calculation of a sub-expression result.
+(right-hand side) to the sub-result (left-hand side of the grammar rule). In our
+case, each reduction should basically be a calculation of a sub-expression
+result.
 
 As you have seen in the previous section, you need to delete actions if you want
 them regenerated on each `rustemo` run. You can also remove some parts of it and
@@ -677,7 +678,8 @@ They are of the form:
 {{#rustdoc_include calculator4/src/calculator_actions.rs:add_action}}
 ```
 
-So they produce AST node while they should do the calculation. So let's change all of them:
+So they produce AST node while they should do the calculation. So let's change
+all of them:
 
 ```rust
 {{#rustdoc_include calculator5/src/calculator_actions.rs:actions}}
@@ -687,9 +689,9 @@ So they produce AST node while they should do the calculation. So let's change a
 Just a reminder that you can see the whole code by using "Show hidden lines".
 ```
 
-Very simple, each action is doing its calculation! Notice the last one which
-is called to reduce `Number` to `E`. It just returns the number as it is already
-a float produced by the `number` action.
+Very simple, each action is doing its calculation! Notice the last one which is
+called to reduce `Number` to `E`. It just returns the number as it is already a
+float produced by the `number` action.
 
 That's it. We have a fully working calculator!
 
