@@ -4,14 +4,17 @@ use std::{
     hash::{Hash, Hasher},
 };
 
-use rustemo::index::{
-    NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, SymbolVec,
-    TermIndex, TermVec,
+use rustemo::{
+    index::{
+        NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, SymbolVec,
+        TermIndex, TermVec,
+    },
+    Result,
 };
 
-use crate::{error::Result, lang::rustemo::RustemoParser};
+use crate::lang::rustemo::RustemoParser;
 
-use self::{builder::GrammarBuilder, types::to_snake_case};
+use self::types::to_snake_case;
 
 use super::lang::rustemo_actions::{
     GrammarSymbol, Imports, ProdMetaDatas, Recognizer, TermMetaDatas,
@@ -309,8 +312,7 @@ pub(crate) fn res_symbol(assign: &ResolvingAssignment) -> SymbolIndex {
 impl Grammar {
     /// Parses given string and constructs a Grammar instance
     pub fn from_string<G: AsRef<str>>(grammar_str: G) -> Result<Self> {
-        Ok(GrammarBuilder::new()
-            .from_file(RustemoParser::parse(grammar_str.as_ref())?))
+        RustemoParser::parse(grammar_str.as_ref())?.try_into()
     }
 
     /// Parses given file and constructs a Grammar instance

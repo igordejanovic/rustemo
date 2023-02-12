@@ -2,9 +2,12 @@
 
 use std::collections::BTreeMap;
 
-use rustemo::index::{
-    NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, TermIndex,
-    TermVec,
+use rustemo::{
+    index::{
+        NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, TermIndex,
+        TermVec,
+    },
+    Error, Result,
 };
 
 use crate::{
@@ -31,7 +34,7 @@ macro_rules! resolving {
 }
 
 #[derive(Debug)]
-pub(crate) struct GrammarBuilder {
+struct GrammarBuilder {
     terminals: BTreeMap<String, Terminal>,
     terminals_matches: BTreeMap<String, (String, TermIndex)>,
     nonterminals: BTreeMap<String, NonTerminal>,
@@ -42,8 +45,16 @@ pub(crate) struct GrammarBuilder {
     start_rule_name: String,
 }
 
+impl TryFrom<File> for Grammar {
+    type Error = Error;
+
+    fn try_from(value: File) -> Result<Self> {
+        GrammarBuilder::new().from_file(value)
+    }
+}
+
 impl GrammarBuilder {
-    pub fn new() -> Self {
+    fn new() -> Self {
         Self {
             terminals: BTreeMap::new(),
             terminals_matches: BTreeMap::new(),
@@ -76,7 +87,7 @@ impl GrammarBuilder {
 
     // TODO: Think of a better API which is aligned with conventions
     #[allow(clippy::wrong_self_convention)]
-    pub(crate) fn from_file(mut self, file: File) -> Grammar {
+    fn from_file(mut self, file: File) -> Result<Grammar> {
         // Create implicit STOP terminal used to signify the end of the input.
         let term_idx = self.get_term_idx();
         self.terminals.insert(
@@ -152,7 +163,7 @@ impl GrammarBuilder {
         };
         // TODO: Dump only if tracing is used
         log!("{grammar}");
-        grammar
+        Ok(grammar)
     }
 
     fn collect_terminals(
