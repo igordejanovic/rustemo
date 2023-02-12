@@ -1299,40 +1299,38 @@ mod tests {
     }
 
     fn test_grammar() -> Grammar {
-        Grammar::from_string(
-            r#"
-            E: T Ep;
-            Ep: "+" T Ep | EMPTY;
-            T: F Tp;
-            Tp: "*" F Tp | EMPTY;
-            F: "(" E ")" | "id";
+        r#"
+        E: T Ep;
+        Ep: "+" T Ep | EMPTY;
+        T: F Tp;
+        Tp: "*" F Tp | EMPTY;
+        F: "(" E ")" | "id";
 
-            terminals
-            Plus: "+";
-            Mul: "*";
-            LParen: "(";
-            RParen: ")";
-            id: "id";
-            "#,
-        )
+        terminals
+        Plus: "+";
+        Mul: "*";
+        LParen: "(";
+        RParen: ")";
+        id: "id";
+        "#
+        .parse()
         .unwrap()
     }
 
     fn test_grammar_2() -> Grammar {
-        Grammar::from_string(
-            r#"
-            E: E "+" T | T;
-            T: T "*" F | F;
-            F: "(" E ")" | "id";
+        r#"
+        E: E "+" T | T;
+        T: T "*" F | F;
+        F: "(" E ")" | "id";
 
-            terminals
-            Plus: "+";
-            Mul: "*";
-            LParen: "(";
-            RParen: ")";
-            id: "id";
-            "#,
-        )
+        terminals
+        Plus: "+";
+        Mul: "*";
+        LParen: "(";
+        RParen: ")";
+        id: "id";
+        "#
+        .parse()
         .unwrap()
     }
 
@@ -1340,39 +1338,37 @@ mod tests {
     /// This grammar is LR(1) but not LALR.
     /// See also: https://www.gnu.org/software/bison/manual/bison.html#Mysterious-Conflicts
     fn test_non_lalr_grammar() -> Grammar {
-        Grammar::from_string(
-            r#"
-            S: A "a" | "b" A "c" | B "c" | "b" B "a";
-            A: "d";
-            B: "d";
-            terminals
-            a_t: "a";
-            b_t: "b";
-            c_t: "c";
-            d_t: "d";
-            "#,
-        )
+        r#"
+        S: A "a" | "b" A "c" | B "c" | "b" B "a";
+        A: "d";
+        B: "d";
+        terminals
+        a_t: "a";
+        b_t: "b";
+        c_t: "c";
+        d_t: "d";
+        "#
+        .parse()
         .unwrap()
     }
 
     fn test_ambiguous_grammar() -> Grammar {
-        Grammar::from_string(
-            r#"
-            E: E "+" E {1, left}
-             | E "*" E {2, left}
-             | E "^" E {3, right}
-             | "(" E ")"
-             | "id";
+        r#"
+        E: E "+" E {1, left}
+            | E "*" E {2, left}
+            | E "^" E {3, right}
+            | "(" E ")"
+            | "id";
 
-            terminals
-            Plus: "+";
-            Mul: "*";
-            Power: "^";
-            LParen: "(";
-            RParen: ")";
-            id: "id";
-            "#,
-        )
+        terminals
+        Plus: "+";
+        Mul: "*";
+        Power: "^";
+        LParen: "(";
+        RParen: ")";
+        id: "id";
+        "#
+        .parse()
         .unwrap()
     }
 
@@ -1746,15 +1742,14 @@ mod tests {
 
     #[test]
     fn test_sorted_terminals() {
-        let grammar = Grammar::from_string(
-            r#"
+        let grammar: Grammar = r#"
             S: A | C | B;
             terminals
             A: /\d+/;
             B: "bb";
             C: "c";
-            "#,
-        )
+            "#
+        .parse()
         .unwrap();
 
         let settings = Settings {

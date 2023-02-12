@@ -2,6 +2,7 @@ use std::{
     collections::BTreeMap,
     fmt::Display,
     hash::{Hash, Hasher},
+    str::FromStr,
 };
 
 use rustemo::{
@@ -9,10 +10,10 @@ use rustemo::{
         NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, SymbolVec,
         TermIndex, TermVec,
     },
-    Result,
+    Error, Result,
 };
 
-use crate::lang::rustemo::RustemoParser;
+use crate::lang::rustemo_actions::File;
 
 use self::types::to_snake_case;
 
@@ -309,10 +310,28 @@ pub(crate) fn res_symbol(assign: &ResolvingAssignment) -> SymbolIndex {
     }
 }
 
+// This can be used at the moment due to conflict with a blankt impl in the core.
+// See: https://github.com/rust-lang/rust/issues/50133
+// impl<T: AsRef<str>> TryFrom<T> for Grammar {
+//     type Error = Error;
+
+//     fn try_from(value: T) -> std::result::Result<Self, Self::Error> {
+//        Grammar::from_string(value.as_ref())
+//     }
+// }
+
+impl FromStr for Grammar {
+    type Err = Error;
+
+    fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
+        Grammar::from_string(s)
+    }
+}
+
 impl Grammar {
     /// Parses given string and constructs a Grammar instance
-    pub fn from_string<G: AsRef<str>>(grammar_str: G) -> Result<Self> {
-        RustemoParser::parse(grammar_str.as_ref())?.try_into()
+    fn from_string<G: AsRef<str>>(grammar_str: G) -> Result<Self> {
+        grammar_str.as_ref().parse::<File>()?.try_into()
     }
 
     /// Parses given file and constructs a Grammar instance

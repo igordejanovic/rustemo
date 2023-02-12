@@ -10,7 +10,7 @@ fn test_rustemo_grammar() {
         [env!("CARGO_MANIFEST_DIR"), "src", "lang", "rustemo.rustemo"]
             .iter()
             .collect();
-    let grammar = Grammar::from_string(fs::read_to_string(path).unwrap());
+    let grammar: Grammar = fs::read_to_string(path).unwrap().parse().unwrap();
 
     output_cmp!("src/lang/rustemo.ast", format!("{:#?}", grammar));
 }

@@ -73,7 +73,7 @@ pub fn generate_parser(
     };
 
     let grammar_input = std::fs::read_to_string(grammar_path)?;
-    let grammar = Grammar::from_string(grammar_input)?;
+    let grammar: Grammar = grammar_input.parse()?;
 
     let table = LRTable::new(&grammar, settings);
 

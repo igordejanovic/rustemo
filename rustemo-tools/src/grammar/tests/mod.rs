@@ -8,28 +8,26 @@ use rustemo::index::ProdIndex;
 
 #[test]
 fn grammar_from_string() {
-    let grammar = Grammar::from_string(
-        r#"
+    let grammar: Grammar = r#"
             S: A B;
         terminals
             A: "a";
             B: "b";
-        "#,
-    )
+        "#
+    .parse()
     .unwrap();
     assert!(type_of(&grammar) == "rustemo_tools::grammar::Grammar");
 }
 
 #[test]
 fn create_terminals_1() {
-    let grammar = Grammar::from_string(
-        r#"
+    let grammar: Grammar = r#"
         S: "first_term" "second_term";
         terminals
         first_term: "first_term";
         second_term: "second_term";
-        "#,
-    )
+        "#
+    .parse()
     .unwrap();
     assert_eq!(
         grammar
@@ -43,16 +41,15 @@ fn create_terminals_1() {
 
 #[test]
 fn create_terminals_2() {
-    let grammar = Grammar::from_string(
-        r#"
+    let grammar: Grammar = r#"
         S: "first_term" A "second_term";
         A: third_term;
         terminals
         first_term: "first_term";
         second_term: "second_term";
         third_term: ;
-        "#,
-    )
+        "#
+    .parse()
     .unwrap();
     assert_eq!(
         grammar
@@ -66,16 +63,15 @@ fn create_terminals_2() {
 
 #[test]
 fn create_terminals_multiple() {
-    let grammar = Grammar::from_string(
-        r#"
+    let grammar: Grammar = r#"
         S: "first_term" A "second_term" "first_term";
         A: third_term "third_term" "first_term" second_term;
         terminals
         first_term: "first_term";
         second_term: "second_term";
         third_term: "third_term";
-        "#,
-    )
+        "#
+    .parse()
     .unwrap();
     assert_eq!(
         grammar
@@ -94,8 +90,7 @@ fn create_terminals_multiple() {
 
 #[test]
 fn terminals_regex() {
-    let grammar = Grammar::from_string(
-        r#"
+    let grammar: Grammar = r#"
         S: "foo" rmatch_term A;
         A: "some" more_regex;
         terminals
@@ -103,8 +98,8 @@ fn terminals_regex() {
         some: "some";
         rmatch_term: /"[^"]+"/;
         more_regex: /\d{2,5}/;
-        "#,
-    )
+        "#
+    .parse()
     .unwrap();
     assert_eq!(
         grammar
@@ -136,15 +131,14 @@ fn terminals_regex() {
 
 #[test]
 fn nonterminal_productions() {
-    let grammar = Grammar::from_string(
-        r#"
+    let grammar: Grammar = r#"
         S: A "some_term" B | B;
         A: B;
         B: some_term;
         terminals
         some_term: "some_term";
-        "#,
-    )
+        "#
+    .parse()
     .unwrap();
     assert_eq!(grammar.nonterminals.len(), 5);
     assert_eq!(
@@ -179,15 +173,14 @@ fn nonterminal_productions() {
 
 #[test]
 fn productions_meta_data() {
-    let grammar = Grammar::from_string(
-        r#"
+    let grammar: Grammar = r#"
         S: A "some_term" B {5} | B {nops};
         A: B {nopse, bla: 5};
         B: some_term {right};
         terminals
         some_term: "some_term";
-        "#,
-    )
+        "#
+    .parse()
     .unwrap();
     assert_eq!(grammar.productions.len(), 5);
 
@@ -215,15 +208,14 @@ fn productions_meta_data() {
 
 #[test]
 fn productions_meta_data_inheritance() {
-    let grammar = Grammar::from_string(
-        r#"
+    let grammar: Grammar = r#"
         S {15, nopse}: A "some_term" B {5} | B {nops};
         A {bla: 10}: B {nopse, bla: 5} | B {7};
         B {left}: some_term {right} | some_term;
         terminals
         some_term: "some_term";
-        "#,
-    )
+        "#
+    .parse()
     .unwrap();
     assert_eq!(grammar.productions.len(), 7);
 
@@ -262,16 +254,15 @@ fn productions_meta_data_inheritance() {
 
 #[test]
 fn regex_sugar_zero_or_more() {
-    let grammar = Grammar::from_string(
-        r#"
+    let grammar: Grammar = r#"
         S: A* B | C* | "some"*;
         A: Some A*;
         B: Some | EMPTY;
         C: A* Some;
         terminals
         Some: "some";
-        "#,
-    )
+        "#
+    .parse()
     .unwrap();
     output_cmp!(
         "src/grammar/tests/regex_sugar_zero_or_more.expected",
@@ -281,16 +272,15 @@ fn regex_sugar_zero_or_more() {
 
 #[test]
 fn regex_sugar_one_or_more() {
-    let grammar = Grammar::from_string(
-        r#"
+    let grammar: Grammar = r#"
         S: A+ B | C+ | "some"+;
         A: Some A+;
         B: Some | EMPTY;
         C: A+ Some;
         terminals
         Some: "some";
-        "#,
-    )
+        "#
+    .parse()
     .unwrap();
     output_cmp!(
         "src/grammar/tests/regex_sugar_one_or_more.expected",
@@ -300,16 +290,15 @@ fn regex_sugar_one_or_more() {
 
 #[test]
 fn regex_sugar_optional() {
-    let grammar = Grammar::from_string(
-        r#"
+    let grammar: Grammar = r#"
         S: A? B | C? | "some"?;
         A: Some A?;
         B: Some | EMPTY;
         C: A? Some;
         terminals
         Some: "some";
-        "#,
-    )
+        "#
+    .parse()
     .unwrap();
     output_cmp!(
         "src/grammar/tests/regex_sugar_optional.expected",
