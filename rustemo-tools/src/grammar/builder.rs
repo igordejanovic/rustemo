@@ -413,12 +413,15 @@ impl GrammarBuilder {
 
         if let Some(ref op) = gsymref.repetition_op {
             let modifiers = &op.rep_modifiers;
-            let mut modifier = None;
-            if let Some(modifiers) = modifiers {
-                // For now we only support a separator modifier
-                assert!(modifiers.len() == 1);
-                modifier = Some(&modifiers[0]);
-            }
+            let modifier = if let Some(modifiers) = modifiers {
+                assert!(
+                    modifiers.len() == 1,
+                    "Separator modifier is supported only!"
+                );
+                Some(&modifiers[0])
+            } else {
+                None
+            };
             // TODO: This unwrap may fail in case of production groups use
             // which is still unimplemented but allowed by the grammar.
             let ref_type = match gsymref.gsymbol.as_ref().unwrap() {
