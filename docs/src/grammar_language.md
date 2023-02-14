@@ -11,7 +11,7 @@ conflicts](#resolving-lr-conflicts)).
 
 ## The structure of the grammar
 
-Each grammar file consists of two parts: 
+Each grammar file consists of two parts:
 
 - derivation/production rules,
 - terminal definitions which are written after the keyword `terminals`.
@@ -58,7 +58,7 @@ parsed a custom lexer must be provided. See the [lexers section](./lexers.md) fo
 Each terminal definition is in the form:
 
     <terminal name>: <recognizer>;
-    
+
 where `<recognizer>` can be omitted if custom lexer is used.
 
 The default string lexer enables specification of two kinds of terminal
@@ -92,8 +92,7 @@ Start: "start";
 End: "end";
 
 ```
-    
-    
+
 You can reference the terminal from the grammar rule, like:
 
 ```
@@ -133,53 +132,65 @@ regex terminal by name in grammar rules.
 ## Usual patterns
 
 This section explains how some common grammar patterns can be written using just
-a plain BNF notation.
+a plain BNF notation. Afterwards we'll see some syntax sugar extensions which
+can be used to write these patterns in a more compact and readable form.
 
 ### One or more
 
-    // Sections rule below will match one or more Section.
-    Sections: Sections Section | Section;
+This pattern is used to match one or more things.
 
-In this example `Sections` will match one or more `Section`. Notice the
-recursive definition of the rule. You can read this as *`Sections` is either a
-single Section or `Sections` and a `Section`*.
+For example, `Sections` rule below will match one or more `Section`.
+
+```
+Sections: Section | Sections Section;
+```
+Notice the recursive definition of the rule. You can read this as
+
+> `Sections` is either a single Section or `Sections` followed by a `Section`.
 
 ```admonish note
 Please note that you could do the same with this rule:
 
-    sections: section sections | section;
+    Sections: Section | Section Sections;
 
 which will give you similar result but the resulting tree will be different.
-Notice the recursive reference is now at the and of the first production.
-Previous example will reduce sections early and than add another section to it,
+Notice the recursive reference is now at the end of the second production.
+
+Previous example will reduce sections early and then add another section to it,
 thus the tree will be expanding to the left. The example in this note will
 collect all the sections and than start reducing from the end, thus building a
 tree expanding to the right. These are subtle differences that are important
 when you start writing your semantic actions. Most of the time you don't care
-about this so use the first version as it is more efficient and Rustemo
-provides built-in actions for these common cases.
-
+so use the first version as it is more efficient in the context of the LR parsing.
 ```
 
 
 ### Zero or more
-    
-    // sections rule below will match zero or more section.
-    sections: sections section | section | EMPTY;
 
-In this example `sections` will match zero or more `section`. Notice the
-addition of the `EMPTY` choice at the end. This means that matching nothing is a
-valid `sections` non-terminal.
+This pattern is used to match zero or more things.
 
-Same note from above applies here to.
+For example, `Sections` rule below will match zero or more `Section`.
+
+```
+Sections: Section | Sections Section | EMPTY;
+```
+
+Notice the addition of the `EMPTY` choice at the end. This means that matching
+nothing is a valid `Sections` non-terminal. Basically, this rule is the same as
+one-or-more except that matching nothing is also a valid solution.
+
+Same note from the above applies here to.
 
 
 ### Optional
 
-    document: optheader body;
-    optheader: header | EMPTY;
+When we want to match something optionally we can use this pattern:
 
-In this example `optheader` is either a header or nothing.
+```
+OptHeader: Header | EMPTY;
+```
+
+In this example `OptHeader` is either a `Header` or nothing.
 
 
 ## Syntactic sugar - BNF extensions
