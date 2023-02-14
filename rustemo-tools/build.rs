@@ -5,6 +5,8 @@ use std::path::PathBuf;
 use std::process::{exit, Command};
 use std::{env, fs};
 
+const PROJECT: &str = "rustemo-tools";
+
 fn main() {
     // Rebuild if head changed to include the new git hash.
     println!("cargo:rerun-if-changed=.git/HEAD");
@@ -40,8 +42,8 @@ fn bootstrap() -> Result<(), Box<dyn Error>> {
     fs::create_dir_all(out_dir.join("src/lang"))?;
 
     for f in [
-        "rustemo/src/lang/rustemo.rs",
-        "rustemo/src/lang/rustemo_actions.rs",
+        format!("{PROJECT}/src/lang/rustemo.rs"),
+        format!("{PROJECT}/src/lang/rustemo_actions.rs"),
     ] {
         let output = Command::new("git")
             .args(["show", &format!("main:{}", f)])
@@ -49,11 +51,14 @@ fn bootstrap() -> Result<(), Box<dyn Error>> {
             .unwrap_or_else(|_| panic!("Cannot checkout file {:?}", f));
 
         if !output.status.success() {
-            panic!("git command execution failed!");
+            panic!("git command execution failed! Exit status = {:?}", output.status);
         }
 
-        let out_file =
-            out_dir.join(PathBuf::from(f).strip_prefix("rustemo/").unwrap());
+        let out_file = out_dir.join(
+            PathBuf::from(f)
+                .strip_prefix(format!("{PROJECT}/"))
+                .unwrap(),
+        );
 
         println!("{:?}", out_file);
 
