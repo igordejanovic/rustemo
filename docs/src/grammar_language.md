@@ -47,13 +47,13 @@ This terminal definition uses [regular expression recognizer](#regular-expressio
 Terminal symbols of the grammar define the fundamental or atomic elements of
 your language, tokens or lexemes (e.g. keywords, numbers).
 
-Terminals are given at the end of the grammar file, after production rules,
+Terminals are specified at the end of the grammar file, after production rules,
 following the keyword `terminals`.
 
-Tokens are recognized from the input by a component called `lexer`. Rustemo
-provides a string lexer out-of-the-box which enable. If more control is needed,
-or if non-textual context has been parsed a custom lexer must be provided. See
-the [lexers section](./lexers.md) for more.
+Tokens are recognized from the input by a `lexer` component. Rustemo provides a
+string lexer out-of-the-box which enable lexing based on recognizers provided in
+the grammar. If more control is needed, or if non-textual context has been
+parsed a custom lexer must be provided. See the [lexers section](./lexers.md) for more.
 
 Each terminal definition is in the form:
 
@@ -70,25 +70,41 @@ recognizers:
 
 ### String recognizer
 
-String recognizer is defined as a plain string inside of double quotes:
+String recognizer is defined as a plain string inside single or double quotes. For
+example, in a grammar rule:
 
-    MyRule: "start" OtherRule "end";
+```
+MyRule: "start" OtherRule "end";
 
-In this example `"start"` and `"end"` will be terminals with string recognizers
-that match exactly the words `start` and `end`.
+```
+
+
+`"start"` and `"end"` will be terminals with string recognizers that match
+exactly the words `start` and `end`. In this example we have recognizers inlined
+in the grammar rule.
 
 For each string recognizer you must provide its definition in the `terminals`
 section in order to define a terminal name.
 
-    MyRule: Start OtherRule End;
+```
+terminals
+Start: "start";
+End: "end";
+
+```
     
-    terminals
-    Start: "start";
-    End: "end";
     
-You can reference the terminal from the grammar rule or use the same string
-recognizer inlined in the grammar rules. It is your choice. Sometimes it is more
-readable to use string recognizers directly.
+You can reference the terminal from the grammar rule, like:
+
+```
+MyRule: Start OtherRule End;
+```
+
+or use the same string recognizer inlined in the grammar rules, like we have
+seen before. It is your choice. Sometimes it is more readable to use string
+recognizers directly. But, anyway you must always declare the terminal in the
+`terminals` section for the sake of providing names which are used in the code
+of the generated parser.
 
 
 ### Regular expression recognizer
@@ -98,16 +114,19 @@ Or regex recognizer for short is a regex pattern written inside slashes
 
 For example:
 
-    Number: /\d+/;
+```
+terminals
+Number: /\d+/;
+```
 
-This rule defines terminal symbol `Number` which has a regex recognizer and will
-recognize one or more digits as a number.
+This rule defines terminal symbol `Number` which has a regex recognizer that
+will recognize one or more digits from the input.
 
 ```admonish note
 You cannot write regex recognizers inline like you can do with string
 recognizers. This constraint is introduced because regexes are not that easy to
 write and they don't add to readability so it is always better to reference
-terminal by name in grammar rules.
+regex terminal by name in grammar rules.
 ```
 
 
