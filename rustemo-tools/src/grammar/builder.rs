@@ -404,9 +404,9 @@ impl GrammarBuilder {
                     RepetitionOperatorOp::ZeroOrMore => "0",
                     RepetitionOperatorOp::ZeroOrMoreGreedy => "0Greedy",
                     RepetitionOperatorOp::OneOrMore => "1",
-                    RepetitionOperatorOp::OneOrMoreGreedy => "1Ggreedy",
+                    RepetitionOperatorOp::OneOrMoreGreedy => "1Greedy",
                     RepetitionOperatorOp::Optional => "Opt",
-                    RepetitionOperatorOp::OptionalGreedy => "OptGgreedy",
+                    RepetitionOperatorOp::OptionalGreedy => "OptGreedy",
                 }
             )
         }
