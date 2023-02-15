@@ -220,7 +220,21 @@ SymbolTypes {
                                 },
                             },
                             Field {
-                                name: "b",
+                                name: "b_2",
+                                ref_type: "B",
+                                recursive: Cell {
+                                    value: false,
+                                },
+                            },
+                            Field {
+                                name: "myb",
+                                ref_type: "B",
+                                recursive: Cell {
+                                    value: false,
+                                },
+                            },
+                            Field {
+                                name: "b_4",
                                 ref_type: "B",
                                 recursive: Cell {
                                     value: false,

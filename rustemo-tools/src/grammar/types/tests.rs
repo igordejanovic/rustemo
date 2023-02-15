@@ -9,7 +9,7 @@ fn symbols_type_deduction() {
             A: myb=B c=C {MyKind}| B c=C | D {MyD} | Num;
             B: C | EMPTY;
             C: b=B;
-            D: a=A b=B  | mya=A B D | EMPTY;
+            D: a=A b=B  | mya=A B myb=B B D | EMPTY;
             F: a=A F | D;
 
             OptionalRef1: A | EMPTY;
