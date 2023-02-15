@@ -196,159 +196,251 @@ In this example `OptHeader` is either a `Header` or nothing.
 ## Syntactic sugar - BNF extensions
 
 Previous section gives the overview of the basic BNF syntax. If you got to use
-various BNF extensions (like [Kleene
-star](https://en.wikipedia.org/wiki/Kleene_star)) you might find writing
-patterns in the previous section awkward. Since some of the patterns are used
-frequently in the grammars (zero-or-more, one-or-more etc.) Rustemo provides
-syntactic sugar for this common idioms using a well known regular expression
-syntax.
+various BNF extensions (like [Kleene star](https://en.wikipedia.org/wiki/Kleene_star)) you might find writing patterns
+in the previous section awkward. Since some of the patterns are used frequently
+in the grammars (zero-or-more, one-or-more etc.) Rustemo provides syntactic
+sugar for this common idioms using a well known regular expression syntax.
 
 
 ### Optional
 
-`Optional` can be specified using `?`. For example:
+Optional match can be specified using `?`. For example:
 
-    S: "2" b? "3"?;
-    
+```
+{{#include ../../tests/src/sugar/optional/optional_1.rustemo}}
+
+```
+
+Here, we will recognize `B` which is optionally preceded with `c` and followed
+by `Num`.
+
+
+Lets see what the parser will return optional inputs.
+
+In [this test](https://github.com/igordejanovic/rustemo/blob/main/tests/src/sugar/optional/mod.rs):
+
+```rust
+{{#include ../../tests/src/sugar/optional/mod.rs:optional1}}
+```
+
+for input `c b 1` the `result` will be:
+
+```
+{{#include ../../tests/src/sugar/optional/optional_1_1.ast}}
+```
+
+If we leave the number out and try to parse `c b`, the parse will succeed and the result will be:
+
+```
+{{#include ../../tests/src/sugar/optional/optional_1_2.ast}}
+```
+
+Notice that returned type is `A` struct with fields `tc_opt` and `num_opt` of
+`Optional` type. These types are auto-generated based on the grammar. To learn
+more see [section on AST types/actions code generation](./builders.md#ast-typesactions-code-generation).
+
+```admonish note
+
+Syntax equivalence for `optional` operator
+
+    S: B?;
+
     terminals
-    b: "1";
+    B: "b";
 
-Here, after `2` we might have terminal `b` but it is optional, as well as `3`
-that follows.
+is equivalent to:
 
-Lets see what the parser will return for various inputs (the `grammar` variable
-is a string holding grammar from above):
+    S: BOpt;
+    BOpt: B | EMPTY;
 
-    g = Grammar.from_string(grammar)
-    p = Parser(g)
-    
-    input_str = '2 1 3'
-    result = p.parse(input_str)
-    assert result == ["2", "1", "3"]
-    
-    input_str = '2 3'
-    result = p.parse(input_str)
-    assert result == ["2", None, "3"]
+    terminals
+    B: "b";
 
-    Syntax equivalence for `optional` operator:
-    
-        S: b?;
-    
-        terminals
-        b: "1";
-    
-    is equivalent to:
-    
-        S: b_opt;
-        b_opt: b | EMPTY;
-    
-        terminals
-        b: "1";
-    
-    Behind the scenes Rustemo will create `b_opt` rule.
-    All syntactic sugar additions operate by creating additional rules in the
-    grammar during table construction.
+Behind the scenes Rustemo will create `BOpt` rule. All syntactic sugar
+additions operate by creating additional rules in the grammar during
+parser compilation.
+```
 
 
 ### One or more
 
-`One or more` match is specified using `+` operator. For example:
+One-or-more match is specified using `+` operator.
 
-    S: "2" c+;
-    
+For example:
+
+```
+{{#include ../../tests/src/sugar/one_or_more/one_or_more_2.rustemo}}
+```
+
+After `c` we expect to see one or more `B` (which will match a number) and at
+the end we expect `a`.
+
+Let's see what the parser will return for input `c 1 2 3 4 a`:
+
+```rust
+{{#include ../../tests/src/sugar/one_or_more/mod.rs:one-or-more}}
+```
+
+The result will be:
+
+```
+{{#include ../../tests/src/sugar/one_or_more/one_or_more_2_2.ast}}
+```
+
+```admonish note
+We see in the previous example that default AST building actions will drop
+string matches as fixed content is not interesting for analysis and
+usually represent syntax noise which is needed only for performing correct
+parsing. Also, we see that one-or-more will be transformed to a `Vec` of matched
+values. Of, course, this is just the default. You can change it to fit your needs.
+To learn more see the section on [builders](./builders.md).
+```
+
+```admonish note
+Syntax equivalence for `one or more`:
+
+    S: A+;
+
     terminals
-    c: "c";
+    A: "a";
 
-After `2` we expect to see one or more `c` terminals.
+is equivalent to:
 
-Lets see what the parser will return for various inputs (the `grammar`
-variable is a string holding grammar from above):
+    S: A1;
+    @vec
+    A1: A1 A | A;
 
-    g = Grammar.from_string(grammar)
-    p = Parser(g)
-    
-    input_str = '2 c c c'
-    result = p.parse(input_str)
-    assert result == ["2", ["c", "c", "c"]]
-    
-    input_str = '2 c'
-    result = p.parse(input_str)
-    assert result == ["2", ["c"]]
-
-So the sub-expression on the second position (`c+` sub-rule) will by
-default produce a list of matched `c` terminals. If `c` is missing a
-[parse error](./handling_errors.md) will be raised.
-
-    Syntax equivalence for `one or more`:
-    
-        S: a+;
-    
-        terminals
-        a: "a";
-    
-    is equivalent to:
-    
-        S: a_1;
-        @collect
-        a_1: a_1 a | a;
-    
-        terminals
-        a: "a";
-
-`+` operator allows repetition modifier for separators. For example:
-
-    S: "2" c+[comma];
-    
     terminals
-    c: "c";
-    comma: ",";
+    A: "a";
+```
 
-`c+[comma]` will match one or more `c` terminals separated by whatever
-is matched by the `comma` rule.
 
-Lets see what the parser will return for various inputs (the `grammar`
-variable is a string holding grammar from above):
+### Zero or more
 
-    g = Grammar.from_string(grammar)
-    p = Parser(g)
-    
-    input_str = '2 c, c,  c'
-    result = p.parse(input_str)
-    assert result == ["2", ["c", "c", "c"]]
-    
-    input_str = '2 c'
-    result = p.parse(input_str)
-    assert result == ["2", ["c"]]
+Zero-or-more match is specified using `*` operator. 
 
-As you can see giving a separator modifier allows us to parse a list of
-items separated by the whatever is matched by the rule given inside
-`[]`.
+For example:
 
-    Syntax equivalence `one or more with separator `:
-    
-        S: a+[comma];
-    
-        terminals
-        a: "a";
-        comma: ",";
-    
-    is equivalent to:
-    
-        S: a_1_comma;
-        @collect_sep
-        a_1_comma: a_1_comma comma a | a;
-    
-        terminals
-        a: "a";
-        comma: ",";
-    
-    Making the name of the separator rule a suffix of the additional rule
-    name makes sure that only one additional rule will be added to the
-    grammar for all instances of `a+[comma]`, i.e. same base rule with the
-    same separator.
+```
+{{#include ../../tests/src/sugar/zero_or_more/zero_or_more_2.rustemo}}
+```
 
+
+This syntactic sugar is similar to `+` except that it doesn't require rule to
+match at least once. If there is no match, resulting sub-expression will be an
+empty list. 
+
+Let's see what the parser based on the given grammar will return for input `c 1
+2 3 a`.
+
+
+```rust
+{{#include ../../tests/src/sugar/zero_or_more/mod.rs:zero-or-more-1}}
+```
+
+The result will be:
+
+```
+{{#include ../../tests/src/sugar/zero_or_more/zero_or_more_2_1.ast}}
+```
+
+But, contrary to one-or-more we may match zero time. For example, if input is `c a` we get:
+
+```
+{{#include ../../tests/src/sugar/zero_or_more/zero_or_more_2_2.ast}}
+```
+
+```admonish note
+Syntax equivalence for `zero or more`:
+
+    S: A*;
+
+    terminals
+    A: "a";
+
+is equivalent to:
+
+    S: A0;
+    @vec
+    A0: A1 {nops} | EMPTY;
+    @vec
+    A1: A1 A | A;
+
+    terminals
+    A: "a";
+
+So using of `*` creates both `A0` and `A1` rules. Action attached to `A0`
+returns a list of matched `a` and empty list if no match is found. Please note
+the [usage of `nops`](./disambiguation.md#nops-and-nopse). In case if
+`prefer_shift` strategy is used using `nops` will perform both `REDUCE` and
+`SHIFT` during GLR parsing in case what follows zero or more might be another
+element in the sequence. This is most of the time what you need.
+```
+
+
+```admonish warning
+Previous statements will be valid when GLR parsing is implemented.
+`{nops}` needs to be implemented.
+```
+
+
+### Repetition modifiers
+
+Repetitions (`+`, `*`, `?`) may optionally be followed by a modifier in square
+brackets. Currently, this modifier can only be used to define a separator. The
+separator is defined as a terminal rule reference.
+
+For example, for this grammar:
+
+```
+{{#include ../../tests/src/sugar/one_or_more/one_or_more_1_sep.rustemo}}
+```
+
+We expect to see `c`, followed by optional `B`, followed by one or more numbers
+separated by a comma (`Num+[Comma]`).
+
+If we give input `c b 1, 2, 3, 4` to the parser:
+
+```rust
+{{#include ../../tests/src/sugar/one_or_more/mod.rs:one-or-more-sep}}
+```
+
+we get this output:
+
+```
+{{#include ../../tests/src/sugar/one_or_more/one_or_more_1_1_sep.ast}}
+```
+
+```admonish note
+Syntax equivalence of `one or more with separator `:
+
+    S: A+[Comma];
+
+    terminals
+    A: "a";
+    Comma: ",";
+
+is equivalent to:
+
+    S: A1Comma;
+    @vec
+    A1Comma: A1Comma Comma A | A;
+
+    terminals
+    A: "a";
+    Comma: ",";
+
+Making the name of the separator rule a suffix of the additional rule
+name makes sure that only one additional rule will be added to the
+grammar for all instances of `A+[Comma]`, i.e. same base rule with the
+same separator.
+```
 
 ### Parenthesized groups
+
+```admonish danger
+This is not yet implemented.
+```
 
 You can use parenthesized groups at any place you can use a rule reference. For
 example:
@@ -374,14 +466,14 @@ and nested groups.
     comma: ",";
 
     Syntax equivalence `parenthesized groups`:
-    
+
         S: c (b* c {left} | b);
         terminals
         c: "c";
         b: "b";
-    
+
     is equivalent to:
-    
+
         S: c S_g1;
         S_g1: b_0 c {left} | b;
         b_0: b_1 | EMPTY;
@@ -389,85 +481,17 @@ and nested groups.
         terminals
         c: "c";
         b: "b";
-    
+
     So using parenthesized groups creates additional `_g<n>` rules (`S_g1` in the
     example), where `n` is a unique number per rule starting from `1`. All other
     syntactic sugar elements applied to groups behave as expected.
 
 
-### Zero or more
-
-`Zero or more` match is specified using `*` operator. For example:
-
-    S: "2" c*;
-    
-    terminals
-    c: "c";
-
-This syntactic addition is similar to `+` except that it doesn&rsquo;t require
-rule to match at least once. If there is no match, resulting
-sub-expression will be an empty list. For example:
-
-    g = Grammar.from_string(grammar)
-    p = Parser(g)
-    
-    input_str = '2 c c c'
-    result = p.parse(input_str)
-    assert result == ["2", ["c", "c", "c"]]
-    
-    input_str = '2'
-    result = p.parse(input_str)
-    assert result == ["2", []]
-
-    Syntax equivalence `zero or more`:
-    
-        S: a*;
-    
-        terminals
-        a: "a";
-    
-    is equivalent to:
-    
-        S: a_0;
-        a_0: a_1 {nops} | EMPTY;
-        @collect
-        a_1: a_1 a | a;
-    
-        terminals
-        a: "a";
-    
-    So using of `*` creates both `a_0` and `a_1` rules. Action attached to `a_0`
-    returns a list of matched `a` and empty list if no match is found. Please note
-    the [usage of `nops`](./disambiguation.md#nops-and-nopse). In case if
-    `prefer_shift` strategy is used using `nops` will perform both REDUCE and
-    SHIFT during GLR parsing in case what follows zero or more might be another
-    element in the sequence. This is most of the time what you need.
-
-Same as `one or more` this operator may use separator modifiers.
-
-    Syntax equivalence `zero or more with separator `:
-    
-        S: a*[comma];
-    
-        terminals
-        a: "a";
-        comma: ",";
-    
-    is equivalent to:
-    
-        S: a_0_comma;
-        a_0_comma: a_1_comma {nops} | EMPTY;
-        @collect_sep
-        a_1_comma: a_1_comma comma a | a;
-    
-        terminals
-        a: "a";
-    
-    where action is attached to `a_0_comma` to provide returning a list of
-    matched `a` and empty list if no match is found.
-
-
 ### Greedy repetitions
+
+```admonish danger
+This is not yet implemented.
+```
 
 `*`, `+`, and `?` operators have their greedy counterparts. To make an
 repetition operator greedy add `!` (e.g. `*!`, `+!`, and `?!`). These
@@ -534,6 +558,9 @@ succeed, i.e. it is empty recognition.
 
 ## Named matches (*assignments*)
 
+```admonish todo
+This needs to be reworked.
+```
 In section on [builders](builders.md) you can see that semantic action (Python
 callable) connected to a rule will be called with two parameters: a context and
 a list of sub-expressions evaluation results. This require you to use positional
@@ -544,16 +571,16 @@ directly in the grammar.
 
 For example:
 
-    S: first=a second=digit+[comma];
-    
+    S: first=A second=Digit+[Comma];
+
     terminals
-    a: "a";
-    digit: /\d+/;
-    comma: ",";
+    A: "a";
+    Digit: /\d+/;
+    Comma: ",";
 
 In this example root rule matches one `a` and then one or more digit separated
 by a comma. You can see that the first sub-expression (`a` match) is assigned to
-`first` while the second sub-expression `digit+[comma]` is assigned to `second`.
+`first` while the second sub-expression `Digit+[Comma]` is assigned to `second`.
 
 `first` and `second` will now be an additional keyword parameters passed to the
 semantic action. The values passed in using these parameters will be the results
@@ -588,6 +615,9 @@ See the next section.
 
 ## Referencing semantic actions from a grammar
 
+```admonish todo
+This needs to be reworked.
+```
 By default action with the name same as the rule name will be searched in the
 accompanying `<grammar>_actions.py` file or `actions` dict. You can override
 this by specifying action name for the rule directly in the grammar using `@`
@@ -607,6 +637,9 @@ specify built-in action to be used for a rule directly in the grammar.
 
 ## User meta-data
 
+```admonish todo
+This needs to be reworked.
+```
 You can supply arbitrary meta-data for the productions and terminals in the
 grammar in the form of key-value pairs. This can be used to augment dynamic
 disambiguation strategies, error reporting etc.
@@ -624,10 +657,10 @@ For example:
                   some_int: 3,
                   some_float: 4.5};
     '''
-    
+
     grammar = Grammar.from_string(grammar_str)
     my_rule = grammar.get_nonterminal('MyRule')
-    
+
     prod = my_rule.productions[0]
     assert prod.some_string == 'My Label'
     assert prod.some_bool is True
@@ -647,19 +680,19 @@ For example:
     grammar_str = r'''
     MyRule {label: 'My Label', nops}: 'a' {left, 1, dynamic};
     '''
-    
+
     grammar = Grammar.from_string(grammar_str)
     my_rule = grammar.get_nonterminal('MyRule')
-    
+
     # User meta-data is accessible on the non-terminal
     assert my_rule.label == 'My Label'
-    
+
     # The production has its own meta-data
     prod = my_rule.productions[0]
     assert prod.assoc == ASSOC_LEFT
     assert prod.prior == 1
     assert prod.dynamic
-    
+
     # Rule-level meta-data are propagated to productions
     assert prod.label == 'My Label'
 
@@ -673,35 +706,35 @@ For example:
     MyRule {label: 'My Label', left}: 'first' {right,
                                                 label: 'My overriden label'}
                                     | 'second';
-    
+
     MyRule {label: 'Other rule'}: 'third' {left}
                                 | 'fourth' {label: 'Fourth prod'};
     '''
-    
+
     grammar = Grammar.from_string(grammar_str)
     my_rule = grammar.get_nonterminal('MyRule')
-    
+
     # User meta-data is accessible on the non-terminal
     # Rule level meta-data are only those defined on the
     # first rule in the order of the definition.
     assert my_rule.label == 'My Label'
-    
+
     prod1 = my_rule.productions[0]
     # First production overrides meta-data
     assert prod1.label == 'My overriden label'
     assert prod1.assoc == ASSOC_RIGHT
-    
+
     # If not overriden it uses meta-data from the rule.
     prod2 = my_rule.productions[1]
     assert prod2.label == 'My Label'
     assert prod2.assoc == ASSOC_LEFT
-    
+
     # Third and fourth production belongs to the second rule so they
     # inherits its meta-data.
     prod3 = my_rule.productions[2]
     assert prod3.label == 'Other rule'
     assert prod3.assoc == ASSOC_LEFT
-    
+
     prod4 = my_rule.productions[3]
     assert prod4.label == 'Fourth prod'
     assert prod4.assoc == ASSOC_NONE
@@ -713,7 +746,7 @@ In Rustemo grammar, comments are available as both line comments and block
 comments:
 
     // This is a line comment. Everything from the '//' to the end of line is a comment.
-    
+
     /*
       This is a block comment.
       Everything in between `/*`  and '*/' is a comment.
@@ -733,7 +766,7 @@ the desired behavior for language keywords.
 For example, lets examine this little grammar:
 
     S: "for" name=ID "=" from=INT "to" to=INT;
-    
+
     terminals
     ID: /\w+/;
     INT: /\d+/;
@@ -757,7 +790,7 @@ construction to match only on word boundary.
 For example:
 
     S: "for" name=ID "=" from=INT "to" to=INT;
-    
+
     terminals
     ID: /\w+/;
     INT: /\d+/;
@@ -779,9 +812,9 @@ separated from the surrounding tokens.
 
 ```admonish note
     Rustemo uses integrated scanner so this example:
-    
+
         for for=10 to 20
-    
+
     will be correctly parsed. `for` in `for=10` will be recognized as `ID` and
     not as a keyword `for`, i.e. there is no lexical ambiguity due to tokenizer
     separation.
@@ -836,4 +869,3 @@ input cannot start or end with a token. If this is not desired, make sure that
 `Layout` parsing is optional by including `EMPTY` in the layout as one of its
 alternatives or using e.g. zero-or-more (`*`) like in the previous example.
 ```
-
