@@ -77,9 +77,11 @@ impl SymbolTypes {
                 let choice_name = choice_name(production);
 
                 // Choices are deduced by the following rules:
-                // - No content references => plain choice without inner content
-                // - A single content. ref and no assig LHS => choice with
-                //   a referred NT type as its content
+                //
+                // - No content references (e.g. just string matches) => plain
+                //   choice without inner content
+                // - A single content. ref and no assig LHS => choice with a
+                //   referred NT type as its content
                 // - Multiple content. refs => Choice with a new struct type
                 //   where fields types are types of the referred symbols.
                 let rhs = production.rhs_with_content(grammar);
@@ -374,6 +376,7 @@ pub(crate) struct SymbolType {
     pub optional: bool,
 }
 
+/// Type kinds derived from grammar rules. Used to auto-generate AST types.
 #[derive(Debug)]
 pub(crate) enum SymbolTypeKind {
     /// Just a single choice with plain ref. as in "B: A;"
