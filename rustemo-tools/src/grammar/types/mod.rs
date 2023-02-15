@@ -84,16 +84,14 @@ impl SymbolTypes {
                 //   where fields types are types of the referred symbols.
                 let rhs = production.rhs_with_content(grammar);
                 choices.push(match rhs.len() {
-                    0 if production.rhs.is_empty() => {
-                        optional = true;
-                        Choice {
-                            name: choice_name,
-                            kind: ChoiceKind::Empty,
-                        }
-                    }
                     0 => Choice {
                         name: choice_name,
-                        kind: ChoiceKind::Plain,
+                        kind: if production.rhs.is_empty() {
+                            optional = true;
+                            ChoiceKind::Empty
+                        } else {
+                            ChoiceKind::Plain
+                        },
                     },
                     1 if rhs[0].name.is_none() => {
                         let ref_type = grammar.symbol_name(rhs[0].symbol);
