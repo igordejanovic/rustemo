@@ -1,0 +1,9 @@
+A: 'c' B Ta*[Comma];
+B: 'b' | EMPTY;
+
+terminals
+
+Ta: 'a';
+Tb: 'b';
+Tc: 'c';
+Comma: ',';

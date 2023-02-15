@@ -1,0 +1,8 @@
+A: 'c' B Num+[Comma];
+B: 'b' | EMPTY;
+
+terminals
+Num: /\d+/;
+Comma: ',';
+Tb: 'b';
+Tc: 'c';

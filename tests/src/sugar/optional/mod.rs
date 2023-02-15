@@ -10,6 +10,7 @@ rustemo_mod!(optional_1_actions, "/src/sugar/optional");
 rustemo_mod!(optional_2, "/src/sugar/optional");
 rustemo_mod!(optional_2_actions, "/src/sugar/optional");
 
+// ANCHOR: optional1
 #[test]
 fn optional_1_1() {
     let result = Optional1Parser::parse("c b 1");
@@ -18,6 +19,7 @@ fn optional_1_1() {
         format!("{result:#?}")
     );
 }
+// ANCHOR_END: optional1
 
 #[test]
 fn optional_1_2() {
