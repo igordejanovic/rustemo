@@ -50,6 +50,13 @@ deactivate CodeGen
 ```
 
 ```admonish note
+The above grammar assumes the default configuration. It might be slightly
+different if non-defaults are used. For example, if custom builder is used type
+inference and generating actions (the last step) is not performed.
+```
+
+
+```admonish note
 Rustemo is bootstrapped using itself, thus, the above diagram describes also the
 process of bootstrapping. The input grammar is `src/lang/rustemo.rustemo` and
 the process generates `src/lang/rustemo.rs` which is the parser code and
