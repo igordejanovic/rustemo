@@ -67,7 +67,7 @@ LR/GLR parser generator for Rust (currently only LR).
 
 ### v0.1.0
 - [x] LR parsing.
-- [x] Bootstrapping. Rustemo is [implemented in itself](./rustemo/src/lang/).
+- [x] Bootstrapping. Rustemo is [implemented in itself](./rustemo-tools/src/lang/).
 - [x] Actions providing AST build are auto-generated but can be manually
       modified. Manual modifications are preserved on code re-generation while
       new types/actions are added to the file. This allow for fast development
