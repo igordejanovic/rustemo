@@ -92,7 +92,7 @@ pub struct Token<'i, I: Input + ?Sized, TK: Clone + Copy> {
 /// information to parsers and actions.
 #[derive(Debug)]
 pub struct Context<'i, I: Input + ?Sized, LO, ST> {
-    /// File path of the parsed content. "<str>" In case of static string.
+    /// File path of the parsed content. `<str>` In case of static string.
     pub file: String,
 
     /// The input being parsed. Should be set when the context is created.

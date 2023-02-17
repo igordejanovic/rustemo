@@ -162,9 +162,11 @@ impl SymbolTypes {
     }
 
     /// Recognize different rule patters:
+    /// ```
     /// A: B | EMPTY ---> A is Option<B>
     /// A: A B | B; or A: A B | B | EMPTY; ---> A is Vec<B>
     /// A: <Whatever> ... | EMPTY; ---> A optional Enum
+    /// ```
     fn get_type_kind(
         nt: &NonTerminal,
         choices: &Vec<Choice>,
@@ -379,9 +381,9 @@ pub(crate) struct SymbolType {
 /// Type kinds derived from grammar rules. Used to auto-generate AST types.
 #[derive(Debug)]
 pub(crate) enum SymbolTypeKind {
-    /// Just a single choice with plain ref. as in "B: A;"
+    /// Just a single choice with plain ref. as in `B: A;`
     /// This will be type alias.
-    /// Can be optional: B: A | EMPTY;
+    /// Can be optional: `B: A | EMPTY;`
     Ref {
         ref_type: String,
         recursive: Cell<bool>,
@@ -393,16 +395,19 @@ pub(crate) enum SymbolTypeKind {
         recursive: Cell<bool>,
     },
 
-    /// Just a single choice as in "B: A C;"
+    /// Just a single choice as in `B: A C;`
     /// choices must be a single element of Struct kind and
     /// optionally element of Empty kind.
-    /// Can be optional as in "B: A C | EMPTY;"
+    /// Can be optional as in `B: A C | EMPTY;`
     Struct {
         type_name: String,
     },
 
     /// All other non-empty rules. Can be optional if
+    /// ```
     /// <Whatever>... | EMPTY
+    /// ```
+    ///
     Enum {
         type_name: String,
     },
@@ -424,8 +429,8 @@ pub(crate) enum ChoiceKind {
     /// Just non-content refs. e.g. string match terminals.
     Plain,
 
-    /// Just a single content ref. E.g. B: A;
-    /// but not B: a=A; <- This will be struct.
+    /// Just a single content ref. E.g. `B: A;`
+    /// but not `B: a=A;` <- This will be struct.
     Ref {
         ref_type: String,
         recursive: Cell<bool>,
