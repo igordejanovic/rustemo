@@ -21,10 +21,10 @@ impl CustomLexer2Lexer {
 /// constituents: MSBByte (if highest bit is set), NonMSBByte (highest bit is
 /// not set). How these bytes is organized into VarInts is defined by the
 /// grammar and the transformation to a numeric value is done in actions.
-impl<'i> Lexer<'i, Input, (), StateIndex, TokenKind> for CustomLexer2Lexer {
+impl<'i> Lexer<'i, Input, StateIndex, TokenKind> for CustomLexer2Lexer {
     fn next_token(
         &self,
-        context: &mut Context<'i, Input, (), StateIndex>,
+        context: &mut Context<'i, Input, StateIndex>,
     ) -> Result<Token<'i, Input, TokenKind>> {
         let value;
         let kind: lexer::TokenKind<TokenKind>;

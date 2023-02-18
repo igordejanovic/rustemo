@@ -10,13 +10,13 @@ use std::{cmp::min, fmt::Display, iter::once};
 ///
 /// Lexer is stateless and its job is to produce next token given the current
 /// context.
-pub trait Lexer<'i, I: Input + ?Sized, LO, ST, TK: Clone + Copy> {
-    /// Given the current context, this method should return RustemoResult with
-    /// token found ahead of the current location or error indicating what is
+pub trait Lexer<'i, I: Input + ?Sized, ST, TK: Clone + Copy> {
+    /// Given the current context, this method should return a result with token
+    /// found ahead of the current location or error indicating what is
     /// expected.
     fn next_token(
         &self,
-        context: &mut Context<'i, I, LO, ST>,
+        context: &mut Context<'i, I, ST>,
     ) -> Result<Token<'i, I, TK>>;
 }
 
@@ -91,7 +91,7 @@ pub struct Token<'i, I: Input + ?Sized, TK: Clone + Copy> {
 /// Lexer context is used to keep the lexing state. It provides necessary
 /// information to parsers and actions.
 #[derive(Debug)]
-pub struct Context<'i, I: Input + ?Sized, LO, ST> {
+pub struct Context<'i, I: Input + ?Sized, ST> {
     /// File path of the parsed content. `<str>` In case of static string.
     pub file: String,
 
@@ -117,14 +117,14 @@ pub struct Context<'i, I: Input + ?Sized, LO, ST> {
     pub location: Option<Location>,
 
     /// Layout before the current token ahead (e.g. whitespaces, comments...)
-    pub layout: Option<LO>,
+    pub layout: Option<&'i I>,
 
     /// An arbitrary state used by the parser. E.g. for LR it is the current
-    /// state of the autmaton.
+    /// state of the automaton.
     pub state: ST,
 }
 
-impl<'i, I: Input + ?Sized, LO, ST: Default> Context<'i, I, LO, ST> {
+impl<'i, I: Input + ?Sized, ST: Default> Context<'i, I, ST> {
     pub fn new(file: String, input: &'i I) -> Self {
         Self {
             file,
@@ -231,10 +231,10 @@ where
     }
 }
 
-impl<'i, I: Input + ?Sized, LO, ST: Default> From<&mut Context<'i, I, LO, ST>>
+impl<'i, I: Input + ?Sized, ST: Default> From<&mut Context<'i, I, ST>>
     for Location
 {
-    fn from(context: &mut Context<I, LO, ST>) -> Self {
+    fn from(context: &mut Context<I, ST>) -> Self {
         context.location.unwrap_or(Self {
             start: Position::Position(context.position),
             end: None,

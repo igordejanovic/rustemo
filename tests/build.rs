@@ -29,7 +29,12 @@ fn main() {
                 s.force(false).out_dir_actions(None)
             }),
         ),
-        ("layout", Box::new(|s| s)),
+        // Layout
+        ("layout/ast", Box::new(|s| s)),
+        (
+            "layout/generic_tree",
+            Box::new(|s| s.builder_type(BuilderType::Generic)),
+        ),
         // Builders
         (
             "generic_tree",

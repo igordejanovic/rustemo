@@ -106,7 +106,7 @@ pub fn generate_parser(
     let parser = format!("{}Parser", parser_name);
     let layout_parser = format!("{}LayoutParser", parser_name);
     let builder = format!("{}Builder", parser_name);
-    let builder_output = format!("{}BuilderOutput", parser_name);
+    let layout_builder = format!("{}LayoutBuilder", parser_name);
     let parser_definition = format!("{}Definition", parser);
     let lexer = format!("{}Lexer", parser_name);
     let lexer_definition = format!("{}Definition", lexer);
@@ -143,7 +143,6 @@ pub fn generate_parser(
         &lexer,
         &builder_file,
         &builder,
-        &builder_output,
         &actions_file,
         &root_symbol,
         settings,
@@ -151,13 +150,14 @@ pub fn generate_parser(
 
     if grammar.has_layout() {
         ast.items.extend(generate_layout_parser(
-            &actions_file,
             &layout_parser,
             &parser_definition,
-            &builder,
-            &builder_output,
+            &layout_builder,
             table.layout_state.unwrap(),
         )?);
+
+        ast.items
+            .extend(generate_layout_builder(&grammar, &layout_builder)?);
     }
 
     if let LexerType::Default = settings.lexer_type {
@@ -269,16 +269,6 @@ fn generate_parser_header(
         },
     });
 
-    header.items.push(if grammar.has_layout() {
-        parse_quote! {
-            pub type Layout = #actions_file::Layout;
-        }
-    } else {
-        parse_quote! {
-            pub type Layout = ();
-        }
-    });
-
     header.items.push(match settings.lexer_type {
         LexerType::Default => parse_quote! {
             pub type Input = str;
@@ -289,7 +279,7 @@ fn generate_parser_header(
     });
 
     header.items.push(parse_quote! {
-        pub type Context<'i> = lexer::Context<'i, Input, Layout, StateIndex>;
+        pub type Context<'i> = lexer::Context<'i, Input, StateIndex>;
     });
 
     // Lazy init of regexes
@@ -539,7 +529,6 @@ fn generate_parser_definition(
     lexer: &str,
     builder_file: &str,
     builder: &str,
-    builder_output: &str,
     actions_file: &str,
     root_symbol: &str,
     settings: &Settings,
@@ -552,7 +541,6 @@ fn generate_parser_definition(
     let lexer = format_ident!("{lexer}");
     let builder_file = format_ident!("{builder_file}");
     let builder = format_ident!("{builder}");
-    let builder_output = format_ident!("{builder_output}");
     let actions_file = format_ident!("{actions_file}");
     let root_symbol = format_ident!("{root_symbol}");
 
@@ -646,20 +634,11 @@ fn generate_parser_definition(
                 if result.is_err() {
                     let pos = context.position;
                     log!("** Parsing layout");
-                    let layout = #layout_parser::parse_layout(&mut context);
-
-                    if let Ok(layout) = layout {
-                        if context.position > pos {
-                            context.layout = Some(layout);
-                            continue;
-                        }
+                    if #layout_parser::parse_layout(&mut context) && context.position > pos {
+                        continue;
                     }
                 }
-                return result.map(|r| match r {
-                        #builder_output::#root_symbol(r) => r,
-                        _ => unreachable!()
-                    }
-                );
+                return result;
             }
         });
     } else {
@@ -669,7 +648,7 @@ fn generate_parser_definition(
         parse_stmt.push(syn::Stmt::Expr(ret_expr));
     }
 
-    let skip_ws = settings.skip_ws;
+    let skip_ws = settings.skip_ws && !grammar.has_layout();
 
     let parse_result: syn::Type = match settings.builder_type {
         BuilderType::Default => parse_quote! {
@@ -717,19 +696,15 @@ fn generate_parser_definition(
 }
 
 fn generate_layout_parser(
-    actions_file: &str,
     layout_parser: &str,
     parser_definition: &str,
-    builder: &str,
-    builder_output: &str,
+    layout_builder: &str,
     layout_state: StateIndex,
 ) -> Result<Vec<syn::Item>> {
     let mut ast: Vec<syn::Item> = vec![];
-    let actions_file = format_ident!("{}", actions_file);
     let layout_parser = format_ident!("{}", layout_parser);
     let parser_definition = format_ident!("{}", parser_definition);
-    let builder = format_ident!("{}", builder);
-    let builder_output = format_ident!("{}", builder_output);
+    let layout_builder = format_ident!("{}", layout_builder);
     let layout_state = layout_state.0;
     let layout_state: syn::Expr = parse_quote! { StateIndex(#layout_state) };
 
@@ -742,13 +717,10 @@ fn generate_layout_parser(
             #[allow(dead_code)]
             impl #layout_parser
             {
-                pub fn parse_layout(context: &mut Context) -> Result<#actions_file::Layout> {
+                pub fn parse_layout(context: &mut Context) -> bool {
                     let lexer = LRStringLexer::new(&LEXER_DEFINITION, true, false);
-                    let mut builder = #builder::new();
-                    match #layout_parser::default().0.parse(context, &lexer, &mut builder)? {
-                        #builder_output::Layout(l) => Ok(l),
-                        _ => panic!("Invalid layout parsing result.")
-                    }
+                    let mut builder = #layout_builder::new();
+                    #layout_parser::default().0.parse(context, &lexer, &mut builder).is_ok()
                 }
             }
         });
@@ -903,7 +875,6 @@ fn generate_builder(
     root_symbol: &str,
 ) -> Result<Vec<syn::Item>> {
     let mut ast: Vec<syn::Item> = vec![];
-    let builder_output = format_ident!("{}Output", builder);
     let builder = format_ident!("{}", builder);
     let actions_file = format_ident!("{}", actions_file);
     let root_symbol = format_ident!("{}", root_symbol);
@@ -915,37 +886,10 @@ fn generate_builder(
         }
     });
 
-    ast.push(if grammar.has_layout() {
-        parse_quote! {
-            enum #builder_output {
-                #root_symbol(#actions_file::#root_symbol),
-                Layout(#actions_file::Layout)
-            }
-        }
-    } else {
-        parse_quote! {
-            type #builder_output = #actions_file::#root_symbol;
-        }
-    });
-
-    let mut get_result_arms: Vec<syn::Arm> = vec![];
-    if grammar.has_layout() {
-        get_result_arms.push(parse_quote!{
-            Symbol::NonTerminal(NonTerminal::#root_symbol(r)) => #builder_output::#root_symbol(r)
-        });
-        get_result_arms.push(parse_quote!{
-            Symbol::NonTerminal(NonTerminal::Layout(r)) => #builder_output::Layout(r)
-        });
-    } else {
-        get_result_arms.push(parse_quote! {
-            Symbol::NonTerminal(NonTerminal::#root_symbol(r)) => r
-        });
-    }
-
     ast.push(parse_quote! {
         impl Builder for #builder
         {
-            type Output = #builder_output;
+            type Output = #actions_file::#root_symbol;
 
             fn new() -> Self {
                 Self {
@@ -955,7 +899,7 @@ fn generate_builder(
 
             fn get_result(&mut self) -> Self::Output {
                 match self.res_stack.pop().unwrap() {
-                    #(#get_result_arms),*,
+                    Symbol::NonTerminal(NonTerminal::#root_symbol(r)) => r,
                     _ => panic!("Invalid result on the parse stack!"),
                 }
             }
@@ -1052,13 +996,13 @@ fn generate_builder(
 
     ast.push(
         parse_quote! {
-            impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for #builder
+            impl<'i> LRBuilder<'i, Input, TokenKind> for #builder
             {
 
                 #![allow(unused_variables)]
                 fn shift_action(
                     &mut self,
-                    #context_var: &Context<'i>,
+                    #context_var: &mut Context<'i>,
                     token: Token<'i, Input, TokenKind>) {
                     let kind = match token.kind {
                         lexer::TokenKind::Kind(kind) => kind,
@@ -1072,7 +1016,7 @@ fn generate_builder(
 
                 fn reduce_action(
                     &mut self,
-                    #context_var: &Context<'i>,
+                    #context_var: &mut Context<'i>,
                     prod_idx: ProdIndex,
                     _prod_len: usize) {
                     let prod = match ProdKind::from(prod_idx) {
@@ -1084,6 +1028,66 @@ fn generate_builder(
             }
         }
     );
+
+    Ok(ast)
+}
+
+fn generate_layout_builder(
+    grammar: &Grammar,
+    layout_builder: &str,
+) -> Result<Vec<syn::Item>> {
+    let mut ast: Vec<syn::Item> = vec![];
+    let layout_builder = format_ident!("{}", layout_builder);
+
+    // Find all ProdIndex for Layout rule.
+    let prods = &grammar.nonterm_by_name("Layout").productions;
+    let prods_len = prods.len();
+    let prods: Vec<syn::Expr> = prods
+        .iter()
+        .map(|x| {
+            let x = x.0;
+            parse_quote!(ProdIndex(#x))
+        })
+        .collect();
+
+    ast.push(parse_quote! {
+        struct #layout_builder([ProdIndex;#prods_len]);
+    });
+
+    ast.push(parse_quote! {
+        impl Builder for #layout_builder {
+            type Output = ();
+
+            fn new() -> Self {
+                #layout_builder([#(#prods),*])
+            }
+
+            fn get_result(&mut self) -> Self::Output {
+            }
+        }
+    });
+
+    ast.push(parse_quote! {
+        impl<'i> LRBuilder<'i, Input, TokenKind> for #layout_builder {
+            fn shift_action(
+                &mut self,
+                _context: &mut Context<'i>,
+                _token: Token<'i, Input, TokenKind>,
+            ) {
+            }
+
+            fn reduce_action(
+                &mut self,
+                context: &mut Context<'i>,
+                prod_idx: ProdIndex,
+                _prod_len: usize,
+            ) {
+                if self.0.contains(&prod_idx) {
+                    context.layout = Some(&context.input[context.start_pos..context.end_pos]);
+                }
+            }
+        }
+    });
 
     Ok(ast)
 }

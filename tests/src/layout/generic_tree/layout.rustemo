@@ -1,0 +1,9 @@
+// Numbers with some words in between that should be part of layout
+S: Num+;
+Layout: LayoutItem+;
+LayoutItem: Word | WS;
+
+terminals
+Num: /\d+/;
+Word: /[a-zA-Z]+/;
+WS: /\s+/;

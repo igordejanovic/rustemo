@@ -8,7 +8,7 @@ use rustemo::{
 use super::custom_builder::{ProdKind, TokenKind};
 
 pub type E = i32;
-pub type Context<'i> = lexer::Context<'i, str, (), StateIndex>;
+pub type Context<'i> = lexer::Context<'i, str, StateIndex>;
 
 // ANCHOR: custom-builder-base
 /// Custom builder that perform arithmetic operations.
@@ -33,10 +33,10 @@ impl Builder for CustomBuilderBuilder {
 // ANCHOR_END: custom-builder-base
 
 // ANCHOR: custom-builder-lr
-impl<'i> LRBuilder<'i, str, (), TokenKind> for CustomBuilderBuilder {
+impl<'i> LRBuilder<'i, str, TokenKind> for CustomBuilderBuilder {
     fn shift_action(
         &mut self,
-        _context: &Context<'i>,
+        _context: &mut Context<'i>,
         token: Token<'i, str, TokenKind>,
     ) {
         let kind = match token.kind {
@@ -50,7 +50,7 @@ impl<'i> LRBuilder<'i, str, (), TokenKind> for CustomBuilderBuilder {
 
     fn reduce_action(
         &mut self,
-        _context: &Context<'i>,
+        _context: &mut Context<'i>,
         prod_idx: ProdIndex,
         _prod_len: usize,
     ) {

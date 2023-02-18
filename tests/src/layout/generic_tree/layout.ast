@@ -1,0 +1,119 @@
+Ok(
+    NonTermNode {
+        prod_idx: 2,
+        position: 0,
+        children: [
+            NonTermNode {
+                prod_idx: 3,
+                position: 0,
+                children: [
+                    NonTermNode {
+                        prod_idx: 3,
+                        position: 0,
+                        children: [
+                            NonTermNode {
+                                prod_idx: 3,
+                                position: 0,
+                                children: [
+                                    NonTermNode {
+                                        prod_idx: 3,
+                                        position: 0,
+                                        children: [
+                                            NonTermNode {
+                                                prod_idx: 4,
+                                                position: 0,
+                                                children: [
+                                                    TermNode {
+                                                        token: Token {
+                                                            kind: Kind(
+                                                                Num,
+                                                            ),
+                                                            value: "1",
+                                                            location: None,
+                                                        },
+                                                        position: 0,
+                                                        layout: None,
+                                                    },
+                                                ],
+                                                layout: Some(
+                                                    " ",
+                                                ),
+                                            },
+                                            TermNode {
+                                                token: Token {
+                                                    kind: Kind(
+                                                        Num,
+                                                    ),
+                                                    value: "42",
+                                                    location: None,
+                                                },
+                                                position: 2,
+                                                layout: Some(
+                                                    " ",
+                                                ),
+                                            },
+                                        ],
+                                        layout: Some(
+                                            " This ",
+                                        ),
+                                    },
+                                    TermNode {
+                                        token: Token {
+                                            kind: Kind(
+                                                Num,
+                                            ),
+                                            value: "6",
+                                            location: None,
+                                        },
+                                        position: 10,
+                                        layout: Some(
+                                            " This ",
+                                        ),
+                                    },
+                                ],
+                                layout: Some(
+                                    " should be ",
+                                ),
+                            },
+                            TermNode {
+                                token: Token {
+                                    kind: Kind(
+                                        Num,
+                                    ),
+                                    value: "89",
+                                    location: None,
+                                },
+                                position: 22,
+                                layout: Some(
+                                    " should be ",
+                                ),
+                            },
+                        ],
+                        layout: Some(
+                            " ignored ",
+                        ),
+                    },
+                    TermNode {
+                        token: Token {
+                            kind: Kind(
+                                Num,
+                            ),
+                            value: "8",
+                            location: None,
+                        },
+                        position: 33,
+                        layout: Some(
+                            " ignored ",
+                        ),
+                    },
+                ],
+                layout: Some(
+                    " ignored ",
+                ),
+            },
+        ],
+        layout: Some(
+            " ignored ",
+        ),
+    },
+)

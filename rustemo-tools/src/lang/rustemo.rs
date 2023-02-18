@@ -18,9 +18,8 @@ const STATE_NO: usize = 141usize;
 #[allow(dead_code)]
 const MAX_ACTIONS: usize = 15usize;
 use super::rustemo_actions;
-pub type Layout = rustemo_actions::Layout;
 pub type Input = str;
-pub type Context<'i> = lexer::Context<'i, Input, Layout, StateIndex>;
+pub type Context<'i> = lexer::Context<'i, Input, StateIndex>;
 use lazy_static::lazy_static;
 lazy_static! {
     static ref REGEX_NAME : Regex = Regex::new(concat!("^", "[a-zA-Z_][a-zA-Z0-9_\\.]*"))
@@ -13787,7 +13786,7 @@ pub struct RustemoParser(LRParser<RustemoParserDefinition>);
 impl RustemoParser {
     pub fn parse(input: &Input) -> Result<rustemo_actions::File> {
         let mut context = Context::new("<str>".to_string(), input);
-        let lexer = LRStringLexer::new(&LEXER_DEFINITION, false, true);
+        let lexer = LRStringLexer::new(&LEXER_DEFINITION, false, false);
         let mut builder = RustemoBuilder::new();
         let mut parser = RustemoParser::default();
         loop {
@@ -13796,19 +13795,13 @@ impl RustemoParser {
             if result.is_err() {
                 let pos = context.position;
                 log!("** Parsing layout");
-                let layout = RustemoLayoutParser::parse_layout(&mut context);
-                if let Ok(layout) = layout {
-                    if context.position > pos {
-                        context.layout = Some(layout);
-                        continue;
-                    }
+                if RustemoLayoutParser::parse_layout(&mut context)
+                    && context.position > pos
+                {
+                    continue;
                 }
             }
-            return result
-                .map(|r| match r {
-                    RustemoBuilderOutput::File(r) => r,
-                    _ => unreachable!(),
-                });
+            return result;
         }
     }
 }
@@ -13820,18 +13813,40 @@ impl Default for RustemoParser {
 pub struct RustemoLayoutParser(LRParser<RustemoParserDefinition>);
 #[allow(dead_code)]
 impl RustemoLayoutParser {
-    pub fn parse_layout(context: &mut Context) -> Result<rustemo_actions::Layout> {
+    pub fn parse_layout(context: &mut Context) -> bool {
         let lexer = LRStringLexer::new(&LEXER_DEFINITION, true, false);
-        let mut builder = RustemoBuilder::new();
-        match RustemoLayoutParser::default().0.parse(context, &lexer, &mut builder)? {
-            RustemoBuilderOutput::Layout(l) => Ok(l),
-            _ => panic!("Invalid layout parsing result."),
-        }
+        let mut builder = RustemoLayoutBuilder::new();
+        RustemoLayoutParser::default().0.parse(context, &lexer, &mut builder).is_ok()
     }
 }
 impl Default for RustemoLayoutParser {
     fn default() -> Self {
         Self(LRParser::new(&PARSER_DEFINITION, StateIndex(122usize)))
+    }
+}
+struct RustemoLayoutBuilder([ProdIndex; 1usize]);
+impl Builder for RustemoLayoutBuilder {
+    type Output = ();
+    fn new() -> Self {
+        RustemoLayoutBuilder([ProdIndex(82usize)])
+    }
+    fn get_result(&mut self) -> Self::Output {}
+}
+impl<'i> LRBuilder<'i, Input, TokenKind> for RustemoLayoutBuilder {
+    fn shift_action(
+        &mut self,
+        _context: &mut Context<'i>,
+        _token: Token<'i, Input, TokenKind>,
+    ) {}
+    fn reduce_action(
+        &mut self,
+        context: &mut Context<'i>,
+        prod_idx: ProdIndex,
+        _prod_len: usize,
+    ) {
+        if self.0.contains(&prod_idx) {
+            context.layout = Some(&context.input[context.start_pos..context.end_pos]);
+        }
     }
 }
 pub struct RustemoLexerDefinition {
@@ -16749,30 +16764,23 @@ impl LexerDefinition for RustemoLexerDefinition {
 struct RustemoBuilder {
     res_stack: Vec<Symbol>,
 }
-enum RustemoBuilderOutput {
-    File(rustemo_actions::File),
-    Layout(rustemo_actions::Layout),
-}
 impl Builder for RustemoBuilder {
-    type Output = RustemoBuilderOutput;
+    type Output = rustemo_actions::File;
     fn new() -> Self {
         Self { res_stack: vec![] }
     }
     fn get_result(&mut self) -> Self::Output {
         match self.res_stack.pop().unwrap() {
-            Symbol::NonTerminal(NonTerminal::File(r)) => RustemoBuilderOutput::File(r),
-            Symbol::NonTerminal(NonTerminal::Layout(r)) => {
-                RustemoBuilderOutput::Layout(r)
-            }
+            Symbol::NonTerminal(NonTerminal::File(r)) => r,
             _ => panic!("Invalid result on the parse stack!"),
         }
     }
 }
-impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
+impl<'i> LRBuilder<'i, Input, TokenKind> for RustemoBuilder {
     #![allow(unused_variables)]
     fn shift_action(
         &mut self,
-        context: &Context<'i>,
+        context: &mut Context<'i>,
         token: Token<'i, Input, TokenKind>,
     ) {
         let kind = match token.kind {
@@ -16844,7 +16852,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
     }
     fn reduce_action(
         &mut self,
-        context: &Context<'i>,
+        context: &mut Context<'i>,
         prod_idx: ProdIndex,
         _prod_len: usize,
     ) {

@@ -71,9 +71,9 @@ impl<D: ParserDefinition> LRParser<D> {
     }
 
     #[inline]
-    fn push_state<I: Input + ?Sized, LO>(
+    fn push_state<I: Input + ?Sized>(
         &mut self,
-        context: &mut Context<I, LO, StateIndex>,
+        context: &mut Context<I, StateIndex>,
         state: StateIndex,
     ) {
         self.parse_stack.push(StackItem {
@@ -85,9 +85,9 @@ impl<D: ParserDefinition> LRParser<D> {
     }
 
     #[inline]
-    fn pop_states<I: Input + ?Sized, LO>(
+    fn pop_states<I: Input + ?Sized>(
         &mut self,
-        context: &mut Context<I, LO, StateIndex>,
+        context: &mut Context<I, StateIndex>,
         states: usize,
     ) -> (StateIndex, usize, usize) {
         let states_removed =
@@ -108,18 +108,17 @@ impl<D: ParserDefinition> LRParser<D> {
     }
 }
 
-impl<'i, I, D, L, B, LO, TK> Parser<'i, I, L, B, LO, StateIndex, TK>
-    for LRParser<D>
+impl<'i, I, D, L, B, TK> Parser<'i, I, L, B, StateIndex, TK> for LRParser<D>
 where
     I: Debug + Input + ?Sized,
     D: ParserDefinition,
-    L: Lexer<'i, I, LO, StateIndex, TK>,
-    B: LRBuilder<'i, I, LO, TK>,
+    L: Lexer<'i, I, StateIndex, TK>,
+    B: LRBuilder<'i, I, TK>,
     TK: Debug + Into<TermIndex> + Copy,
 {
     fn parse(
         &mut self,
-        context: &mut Context<'i, I, LO, StateIndex>,
+        context: &mut Context<'i, I, StateIndex>,
         lexer: &L,
         builder: &mut B,
     ) -> Result<B::Output> {

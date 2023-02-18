@@ -20,10 +20,10 @@ impl CustomLexer1Lexer {
 /// This custom lexer will recognize a VarInt in the input by returning a slice
 /// of the input where first bytes has highest bit set while the last byte
 /// highest bit is .
-impl<'i> Lexer<'i, Input, (), StateIndex, TokenKind> for CustomLexer1Lexer {
+impl<'i> Lexer<'i, Input, StateIndex, TokenKind> for CustomLexer1Lexer {
     fn next_token(
         &self,
-        context: &mut Context<'i, Input, (), StateIndex>,
+        context: &mut Context<'i, Input, StateIndex>,
     ) -> Result<Token<'i, Input, TokenKind>> {
         let value;
         let kind: lexer::TokenKind<TokenKind>;

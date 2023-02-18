@@ -8,7 +8,7 @@ use crate::{
 ///
 /// Builder should keep its internal stack of subresults, similar to the way LR
 /// parsing operates.
-pub trait LRBuilder<'i, I: Input + ?Sized, LO, TK: Copy>: Builder {
+pub trait LRBuilder<'i, I: Input + ?Sized, TK: Copy>: Builder {
     /// Called when LR shifting is taking place.
     ///
     /// # Arguments
@@ -17,7 +17,7 @@ pub trait LRBuilder<'i, I: Input + ?Sized, LO, TK: Copy>: Builder {
     /// * `token` - A token recognized in the input.
     fn shift_action(
         &mut self,
-        context: &Context<'i, I, LO, StateIndex>,
+        context: &mut Context<'i, I, StateIndex>,
         token: Token<'i, I, TK>,
     );
 
@@ -31,7 +31,7 @@ pub trait LRBuilder<'i, I: Input + ?Sized, LO, TK: Copy>: Builder {
     ///                subresults from the stack
     fn reduce_action(
         &mut self,
-        context: &Context<'i, I, LO, StateIndex>,
+        context: &mut Context<'i, I, StateIndex>,
         prod_idx: ProdIndex,
         prod_len: usize,
     );
@@ -54,23 +54,24 @@ impl<'i, I: Input + ?Sized, TK: Copy> Builder for TreeBuilder<'i, I, TK> {
     }
 }
 
-impl<'i, I: Input + ?Sized, LO, TK: Clone + Copy> LRBuilder<'i, I, LO, TK>
+impl<'i, I: Input + ?Sized, TK: Clone + Copy> LRBuilder<'i, I, TK>
     for TreeBuilder<'i, I, TK>
 {
     fn shift_action(
         &mut self,
-        context: &Context<'i, I, LO, StateIndex>,
+        context: &mut Context<'i, I, StateIndex>,
         token: Token<'i, I, TK>,
     ) {
         self.res_stack.push(TreeNode::TermNode {
             token,
             position: context.start_pos,
+            layout: context.layout,
         })
     }
 
     fn reduce_action(
         &mut self,
-        context: &Context<'i, I, LO, StateIndex>,
+        context: &mut Context<'i, I, StateIndex>,
         prod_idx: ProdIndex,
         prod_len: usize,
     ) {
@@ -80,6 +81,7 @@ impl<'i, I: Input + ?Sized, LO, TK: Clone + Copy> LRBuilder<'i, I, LO, TK>
             children,
             prod_idx,
             position: context.start_pos,
+            layout: context.layout,
         });
     }
 }
@@ -89,10 +91,12 @@ pub enum TreeNode<'i, I: Input + ?Sized, TK: Copy> {
     TermNode {
         token: Token<'i, I, TK>,
         position: usize,
+        layout: Option<&'i I>,
     },
     NonTermNode {
         prod_idx: ProdIndex,
         position: usize,
         children: Vec<TreeNode<'i, I, TK>>,
+        layout: Option<&'i I>,
     },
 }

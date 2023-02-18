@@ -413,6 +413,12 @@ impl Grammar {
         &self.terminals[self.symbol_to_term_index(index)]
     }
 
+    /// Get Terminal by name.
+    #[inline]
+    pub fn term_by_name(&self, name: &str) -> &Terminal {
+        self.symbol_to_term(self.symbol_index(name))
+    }
+
     #[inline]
     pub fn nonterm_to_symbol_index(&self, index: NonTermIndex) -> SymbolIndex {
         SymbolIndex(index.0 + self.terminals.len())
@@ -431,6 +437,12 @@ impl Grammar {
     pub fn symbol_to_nonterm(&self, index: SymbolIndex) -> &NonTerminal {
         &self.nonterminals
             [NonTermIndex(index.0.checked_sub(self.terminals.len()).unwrap())]
+    }
+
+    /// Get NonTerminal by name.
+    #[inline]
+    pub fn nonterm_by_name(&self, name: &str) -> &NonTerminal {
+        self.symbol_to_nonterm(self.symbol_index(name))
     }
 
     /// Convert symbol index to non-terminal. Panics if symbol index is a

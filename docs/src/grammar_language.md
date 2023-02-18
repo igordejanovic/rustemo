@@ -822,28 +822,38 @@ separated from the surrounding tokens.
 
 ## Handling whitespaces and comments in your language
 
-By default parser will skip whitespaces. You can take control over this process
-by defining a special grammar rule `Layout`. If this rule is found in the
-grammar the parser will use it to parse layout before each token. This is
+The default string lexer skips whitespaces. You can take control over this
+process by defining a special grammar rule `Layout`. If this rule is found in
+the grammar the parser will use it to parse layout before each token. This is
 usually used to parse whitespaces, comments, or anything that is not relevant
 for the semantics analysis of the language.
 
 For example, given the grammar:
 
 ```
-{{#include ../../tests/src/layout/layout.rustemo}}
+{{#include ../../tests/src/layout/generic_tree/layout.rustemo}}
 ```
 
-We can parse an input consisting of numbers and words but we will get only numbers as an output.
+We can parse an input consisting of numbers and words but we will get only
+numbers in the output.
 
 ```rust
-{{#include ../../tests/src/layout/mod.rs:input}}
+{{#include ../../tests/src/layout/generic_tree/mod.rs:input}}
 ```
-The result will be:
+If default AST builder is used, the result will be:
 
 ```
-{{#include ../../tests/src/layout/layout.ast}}
+{{#include ../../tests/src/layout/ast/layout.ast}}
+```
 
+You can see that all layout is by default dropped from the result. Of course,
+you can change that by changing the generated actions. The layout is passed to
+each action through the `Context` object (`ctx.layout`).
+
+For example, the generic tree builder preserves the layout on the tree nodes. The result from the above parse if generic tree builder is used will be:
+
+```
+{{#include ../../tests/src/layout/generic_tree/layout.ast}}
 ```
 
 Here is another example that gives support for both line comments and
@@ -860,12 +870,4 @@ terminals
 WS: /\s+/;
 CommentLine: /\/\/.*/;
 NotComment: /((\*[^\/])|[^\s*\/]|\/[^\*])+/;
-```
-
-```admonish note
-If `Layout` is provided it *must* match before the first token, between any two
-tokens in the input, and after the last token. If layout cannot be empty, the
-input cannot start or end with a token. If this is not desired, make sure that
-`Layout` parsing is optional by including `EMPTY` in the layout as one of its
-alternatives or using e.g. zero-or-more (`*`) like in the previous example.
 ```
