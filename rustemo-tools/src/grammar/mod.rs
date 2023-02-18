@@ -13,7 +13,7 @@ use rustemo::{
     Error, Result,
 };
 
-use crate::lang::rustemo_actions::File;
+use crate::lang::rustemo::RustemoParser;
 
 use self::types::to_snake_case;
 
@@ -331,7 +331,7 @@ impl FromStr for Grammar {
 impl Grammar {
     /// Parses given string and constructs a Grammar instance
     fn from_string<G: AsRef<str>>(grammar_str: G) -> Result<Self> {
-        grammar_str.as_ref().parse::<File>()?.try_into()
+        RustemoParser::parse(grammar_str.as_ref())?.try_into()
     }
 
     /// Parses given file and constructs a Grammar instance
