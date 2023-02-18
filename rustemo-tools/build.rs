@@ -51,7 +51,10 @@ fn bootstrap() -> Result<(), Box<dyn Error>> {
             .unwrap_or_else(|_| panic!("Cannot checkout file {:?}", f));
 
         if !output.status.success() {
-            panic!("git command execution failed! Exit status = {:?}", output.status);
+            panic!(
+                "git command execution failed! Exit status = {:?}",
+                output.status
+            );
         }
 
         let out_file = out_dir.join(

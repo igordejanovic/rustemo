@@ -16782,7 +16782,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
     #![allow(unused_variables)]
     fn shift_action(
         &mut self,
-        _context: &Context<'i>,
+        context: &Context<'i>,
         token: Token<'i, Input, TokenKind>,
     ) {
         let kind = match token.kind {
@@ -16823,32 +16823,38 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
             TokenKind::NoFinish => Terminal::NoFinish,
             TokenKind::OComment => Terminal::OComment,
             TokenKind::CComment => Terminal::CComment,
-            TokenKind::Name => Terminal::Name(rustemo_actions::name(token)),
+            TokenKind::Name => Terminal::Name(rustemo_actions::name(context, token)),
             TokenKind::RegexTerm => {
-                Terminal::RegexTerm(rustemo_actions::regex_term(token))
+                Terminal::RegexTerm(rustemo_actions::regex_term(context, token))
             }
-            TokenKind::IntConst => Terminal::IntConst(rustemo_actions::int_const(token)),
+            TokenKind::IntConst => {
+                Terminal::IntConst(rustemo_actions::int_const(context, token))
+            }
             TokenKind::FloatConst => {
-                Terminal::FloatConst(rustemo_actions::float_const(token))
+                Terminal::FloatConst(rustemo_actions::float_const(context, token))
             }
             TokenKind::BoolConst => {
-                Terminal::BoolConst(rustemo_actions::bool_const(token))
+                Terminal::BoolConst(rustemo_actions::bool_const(context, token))
             }
-            TokenKind::StrConst => Terminal::StrConst(rustemo_actions::str_const(token)),
-            TokenKind::Action => Terminal::Action(rustemo_actions::action(token)),
-            TokenKind::WS => Terminal::WS(rustemo_actions::ws(token)),
+            TokenKind::StrConst => {
+                Terminal::StrConst(rustemo_actions::str_const(context, token))
+            }
+            TokenKind::Action => {
+                Terminal::Action(rustemo_actions::action(context, token))
+            }
+            TokenKind::WS => Terminal::WS(rustemo_actions::ws(context, token)),
             TokenKind::CommentLine => {
-                Terminal::CommentLine(rustemo_actions::comment_line(token))
+                Terminal::CommentLine(rustemo_actions::comment_line(context, token))
             }
             TokenKind::NotComment => {
-                Terminal::NotComment(rustemo_actions::not_comment(token))
+                Terminal::NotComment(rustemo_actions::not_comment(context, token))
             }
         };
         self.res_stack.push(Symbol::Terminal(val));
     }
     fn reduce_action(
         &mut self,
-        _context: &Context<'i>,
+        context: &Context<'i>,
         prod_idx: ProdIndex,
         _prod_len: usize,
     ) {
@@ -16860,7 +16866,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::GrammarRule1(p0)) => {
-                        NonTerminal::File(rustemo_actions::file_c1(p0))
+                        NonTerminal::File(rustemo_actions::file_c1(context, p0))
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -16876,7 +16882,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                         Symbol::NonTerminal(NonTerminal::GrammarRule(p1)),
                     ) => {
                         NonTerminal::GrammarRule1(
-                            rustemo_actions::grammar_rule1_c1(p0, p1),
+                            rustemo_actions::grammar_rule1_c1(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -16889,7 +16895,9 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::GrammarRule(p0)) => {
-                        NonTerminal::GrammarRule1(rustemo_actions::grammar_rule1_c2(p0))
+                        NonTerminal::GrammarRule1(
+                            rustemo_actions::grammar_rule1_c2(context, p0),
+                        )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -16903,7 +16911,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     (
                         Symbol::NonTerminal(NonTerminal::ImportStm1(p0)),
                         Symbol::NonTerminal(NonTerminal::GrammarRule1(p1)),
-                    ) => NonTerminal::File(rustemo_actions::file_c2(p0, p1)),
+                    ) => NonTerminal::File(rustemo_actions::file_c2(context, p0, p1)),
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
@@ -16916,7 +16924,11 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     (
                         Symbol::NonTerminal(NonTerminal::ImportStm1(p0)),
                         Symbol::NonTerminal(NonTerminal::ImportStm(p1)),
-                    ) => NonTerminal::ImportStm1(rustemo_actions::import_stm1_c1(p0, p1)),
+                    ) => {
+                        NonTerminal::ImportStm1(
+                            rustemo_actions::import_stm1_c1(context, p0, p1),
+                        )
+                    }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
@@ -16927,7 +16939,9 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::ImportStm(p0)) => {
-                        NonTerminal::ImportStm1(rustemo_actions::import_stm1_c2(p0))
+                        NonTerminal::ImportStm1(
+                            rustemo_actions::import_stm1_c2(context, p0),
+                        )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -16942,7 +16956,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                         Symbol::NonTerminal(NonTerminal::GrammarRule1(p0)),
                         _,
                         Symbol::NonTerminal(NonTerminal::TerminalRule1(p1)),
-                    ) => NonTerminal::File(rustemo_actions::file_c3(p0, p1)),
+                    ) => NonTerminal::File(rustemo_actions::file_c3(context, p0, p1)),
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
@@ -16957,7 +16971,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                         Symbol::NonTerminal(NonTerminal::TerminalRule(p1)),
                     ) => {
                         NonTerminal::TerminalRule1(
-                            rustemo_actions::terminal_rule1_c1(p0, p1),
+                            rustemo_actions::terminal_rule1_c1(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -16971,7 +16985,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::TerminalRule(p0)) => {
                         NonTerminal::TerminalRule1(
-                            rustemo_actions::terminal_rule1_c2(p0),
+                            rustemo_actions::terminal_rule1_c2(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -16993,7 +17007,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                         Symbol::NonTerminal(NonTerminal::GrammarRule1(p1)),
                         _,
                         Symbol::NonTerminal(NonTerminal::TerminalRule1(p2)),
-                    ) => NonTerminal::File(rustemo_actions::file_c4(p0, p1, p2)),
+                    ) => NonTerminal::File(rustemo_actions::file_c4(context, p0, p1, p2)),
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
@@ -17004,7 +17018,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match (i.next().unwrap(), i.next().unwrap()) {
                     (_, Symbol::NonTerminal(NonTerminal::TerminalRule1(p0))) => {
-                        NonTerminal::File(rustemo_actions::file_c5(p0))
+                        NonTerminal::File(rustemo_actions::file_c5(context, p0))
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -17016,7 +17030,9 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match (i.next().unwrap(), i.next().unwrap()) {
                     (_, Symbol::Terminal(Terminal::StrConst(p0))) => {
-                        NonTerminal::ImportStm(rustemo_actions::import_stm_c1(p0))
+                        NonTerminal::ImportStm(
+                            rustemo_actions::import_stm_c1(context, p0),
+                        )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -17037,7 +17053,11 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                         Symbol::Terminal(Terminal::StrConst(p0)),
                         _,
                         Symbol::Terminal(Terminal::Name(p1)),
-                    ) => NonTerminal::ImportStm(rustemo_actions::import_stm_c2(p0, p1)),
+                    ) => {
+                        NonTerminal::ImportStm(
+                            rustemo_actions::import_stm_c2(context, p0, p1),
+                        )
+                    }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
@@ -17061,7 +17081,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                         _,
                     ) => {
                         NonTerminal::GrammarRule(
-                            rustemo_actions::grammar_rule_c1(p0, p1, p2),
+                            rustemo_actions::grammar_rule_c1(context, p0, p1, p2),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17074,13 +17094,15 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::Action(p0)) => {
-                        NonTerminal::ActionOpt(rustemo_actions::action_opt_c1(p0))
+                        NonTerminal::ActionOpt(
+                            rustemo_actions::action_opt_c1(context, p0),
+                        )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
             ProdKind::ActionOptP2 => {
-                NonTerminal::ActionOpt(rustemo_actions::action_opt_empty())
+                NonTerminal::ActionOpt(rustemo_actions::action_opt_empty(context))
             }
             ProdKind::GrammarRuleP2 => {
                 let mut i = self
@@ -17108,7 +17130,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                         _,
                     ) => {
                         NonTerminal::GrammarRule(
-                            rustemo_actions::grammar_rule_c2(p0, p1, p2, p3),
+                            rustemo_actions::grammar_rule_c2(context, p0, p1, p2, p3),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17126,7 +17148,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                         Symbol::NonTerminal(NonTerminal::Production(p1)),
                     ) => {
                         NonTerminal::GrammarRuleRHS(
-                            rustemo_actions::grammar_rule_rhs_c1(p0, p1),
+                            rustemo_actions::grammar_rule_rhs_c1(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17140,7 +17162,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::Production(p0)) => {
                         NonTerminal::GrammarRuleRHS(
-                            rustemo_actions::grammar_rule_rhs_c2(p0),
+                            rustemo_actions::grammar_rule_rhs_c2(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17153,7 +17175,9 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::Assignment1(p0)) => {
-                        NonTerminal::Production(rustemo_actions::production_c1(p0))
+                        NonTerminal::Production(
+                            rustemo_actions::production_c1(context, p0),
+                        )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -17168,7 +17192,9 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                         Symbol::NonTerminal(NonTerminal::Assignment1(p0)),
                         Symbol::NonTerminal(NonTerminal::Assignment(p1)),
                     ) => {
-                        NonTerminal::Assignment1(rustemo_actions::assignment1_c1(p0, p1))
+                        NonTerminal::Assignment1(
+                            rustemo_actions::assignment1_c1(context, p0, p1),
+                        )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -17180,7 +17206,9 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::Assignment(p0)) => {
-                        NonTerminal::Assignment1(rustemo_actions::assignment1_c2(p0))
+                        NonTerminal::Assignment1(
+                            rustemo_actions::assignment1_c2(context, p0),
+                        )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -17201,7 +17229,11 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                         _,
                         Symbol::NonTerminal(NonTerminal::ProdMetaDatas(p1)),
                         _,
-                    ) => NonTerminal::Production(rustemo_actions::production_c2(p0, p1)),
+                    ) => {
+                        NonTerminal::Production(
+                            rustemo_actions::production_c2(context, p0, p1),
+                        )
+                    }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
@@ -17225,7 +17257,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                         _,
                     ) => {
                         NonTerminal::TerminalRule(
-                            rustemo_actions::terminal_rule_c1(p0, p1, p2),
+                            rustemo_actions::terminal_rule_c1(context, p0, p1, p2),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17249,7 +17281,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                         _,
                     ) => {
                         NonTerminal::TerminalRule(
-                            rustemo_actions::terminal_rule_c2(p0, p1),
+                            rustemo_actions::terminal_rule_c2(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17281,7 +17313,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                         _,
                     ) => {
                         NonTerminal::TerminalRule(
-                            rustemo_actions::terminal_rule_c3(p0, p1, p2, p3),
+                            rustemo_actions::terminal_rule_c3(context, p0, p1, p2, p3),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17311,7 +17343,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                         _,
                     ) => {
                         NonTerminal::TerminalRule(
-                            rustemo_actions::terminal_rule_c4(p0, p1, p2),
+                            rustemo_actions::terminal_rule_c4(context, p0, p1, p2),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17322,49 +17354,53 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .res_stack
                     .split_off(self.res_stack.len() - 1usize)
                     .into_iter();
-                NonTerminal::ProdMetaData(rustemo_actions::prod_meta_data_left())
+                NonTerminal::ProdMetaData(rustemo_actions::prod_meta_data_left(context))
             }
             ProdKind::ProdMetaDataReduce => {
                 let _ = self
                     .res_stack
                     .split_off(self.res_stack.len() - 1usize)
                     .into_iter();
-                NonTerminal::ProdMetaData(rustemo_actions::prod_meta_data_reduce())
+                NonTerminal::ProdMetaData(
+                    rustemo_actions::prod_meta_data_reduce(context),
+                )
             }
             ProdKind::ProdMetaDataRight => {
                 let _ = self
                     .res_stack
                     .split_off(self.res_stack.len() - 1usize)
                     .into_iter();
-                NonTerminal::ProdMetaData(rustemo_actions::prod_meta_data_right())
+                NonTerminal::ProdMetaData(rustemo_actions::prod_meta_data_right(context))
             }
             ProdKind::ProdMetaDataShift => {
                 let _ = self
                     .res_stack
                     .split_off(self.res_stack.len() - 1usize)
                     .into_iter();
-                NonTerminal::ProdMetaData(rustemo_actions::prod_meta_data_shift())
+                NonTerminal::ProdMetaData(rustemo_actions::prod_meta_data_shift(context))
             }
             ProdKind::ProdMetaDataDynamic => {
                 let _ = self
                     .res_stack
                     .split_off(self.res_stack.len() - 1usize)
                     .into_iter();
-                NonTerminal::ProdMetaData(rustemo_actions::prod_meta_data_dynamic())
+                NonTerminal::ProdMetaData(
+                    rustemo_actions::prod_meta_data_dynamic(context),
+                )
             }
             ProdKind::ProdMetaDataNOPS => {
                 let _ = self
                     .res_stack
                     .split_off(self.res_stack.len() - 1usize)
                     .into_iter();
-                NonTerminal::ProdMetaData(rustemo_actions::prod_meta_data_nops())
+                NonTerminal::ProdMetaData(rustemo_actions::prod_meta_data_nops(context))
             }
             ProdKind::ProdMetaDataNOPSE => {
                 let _ = self
                     .res_stack
                     .split_off(self.res_stack.len() - 1usize)
                     .into_iter();
-                NonTerminal::ProdMetaData(rustemo_actions::prod_meta_data_nopse())
+                NonTerminal::ProdMetaData(rustemo_actions::prod_meta_data_nopse(context))
             }
             ProdKind::ProdMetaDataPriority => {
                 let mut i = self
@@ -17374,7 +17410,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::IntConst(p0)) => {
                         NonTerminal::ProdMetaData(
-                            rustemo_actions::prod_meta_data_priority(p0),
+                            rustemo_actions::prod_meta_data_priority(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17387,7 +17423,9 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::UserMetaData(p0)) => {
-                        NonTerminal::ProdMetaData(rustemo_actions::prod_meta_data_c9(p0))
+                        NonTerminal::ProdMetaData(
+                            rustemo_actions::prod_meta_data_c9(context, p0),
+                        )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -17400,7 +17438,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::ProdKind(p0)) => {
                         NonTerminal::ProdMetaData(
-                            rustemo_actions::prod_meta_data_c10(p0),
+                            rustemo_actions::prod_meta_data_c10(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17418,7 +17456,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                         Symbol::NonTerminal(NonTerminal::ProdMetaData(p1)),
                     ) => {
                         NonTerminal::ProdMetaDatas(
-                            rustemo_actions::prod_meta_datas_c1(p0, p1),
+                            rustemo_actions::prod_meta_datas_c1(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17432,7 +17470,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::ProdMetaData(p0)) => {
                         NonTerminal::ProdMetaDatas(
-                            rustemo_actions::prod_meta_datas_c2(p0),
+                            rustemo_actions::prod_meta_datas_c2(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17443,28 +17481,36 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .res_stack
                     .split_off(self.res_stack.len() - 1usize)
                     .into_iter();
-                NonTerminal::TermMetaData(rustemo_actions::term_meta_data_prefer())
+                NonTerminal::TermMetaData(
+                    rustemo_actions::term_meta_data_prefer(context),
+                )
             }
             ProdKind::TermMetaDataFinish => {
                 let _ = self
                     .res_stack
                     .split_off(self.res_stack.len() - 1usize)
                     .into_iter();
-                NonTerminal::TermMetaData(rustemo_actions::term_meta_data_finish())
+                NonTerminal::TermMetaData(
+                    rustemo_actions::term_meta_data_finish(context),
+                )
             }
             ProdKind::TermMetaDataNoFinish => {
                 let _ = self
                     .res_stack
                     .split_off(self.res_stack.len() - 1usize)
                     .into_iter();
-                NonTerminal::TermMetaData(rustemo_actions::term_meta_data_no_finish())
+                NonTerminal::TermMetaData(
+                    rustemo_actions::term_meta_data_no_finish(context),
+                )
             }
             ProdKind::TermMetaDataDynamic => {
                 let _ = self
                     .res_stack
                     .split_off(self.res_stack.len() - 1usize)
                     .into_iter();
-                NonTerminal::TermMetaData(rustemo_actions::term_meta_data_dynamic())
+                NonTerminal::TermMetaData(
+                    rustemo_actions::term_meta_data_dynamic(context),
+                )
             }
             ProdKind::TermMetaDataPriority => {
                 let mut i = self
@@ -17474,7 +17520,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::IntConst(p0)) => {
                         NonTerminal::TermMetaData(
-                            rustemo_actions::term_meta_data_priority(p0),
+                            rustemo_actions::term_meta_data_priority(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17487,7 +17533,9 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::UserMetaData(p0)) => {
-                        NonTerminal::TermMetaData(rustemo_actions::term_meta_data_c6(p0))
+                        NonTerminal::TermMetaData(
+                            rustemo_actions::term_meta_data_c6(context, p0),
+                        )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -17504,7 +17552,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                         Symbol::NonTerminal(NonTerminal::TermMetaData(p1)),
                     ) => {
                         NonTerminal::TermMetaDatas(
-                            rustemo_actions::term_meta_datas_c1(p0, p1),
+                            rustemo_actions::term_meta_datas_c1(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17518,7 +17566,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::TermMetaData(p0)) => {
                         NonTerminal::TermMetaDatas(
-                            rustemo_actions::term_meta_datas_c2(p0),
+                            rustemo_actions::term_meta_datas_c2(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17536,7 +17584,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                         Symbol::NonTerminal(NonTerminal::ConstVal(p1)),
                     ) => {
                         NonTerminal::UserMetaData(
-                            rustemo_actions::user_meta_data_c1(p0, p1),
+                            rustemo_actions::user_meta_data_c1(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17549,7 +17597,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::Name(p0)) => {
-                        NonTerminal::ProdKind(rustemo_actions::prod_kind_c1(p0))
+                        NonTerminal::ProdKind(rustemo_actions::prod_kind_c1(context, p0))
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -17561,7 +17609,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::IntConst(p0)) => {
-                        NonTerminal::ConstVal(rustemo_actions::const_val_c1(p0))
+                        NonTerminal::ConstVal(rustemo_actions::const_val_c1(context, p0))
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -17573,7 +17621,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::FloatConst(p0)) => {
-                        NonTerminal::ConstVal(rustemo_actions::const_val_c2(p0))
+                        NonTerminal::ConstVal(rustemo_actions::const_val_c2(context, p0))
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -17585,7 +17633,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::BoolConst(p0)) => {
-                        NonTerminal::ConstVal(rustemo_actions::const_val_c3(p0))
+                        NonTerminal::ConstVal(rustemo_actions::const_val_c3(context, p0))
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -17597,7 +17645,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::StrConst(p0)) => {
-                        NonTerminal::ConstVal(rustemo_actions::const_val_c4(p0))
+                        NonTerminal::ConstVal(rustemo_actions::const_val_c4(context, p0))
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -17609,7 +17657,9 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::PlainAssignment(p0)) => {
-                        NonTerminal::Assignment(rustemo_actions::assignment_c1(p0))
+                        NonTerminal::Assignment(
+                            rustemo_actions::assignment_c1(context, p0),
+                        )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -17621,7 +17671,9 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::BoolAssignment(p0)) => {
-                        NonTerminal::Assignment(rustemo_actions::assignment_c2(p0))
+                        NonTerminal::Assignment(
+                            rustemo_actions::assignment_c2(context, p0),
+                        )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -17633,7 +17685,9 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::GrammarSymbolRef(p0)) => {
-                        NonTerminal::Assignment(rustemo_actions::assignment_c3(p0))
+                        NonTerminal::Assignment(
+                            rustemo_actions::assignment_c3(context, p0),
+                        )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -17650,7 +17704,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                         Symbol::NonTerminal(NonTerminal::GrammarSymbolRef(p1)),
                     ) => {
                         NonTerminal::PlainAssignment(
-                            rustemo_actions::plain_assignment_c1(p0, p1),
+                            rustemo_actions::plain_assignment_c1(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17668,7 +17722,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                         Symbol::NonTerminal(NonTerminal::GrammarSymbolRef(p1)),
                     ) => {
                         NonTerminal::BoolAssignment(
-                            rustemo_actions::bool_assignment_c1(p0, p1),
+                            rustemo_actions::bool_assignment_c1(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17682,7 +17736,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                 match (i.next().unwrap(), i.next().unwrap(), i.next().unwrap()) {
                     (_, Symbol::NonTerminal(NonTerminal::GrammarRuleRHS(p0)), _) => {
                         NonTerminal::ProductionGroup(
-                            rustemo_actions::production_group_c1(p0),
+                            rustemo_actions::production_group_c1(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17699,7 +17753,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                         Symbol::NonTerminal(NonTerminal::RepetitionOperatorOpt(p1)),
                     ) => {
                         NonTerminal::GrammarSymbolRef(
-                            rustemo_actions::grammar_symbol_ref_c1(p0, p1),
+                            rustemo_actions::grammar_symbol_ref_c1(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17713,7 +17767,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::RepetitionOperator(p0)) => {
                         NonTerminal::RepetitionOperatorOpt(
-                            rustemo_actions::repetition_operator_opt_c1(p0),
+                            rustemo_actions::repetition_operator_opt_c1(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17721,7 +17775,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
             }
             ProdKind::RepetitionOperatorOptP2 => {
                 NonTerminal::RepetitionOperatorOpt(
-                    rustemo_actions::repetition_operator_opt_empty(),
+                    rustemo_actions::repetition_operator_opt_empty(context),
                 )
             }
             ProdKind::GrammarSymbolRefP2 => {
@@ -17735,7 +17789,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                         Symbol::NonTerminal(NonTerminal::RepetitionOperatorOpt(p1)),
                     ) => {
                         NonTerminal::GrammarSymbolRef(
-                            rustemo_actions::grammar_symbol_ref_c2(p0, p1),
+                            rustemo_actions::grammar_symbol_ref_c2(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17752,7 +17806,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                         Symbol::NonTerminal(NonTerminal::RepetitionModifiersOpt(p1)),
                     ) => {
                         NonTerminal::RepetitionOperator(
-                            rustemo_actions::repetition_operator_c1(p0, p1),
+                            rustemo_actions::repetition_operator_c1(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17766,7 +17820,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::RepetitionModifiers(p0)) => {
                         NonTerminal::RepetitionModifiersOpt(
-                            rustemo_actions::repetition_modifiers_opt_c1(p0),
+                            rustemo_actions::repetition_modifiers_opt_c1(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17774,7 +17828,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
             }
             ProdKind::RepetitionModifiersOptP2 => {
                 NonTerminal::RepetitionModifiersOpt(
-                    rustemo_actions::repetition_modifiers_opt_empty(),
+                    rustemo_actions::repetition_modifiers_opt_empty(context),
                 )
             }
             ProdKind::RepetitionOperatorOpZeroOrMore => {
@@ -17783,7 +17837,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .split_off(self.res_stack.len() - 1usize)
                     .into_iter();
                 NonTerminal::RepetitionOperatorOp(
-                    rustemo_actions::repetition_operator_op_zero_or_more(),
+                    rustemo_actions::repetition_operator_op_zero_or_more(context),
                 )
             }
             ProdKind::RepetitionOperatorOpZeroOrMoreGreedy => {
@@ -17792,7 +17846,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .split_off(self.res_stack.len() - 1usize)
                     .into_iter();
                 NonTerminal::RepetitionOperatorOp(
-                    rustemo_actions::repetition_operator_op_zero_or_more_greedy(),
+                    rustemo_actions::repetition_operator_op_zero_or_more_greedy(context),
                 )
             }
             ProdKind::RepetitionOperatorOpOneOrMore => {
@@ -17801,7 +17855,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .split_off(self.res_stack.len() - 1usize)
                     .into_iter();
                 NonTerminal::RepetitionOperatorOp(
-                    rustemo_actions::repetition_operator_op_one_or_more(),
+                    rustemo_actions::repetition_operator_op_one_or_more(context),
                 )
             }
             ProdKind::RepetitionOperatorOpOneOrMoreGreedy => {
@@ -17810,7 +17864,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .split_off(self.res_stack.len() - 1usize)
                     .into_iter();
                 NonTerminal::RepetitionOperatorOp(
-                    rustemo_actions::repetition_operator_op_one_or_more_greedy(),
+                    rustemo_actions::repetition_operator_op_one_or_more_greedy(context),
                 )
             }
             ProdKind::RepetitionOperatorOpOptional => {
@@ -17819,7 +17873,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .split_off(self.res_stack.len() - 1usize)
                     .into_iter();
                 NonTerminal::RepetitionOperatorOp(
-                    rustemo_actions::repetition_operator_op_optional(),
+                    rustemo_actions::repetition_operator_op_optional(context),
                 )
             }
             ProdKind::RepetitionOperatorOpOptionalGreedy => {
@@ -17828,7 +17882,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .split_off(self.res_stack.len() - 1usize)
                     .into_iter();
                 NonTerminal::RepetitionOperatorOp(
-                    rustemo_actions::repetition_operator_op_optional_greedy(),
+                    rustemo_actions::repetition_operator_op_optional_greedy(context),
                 )
             }
             ProdKind::RepetitionModifiersP1 => {
@@ -17839,7 +17893,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                 match (i.next().unwrap(), i.next().unwrap(), i.next().unwrap()) {
                     (_, Symbol::NonTerminal(NonTerminal::RepetitionModifier1(p0)), _) => {
                         NonTerminal::RepetitionModifiers(
-                            rustemo_actions::repetition_modifiers_c1(p0),
+                            rustemo_actions::repetition_modifiers_c1(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17857,7 +17911,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                         Symbol::NonTerminal(NonTerminal::RepetitionModifier(p1)),
                     ) => {
                         NonTerminal::RepetitionModifier1(
-                            rustemo_actions::repetition_modifier1_c1(p0, p1),
+                            rustemo_actions::repetition_modifier1_c1(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17871,7 +17925,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::RepetitionModifier(p0)) => {
                         NonTerminal::RepetitionModifier1(
-                            rustemo_actions::repetition_modifier1_c2(p0),
+                            rustemo_actions::repetition_modifier1_c2(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17885,7 +17939,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::Name(p0)) => {
                         NonTerminal::RepetitionModifier(
-                            rustemo_actions::repetition_modifier_c1(p0),
+                            rustemo_actions::repetition_modifier_c1(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17899,7 +17953,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::Name(p0)) => {
                         NonTerminal::GrammarSymbol(
-                            rustemo_actions::grammar_symbol_c1(p0),
+                            rustemo_actions::grammar_symbol_c1(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17913,7 +17967,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::StrConst(p0)) => {
                         NonTerminal::GrammarSymbol(
-                            rustemo_actions::grammar_symbol_c2(p0),
+                            rustemo_actions::grammar_symbol_c2(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17926,7 +17980,9 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::StrConst(p0)) => {
-                        NonTerminal::Recognizer(rustemo_actions::recognizer_c1(p0))
+                        NonTerminal::Recognizer(
+                            rustemo_actions::recognizer_c1(context, p0),
+                        )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -17938,7 +17994,9 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::RegexTerm(p0)) => {
-                        NonTerminal::Recognizer(rustemo_actions::recognizer_c2(p0))
+                        NonTerminal::Recognizer(
+                            rustemo_actions::recognizer_c2(context, p0),
+                        )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -17950,7 +18008,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::LayoutItem0(p0)) => {
-                        NonTerminal::Layout(rustemo_actions::layout_c1(p0))
+                        NonTerminal::Layout(rustemo_actions::layout_c1(context, p0))
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -17966,7 +18024,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                         Symbol::NonTerminal(NonTerminal::LayoutItem(p1)),
                     ) => {
                         NonTerminal::LayoutItem1(
-                            rustemo_actions::layout_item1_c1(p0, p1),
+                            rustemo_actions::layout_item1_c1(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -17979,7 +18037,9 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::LayoutItem(p0)) => {
-                        NonTerminal::LayoutItem1(rustemo_actions::layout_item1_c2(p0))
+                        NonTerminal::LayoutItem1(
+                            rustemo_actions::layout_item1_c2(context, p0),
+                        )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -17991,13 +18051,15 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::LayoutItem1(p0)) => {
-                        NonTerminal::LayoutItem0(rustemo_actions::layout_item0_c1(p0))
+                        NonTerminal::LayoutItem0(
+                            rustemo_actions::layout_item0_c1(context, p0),
+                        )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
             ProdKind::LayoutItem0P2 => {
-                NonTerminal::LayoutItem0(rustemo_actions::layout_item0_empty())
+                NonTerminal::LayoutItem0(rustemo_actions::layout_item0_empty(context))
             }
             ProdKind::LayoutItemP1 => {
                 let mut i = self
@@ -18006,7 +18068,9 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::WS(p0)) => {
-                        NonTerminal::LayoutItem(rustemo_actions::layout_item_c1(p0))
+                        NonTerminal::LayoutItem(
+                            rustemo_actions::layout_item_c1(context, p0),
+                        )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -18018,7 +18082,9 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::Comment(p0)) => {
-                        NonTerminal::LayoutItem(rustemo_actions::layout_item_c2(p0))
+                        NonTerminal::LayoutItem(
+                            rustemo_actions::layout_item_c2(context, p0),
+                        )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -18030,7 +18096,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match (i.next().unwrap(), i.next().unwrap(), i.next().unwrap()) {
                     (_, Symbol::NonTerminal(NonTerminal::Corncs(p0)), _) => {
-                        NonTerminal::Comment(rustemo_actions::comment_c1(p0))
+                        NonTerminal::Comment(rustemo_actions::comment_c1(context, p0))
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -18042,7 +18108,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::CommentLine(p0)) => {
-                        NonTerminal::Comment(rustemo_actions::comment_c2(p0))
+                        NonTerminal::Comment(rustemo_actions::comment_c2(context, p0))
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -18054,7 +18120,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::Cornc0(p0)) => {
-                        NonTerminal::Corncs(rustemo_actions::corncs_c1(p0))
+                        NonTerminal::Corncs(rustemo_actions::corncs_c1(context, p0))
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -18068,7 +18134,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     (
                         Symbol::NonTerminal(NonTerminal::Cornc1(p0)),
                         Symbol::NonTerminal(NonTerminal::Cornc(p1)),
-                    ) => NonTerminal::Cornc1(rustemo_actions::cornc1_c1(p0, p1)),
+                    ) => NonTerminal::Cornc1(rustemo_actions::cornc1_c1(context, p0, p1)),
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
@@ -18079,7 +18145,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::Cornc(p0)) => {
-                        NonTerminal::Cornc1(rustemo_actions::cornc1_c2(p0))
+                        NonTerminal::Cornc1(rustemo_actions::cornc1_c2(context, p0))
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -18091,12 +18157,14 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::Cornc1(p0)) => {
-                        NonTerminal::Cornc0(rustemo_actions::cornc0_c1(p0))
+                        NonTerminal::Cornc0(rustemo_actions::cornc0_c1(context, p0))
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
-            ProdKind::Cornc0P2 => NonTerminal::Cornc0(rustemo_actions::cornc0_empty()),
+            ProdKind::Cornc0P2 => {
+                NonTerminal::Cornc0(rustemo_actions::cornc0_empty(context))
+            }
             ProdKind::CorncP1 => {
                 let mut i = self
                     .res_stack
@@ -18104,7 +18172,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::Comment(p0)) => {
-                        NonTerminal::Cornc(rustemo_actions::cornc_c1(p0))
+                        NonTerminal::Cornc(rustemo_actions::cornc_c1(context, p0))
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -18116,7 +18184,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::NotComment(p0)) => {
-                        NonTerminal::Cornc(rustemo_actions::cornc_c2(p0))
+                        NonTerminal::Cornc(rustemo_actions::cornc_c2(context, p0))
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
@@ -18128,7 +18196,7 @@ impl<'i> LRBuilder<'i, Input, Layout, TokenKind> for RustemoBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::WS(p0)) => {
-                        NonTerminal::Cornc(rustemo_actions::cornc_c3(p0))
+                        NonTerminal::Cornc(rustemo_actions::cornc_c3(context, p0))
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }

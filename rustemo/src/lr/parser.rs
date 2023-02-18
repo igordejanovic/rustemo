@@ -71,9 +71,9 @@ impl<D: ParserDefinition> LRParser<D> {
     }
 
     #[inline]
-    fn push_state<'i, I: Input + ?Sized, LO>(
+    fn push_state<I: Input + ?Sized, LO>(
         &mut self,
-        context: &mut Context<'i, I, LO, StateIndex>,
+        context: &mut Context<I, LO, StateIndex>,
         state: StateIndex,
     ) {
         self.parse_stack.push(StackItem {
@@ -85,9 +85,9 @@ impl<D: ParserDefinition> LRParser<D> {
     }
 
     #[inline]
-    fn pop_states<'i, I: Input + ?Sized, LO>(
+    fn pop_states<I: Input + ?Sized, LO>(
         &mut self,
-        context: &mut Context<'i, I, LO, StateIndex>,
+        context: &mut Context<I, LO, StateIndex>,
         states: usize,
     ) -> (StateIndex, usize, usize) {
         let states_removed =

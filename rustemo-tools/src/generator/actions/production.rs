@@ -299,7 +299,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
     fn nonterminal_actions(
         &self,
         nonterminal: &NonTerminal,
-        settings: &Settings,
+        _settings: &Settings,
     ) -> Vec<(String, syn::Item)> {
         let ty = self.types.get_type(&nonterminal.name);
         let ret_type = Ident::new(&nonterminal.name, Span::call_site());
@@ -326,17 +326,9 @@ impl ActionsGenerator for ProductionActionsGenerator {
 
                     (
                         action_name,
-                        if settings.pass_context{
-                            parse_quote! {
-                                pub fn #action<'i>(_context: &Context<&'i str>, #(#args),*) -> #ret_type {
-                                    #body
-                                }
-                            }
-                        } else {
-                            parse_quote! {
-                                pub fn #action(#(#args),*) -> #ret_type {
-                                    #body
-                                }
+                        parse_quote! {
+                            pub fn #action<'i>(_ctx: &Context<'i>, #(#args),*) -> #ret_type {
+                                #body
                             }
                         }
                     )
@@ -409,17 +401,9 @@ impl ActionsGenerator for ProductionActionsGenerator {
 
                     (
                         action_name,
-                        if settings.pass_context {
-                            parse_quote! {
-                                pub fn #action<'i>(_context: &Context<&'i str>, #(#args),*) -> #ret_type {
-                                    #(#body);*
-                                }
-                            }
-                        } else {
-                            parse_quote! {
-                                pub fn #action(#(#args),*) -> #ret_type {
-                                    #(#body);*
-                                }
+                        parse_quote! {
+                            pub fn #action<'i>(_context: &Context<'i>, #(#args),*) -> #ret_type {
+                                #(#body);*
                             }
                         }
                     )

@@ -57,10 +57,6 @@ struct Cli {
     #[clap(long)]
     partial_parse: bool,
 
-    /// Should parse context be passed to actions if AST output is generated.
-    #[clap(long)]
-    pass_context: bool,
-
     /// Should whitespace be skipped. Not used if Layout rule exists in the Grammar.
     #[clap(long)]
     no_skip_ws: bool,
@@ -92,7 +88,6 @@ fn main() {
         .prefer_shifts(cli.prefer_shifts)
         .prefer_shifts_over_empty(!cli.no_shifts_over_empty)
         .partial_parse(cli.partial_parse)
-        .pass_context(cli.pass_context)
         .skip_ws(!cli.no_skip_ws)
         .table_type(cli.table_type)
         .print_table(cli.print_table)

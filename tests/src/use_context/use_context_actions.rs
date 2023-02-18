@@ -1,9 +1,11 @@
-use super::pass_context::{Context, TokenKind};
 ///! This file is maintained by rustemo but can be modified manually.
 ///! All manual changes will be preserved except non-doc comments.
-use rustemo::lexer::Token;
+use super::use_context::{Context, TokenKind};
+use rustemo::lexer;
+pub type Input = str;
+pub type Token<'i> = lexer::Token<'i, Input, TokenKind>;
 pub type Num = u32;
-pub fn num<'i>(context: &Context<'i>, token: Token<'i, str, TokenKind>) -> Num {
+pub fn num(context: &Context, token: Token) -> Num {
     token.value.parse::<u32>().unwrap() + context.position as u32
 }
 pub type A = Num1;

@@ -66,9 +66,6 @@ pub struct Settings {
     /// Should whitespace be skipped. Not used if Layout rule exists in the Grammar.
     pub skip_ws: bool,
 
-    /// Should parse context be passed to actions if AST output is generated.
-    pub pass_context: bool,
-
     /// Should actions file be recreated if exist. Use with care.
     pub force: bool,
 }
@@ -86,7 +83,6 @@ impl Default for Settings {
             actions: true,
             lexer_type: Default::default(),
             builder_type: Default::default(),
-            pass_context: false,
             partial_parse: false,
             skip_ws: true,
             force: false,

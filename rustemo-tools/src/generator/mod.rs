@@ -174,7 +174,6 @@ pub fn generate_parser(
             &builder,
             &actions_file,
             &root_symbol,
-            settings,
         )?);
 
         // Generate actions
@@ -902,18 +901,13 @@ fn generate_builder(
     builder: &str,
     actions_file: &str,
     root_symbol: &str,
-    settings: &Settings,
 ) -> Result<Vec<syn::Item>> {
     let mut ast: Vec<syn::Item> = vec![];
     let builder_output = format_ident!("{}Output", builder);
     let builder = format_ident!("{}", builder);
     let actions_file = format_ident!("{}", actions_file);
     let root_symbol = format_ident!("{}", root_symbol);
-    let context_var = if settings.pass_context {
-        format_ident!("context")
-    } else {
-        format_ident!("_context")
-    };
+    let context_var = format_ident!("context");
 
     ast.push(parse_quote! {
         struct #builder {
@@ -975,13 +969,9 @@ fn generate_builder(
             parse_quote!{
                 TokenKind::#term => Terminal::#term
             }
-        } else if settings.pass_context {
-            parse_quote!{
-                TokenKind::#term => Terminal::#term(#actions_file::#action(context, token))
-            }
         } else {
             parse_quote!{
-                TokenKind::#term => Terminal::#term(#actions_file::#action(token))
+                TokenKind::#term => Terminal::#term(#actions_file::#action(context, token))
             }
         }
     }).collect();
@@ -995,31 +985,16 @@ fn generate_builder(
 
         if rhs_len == 0 {
             // Handle EMPTY reduction
-            if settings.pass_context {
-                parse_quote!{
-                    ProdKind::#prod_kind => NonTerminal::#nonterminal(#actions_file::#action(#context_var))
-                }
-            } else {
-                parse_quote!{
-                    ProdKind::#prod_kind => NonTerminal::#nonterminal(#actions_file::#action())
-                }
+            parse_quote!{
+                ProdKind::#prod_kind => NonTerminal::#nonterminal(#actions_file::#action(#context_var))
             }
         } else {
             // Special handling of production with only str match terms in RHS
             if production.rhs_with_content(grammar).is_empty() {
-                if settings.pass_context {
-                    parse_quote! {
-                        ProdKind::#prod_kind => {
-                            let _ = self.res_stack.split_off(self.res_stack.len()-#rhs_len).into_iter();
-                            NonTerminal::#nonterminal(#actions_file::#action(#context_var))
-                        }
-                    }
-                } else {
-                    parse_quote! {
-                        ProdKind::#prod_kind => {
-                            let _ = self.res_stack.split_off(self.res_stack.len()-#rhs_len).into_iter();
-                            NonTerminal::#nonterminal(#actions_file::#action())
-                        }
+                parse_quote! {
+                    ProdKind::#prod_kind => {
+                        let _ = self.res_stack.split_off(self.res_stack.len()-#rhs_len).into_iter();
+                        NonTerminal::#nonterminal(#actions_file::#action(#context_var))
                     }
                 }
             } else {
@@ -1061,27 +1036,14 @@ fn generate_builder(
                 let params: Vec<syn::Ident> = (0..production.rhs_with_content(grammar).len())
                     .map( |idx| format_ident! { "p{}", idx }).collect();
 
-                if settings.pass_context {
-                    parse_quote! {
-                        ProdKind::#prod_kind => {
-                            let mut i = self.res_stack.split_off(self.res_stack.len()-#rhs_len).into_iter();
-                            match #match_expr {
-                                #match_lhs => NonTerminal::#nonterminal(#actions_file::#action(context, #(#params),*)),
-                                _ => panic!("Invalid symbol parse stack data.")
-                            }
-
+                parse_quote! {
+                    ProdKind::#prod_kind => {
+                        let mut i = self.res_stack.split_off(self.res_stack.len()-#rhs_len).into_iter();
+                        match #match_expr {
+                            #match_lhs => NonTerminal::#nonterminal(#actions_file::#action(context, #(#params),*)),
+                            _ => panic!("Invalid symbol parse stack data.")
                         }
-                    }
-                } else {
-                    parse_quote! {
-                        ProdKind::#prod_kind => {
-                            let mut i = self.res_stack.split_off(self.res_stack.len()-#rhs_len).into_iter();
-                            match #match_expr {
-                                #match_lhs => NonTerminal::#nonterminal(#actions_file::#action(#(#params),*)),
-                                _ => panic!("Invalid symbol parse stack data.")
-                            }
 
-                        }
                     }
                 }
             }

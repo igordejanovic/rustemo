@@ -31,22 +31,14 @@ pub(crate) trait ActionsGenerator {
     fn terminal_action(
         &self,
         terminal: &Terminal,
-        settings: &Settings,
+        _settings: &Settings,
     ) -> syn::Item {
         let type_name_ident = Ident::new(&terminal.name, Span::call_site());
         let action_name = to_snake_case(&terminal.name);
         let action_name_ident = Ident::new(&action_name, Span::call_site());
-        if settings.pass_context {
-            parse_quote! {
-                pub fn #action_name_ident<'i>(_context: &Context<&'i str>, token: Token<'i>) -> #type_name_ident {
-                    token.value.into()
-                }
-            }
-        } else {
-            parse_quote! {
-                pub fn #action_name_ident(token: Token) -> #type_name_ident {
-                    token.value.into()
-                }
+        parse_quote! {
+            pub fn #action_name_ident<'i>(_ctx: &Context<'i>, token: Token<'i>) -> #type_name_ident {
+                token.value.into()
             }
         }
     }
@@ -96,27 +88,15 @@ where
                 use super::#lexer_mod::Input;
             },
         };
-        if settings.pass_context {
-            parse_quote! {
-                ///! This file is maintained by rustemo but can be modified manually.
-                ///! All manual changes will be preserved except non-doc comments.
-                use rustemo::lexer;
-                use super::#parser_mod::Context;
-                use super::#parser_mod::TokenKind;
-                #input_type
-                #[allow(dead_code)]
-                pub type Token<'i> = lexer::Token<'i, Input, TokenKind>;
-            }
-        } else {
-            parse_quote! {
-                ///! This file is maintained by rustemo but can be modified manually.
-                ///! All manual changes will be preserved except non-doc comments.
-                use rustemo::lexer;
-                use super::#parser_mod::TokenKind;
-                #input_type
-                #[allow(dead_code)]
-                pub type Token<'i> = lexer::Token<'i, Input, TokenKind>;
-            }
+        parse_quote! {
+            ///! This file is maintained by rustemo but can be modified manually.
+            ///! All manual changes will be preserved except non-doc comments.
+            use rustemo::lexer;
+            use super::#parser_mod::Context;
+            use super::#parser_mod::TokenKind;
+            #input_type
+            #[allow(dead_code)]
+            pub type Token<'i> = lexer::Token<'i, Input, TokenKind>;
         }
     };
 

@@ -23,10 +23,10 @@ fn main() {
             Box::new(|s| s.prefer_shifts(true).partial_parse(true)),
         ),
         (
-            "pass_context",
+            "use_context",
             Box::new(|s| {
                 // We want actions generated in the source tree.
-                s.pass_context(true).force(false).out_dir_actions(None)
+                s.force(false).out_dir_actions(None)
             }),
         ),
         ("layout", Box::new(|s| s)),

@@ -101,10 +101,6 @@ impl RustemoSettings {
         self.0.actions = actions;
         self
     }
-    pub fn pass_context(mut self, pass_context: bool) -> Self {
-        self.0.pass_context = pass_context;
-        self
-    }
     pub fn force(mut self, force: bool) -> Self {
         self.0.force = force;
         self

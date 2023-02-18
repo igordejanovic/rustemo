@@ -48,14 +48,12 @@ The inference is done by the following rules:
 
 - Each grammar rule
 
-### Passing `Context` to actions
-
-The default builder can be configured to pass lexing context to actions. This
-can be used to write semantic actions which utilize lexing information like
-position or surrounding content. For example, layout parser used with string
-lexer uses this to construct and return a borrowed string slice which span the
-layout preceding a next valid token. To be able to return a string slice layout
-actions need access to the input string and start/end positions.
+Lexing context is passed to actions as a first parameter. This can be used to
+write semantic actions which utilize lexing information like position or
+surrounding content. For example, layout parser used with string lexer uses this
+to construct and return a borrowed string slice which span the layout preceding
+a next valid token. To be able to return a string slice layout actions need
+access to the input string and start/end positions.
 
 By default `Context` is not passed to actions. You can change that by
 `RustemoSettings::pass_context(true)` which is also controlled by
