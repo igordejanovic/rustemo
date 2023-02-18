@@ -8,44 +8,12 @@ Ok(
                 position: 0,
                 children: [
                     NonTermNode {
-                        prod_idx: 2,
+                        prod_idx: 3,
                         position: 0,
                         children: [
                             NonTermNode {
-                                prod_idx: 3,
-                                position: 0,
-                                children: [
-                                    NonTermNode {
-                                        prod_idx: 4,
-                                        position: 0,
-                                        children: [
-                                            TermNode {
-                                                token: Token {
-                                                    kind: Kind(
-                                                        Ta,
-                                                    ),
-                                                    value: "a",
-                                                    location: None,
-                                                },
-                                                position: 0,
-                                            },
-                                            TermNode {
-                                                token: Token {
-                                                    kind: Kind(
-                                                        Num,
-                                                    ),
-                                                    value: "1",
-                                                    location: None,
-                                                },
-                                                position: 2,
-                                            },
-                                        ],
-                                    },
-                                ],
-                            },
-                            NonTermNode {
                                 prod_idx: 4,
-                                position: 4,
+                                position: 0,
                                 children: [
                                     TermNode {
                                         token: Token {
@@ -55,17 +23,17 @@ Ok(
                                             value: "a",
                                             location: None,
                                         },
-                                        position: 4,
+                                        position: 0,
                                     },
                                     TermNode {
                                         token: Token {
                                             kind: Kind(
                                                 Num,
                                             ),
-                                            value: "3",
+                                            value: "42",
                                             location: None,
                                         },
-                                        position: 6,
+                                        position: 2,
                                     },
                                 ],
                             },
@@ -73,7 +41,7 @@ Ok(
                     },
                     NonTermNode {
                         prod_idx: 4,
-                        position: 8,
+                        position: 5,
                         children: [
                             TermNode {
                                 token: Token {
@@ -83,17 +51,17 @@ Ok(
                                     value: "a",
                                     location: None,
                                 },
-                                position: 8,
+                                position: 5,
                             },
                             TermNode {
                                 token: Token {
                                     kind: Kind(
                                         Num,
                                     ),
-                                    value: "42",
+                                    value: "3",
                                     location: None,
                                 },
-                                position: 10,
+                                position: 7,
                             },
                         ],
                     },
@@ -107,7 +75,7 @@ Ok(
                     value: "b",
                     location: None,
                 },
-                position: 13,
+                position: 9,
             },
         ],
     },
