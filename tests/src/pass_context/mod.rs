@@ -6,6 +6,7 @@ rustemo_mod!(pass_context, "/src/pass_context");
 
 use self::pass_context::PassContextParser;
 
+// ANCHOR: pass_context
 #[test]
 fn pass_context() {
     let result = PassContextParser::parse("a 1 42 b");
@@ -14,3 +15,4 @@ fn pass_context() {
         format!("{:#?}", result)
     );
 }
+// ANCHOR_END: pass_context

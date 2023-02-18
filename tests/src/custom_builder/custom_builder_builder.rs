@@ -10,6 +10,7 @@ use super::custom_builder::{ProdKind, TokenKind};
 pub type E = i32;
 pub type Context<'i> = lexer::Context<'i, str, (), StateIndex>;
 
+// ANCHOR: custom-builder-base
 /// Custom builder that perform arithmetic operations.
 pub struct CustomBuilderBuilder {
     // A stack used to shift numbers and keep intermediate result
@@ -29,7 +30,9 @@ impl Builder for CustomBuilderBuilder {
         self.stack.pop().unwrap()
     }
 }
+// ANCHOR_END: custom-builder-base
 
+// ANCHOR: custom-builder-lr
 impl<'i> LRBuilder<'i, str, (), TokenKind> for CustomBuilderBuilder {
     fn shift_action(
         &mut self,
@@ -63,3 +66,4 @@ impl<'i> LRBuilder<'i, str, (), TokenKind> for CustomBuilderBuilder {
         self.stack.push(res);
     }
 }
+// ANCHOR_END: custom-builder-lr

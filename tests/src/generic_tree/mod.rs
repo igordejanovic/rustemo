@@ -6,6 +6,7 @@ use self::generic_tree::GenericTreeParser;
 // Only parser, no actions are generated for generic builder.
 rustemo_mod!(generic_tree, "/src/generic_tree");
 
+// ANCHOR: generic_tree
 #[test]
 fn generic_tree() {
     let result = GenericTreeParser::parse("a 42 a 3 b");
@@ -14,3 +15,4 @@ fn generic_tree() {
         format!("{:#?}", result)
     );
 }
+// ANCHOR_END: generic_tree
