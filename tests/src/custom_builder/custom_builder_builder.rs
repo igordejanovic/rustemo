@@ -40,11 +40,8 @@ impl<'i> LRBuilder<'i, str, (), TokenKind> for CustomBuilderBuilder {
             lexer::TokenKind::Kind(kind) => kind,
             lexer::TokenKind::STOP => panic!("Cannot shift STOP token!"),
         };
-        match kind {
-            // We are interested only in parsing numbers as operations will be
-            // handled by reductions.
-            TokenKind::Num => self.stack.push(token.value.parse().unwrap()),
-            _ => (),
+        if let TokenKind::Num = kind {
+            self.stack.push(token.value.parse().unwrap())
         }
     }
 
