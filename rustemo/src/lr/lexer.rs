@@ -29,17 +29,18 @@ where
     }
 
     fn skip(context: &mut Context<str, StateIndex>) {
-        let skipped = context.input[context.position..]
+        let skipped_len = context.input[context.position..]
             .chars()
             .take_while(|x| x.is_whitespace())
-            .collect::<String>();
+            .count();
+        let skipped =
+            &context.input[context.position..context.position + skipped_len];
         log!("Skipped ws: {}", skipped.len());
-        // context.layout = Some(
-        //     &context.input[context.position..context.position + skipped.len()],
-        // );
-        context.location =
-            Some(skipped.as_str().new_location(context.location));
-        context.position += skipped.len();
+        if skipped_len > 0 {
+            context.layout = Some(skipped);
+            context.position += skipped_len;
+        }
+        context.location = Some(skipped.new_location(context.location));
     }
 }
 
