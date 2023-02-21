@@ -10,7 +10,7 @@ use std::{cmp::min, fmt::Display, iter::once, ops::Range};
 ///
 /// Lexer is stateless and its job is to produce next token given the current
 /// context.
-pub trait Lexer<'i, I: Input + ?Sized, ST, TK: Clone + Copy> {
+pub trait Lexer<'i, I: Input + ?Sized, ST, TK> {
     /// Given the current context, this method should return a result with token
     /// found ahead of the current location or error indicating what is
     /// expected.
@@ -39,7 +39,7 @@ pub trait Input {
 }
 
 #[derive(Debug, Clone, Copy)]
-pub enum TokenKind<K: Clone + Copy> {
+pub enum TokenKind<K> {
     STOP,
     Kind(K),
 }
@@ -48,7 +48,7 @@ pub trait AsStr {
     fn as_str(&self) -> &'static str;
 }
 
-impl<K: AsStr + Clone + Copy> AsStr for TokenKind<K> {
+impl<K: AsStr> AsStr for TokenKind<K> {
     fn as_str(&self) -> &'static str {
         match self {
             TokenKind::STOP => "STOP",
@@ -57,7 +57,7 @@ impl<K: AsStr + Clone + Copy> AsStr for TokenKind<K> {
     }
 }
 
-impl<K: From<TermIndex> + Clone + Copy> From<TermIndex> for TokenKind<K> {
+impl<K: From<TermIndex>> From<TermIndex> for TokenKind<K> {
     fn from(idx: TermIndex) -> Self {
         if idx.0 == 0 {
             TokenKind::STOP
@@ -67,7 +67,7 @@ impl<K: From<TermIndex> + Clone + Copy> From<TermIndex> for TokenKind<K> {
     }
 }
 
-impl<K: Into<TermIndex> + Clone + Copy> From<TokenKind<K>> for TermIndex {
+impl<K: Into<TermIndex>> From<TokenKind<K>> for TermIndex {
     fn from(token_kind: TokenKind<K>) -> Self {
         match token_kind {
             TokenKind::STOP => TermIndex(0),
@@ -78,7 +78,7 @@ impl<K: Into<TermIndex> + Clone + Copy> From<TokenKind<K>> for TermIndex {
 
 /// `Token` represent a single token from the input stream.
 #[derive(Debug)]
-pub struct Token<'i, I: Input + ?Sized, TK: Clone + Copy> {
+pub struct Token<'i, I: Input + ?Sized, TK> {
     pub kind: TokenKind<TK>,
 
     /// The part of the input stream that this token represents.

@@ -47,7 +47,7 @@ where
 impl<'i, D, TK> Lexer<'i, str, StateIndex, TK> for LRStringLexer<D>
 where
     D: LexerDefinition<Recognizer = for<'a> fn(&'a str) -> Option<&'a str>>,
-    TK: From<TermIndex> + AsStr + Copy,
+    TK: From<TermIndex> + AsStr,
 {
     fn next_token(
         &self,

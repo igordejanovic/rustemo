@@ -9,7 +9,6 @@ where
     I: Input + ?Sized,
     L: Lexer<'i, I, ST, TK>,
     B: Builder,
-    TK: Copy,
 {
     fn parse(
         &mut self,
