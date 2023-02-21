@@ -4,7 +4,7 @@ use crate::{
     location::{LineBased, Location, Position},
 };
 use core::fmt::Debug;
-use std::{cmp::min, fmt::Display, iter::once};
+use std::{cmp::min, fmt::Display, iter::once, ops::Range};
 
 /// The `Lexer` trait allows input tokenization
 ///
@@ -103,10 +103,8 @@ pub struct Context<'i, I: Input + ?Sized, ST> {
     /// The input must be indexable type.
     pub position: usize,
 
-    /// Start position of token/non-terminal during shift/reduce operation.
-    pub start_pos: usize,
-    /// End position of token/non-terminal during shift/reduce operation.
-    pub end_pos: usize,
+    /// The range of token/non-terminal during shift/reduce operation.
+    pub range: Range<usize>,
 
     /// Location in the input if the input is line/column based.
     ///
@@ -133,8 +131,7 @@ impl<'i, I: Input + ?Sized, ST: Default> Context<'i, I, ST> {
             location: None,
             layout: None,
             state: ST::default(),
-            start_pos: 0,
-            end_pos: 0,
+            range: 0..0,
         }
     }
 

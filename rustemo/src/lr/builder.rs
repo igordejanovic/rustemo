@@ -64,7 +64,7 @@ impl<'i, I: Input + ?Sized, TK: Clone + Copy> LRBuilder<'i, I, TK>
     ) {
         self.res_stack.push(TreeNode::TermNode {
             token,
-            position: context.start_pos,
+            position: context.range.start,
             layout: context.layout,
         })
     }
@@ -80,7 +80,7 @@ impl<'i, I: Input + ?Sized, TK: Clone + Copy> LRBuilder<'i, I, TK>
         self.res_stack.push(TreeNode::NonTermNode {
             children,
             prod_idx,
-            position: context.start_pos,
+            position: context.range.start,
             layout: context.layout,
         });
     }

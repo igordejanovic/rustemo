@@ -5,6 +5,7 @@ use crate::lexer::{Context, Input, Lexer};
 use crate::parser::Parser;
 use crate::Error;
 use std::fmt::{Debug, Display};
+use std::ops::Range;
 
 use super::builder::LRBuilder;
 
@@ -29,8 +30,7 @@ pub enum Action {
 #[derive(Debug)]
 struct StackItem {
     state: StateIndex,
-    start_pos: usize,
-    end_pos: usize,
+    range: Range<usize>,
 }
 
 impl Display for Action {
@@ -64,8 +64,7 @@ impl<D: ParserDefinition> LRParser<D> {
             definition,
             parse_stack: vec![StackItem {
                 state,
-                start_pos: 0,
-                end_pos: 0,
+                range: 0..0,
             }],
         }
     }
@@ -78,8 +77,7 @@ impl<D: ParserDefinition> LRParser<D> {
     ) {
         self.parse_stack.push(StackItem {
             state,
-            start_pos: context.start_pos,
-            end_pos: context.end_pos,
+            range: context.range.start..context.range.end,
         });
         context.state = state;
     }
@@ -89,22 +87,19 @@ impl<D: ParserDefinition> LRParser<D> {
         &mut self,
         context: &mut Context<I, StateIndex>,
         states: usize,
-    ) -> (StateIndex, usize, usize) {
+    ) -> (StateIndex, Range<usize>) {
         let states_removed =
             self.parse_stack.split_off(self.parse_stack.len() - states);
         context.state = self.parse_stack.last().unwrap().state;
 
-        let start_pos;
-        let end_pos;
+        let range;
         if states == 0 {
             // EMPTY reduction
-            start_pos = context.position;
-            end_pos = context.position;
+            range = context.position..context.position;
         } else {
-            start_pos = states_removed[0].start_pos;
-            end_pos = states_removed.last().unwrap().end_pos;
+            range = states_removed[0].range.start..states_removed.last().unwrap().range.end;
         }
-        (context.state, start_pos, end_pos)
+        (context.state, range)
     }
 }
 
@@ -148,14 +143,13 @@ where
                         state_id,
                         next_token
                     );
-                    context.start_pos = context.position;
-                    context.end_pos = context.position + next_token.value.len();
+                    context.range = context.position..(context.position + next_token.value.len());
                     self.push_state(context, state_id);
 
                     let new_location = next_token.value.new_location(context.location);
                     builder.shift_action(context, next_token);
 
-                    context.position = context.end_pos;
+                    context.position = context.range.end;
                     log!(
                         "Position={}: {}",
                         context.position,
@@ -171,10 +165,9 @@ where
                         prod_len,
                         nonterm_id
                     );
-                    let (from_state, start_pos, end_pos) =
+                    let (from_state, range) =
                         self.pop_states(context, prod_len);
-                    context.start_pos = start_pos;
-                    context.end_pos = end_pos;
+                    context.range = range;
                     let to_state = self.definition.goto(from_state, nonterm_id);
                     self.push_state(context, to_state);
                     log!("GOTO {:?} -> {:?}", from_state, to_state);
