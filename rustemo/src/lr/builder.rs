@@ -77,11 +77,15 @@ impl<'i, I: Input + ?Sized, TK> LRBuilder<'i, I, TK>
     ) {
         let children =
             self.res_stack.split_off(self.res_stack.len() - prod_len);
+        let layout = match children[0] {
+            TreeNode::TermNode { layout, .. } => layout,
+            TreeNode::NonTermNode { layout, .. } => layout,
+        };
         self.res_stack.push(TreeNode::NonTermNode {
             children,
             prod_idx,
             position: context.range.start,
-            layout: context.layout,
+            layout,
         });
     }
 }
@@ -99,4 +103,45 @@ pub enum TreeNode<'i, I: Input + ?Sized, TK> {
         children: Vec<TreeNode<'i, I, TK>>,
         layout: Option<&'i I>,
     },
+}
+
+/// This builder returns a slice of the matched input. If no match is possible
+/// `None` is returned.
+pub struct SliceBuilder<'i, I: Input + ?Sized>(Option<&'i I>);
+impl<'i, I: Input + ?Sized> Builder for SliceBuilder<'i, I> {
+    type Output = Option<&'i I>;
+
+    fn new() -> Self {
+        Self(None)
+    }
+
+    fn get_result(&mut self) -> Self::Output {
+        self.0
+    }
+}
+
+impl<'i, I: Input + ?Sized, TK> LRBuilder<'i, I, TK> for SliceBuilder<'i, I> {
+    fn shift_action(
+        &mut self,
+        _context: &mut Context<'i, I, StateIndex>,
+        _token: Token<'i, I, TK>,
+    ) {
+        // We do nothing on shift
+    }
+
+    fn reduce_action(
+        &mut self,
+        context: &mut Context<'i, I, StateIndex>,
+        _prod_idx: ProdIndex,
+        _prod_len: usize,
+    ) {
+        // On reduce, save the slice of the input.
+        self.0 = Some(context.input.slice(&context.range));
+    }
+}
+
+impl<'i, I: Input + ?Sized> Default for SliceBuilder<'i, I> {
+    fn default() -> Self {
+        Self::new()
+    }
 }

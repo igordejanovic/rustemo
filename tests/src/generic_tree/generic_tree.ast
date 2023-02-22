@@ -40,14 +40,10 @@ Ok(
                                         ),
                                     },
                                 ],
-                                layout: Some(
-                                    " ",
-                                ),
+                                layout: None,
                             },
                         ],
-                        layout: Some(
-                            " ",
-                        ),
+                        layout: None,
                     },
                     NonTermNode {
                         prod_idx: 4,
@@ -85,9 +81,7 @@ Ok(
                         ),
                     },
                 ],
-                layout: Some(
-                    " ",
-                ),
+                layout: None,
             },
             TermNode {
                 token: Token {
@@ -103,8 +97,6 @@ Ok(
                 ),
             },
         ],
-        layout: Some(
-            " ",
-        ),
+        layout: None,
     },
 )

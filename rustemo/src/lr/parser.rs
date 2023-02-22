@@ -62,10 +62,7 @@ impl<D: ParserDefinition> LRParser<D> {
     pub fn new(definition: &'static D, state: StateIndex) -> Self {
         Self {
             definition,
-            parse_stack: vec![StackItem {
-                state,
-                range: 0..0,
-            }],
+            parse_stack: vec![StackItem { state, range: 0..0 }],
         }
     }
 
@@ -92,13 +89,13 @@ impl<D: ParserDefinition> LRParser<D> {
             self.parse_stack.split_off(self.parse_stack.len() - states);
         context.state = self.parse_stack.last().unwrap().state;
 
-        let range;
-        if states == 0 {
+        let range = if states == 0 {
             // EMPTY reduction
-            range = context.position..context.position;
+            context.position..context.position
         } else {
-            range = states_removed[0].range.start..states_removed.last().unwrap().range.end;
-        }
+            states_removed[0].range.start
+                ..states_removed.last().unwrap().range.end
+        };
         (context.state, range)
     }
 }
@@ -147,6 +144,7 @@ where
                     self.push_state(context, state_id);
 
                     let new_location = next_token.value.new_location(context.location);
+                    context.layout = context.layout_ahead;
                     builder.shift_action(context, next_token);
 
                     context.position = context.range.end;

@@ -6,7 +6,7 @@ use rustemo::parser::Parser;
 use rustemo::builder::Builder;
 use rustemo::Result;
 use rustemo::lr::lexer::{LRStringLexer, LexerDefinition, RecognizerIterator};
-use rustemo::lr::builder::LRBuilder;
+use rustemo::lr::builder::{LRBuilder, SliceBuilder};
 use rustemo::lr::parser::{LRParser, ParserDefinition};
 use rustemo::lr::parser::Action::{self, Shift, Reduce, Accept, Error};
 use rustemo::index::{StateIndex, TermIndex, NonTermIndex, ProdIndex};
@@ -37,7 +37,7 @@ lazy_static! {
     "((\\*[^/])|[^\\s*/]|/[^\\*])+")).unwrap();
 }
 #[allow(clippy::upper_case_acronyms)]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum TokenKind {
     Terminals,
     Import,
@@ -233,7 +233,7 @@ impl From<TokenKind> for TermIndex {
     }
 }
 #[allow(clippy::enum_variant_names)]
-#[derive(Copy, Clone)]
+#[derive(Clone, Copy)]
 pub enum ProdKind {
     FileP1,
     GrammarRule1P1,
@@ -13795,9 +13795,8 @@ impl RustemoParser {
             if result.is_err() {
                 let pos = context.position;
                 log!("** Parsing layout");
-                if RustemoLayoutParser::parse_layout(&mut context)
-                    && context.position > pos
-                {
+                RustemoLayoutParser::parse_layout(&mut context);
+                if context.position > pos {
                     continue;
                 }
             }
@@ -13813,40 +13812,26 @@ impl Default for RustemoParser {
 pub struct RustemoLayoutParser(LRParser<RustemoParserDefinition>);
 #[allow(dead_code)]
 impl RustemoLayoutParser {
-    pub fn parse_layout(context: &mut Context) -> bool {
+    pub fn parse_layout(context: &mut Context) {
         let lexer = LRStringLexer::new(&LEXER_DEFINITION, true, false);
-        let mut builder = RustemoLayoutBuilder::new();
-        RustemoLayoutParser::default().0.parse(context, &lexer, &mut builder).is_ok()
+        let mut builder = SliceBuilder::new();
+        context
+            .layout_ahead = <LRParser<
+            RustemoParserDefinition,
+        > as rustemo::parser::Parser<
+            '_,
+            Input,
+            LRStringLexer<RustemoLexerDefinition>,
+            SliceBuilder<'_, Input>,
+            StateIndex,
+            TokenKind,
+        >>::parse(&mut RustemoLayoutParser::default().0, context, &lexer, &mut builder)
+            .unwrap_or_default();
     }
 }
 impl Default for RustemoLayoutParser {
     fn default() -> Self {
         Self(LRParser::new(&PARSER_DEFINITION, StateIndex(122usize)))
-    }
-}
-struct RustemoLayoutBuilder([ProdIndex; 1usize]);
-impl Builder for RustemoLayoutBuilder {
-    type Output = ();
-    fn new() -> Self {
-        RustemoLayoutBuilder([ProdIndex(82usize)])
-    }
-    fn get_result(&mut self) -> Self::Output {}
-}
-impl<'i> LRBuilder<'i, Input, TokenKind> for RustemoLayoutBuilder {
-    fn shift_action(
-        &mut self,
-        _context: &mut Context<'i>,
-        _token: Token<'i, Input, TokenKind>,
-    ) {}
-    fn reduce_action(
-        &mut self,
-        context: &mut Context<'i>,
-        prod_idx: ProdIndex,
-        _prod_len: usize,
-    ) {
-        if self.0.contains(&prod_idx) {
-            context.layout = Some(&context.input[context.start_pos..context.end_pos]);
-        }
     }
 }
 pub struct RustemoLexerDefinition {

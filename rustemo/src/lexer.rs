@@ -21,7 +21,7 @@ pub trait Lexer<'i, I: Input + ?Sized, ST, TK> {
 }
 
 /// This trait must be implemented by all types that should be parsed by
-/// Rustemo. Input is a sequence-like type with a concept of length.
+/// Rustemo. Input is a sliceable sequence-like type with a concept of length.
 pub trait Input {
     /// Returns a string context for the given position. Used in debugging outputs.
     fn context_str(&self, position: usize) -> String;
@@ -32,6 +32,8 @@ pub trait Input {
     fn is_empty(&self) -> bool {
         self.len() == 0
     }
+
+    fn slice(&self, range: &Range<usize>) -> &Self;
 
     /// Given the current location returns the location at the end of self.
     /// Location is an input-specific concept. E.g. for text it is line/column.
@@ -114,8 +116,11 @@ pub struct Context<'i, I: Input + ?Sized, ST> {
     /// can calculate location information based on the absolute position.
     pub location: Option<Location>,
 
-    /// Layout before the current token ahead (e.g. whitespaces, comments...)
+    /// Layout before the current token (e.g. whitespaces, comments...)
     pub layout: Option<&'i I>,
+
+    /// Layout before the lookahead token (e.g. whitespaces, comments...)
+    pub layout_ahead: Option<&'i I>,
 
     /// An arbitrary state used by the parser. E.g. for LR it is the current
     /// state of the automaton.
@@ -130,6 +135,7 @@ impl<'i, I: Input + ?Sized, ST: Default> Context<'i, I, ST> {
             position: 0,
             location: None,
             layout: None,
+            layout_ahead: None,
             state: ST::default(),
             range: 0..0,
         }
@@ -162,6 +168,10 @@ impl Input for str {
 
     fn len(&self) -> usize {
         str::len(self)
+    }
+
+    fn slice(&self, range: &Range<usize>) -> &Self {
+        &self[range.start..range.end]
     }
 
     fn new_location(&self, location: Option<Location>) -> Location {
@@ -207,6 +217,10 @@ where
 
     fn len(&self) -> usize {
         self.len()
+    }
+
+    fn slice(&self, range: &Range<usize>) -> &Self {
+        &self[range.start..range.end]
     }
 
     fn new_location(&self, location: Option<Location>) -> Location {

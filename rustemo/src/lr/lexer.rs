@@ -37,8 +37,10 @@ where
             &context.input[context.position..context.position + skipped_len];
         log!("Skipped ws: {}", skipped.len());
         if skipped_len > 0 {
-            context.layout = Some(skipped);
+            context.layout_ahead = Some(skipped);
             context.position += skipped_len;
+        } else {
+            context.layout_ahead = None;
         }
         context.location = Some(skipped.new_location(context.location));
     }

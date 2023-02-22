@@ -1,9 +1,9 @@
-// Numbers with some words in between that should be ignored.
-S: Num+;
+// Digits with some words in between that should be ignored.
+S: Digit+;
 Layout: LayoutItem+;
 LayoutItem: Word | WS;
 
 terminals
-Num: /\d+/;
+Digit: /\d/;
 Word: /[a-zA-Z]+/;
 WS: /\s+/;
