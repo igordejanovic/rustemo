@@ -7,7 +7,7 @@ rustemo_mod!(layout, "/src/layout/ast");
 rustemo_mod!(layout_actions, "/src/layout/ast");
 
 #[test]
-fn layout() {
+fn layout_ast() {
     // ANCHOR: input
     let result = LayoutParser::parse("42 This6 should be 8 ignored 9 ");
     // ANCHOR_END: input

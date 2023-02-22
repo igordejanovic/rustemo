@@ -1,5 +1,6 @@
 // Digits with some words in between that should be ignored.
-S: Digit+;
+S: Digit TwoDigits Digit+;
+TwoDigits: Digit Digit;
 Layout: LayoutItem+;
 LayoutItem: Word | WS;
 

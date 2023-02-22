@@ -820,7 +820,7 @@ separated from the surrounding tokens.
     separation.
 ```
 
-## Handling whitespaces and comments in your language
+## Handling whitespaces and comments (a.k.a Layout) in your language
 
 The default string lexer skips whitespaces. You can take control over this
 process by defining a special grammar rule `Layout`. If this rule is found in
@@ -831,14 +831,14 @@ for the semantics analysis of the language.
 For example, given the grammar:
 
 ```
-{{#include ../../tests/src/layout/generic_tree/layout.rustemo}}
+{{#include ../../tests/src/layout/ast/layout.rustemo}}
 ```
 
 We can parse an input consisting of numbers and words but we will get only
 numbers in the output.
 
 ```rust
-{{#include ../../tests/src/layout/generic_tree/mod.rs:input}}
+{{#include ../../tests/src/layout/ast/mod.rs:input}}
 ```
 If default AST builder is used, the result will be:
 
