@@ -46,15 +46,14 @@ LR/GLR parser generator for Rust (currently only LR).
 
 - **Inference of AST node types from the grammar**
   
-  For default built-in builder, AST node types and semantics actions should be
-  inferred from the grammar and auto-generated, but the user can introduce
+  For the default built-in builder, AST node types and semantics actions should
+  be inferred from the grammar and auto-generated, but the user can introduce
   manual changes.
 
-- **Multiple builders can be called by providing a macro builder**
+- **Zero-copy by default**
 
-  E.g. you can construct an AST and a full/concrete syntax tree (for example, if
-  you are implementing refactoring engine) where AST nodes keep relations to
-  CST.
+  Built-in builders should by default produce outputs by borrowing from the
+  input.
 
 - **High test coverage**
 
@@ -95,9 +94,8 @@ LR/GLR parser generator for Rust (currently only LR).
       There are some WIP in the docs folder.
 
 ### v0.2.0
-- [ ] Macro builder.
-- [ ] Greedy repetitions.
 - [ ] GLR parsing based on Right-Nulled GLR algorithm (RNGLR).
+- [ ] Greedy repetitions.
 
 ### v1.0
 - [ ] Grammars compositions. Grammars importing, rule inheritance etc.
