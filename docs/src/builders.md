@@ -46,83 +46,73 @@ parser and tune it later.
 
 The inference is done by the following rules:
 
-- Each grammar rule
+```admonish todo
+Specify rules.
+```
 
 Lexing context is passed to actions as a first parameter. This can be used to
 write semantic actions which utilize lexing information like position or
-surrounding content. For example, layout parser used with string lexer uses this
-to construct and return a borrowed string slice which span the layout preceding
-a next valid token. To be able to return a string slice layout actions need
-access to the input string and start/end positions.
+surrounding content. For example, layout parser used with string lexer can use
+this to construct and return a borrowed string slice which span the layout
+preceding a next valid token. To be able to return a string slice, layout
+actions need access to the input string and start/end positions.
 
-By default `Context` is not passed to actions. You can change that by
-`RustemoSettings::pass_context(true)` which is also controlled by
-`--pass-context` switch in `rustemo` CLI.
-
-When this settings is in action, for the grammar:
+For example, if we have this grammar:
 
 ```
-{{#include ../../tests/src/pass_context/pass_context.rustemo}}
+{{#include ../../examples/calculator/src/ast_actions/calculator02_ambig.rustemo}}
 ```
 
-we get these generated actions:
+we get these generated actions/types:
 ```rust
-{{#include ../../tests/src/pass_context/pass_context_actions.rs}}
+{{#include ../../examples/calculator/src/ast_actions/calculator02_ambig_actions.rs}}
 ```
 
-```admonish note
-The example above is from the [pass context test](https://github.com/igordejanovic/rustemo/tree/main/tests/src/pass_context) where actions are manually
-modified to perform the position based calculation. The actual generated actions
-will be slightly different but the main point is that each action function now
-have an additional parameter of type `Context`.
-```
+We see that each grammar rule will have its corresponding type defined. Also,
+each production and each terminal will have an actions (Rust function)
+generated. You can change these manually and your manual modifications will be
+preserved on the next code generation.
 
-We can see that in `num` action we are adding `context.position` to the parsed number.
 
-The result of this test:
+Here is an example of generated and manually modified actions for the same grammar above:
 
 ```rust
-{{#include ../../tests/src/pass_context/mod.rs:pass_context}}
+{{#include ../../examples/calculator/src/calc_actions/calculator02_ambig_actions.rs}}
 ```
 
-is:
-
-```rust
-{{#include ../../tests/src/pass_context/pass_context.ast}}
-```
-
-Where we get `3` as parsed `1` plus its position `2`, and we get `46` as parsed
-`42` plus its position `4`.
-
+In these actions we are doing actual calculations. For the full explanation see
+[the calculator tutorial](tutorials/calculator/calculator.md).
 
 
 ## Generic tree builder
 
-This is a built-in builder that will produce a generic parse tree.
+This is a built-in builder that will produce a generic parse tree (a.k.a
+/Concrete-Syntax-Tree (CST)/).
 
 For example, given the grammar:
 
 ```
-{{#include ../../tests/src/generic_tree/generic_tree.rustemo}}
+{{#include ../../tests/src/builder/generic_tree/generic_tree.rustemo}}
 ```
 
 The test:
 
 ```rust
-{{#include ../../tests/src/generic_tree/mod.rs:generic_tree}}
+{{#include ../../tests/src/builder/generic_tree/mod.rs:generic_tree}}
 ```
 
-Will produce this output:
+will produce this output:
 
 ```
-{{#include ../../tests/src/generic_tree/generic_tree.ast}}
+{{#include ../../tests/src/builder/generic_tree/generic_tree.ast}}
 ```
 
-You can see that each node in the tree is a `TermNode` or `NonTermNode` variant
-of `TreeNode` enum.
+We can see that we get all the information from the input. Each node in the tree
+is a `TermNode` or `NonTermNode` variant of `TreeNode` enum. Each node keeps the
+layout that precedes it.
 
 For details see [the full
-test](https://github.com/igordejanovic/rustemo/tree/main/tests/src/generic_tree).
+test](https://github.com/igordejanovic/rustemo/tree/main/tests/src/builder/generic_tree).
 
 ```admonish note
 Generic builder can be configured by `RustemoSettings::builder_type(BuilderType::Generic)`
@@ -143,10 +133,19 @@ algorithm trait. Currently, Rustemo is a LR parser thus you can use
 Let's see how can we do all of this by implementing a builder that does
 on-the-fly calculation of the arithmetic expression. Start with a type and a
 base `Builder` trait implementation as each builder needs initialization and
-should be able to return the final result:
+should be able to return the final result.
+
+For example, given the grammar:
 
 ```rust
-{{#include ../../tests/src/custom_builder/custom_builder_builder.rs:custom-builder-base}}
+{{#include ../../tests/src/builder/custom_builder/custom_builder.rustemo}}
+
+```
+
+The following builder will perform arithmetic operation on-the-fly (during parsing):
+
+```rust
+{{#include ../../tests/src/builder/custom_builder/custom_builder_builder.rs:custom-builder-base}}
 ```
 
 
@@ -154,11 +153,11 @@ Now, implement LR part of the builder. For this we must specify what should be
 done for `shift/reduce` operations:
 
 ```rust
-{{#include ../../tests/src/custom_builder/custom_builder_builder.rs:custom-builder-lr}}
+{{#include ../../tests/src/builder/custom_builder/custom_builder_builder.rs:custom-builder-lr}}
 ```
 
 ```admonish tip
-You can see the full test [here](https://github.com/igordejanovic/rustemo/tree/main/tests/src/custom_builder).
+You can see the full test [here](https://github.com/igordejanovic/rustemo/tree/main/tests/src/builder/custom_builder).
 ```
 
 
