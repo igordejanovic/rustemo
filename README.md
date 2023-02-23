@@ -67,14 +67,14 @@ LR/GLR parser generator for Rust (currently only LR).
 ### v0.1.0
 - [x] LR parsing.
 - [x] Bootstrapping. Rustemo is [implemented in itself](./rustemo-tools/src/lang/).
+- [x] Built-in lexer for parsing strings. Support for custom lexers.
+- [x] Built-in builders: AST, generic CST, slice builder. Support for custom
+      builders. Passing context to actions. See [the tests](./tests/src/builder) .
 - [x] Actions providing AST build are auto-generated but can be manually
       modified. Manual modifications are preserved on code re-generation while
       new types/actions are added to the file. This allow for fast development
       while keeping full control over the AST.
 - [x] Regex-like syntax sugar. See [the tests](./tests/src/sugar/).
-- [ ] Parenthesized groups. Still not sure if this is a good thing to have.
-      Sometimes it can nicely reduce clutter but if used too much it lowers
-      readability.
 - [x] Repetition modifiers (e.g. separator)
 - [x] Disambiguation filters: priorities, associativities.
 - [x] Rule/production meta-data. E.g. production kinds.
@@ -86,7 +86,8 @@ LR/GLR parser generator for Rust (currently only LR).
 - [x] Support for a layout (comments, whitespaces given as CFG). It is
       implemented as a special grammar rule and parsed by the LR parser. Result
       is be passed by context to actions which can do whatever they please. E.g.
-      a generic tree builder keep layout on the following tree leaf.
+      a generic tree builder keep layout on the following tree leaf. See [the
+      tests](./tests/src/layout).
 - [ ] Better error reporting during grammar analysis and state machine building.   
       Basic error reporting is implemented at the moment without full location
       info.
@@ -96,6 +97,10 @@ LR/GLR parser generator for Rust (currently only LR).
 ### v0.2.0
 - [ ] GLR parsing based on Right-Nulled GLR algorithm (RNGLR).
 - [ ] Greedy repetitions.
+- [ ] Zero copy for built-in builders.
+- [ ] Parenthesized groups. Still not sure if this is a good thing to have.
+      Sometimes it can nicely reduce clutter but if used too much it lowers
+      readability.
 
 ### v1.0
 - [ ] Grammars compositions. Grammars importing, rule inheritance etc.
