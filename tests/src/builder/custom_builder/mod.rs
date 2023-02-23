@@ -5,7 +5,7 @@ use rustemo_tools::output_cmp;
 
 use self::custom_builder::CustomBuilderParser;
 
-rustemo_mod!(custom_builder, "/src/custom_builder");
+rustemo_mod!(custom_builder, "/src/builder/custom_builder");
 
 #[test]
 fn custom_builder() {

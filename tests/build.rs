@@ -22,13 +22,6 @@ fn main() {
             "partial",
             Box::new(|s| s.prefer_shifts(true).partial_parse(true)),
         ),
-        (
-            "use_context",
-            Box::new(|s| {
-                // We want actions generated in the source tree.
-                s.force(false).out_dir_actions(None)
-            }),
-        ),
         // Layout
         ("layout/ast", Box::new(|s| s)),
         (
@@ -37,16 +30,23 @@ fn main() {
         ),
         // Builders
         (
-            "generic_tree",
+            "builder/generic_tree",
             Box::new(|s| s.builder_type(BuilderType::Generic)),
         ),
         (
-            "custom_builder",
+            "builder/custom_builder",
             Box::new(|s| s.builder_type(BuilderType::Custom)),
         ),
-        // Custom lexer
         (
-            "custom_lexer",
+            "builder/use_context",
+            Box::new(|s| {
+                // We want actions generated in the source tree.
+                s.force(false).out_dir_actions(None)
+            }),
+        ),
+        // Lexer
+        (
+            "lexer/custom_lexer",
             Box::new(|s| {
                 s.lexer_type(LexerType::Custom)
                     .force(false)
