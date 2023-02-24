@@ -495,7 +495,7 @@ impl<'g, 's> LRTable<'g, 's> {
     /// Calculate LR states with GOTOs and ACTIONs for the given Grammar.
     ///
     /// This collection of states is used to generate LR/GLR parser tables.
-    pub fn calc_states(&mut self, start_symbol: SymbolIndex) {
+    fn calc_states(&mut self, start_symbol: SymbolIndex) {
         let mut current_state_idx = self.states.len();
 
         let prods = &self.grammar.symbol_to_nonterm(start_symbol).productions;
