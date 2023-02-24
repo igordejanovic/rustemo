@@ -146,7 +146,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
 
         fn get_choice_type(
             choice: &Choice,
-            type_name: Option<&String>,
+            type_name: Option<&str>,
         ) -> Option<syn::Item> {
             match &choice.kind {
                 ChoiceKind::Struct(struct_type, fields) => {
@@ -186,7 +186,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
 
         fn get_choice_types(
             choices: &[Choice],
-            type_name: Option<&String>,
+            type_name: Option<&str>,
         ) -> Vec<syn::Item> {
             choices
                 .iter()
