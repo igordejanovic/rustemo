@@ -230,18 +230,24 @@ fn productions_meta_data_inheritance() {
     // Inherited
     assert!(grammar.productions[ProdIndex(2)].nopse);
 
-    match grammar.productions[ProdIndex(3)].meta.get("bla").unwrap() {
-        crate::lang::rustemo_actions::ConstVal::Int(i) => *i == 5u32,
-        _ => unreachable!(),
-    };
+    assert_eq!(
+        5u32,
+        match grammar.productions[ProdIndex(3)].meta.get("bla").unwrap() {
+            crate::lang::rustemo_actions::ConstVal::Int(i) => i.into(),
+            _ => panic!(),
+        }
+    );
     assert_eq!(grammar.productions[ProdIndex(3)].meta.len(), 1);
 
     // Inherited
     assert_eq!(grammar.productions[ProdIndex(4)].prio, 7);
-    match grammar.productions[ProdIndex(4)].meta.get("bla").unwrap() {
-        crate::lang::rustemo_actions::ConstVal::Int(i) => *i == 10u32,
-        _ => unreachable!(),
-    };
+    assert_eq!(
+        10u32,
+        match grammar.productions[ProdIndex(4)].meta.get("bla").unwrap() {
+            crate::lang::rustemo_actions::ConstVal::Int(i) => i.into(),
+            _ => panic!(),
+        }
+    );
 
     assert_eq!(
         grammar.productions[ProdIndex(5)].assoc,
