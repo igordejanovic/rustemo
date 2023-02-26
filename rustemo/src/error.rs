@@ -5,13 +5,10 @@ pub type Result<R> = std::result::Result<R, Error>;
 
 #[derive(Debug)]
 pub enum Error {
-    /// Generic Rustemo error
-    Error(String),
-
-    ParseError {
+    Error {
         message: String,
-        file: String,
-        location: Location,
+        file: Option<String>,
+        location: Option<Location>,
     },
     IOError(std::io::Error),
 }
@@ -19,13 +16,27 @@ pub enum Error {
 impl Display for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Error::ParseError {
+            Error::Error {
                 message,
                 file,
                 location,
-            } => write!(f, "Parse error at {}:{}: {}", file, location, message),
+            } => {
+                let mut loc_str = String::from("Error");
+                if file.is_some() || location.is_some() {
+                    loc_str.push_str(" at ");
+                }
+                if let Some(file) = file {
+                    loc_str.push_str(file);
+                    if location.is_some() {
+                        loc_str.push(':');
+                    }
+                }
+                if let Some(location) = location {
+                    loc_str.push_str(&location.to_string())
+                }
+                write!(f, "{}:{}", loc_str, message)
+            }
             Error::IOError(e) => write!(f, "IOError: {}", e),
-            Error::Error(e) => write!(f, "Error: {}", e),
         }
     }
 }
@@ -44,7 +55,25 @@ impl<R> From<Error> for Result<R> {
 
 #[macro_export]
 macro_rules! err {
-   ($e:expr) => {
-       Result::from(Error::Error($e))
-   }
+    ($message:expr) => {
+        Result::from(Error::Error {
+            message: $message,
+            file: None,
+            location: None,
+        })
+    };
+    ($message:expr, $file:expr) => {
+        Result::from(Error::Error {
+            message: $message,
+            file: $file,
+            location: None,
+        })
+    };
+    ($message:expr, $file:expr, $location:expr) => {
+        Result::from(Error::Error {
+            message: $message,
+            file: $file,
+            location: $location,
+        })
+    };
 }

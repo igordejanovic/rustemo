@@ -3,7 +3,7 @@ use crate::error::Result;
 use crate::index::{NonTermIndex, ProdIndex, StateIndex, TermIndex};
 use crate::lexer::{Context, Input, Lexer};
 use crate::parser::Parser;
-use crate::Error;
+use crate::{err, Error};
 use std::fmt::{Debug, Display};
 use std::ops::Range;
 
@@ -178,9 +178,7 @@ where
                 // It may happen that a wrong recognition is done in the content
                 // after a layout. Also, in the future, if parser composition
                 // would be done similar problem may arise.
-                Action::Error => Err(
-                    Error::Error(
-                        format!("Can't continue in state {current_state} with lookahead {next_token:?}.")))?,
+                Action::Error => err!(format!("Can't continue in state {current_state} with lookahead {next_token:?}."))?,
             }
         }
         Ok(builder.get_result())

@@ -43,10 +43,10 @@ impl<'i> Lexer<'i, Input, StateIndex, TokenKind> for CustomLexer2Lexer {
         Ok(Token {
             kind,
             value,
-            location: Some(Location {
+            location: Location {
                 start: Position::Position(context.position),
                 end: Some(Position::Position(context.position)),
-            }),
+            },
         })
     }
 }

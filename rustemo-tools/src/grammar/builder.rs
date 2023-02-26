@@ -34,6 +34,7 @@ macro_rules! resolving {
 
 #[derive(Debug)]
 struct GrammarBuilder {
+    file: String,
     terminals: BTreeMap<String, Terminal>,
     terminals_matches: BTreeMap<String, (String, TermIndex)>,
     nonterminals: BTreeMap<String, NonTerminal>,
@@ -55,6 +56,7 @@ impl TryFrom<File> for Grammar {
 impl GrammarBuilder {
     fn new() -> Self {
         Self {
+            file: "".into(),
             terminals: BTreeMap::new(),
             terminals_matches: BTreeMap::new(),
             nonterminals: BTreeMap::new(),
@@ -87,6 +89,7 @@ impl GrammarBuilder {
     // TODO: Think of a better API which is aligned with conventions
     #[allow(clippy::wrong_self_convention)]
     fn from_file(mut self, file: File) -> Result<Grammar> {
+        self.file = file.file;
         // Create implicit STOP terminal used to signify the end of the input.
         let term_idx = self.get_term_idx();
         self.terminals.insert(
@@ -207,6 +210,7 @@ impl GrammarBuilder {
                 );
             }
         }
+        log!("Terminal matches: {:?}", self.terminals_matches);
     }
 
     fn extract_productions_and_symbols(
@@ -353,9 +357,7 @@ impl GrammarBuilder {
                         idx: nt_idx,
                         name: rule.name.as_ref().into(),
                         productions: vec![],
-                        action: (&rule.action)
-                            .as_ref()
-                            .map(|a| a.as_ref().into()),
+                        action: rule.action.as_ref().map(|a| a.as_ref().into()),
                     });
                 nonterminal.productions.push(prod_idx);
             }
@@ -435,10 +437,14 @@ impl GrammarBuilder {
             let ref_type = match gsymref.gsymbol.as_ref().unwrap() {
                 GrammarSymbol::Name(ref name) => name.as_ref().into(),
                 GrammarSymbol::StrConst(mtch) => {
-                    self.terminals_matches.get(mtch.as_ref())
-                        .unwrap_or(
-                            err!(format!("Terminal '{}' at location '{:?}' is not declared in the terminals section.", mtch, mtch.location))?
-                        ).0.clone()
+                    if let Some(term) =
+                        self.terminals_matches.get(mtch.as_ref())
+                    {
+                        term.0.clone()
+                    } else {
+                        return err!(format!("Terminal '{}' is not declared in the terminals section.", mtch),
+                                    Some(self.file.clone()), mtch.location);
+                    }
                 }
             };
 

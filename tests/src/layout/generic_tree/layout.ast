@@ -9,7 +9,22 @@ Ok(
                         Digit,
                     ),
                     value: "4",
-                    location: None,
+                    location: Location {
+                        start: LineBased(
+                            LineBased {
+                                line: 1,
+                                column: 0,
+                            },
+                        ),
+                        end: Some(
+                            LineBased(
+                                LineBased {
+                                    line: 1,
+                                    column: 1,
+                                },
+                            ),
+                        ),
+                    },
                 },
                 position: 0,
                 layout: None,
@@ -24,7 +39,22 @@ Ok(
                                 Digit,
                             ),
                             value: "2",
-                            location: None,
+                            location: Location {
+                                start: LineBased(
+                                    LineBased {
+                                        line: 1,
+                                        column: 1,
+                                    },
+                                ),
+                                end: Some(
+                                    LineBased(
+                                        LineBased {
+                                            line: 1,
+                                            column: 2,
+                                        },
+                                    ),
+                                ),
+                            },
                         },
                         position: 1,
                         layout: None,
@@ -35,7 +65,22 @@ Ok(
                                 Digit,
                             ),
                             value: "6",
-                            location: None,
+                            location: Location {
+                                start: LineBased(
+                                    LineBased {
+                                        line: 1,
+                                        column: 7,
+                                    },
+                                ),
+                                end: Some(
+                                    LineBased(
+                                        LineBased {
+                                            line: 1,
+                                            column: 8,
+                                        },
+                                    ),
+                                ),
+                            },
                         },
                         position: 7,
                         layout: Some(
@@ -59,7 +104,22 @@ Ok(
                                         Digit,
                                     ),
                                     value: "8",
-                                    location: None,
+                                    location: Location {
+                                        start: LineBased(
+                                            LineBased {
+                                                line: 1,
+                                                column: 19,
+                                            },
+                                        ),
+                                        end: Some(
+                                            LineBased(
+                                                LineBased {
+                                                    line: 1,
+                                                    column: 20,
+                                                },
+                                            ),
+                                        ),
+                                    },
                                 },
                                 position: 19,
                                 layout: Some(
@@ -77,7 +137,22 @@ Ok(
                                 Digit,
                             ),
                             value: "9",
-                            location: None,
+                            location: Location {
+                                start: LineBased(
+                                    LineBased {
+                                        line: 1,
+                                        column: 29,
+                                    },
+                                ),
+                                end: Some(
+                                    LineBased(
+                                        LineBased {
+                                            line: 1,
+                                            column: 30,
+                                        },
+                                    ),
+                                ),
+                            },
                         },
                         position: 29,
                         layout: Some(

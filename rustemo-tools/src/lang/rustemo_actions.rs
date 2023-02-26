@@ -67,7 +67,6 @@ pub fn int_const(ctx: &Context, token: Token) -> IntConst {
         value: token.value.parse().unwrap(),
         location: Some(ctx.location),
     }
-
 }
 pub type FloatConst = ValLoc<f32>;
 pub fn float_const(ctx: &Context, token: Token) -> FloatConst {
@@ -99,48 +98,58 @@ pub fn action(ctx: &Context, token: Token) -> Action {
 }
 #[derive(Debug, Clone, Default)]
 pub struct File {
+    pub file: String,
     pub imports: Option<Imports>,
     pub grammar_rules: Option<GrammarRules>,
     pub terminal_rules: Option<TerminalRules>,
 }
-pub fn file_c1(_ctx: &Context, grammar_rules: GrammarRules) -> File {
+pub fn file_c1(ctx: &Context, grammar_rules: GrammarRules) -> File {
     File {
+        file: ctx.file.clone(),
         grammar_rules: Some(grammar_rules),
         ..Default::default()
     }
 }
-pub fn file_c2(_ctx: &Context, imports: Imports, grammar_rules: GrammarRules) -> File {
+pub fn file_c2(
+    ctx: &Context,
+    imports: Imports,
+    grammar_rules: GrammarRules,
+) -> File {
     File {
+        file: ctx.file.clone(),
         imports: Some(imports),
         grammar_rules: Some(grammar_rules),
         terminal_rules: None,
     }
 }
 pub fn file_c3(
-    _ctx: &Context,
+    ctx: &Context,
     grammar_rules: GrammarRules,
     terminal_rules: TerminalRules,
 ) -> File {
     File {
+        file: ctx.file.clone(),
         grammar_rules: Some(grammar_rules),
         terminal_rules: Some(terminal_rules),
         imports: None,
     }
 }
 pub fn file_c4(
-    _ctx: &Context,
+    ctx: &Context,
     imports: Imports,
     grammar_rules: GrammarRules,
     terminal_rules: TerminalRules,
 ) -> File {
     File {
+        file: ctx.file.clone(),
         imports: Some(imports),
         grammar_rules: Some(grammar_rules),
         terminal_rules: Some(terminal_rules),
     }
 }
-pub fn file_c5(_ctx: &Context, terminal_rules: TerminalRules) -> File {
+pub fn file_c5(ctx: &Context, terminal_rules: TerminalRules) -> File {
     File {
+        file: ctx.file.clone(),
         terminal_rules: Some(terminal_rules),
         ..Default::default()
     }
@@ -182,7 +191,10 @@ pub fn grammar_rule1_c1(
     grammar_rule1.push(grammar_rule);
     grammar_rule1
 }
-pub fn grammar_rule1_c2(_ctx: &Context, grammar_rule: GrammarRule) -> GrammarRule1 {
+pub fn grammar_rule1_c2(
+    _ctx: &Context,
+    grammar_rule: GrammarRule,
+) -> GrammarRule1 {
     vec![grammar_rule]
 }
 #[derive(Debug, Clone)]
@@ -235,7 +247,10 @@ pub fn grammar_rule_rhs_c1(
     rhs.push(production);
     rhs
 }
-pub fn grammar_rule_rhs_c2(_ctx: &Context, production: Production) -> GrammarRuleRHS {
+pub fn grammar_rule_rhs_c2(
+    _ctx: &Context,
+    production: Production,
+) -> GrammarRuleRHS {
     vec![production]
 }
 #[derive(Debug, Clone)]
@@ -266,7 +281,10 @@ pub fn terminal_rule1_c1(
     terminal_rule1.push(terminal_rule);
     terminal_rule1
 }
-pub fn terminal_rule1_c2(_ctx: &Context, terminal_rule: TerminalRule) -> TerminalRule1 {
+pub fn terminal_rule1_c2(
+    _ctx: &Context,
+    terminal_rule: TerminalRule,
+) -> TerminalRule1 {
     vec![terminal_rule]
 }
 #[derive(Debug, Clone)]
@@ -352,7 +370,7 @@ pub fn prod_meta_data_nopse(_ctx: &Context) -> ProdMetaData {
     ProdMetaData::from([("nopse".into(), ConstVal::Bool(true.into()))])
 }
 pub fn prod_meta_data_priority(_ctx: &Context, prio: IntConst) -> ProdMetaData {
-    ProdMetaData::from([("priority".into(), ConstVal::Int(prio.into()))])
+    ProdMetaData::from([("priority".into(), ConstVal::Int(prio))])
 }
 pub fn prod_meta_data_c9(_ctx: &Context, user: UserMetaData) -> ProdMetaData {
     ProdMetaData::from([(user.name.into(), user.value)])
@@ -386,7 +404,7 @@ pub fn term_meta_data_dynamic(_ctx: &Context) -> TermMetaData {
     TermMetaData::from([("dynamic".into(), ConstVal::Bool(true.into()))])
 }
 pub fn term_meta_data_priority(_ctx: &Context, prio: IntConst) -> TermMetaData {
-    TermMetaData::from([("priority".into(), ConstVal::Int(prio.into()))])
+    TermMetaData::from([("priority".into(), ConstVal::Int(prio))])
 }
 pub fn term_meta_data_c6(_ctx: &Context, user: UserMetaData) -> TermMetaData {
     TermMetaData::from([(user.name.into(), user.value)])
@@ -408,7 +426,11 @@ pub struct UserMetaData {
     pub name: Name,
     pub value: ConstVal,
 }
-pub fn user_meta_data_c1(_ctx: &Context, name: Name, value: ConstVal) -> UserMetaData {
+pub fn user_meta_data_c1(
+    _ctx: &Context,
+    name: Name,
+    value: ConstVal,
+) -> UserMetaData {
     UserMetaData { name, value }
 }
 pub type ProdKind = Name;
@@ -440,10 +462,16 @@ pub enum Assignment {
     BoolAssignment(BoolAssignment),
     GrammarSymbolRef(GrammarSymbolRef),
 }
-pub fn assignment_c1(_ctx: &Context, plain_assignment: PlainAssignment) -> Assignment {
+pub fn assignment_c1(
+    _ctx: &Context,
+    plain_assignment: PlainAssignment,
+) -> Assignment {
     Assignment::PlainAssignment(plain_assignment)
 }
-pub fn assignment_c2(_ctx: &Context, bool_assignment: BoolAssignment) -> Assignment {
+pub fn assignment_c2(
+    _ctx: &Context,
+    bool_assignment: BoolAssignment,
+) -> Assignment {
     Assignment::BoolAssignment(bool_assignment)
 }
 pub fn assignment_c3(
@@ -556,7 +584,9 @@ pub enum RepetitionOperatorOp {
     Optional,
     OptionalGreedy,
 }
-pub fn repetition_operator_op_zero_or_more(_ctx: &Context) -> RepetitionOperatorOp {
+pub fn repetition_operator_op_zero_or_more(
+    _ctx: &Context,
+) -> RepetitionOperatorOp {
     RepetitionOperatorOp::ZeroOrMore
 }
 pub fn repetition_operator_op_zero_or_more_greedy(
@@ -564,7 +594,9 @@ pub fn repetition_operator_op_zero_or_more_greedy(
 ) -> RepetitionOperatorOp {
     RepetitionOperatorOp::ZeroOrMoreGreedy
 }
-pub fn repetition_operator_op_one_or_more(_ctx: &Context) -> RepetitionOperatorOp {
+pub fn repetition_operator_op_one_or_more(
+    _ctx: &Context,
+) -> RepetitionOperatorOp {
     RepetitionOperatorOp::OneOrMore
 }
 pub fn repetition_operator_op_one_or_more_greedy(
@@ -575,7 +607,9 @@ pub fn repetition_operator_op_one_or_more_greedy(
 pub fn repetition_operator_op_optional(_ctx: &Context) -> RepetitionOperatorOp {
     RepetitionOperatorOp::Optional
 }
-pub fn repetition_operator_op_optional_greedy(_ctx: &Context) -> RepetitionOperatorOp {
+pub fn repetition_operator_op_optional_greedy(
+    _ctx: &Context,
+) -> RepetitionOperatorOp {
     RepetitionOperatorOp::OptionalGreedy
 }
 pub type RepetitionModifiersOpt = Option<RepetitionModifiers>;
@@ -585,7 +619,9 @@ pub fn repetition_modifiers_opt_c1(
 ) -> RepetitionModifiersOpt {
     Some(repetition_modifiers)
 }
-pub fn repetition_modifiers_opt_empty(_ctx: &Context) -> RepetitionModifiersOpt {
+pub fn repetition_modifiers_opt_empty(
+    _ctx: &Context,
+) -> RepetitionModifiersOpt {
     None
 }
 pub type RepetitionModifiers = Vec<RepetitionModifier>;
@@ -611,7 +647,10 @@ pub fn repetition_modifier1_c2(
     vec![repetition_modifier]
 }
 pub type RepetitionModifier = Name;
-pub fn repetition_modifier_c1(_ctx: &Context, name: Name) -> RepetitionModifier {
+pub fn repetition_modifier_c1(
+    _ctx: &Context,
+    name: Name,
+) -> RepetitionModifier {
     name
 }
 #[derive(Debug, Clone)]
@@ -648,8 +687,7 @@ pub fn comment_line(_ctx: &Context, _token: Token) -> CommentLine {}
 pub type NotComment = ();
 pub fn not_comment(_ctx: &Context, _token: Token) -> NotComment {}
 pub type Layout = ();
-pub fn layout_c1(_ctx: &Context, _layout_item0: LayoutItem0) -> Layout {
-}
+pub fn layout_c1(_ctx: &Context, _layout_item0: LayoutItem0) -> Layout {}
 pub type LayoutItem1 = ();
 pub fn layout_item1_c1(
     _ctx: &Context,
@@ -657,21 +695,23 @@ pub fn layout_item1_c1(
     _layout_item: LayoutItem,
 ) -> LayoutItem1 {
 }
-pub fn layout_item1_c2(_ctx: &Context, _layout_item: LayoutItem) -> LayoutItem1 {
+pub fn layout_item1_c2(
+    _ctx: &Context,
+    _layout_item: LayoutItem,
+) -> LayoutItem1 {
 }
 pub type LayoutItem0 = LayoutItem1;
-pub fn layout_item0_c1(_ctx: &Context, _layout_item1: LayoutItem1) -> LayoutItem0 {
+pub fn layout_item0_c1(
+    _ctx: &Context,
+    _layout_item1: LayoutItem1,
+) -> LayoutItem0 {
 }
-pub fn layout_item0_empty(_ctx: &Context) -> LayoutItem0 {
-}
+pub fn layout_item0_empty(_ctx: &Context) -> LayoutItem0 {}
 pub type LayoutItem = ();
-pub fn layout_item_c1(_ctx: &Context, _ws: WS) -> LayoutItem {
-}
-pub fn layout_item_c2(_ctx: &Context, _comment: Comment) -> LayoutItem {
-}
+pub fn layout_item_c1(_ctx: &Context, _ws: WS) -> LayoutItem {}
+pub fn layout_item_c2(_ctx: &Context, _comment: Comment) -> LayoutItem {}
 pub type Comment = ();
-pub fn comment_c1(_ctx: &Context, _corncs: Corncs) -> Comment {
-}
+pub fn comment_c1(_ctx: &Context, _corncs: Corncs) -> Comment {}
 pub fn comment_c2(_ctx: &Context, comment_line: CommentLine) -> Comment {
     comment_line
 }
@@ -682,17 +722,11 @@ pub fn corncs_c1(_ctx: &Context, cornc0: Cornc0) -> Corncs {
 pub type Cornc1 = ();
 pub fn cornc1_c1(_ctx: &Context, mut _cornc1: Cornc1, _cornc: Cornc) -> Cornc1 {
 }
-pub fn cornc1_c2(_ctx: &Context, _cornc: Cornc) -> Cornc1 {
-}
+pub fn cornc1_c2(_ctx: &Context, _cornc: Cornc) -> Cornc1 {}
 pub type Cornc0 = Cornc1;
-pub fn cornc0_c1(_ctx: &Context, _cornc1: Cornc1) -> Cornc0 {
-}
-pub fn cornc0_empty(_ctx: &Context) -> Cornc0 {
-}
+pub fn cornc0_c1(_ctx: &Context, _cornc1: Cornc1) -> Cornc0 {}
+pub fn cornc0_empty(_ctx: &Context) -> Cornc0 {}
 pub type Cornc = ();
-pub fn cornc_c1(_ctx: &Context, _comment: Comment) -> Cornc {
-}
-pub fn cornc_c2(_ctx: &Context, _not_comment: NotComment) -> Cornc {
-}
-pub fn cornc_c3(_ctx: &Context, _ws: WS) -> Cornc {
-}
+pub fn cornc_c1(_ctx: &Context, _comment: Comment) -> Cornc {}
+pub fn cornc_c2(_ctx: &Context, _not_comment: NotComment) -> Cornc {}
+pub fn cornc_c3(_ctx: &Context, _ws: WS) -> Cornc {}

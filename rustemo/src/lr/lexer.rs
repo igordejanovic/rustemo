@@ -1,4 +1,5 @@
 use crate::debug::log;
+use crate::err;
 use crate::error::{Error, Result};
 use crate::index::{StateIndex, TermIndex};
 use crate::lexer::{AsStr, Context, Input, Lexer, Token, TokenKind};
@@ -101,18 +102,21 @@ where
                         .map(|(_, term_idx)| {
                             TokenKind::<TK>::from(term_idx).as_str()
                         })
-                        .collect::<Vec<_>>()
-                        .join(", ");
-                    Err(Error::ParseError {
-                        message: format!(
-                            r#"Error at position {} "{}". Expected one of {}."#,
-                            context.location_str(),
+                        .collect::<Vec<_>>();
+                    let expected = if expected.len() > 1 {
+                        format!("one of {}", expected.join(", "))
+                    } else {
+                        expected[0].into()
+                    };
+                    err!(
+                        format!(
+                            r#""{}". Expected {}."#,
                             context.input.context_str(context.position),
                             expected
                         ),
-                        file: context.file(),
-                        location: Location::from(context),
-                    })
+                        Some(context.file.clone()),
+                        Some(Location::from(context))
+                    )
                 }
             }
         }

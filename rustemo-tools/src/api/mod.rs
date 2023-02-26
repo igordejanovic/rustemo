@@ -172,7 +172,8 @@ impl RustemoSettings {
 
                 if path.is_dir() {
                     self.visit_dirs(&path, visitor)?;
-                } else if matches!(path.extension(), Some(ext) if ext == "rustemo"){
+                } else if matches!(path.extension(), Some(ext) if ext == "rustemo")
+                {
                     visitor(&path)?
                 }
             }

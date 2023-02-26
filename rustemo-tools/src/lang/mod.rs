@@ -2,6 +2,8 @@
 //! out from the git `main` branch.
 //!
 //! In regular builds parser code from the source tree will be used.
+// TODO: Allow clippy warning for unit_arg when Layout is removed from actions.
+#[allow(clippy::unit_arg)]
 #[rustfmt::skip]
 #[cfg(not(feature="bootstrap"))]
 pub(crate) mod rustemo;
@@ -11,6 +13,7 @@ pub(crate) mod rustemo;
 #[cfg(not(feature = "bootstrap"))]
 pub(crate) mod rustemo_actions;
 
+#[allow(clippy::unit_arg)]
 #[cfg(feature = "bootstrap")]
 rustemo_mod! {pub(crate) rustemo, "/src/lang"}
 
