@@ -77,9 +77,7 @@ where
             .map(|(recognized, token_kind)| Token {
                 kind: token_kind.into(),
                 value: recognized.unwrap(),
-                location: Some(
-                    recognized.unwrap().location_after(context.location),
-                ),
+                location: recognized.unwrap().location_span(context.location),
             })
             // Take the first token or return None if no tokens are found.
             .next();
@@ -94,7 +92,7 @@ where
                     Ok(Token {
                         kind: TokenKind::STOP,
                         value: "",
-                        location: None,
+                        location: context.location,
                     })
                 } else {
                     let expected = self

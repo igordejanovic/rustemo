@@ -104,7 +104,7 @@ pub struct Token<'i, I: Input + ?Sized, TK> {
     pub value: &'i I,
 
     /// Location (with span) in the input file where this token is found.
-    pub location: Option<Location>,
+    pub location: Location,
 }
 
 /// Lexer context is used to keep the lexing state. It provides necessary
