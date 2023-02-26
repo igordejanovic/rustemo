@@ -35,9 +35,26 @@ pub trait Input {
 
     fn slice(&self, range: &Range<usize>) -> &Self;
 
+    fn start_location() -> Location {
+        Location {
+            start: Position::Position(0),
+            end: None,
+        }
+    }
+
     /// Given the current location returns the location at the end of self.
     /// Location is an input-specific concept. E.g. for text it is line/column.
-    fn new_location(&self, location: Option<Location>) -> Location;
+    fn location_after(&self, location: Location) -> Location;
+
+    /// Given the current location return a span starting from the current
+    /// location and extending over self. The `self.start` should not be changed,
+    /// only `self.end` where `self.end` should be `self.start`
+    fn location_span(&self, location: Location) -> Location {
+        Location {
+            start: location.start,
+            end: Some(self.location_after(location).start),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -114,7 +131,7 @@ pub struct Context<'i, I: Input + ?Sized, ST> {
     /// the current location is always kept in the context. As location tracking
     /// incurs an overhead it should be configurable. In case of an error, lexer
     /// can calculate location information based on the absolute position.
-    pub location: Option<Location>,
+    pub location: Location,
 
     /// Layout before the current token (e.g. whitespaces, comments...)
     pub layout: Option<&'i I>,
@@ -133,7 +150,7 @@ impl<'i, I: Input + ?Sized, ST: Default> Context<'i, I, ST> {
             file,
             input,
             position: 0,
-            location: None,
+            location: I::start_location(),
             layout: None,
             layout_ahead: None,
             state: ST::default(),
@@ -148,12 +165,7 @@ impl<'i, I: Input + ?Sized, ST: Default> Context<'i, I, ST> {
 
     #[inline]
     pub fn location_str(&self) -> String {
-        match self.location {
-            Some(location) => {
-                format!("{}:{}", self.file(), location)
-            }
-            None => format!("{}:{}", self.file(), self.position),
-        }
+        format!("{}:{}", self.file(), self.location)
     }
 }
 
@@ -174,14 +186,21 @@ impl Input for str {
         &self[range.start..range.end]
     }
 
-    fn new_location(&self, location: Option<Location>) -> Location {
-        let (mut line, mut column) = location.map_or((1, 0), |l| match l {
+    fn start_location() -> Location {
+        Location {
+            start: Position::LineBased(LineBased {line: 1, column: 0}),
+            end: None
+        }
+    }
+
+    fn location_after(&self, location: Location) -> Location {
+        let (mut line, mut column) = match location {
             Location {
                 start: Position::LineBased(lb),
                 ..
             } => (lb.line, lb.column),
-            _ => panic!(),
-        });
+            _ => panic!("Location not in line/column format!"),
+        };
         let newlines = self.as_bytes().iter().filter(|&c| *c == b'\n').count();
         let newcolumn = self.len()
             - self
@@ -223,11 +242,11 @@ where
         &self[range.start..range.end]
     }
 
-    fn new_location(&self, location: Option<Location>) -> Location {
-        if let Some(Location {
+    fn location_after(&self, location: Location) -> Location {
+        if let Location {
             start: Position::Position(p),
             ..
-        }) = location
+        } = location
         {
             Location {
                 start: Position::Position(p + self.len()),
@@ -246,9 +265,6 @@ impl<'i, I: Input + ?Sized, ST: Default> From<&mut Context<'i, I, ST>>
     for Location
 {
     fn from(context: &mut Context<I, ST>) -> Self {
-        context.location.unwrap_or(Self {
-            start: Position::Position(context.position),
-            end: None,
-        })
+        context.location
     }
 }

@@ -42,7 +42,7 @@ where
         } else {
             context.layout_ahead = None;
         }
-        context.location = Some(skipped.new_location(context.location));
+        context.location = skipped.location_after(context.location);
     }
 }
 
@@ -77,7 +77,9 @@ where
             .map(|(recognized, token_kind)| Token {
                 kind: token_kind.into(),
                 value: recognized.unwrap(),
-                location: None,
+                location: Some(
+                    recognized.unwrap().location_after(context.location),
+                ),
             })
             // Take the first token or return None if no tokens are found.
             .next();

@@ -143,7 +143,7 @@ where
                     context.range = context.position..(context.position + next_token.value.len());
                     self.push_state(context, state_id);
 
-                    let new_location = next_token.value.new_location(context.location);
+                    let new_location = next_token.value.location_after(context.location);
                     context.layout = context.layout_ahead;
                     builder.shift_action(context, next_token);
 
@@ -153,7 +153,7 @@ where
                         context.position,
                         context.input.context_str(context.position)
                     );
-                    context.location = Some(new_location);
+                    context.location = new_location;
                     next_token = lexer.next_token(context)?;
                 }
                 Action::Reduce(prod_idx, prod_len, nonterm_id) => {

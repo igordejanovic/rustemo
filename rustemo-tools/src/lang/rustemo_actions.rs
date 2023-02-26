@@ -54,7 +54,7 @@ pub type Token<'i> = lexer::Token<'i, str, TokenKind>;
 pub fn name(ctx: &Context, token: Token) -> Name {
     Name {
         value: token.value.into(),
-        location: Some(ctx.location.expect("Location not set!")),
+        location: Some(ctx.location),
     }
 }
 pub type RegexTerm = String;
@@ -65,7 +65,7 @@ pub type IntConst = ValLoc<u32>;
 pub fn int_const(ctx: &Context, token: Token) -> IntConst {
     IntConst {
         value: token.value.parse().unwrap(),
-        location: Some(ctx.location.expect("Location not set!")),
+        location: Some(ctx.location),
     }
 
 }
@@ -73,28 +73,28 @@ pub type FloatConst = ValLoc<f32>;
 pub fn float_const(ctx: &Context, token: Token) -> FloatConst {
     FloatConst {
         value: token.value.parse().unwrap(),
-        location: Some(ctx.location.expect("Location not set!")),
+        location: Some(ctx.location),
     }
 }
 pub type BoolConst = ValLoc<bool>;
 pub fn bool_const(ctx: &Context, token: Token) -> BoolConst {
     BoolConst {
         value: token.value == "true",
-        location: Some(ctx.location.expect("Location not set!")),
+        location: Some(ctx.location),
     }
 }
 pub type StrConst = ValLoc<String>;
 pub fn str_const(ctx: &Context, token: Token) -> StrConst {
     StrConst {
         value: token.value.trim_matches('\'').trim_matches('"').into(),
-        location: ctx.location,
+        location: Some(ctx.location),
     }
 }
 pub type Action = ValLoc<String>;
 pub fn action(ctx: &Context, token: Token) -> Action {
     Action {
         value: token.value[1..].into(),
-        location: ctx.location,
+        location: Some(ctx.location),
     }
 }
 #[derive(Debug, Clone, Default)]
