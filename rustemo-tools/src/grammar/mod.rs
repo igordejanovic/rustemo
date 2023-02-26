@@ -262,9 +262,9 @@ impl Display for Production {
                         format!("{}", symbol)
                     }
                     ResolvingSymbolIndex::Resolving(symbol) => match symbol {
-                        GrammarSymbol::Name(name) => name.into(),
+                        GrammarSymbol::Name(name) => name.as_ref().into(),
                         GrammarSymbol::StrConst(mtch) => {
-                            format!("\"{}\"", mtch)
+                            format!("\"{}\"", mtch.as_ref())
                         }
                     },
                 };

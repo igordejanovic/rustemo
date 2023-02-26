@@ -898,7 +898,7 @@ impl<'g, 's> LRTable<'g, 's> {
                             Some(recognizer) => {
                                 (match recognizer {
                                     Recognizer::StrConst(str_rec) => {
-                                        str_rec.len()
+                                        str_rec.as_ref().len()
                                     }
                                     Recognizer::RegexTerm(_) => 0,
                                 }) as u32

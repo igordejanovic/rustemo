@@ -1,48 +1,101 @@
 ///! This file is maintained by rustemo but can be modified manually.
 ///! All manual changes will be preserved except non-doc comments.
 use super::rustemo::{Context, TokenKind};
-use rustemo::lexer;
-use std::collections::BTreeMap;
-pub type Name = String;
+use rustemo::{lexer, location::Location};
+use std::{collections::BTreeMap, fmt::Display};
+#[derive(Debug, Clone)]
+pub struct ValLoc<T> {
+    value: T,
+    pub location: Option<Location>,
+}
+pub type Name = ValLoc<String>;
+impl<T: Display> Display for ValLoc<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.value)
+    }
+}
+impl<T> AsRef<T> for ValLoc<T> {
+    fn as_ref(&self) -> &T {
+        &self.value
+    }
+}
+impl<T> From<T> for ValLoc<T> {
+    fn from(value: T) -> Self {
+        Self {
+            value,
+            location: None,
+        }
+    }
+}
+impl From<ValLoc<String>> for String {
+    fn from(value: ValLoc<String>) -> Self {
+        value.value
+    }
+}
+macro_rules! from_valloc {
+    ($($type:ident),*) => {
+        $(impl From<ValLoc<$type>> for $type {
+            fn from(value: ValLoc<Self>) -> Self {
+                value.value
+            }
+        })*
+        $(impl From<&ValLoc<$type>> for $type
+          where $type: Copy
+          {
+            fn from(value: &ValLoc<Self>) -> Self {
+                value.value
+            }
+        })*
+    }
+}
+from_valloc!(u32, f32, bool);
+
 pub type Token<'i> = lexer::Token<'i, str, TokenKind>;
-pub fn name(_ctx: &Context, token: Token) -> Name {
-    token.value.into()
+pub fn name(ctx: &Context, token: Token) -> Name {
+    Name {
+        value: token.value.into(),
+        location: Some(ctx.location.expect("Location not set!")),
+    }
 }
 pub type RegexTerm = String;
 pub fn regex_term(_ctx: &Context, token: Token) -> RegexTerm {
     token.value[1..token.value.len() - 1].replace(r"\/", "/")
 }
-pub type IntConst = u32;
-pub fn int_const(_ctx: &Context, token: Token) -> IntConst {
-    token.value.parse().unwrap()
+pub type IntConst = ValLoc<u32>;
+pub fn int_const(ctx: &Context, token: Token) -> IntConst {
+    IntConst {
+        value: token.value.parse().unwrap(),
+        location: Some(ctx.location.expect("Location not set!")),
+    }
+
 }
-pub type FloatConst = f32;
-pub fn float_const(_ctx: &Context, token: Token) -> FloatConst {
-    token.value.parse().unwrap()
+pub type FloatConst = ValLoc<f32>;
+pub fn float_const(ctx: &Context, token: Token) -> FloatConst {
+    FloatConst {
+        value: token.value.parse().unwrap(),
+        location: Some(ctx.location.expect("Location not set!")),
+    }
 }
-pub type BoolConst = bool;
-pub fn bool_const(_ctx: &Context, token: Token) -> BoolConst {
-    token.value == "true"
+pub type BoolConst = ValLoc<bool>;
+pub fn bool_const(ctx: &Context, token: Token) -> BoolConst {
+    BoolConst {
+        value: token.value == "true",
+        location: Some(ctx.location.expect("Location not set!")),
+    }
 }
-pub type StrConst = String;
-pub fn str_const(_ctx: &Context, token: Token) -> StrConst {
-    token.value.trim_matches('\'').trim_matches('"').into()
+pub type StrConst = ValLoc<String>;
+pub fn str_const(ctx: &Context, token: Token) -> StrConst {
+    StrConst {
+        value: token.value.trim_matches('\'').trim_matches('"').into(),
+        location: ctx.location,
+    }
 }
-pub type Action = String;
-pub fn action(_ctx: &Context, token: Token) -> Action {
-    token.value[1..].into()
-}
-pub type WS = String;
-pub fn ws(_ctx: &Context, token: Token) -> WS {
-    token.value.into()
-}
-pub type CommentLine = String;
-pub fn comment_line(_ctx: &Context, token: Token) -> CommentLine {
-    token.value.into()
-}
-pub type NotComment = String;
-pub fn not_comment(_ctx: &Context, token: Token) -> NotComment {
-    token.value.into()
+pub type Action = ValLoc<String>;
+pub fn action(ctx: &Context, token: Token) -> Action {
+    Action {
+        value: token.value[1..].into(),
+        location: ctx.location,
+    }
 }
 #[derive(Debug, Clone, Default)]
 pub struct File {
@@ -56,11 +109,7 @@ pub fn file_c1(_ctx: &Context, grammar_rules: GrammarRules) -> File {
         ..Default::default()
     }
 }
-pub fn file_c2(
-    _ctx: &Context,
-    imports: Imports,
-    grammar_rules: GrammarRules,
-) -> File {
+pub fn file_c2(_ctx: &Context, imports: Imports, grammar_rules: GrammarRules) -> File {
     File {
         imports: Some(imports),
         grammar_rules: Some(grammar_rules),
@@ -133,10 +182,7 @@ pub fn grammar_rule1_c1(
     grammar_rule1.push(grammar_rule);
     grammar_rule1
 }
-pub fn grammar_rule1_c2(
-    _ctx: &Context,
-    grammar_rule: GrammarRule,
-) -> GrammarRule1 {
+pub fn grammar_rule1_c2(_ctx: &Context, grammar_rule: GrammarRule) -> GrammarRule1 {
     vec![grammar_rule]
 }
 #[derive(Debug, Clone)]
@@ -189,10 +235,7 @@ pub fn grammar_rule_rhs_c1(
     rhs.push(production);
     rhs
 }
-pub fn grammar_rule_rhs_c2(
-    _ctx: &Context,
-    production: Production,
-) -> GrammarRuleRHS {
+pub fn grammar_rule_rhs_c2(_ctx: &Context, production: Production) -> GrammarRuleRHS {
     vec![production]
 }
 #[derive(Debug, Clone)]
@@ -223,10 +266,7 @@ pub fn terminal_rule1_c1(
     terminal_rule1.push(terminal_rule);
     terminal_rule1
 }
-pub fn terminal_rule1_c2(
-    _ctx: &Context,
-    terminal_rule: TerminalRule,
-) -> TerminalRule1 {
+pub fn terminal_rule1_c2(_ctx: &Context, terminal_rule: TerminalRule) -> TerminalRule1 {
     vec![terminal_rule]
 }
 #[derive(Debug, Clone)]
@@ -291,31 +331,31 @@ pub fn terminal_rule_c4(
 }
 pub type ProdMetaData = BTreeMap<String, ConstVal>;
 pub fn prod_meta_data_left(_ctx: &Context) -> ProdMetaData {
-    ProdMetaData::from([("left".into(), ConstVal::Bool(true))])
+    ProdMetaData::from([("left".into(), ConstVal::Bool(true.into()))])
 }
 pub fn prod_meta_data_reduce(_ctx: &Context) -> ProdMetaData {
-    ProdMetaData::from([("left".into(), ConstVal::Bool(true))])
+    ProdMetaData::from([("left".into(), ConstVal::Bool(true.into()))])
 }
 pub fn prod_meta_data_right(_ctx: &Context) -> ProdMetaData {
-    ProdMetaData::from([("right".into(), ConstVal::Bool(true))])
+    ProdMetaData::from([("right".into(), ConstVal::Bool(true.into()))])
 }
 pub fn prod_meta_data_shift(_ctx: &Context) -> ProdMetaData {
-    ProdMetaData::from([("right".into(), ConstVal::Bool(true))])
+    ProdMetaData::from([("right".into(), ConstVal::Bool(true.into()))])
 }
 pub fn prod_meta_data_dynamic(_ctx: &Context) -> ProdMetaData {
-    ProdMetaData::from([("dynamic".into(), ConstVal::Bool(true))])
+    ProdMetaData::from([("dynamic".into(), ConstVal::Bool(true.into()))])
 }
 pub fn prod_meta_data_nops(_ctx: &Context) -> ProdMetaData {
-    ProdMetaData::from([("nops".into(), ConstVal::Bool(true))])
+    ProdMetaData::from([("nops".into(), ConstVal::Bool(true.into()))])
 }
 pub fn prod_meta_data_nopse(_ctx: &Context) -> ProdMetaData {
-    ProdMetaData::from([("nopse".into(), ConstVal::Bool(true))])
+    ProdMetaData::from([("nopse".into(), ConstVal::Bool(true.into()))])
 }
 pub fn prod_meta_data_priority(_ctx: &Context, prio: IntConst) -> ProdMetaData {
-    ProdMetaData::from([("priority".into(), ConstVal::Int(prio))])
+    ProdMetaData::from([("priority".into(), ConstVal::Int(prio.into()))])
 }
 pub fn prod_meta_data_c9(_ctx: &Context, user: UserMetaData) -> ProdMetaData {
-    ProdMetaData::from([(user.name, user.value)])
+    ProdMetaData::from([(user.name.into(), user.value)])
 }
 pub fn prod_meta_data_c10(_ctx: &Context, prod_kind: ProdKind) -> ProdMetaData {
     ProdMetaData::from([("kind".into(), ConstVal::String(prod_kind))])
@@ -334,22 +374,22 @@ pub fn prod_meta_datas_c2(_ctx: &Context, meta: ProdMetaData) -> ProdMetaDatas {
 }
 pub type TermMetaData = BTreeMap<String, ConstVal>;
 pub fn term_meta_data_prefer(_ctx: &Context) -> TermMetaData {
-    TermMetaData::from([("prefer".into(), ConstVal::Bool(true))])
+    TermMetaData::from([("prefer".into(), ConstVal::Bool(true.into()))])
 }
 pub fn term_meta_data_finish(_ctx: &Context) -> TermMetaData {
-    TermMetaData::from([("finish".into(), ConstVal::Bool(true))])
+    TermMetaData::from([("finish".into(), ConstVal::Bool(true.into()))])
 }
 pub fn term_meta_data_no_finish(_ctx: &Context) -> TermMetaData {
-    TermMetaData::from([("finish".into(), ConstVal::Bool(false))])
+    TermMetaData::from([("finish".into(), ConstVal::Bool(false.into()))])
 }
 pub fn term_meta_data_dynamic(_ctx: &Context) -> TermMetaData {
-    TermMetaData::from([("dynamic".into(), ConstVal::Bool(true))])
+    TermMetaData::from([("dynamic".into(), ConstVal::Bool(true.into()))])
 }
 pub fn term_meta_data_priority(_ctx: &Context, prio: IntConst) -> TermMetaData {
-    TermMetaData::from([("priority".into(), ConstVal::Int(prio))])
+    TermMetaData::from([("priority".into(), ConstVal::Int(prio.into()))])
 }
 pub fn term_meta_data_c6(_ctx: &Context, user: UserMetaData) -> TermMetaData {
-    TermMetaData::from([(user.name, user.value)])
+    TermMetaData::from([(user.name.into(), user.value)])
 }
 pub type TermMetaDatas = TermMetaData;
 pub fn term_meta_datas_c1(
@@ -368,11 +408,7 @@ pub struct UserMetaData {
     pub name: Name,
     pub value: ConstVal,
 }
-pub fn user_meta_data_c1(
-    _ctx: &Context,
-    name: Name,
-    value: ConstVal,
-) -> UserMetaData {
+pub fn user_meta_data_c1(_ctx: &Context, name: Name, value: ConstVal) -> UserMetaData {
     UserMetaData { name, value }
 }
 pub type ProdKind = Name;
@@ -381,10 +417,10 @@ pub fn prod_kind_c1(_ctx: &Context, name: Name) -> ProdKind {
 }
 #[derive(Debug, Clone)]
 pub enum ConstVal {
-    Int(u32),
-    Float(f32),
-    Bool(bool),
-    String(String),
+    Int(IntConst),
+    Float(FloatConst),
+    Bool(BoolConst),
+    String(StrConst),
 }
 pub fn const_val_c1(_ctx: &Context, int_const: IntConst) -> ConstVal {
     ConstVal::Int(int_const)
@@ -404,16 +440,10 @@ pub enum Assignment {
     BoolAssignment(BoolAssignment),
     GrammarSymbolRef(GrammarSymbolRef),
 }
-pub fn assignment_c1(
-    _ctx: &Context,
-    plain_assignment: PlainAssignment,
-) -> Assignment {
+pub fn assignment_c1(_ctx: &Context, plain_assignment: PlainAssignment) -> Assignment {
     Assignment::PlainAssignment(plain_assignment)
 }
-pub fn assignment_c2(
-    _ctx: &Context,
-    bool_assignment: BoolAssignment,
-) -> Assignment {
+pub fn assignment_c2(_ctx: &Context, bool_assignment: BoolAssignment) -> Assignment {
     Assignment::BoolAssignment(bool_assignment)
 }
 pub fn assignment_c3(
@@ -526,9 +556,7 @@ pub enum RepetitionOperatorOp {
     Optional,
     OptionalGreedy,
 }
-pub fn repetition_operator_op_zero_or_more(
-    _ctx: &Context,
-) -> RepetitionOperatorOp {
+pub fn repetition_operator_op_zero_or_more(_ctx: &Context) -> RepetitionOperatorOp {
     RepetitionOperatorOp::ZeroOrMore
 }
 pub fn repetition_operator_op_zero_or_more_greedy(
@@ -536,9 +564,7 @@ pub fn repetition_operator_op_zero_or_more_greedy(
 ) -> RepetitionOperatorOp {
     RepetitionOperatorOp::ZeroOrMoreGreedy
 }
-pub fn repetition_operator_op_one_or_more(
-    _ctx: &Context,
-) -> RepetitionOperatorOp {
+pub fn repetition_operator_op_one_or_more(_ctx: &Context) -> RepetitionOperatorOp {
     RepetitionOperatorOp::OneOrMore
 }
 pub fn repetition_operator_op_one_or_more_greedy(
@@ -549,9 +575,7 @@ pub fn repetition_operator_op_one_or_more_greedy(
 pub fn repetition_operator_op_optional(_ctx: &Context) -> RepetitionOperatorOp {
     RepetitionOperatorOp::Optional
 }
-pub fn repetition_operator_op_optional_greedy(
-    _ctx: &Context,
-) -> RepetitionOperatorOp {
+pub fn repetition_operator_op_optional_greedy(_ctx: &Context) -> RepetitionOperatorOp {
     RepetitionOperatorOp::OptionalGreedy
 }
 pub type RepetitionModifiersOpt = Option<RepetitionModifiers>;
@@ -561,9 +585,7 @@ pub fn repetition_modifiers_opt_c1(
 ) -> RepetitionModifiersOpt {
     Some(repetition_modifiers)
 }
-pub fn repetition_modifiers_opt_empty(
-    _ctx: &Context,
-) -> RepetitionModifiersOpt {
+pub fn repetition_modifiers_opt_empty(_ctx: &Context) -> RepetitionModifiersOpt {
     None
 }
 pub type RepetitionModifiers = Vec<RepetitionModifier>;
@@ -588,11 +610,8 @@ pub fn repetition_modifier1_c2(
 ) -> RepetitionModifier1 {
     vec![repetition_modifier]
 }
-pub type RepetitionModifier = String;
-pub fn repetition_modifier_c1(
-    _ctx: &Context,
-    name: Name,
-) -> RepetitionModifier {
+pub type RepetitionModifier = Name;
+pub fn repetition_modifier_c1(_ctx: &Context, name: Name) -> RepetitionModifier {
     name
 }
 #[derive(Debug, Clone)]
@@ -617,42 +636,41 @@ pub fn recognizer_c1(_ctx: &Context, str_const: StrConst) -> Recognizer {
 pub fn recognizer_c2(_ctx: &Context, regex_term: RegexTerm) -> Recognizer {
     Recognizer::RegexTerm(regex_term)
 }
-pub type Layout = String;
-pub fn layout_c1(_ctx: &Context, layout_item0: LayoutItem0) -> Layout {
-    layout_item0
+
+/// Layout types are here just to prevent code generator to regenerate
+/// TODO: In future versions this should be skipped if Layout rule is used
+/// as the SliceBuilder will be used for layout which doesn't need these
+/// types/actions.
+pub type WS = ();
+pub fn ws(_ctx: &Context, _token: Token) -> WS {}
+pub type CommentLine = ();
+pub fn comment_line(_ctx: &Context, _token: Token) -> CommentLine {}
+pub type NotComment = ();
+pub fn not_comment(_ctx: &Context, _token: Token) -> NotComment {}
+pub type Layout = ();
+pub fn layout_c1(_ctx: &Context, _layout_item0: LayoutItem0) -> Layout {
 }
-pub type LayoutItem1 = String;
+pub type LayoutItem1 = ();
 pub fn layout_item1_c1(
     _ctx: &Context,
-    mut layout_item1: LayoutItem1,
-    layout_item: LayoutItem,
+    mut _layout_item1: LayoutItem1,
+    _layout_item: LayoutItem,
 ) -> LayoutItem1 {
-    layout_item1.push_str(&layout_item);
-    layout_item1
 }
-pub fn layout_item1_c2(_ctx: &Context, layout_item: LayoutItem) -> LayoutItem1 {
-    layout_item
+pub fn layout_item1_c2(_ctx: &Context, _layout_item: LayoutItem) -> LayoutItem1 {
 }
 pub type LayoutItem0 = LayoutItem1;
-pub fn layout_item0_c1(
-    _ctx: &Context,
-    layout_item1: LayoutItem1,
-) -> LayoutItem0 {
-    layout_item1
+pub fn layout_item0_c1(_ctx: &Context, _layout_item1: LayoutItem1) -> LayoutItem0 {
 }
 pub fn layout_item0_empty(_ctx: &Context) -> LayoutItem0 {
-    "".into()
 }
-pub type LayoutItem = String;
-pub fn layout_item_c1(_ctx: &Context, ws: WS) -> LayoutItem {
-    ws
+pub type LayoutItem = ();
+pub fn layout_item_c1(_ctx: &Context, _ws: WS) -> LayoutItem {
 }
-pub fn layout_item_c2(_ctx: &Context, comment: Comment) -> LayoutItem {
-    comment
+pub fn layout_item_c2(_ctx: &Context, _comment: Comment) -> LayoutItem {
 }
-pub type Comment = String;
-pub fn comment_c1(_ctx: &Context, corncs: Corncs) -> Comment {
-    corncs
+pub type Comment = ();
+pub fn comment_c1(_ctx: &Context, _corncs: Corncs) -> Comment {
 }
 pub fn comment_c2(_ctx: &Context, comment_line: CommentLine) -> Comment {
     comment_line
@@ -661,28 +679,20 @@ pub type Corncs = Cornc0;
 pub fn corncs_c1(_ctx: &Context, cornc0: Cornc0) -> Corncs {
     cornc0
 }
-pub type Cornc1 = String;
-pub fn cornc1_c1(_ctx: &Context, mut cornc1: Cornc1, cornc: Cornc) -> Cornc1 {
-    cornc1.push_str(&cornc);
-    cornc1
+pub type Cornc1 = ();
+pub fn cornc1_c1(_ctx: &Context, mut _cornc1: Cornc1, _cornc: Cornc) -> Cornc1 {
 }
-pub fn cornc1_c2(_ctx: &Context, cornc: Cornc) -> Cornc1 {
-    cornc
+pub fn cornc1_c2(_ctx: &Context, _cornc: Cornc) -> Cornc1 {
 }
 pub type Cornc0 = Cornc1;
-pub fn cornc0_c1(_ctx: &Context, cornc1: Cornc1) -> Cornc0 {
-    cornc1
+pub fn cornc0_c1(_ctx: &Context, _cornc1: Cornc1) -> Cornc0 {
 }
 pub fn cornc0_empty(_ctx: &Context) -> Cornc0 {
-    "".into()
 }
-pub type Cornc = String;
-pub fn cornc_c1(_ctx: &Context, comment: Comment) -> Cornc {
-    comment
+pub type Cornc = ();
+pub fn cornc_c1(_ctx: &Context, _comment: Comment) -> Cornc {
 }
-pub fn cornc_c2(_ctx: &Context, not_comment: NotComment) -> Cornc {
-    not_comment
+pub fn cornc_c2(_ctx: &Context, _not_comment: NotComment) -> Cornc {
 }
-pub fn cornc_c3(_ctx: &Context, ws: WS) -> Cornc {
-    ws
+pub fn cornc_c3(_ctx: &Context, _ws: WS) -> Cornc {
 }

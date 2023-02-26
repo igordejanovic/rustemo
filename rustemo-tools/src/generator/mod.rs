@@ -782,6 +782,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             if let Some(recognizer) = &terminal.recognizer {
                 match recognizer {
                     Recognizer::StrConst(str_match) => {
+                        let str_match = str_match.as_ref();
                         recognizers.push(parse_quote! {
                             |input: &str| {
                                 logn!("Recognizing <{}> -- ", #term_name);

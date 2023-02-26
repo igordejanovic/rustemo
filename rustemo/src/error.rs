@@ -35,3 +35,16 @@ impl From<std::io::Error> for Error {
         Error::IOError(e)
     }
 }
+
+impl<R> From<Error> for Result<R> {
+    fn from(value: Error) -> Self {
+        Self::Err(value)
+    }
+}
+
+#[macro_export]
+macro_rules! err {
+   ($e:expr) => {
+       Result::from(Error::Error($e))
+   }
+}
