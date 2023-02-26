@@ -188,8 +188,8 @@ impl Input for str {
 
     fn start_location() -> Location {
         Location {
-            start: Position::LineBased(LineBased {line: 1, column: 0}),
-            end: None
+            start: Position::LineBased(LineBased { line: 1, column: 0 }),
+            end: None,
         }
     }
 
@@ -201,15 +201,14 @@ impl Input for str {
             } => (lb.line, lb.column),
             _ => panic!("Location not in line/column format!"),
         };
-        let newlines = self.as_bytes().iter().filter(|&c| *c == b'\n').count();
-        let newcolumn = self.len()
-            - self
-                .as_bytes()
-                .iter()
-                .rposition(|&c| c == b'\n')
-                .unwrap_or(0);
-        line += newlines;
-        column += newcolumn;
+
+        line += self.as_bytes().iter().filter(|&c| *c == b'\n').count();
+        if let Some(new_col) = self.as_bytes().iter().rposition(|&c| c == b'\n')
+        {
+            column = self.len() - new_col;
+        } else {
+            column += self.len();
+        }
 
         Location {
             start: Position::LineBased(LineBased { line, column }),
