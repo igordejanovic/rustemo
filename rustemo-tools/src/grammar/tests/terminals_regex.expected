@@ -105,7 +105,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "foo",
+                        ValLoc {
+                            value: "foo",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 5,
+                                            column: 13,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -118,7 +131,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "some",
+                        ValLoc {
+                            value: "some",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 6,
+                                            column: 14,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,

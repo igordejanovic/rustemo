@@ -126,7 +126,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "first_term",
+                        ValLoc {
+                            value: "first_term",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 5,
+                                            column: 20,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -139,7 +152,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "second_term",
+                        ValLoc {
+                            value: "second_term",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 6,
+                                            column: 21,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -152,7 +178,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "third_term",
+                        ValLoc {
+                            value: "third_term",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 7,
+                                            column: 20,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,

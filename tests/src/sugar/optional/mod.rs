@@ -43,7 +43,7 @@ fn optional_1_3() {
 fn optional_1_1_error() {
     let result = Optional1Parser::parse("c 1");
     output_cmp!(
-        "src/sugar/optional/optional_1_1_error.ast",
+        "src/sugar/optional/optional_1_1.err",
         result.unwrap_err().to_string()
     );
 }
@@ -52,7 +52,7 @@ fn optional_1_1_error() {
 fn optional_1_2_error() {
     let result = Optional1Parser::parse("c b 1 2");
     output_cmp!(
-        "src/sugar/optional/optional_1_2_error.ast",
+        "src/sugar/optional/optional_1_2.err",
         result.unwrap_err().to_string()
     );
 }
@@ -88,7 +88,7 @@ fn optional_2_3() {
 fn optional_2_1_error() {
     let result = Optional2Parser::parse("c 1 2");
     output_cmp!(
-        "src/sugar/optional/optional_2_1_error.ast",
+        "src/sugar/optional/optional_2_1.err",
         result.unwrap_err().to_string()
     );
 }
@@ -97,7 +97,7 @@ fn optional_2_1_error() {
 fn optional_2_2_error() {
     let result = Optional2Parser::parse("c a a");
     output_cmp!(
-        "src/sugar/optional/optional_2_2_error.ast",
+        "src/sugar/optional/optional_2_2.err",
         result.unwrap_err().to_string()
     );
 }

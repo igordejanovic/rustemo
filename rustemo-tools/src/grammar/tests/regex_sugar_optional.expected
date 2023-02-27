@@ -304,7 +304,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "some",
+                        ValLoc {
+                            value: "some",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 7,
+                                            column: 14,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,

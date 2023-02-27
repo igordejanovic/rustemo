@@ -100,7 +100,20 @@ Grammar {
                 nopse: true,
                 meta: {
                     "bla": Int(
-                        5,
+                        ValLoc {
+                            value: 5,
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 3,
+                                            column: 26,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 },
             },
@@ -144,7 +157,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "some_term",
+                        ValLoc {
+                            value: "some_term",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 6,
+                                            column: 19,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,

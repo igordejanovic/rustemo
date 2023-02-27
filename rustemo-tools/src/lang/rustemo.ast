@@ -2656,7 +2656,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "terminals",
+                        ValLoc {
+                            value: "terminals",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 72,
+                                            column: 11,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -2669,7 +2682,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "import",
+                        ValLoc {
+                            value: "import",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 73,
+                                            column: 8,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -2682,7 +2708,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "as",
+                        ValLoc {
+                            value: "as",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 74,
+                                            column: 4,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -2695,7 +2734,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        ":",
+                        ValLoc {
+                            value: ":",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 75,
+                                            column: 7,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -2708,7 +2760,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        ";",
+                        ValLoc {
+                            value: ";",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 76,
+                                            column: 11,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -2721,7 +2786,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        ",",
+                        ValLoc {
+                            value: ",",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 77,
+                                            column: 7,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -2734,7 +2812,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "{",
+                        ValLoc {
+                            value: "{",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 78,
+                                            column: 8,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -2747,7 +2838,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "}",
+                        ValLoc {
+                            value: "}",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 79,
+                                            column: 8,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -2760,7 +2864,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "(",
+                        ValLoc {
+                            value: "(",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 80,
+                                            column: 10,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -2773,7 +2890,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        ")",
+                        ValLoc {
+                            value: ")",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 81,
+                                            column: 10,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -2786,7 +2916,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "[",
+                        ValLoc {
+                            value: "[",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 82,
+                                            column: 11,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -2799,7 +2942,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "]",
+                        ValLoc {
+                            value: "]",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 83,
+                                            column: 11,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -2812,7 +2968,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "|",
+                        ValLoc {
+                            value: "|",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 84,
+                                            column: 8,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -2825,7 +2994,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "*",
+                        ValLoc {
+                            value: "*",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 85,
+                                            column: 12,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -2838,7 +3020,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "*!",
+                        ValLoc {
+                            value: "*!",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 86,
+                                            column: 18,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -2851,7 +3046,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "+",
+                        ValLoc {
+                            value: "+",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 87,
+                                            column: 11,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -2864,7 +3072,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "+!",
+                        ValLoc {
+                            value: "+!",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 88,
+                                            column: 17,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -2877,7 +3098,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "?",
+                        ValLoc {
+                            value: "?",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 89,
+                                            column: 10,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -2890,7 +3124,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "?!",
+                        ValLoc {
+                            value: "?!",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 90,
+                                            column: 16,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -2903,7 +3150,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "=",
+                        ValLoc {
+                            value: "=",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 91,
+                                            column: 8,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -2916,7 +3176,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "?=",
+                        ValLoc {
+                            value: "?=",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 92,
+                                            column: 9,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -2929,7 +3202,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "left",
+                        ValLoc {
+                            value: "left",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 93,
+                                            column: 6,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -2942,7 +3228,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "right",
+                        ValLoc {
+                            value: "right",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 94,
+                                            column: 7,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -2955,7 +3254,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "reduce",
+                        ValLoc {
+                            value: "reduce",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 95,
+                                            column: 8,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -2968,7 +3280,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "shift",
+                        ValLoc {
+                            value: "shift",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 96,
+                                            column: 7,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -2981,7 +3306,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "dynamic",
+                        ValLoc {
+                            value: "dynamic",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 97,
+                                            column: 9,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -2994,7 +3332,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "nops",
+                        ValLoc {
+                            value: "nops",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 98,
+                                            column: 6,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -3007,7 +3358,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "nopse",
+                        ValLoc {
+                            value: "nopse",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 99,
+                                            column: 7,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -3020,7 +3384,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "prefer",
+                        ValLoc {
+                            value: "prefer",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 100,
+                                            column: 8,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -3033,7 +3410,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "finish",
+                        ValLoc {
+                            value: "finish",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 101,
+                                            column: 8,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -3046,7 +3436,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "nofinish",
+                        ValLoc {
+                            value: "nofinish",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 102,
+                                            column: 10,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -3059,7 +3462,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "/*",
+                        ValLoc {
+                            value: "/*",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 103,
+                                            column: 10,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
@@ -3072,7 +3488,20 @@ Grammar {
                 action: None,
                 recognizer: Some(
                     StrConst(
-                        "*/",
+                        ValLoc {
+                            value: "*/",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 104,
+                                            column: 10,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: false,
