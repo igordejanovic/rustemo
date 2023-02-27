@@ -205,7 +205,7 @@ impl Input for str {
         line += self.as_bytes().iter().filter(|&c| *c == b'\n').count();
         if let Some(new_col) = self.as_bytes().iter().rposition(|&c| c == b'\n')
         {
-            column = self.len() - new_col;
+            column = self.len() - new_col - 1;
         } else {
             column += self.len();
         }
