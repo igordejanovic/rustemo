@@ -117,7 +117,7 @@ impl GrammarBuilder {
         }
 
         // Create implicit terminals from string constants.
-        self.resolve_inline_terminals_from_productions();
+        self.resolve_inline_terminals_from_productions()?;
 
         // Resolve references in productions.
         self.resolve_references()?;
@@ -442,8 +442,14 @@ impl GrammarBuilder {
                     {
                         term.0.clone()
                     } else {
-                        return err!(format!("Terminal '{}' is not declared in the terminals section.", mtch),
-                                    Some(self.file.clone()), mtch.location);
+                        return err!(
+                            format!(
+                                r#"Terminal "{}" is not defined in the terminals section."#,
+                                mtch
+                            ),
+                            Some(self.file.clone()),
+                            mtch.location
+                        );
                     }
                 }
             };
@@ -504,7 +510,7 @@ impl GrammarBuilder {
     ///
     /// Thus, in production you can either reference terminal by name or use the
     /// same string match.
-    fn resolve_inline_terminals_from_productions(&mut self) {
+    fn resolve_inline_terminals_from_productions(&mut self) -> Result<()> {
         for production in &mut self.productions {
             let production_str = format!("{}", production);
             for assign in &mut production.rhs {
@@ -521,17 +527,22 @@ impl GrammarBuilder {
                                 .to_symbol_index(),
                         );
                     } else {
-                        panic!(
-                            concat!(
-                                "terminal \"{}\" used in production \"{}\" ",
-                                "is not defined in the 'terminals' section!."
+                        err!(
+                            format!(
+                                concat!(
+                                "Terminal \"{}\" used in production \"{}\" ",
+                                "is not defined in the 'terminals' section."
                             ),
-                            mtch, production_str
-                        )
+                                mtch, production_str
+                            ),
+                            Some(self.file.clone()),
+                            mtch.location
+                        )?
                     }
                 }
             }
         }
+        Ok(())
     }
 
     fn resolve_references(&mut self) -> Result<()> {
