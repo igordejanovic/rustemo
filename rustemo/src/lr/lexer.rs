@@ -110,7 +110,7 @@ where
                     };
                     err!(
                         format!(
-                            r#""{}". Expected {}."#,
+                            "...{}...\nExpected {}.",
                             context.input.context_str(context.position),
                             expected
                         ),

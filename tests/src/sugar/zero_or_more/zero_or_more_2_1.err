@@ -1,1 +1,3 @@
-Error at <str>:1:2:"c -->c a". Expected one of Ta, Num.
+Error at <str>:1:2:
+	...c -->c a...
+	Expected one of Ta, Num.

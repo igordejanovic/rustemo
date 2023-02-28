@@ -1,1 +1,3 @@
-Error at <str>:1:2:"c -->1". Expected Tb.
+Error at <str>:1:2:
+	...c -->1...
+	Expected Tb.

@@ -34,7 +34,7 @@ impl Display for Error {
                 if let Some(location) = location {
                     loc_str.push_str(&location.to_string())
                 }
-                write!(f, "{}:{}", loc_str, message)
+                write!(f, "{}:\n\t{}", loc_str, message.replace('\n', "\n\t"))
             }
             Error::IOError(e) => write!(f, "IOError: {}", e),
         }
