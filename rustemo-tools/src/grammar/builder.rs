@@ -562,10 +562,9 @@ impl GrammarBuilder {
                                     if rhs_len == 1
                                         && nt_idx == production.nonterminal
                                     {
-                                        panic!(
-                                            "Infinite recursion on symbol '{}' in production '{}'.",
-                                            name, production_str
-                                        );
+                                        err!(format!("Infinite recursion on symbol '{}' in production '{}'.",
+                                            name, production_str),
+                                             Some(self.file.clone()), name.location)?;
                                     }
                                     nt_idx.to_symbol_index(self.terminals.len())
                                 },
