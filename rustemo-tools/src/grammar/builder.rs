@@ -120,7 +120,7 @@ impl GrammarBuilder {
         self.resolve_inline_terminals_from_productions();
 
         // Resolve references in productions.
-        self.resolve_references();
+        self.resolve_references()?;
 
         let term_len = self.terminals.len();
         let grammar = Grammar {
@@ -534,7 +534,7 @@ impl GrammarBuilder {
         }
     }
 
-    fn resolve_references(&mut self) {
+    fn resolve_references(&mut self) -> Result<()> {
         // Resolve references.
         for production in &mut self.productions {
             let rhs_len = production.rhs.len();
@@ -553,13 +553,12 @@ impl GrammarBuilder {
                                     let nt_idx = self
                                         .nonterminals
                                         .get(name.as_ref())
-                                        .unwrap_or_else(|| {
-                                            panic!(
-                                                "unexisting symbol '{}' in production '{}'.",
-                                                name, production_str
-                                            )
-                                        })
-                                        .idx;
+                                        .ok_or_else(|| {
+                                            let r: Result<()> = err!(format!("Unexisting symbol '{}' in production '{}'.",
+                                                         name, production_str),
+                                                 Some(self.file.clone()), name.location);
+                                            r.unwrap_err()
+                                        })?.idx;
                                     if rhs_len == 1
                                         && nt_idx == production.nonterminal
                                     {
@@ -590,6 +589,7 @@ impl GrammarBuilder {
                 }
             }
         }
+        Ok(())
     }
 
     fn create_optional(
