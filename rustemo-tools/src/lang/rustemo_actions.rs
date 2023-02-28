@@ -1,61 +1,13 @@
 ///! This file is maintained by rustemo but can be modified manually.
 ///! All manual changes will be preserved except non-doc comments.
 use super::rustemo::{Context, TokenKind};
-use rustemo::{lexer, location::Location};
-use std::{collections::BTreeMap, fmt::Display};
-#[derive(Debug, Clone)]
-pub struct ValLoc<T> {
-    value: T,
-    pub location: Option<Location>,
-}
+use rustemo::{lexer, location::ValLoc};
+use std::collections::BTreeMap;
 pub type Name = ValLoc<String>;
-impl<T: Display> Display for ValLoc<T> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.value)
-    }
-}
-impl<T> AsRef<T> for ValLoc<T> {
-    fn as_ref(&self) -> &T {
-        &self.value
-    }
-}
-impl<T> From<T> for ValLoc<T> {
-    fn from(value: T) -> Self {
-        Self {
-            value,
-            location: None,
-        }
-    }
-}
-impl From<ValLoc<String>> for String {
-    fn from(value: ValLoc<String>) -> Self {
-        value.value
-    }
-}
-macro_rules! from_valloc {
-    ($($type:ident),*) => {
-        $(impl From<ValLoc<$type>> for $type {
-            fn from(value: ValLoc<Self>) -> Self {
-                value.value
-            }
-        })*
-        $(impl From<&ValLoc<$type>> for $type
-          where $type: Copy
-          {
-            fn from(value: &ValLoc<Self>) -> Self {
-                value.value
-            }
-        })*
-    }
-}
-from_valloc!(u32, f32, bool);
 
 pub type Token<'i> = lexer::Token<'i, str, TokenKind>;
 pub fn name(ctx: &Context, token: Token) -> Name {
-    Name {
-        value: token.value.into(),
-        location: Some(ctx.location),
-    }
+    Name::new(token.value.into(), Some(ctx.location))
 }
 pub type RegexTerm = String;
 pub fn regex_term(_ctx: &Context, token: Token) -> RegexTerm {
@@ -63,38 +15,26 @@ pub fn regex_term(_ctx: &Context, token: Token) -> RegexTerm {
 }
 pub type IntConst = ValLoc<u32>;
 pub fn int_const(ctx: &Context, token: Token) -> IntConst {
-    IntConst {
-        value: token.value.parse().unwrap(),
-        location: Some(ctx.location),
-    }
+    IntConst::new(token.value.parse().unwrap(), Some(ctx.location))
 }
 pub type FloatConst = ValLoc<f32>;
 pub fn float_const(ctx: &Context, token: Token) -> FloatConst {
-    FloatConst {
-        value: token.value.parse().unwrap(),
-        location: Some(ctx.location),
-    }
+    FloatConst::new(token.value.parse().unwrap(), Some(ctx.location))
 }
 pub type BoolConst = ValLoc<bool>;
 pub fn bool_const(ctx: &Context, token: Token) -> BoolConst {
-    BoolConst {
-        value: token.value == "true",
-        location: Some(ctx.location),
-    }
+    BoolConst::new(token.value == "true", Some(ctx.location))
 }
 pub type StrConst = ValLoc<String>;
 pub fn str_const(ctx: &Context, token: Token) -> StrConst {
-    StrConst {
-        value: token.value.trim_matches('\'').trim_matches('"').into(),
-        location: Some(ctx.location),
-    }
+    StrConst::new(
+        token.value.trim_matches('\'').trim_matches('"').into(),
+        Some(ctx.location),
+    )
 }
 pub type Action = ValLoc<String>;
 pub fn action(ctx: &Context, token: Token) -> Action {
-    Action {
-        value: token.value[1..].into(),
-        location: Some(ctx.location),
-    }
+    Action::new(token.value[1..].into(), Some(ctx.location))
 }
 #[derive(Debug, Clone, Default)]
 pub struct File {
@@ -675,7 +615,6 @@ pub fn recognizer_c1(_ctx: &Context, str_const: StrConst) -> Recognizer {
 pub fn recognizer_c2(_ctx: &Context, regex_term: RegexTerm) -> Recognizer {
     Recognizer::RegexTerm(regex_term)
 }
-
 /// Layout types are here just to prevent code generator to regenerate
 /// TODO: In future versions this should be skipped if Layout rule is used
 /// as the SliceBuilder will be used for layout which doesn't need these

@@ -95,6 +95,67 @@ impl Display for Location {
     }
 }
 
+/// Value with location. Used in place of parsed values which need locations to
+/// report errors during semantic analysis.
+#[derive(Debug, Clone)]
+pub struct ValLoc<T> {
+    value: T,
+    pub location: Option<Location>,
+}
+
+impl<T: Display> Display for ValLoc<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.value)
+    }
+}
+impl<T> AsRef<T> for ValLoc<T> {
+    fn as_ref(&self) -> &T {
+        &self.value
+    }
+}
+impl<T> From<T> for ValLoc<T> {
+    fn from(value: T) -> Self {
+        Self {
+            value,
+            location: None,
+        }
+    }
+}
+impl From<ValLoc<String>> for String {
+    fn from(value: ValLoc<String>) -> Self {
+        value.value
+    }
+}
+impl<T> ValLoc<T> {
+    pub fn new(value: T, location: Option<Location>) -> Self {
+        Self { value, location }
+    }
+}
+macro_rules! from_valloc {
+    ($type:ty) => {
+        impl From<$crate::location::ValLoc<$type>> for $type {
+            fn from(value: $crate::location::ValLoc<Self>) -> Self {
+                value.value
+            }
+        }
+        impl From<&$crate::location::ValLoc<$type>> for $type
+          where $type: Copy
+          {
+            fn from(value: &$crate::location::ValLoc<Self>) -> Self {
+                value.value
+            }
+        }
+    };
+    ($($type:ty),+) => {
+        $(from_valloc!($type);)+
+    };
+}
+// Implement value with location support for all primitive types.
+from_valloc!(
+    i8, i16, i32, i64, i128, isize, u8, u16, u32, u64, u128, usize, f32, f64,
+    bool, char
+);
+
 #[cfg(test)]
 mod tests {
     use super::{Location, Position};
