@@ -21,5 +21,5 @@ fn main() {
     let result = CalculatorParser::parse(&expression);
 
     // Print the result using Debug formatter.
-    println!("{:?}", result);
+    println!("{:#?}", result);
 }

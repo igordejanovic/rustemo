@@ -120,30 +120,46 @@ If you get no output there were no errors. If you made an error in the grammar
 you will get a report with the line and column where the error was and what is
 expected at that location.
 
+For example, if we forget colon after the rule name we get:
+
+```
+Error at <str>:1:11:
+	...Expression -->Operand Operato...
+	Expected one of Colon, OBrace.
+Parser(s) not generated.
+```
+
+```admonish todo
+Errors should have filename info.
+```
+
 After the parser generator is run successfully you should have files
 `calculator.rs` and `calculator_actions.rs` generated.
 
 File `calculator.rs` is the parser while `calculator_actions.rs` in the default
 configuration contains deduced types for the AST (_Abstract Syntax Tree_)
-together with function/actions used by the builder during the parsing process to
-construct the AST.
+together with functions/actions used by the builder during the parsing process
+to construct the AST.
 
 ```admonish note "Regenerating the parser"
 `calculator.rs` is regenerated whenever you run `rustemo` command.
 
 Actions in file `calculator_actions.rs`, on the other hand, are not fully
-regenerated. Only missing actions/type will be regenerated. This enables you to
-provide manual modifications of the actions/type as long as you retain the same
+regenerated. Only missing actions/types will be regenerated. This enables you to
+provide manual modifications of the actions/types as long as you retain the same
 name. As we shall soon see, this is a nice feature which provides a quick way to
-have a working parser with default AST output which can be later tuned.
+have a working parser with default AST output which can be later tuned as needed.
 ```
-
 
 ## Adding dependencies
 
-Our generated parser code calls Rustemo code so we must add `rustemo` crate
-as a dependency. Since we are using regular expressions in our grammar we also
-need `regex` and `lazy_static`.
+Our generated parser code calls Rustemo code so we must add `rustemo` crate as a
+dependency. Since we are using regular expressions in our grammar we also need
+`regex` and `lazy_static`.
+
+```admonish todo
+This transitive dependencies should be handled automatically.
+```
 
 Let's add `rustemo`.
 
@@ -168,14 +184,20 @@ Your `Cargo.toml` should look like this:
 
 ## Running the parser
 
-Now, let's open the `main.rs` file and write this:
+Now, let's open the `main.rs` file and write this for the header:
 
 ```rust
-{{#include ./calculator1/src/main.rs }}
+{{#include ./calculator1/src/main.rs:header }}
+```
+
+and this as the `main` function which will serve as entry point for our program:
+
+```rust
+{{#include ./calculator1/src/main.rs:main }}
 ```
 
 So, our initial program will accept the string from the console input, parse it
-and print the result.
+using the parser generated in the `calculator` module and print the result.
 
 Run the program:
 ```sh
@@ -192,7 +214,13 @@ We get debug output from the parser and at the end you should see:
 
 ```
 Action: Accept
-Ok(Expression { operand_1: "2", operator: "+", operand_3: "3" })
+Ok(
+    Expression {
+        operand_1: "2",
+        operator: "+",
+        operand_3: "3",
+    },
+)
 ```
 
 But if you make a mistake, like:
@@ -204,9 +232,25 @@ But if you make a mistake, like:
 You get:
 
 ```
-Err(ParseError { message: "Error at position <str>:1:4 \"2 + -->/ 3\n\".
-Expected one of Operand.", file: "<str>",
-location: Location { start: LineBased(LineBased { line: 1, column: 4 }), end: None } })
+Err(
+    Error {
+        message: "...2 + -->/ 3\n...\nExpected Operand.",
+        file: Some(
+            "<str>",
+        ),
+        location: Some(
+            Location {
+                start: LineBased(
+                    LineBased {
+                        line: 1,
+                        column: 4,
+                    },
+                ),
+                end: None,
+            },
+        ),
+    },
+)
 ```
 
 Congrats! You have made your first Rustemo parser!
@@ -230,9 +274,25 @@ $ cargo run
 Expression:
 8 + 4 / 2 - 3.2 * 2
 ...
-Err(ParseError { message: "Error at position <str>:1:6 \"8 + 4 -->/ 2 - 3.2 * 2\n\".
-Expected one of STOP.", file: "<str>", location:
-Location { start: LineBased(LineBased { line: 1, column: 6 }), end: None } })
+Err(
+    Error {
+        message: "...8 + 4 -->/ 2 - 3.2 * 2\n...\nExpected STOP.",
+        file: Some(
+            "<str>",
+        ),
+        location: Some(
+            Location {
+                start: LineBased(
+                    LineBased {
+                        line: 1,
+                        column: 6,
+                    },
+                ),
+                end: None,
+            },
+        ),
+    },
+)
 ```
 
 As we already discussed above, the grammar we created so far can only parse an
@@ -278,7 +338,7 @@ These kinds of trees resemble the gist of the underlying expressions. We can obs
    expressions, each operation is a sub-expression consisting of left
    sub-tree/sub-expression, operation and right sub-tree/sub-expression.
 
-So, we can write:
+So, we could write grammar rules as:
 
 ```
 Add: Expression '+' Expression;
@@ -467,9 +527,39 @@ Expression:
 8 + 4 / 2 - 3.2 * 2
 ...
 Action: Accept
-Ok(C2(EC2 { e_1: C1(EC1 { e_1: C5("8"), e_3: C4(EC4 { e_1: C5("4"), e_3: C5("2") }) })
-, e_3: C3(EC3 { e_1: C5("3.2"), e_3: C5("2") }) }))
-
+Ok(
+    C2(
+        EC2 {
+            e_1: C1(
+                EC1 {
+                    e_1: C5(
+                        "8",
+                    ),
+                    e_3: C4(
+                        EC4 {
+                            e_1: C5(
+                                "4",
+                            ),
+                            e_3: C5(
+                                "2",
+                            ),
+                        },
+                    ),
+                },
+            ),
+            e_3: C3(
+                EC3 {
+                    e_1: C5(
+                        "3.2",
+                    ),
+                    e_3: C5(
+                        "2",
+                    ),
+                },
+            ),
+        },
+    ),
+)
 ```
 
 That's it! We have a working grammar. It wasn't that hard after all, was it? :)
@@ -711,22 +801,6 @@ If you have made it through here, well done!
 
 Now, just to make sure that you have connected all the dots try to solve
 exercises bellow.
-
-## Reminder
-
-```admonish note "Note to myself"
-
-Trees can be created with parglare and command
-
-    pglr parse calc.pg -i "8 + 4 / 2 - 3.2 * 2" --dot ` (add `--glr` for ambiguous grammars)
-    sed -E -e 's/number\((.*)\)/\1/g; s/(->[0-9]+)\[label.*\]/\1/g; s/dir=black,arrowtail=empty,/dir=none /g' tree.dot > tree1.dot
-tree1.dot
-
-where `calc.pg` is the following grammar:
-
-    {{#include calc.pg}}
-
-```
 
 ## Exercises
 

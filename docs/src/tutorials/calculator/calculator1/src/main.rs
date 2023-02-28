@@ -1,3 +1,4 @@
+// ANCHOR: header
 use std::io;
 // Use the generated parser
 use crate::calculator::CalculatorParser;
@@ -6,10 +7,12 @@ use crate::calculator::CalculatorParser;
 mod calculator;
 #[allow(unused)]
 mod calculator_actions;
+// ANCHOR_END: header
 
 #[cfg(test)]
 mod tests;
 
+// ANCHOR: main
 fn main() {
     let mut expression = String::new();
 
@@ -21,5 +24,6 @@ fn main() {
     let result = CalculatorParser::parse(&expression);
 
     // Print the result using Debug formatter.
-    println!("{:?}", result);
+    println!("{:#?}", result);
 }
+// ANCHOR_END: main
