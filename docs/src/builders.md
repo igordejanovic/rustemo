@@ -135,6 +135,14 @@ on-the-fly calculation of the arithmetic expression. Start with a type and a
 base `Builder` trait implementation as each builder needs initialization and
 should be able to return the final result.
 
+```admonish note
+To be able to find custom builder Rustemo uses the following conventions:
+- File name where builder is implemented is constructed by taking the filename
+  of the grammar (moduo extension) and adding sufix `_builder`.
+- Builder type name is constructed similarly by taking the name of the builder
+  file and converting to CamelCase.
+```
+
 For example, given the grammar:
 
 ```rust
@@ -142,12 +150,13 @@ For example, given the grammar:
 
 ```
 
-The following builder will perform arithmetic operation on-the-fly (during parsing):
+in file `custom_builder.rustemo` the following builder from file
+`custom_builder_builder.rs` will perform arithmetic operation on-the-fly (during
+parsing):
 
 ```rust
 {{#include ../../tests/src/builder/custom_builder/custom_builder_builder.rs:custom-builder-base}}
 ```
-
 
 Now, implement LR part of the builder. For this we must specify what should be
 done for `shift/reduce` operations:

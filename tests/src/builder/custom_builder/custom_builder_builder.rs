@@ -7,14 +7,14 @@ use rustemo::{
 
 use super::custom_builder::{ProdKind, TokenKind};
 
+// ANCHOR: custom-builder-base
 pub type E = i32;
 pub type Context<'i> = lexer::Context<'i, str, StateIndex>;
 
-// ANCHOR: custom-builder-base
 /// Custom builder that perform arithmetic operations.
 pub struct CustomBuilderBuilder {
     // A stack used to shift numbers and keep intermediate result
-    stack: Vec<i32>,
+    stack: Vec<E>,
 }
 
 impl Builder for CustomBuilderBuilder {
