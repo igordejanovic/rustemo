@@ -1,12 +1,13 @@
 ///! This file is maintained by rustemo but can be modified manually.
 ///! All manual changes will be preserved except non-doc comments.
 use rustemo::lexer;
+use super::calculator::Context;
 use super::calculator::TokenKind;
 pub type Input = str;
 #[allow(dead_code)]
 pub type Token<'i> = lexer::Token<'i, Input, TokenKind>;
 pub type Number = String;
-pub fn number(token: Token) -> Number {
+pub fn number<'i>(_ctx: &Context<'i>, token: Token<'i>) -> Number {
     token.value.into()
 }
 /// ANCHOR: structs
@@ -41,30 +42,30 @@ pub enum E {
     C5(Number),
 }
 /// ANCHOR_END: enum
-pub fn e_c1(e_1: E, e_3: E) -> E {
+pub fn e_c1(_ctx: &Context, e_1: E, e_3: E) -> E {
     E::C1(EC1 {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
-pub fn e_c2(e_1: E, e_3: E) -> E {
+pub fn e_c2(_ctx: &Context, e_1: E, e_3: E) -> E {
     E::C2(EC2 {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
-pub fn e_c3(e_1: E, e_3: E) -> E {
+pub fn e_c3(_ctx: &Context, e_1: E, e_3: E) -> E {
     E::C3(EC3 {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
-pub fn e_c4(e_1: E, e_3: E) -> E {
+pub fn e_c4(_ctx: &Context, e_1: E, e_3: E) -> E {
     E::C4(EC4 {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
-pub fn e_c5(number: Number) -> E {
+pub fn e_c5(_ctx: &Context, number: Number) -> E {
     E::C5(number)
 }

@@ -4,7 +4,11 @@ members = [
         "rustemo-tools",
         "tests",
         "examples/calculator",
-]
-exclude = [
-        "docs",
+
+        # Tutorials
+        "docs/src/tutorials/calculator/calculator1",
+        "docs/src/tutorials/calculator/calculator2",
+        "docs/src/tutorials/calculator/calculator3",
+        "docs/src/tutorials/calculator/calculator4",
+        "docs/src/tutorials/calculator/calculator5",
 ]

@@ -1,0 +1,7 @@
+Ok(
+    Expression {
+        operand_1: "2",
+        operator: "+",
+        operand_3: "3",
+    },
+)

@@ -7,6 +7,9 @@ mod calculator;
 #[allow(unused)]
 mod calculator_actions;
 
+#[cfg(test)]
+mod tests;
+
 fn main() {
     let mut expression = String::new();
 

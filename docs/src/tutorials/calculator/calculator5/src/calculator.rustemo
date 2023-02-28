@@ -1,4 +1,4 @@
-E: left=E '+' right=E Pluz {Add, 1, left}
+E: left=E '+' right=E {Add, 1, left}
  | left=E '-' right=E {Sub, 1, left}
  | left=E '*' right=E {Mul, 2, left}
  | left=E '/' right=E {Div, 2, left}

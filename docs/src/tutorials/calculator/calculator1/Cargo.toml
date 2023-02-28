@@ -1,5 +1,5 @@
 [package]
-name = "calculator"
+name = "calculator1"
 version = "0.1.0"
 edition = "2021"
 
@@ -9,3 +9,7 @@ edition = "2021"
 lazy_static = "1.4.0"
 regex = { version = "1.7.1", default-features = false, features = ["std", "unicode-perl"] }
 rustemo = { version = "0.1.0", path = "../../../../../rustemo" }
+
+[dev-dependencies]
+# For output_cmp for testing
+rustemo-tools = { path = "../../../../../rustemo-tools" }

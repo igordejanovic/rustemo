@@ -1,6 +1,7 @@
 ///! This file is maintained by rustemo but can be modified manually.
 ///! All manual changes will be preserved except non-doc comments.
 use rustemo::lexer;
+use super::calculator::Context;
 use super::calculator::TokenKind;
 pub type Input = str;
 #[allow(dead_code)]
@@ -9,7 +10,7 @@ pub type Token<'i> = lexer::Token<'i, Input, TokenKind>;
 pub type Number = String;
 /// ANCHOR_END: number
 /// ANCHOR: number_action
-pub fn number(token: Token) -> Number {
+pub fn number<'i>(_ctx: &Context<'i>, token: Token<'i>) -> Number {
     token.value.into()
 }
 /// ANCHOR_END: number_action
@@ -46,31 +47,31 @@ pub enum E {
 }
 /// ANCHOR_END: expression
 /// ANCHOR: add_action
-pub fn e_add(left: E, right: E) -> E {
+pub fn e_add(_ctx: &Context, left: E, right: E) -> E {
     E::Add(Add {
         left: Box::new(left),
         right: Box::new(right),
     })
 }
 /// ANCHOR_END: add_action
-pub fn e_sub(left: E, right: E) -> E {
+pub fn e_sub(_ctx: &Context, left: E, right: E) -> E {
     E::Sub(Sub {
         left: Box::new(left),
         right: Box::new(right),
     })
 }
-pub fn e_mul(left: E, right: E) -> E {
+pub fn e_mul(_ctx: &Context, left: E, right: E) -> E {
     E::Mul(Mul {
         left: Box::new(left),
         right: Box::new(right),
     })
 }
-pub fn e_div(left: E, right: E) -> E {
+pub fn e_div(_ctx: &Context, left: E, right: E) -> E {
     E::Div(Div {
         left: Box::new(left),
         right: Box::new(right),
     })
 }
-pub fn e_c5(number: Number) -> E {
+pub fn e_c5(_ctx: &Context, number: Number) -> E {
     E::C5(number)
 }
