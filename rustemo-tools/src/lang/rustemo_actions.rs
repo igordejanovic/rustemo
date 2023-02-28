@@ -4,7 +4,6 @@ use super::rustemo::{Context, TokenKind};
 use rustemo::{lexer, location::ValLoc};
 use std::collections::BTreeMap;
 pub type Name = ValLoc<String>;
-
 pub type Token<'i> = lexer::Token<'i, str, TokenKind>;
 pub fn name(ctx: &Context, token: Token) -> Name {
     Name::new(token.value.into(), Some(ctx.location))
@@ -50,11 +49,7 @@ pub fn file_c1(ctx: &Context, grammar_rules: GrammarRules) -> File {
         ..Default::default()
     }
 }
-pub fn file_c2(
-    ctx: &Context,
-    imports: Imports,
-    grammar_rules: GrammarRules,
-) -> File {
+pub fn file_c2(ctx: &Context, imports: Imports, grammar_rules: GrammarRules) -> File {
     File {
         file: ctx.file.clone(),
         imports: Some(imports),
@@ -131,10 +126,7 @@ pub fn grammar_rule1_c1(
     grammar_rule1.push(grammar_rule);
     grammar_rule1
 }
-pub fn grammar_rule1_c2(
-    _ctx: &Context,
-    grammar_rule: GrammarRule,
-) -> GrammarRule1 {
+pub fn grammar_rule1_c2(_ctx: &Context, grammar_rule: GrammarRule) -> GrammarRule1 {
     vec![grammar_rule]
 }
 #[derive(Debug, Clone)]
@@ -187,10 +179,7 @@ pub fn grammar_rule_rhs_c1(
     rhs.push(production);
     rhs
 }
-pub fn grammar_rule_rhs_c2(
-    _ctx: &Context,
-    production: Production,
-) -> GrammarRuleRHS {
+pub fn grammar_rule_rhs_c2(_ctx: &Context, production: Production) -> GrammarRuleRHS {
     vec![production]
 }
 #[derive(Debug, Clone)]
@@ -221,10 +210,7 @@ pub fn terminal_rule1_c1(
     terminal_rule1.push(terminal_rule);
     terminal_rule1
 }
-pub fn terminal_rule1_c2(
-    _ctx: &Context,
-    terminal_rule: TerminalRule,
-) -> TerminalRule1 {
+pub fn terminal_rule1_c2(_ctx: &Context, terminal_rule: TerminalRule) -> TerminalRule1 {
     vec![terminal_rule]
 }
 #[derive(Debug, Clone)]
@@ -366,11 +352,7 @@ pub struct UserMetaData {
     pub name: Name,
     pub value: ConstVal,
 }
-pub fn user_meta_data_c1(
-    _ctx: &Context,
-    name: Name,
-    value: ConstVal,
-) -> UserMetaData {
+pub fn user_meta_data_c1(_ctx: &Context, name: Name, value: ConstVal) -> UserMetaData {
     UserMetaData { name, value }
 }
 pub type ProdKind = Name;
@@ -402,16 +384,10 @@ pub enum Assignment {
     BoolAssignment(BoolAssignment),
     GrammarSymbolRef(GrammarSymbolRef),
 }
-pub fn assignment_c1(
-    _ctx: &Context,
-    plain_assignment: PlainAssignment,
-) -> Assignment {
+pub fn assignment_c1(_ctx: &Context, plain_assignment: PlainAssignment) -> Assignment {
     Assignment::PlainAssignment(plain_assignment)
 }
-pub fn assignment_c2(
-    _ctx: &Context,
-    bool_assignment: BoolAssignment,
-) -> Assignment {
+pub fn assignment_c2(_ctx: &Context, bool_assignment: BoolAssignment) -> Assignment {
     Assignment::BoolAssignment(bool_assignment)
 }
 pub fn assignment_c3(
@@ -524,9 +500,7 @@ pub enum RepetitionOperatorOp {
     Optional,
     OptionalGreedy,
 }
-pub fn repetition_operator_op_zero_or_more(
-    _ctx: &Context,
-) -> RepetitionOperatorOp {
+pub fn repetition_operator_op_zero_or_more(_ctx: &Context) -> RepetitionOperatorOp {
     RepetitionOperatorOp::ZeroOrMore
 }
 pub fn repetition_operator_op_zero_or_more_greedy(
@@ -534,9 +508,7 @@ pub fn repetition_operator_op_zero_or_more_greedy(
 ) -> RepetitionOperatorOp {
     RepetitionOperatorOp::ZeroOrMoreGreedy
 }
-pub fn repetition_operator_op_one_or_more(
-    _ctx: &Context,
-) -> RepetitionOperatorOp {
+pub fn repetition_operator_op_one_or_more(_ctx: &Context) -> RepetitionOperatorOp {
     RepetitionOperatorOp::OneOrMore
 }
 pub fn repetition_operator_op_one_or_more_greedy(
@@ -547,9 +519,7 @@ pub fn repetition_operator_op_one_or_more_greedy(
 pub fn repetition_operator_op_optional(_ctx: &Context) -> RepetitionOperatorOp {
     RepetitionOperatorOp::Optional
 }
-pub fn repetition_operator_op_optional_greedy(
-    _ctx: &Context,
-) -> RepetitionOperatorOp {
+pub fn repetition_operator_op_optional_greedy(_ctx: &Context) -> RepetitionOperatorOp {
     RepetitionOperatorOp::OptionalGreedy
 }
 pub type RepetitionModifiersOpt = Option<RepetitionModifiers>;
@@ -559,9 +529,7 @@ pub fn repetition_modifiers_opt_c1(
 ) -> RepetitionModifiersOpt {
     Some(repetition_modifiers)
 }
-pub fn repetition_modifiers_opt_empty(
-    _ctx: &Context,
-) -> RepetitionModifiersOpt {
+pub fn repetition_modifiers_opt_empty(_ctx: &Context) -> RepetitionModifiersOpt {
     None
 }
 pub type RepetitionModifiers = Vec<RepetitionModifier>;
@@ -587,10 +555,7 @@ pub fn repetition_modifier1_c2(
     vec![repetition_modifier]
 }
 pub type RepetitionModifier = Name;
-pub fn repetition_modifier_c1(
-    _ctx: &Context,
-    name: Name,
-) -> RepetitionModifier {
+pub fn repetition_modifier_c1(_ctx: &Context, name: Name) -> RepetitionModifier {
     name
 }
 #[derive(Debug, Clone)]
@@ -632,19 +597,10 @@ pub fn layout_item1_c1(
     _ctx: &Context,
     mut _layout_item1: LayoutItem1,
     _layout_item: LayoutItem,
-) -> LayoutItem1 {
-}
-pub fn layout_item1_c2(
-    _ctx: &Context,
-    _layout_item: LayoutItem,
-) -> LayoutItem1 {
-}
+) -> LayoutItem1 {}
+pub fn layout_item1_c2(_ctx: &Context, _layout_item: LayoutItem) -> LayoutItem1 {}
 pub type LayoutItem0 = LayoutItem1;
-pub fn layout_item0_c1(
-    _ctx: &Context,
-    _layout_item1: LayoutItem1,
-) -> LayoutItem0 {
-}
+pub fn layout_item0_c1(_ctx: &Context, _layout_item1: LayoutItem1) -> LayoutItem0 {}
 pub fn layout_item0_empty(_ctx: &Context) -> LayoutItem0 {}
 pub type LayoutItem = ();
 pub fn layout_item_c1(_ctx: &Context, _ws: WS) -> LayoutItem {}
@@ -659,8 +615,7 @@ pub fn corncs_c1(_ctx: &Context, cornc0: Cornc0) -> Corncs {
     cornc0
 }
 pub type Cornc1 = ();
-pub fn cornc1_c1(_ctx: &Context, mut _cornc1: Cornc1, _cornc: Cornc) -> Cornc1 {
-}
+pub fn cornc1_c1(_ctx: &Context, mut _cornc1: Cornc1, _cornc: Cornc) -> Cornc1 {}
 pub fn cornc1_c2(_ctx: &Context, _cornc: Cornc) -> Cornc1 {}
 pub type Cornc0 = Cornc1;
 pub fn cornc0_c1(_ctx: &Context, _cornc1: Cornc1) -> Cornc0 {}
