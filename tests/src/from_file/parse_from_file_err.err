@@ -1,0 +1,5 @@
+Error at /home/igor/repos/rust/rustemo/tests/src/from_file/input2.calc:2:9:
+	...3 + 5
+	/ 7.54 * -->/ 78 + 3
+	...
+	Expected Number.

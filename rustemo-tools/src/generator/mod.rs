@@ -15,7 +15,7 @@ use crate::{
         types::{choice_name, to_pascal_case, to_snake_case},
         Grammar, NonTerminal, Production,
     },
-    lang::rustemo_actions::Recognizer,
+    lang::{rustemo::RustemoParser, rustemo_actions::Recognizer},
     table::{Action, LRTable},
 };
 
@@ -46,8 +46,9 @@ pub fn generate_parser(
     let out_dir = out_dir.unwrap_or(&grammar_dir);
     let out_dir_actions = out_dir_actions.unwrap_or(&grammar_dir);
 
-    let grammar_input = std::fs::read_to_string(grammar_path)?;
-    let grammar: Grammar = grammar_input.parse()?;
+    let mut parser = RustemoParser::new();
+    let file = parser.parse_file(grammar_path)?;
+    let grammar = file.try_into()?;
     let table = LRTable::new(&grammar, settings);
 
     let conflicts = table.get_conflicts();
@@ -601,7 +602,10 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         });
 
         ast.push(parse_quote! {
-            pub struct #parser(LRParser<#parser_definition>);
+            #[derive(Default)]
+            pub struct #parser{
+                content: Option<<Input as ToOwned>::Owned>
+            }
         });
 
         let partial_parse: syn::Expr = if self.settings.partial_parse {
@@ -613,26 +617,23 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         let mut parse_stmt: Vec<syn::Stmt> = vec![];
         if self.grammar.has_layout() {
             parse_stmt.push(parse_quote! {
-                let mut parser = #parser::default();
-            });
-            parse_stmt.push(parse_quote! {
-            loop {
-                log!("** Parsing content");
-                let result = parser.0.parse(&mut context, &lexer, &mut builder);
-                if result.is_err() {
-                    let pos = context.position;
-                    log!("** Parsing layout");
-                    #layout_parser::parse_layout(&mut context);
-                    if context.position > pos {
-                        continue;
+                loop {
+                    log!("** Parsing content");
+                    let result = parser.parse(context, &lexer, &mut builder);
+                    if result.is_err() {
+                        let pos = context.position;
+                        log!("** Parsing layout");
+                        #layout_parser::parse_layout(context);
+                        if context.position > pos {
+                            continue;
+                        }
                     }
+                    return result;
                 }
-                return result;
-            }
-        });
+            });
         } else {
             let ret_expr: syn::Expr = parse_quote! {
-                #parser::default().0.parse(&mut context, &lexer, &mut builder)
+                parser.parse(context, &lexer, &mut builder)
             };
             parse_stmt.push(syn::Stmt::Expr(ret_expr));
         }
@@ -641,13 +642,13 @@ impl<'g, 's> ParserGenerator<'g, 's> {
 
         let parse_result: syn::Type = match self.settings.builder_type {
             BuilderType::Default => parse_quote! {
-                Result<#actions_file::#root_symbol>
+                #actions_file::#root_symbol
             },
             BuilderType::Generic => parse_quote! {
-                Result<TreeNode<str, super::#parser_file::TokenKind>>
+                TreeNode<'i, str, super::#parser_file::TokenKind>
             },
             BuilderType::Custom => parse_quote! {
-                Result<#builder_file::#root_symbol>
+                #builder_file::#root_symbol
             },
         };
 
@@ -664,19 +665,30 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             #[allow(dead_code)]
             impl #parser
             {
-                pub fn parse(input: &Input) -> #parse_result {
+                pub fn new() -> Self {
+                    Default::default()
+                }
+
+                #[allow(clippy::needless_lifetimes)]
+                pub fn parse_file<'i, P: AsRef<std::path::Path>>(&'i mut self, file: P)
+                                                             -> Result<#parse_result> {
+                    self.content = Some(<Input as rustemo::lexer::Input>::read_file(&file)?);
+                    let mut context = Context::new(
+                        file.as_ref().to_string_lossy().to_string(),
+                        self.content.as_ref().unwrap());
+                    Self::inner_parse(&mut context)
+                }
+                #[allow(clippy::needless_lifetimes)]
+                pub fn parse<'i>(input: &'i Input) -> Result<#parse_result> {
                     let mut context = Context::new("<str>".to_string(), input);
+                    Self::inner_parse(&mut context)
+                }
+                #[allow(clippy::needless_lifetimes)]
+                fn inner_parse<'i>(context: &mut Context<'i>) -> Result<#parse_result> {
                     #lexer_instance
                     let mut builder = #builder::new();
+                    let mut parser = LRParser::new(&PARSER_DEFINITION, StateIndex(0));
                     #(#parse_stmt)*
-                }
-            }
-        });
-
-        ast.push(parse_quote! {
-            impl Default for #parser {
-                fn default() -> Self {
-                    Self(LRParser::new(&PARSER_DEFINITION, StateIndex(0)))
                 }
             }
         });

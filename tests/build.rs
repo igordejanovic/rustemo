@@ -18,6 +18,7 @@ fn main() {
         ("rule_patterns", Box::new(|s| s)),
         ("sugar", Box::new(|s| s)),
         ("ambiguity", Box::new(|s| s.prefer_shifts(true))),
+        ("from_file", Box::new(|s| s)),
         (
             "partial",
             Box::new(|s| s.prefer_shifts(true).partial_parse(true)),

@@ -1,0 +1,2 @@
+Error at /home/igor/repos/rust/rustemo/tests/src/errors/infinite_recursion/infinite_recursion.rustemo:2:3:
+	Infinite recursion on symbol 'B' in production '2:  B '.

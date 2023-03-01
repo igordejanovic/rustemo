@@ -1,0 +1,47 @@
+Ok(
+    Sub(
+        Sub {
+            left: Add(
+                Add {
+                    left: Add(
+                        Add {
+                            left: C5(
+                                "2",
+                            ),
+                            right: Div(
+                                Div {
+                                    left: Mul(
+                                        Mul {
+                                            left: C5(
+                                                "5",
+                                            ),
+                                            right: C5(
+                                                "7",
+                                            ),
+                                        },
+                                    ),
+                                    right: C5(
+                                        "2.3",
+                                    ),
+                                },
+                            ),
+                        },
+                    ),
+                    right: C5(
+                        "3",
+                    ),
+                },
+            ),
+            right: Div(
+                Div {
+                    left: C5(
+                        "17",
+                    ),
+                    right: C5(
+                        "2",
+                    ),
+                },
+            ),
+        },
+    ),
+)

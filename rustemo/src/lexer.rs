@@ -4,7 +4,7 @@ use crate::{
     location::{LineBased, Location, Position},
 };
 use core::fmt::Debug;
-use std::{cmp::min, fmt::Display, iter::once, ops::Range};
+use std::{cmp::min, iter::once, ops::Range, path::Path};
 
 /// The `Lexer` trait allows input tokenization
 ///
@@ -22,7 +22,7 @@ pub trait Lexer<'i, I: Input + ?Sized, ST, TK> {
 
 /// This trait must be implemented by all types that should be parsed by
 /// Rustemo. Input is a sliceable sequence-like type with a concept of length.
-pub trait Input {
+pub trait Input: ToOwned {
     /// Returns a string context for the given position. Used in debugging outputs.
     fn context_str(&self, position: usize) -> String;
 
@@ -34,6 +34,8 @@ pub trait Input {
     }
 
     fn slice(&self, range: &Range<usize>) -> &Self;
+
+    fn read_file<P: AsRef<Path>>(path: P) -> Result<Self::Owned>;
 
     fn start_location() -> Location {
         Location {
@@ -215,12 +217,13 @@ impl Input for str {
             end: None,
         }
     }
+
+    fn read_file<P: AsRef<Path>>(path: P) -> Result<Self::Owned> {
+        Ok(std::fs::read_to_string(path)?)
+    }
 }
 
-impl<T> Input for [T]
-where
-    T: Display,
-{
+impl Input for [u8] {
     fn context_str(&self, position: usize) -> String {
         format!(
             "{:?}",
@@ -257,6 +260,10 @@ where
                 end: None,
             }
         }
+    }
+
+    fn read_file<P: AsRef<Path>>(path: P) -> Result<Self::Owned> {
+        Ok(std::fs::read(path)?)
     }
 }
 

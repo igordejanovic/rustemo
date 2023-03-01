@@ -13781,32 +13781,50 @@ impl ParserDefinition for RustemoParserDefinition {
         PARSER_DEFINITION.gotos[state_index.0][nonterm_index.0].unwrap()
     }
 }
-pub struct RustemoParser(LRParser<RustemoParserDefinition>);
+#[derive(Default)]
+pub struct RustemoParser {
+    content: Option<<Input as ToOwned>::Owned>,
+}
 #[allow(dead_code)]
 impl RustemoParser {
-    pub fn parse(input: &Input) -> Result<rustemo_actions::File> {
+    pub fn new() -> Self {
+        Default::default()
+    }
+    #[allow(clippy::needless_lifetimes)]
+    pub fn parse_file<'i, P: AsRef<std::path::Path>>(
+        &'i mut self,
+        file: P,
+    ) -> Result<rustemo_actions::File> {
+        self.content = Some(<Input as rustemo::lexer::Input>::read_file(&file)?);
+        let mut context = Context::new(
+            file.as_ref().to_string_lossy().to_string(),
+            self.content.as_ref().unwrap(),
+        );
+        Self::inner_parse(&mut context)
+    }
+    #[allow(clippy::needless_lifetimes)]
+    pub fn parse<'i>(input: &'i Input) -> Result<rustemo_actions::File> {
         let mut context = Context::new("<str>".to_string(), input);
+        Self::inner_parse(&mut context)
+    }
+    #[allow(clippy::needless_lifetimes)]
+    fn inner_parse<'i>(context: &mut Context<'i>) -> Result<rustemo_actions::File> {
         let lexer = LRStringLexer::new(&LEXER_DEFINITION, false, false);
         let mut builder = RustemoBuilder::new();
-        let mut parser = RustemoParser::default();
+        let mut parser = LRParser::new(&PARSER_DEFINITION, StateIndex(0));
         loop {
             log!("** Parsing content");
-            let result = parser.0.parse(&mut context, &lexer, &mut builder);
+            let result = parser.parse(context, &lexer, &mut builder);
             if result.is_err() {
                 let pos = context.position;
                 log!("** Parsing layout");
-                RustemoLayoutParser::parse_layout(&mut context);
+                RustemoLayoutParser::parse_layout(context);
                 if context.position > pos {
                     continue;
                 }
             }
             return result;
         }
-    }
-}
-impl Default for RustemoParser {
-    fn default() -> Self {
-        Self(LRParser::new(&PARSER_DEFINITION, StateIndex(0)))
     }
 }
 pub struct RustemoLayoutParser(LRParser<RustemoParserDefinition>);

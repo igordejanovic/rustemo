@@ -3,6 +3,7 @@
 mod ambiguity;
 mod builder;
 mod errors;
+mod from_file;
 mod layout;
 mod lexer;
 mod partial;
