@@ -7,7 +7,6 @@
 - [Components](components.md)
   - [Lexers](lexers.md)
   - [Builders](builders.md)
-  - [Recognizers](recognizers.md)
 - [CLI](cli.md)
 - [Handling errors](handling_errors.md)
   - [Disambiguation](disambiguation.md)
