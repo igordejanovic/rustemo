@@ -15,7 +15,9 @@ fn main() {
 
     // Read the line from the input
     println!("Expression:");
-    io::stdin().read_line(&mut expression).expect("Failed to read line.");
+    io::stdin()
+        .read_line(&mut expression)
+        .expect("Failed to read line.");
 
     // Parse the line and get the result.
     let result = CalculatorParser::parse(&expression);

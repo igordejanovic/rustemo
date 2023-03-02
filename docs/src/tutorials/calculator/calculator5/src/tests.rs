@@ -11,8 +11,5 @@ fn calculator5_1() {
 #[test]
 fn calculator5_1_error() {
     let result = CalculatorParser::parse("2 + 3 * 7 ^ 2.3");
-    output_cmp!(
-        "src/calculator5_1.err",
-        result.unwrap_err().to_string()
-    );
+    output_cmp!("src/calculator5_1.err", result.unwrap_err().to_string());
 }
