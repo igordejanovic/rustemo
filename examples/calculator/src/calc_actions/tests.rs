@@ -1,6 +1,7 @@
 mod calculator01_calc_tests {
+    use rustemo_tools::output_cmp;
+
     use crate::calc_actions::calculator01::Calculator01Parser;
-    use indoc::indoc;
 
     #[test]
     fn test_calculator01_1() {
@@ -18,12 +19,9 @@ mod calculator01_calc_tests {
     fn test_calculator01_error() {
         let result = Calculator01Parser::parse("2 + ( 3  *  + 7 ) + 2 * 4");
         assert!(result.is_err());
-        assert_eq!(
-            indoc! {"
-                Error at <str>:1:12:
-                \t...2 + ( 3  *  -->+ 7 ) + 2 * 4...
-                \tExpected one of LParen, Num."},
-            result.err().unwrap().to_string()
+        output_cmp!(
+            "src/calc_actions/calculator01.err",
+            result.unwrap_err().to_string()
         );
     }
 }
