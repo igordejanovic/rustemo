@@ -265,7 +265,8 @@ impl ActionsGenerator for ProductionActionsGenerator {
                 ref_type,
                 recursive,
             } => {
-                let mut ref_type = Ident::new(ref_type, Span::call_site());
+                let ref_type_ident = Ident::new(ref_type, Span::call_site());
+                let mut ref_type: syn::Type = parse_quote! { #ref_type_ident };
                 if recursive.get() {
                     ref_type = parse_quote! { Box<#ref_type> }
                 }
