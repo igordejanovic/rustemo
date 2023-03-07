@@ -32,28 +32,14 @@ Grammar {
                     ResolvingAssignment {
                         name: None,
                         symbol: Resolved(
-                            1,
+                            8,
                         ),
                         is_bool: false,
                     },
                     ResolvingAssignment {
                         name: None,
                         symbol: Resolved(
-                            7,
-                        ),
-                        is_bool: false,
-                    },
-                    ResolvingAssignment {
-                        name: None,
-                        symbol: Resolved(
-                            2,
-                        ),
-                        is_bool: false,
-                    },
-                    ResolvingAssignment {
-                        name: None,
-                        symbol: Resolved(
-                            1,
+                            9,
                         ),
                         is_bool: false,
                     },
@@ -67,6 +53,27 @@ Grammar {
             },
             Production {
                 idx: 2,
+                nonterminal: 2,
+                ntidx: 1,
+                kind: None,
+                rhs: [
+                    ResolvingAssignment {
+                        name: None,
+                        symbol: Resolved(
+                            7,
+                        ),
+                        is_bool: false,
+                    },
+                ],
+                assoc: None,
+                prio: 10,
+                dynamic: false,
+                nops: false,
+                nopse: false,
+                meta: {},
+            },
+            Production {
+                idx: 3,
                 nonterminal: 3,
                 ntidx: 0,
                 kind: None,
@@ -74,24 +81,37 @@ Grammar {
                     ResolvingAssignment {
                         name: None,
                         symbol: Resolved(
-                            3,
+                            11,
                         ),
                         is_bool: false,
                     },
-                    ResolvingAssignment {
-                        name: None,
-                        symbol: Resolved(
-                            3,
-                        ),
-                        is_bool: false,
-                    },
-                    ResolvingAssignment {
-                        name: None,
-                        symbol: Resolved(
-                            1,
-                        ),
-                        is_bool: false,
-                    },
+                ],
+                assoc: None,
+                prio: 10,
+                dynamic: false,
+                nops: false,
+                nopse: false,
+                meta: {},
+            },
+            Production {
+                idx: 4,
+                nonterminal: 3,
+                ntidx: 1,
+                kind: None,
+                rhs: [],
+                assoc: None,
+                prio: 10,
+                dynamic: false,
+                nops: false,
+                nopse: false,
+                meta: {},
+            },
+            Production {
+                idx: 5,
+                nonterminal: 2,
+                ntidx: 2,
+                kind: None,
+                rhs: [
                     ResolvingAssignment {
                         name: None,
                         symbol: Resolved(
@@ -100,6 +120,103 @@ Grammar {
                         is_bool: false,
                     },
                 ],
+                assoc: None,
+                prio: 10,
+                dynamic: false,
+                nops: false,
+                nopse: false,
+                meta: {},
+            },
+            Production {
+                idx: 6,
+                nonterminal: 4,
+                ntidx: 0,
+                kind: None,
+                rhs: [
+                    ResolvingAssignment {
+                        name: None,
+                        symbol: Resolved(
+                            9,
+                        ),
+                        is_bool: false,
+                    },
+                ],
+                assoc: None,
+                prio: 10,
+                dynamic: false,
+                nops: false,
+                nopse: false,
+                meta: {},
+            },
+            Production {
+                idx: 7,
+                nonterminal: 5,
+                ntidx: 0,
+                kind: None,
+                rhs: [
+                    ResolvingAssignment {
+                        name: None,
+                        symbol: Resolved(
+                            2,
+                        ),
+                        is_bool: false,
+                    },
+                ],
+                assoc: None,
+                prio: 10,
+                dynamic: false,
+                nops: false,
+                nopse: false,
+                meta: {},
+            },
+            Production {
+                idx: 8,
+                nonterminal: 6,
+                ntidx: 0,
+                kind: None,
+                rhs: [
+                    ResolvingAssignment {
+                        name: None,
+                        symbol: Resolved(
+                            11,
+                        ),
+                        is_bool: false,
+                    },
+                ],
+                assoc: None,
+                prio: 10,
+                dynamic: false,
+                nops: false,
+                nopse: false,
+                meta: {},
+            },
+            Production {
+                idx: 9,
+                nonterminal: 7,
+                ntidx: 0,
+                kind: None,
+                rhs: [
+                    ResolvingAssignment {
+                        name: None,
+                        symbol: Resolved(
+                            9,
+                        ),
+                        is_bool: false,
+                    },
+                ],
+                assoc: None,
+                prio: 10,
+                dynamic: false,
+                nops: false,
+                nopse: false,
+                meta: {},
+            },
+            Production {
+                idx: 10,
+                nonterminal: 7,
+                ntidx: 1,
+                kind: None,
+                rhs: [],
                 assoc: None,
                 prio: 10,
                 dynamic: false,
@@ -125,18 +242,18 @@ Grammar {
             },
             Terminal {
                 idx: 1,
-                name: "first_term",
+                name: "Ta",
                 action: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
-                            value: "first_term",
+                            value: "a",
                             location: Some(
                                 Location {
                                     start: LineBased(
                                         LineBased {
-                                            line: 5,
-                                            column: 20,
+                                            line: 10,
+                                            column: 12,
                                         },
                                     ),
                                     end: None,
@@ -147,25 +264,25 @@ Grammar {
                 ),
                 has_content: false,
                 reachable: Cell {
-                    value: true,
+                    value: false,
                 },
                 prio: 10,
                 meta: {},
             },
             Terminal {
                 idx: 2,
-                name: "second_term",
+                name: "Tb",
                 action: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
-                            value: "second_term",
+                            value: "b",
                             location: Some(
                                 Location {
                                     start: LineBased(
                                         LineBased {
-                                            line: 6,
-                                            column: 21,
+                                            line: 11,
+                                            column: 12,
                                         },
                                     ),
                                     end: None,
@@ -183,18 +300,18 @@ Grammar {
             },
             Terminal {
                 idx: 3,
-                name: "third_term",
+                name: "Tc",
                 action: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
-                            value: "third_term",
+                            value: "c",
                             location: Some(
                                 Location {
                                     start: LineBased(
                                         LineBased {
-                                            line: 7,
-                                            column: 20,
+                                            line: 12,
+                                            column: 12,
                                         },
                                     ),
                                     end: None,
@@ -205,7 +322,7 @@ Grammar {
                 ),
                 has_content: false,
                 reachable: Cell {
-                    value: true,
+                    value: false,
                 },
                 prio: 10,
                 meta: {},
@@ -240,6 +357,8 @@ Grammar {
                 action: None,
                 productions: [
                     1,
+                    2,
+                    5,
                 ],
                 reachable: Cell {
                     value: true,
@@ -247,10 +366,56 @@ Grammar {
             },
             NonTerminal {
                 idx: 3,
+                name: "COpt",
+                action: None,
+                productions: [
+                    3,
+                    4,
+                ],
+                reachable: Cell {
+                    value: true,
+                },
+            },
+            NonTerminal {
+                idx: 4,
                 name: "A",
                 action: None,
                 productions: [
-                    2,
+                    6,
+                ],
+                reachable: Cell {
+                    value: true,
+                },
+            },
+            NonTerminal {
+                idx: 5,
+                name: "B",
+                action: None,
+                productions: [
+                    7,
+                ],
+                reachable: Cell {
+                    value: true,
+                },
+            },
+            NonTerminal {
+                idx: 6,
+                name: "D",
+                action: None,
+                productions: [
+                    8,
+                ],
+                reachable: Cell {
+                    value: false,
+                },
+            },
+            NonTerminal {
+                idx: 7,
+                name: "C",
+                action: None,
+                productions: [
+                    9,
+                    10,
                 ],
                 reachable: Cell {
                     value: true,
@@ -259,16 +424,20 @@ Grammar {
         ],
     ),
     nonterm_by_name: {
-        "A": 7,
+        "A": 8,
         "AUG": 5,
+        "B": 9,
+        "C": 11,
+        "COpt": 7,
+        "D": 10,
         "EMPTY": 4,
         "S": 6,
     },
     term_by_name: {
         "STOP": 0,
-        "first_term": 1,
-        "second_term": 2,
-        "third_term": 3,
+        "Ta": 1,
+        "Tb": 2,
+        "Tc": 3,
     },
     empty_index: 4,
     stop_index: 0,

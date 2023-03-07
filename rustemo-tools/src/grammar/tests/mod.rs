@@ -311,3 +311,26 @@ fn regex_sugar_optional() {
         format!("{:#?}", grammar)
     );
 }
+
+#[test]
+fn unreachable_rules() {
+    let grammar: Grammar = r#"
+        S: A B | C? | Tb;
+        A: B;
+        B: Tb;
+        // Rule D is unreachable.
+        D: C;
+        C: B | EMPTY;
+
+        terminals
+        Ta: 'a';   // unreachable
+        Tb: 'b';   // reachable
+        Tc: 'c';  // unreachable
+    "#
+    .parse()
+    .unwrap();
+    output_cmp!(
+        "src/grammar/tests/unreachable_rules.expected",
+        format!("{:#?}", grammar)
+    );
+}

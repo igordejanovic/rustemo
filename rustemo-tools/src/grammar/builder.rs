@@ -1,5 +1,5 @@
 //! Grammar builder. Used to construct the grammar from the parsed AST.
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use rustemo::{
     index::{
@@ -97,11 +97,9 @@ impl GrammarBuilder {
             Terminal {
                 idx: term_idx,
                 name: "STOP".to_string(),
-                action: None,
-                recognizer: None,
-                has_content: false,
                 prio: DEFAULT_PRIORITY,
                 meta: TermMetaDatas::new(),
+                ..Default::default()
             },
         );
 
@@ -161,6 +159,9 @@ impl GrammarBuilder {
                 nonterms
             },
         };
+
+        mark_reachable_symbols(&grammar);
+
         // TODO: Dump only if tracing is used
         log!("{grammar}");
         Ok(grammar)
@@ -196,6 +197,7 @@ impl GrammarBuilder {
                         DEFAULT_PRIORITY
                     },
                     meta: terminal.meta,
+                    reachable: false.into(),
                 },
             );
         }
@@ -226,6 +228,7 @@ impl GrammarBuilder {
                 name: "EMPTY".to_string(),
                 productions: vec![],
                 action: None,
+                reachable: false.into(),
             },
         );
 
@@ -356,8 +359,8 @@ impl GrammarBuilder {
                     .or_insert_with(|| NonTerminal {
                         idx: nt_idx,
                         name: rule.name.as_ref().into(),
-                        productions: vec![],
                         action: rule.action.as_ref().map(|a| a.as_ref().into()),
+                        ..Default::default()
                     });
                 nonterminal.productions.push(prod_idx);
             }
@@ -380,7 +383,7 @@ impl GrammarBuilder {
                 idx: nt_idx,
                 name: nt_name.to_string(),
                 productions: vec![prod_idx],
-                action: None,
+                ..Default::default()
             },
         );
 
@@ -612,7 +615,6 @@ impl GrammarBuilder {
         let nt = NonTerminal {
             idx: nt_index,
             name: name.clone(),
-            action: None,
             productions: (0..2)
                 .map(|idx| {
                     let prod_idx = self.get_prod_idx();
@@ -636,6 +638,7 @@ impl GrammarBuilder {
                     prod_idx
                 })
                 .collect(),
+            ..Default::default()
         };
         self.nonterminals.insert(name, nt);
     }
@@ -689,6 +692,7 @@ impl GrammarBuilder {
                     prod_idx
                 })
                 .collect(),
+            reachable: false.into(),
         };
         self.nonterminals.insert(name, nt);
     }
@@ -727,7 +731,40 @@ impl GrammarBuilder {
                     prod_idx
                 })
                 .collect(),
+            reachable: false.into(),
         };
         self.nonterminals.insert(name, nt);
     }
+}
+
+fn mark_reachable_symbols(grammar: &Grammar) {
+    let mut visited = BTreeSet::<ProdIndex>::new();
+
+    fn mark_reachable(
+        grammar: &Grammar,
+        nonterm: &NonTerminal,
+        visited: &mut BTreeSet<ProdIndex>,
+    ) {
+        nonterm.reachable.set(true);
+        for prod in &nonterm.productions {
+            if visited.contains(prod) {
+                continue;
+            }
+            visited.insert(*prod);
+            for symbol in grammar.productions[*prod].rhs_symbols() {
+                if grammar.is_nonterm(symbol) {
+                    mark_reachable(grammar, grammar.symbol_to_nonterm(symbol), visited)
+                } else {
+                    grammar.symbol_to_term(symbol).reachable.set(true);
+                }
+            }
+        }
+    }
+
+    mark_reachable(
+        grammar,
+        &grammar.nonterminals
+            [grammar.symbol_to_nonterm_index(grammar.start_index)],
+        &mut visited,
+    );
 }

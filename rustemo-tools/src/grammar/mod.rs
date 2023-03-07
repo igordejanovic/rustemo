@@ -2,7 +2,7 @@ use std::{
     collections::BTreeMap,
     fmt::Display,
     hash::{Hash, Hasher},
-    str::FromStr,
+    str::FromStr, cell::Cell,
 };
 
 use rustemo::{
@@ -74,7 +74,7 @@ macro_rules! grammar_elem {
     };
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Terminal {
     pub idx: TermIndex,
     pub name: String,
@@ -85,17 +85,25 @@ pub struct Terminal {
     /// or a custom recognizer).
     pub has_content: bool,
 
+    /// Is this terminal reachable from the start rule.
+    /// Used to determine layout-only rules.
+    pub reachable: Cell<bool>,
+
     pub prio: Priority,
     pub meta: TermMetaDatas,
 }
 grammar_elem!(Terminal);
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct NonTerminal {
     pub idx: NonTermIndex,
     pub name: String,
     pub action: Option<String>,
     pub productions: Vec<ProdIndex>,
+
+    /// Is this non-terminal reachable from the start rule.
+    /// Used to determine layout-only rules.
+    pub reachable: Cell<bool>,
 }
 grammar_elem!(NonTerminal);
 

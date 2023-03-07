@@ -148,6 +148,9 @@ Grammar {
                 action: None,
                 recognizer: None,
                 has_content: false,
+                reachable: Cell {
+                    value: false,
+                },
                 prio: 10,
                 meta: {},
             },
@@ -174,6 +177,9 @@ Grammar {
                     ),
                 ),
                 has_content: false,
+                reachable: Cell {
+                    value: true,
+                },
                 prio: 10,
                 meta: {},
             },
@@ -186,6 +192,9 @@ Grammar {
                 name: "EMPTY",
                 action: None,
                 productions: [],
+                reachable: Cell {
+                    value: false,
+                },
             },
             NonTerminal {
                 idx: 1,
@@ -194,6 +203,9 @@ Grammar {
                 productions: [
                     0,
                 ],
+                reachable: Cell {
+                    value: false,
+                },
             },
             NonTerminal {
                 idx: 2,
@@ -203,6 +215,9 @@ Grammar {
                     1,
                     2,
                 ],
+                reachable: Cell {
+                    value: true,
+                },
             },
             NonTerminal {
                 idx: 3,
@@ -211,6 +226,9 @@ Grammar {
                 productions: [
                     3,
                 ],
+                reachable: Cell {
+                    value: true,
+                },
             },
             NonTerminal {
                 idx: 4,
@@ -219,6 +237,9 @@ Grammar {
                 productions: [
                     4,
                 ],
+                reachable: Cell {
+                    value: true,
+                },
             },
         ],
     ),
