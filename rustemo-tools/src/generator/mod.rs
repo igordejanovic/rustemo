@@ -472,6 +472,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
 
         let term_variants: Vec<syn::Variant> = self.grammar.terminals[1..]
             .iter()
+            .filter(|t| t.reachable.get())
             .map(|t| {
                 let name = format_ident!("{}", t.name);
                 if t.has_content {
@@ -498,6 +499,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             .grammar
             .nonterminals()
             .iter()
+            .filter(|nt| nt.reachable.get())
             .map(|nt| {
                 let name = format_ident!("{}", nt.name);
                 parse_quote! {
@@ -907,7 +909,9 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             }
         });
 
-        let shift_match_arms: Vec<syn::Arm> = self.grammar.terminals[1..].iter().map(|terminal| {
+        let mut shift_match_arms: Vec<syn::Arm> =
+            self.grammar.terminals[1..].iter().filter(|t| t.reachable.get())
+                                              .map(|terminal| {
             let action = format_ident!("{}", to_snake_case(&terminal.name));
             let term = format_ident!("{}", terminal.name);
             if let Some(Recognizer::StrConst(_)) = terminal.recognizer {
@@ -921,8 +925,24 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             }
         }).collect();
 
-        let reduce_match_arms: Vec<syn::Arm> = self.grammar.productions().iter().map(|production| {
+        if self.grammar.terminals[1..].iter().any(|t| !t.reachable.get()) {
+            shift_match_arms.push(
+                parse_quote!{
+                    _ => panic!("Shift of unreachable terminal!")
+                }
+            )
+        }
+        let shift_match_arms = shift_match_arms;
+
+        let mut has_nonreachable_nonterminals = false;
+        let mut reduce_match_arms: Vec<syn::Arm> =
+            self.grammar.productions().iter()
+                                      .filter_map(|production| {
             let nonterminal = &self.grammar.nonterminals[production.nonterminal];
+            if !nonterminal.reachable.get() {
+                has_nonreachable_nonterminals = true;
+                return None
+            }
             let rhs_len = production.rhs.len();
             let action = action_name(nonterminal, production);
             let prod_kind = self.prod_kind_ident(production);
@@ -930,18 +950,18 @@ impl<'g, 's> ParserGenerator<'g, 's> {
 
             if rhs_len == 0 {
                 // Handle EMPTY reduction
-                parse_quote!{
+                Some(parse_quote!{
                     ProdKind::#prod_kind => NonTerminal::#nonterminal(#actions_file::#action(#context_var))
-                }
+                })
             } else {
                 // Special handling of production with only str match terms in RHS
                 if production.rhs_with_content(self.grammar).is_empty() {
-                    parse_quote! {
+                    Some(parse_quote! {
                         ProdKind::#prod_kind => {
                             let _ = self.res_stack.split_off(self.res_stack.len()-#rhs_len).into_iter();
                             NonTerminal::#nonterminal(#actions_file::#action(#context_var))
                         }
-                    }
+                    })
                 } else {
                     let mut next_rep: Vec<syn::Expr> = repeat(
                         parse_quote!{ i.next().unwrap() }
@@ -981,7 +1001,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                     let params: Vec<syn::Ident> = (0..production.rhs_with_content(self.grammar).len())
                         .map( |idx| format_ident! { "p{}", idx }).collect();
 
-                    parse_quote! {
+                    Some(parse_quote! {
                         ProdKind::#prod_kind => {
                             let mut i = self.res_stack.split_off(self.res_stack.len()-#rhs_len).into_iter();
                             match #match_expr {
@@ -990,10 +1010,19 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                             }
 
                         }
-                    }
+                    })
                 }
             }
         }).collect();
+
+        if has_nonreachable_nonterminals {
+           reduce_match_arms.push(
+               parse_quote!(
+                    _ => panic!("Reduce of unreachable nonterminal!")
+               )
+           )
+        }
+        let reduce_match_arms = reduce_match_arms;
 
         ast.push(
             parse_quote! {

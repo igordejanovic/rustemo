@@ -734,8 +734,6 @@ pub enum Terminal {
     Prefer,
     Finish,
     NoFinish,
-    OComment,
-    CComment,
     Name(rustemo_actions::Name),
     RegexTerm(rustemo_actions::RegexTerm),
     IntConst(rustemo_actions::IntConst),
@@ -743,9 +741,6 @@ pub enum Terminal {
     BoolConst(rustemo_actions::BoolConst),
     StrConst(rustemo_actions::StrConst),
     Action(rustemo_actions::Action),
-    WS(rustemo_actions::WS),
-    CommentLine(rustemo_actions::CommentLine),
-    NotComment(rustemo_actions::NotComment),
 }
 #[derive(Debug)]
 pub enum NonTerminal {
@@ -781,15 +776,6 @@ pub enum NonTerminal {
     RepetitionModifier(rustemo_actions::RepetitionModifier),
     GrammarSymbol(rustemo_actions::GrammarSymbol),
     Recognizer(rustemo_actions::Recognizer),
-    Layout(rustemo_actions::Layout),
-    LayoutItem1(rustemo_actions::LayoutItem1),
-    LayoutItem0(rustemo_actions::LayoutItem0),
-    LayoutItem(rustemo_actions::LayoutItem),
-    Comment(rustemo_actions::Comment),
-    Corncs(rustemo_actions::Corncs),
-    Cornc1(rustemo_actions::Cornc1),
-    Cornc0(rustemo_actions::Cornc0),
-    Cornc(rustemo_actions::Cornc),
 }
 pub struct RustemoParserDefinition {
     actions: [[Action; TERMINAL_NO]; STATE_NO],
@@ -16822,8 +16808,6 @@ impl<'i> LRBuilder<'i, Input, TokenKind> for RustemoBuilder {
             TokenKind::Prefer => Terminal::Prefer,
             TokenKind::Finish => Terminal::Finish,
             TokenKind::NoFinish => Terminal::NoFinish,
-            TokenKind::OComment => Terminal::OComment,
-            TokenKind::CComment => Terminal::CComment,
             TokenKind::Name => Terminal::Name(rustemo_actions::name(context, token)),
             TokenKind::RegexTerm => {
                 Terminal::RegexTerm(rustemo_actions::regex_term(context, token))
@@ -16843,13 +16827,7 @@ impl<'i> LRBuilder<'i, Input, TokenKind> for RustemoBuilder {
             TokenKind::Action => {
                 Terminal::Action(rustemo_actions::action(context, token))
             }
-            TokenKind::WS => Terminal::WS(rustemo_actions::ws(context, token)),
-            TokenKind::CommentLine => {
-                Terminal::CommentLine(rustemo_actions::comment_line(context, token))
-            }
-            TokenKind::NotComment => {
-                Terminal::NotComment(rustemo_actions::not_comment(context, token))
-            }
+            _ => panic!("Shift of unreachable terminal!"),
         };
         self.res_stack.push(Symbol::Terminal(val));
     }
@@ -18002,206 +17980,7 @@ impl<'i> LRBuilder<'i, Input, TokenKind> for RustemoBuilder {
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
-            ProdKind::LayoutP1 => {
-                let mut i = self
-                    .res_stack
-                    .split_off(self.res_stack.len() - 1usize)
-                    .into_iter();
-                match i.next().unwrap() {
-                    Symbol::NonTerminal(NonTerminal::LayoutItem0(p0)) => {
-                        NonTerminal::Layout(rustemo_actions::layout_c1(context, p0))
-                    }
-                    _ => panic!("Invalid symbol parse stack data."),
-                }
-            }
-            ProdKind::LayoutItem1P1 => {
-                let mut i = self
-                    .res_stack
-                    .split_off(self.res_stack.len() - 2usize)
-                    .into_iter();
-                match (i.next().unwrap(), i.next().unwrap()) {
-                    (
-                        Symbol::NonTerminal(NonTerminal::LayoutItem1(p0)),
-                        Symbol::NonTerminal(NonTerminal::LayoutItem(p1)),
-                    ) => {
-                        NonTerminal::LayoutItem1(
-                            rustemo_actions::layout_item1_c1(context, p0, p1),
-                        )
-                    }
-                    _ => panic!("Invalid symbol parse stack data."),
-                }
-            }
-            ProdKind::LayoutItem1P2 => {
-                let mut i = self
-                    .res_stack
-                    .split_off(self.res_stack.len() - 1usize)
-                    .into_iter();
-                match i.next().unwrap() {
-                    Symbol::NonTerminal(NonTerminal::LayoutItem(p0)) => {
-                        NonTerminal::LayoutItem1(
-                            rustemo_actions::layout_item1_c2(context, p0),
-                        )
-                    }
-                    _ => panic!("Invalid symbol parse stack data."),
-                }
-            }
-            ProdKind::LayoutItem0P1 => {
-                let mut i = self
-                    .res_stack
-                    .split_off(self.res_stack.len() - 1usize)
-                    .into_iter();
-                match i.next().unwrap() {
-                    Symbol::NonTerminal(NonTerminal::LayoutItem1(p0)) => {
-                        NonTerminal::LayoutItem0(
-                            rustemo_actions::layout_item0_c1(context, p0),
-                        )
-                    }
-                    _ => panic!("Invalid symbol parse stack data."),
-                }
-            }
-            ProdKind::LayoutItem0P2 => {
-                NonTerminal::LayoutItem0(rustemo_actions::layout_item0_empty(context))
-            }
-            ProdKind::LayoutItemP1 => {
-                let mut i = self
-                    .res_stack
-                    .split_off(self.res_stack.len() - 1usize)
-                    .into_iter();
-                match i.next().unwrap() {
-                    Symbol::Terminal(Terminal::WS(p0)) => {
-                        NonTerminal::LayoutItem(
-                            rustemo_actions::layout_item_c1(context, p0),
-                        )
-                    }
-                    _ => panic!("Invalid symbol parse stack data."),
-                }
-            }
-            ProdKind::LayoutItemP2 => {
-                let mut i = self
-                    .res_stack
-                    .split_off(self.res_stack.len() - 1usize)
-                    .into_iter();
-                match i.next().unwrap() {
-                    Symbol::NonTerminal(NonTerminal::Comment(p0)) => {
-                        NonTerminal::LayoutItem(
-                            rustemo_actions::layout_item_c2(context, p0),
-                        )
-                    }
-                    _ => panic!("Invalid symbol parse stack data."),
-                }
-            }
-            ProdKind::CommentP1 => {
-                let mut i = self
-                    .res_stack
-                    .split_off(self.res_stack.len() - 3usize)
-                    .into_iter();
-                match (i.next().unwrap(), i.next().unwrap(), i.next().unwrap()) {
-                    (_, Symbol::NonTerminal(NonTerminal::Corncs(p0)), _) => {
-                        NonTerminal::Comment(rustemo_actions::comment_c1(context, p0))
-                    }
-                    _ => panic!("Invalid symbol parse stack data."),
-                }
-            }
-            ProdKind::CommentP2 => {
-                let mut i = self
-                    .res_stack
-                    .split_off(self.res_stack.len() - 1usize)
-                    .into_iter();
-                match i.next().unwrap() {
-                    Symbol::Terminal(Terminal::CommentLine(p0)) => {
-                        NonTerminal::Comment(rustemo_actions::comment_c2(context, p0))
-                    }
-                    _ => panic!("Invalid symbol parse stack data."),
-                }
-            }
-            ProdKind::CorncsP1 => {
-                let mut i = self
-                    .res_stack
-                    .split_off(self.res_stack.len() - 1usize)
-                    .into_iter();
-                match i.next().unwrap() {
-                    Symbol::NonTerminal(NonTerminal::Cornc0(p0)) => {
-                        NonTerminal::Corncs(rustemo_actions::corncs_c1(context, p0))
-                    }
-                    _ => panic!("Invalid symbol parse stack data."),
-                }
-            }
-            ProdKind::Cornc1P1 => {
-                let mut i = self
-                    .res_stack
-                    .split_off(self.res_stack.len() - 2usize)
-                    .into_iter();
-                match (i.next().unwrap(), i.next().unwrap()) {
-                    (
-                        Symbol::NonTerminal(NonTerminal::Cornc1(p0)),
-                        Symbol::NonTerminal(NonTerminal::Cornc(p1)),
-                    ) => NonTerminal::Cornc1(rustemo_actions::cornc1_c1(context, p0, p1)),
-                    _ => panic!("Invalid symbol parse stack data."),
-                }
-            }
-            ProdKind::Cornc1P2 => {
-                let mut i = self
-                    .res_stack
-                    .split_off(self.res_stack.len() - 1usize)
-                    .into_iter();
-                match i.next().unwrap() {
-                    Symbol::NonTerminal(NonTerminal::Cornc(p0)) => {
-                        NonTerminal::Cornc1(rustemo_actions::cornc1_c2(context, p0))
-                    }
-                    _ => panic!("Invalid symbol parse stack data."),
-                }
-            }
-            ProdKind::Cornc0P1 => {
-                let mut i = self
-                    .res_stack
-                    .split_off(self.res_stack.len() - 1usize)
-                    .into_iter();
-                match i.next().unwrap() {
-                    Symbol::NonTerminal(NonTerminal::Cornc1(p0)) => {
-                        NonTerminal::Cornc0(rustemo_actions::cornc0_c1(context, p0))
-                    }
-                    _ => panic!("Invalid symbol parse stack data."),
-                }
-            }
-            ProdKind::Cornc0P2 => {
-                NonTerminal::Cornc0(rustemo_actions::cornc0_empty(context))
-            }
-            ProdKind::CorncP1 => {
-                let mut i = self
-                    .res_stack
-                    .split_off(self.res_stack.len() - 1usize)
-                    .into_iter();
-                match i.next().unwrap() {
-                    Symbol::NonTerminal(NonTerminal::Comment(p0)) => {
-                        NonTerminal::Cornc(rustemo_actions::cornc_c1(context, p0))
-                    }
-                    _ => panic!("Invalid symbol parse stack data."),
-                }
-            }
-            ProdKind::CorncP2 => {
-                let mut i = self
-                    .res_stack
-                    .split_off(self.res_stack.len() - 1usize)
-                    .into_iter();
-                match i.next().unwrap() {
-                    Symbol::Terminal(Terminal::NotComment(p0)) => {
-                        NonTerminal::Cornc(rustemo_actions::cornc_c2(context, p0))
-                    }
-                    _ => panic!("Invalid symbol parse stack data."),
-                }
-            }
-            ProdKind::CorncP3 => {
-                let mut i = self
-                    .res_stack
-                    .split_off(self.res_stack.len() - 1usize)
-                    .into_iter();
-                match i.next().unwrap() {
-                    Symbol::Terminal(Terminal::WS(p0)) => {
-                        NonTerminal::Cornc(rustemo_actions::cornc_c3(context, p0))
-                    }
-                    _ => panic!("Invalid symbol parse stack data."),
-                }
-            }
+            _ => panic!("Reduce of unreachable nonterminal!"),
         };
         self.res_stack.push(Symbol::NonTerminal(prod));
     }

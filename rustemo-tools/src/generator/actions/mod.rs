@@ -138,42 +138,51 @@ where
         production::ProductionActionsGenerator::new(grammar);
 
     // Generate types and actions for terminals
-    for terminal in grammar.terminals.iter().filter(|t| t.has_content) {
-        // Add terminal types
-        let type_name = &terminal.name;
-        if !type_names.contains(type_name) {
-            log!("Create type for terminal '{type_name}'.");
-            ast.items.push(generator.terminal_type(terminal));
-        }
-        // Add terminal actions
-        let action_name = to_snake_case(&terminal.name);
-        if !action_names.contains(&action_name) {
-            log!("Create action function for terminal '{type_name}'.");
-            ast.items
-                .push(generator.terminal_action(terminal, settings))
-        }
-    }
+    grammar
+        .terminals
+        .iter()
+        .filter(|t| t.has_content && t.reachable.get())
+        .for_each(|terminal| {
+            // Add terminal types
+            let type_name = &terminal.name;
+            if !type_names.contains(type_name) {
+                log!("Create type for terminal '{type_name}'.");
+                ast.items.push(generator.terminal_type(terminal));
+            }
+            // Add terminal actions
+            let action_name = to_snake_case(&terminal.name);
+            if !action_names.contains(&action_name) {
+                log!("Create action function for terminal '{type_name}'.");
+                ast.items
+                    .push(generator.terminal_action(terminal, settings))
+            }
+        });
 
     // Generate types and actions for non-terminals
-    for nonterminal in grammar.nonterminals() {
-        // Add non-terminal type
-        if !type_names.contains(&nonterminal.name) {
-            log!("Creating types for non-terminal '{}'.", nonterminal.name);
-            for ty in generator.nonterminal_types(nonterminal) {
-                ast.items.push(ty);
+    grammar
+        .nonterminals()
+        .iter()
+        .filter(|nt| nt.reachable.get())
+        .into_iter()
+        .for_each(|nonterminal| {
+            // Add non-terminal type
+            if !type_names.contains(&nonterminal.name) {
+                log!("Creating types for non-terminal '{}'.", nonterminal.name);
+                for ty in generator.nonterminal_types(nonterminal) {
+                    ast.items.push(ty);
+                }
             }
-        }
 
-        // Add non-terminal actions
-        for (action_name, action) in
-            generator.nonterminal_actions(nonterminal, settings)
-        {
-            if !action_names.contains(&action_name) {
-                log!("Creating action '{action_name}'.");
-                ast.items.push(action);
+            // Add non-terminal actions
+            for (action_name, action) in
+                generator.nonterminal_actions(nonterminal, settings)
+            {
+                if !action_names.contains(&action_name) {
+                    log!("Creating action '{action_name}'.");
+                    ast.items.push(action);
+                }
             }
-        }
-    }
+        });
 
     log!("Writing action file {:?}", action_file);
     std::fs::create_dir_all(&out_dir_actions).map_err(|e| {
