@@ -111,25 +111,26 @@ where
             syn::Item::Enum(e) => {
                 let type_name = e.ident.to_string();
                 log!("Found enum type '{}'", type_name);
-                type_names.insert(type_name)
+                type_names.insert(type_name);
             }
             syn::Item::Struct(e) => {
                 let type_name = e.ident.to_string();
                 log!("Found struct type '{}'", type_name);
-                type_names.insert(type_name)
+                type_names.insert(type_name);
             }
             // Used for actions
             syn::Item::Fn(f) => {
                 let type_name = f.sig.ident.to_string();
                 log!("Found action function '{}'", type_name);
-                action_names.insert(type_name)
+                action_names.insert(type_name);
             }
             syn::Item::Type(t) => {
                 let type_name = t.ident.to_string();
                 log!("Found type '{}'", type_name);
-                type_names.insert(type_name)
+                type_names.insert(type_name);
             }
-            _ => false,
+            // We don't need to do anything for other source items
+            _ => (),
         };
     }
 
