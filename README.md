@@ -1,13 +1,13 @@
 # Rustemo
 
-LR/GLR parser generator for Rust (currently only LR). 
+LR/GLR parser generator for Rust (currently only LR).
 
 **In the early phase of development. DO NOT USE IN PRODUCTION!**
 
 ## Aspirations
 
 - **Both LR and GLR parsing from the same grammar**
-  
+
   E.g. start with GLR for easier development and refactor to LR for performance,
   or start from LR and move to GLR if your language needs more than 1 token of
   lookahead or is inherently ambiguous.
@@ -40,12 +40,12 @@ LR/GLR parser generator for Rust (currently only LR).
 
   Default lexers and builders are provided/generated out-of-the box but the user
   can choose to write custom lexer and/or builder.
-  
+
   When custom lexer/builder is provided Rustemo can be used to parse virtually
   any kind of sequence and also build any kind of output.
 
 - **Inference of AST node types from the grammar**
-  
+
   For the default built-in builder, AST node types and semantics actions should
   be inferred from the grammar and auto-generated, but the user can introduce
   manual changes.
@@ -88,7 +88,7 @@ LR/GLR parser generator for Rust (currently only LR).
       is be passed by context to actions which can do whatever they please. E.g.
       a generic tree builder keep layout on the following tree leaf. See [the
       tests](./tests/src/layout).
-- [ ] Better error reporting during grammar analysis and state machine building.   
+- [x] Better error reporting during grammar analysis and state machine building.
       Basic error reporting is implemented at the moment without full location
       info.
 - [ ] Docs (will mostly be based on parglare docs for the grammar language).
