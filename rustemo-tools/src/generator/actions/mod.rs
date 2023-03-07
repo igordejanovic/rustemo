@@ -159,7 +159,7 @@ where
         // Add non-terminal type
         if !type_names.contains(&nonterminal.name) {
             log!("Creating types for non-terminal '{}'.", nonterminal.name);
-            for ty in generator.nonterminal_types(nonterminal).into_iter() {
+            for ty in generator.nonterminal_types(nonterminal) {
                 ast.items.push(ty);
             }
         }
