@@ -1,8 +1,7 @@
-use rustemo_tools::output_cmp;
+use rustemo_tools::{local_file, output_cmp};
 
 #[test]
 fn terminal_not_defined() {
-    use crate::local_file;
     let result = rustemo_tools::with_settings()
         .process_grammar(local_file!(file!(), "terminal_not_defined.rustemo"));
     output_cmp!(
@@ -13,7 +12,6 @@ fn terminal_not_defined() {
 
 #[test]
 fn terminal_not_defined_sugar() {
-    use crate::local_file;
     let result = rustemo_tools::with_settings().process_grammar(local_file!(
         file!(),
         "terminal_not_defined_sugar.rustemo"

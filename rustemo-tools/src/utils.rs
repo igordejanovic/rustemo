@@ -54,3 +54,22 @@ macro_rules! output_cmp {
     }};
 }
 pub use output_cmp;
+
+/// Used in tests to calculate local file path relative to the source file.
+/// Requires call to file!() as a first parameter.
+///
+/// # Example
+/// ```rust
+/// MyParser::parse_file(local_file!(file!(), "my_local_file.txt"));
+/// ```
+#[macro_export]
+macro_rules! local_file {
+    ($this:expr, $local_path:expr) => {
+        &std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .parent()
+            .unwrap()
+            .join($this)
+            .with_file_name($local_path)
+    };
+}
+pub use local_file;
