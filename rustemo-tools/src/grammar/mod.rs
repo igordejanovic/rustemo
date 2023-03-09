@@ -1,8 +1,9 @@
 use std::{
+    cell::Cell,
     collections::BTreeMap,
     fmt::Display,
     hash::{Hash, Hasher},
-    str::FromStr, cell::Cell,
+    str::FromStr,
 };
 
 use rustemo::{
@@ -229,13 +230,7 @@ impl Production {
     pub fn rhs_with_content(&self, grammar: &Grammar) -> Vec<Assignment> {
         self.rhs_assign()
             .into_iter()
-            .filter_map(|a| {
-                if grammar.symbol_has_content(a.symbol) {
-                    Some(a)
-                } else {
-                    None
-                }
-            })
+            .filter(|a| grammar.symbol_has_content(a.symbol))
             .collect::<Vec<_>>()
     }
 
