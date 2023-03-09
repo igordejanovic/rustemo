@@ -136,6 +136,15 @@ SymbolTypes {
                         },
                     },
                 },
+                Choice {
+                    name: "C6",
+                    kind: Ref {
+                        ref_type: "OneOrMoreRecursive",
+                        recursive: Cell {
+                            value: false,
+                        },
+                    },
+                },
             ],
             optional: false,
         },
@@ -1413,6 +1422,91 @@ SymbolTypes {
             optional: false,
         },
         SymbolType {
+            name: "OneOrMoreRecursive",
+            kind: Ref {
+                ref_type: "OneOrMoreRecursiveA",
+                recursive: Cell {
+                    value: false,
+                },
+            },
+            choices: [
+                Choice {
+                    name: "C1",
+                    kind: Ref {
+                        ref_type: "OneOrMoreRecursiveA",
+                        recursive: Cell {
+                            value: false,
+                        },
+                    },
+                },
+            ],
+            optional: false,
+        },
+        SymbolType {
+            name: "OneOrMoreRecursiveA",
+            kind: Ref {
+                ref_type: "OneOrMoreRecursive1",
+                recursive: Cell {
+                    value: false,
+                },
+            },
+            choices: [
+                Choice {
+                    name: "C1",
+                    kind: Ref {
+                        ref_type: "OneOrMoreRecursive1",
+                        recursive: Cell {
+                            value: false,
+                        },
+                    },
+                },
+            ],
+            optional: false,
+        },
+        SymbolType {
+            name: "OneOrMoreRecursive1",
+            kind: Vec {
+                ref_type: "OneOrMoreRecursive",
+                recursive: Cell {
+                    value: true,
+                },
+            },
+            choices: [
+                Choice {
+                    name: "C1",
+                    kind: Struct {
+                        type_name: "OneOrMoreRecursive1C1",
+                        fields: [
+                            Field {
+                                name: "one_or_more_recursive1",
+                                ref_type: "OneOrMoreRecursive1",
+                                recursive: Cell {
+                                    value: false,
+                                },
+                            },
+                            Field {
+                                name: "one_or_more_recursive",
+                                ref_type: "OneOrMoreRecursive",
+                                recursive: Cell {
+                                    value: false,
+                                },
+                            },
+                        ],
+                    },
+                },
+                Choice {
+                    name: "C2",
+                    kind: Ref {
+                        ref_type: "OneOrMoreRecursive",
+                        recursive: Cell {
+                            value: true,
+                        },
+                    },
+                },
+            ],
+            optional: false,
+        },
+        SymbolType {
             name: "OptionalSugar1",
             kind: Ref {
                 ref_type: "TcOpt",
@@ -1625,7 +1719,7 @@ SymbolTypes {
                     kind: Ref {
                         ref_type: "Recursive",
                         recursive: Cell {
-                            value: false,
+                            value: true,
                         },
                     },
                 },

@@ -321,12 +321,12 @@ impl ActionsGenerator for ProductionActionsGenerator {
             } => ty
                 .choices
                 .iter()
-                .map(|v| {
+                .map(|choice| {
                     let action_name =
-                        to_snake_case(format!("{}_{}", ty.name, v.name));
+                        to_snake_case(format!("{}_{}", ty.name, choice.name));
                     let action = Ident::new(&action_name, Span::call_site());
-                    let args = self.get_action_args(ty, v);
-                    let body = self.get_action_body(ty, target_type, v);
+                    let args = self.get_action_args(ty, choice);
+                    let body = self.get_action_body(ty, target_type, choice);
 
                     (
                         action_name,
@@ -338,67 +338,67 @@ impl ActionsGenerator for ProductionActionsGenerator {
                     )
                 })
                 .collect(),
-            SymbolTypeKind::Vec { .. } => ty
+            SymbolTypeKind::Vec { recursive, .. } => ty
                 .choices
                 .iter()
-                .map(|v| {
+                .map(|choice| {
                     let action_name =
-                        to_snake_case(format!("{}_{}", ty.name, v.name));
+                        to_snake_case(format!("{}_{}", ty.name, choice.name));
                     let action = Ident::new(&action_name, Span::call_site());
-                    let args = self.get_action_args(ty, v);
+                    let args = self.get_action_args(ty, choice);
 
                     let mut body: Vec<syn::Expr> = vec![];
 
-                    match &v.kind {
+                    match &choice.kind {
                         ChoiceKind::Empty => body.push(parse_quote! { vec![] }),
                         ChoiceKind::Struct{fields, ..} => {
                             match &fields[..] {
                                 [a, b] => {
                                     let mut a_i =
                                         Ident::new(&a.name, Span::call_site());
-                                    if a.recursive.get() {
-                                        a_i = parse_quote! { Box::new(#a_i) }
-                                    }
                                     let mut b_i =
                                         Ident::new(&b.name, Span::call_site());
-                                    if b.recursive.get() {
-                                        b_i = parse_quote! { Box::new(#b_i) }
-                                    }
                                     // Find which one is a vector
-                                    if a.ref_type == nonterminal.name {
-                                        body.push(
-                                            parse_quote! { #a_i.push(#b_i) },
-                                        );
-                                        body.push(parse_quote! { #a_i });
-                                    } else {
-                                        body.push(
-                                            parse_quote! { #b_i.push(#a_i) },
-                                        );
-                                        body.push(parse_quote! { #b_i });
+                                    if b.ref_type == nonterminal.name {
+                                        (a_i, b_i) = (b_i, a_i)
                                     }
+                                    body.push(
+                                        if recursive.get() {
+                                            parse_quote! { #a_i.push(Box::new(#b_i)) }
+                                        } else {
+                                            parse_quote! { #a_i.push(#b_i) }
+                                        }
+                                    );
+                                    body.push(parse_quote! { #a_i });
                                 }
                                 [a] => {
                                     let a_i = Ident::new(
                                         &to_snake_case(&a.name),
                                         Span::call_site(),
                                     );
-                                    body.push(parse_quote! { vec![#a_i] });
+                                    if recursive.get() {
+                                        body.push(parse_quote! { vec![Box::new(#a_i)] });
+                                    } else {
+                                        body.push(parse_quote! { vec![#a_i] });
+                                    }
                                 }
                                 _ => unreachable!(),
                             }
                         }
                         ChoiceKind::Ref {
                             ref_type,
-                            recursive,
+                            ..
                         } => {
-                            let mut i = Ident::new(
+                            let i = Ident::new(
                                 &to_snake_case(ref_type),
                                 Span::call_site(),
                             );
                             if recursive.get() {
-                                i = parse_quote! { Box::new(#i) }
+                                log!("{:?}", i);
+                                body.push(parse_quote! { vec![Box::new(#i)] });
+                            } else {
+                                body.push(parse_quote! { vec![#i] });
                             }
-                            body.push(parse_quote! { vec![#i] });
                         }
                         ChoiceKind::Plain => unreachable!(),
                     };

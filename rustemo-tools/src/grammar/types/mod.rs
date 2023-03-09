@@ -188,7 +188,7 @@ impl SymbolTypes {
             recurse: None,
         };
 
-        // For regex-like op. patter recognition
+        // For zero/one-or-more, and optional pattern recognition
         for choice in choices {
             match &choice.kind {
                 ChoiceKind::Empty => m.empty = true,
@@ -305,6 +305,14 @@ impl SymbolTypes {
                     if !recursive.get() {
                         if visiting.contains(ref_type) {
                             recursive.set(true);
+                            for choice in &ty.choices {
+                                if let ChoiceKind::Ref {
+                                    ref recursive, ..
+                                } = choice.kind
+                                {
+                                    recursive.set(true);
+                                }
+                            }
                         } else {
                             visiting.insert(ref_type.clone());
                             dfs(types.get(ref_type).unwrap(), visiting, types);

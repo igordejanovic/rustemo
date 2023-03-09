@@ -6,7 +6,8 @@ use crate::{
 #[test]
 fn symbols_type_deduction() {
     let grammar: Grammar = r#"
-            A: myb=B c=C {MyKind}| B c=C | D {MyD} | Num | Recursive;
+            A: myb=B c=C {MyKind}| B c=C | D {MyD}
+             | Num | Recursive | OneOrMoreRecursive;
             B: C | EMPTY;
             C: b=B;
             D: a=A b=B  | mya=A B myb=B B D | EMPTY;
@@ -53,6 +54,9 @@ fn symbols_type_deduction() {
             OneOrMoreSugar2: A+;
             OneOrMoreSugar3: A+ | B C;
             OneOrMoreSugar4: A+ B | B C;
+
+            OneOrMoreRecursive: OneOrMoreRecursiveA;
+            OneOrMoreRecursiveA: OneOrMoreRecursive+;
 
             OptionalSugar1: Tc?;
             OptionalSugar2: A?;
