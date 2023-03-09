@@ -382,7 +382,7 @@ pub(crate) struct SymbolType {
 /// Type kinds derived from grammar rules. Used to auto-generate AST types.
 #[derive(Debug)]
 pub(crate) enum SymbolTypeKind {
-    /// This will be a type alias in the generated code.
+    /// Ref will be a type alias in the generated code.
     ///
     /// Produced by a single choice with plain ref. as in `B: A;`
     ///
@@ -395,7 +395,7 @@ pub(crate) enum SymbolTypeKind {
         recursive: Cell<bool>,
     },
 
-    /// Zero or more, one or more patterns
+    /// Zero or more, one or more patterns. E.g `A: A B | B;`
     Vec {
         ref_type: String,
         recursive: Cell<bool>,
@@ -409,7 +409,7 @@ pub(crate) enum SymbolTypeKind {
         type_name: String,
     },
 
-    /// All other non-empty rules. Can be optional if
+    /// The default. All other non-empty rules. Can be optional if
     /// ```
     /// <Whatever>... | EMPTY
     /// ```
