@@ -292,7 +292,7 @@ impl SymbolTypes {
             symbol_types.iter().map(|t| (t.name.clone(), t)).collect();
         fn dfs(
             ty: &SymbolType,
-            visited: &mut HashSet<String>,
+            visiting: &mut HashSet<String>,
             types: &HashMap<String, &SymbolType>,
         ) {
             match &ty.kind {
@@ -305,12 +305,12 @@ impl SymbolTypes {
                     ref_type,
                 } => {
                     if !recursive.get() {
-                        if visited.contains(ref_type) {
+                        if visiting.contains(ref_type) {
                             recursive.set(true);
                         } else {
-                            visited.insert(ref_type.clone());
-                            dfs(types.get(ref_type).unwrap(), visited, types);
-                            visited.remove(ref_type);
+                            visiting.insert(ref_type.clone());
+                            dfs(types.get(ref_type).unwrap(), visiting, types);
+                            visiting.remove(ref_type);
                         }
                     }
                 }
@@ -322,35 +322,35 @@ impl SymbolTypes {
                                 ref recursive,
                             } => {
                                 if !recursive.get() {
-                                    if visited.contains(ref_type) {
+                                    if visiting.contains(ref_type) {
                                         recursive.set(true);
                                     } else {
-                                        visited.insert(ref_type.clone());
+                                        visiting.insert(ref_type.clone());
                                         dfs(
                                             types.get(ref_type).unwrap(),
-                                            visited,
+                                            visiting,
                                             types,
                                         );
-                                        visited.remove(ref_type);
+                                        visiting.remove(ref_type);
                                     }
                                 }
                             }
                             ChoiceKind::Struct { ref fields, .. } => {
                                 for field in fields {
                                     if !field.recursive.get() {
-                                        if visited.contains(&field.ref_type) {
+                                        if visiting.contains(&field.ref_type) {
                                             field.recursive.set(true);
                                         } else {
-                                            visited
+                                            visiting
                                                 .insert(field.ref_type.clone());
                                             dfs(
                                                 types
                                                     .get(&field.ref_type)
                                                     .unwrap(),
-                                                visited,
+                                                visiting,
                                                 types,
                                             );
-                                            visited.remove(&field.ref_type);
+                                            visiting.remove(&field.ref_type);
                                         }
                                     }
                                 }
