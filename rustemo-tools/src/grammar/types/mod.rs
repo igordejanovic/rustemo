@@ -144,7 +144,10 @@ impl SymbolTypes {
 
                         Choice {
                             name: choice_name.clone(),
-                            kind: ChoiceKind::Struct(struct_type, fields),
+                            kind: ChoiceKind::Struct {
+                                type_name: struct_type,
+                                fields,
+                            },
                         }
                     }
                 });
@@ -191,7 +194,7 @@ impl SymbolTypes {
         for choice in choices {
             match &choice.kind {
                 ChoiceKind::Empty => m.empty = true,
-                ChoiceKind::Struct(_, fields) => match &fields[..] {
+                ChoiceKind::Struct { fields, .. } => match &fields[..] {
                     [a] => {
                         if m.single.is_none() {
                             m.single = Some(a.ref_type.clone())
@@ -258,7 +261,7 @@ impl SymbolTypes {
                                 recursive: Cell::new(false),
                             }
                         }
-                        ChoiceKind::Struct(_, _) => SymbolTypeKind::Struct {
+                        ChoiceKind::Struct { .. } => SymbolTypeKind::Struct {
                             type_name: if empty {
                                 format!("{}NO", type_name)
                             } else {
@@ -332,7 +335,7 @@ impl SymbolTypes {
                                     }
                                 }
                             }
-                            ChoiceKind::Struct(_, ref fields) => {
+                            ChoiceKind::Struct { ref fields, .. } => {
                                 for field in fields {
                                     if !field.recursive.get() {
                                         if visited.contains(&field.ref_type) {
@@ -437,7 +440,10 @@ pub(crate) enum ChoiceKind {
     },
 
     /// Multiple content refs or named assignments.
-    Struct(String, Vec<Field>),
+    Struct {
+        type_name: String,
+        fields: Vec<Field>,
+    },
 }
 
 #[derive(Debug)]

@@ -67,9 +67,9 @@ SymbolTypes {
             choices: [
                 Choice {
                     name: "MyKind",
-                    kind: Struct(
-                        "MyKind",
-                        [
+                    kind: Struct {
+                        type_name: "MyKind",
+                        fields: [
                             Field {
                                 name: "myb",
                                 ref_type: "B",
@@ -85,13 +85,13 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
                 Choice {
                     name: "C2",
-                    kind: Struct(
-                        "AC2",
-                        [
+                    kind: Struct {
+                        type_name: "AC2",
+                        fields: [
                             Field {
                                 name: "b",
                                 ref_type: "B",
@@ -107,7 +107,7 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
                 Choice {
                     name: "MyD",
@@ -172,9 +172,9 @@ SymbolTypes {
             choices: [
                 Choice {
                     name: "C1",
-                    kind: Struct(
-                        "CC1",
-                        [
+                    kind: Struct {
+                        type_name: "CC1",
+                        fields: [
                             Field {
                                 name: "b",
                                 ref_type: "B",
@@ -183,7 +183,7 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
             ],
             optional: false,
@@ -196,9 +196,9 @@ SymbolTypes {
             choices: [
                 Choice {
                     name: "C1",
-                    kind: Struct(
-                        "DC1",
-                        [
+                    kind: Struct {
+                        type_name: "DC1",
+                        fields: [
                             Field {
                                 name: "a",
                                 ref_type: "A",
@@ -214,13 +214,13 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
                 Choice {
                     name: "C2",
-                    kind: Struct(
-                        "DC2",
-                        [
+                    kind: Struct {
+                        type_name: "DC2",
+                        fields: [
                             Field {
                                 name: "mya",
                                 ref_type: "A",
@@ -257,7 +257,7 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
                 Choice {
                     name: "Empty",
@@ -274,9 +274,9 @@ SymbolTypes {
             choices: [
                 Choice {
                     name: "C1",
-                    kind: Struct(
-                        "FC1",
-                        [
+                    kind: Struct {
+                        type_name: "FC1",
+                        fields: [
                             Field {
                                 name: "a",
                                 ref_type: "A",
@@ -292,7 +292,7 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
                 Choice {
                     name: "C2",
@@ -431,9 +431,9 @@ SymbolTypes {
             choices: [
                 Choice {
                     name: "C1",
-                    kind: Struct(
-                        "OptionalStruct1C1",
-                        [
+                    kind: Struct {
+                        type_name: "OptionalStruct1C1",
+                        fields: [
                             Field {
                                 name: "a",
                                 ref_type: "A",
@@ -449,7 +449,7 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
                 Choice {
                     name: "Empty",
@@ -470,9 +470,9 @@ SymbolTypes {
                 },
                 Choice {
                     name: "C2",
-                    kind: Struct(
-                        "OptionalStruct2C2",
-                        [
+                    kind: Struct {
+                        type_name: "OptionalStruct2C2",
+                        fields: [
                             Field {
                                 name: "mya",
                                 ref_type: "A",
@@ -488,7 +488,7 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
             ],
             optional: true,
@@ -501,9 +501,9 @@ SymbolTypes {
             choices: [
                 Choice {
                     name: "C1",
-                    kind: Struct(
-                        "StructC1",
-                        [
+                    kind: Struct {
+                        type_name: "StructC1",
+                        fields: [
                             Field {
                                 name: "a",
                                 ref_type: "A",
@@ -519,7 +519,7 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
             ],
             optional: false,
@@ -532,9 +532,9 @@ SymbolTypes {
             choices: [
                 Choice {
                     name: "C1",
-                    kind: Struct(
-                        "OptionalEnum1C1",
-                        [
+                    kind: Struct {
+                        type_name: "OptionalEnum1C1",
+                        fields: [
                             Field {
                                 name: "a",
                                 ref_type: "A",
@@ -550,7 +550,7 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
                 Choice {
                     name: "C2",
@@ -576,9 +576,9 @@ SymbolTypes {
             choices: [
                 Choice {
                     name: "C1",
-                    kind: Struct(
-                        "OptionalEnum2C1",
-                        [
+                    kind: Struct {
+                        type_name: "OptionalEnum2C1",
+                        fields: [
                             Field {
                                 name: "a",
                                 ref_type: "A",
@@ -594,7 +594,7 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
                 Choice {
                     name: "Empty",
@@ -602,9 +602,9 @@ SymbolTypes {
                 },
                 Choice {
                     name: "C3",
-                    kind: Struct(
-                        "OptionalEnum2C3",
-                        [
+                    kind: Struct {
+                        type_name: "OptionalEnum2C3",
+                        fields: [
                             Field {
                                 name: "myc",
                                 ref_type: "C",
@@ -613,7 +613,7 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
             ],
             optional: true,
@@ -626,9 +626,9 @@ SymbolTypes {
             choices: [
                 Choice {
                     name: "C1",
-                    kind: Struct(
-                        "Enum1C1",
-                        [
+                    kind: Struct {
+                        type_name: "Enum1C1",
+                        fields: [
                             Field {
                                 name: "a",
                                 ref_type: "A",
@@ -644,13 +644,13 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
                 Choice {
                     name: "C2",
-                    kind: Struct(
-                        "Enum1C2",
-                        [
+                    kind: Struct {
+                        type_name: "Enum1C2",
+                        fields: [
                             Field {
                                 name: "myc",
                                 ref_type: "C",
@@ -659,7 +659,7 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
             ],
             optional: false,
@@ -672,9 +672,9 @@ SymbolTypes {
             choices: [
                 Choice {
                     name: "C1",
-                    kind: Struct(
-                        "Enum2C1",
-                        [
+                    kind: Struct {
+                        type_name: "Enum2C1",
+                        fields: [
                             Field {
                                 name: "a",
                                 ref_type: "A",
@@ -690,13 +690,13 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
                 Choice {
                     name: "C2",
-                    kind: Struct(
-                        "Enum2C2",
-                        [
+                    kind: Struct {
+                        type_name: "Enum2C2",
+                        fields: [
                             Field {
                                 name: "myc",
                                 ref_type: "C",
@@ -705,7 +705,7 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
                 Choice {
                     name: "C3",
@@ -771,9 +771,9 @@ SymbolTypes {
             choices: [
                 Choice {
                     name: "C1",
-                    kind: Struct(
-                        "ZeroOrMore1C1",
-                        [
+                    kind: Struct {
+                        type_name: "ZeroOrMore1C1",
+                        fields: [
                             Field {
                                 name: "zero_or_more1",
                                 ref_type: "ZeroOrMore1",
@@ -789,13 +789,13 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
                 Choice {
                     name: "C2",
-                    kind: Struct(
-                        "ZeroOrMore1C2",
-                        [
+                    kind: Struct {
+                        type_name: "ZeroOrMore1C2",
+                        fields: [
                             Field {
                                 name: "myb",
                                 ref_type: "B",
@@ -804,7 +804,7 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
                 Choice {
                     name: "Empty",
@@ -824,9 +824,9 @@ SymbolTypes {
             choices: [
                 Choice {
                     name: "C1",
-                    kind: Struct(
-                        "ZeroOrMore2C1",
-                        [
+                    kind: Struct {
+                        type_name: "ZeroOrMore2C1",
+                        fields: [
                             Field {
                                 name: "b",
                                 ref_type: "B",
@@ -842,7 +842,7 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
                 Choice {
                     name: "C2",
@@ -868,9 +868,9 @@ SymbolTypes {
             choices: [
                 Choice {
                     name: "C1",
-                    kind: Struct(
-                        "ZeroOrMore3C1",
-                        [
+                    kind: Struct {
+                        type_name: "ZeroOrMore3C1",
+                        fields: [
                             Field {
                                 name: "b",
                                 ref_type: "B",
@@ -886,7 +886,7 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
                 Choice {
                     name: "Empty",
@@ -912,9 +912,9 @@ SymbolTypes {
             choices: [
                 Choice {
                     name: "C1",
-                    kind: Struct(
-                        "OneOrMore1C1",
-                        [
+                    kind: Struct {
+                        type_name: "OneOrMore1C1",
+                        fields: [
                             Field {
                                 name: "one_or_more1",
                                 ref_type: "OneOrMore1",
@@ -930,7 +930,7 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
                 Choice {
                     name: "C2",
@@ -955,9 +955,9 @@ SymbolTypes {
             choices: [
                 Choice {
                     name: "C1",
-                    kind: Struct(
-                        "OneOrMore2C1",
-                        [
+                    kind: Struct {
+                        type_name: "OneOrMore2C1",
+                        fields: [
                             Field {
                                 name: "b",
                                 ref_type: "B",
@@ -973,7 +973,7 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
                 Choice {
                     name: "C2",
@@ -1004,9 +1004,9 @@ SymbolTypes {
                 },
                 Choice {
                     name: "C2",
-                    kind: Struct(
-                        "OneOrMore3C2",
-                        [
+                    kind: Struct {
+                        type_name: "OneOrMore3C2",
+                        fields: [
                             Field {
                                 name: "b",
                                 ref_type: "B",
@@ -1022,7 +1022,7 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
             ],
             optional: false,
@@ -1127,9 +1127,9 @@ SymbolTypes {
             choices: [
                 Choice {
                     name: "C1",
-                    kind: Struct(
-                        "A1C1",
-                        [
+                    kind: Struct {
+                        type_name: "A1C1",
+                        fields: [
                             Field {
                                 name: "a1",
                                 ref_type: "A1",
@@ -1145,7 +1145,7 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
                 Choice {
                     name: "C2",
@@ -1201,9 +1201,9 @@ SymbolTypes {
                 },
                 Choice {
                     name: "C2",
-                    kind: Struct(
-                        "ZeroOrMoreSugar3C2",
-                        [
+                    kind: Struct {
+                        type_name: "ZeroOrMoreSugar3C2",
+                        fields: [
                             Field {
                                 name: "b",
                                 ref_type: "B",
@@ -1219,7 +1219,7 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
             ],
             optional: false,
@@ -1232,9 +1232,9 @@ SymbolTypes {
             choices: [
                 Choice {
                     name: "C1",
-                    kind: Struct(
-                        "ZeroOrMoreSugar4C1",
-                        [
+                    kind: Struct {
+                        type_name: "ZeroOrMoreSugar4C1",
+                        fields: [
                             Field {
                                 name: "a0",
                                 ref_type: "A0",
@@ -1250,13 +1250,13 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
                 Choice {
                     name: "C2",
-                    kind: Struct(
-                        "ZeroOrMoreSugar4C2",
-                        [
+                    kind: Struct {
+                        type_name: "ZeroOrMoreSugar4C2",
+                        fields: [
                             Field {
                                 name: "b",
                                 ref_type: "B",
@@ -1272,7 +1272,7 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
             ],
             optional: false,
@@ -1336,9 +1336,9 @@ SymbolTypes {
                 },
                 Choice {
                     name: "C2",
-                    kind: Struct(
-                        "OneOrMoreSugar3C2",
-                        [
+                    kind: Struct {
+                        type_name: "OneOrMoreSugar3C2",
+                        fields: [
                             Field {
                                 name: "b",
                                 ref_type: "B",
@@ -1354,7 +1354,7 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
             ],
             optional: false,
@@ -1367,9 +1367,9 @@ SymbolTypes {
             choices: [
                 Choice {
                     name: "C1",
-                    kind: Struct(
-                        "OneOrMoreSugar4C1",
-                        [
+                    kind: Struct {
+                        type_name: "OneOrMoreSugar4C1",
+                        fields: [
                             Field {
                                 name: "a1",
                                 ref_type: "A1",
@@ -1385,13 +1385,13 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
                 Choice {
                     name: "C2",
-                    kind: Struct(
-                        "OneOrMoreSugar4C2",
-                        [
+                    kind: Struct {
+                        type_name: "OneOrMoreSugar4C2",
+                        fields: [
                             Field {
                                 name: "b",
                                 ref_type: "B",
@@ -1407,7 +1407,7 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
             ],
             optional: false,
@@ -1513,9 +1513,9 @@ SymbolTypes {
                 },
                 Choice {
                     name: "C2",
-                    kind: Struct(
-                        "OptionalSugar3C2",
-                        [
+                    kind: Struct {
+                        type_name: "OptionalSugar3C2",
+                        fields: [
                             Field {
                                 name: "b",
                                 ref_type: "B",
@@ -1531,7 +1531,7 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
             ],
             optional: false,
@@ -1544,9 +1544,9 @@ SymbolTypes {
             choices: [
                 Choice {
                     name: "C1",
-                    kind: Struct(
-                        "OptionalSugar4C1",
-                        [
+                    kind: Struct {
+                        type_name: "OptionalSugar4C1",
+                        fields: [
                             Field {
                                 name: "aopt",
                                 ref_type: "AOpt",
@@ -1562,13 +1562,13 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
                 Choice {
                     name: "C2",
-                    kind: Struct(
-                        "OptionalSugar4C2",
-                        [
+                    kind: Struct {
+                        type_name: "OptionalSugar4C2",
+                        fields: [
                             Field {
                                 name: "b",
                                 ref_type: "B",
@@ -1584,7 +1584,7 @@ SymbolTypes {
                                 },
                             },
                         ],
-                    ),
+                    },
                 },
             ],
             optional: false,

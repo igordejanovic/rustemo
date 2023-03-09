@@ -37,7 +37,7 @@ impl ProductionActionsGenerator {
 
         match &choice.kind {
             ChoiceKind::Plain => (), // No args for plain enum
-            ChoiceKind::Struct(_, fields) => {
+            ChoiceKind::Struct { fields, .. } => {
                 for field in fields {
                     let f_name = Ident::new(&field.name, Span::call_site());
                     let f_type = Ident::new(&field.ref_type, Span::call_site());
@@ -76,7 +76,7 @@ impl ProductionActionsGenerator {
             ChoiceKind::Plain => {
                 parse_quote! { #target_type::#choice_ident }
             }
-            ChoiceKind::Struct(type_name, fields) => {
+            ChoiceKind::Struct { type_name, fields } => {
                 let struct_ty = Ident::new(type_name, Span::call_site());
                 let fields: Vec<syn::FieldValue> = fields
                     .iter()
@@ -149,7 +149,10 @@ impl ActionsGenerator for ProductionActionsGenerator {
             type_name: Option<&str>,
         ) -> Option<syn::Item> {
             match &choice.kind {
-                ChoiceKind::Struct(struct_type, fields) => {
+                ChoiceKind::Struct {
+                    type_name: struct_type,
+                    fields,
+                } => {
                     let type_ident = if let Some(type_name) = type_name {
                         Ident::new(type_name, Span::call_site())
                     } else {
@@ -203,7 +206,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
                         ChoiceKind::Plain => {
                             Some(parse_quote! { #variant_ident })
                         }
-                        ChoiceKind::Struct(type_name, _) => {
+                        ChoiceKind::Struct { type_name, .. } => {
                             let type_ident =
                                 Ident::new(type_name, Span::call_site());
                             Some(parse_quote! { #variant_ident(#type_ident) })
@@ -348,7 +351,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
 
                     match &v.kind {
                         ChoiceKind::Empty => body.push(parse_quote! { vec![] }),
-                        ChoiceKind::Struct(_, fields) => {
+                        ChoiceKind::Struct{fields, ..} => {
                             match &fields[..] {
                                 [a, b] => {
                                     let mut a_i =
