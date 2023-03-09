@@ -75,12 +75,19 @@ impl<'i, I: Input + ?Sized, TK> LRBuilder<'i, I, TK>
         prod_idx: ProdIndex,
         prod_len: usize,
     ) {
-        let children =
-            self.res_stack.split_off(self.res_stack.len() - prod_len);
-        let layout = match children[0] {
-            TreeNode::TermNode { layout, .. } => layout,
-            TreeNode::NonTermNode { layout, .. } => layout,
-        };
+        let children;
+        let layout;
+        if prod_len > 0 {
+            children =
+                self.res_stack.split_off(self.res_stack.len() - prod_len);
+            layout = match children[0] {
+                TreeNode::TermNode { layout, .. } => layout,
+                TreeNode::NonTermNode { layout, .. } => layout,
+            };
+        } else {
+            children = vec![];
+            layout = None;
+        }
         self.res_stack.push(TreeNode::NonTermNode {
             children,
             prod_idx,
