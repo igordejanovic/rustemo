@@ -753,7 +753,11 @@ fn mark_reachable_symbols(grammar: &Grammar) {
             visited.insert(*prod);
             for symbol in grammar.productions[*prod].rhs_symbols() {
                 if grammar.is_nonterm(symbol) {
-                    mark_reachable(grammar, grammar.symbol_to_nonterm(symbol), visited)
+                    mark_reachable(
+                        grammar,
+                        grammar.symbol_to_nonterm(symbol),
+                        visited,
+                    )
                 } else {
                     grammar.symbol_to_term(symbol).reachable.set(true);
                 }

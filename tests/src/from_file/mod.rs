@@ -1,5 +1,5 @@
 use rustemo::rustemo_mod;
-use rustemo_tools::{output_cmp, local_file};
+use rustemo_tools::{local_file, output_cmp};
 
 rustemo_mod!(calculator, "/src/from_file");
 rustemo_mod!(calculator_actions, "/src/from_file");

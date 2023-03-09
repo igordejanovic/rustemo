@@ -925,12 +925,13 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             }
         }).collect();
 
-        if self.grammar.terminals[1..].iter().any(|t| !t.reachable.get()) {
-            shift_match_arms.push(
-                parse_quote!{
-                    _ => panic!("Shift of unreachable terminal!")
-                }
-            )
+        if self.grammar.terminals[1..]
+            .iter()
+            .any(|t| !t.reachable.get())
+        {
+            shift_match_arms.push(parse_quote! {
+                _ => panic!("Shift of unreachable terminal!")
+            })
         }
         let shift_match_arms = shift_match_arms;
 
@@ -1016,11 +1017,9 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         }).collect();
 
         if has_nonreachable_nonterminals {
-           reduce_match_arms.push(
-               parse_quote!(
-                    _ => panic!("Reduce of unreachable nonterminal!")
-               )
-           )
+            reduce_match_arms.push(parse_quote!(
+                 _ => panic!("Reduce of unreachable nonterminal!")
+            ))
         }
         let reduce_match_arms = reduce_match_arms;
 
