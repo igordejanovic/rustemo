@@ -384,8 +384,13 @@ pub(crate) struct SymbolType {
 /// Type kinds derived from grammar rules. Used to auto-generate AST types.
 #[derive(Debug)]
 pub(crate) enum SymbolTypeKind {
-    /// Just a single choice with plain ref. as in `B: A;`
-    /// This will be type alias.
+    /// This will be a type alias in the generated code.
+    ///
+    /// Produced by a single choice with plain ref. as in `B: A;`
+    ///
+    /// Non-content terminal refs are ignored. E.g. `B: 'a' A 'b';` is
+    /// equivalent to the previous example.
+    ///
     /// Can be optional: `B: A | EMPTY;`
     Ref {
         ref_type: String,
@@ -399,8 +404,8 @@ pub(crate) enum SymbolTypeKind {
     },
 
     /// Just a single choice as in `B: A C;`
-    /// choices must be a single element of Struct kind and
-    /// optionally element of Empty kind.
+    /// choices must be a single element of a Struct kind and
+    /// optionally element of an Empty kind.
     /// Can be optional as in `B: A C | EMPTY;`
     Struct {
         type_name: String,
