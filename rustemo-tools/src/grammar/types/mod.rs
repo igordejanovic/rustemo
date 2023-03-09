@@ -107,13 +107,11 @@ impl SymbolTypes {
                     }
                     _ => {
                         let mut fields = vec![];
+                        let type_names = grammar.symbol_names(
+                            rhs.iter().map(|a| a.symbol).collect::<Vec<_>>(),
+                        );
                         for assign in &rhs {
                             let ref_type = grammar.symbol_name(assign.symbol);
-                            let type_names = grammar.symbol_names(
-                                rhs.iter()
-                                    .map(|a| a.symbol)
-                                    .collect::<Vec<_>>(),
-                            );
                             let name = assign.name.clone().unwrap_or(format!(
                                 "{}{}",
                                 to_snake_case(&ref_type),
