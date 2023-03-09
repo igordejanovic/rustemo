@@ -127,6 +127,15 @@ SymbolTypes {
                         },
                     },
                 },
+                Choice {
+                    name: "C5",
+                    kind: Ref {
+                        ref_type: "Recursive",
+                        recursive: Cell {
+                            value: false,
+                        },
+                    },
+                },
             ],
             optional: false,
         },
@@ -1576,6 +1585,49 @@ SymbolTypes {
                             },
                         ],
                     ),
+                },
+            ],
+            optional: false,
+        },
+        SymbolType {
+            name: "Recursive",
+            kind: Enum {
+                type_name: "Recursive",
+            },
+            choices: [
+                Choice {
+                    name: "C1",
+                    kind: Ref {
+                        ref_type: "RecursiveA",
+                        recursive: Cell {
+                            value: false,
+                        },
+                    },
+                },
+                Choice {
+                    name: "C2",
+                    kind: Plain,
+                },
+            ],
+            optional: false,
+        },
+        SymbolType {
+            name: "RecursiveA",
+            kind: Ref {
+                ref_type: "Recursive",
+                recursive: Cell {
+                    value: true,
+                },
+            },
+            choices: [
+                Choice {
+                    name: "C1",
+                    kind: Ref {
+                        ref_type: "Recursive",
+                        recursive: Cell {
+                            value: false,
+                        },
+                    },
                 },
             ],
             optional: false,
