@@ -14,9 +14,7 @@ use rustemo::{
     Error, Result,
 };
 
-use crate::lang::rustemo::RustemoParser;
-
-use self::types::to_snake_case;
+use crate::lang::{rustemo::RustemoParser, rustemo_actions::Name};
 
 use super::lang::rustemo_actions::{
     GrammarSymbol, Imports, ProdMetaDatas, Recognizer, TermMetaDatas,
@@ -286,14 +284,14 @@ pub enum ResolvingSymbolIndex {
 
 #[derive(Debug)]
 pub struct ResolvingAssignment {
-    pub name: Option<String>,
+    pub name: Option<Name>,
     pub symbol: ResolvingSymbolIndex,
     pub is_bool: bool,
 }
 
 #[derive(Debug)]
 pub struct Assignment {
-    pub name: Option<String>,
+    pub name: Option<Name>,
     pub symbol: SymbolIndex,
     /// If this assignment is ?= variant. RHS is true if Some.
     pub is_bool: bool,
@@ -518,17 +516,5 @@ impl Grammar {
     #[inline]
     pub fn has_layout(&self) -> bool {
         self.augmented_layout_index.is_some()
-    }
-
-    #[inline]
-    pub fn assig_name(
-        &self,
-        assig: &ResolvingAssignment,
-        symbol: SymbolIndex,
-    ) -> String {
-        to_snake_case(match &assig.name {
-            Some(s) => s.clone(),
-            None => self.symbol_name(symbol),
-        })
     }
 }

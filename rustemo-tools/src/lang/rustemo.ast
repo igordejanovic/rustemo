@@ -360,7 +360,20 @@ Grammar {
                     },
                     ResolvingAssignment {
                         name: Some(
-                            "path",
+                            ValLoc {
+                                value: "path",
+                                location: Some(
+                                    Location {
+                                        start: LineBased(
+                                            LineBased {
+                                                line: 7,
+                                                column: 20,
+                                            },
+                                        ),
+                                        end: None,
+                                    },
+                                ),
+                            },
                         ),
                         symbol: Resolved(
                             39,
@@ -390,7 +403,20 @@ Grammar {
                     },
                     ResolvingAssignment {
                         name: Some(
-                            "path",
+                            ValLoc {
+                                value: "path",
+                                location: Some(
+                                    Location {
+                                        start: LineBased(
+                                            LineBased {
+                                                line: 8,
+                                                column: 20,
+                                            },
+                                        ),
+                                        end: None,
+                                    },
+                                ),
+                            },
                         ),
                         symbol: Resolved(
                             39,
@@ -448,7 +474,20 @@ Grammar {
                     },
                     ResolvingAssignment {
                         name: Some(
-                            "rhs",
+                            ValLoc {
+                                value: "rhs",
+                                location: Some(
+                                    Location {
+                                        start: LineBased(
+                                            LineBased {
+                                                line: 10,
+                                                column: 30,
+                                            },
+                                        ),
+                                        end: None,
+                                    },
+                                ),
+                            },
                         ),
                         symbol: Resolved(
                             54,
@@ -533,7 +572,20 @@ Grammar {
                     },
                     ResolvingAssignment {
                         name: Some(
-                            "meta",
+                            ValLoc {
+                                value: "meta",
+                                location: Some(
+                                    Location {
+                                        start: LineBased(
+                                            LineBased {
+                                                line: 11,
+                                                column: 30,
+                                            },
+                                        ),
+                                        end: None,
+                                    },
+                                ),
+                            },
                         ),
                         symbol: Resolved(
                             59,
@@ -556,7 +608,20 @@ Grammar {
                     },
                     ResolvingAssignment {
                         name: Some(
-                            "rhs",
+                            ValLoc {
+                                value: "rhs",
+                                location: Some(
+                                    Location {
+                                        start: LineBased(
+                                            LineBased {
+                                                line: 11,
+                                                column: 57,
+                                            },
+                                        ),
+                                        end: None,
+                                    },
+                                ),
+                            },
                         ),
                         symbol: Resolved(
                             54,
@@ -586,7 +651,20 @@ Grammar {
                 rhs: [
                     ResolvingAssignment {
                         name: Some(
-                            "rhs",
+                            ValLoc {
+                                value: "rhs",
+                                location: Some(
+                                    Location {
+                                        start: LineBased(
+                                            LineBased {
+                                                line: 12,
+                                                column: 26,
+                                            },
+                                        ),
+                                        end: None,
+                                    },
+                                ),
+                            },
                         ),
                         symbol: Resolved(
                             54,
@@ -728,7 +806,20 @@ Grammar {
                     },
                     ResolvingAssignment {
                         name: Some(
-                            "meta",
+                            ValLoc {
+                                value: "meta",
+                                location: Some(
+                                    Location {
+                                        start: LineBased(
+                                            LineBased {
+                                                line: 15,
+                                                column: 28,
+                                            },
+                                        ),
+                                        end: None,
+                                    },
+                                ),
+                            },
                         ),
                         symbol: Resolved(
                             59,
@@ -884,7 +975,20 @@ Grammar {
                     },
                     ResolvingAssignment {
                         name: Some(
-                            "meta",
+                            ValLoc {
+                                value: "meta",
+                                location: Some(
+                                    Location {
+                                        start: LineBased(
+                                            LineBased {
+                                                line: 19,
+                                                column: 57,
+                                            },
+                                        ),
+                                        end: None,
+                                    },
+                                ),
+                            },
                         ),
                         symbol: Resolved(
                             61,
@@ -949,7 +1053,20 @@ Grammar {
                     },
                     ResolvingAssignment {
                         name: Some(
-                            "meta",
+                            ValLoc {
+                                value: "meta",
+                                location: Some(
+                                    Location {
+                                        start: LineBased(
+                                            LineBased {
+                                                line: 20,
+                                                column: 46,
+                                            },
+                                        ),
+                                        end: None,
+                                    },
+                                ),
+                            },
                         ),
                         symbol: Resolved(
                             61,
@@ -1212,7 +1329,20 @@ Grammar {
                 rhs: [
                     ResolvingAssignment {
                         name: Some(
-                            "metas",
+                            ValLoc {
+                                value: "metas",
+                                location: Some(
+                                    Location {
+                                        start: LineBased(
+                                            LineBased {
+                                                line: 27,
+                                                column: 22,
+                                            },
+                                        ),
+                                        end: None,
+                                    },
+                                ),
+                            },
                         ),
                         symbol: Resolved(
                             59,
@@ -1228,7 +1358,20 @@ Grammar {
                     },
                     ResolvingAssignment {
                         name: Some(
-                            "meta",
+                            ValLoc {
+                                value: "meta",
+                                location: Some(
+                                    Location {
+                                        start: LineBased(
+                                            LineBased {
+                                                line: 27,
+                                                column: 46,
+                                            },
+                                        ),
+                                        end: None,
+                                    },
+                                ),
+                            },
                         ),
                         symbol: Resolved(
                             58,
@@ -1251,7 +1394,20 @@ Grammar {
                 rhs: [
                     ResolvingAssignment {
                         name: Some(
-                            "meta",
+                            ValLoc {
+                                value: "meta",
+                                location: Some(
+                                    Location {
+                                        start: LineBased(
+                                            LineBased {
+                                                line: 27,
+                                                column: 66,
+                                            },
+                                        ),
+                                        end: None,
+                                    },
+                                ),
+                            },
                         ),
                         symbol: Resolved(
                             58,
@@ -1410,7 +1566,20 @@ Grammar {
                 rhs: [
                     ResolvingAssignment {
                         name: Some(
-                            "metas",
+                            ValLoc {
+                                value: "metas",
+                                location: Some(
+                                    Location {
+                                        start: LineBased(
+                                            LineBased {
+                                                line: 33,
+                                                column: 15,
+                                            },
+                                        ),
+                                        end: None,
+                                    },
+                                ),
+                            },
                         ),
                         symbol: Resolved(
                             61,
@@ -1426,7 +1595,20 @@ Grammar {
                     },
                     ResolvingAssignment {
                         name: Some(
-                            "meta",
+                            ValLoc {
+                                value: "meta",
+                                location: Some(
+                                    Location {
+                                        start: LineBased(
+                                            LineBased {
+                                                line: 33,
+                                                column: 39,
+                                            },
+                                        ),
+                                        end: None,
+                                    },
+                                ),
+                            },
                         ),
                         symbol: Resolved(
                             60,
@@ -1449,7 +1631,20 @@ Grammar {
                 rhs: [
                     ResolvingAssignment {
                         name: Some(
-                            "meta",
+                            ValLoc {
+                                value: "meta",
+                                location: Some(
+                                    Location {
+                                        start: LineBased(
+                                            LineBased {
+                                                line: 33,
+                                                column: 59,
+                                            },
+                                        ),
+                                        end: None,
+                                    },
+                                ),
+                            },
                         ),
                         symbol: Resolved(
                             60,
@@ -1486,7 +1681,20 @@ Grammar {
                     },
                     ResolvingAssignment {
                         name: Some(
-                            "value",
+                            ValLoc {
+                                value: "value",
+                                location: Some(
+                                    Location {
+                                        start: LineBased(
+                                            LineBased {
+                                                line: 35,
+                                                column: 23,
+                                            },
+                                        ),
+                                        end: None,
+                                    },
+                                ),
+                            },
                         ),
                         symbol: Resolved(
                             64,
@@ -1691,7 +1899,20 @@ Grammar {
                     },
                     ResolvingAssignment {
                         name: Some(
-                            "gsymref",
+                            ValLoc {
+                                value: "gsymref",
+                                location: Some(
+                                    Location {
+                                        start: LineBased(
+                                            LineBased {
+                                                line: 42,
+                                                column: 26,
+                                            },
+                                        ),
+                                        end: None,
+                                    },
+                                ),
+                            },
                         ),
                         symbol: Resolved(
                             69,
@@ -1728,7 +1949,20 @@ Grammar {
                     },
                     ResolvingAssignment {
                         name: Some(
-                            "gsymref",
+                            ValLoc {
+                                value: "gsymref",
+                                location: Some(
+                                    Location {
+                                        start: LineBased(
+                                            LineBased {
+                                                line: 43,
+                                                column: 26,
+                                            },
+                                        ),
+                                        end: None,
+                                    },
+                                ),
+                            },
                         ),
                         symbol: Resolved(
                             69,
@@ -1758,7 +1992,20 @@ Grammar {
                     },
                     ResolvingAssignment {
                         name: Some(
-                            "prod_rule_rhs",
+                            ValLoc {
+                                value: "prod_rule_rhs",
+                                location: Some(
+                                    Location {
+                                        start: LineBased(
+                                            LineBased {
+                                                line: 45,
+                                                column: 21,
+                                            },
+                                        ),
+                                        end: None,
+                                    },
+                                ),
+                            },
                         ),
                         symbol: Resolved(
                             54,
@@ -1788,7 +2035,20 @@ Grammar {
                 rhs: [
                     ResolvingAssignment {
                         name: Some(
-                            "gsymbol",
+                            ValLoc {
+                                value: "gsymbol",
+                                location: Some(
+                                    Location {
+                                        start: LineBased(
+                                            LineBased {
+                                                line: 47,
+                                                column: 18,
+                                            },
+                                        ),
+                                        end: None,
+                                    },
+                                ),
+                            },
                         ),
                         symbol: Resolved(
                             77,

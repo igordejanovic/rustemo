@@ -8,6 +8,8 @@ use std::{
 
 use convert_case::{Boundary, Case, Casing};
 
+use crate::lang::rustemo_actions::Name;
+
 use super::{Grammar, NonTerminal, Production};
 
 #[cfg(test)]
@@ -112,23 +114,27 @@ impl SymbolTypes {
                         );
                         for assign in &rhs {
                             let ref_type = grammar.symbol_name(assign.symbol);
-                            let name = assign.name.clone().unwrap_or(format!(
-                                "{}{}",
-                                to_snake_case(&ref_type),
-                                if type_names
-                                    .iter()
-                                    .filter(|&ty| *ty == ref_type)
-                                    .count()
-                                    > 1
-                                {
-                                    // Not a unique rule ref inside this choice
-                                    format!("_{}", assign.idx + 1)
-                                } else {
-                                    "".into()
-                                }
-                            ));
+                            let name =
+                                assign.name.clone().unwrap_or(Name::new(
+                                    format!(
+                                        "{}{}",
+                                        to_snake_case(&ref_type),
+                                        if type_names
+                                            .iter()
+                                            .filter(|&ty| *ty == ref_type)
+                                            .count()
+                                            > 1
+                                        {
+                                            // Not a unique rule ref inside this choice
+                                            format!("_{}", assign.idx + 1)
+                                        } else {
+                                            "".into()
+                                        }
+                                    ),
+                                    None,
+                                ));
                             fields.push(Field {
-                                name: name.clone(),
+                                name: name.as_ref().clone(),
                                 ref_type: ref_type.clone(),
                                 recursive: Cell::new(false),
                             })
