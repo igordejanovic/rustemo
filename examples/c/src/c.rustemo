@@ -1,0 +1,303 @@
+// Rustemo grammar of the C Programming Language
+//
+// Based on K&R2 A.13
+//
+// Simplified by Rustemo BNF syntax sugar and priority/associativity declarative
+// spec.
+//
+// This is here to serve just as a more complex grammar example. It is not
+// extensively tested so use at your own risk.
+
+TranslationUnit: ExternalDeclaration+;
+
+ExternalDeclaration: FunctionDefinition | Declaration;
+
+FunctionDefinition:
+    DeclarationSpecifier* Declarator Declaration* CompoundStatement;
+
+Declaration: DeclarationSpecifier+ InitDeclarator*[Comma] ';';
+
+DeclarationSpecifier: StorageClassSpecifier
+                    | TypeSpecifier
+                    | TypeQualifier
+                    ;
+
+StorageClassSpecifier: Auto | Register | Static | Extern | Typedef;
+
+TypeSpecifier: Void | Char | Short | Int | Long | Float | Double
+             | Signed | Unsigned
+             | StructOrUnionSpecifier | EnumSpecifier | TypedefName
+             ;
+
+TypeQualifier: Const | Volatile;
+
+StructOrUnionSpecifier: StructOrUnion Identifier? '{' StructDeclaration+ '}'
+                      | StructOrUnion Identifier
+                      ;
+
+StructOrUnion: Struct | Union;
+
+InitDeclarator: Declarator
+              | Declarator '=' Initializer
+              ;
+
+StructDeclaration: SpecifierQualifier+ StructDeclarator+[Comma] ';';
+
+SpecifierQualifier: TypeSpecifier | TypeQualifier;
+
+StructDeclarator: Declarator
+                | Declarator? ':' ConstantExpression
+                ;
+
+EnumSpecifier: Enum Identifier? '{' Enumerator+ '}'
+             | Enum Identifier
+             ;
+
+Enumerator: Identifier
+          | Identifier '=' ConstantExpression
+          ;
+
+Declarator: Pointer? DirectDeclarator;
+
+DirectDeclarator: Identifier
+                | '(' Declarator ')'
+                | DirectDeclarator '[' ConstantExpression? ']'
+                | DirectDeclarator '(' ParameterTypeList ')'
+                | DirectDeclarator '(' Identifier* ')'
+                ;
+
+Pointer: '*' TypeQualifier* Pointer?;
+
+ParameterTypeList: ParameterDeclaration+[Comma]
+                 | ParameterDeclaration+[Comma] ',' '...'
+                 ;
+
+ParameterDeclaration: DeclarationSpecifier+ Declarator
+                    | DeclarationSpecifier+ AbstractDeclarator?
+                    ;
+
+Initializer: AssignmentExpression
+           | '{' Initializer+ ','? '}'
+           ;
+
+TypeName: SpecifierQualifier+ AbstractDeclarator?;
+
+AbstractDeclarator: Pointer? DirectAbstractDeclarator;
+
+DirectAbstractDeclarator: '(' AbstractDeclarator ')'
+                        | DirectAbstractDeclarator? '[' ConstantExpression? ']'
+                        | DirectAbstractDeclarator? '(' ParameterTypeList? ')'
+                        ;
+
+TypedefName: Identifier;
+
+Statement: LabeledStatement
+         | ExpressionStatement
+         | CompoundStatement
+         | SelectionStatement
+         | IterationStatement
+         | JumpStatement
+         ;
+
+LabeledStatement: Identifier ':' Statement
+                | Case ConstantExpression ':' Statement
+                | Default ':' Statement
+                ;
+
+ExpressionStatement: Expression? ';';
+
+CompoundStatement: '{' Declaration* Statement* '}';
+
+SelectionStatement: If '(' Expression ')' Statement {If, 2}
+                  | If '(' Expression ')' Statement Else Statement {IfElse, 1}
+                  | Switch '(' Expression ')' Statement
+                  ;
+
+IterationStatement: While '(' Expression ')' Statement
+                  | Do Statement While '(' Expression ')' ';'
+                  | For '(' Expression? ';' Expression? ';' Expression? ')' Statement
+                  ;
+
+JumpStatement: Goto Identifier ';'
+             | Continue ';'
+             | Break ';'
+             | Return Expression? ';'
+             ;
+
+
+// Expressions
+Expression: AssignmentExpression+[Comma];
+
+AssignmentExpression: ConditionalExpression
+                    | UnaryExpression AssignmentOperator AssignmentExpression {Assignment, 5, right}
+                    ;
+
+AssignmentOperator: '=' | '*=' | '/=' | '%=' | '+=' | '-=' | '<<=' | '>>=' | '&=' | '^=' | '|=';
+
+ConstantExpression: ConditionalExpression;
+
+ConditionalExpression: BinaryExpression
+                     | BinaryExpression '?' Expression ':' ConditionalExpression {TernIf, right}
+                     ;
+
+// Binary expression with priorities and asssociativities
+BinaryExpression: CastExpression
+                | BinaryExpression '*' BinaryExpression     {Add, 19, left}
+                | BinaryExpression '/' BinaryExpression     {Div, 19, left}
+                | BinaryExpression '%' BinaryExpression     {Mod, 19, left}
+                | BinaryExpression '+' BinaryExpression     {Add, 18, left}
+                | BinaryExpression '-' BinaryExpression     {Sub, 18, left}
+                | BinaryExpression '>>' BinaryExpression    {RShift, 17, left}
+                | BinaryExpression '<<' BinaryExpression    {LShift, 17, left}
+                | BinaryExpression '<' BinaryExpression     {LT, 16, left}
+                | BinaryExpression '>' BinaryExpression     {GT, 16, left}
+                | BinaryExpression '<=' BinaryExpression    {LE, 16, left}
+                | BinaryExpression '>=' BinaryExpression    {GE, 16, left}
+                | BinaryExpression '==' BinaryExpression    {Eq, 15, left}
+                | BinaryExpression '!=' BinaryExpression    {NEq, 15, left}
+                | BinaryExpression '&' BinaryExpression     {And, 14, left}
+                | BinaryExpression '^' BinaryExpression     {Xor, 13, left}
+                | BinaryExpression '|' BinaryExpression     {Or, 12, left}
+                | BinaryExpression '&&' BinaryExpression    {LogAnd, 11, left}
+                | BinaryExpression '||' BinaryExpression    {LogOr, 10, left}
+                ;
+
+CastExpression: UnaryExpression
+              | '(' TypeName ')' CastExpression
+              ;
+
+UnaryExpression: PostfixExpression
+               | '++' UnaryExpression
+               | '--' UnaryExpression
+               | UnaryOperator CastExpression
+               | Sizeof UnaryExpression
+               | Sizeof '(' TypeName ')'
+               | Alignof '(' TypeName ')'
+               ;
+
+UnaryOperator: '&' | '*' | '+' | '-' | '~' | '!';
+
+PostfixExpression: PrimaryExpression
+                 | PostfixExpression '[' Expression ']'
+                 | PostfixExpression '(' Expression? ')'
+                 | PostfixExpression '(' ArgumentExpressionList ')'
+                 | PostfixExpression '.' Identifier
+                 | PostfixExpression '.' TypeName
+                 | PostfixExpression '->' Identifier
+                 | PostfixExpression '->' TypeName
+                 | PostfixExpression '++'
+                 | PostfixExpression '--'
+                 | PostfixExpression '(' TypeName ')' '{' Initializer+ ','? '}'
+                 ;
+
+PrimaryExpression: Identifier
+                 | Constant
+                 | String
+                 | '(' Expression ')'
+                 ;
+
+ArgumentExpressionList: AssignmentExpression*[Comma];
+
+Constant: IntegerConstant
+        | CharacterConstant
+        | FloatConstant
+//        | EnumerationConstant
+        ;
+
+//EnumerationConstant: Identifier;
+
+
+terminals
+
+// Keywords
+Auto: 'auto';
+Register: 'register';
+Static: 'static';
+Extern: 'extern';
+Typedef: 'typedef';
+Void: 'void';
+Char: 'char';
+Short: 'short';
+Int: 'int';
+Long: 'long';
+Float: 'float';
+Double: 'double';
+Signed: 'signed';
+Unsigned: 'unsigned';
+Const: 'const';
+Volatile: 'volatile';
+Struct: 'struct';
+Union: 'union';
+Enum: 'enum';
+Case: 'case';
+Default: 'default';
+If: 'if';
+Else: 'else';
+Switch: 'switch';
+While: 'while';
+Do: 'do';
+For: 'for';
+Goto: 'goto';
+Continue: 'continue';
+Break: 'break';
+Return: 'return';
+Sizeof: 'sizeof';
+Alignof: 'alignof';
+
+// Punctuation
+Comma: ',';
+Semicolon: ';';
+Colon: ':';
+OParen: '(';
+CParen: ')';
+OBracket: '[';
+CBracket: ']';
+OBrace: '{';
+CBrace: '}';
+Asterisk: '*';
+Ellipsis: '...';
+Question: '?';
+Dot: '.';
+
+// Operators
+LogicalOr: '||';
+LogicalAnd: '&&';
+LogicalNot: '!';
+Not: '~';
+Or: '|';
+And: '&';
+Xor: '^';
+Assignment: '=';
+Eq: '==';
+NE: '!=';
+LT: '<';
+LE: '<=';
+GT: '>';
+GE: '>=';
+Div: '/';
+Mod: '%';
+Add: '+';
+Sub: '-';
+Arrow: '->';
+LShift: '>>';
+RShift: '<<';
+PlusPlus: '++';
+MinusMinus: '--';
+MulAssig: '*=';
+DivAssig: '/=';
+ModAssig: '%=';
+AddAssig: '+=';
+SubAssig: '-=';
+LShiftAssig: '<<=';
+RShiftAssig: '>>=';
+AndAssig: '&=';
+OrAssig: '|=';
+XorAssig: '^=';
+
+
+// Non-const lexemes
+Identifier: /[_a-zA-Z][_a-zA-Z0-9]*/;
+IntegerConstant: /[-+]?[0-9]+[uUlL]{0,2}\b/ {prefer};
+FloatConstant: /[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?[FfLl]?(?<=[\w\.])(?![\w\.])/;
+CharacterConstant: /'([^'\\\n]|(\\(([a-zA-Z._~!=&\^\-\\?'"])|(\d+)|(x[0-9a-fA-F]+))))'/;
+String: /"([^"\\\n]|(\\(([a-zA-Z._~!=&\^\-\\?'"])|(\d+)|(x[0-9a-fA-F]+))))*"/;
