@@ -38,7 +38,7 @@ pub enum E {
     Sub(Sub),
     Mul(Mul),
     Div(Div),
-    C5(Number),
+    Number(Number),
 }
 pub fn e_add(_ctx: &Context, e_1: E, e_3: E) -> E {
     E::Add(Add {
@@ -64,6 +64,6 @@ pub fn e_div(_ctx: &Context, e_1: E, e_3: E) -> E {
         e_3: Box::new(e_3),
     })
 }
-pub fn e_c5(_ctx: &Context, number: Number) -> E {
-    E::C5(number)
+pub fn e_number(_ctx: &Context, number: Number) -> E {
+    E::Number(number)
 }

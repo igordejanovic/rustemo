@@ -29,7 +29,7 @@ pub fn e_mul(_ctx: &Context, left: E, right: E) -> E {
 pub fn e_div(_ctx: &Context, left: E, right: E) -> E {
     left / right
 }
-pub fn e_c5(_ctx: &Context, number: Number) -> E {
+pub fn e_number(_ctx: &Context, number: Number) -> E {
     number
 }
 /// ANCHOR_END: actions

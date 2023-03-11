@@ -1,22 +1,22 @@
 Ok(
     C1(
         EC1 {
-            e_1: C5(
+            e_1: Number(
                 "2",
             ),
             e_3: C4(
                 EC4 {
                     e_1: C3(
                         EC3 {
-                            e_1: C5(
+                            e_1: Number(
                                 "3",
                             ),
-                            e_3: C5(
+                            e_3: Number(
                                 "7",
                             ),
                         },
                     ),
-                    e_3: C5(
+                    e_3: Number(
                         "2.3",
                     ),
                 },

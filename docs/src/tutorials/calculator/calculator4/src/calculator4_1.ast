@@ -1,22 +1,22 @@
 Ok(
     Add(
         Add {
-            left: C5(
+            left: Number(
                 "2",
             ),
             right: Div(
                 Div {
                     left: Mul(
                         Mul {
-                            left: C5(
+                            left: Number(
                                 "3",
                             ),
-                            right: C5(
+                            right: Number(
                                 "7",
                             ),
                         },
                     ),
-                    right: C5(
+                    right: Number(
                         "2.3",
                     ),
                 },

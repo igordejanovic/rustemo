@@ -39,7 +39,7 @@ pub enum E {
     C2(EC2),
     C3(EC3),
     C4(EC4),
-    C5(Number),
+    Number(Number),
 }
 /// ANCHOR_END: enum
 pub fn e_c1(_ctx: &Context, e_1: E, e_3: E) -> E {
@@ -66,6 +66,6 @@ pub fn e_c4(_ctx: &Context, e_1: E, e_3: E) -> E {
         e_3: Box::new(e_3),
     })
 }
-pub fn e_c5(_ctx: &Context, number: Number) -> E {
-    E::C5(number)
+pub fn e_number(_ctx: &Context, number: Number) -> E {
+    E::Number(number)
 }

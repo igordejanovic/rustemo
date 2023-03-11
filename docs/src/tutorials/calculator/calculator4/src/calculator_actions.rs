@@ -43,7 +43,7 @@ pub enum E {
     Sub(Sub),
     Mul(Mul),
     Div(Div),
-    C5(Number),
+    Number(Number),
 }
 /// ANCHOR_END: expression
 /// ANCHOR: add_action
@@ -72,6 +72,6 @@ pub fn e_div(_ctx: &Context, left: E, right: E) -> E {
         right: Box::new(right),
     })
 }
-pub fn e_c5(_ctx: &Context, number: Number) -> E {
-    E::C5(number)
+pub fn e_number(_ctx: &Context, number: Number) -> E {
+    E::Number(number)
 }
