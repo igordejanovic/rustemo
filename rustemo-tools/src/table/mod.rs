@@ -974,18 +974,16 @@ impl<'g, 's> LRTable<'g, 's> {
                     .enumerate()
                     .filter_map(|(term_index, actions)| -> Option<Conflict> {
                         if actions.len() > 1 {
-                            // Assumtion is that only two action at most can exist
-                            // for some terminal lookahead.
-                            assert!(actions.len() == 2);
-
                             // First figure out the type of conflict.
                             let kind = match &actions[..] {
                                 // Shift/Reduce
                                 [Action::Shift(_), Action::Reduce(prod, ..)]
                                     | [Action::Reduce(prod, ..), Action::Shift(_)]=>
                                         ConflictKind::ShiftReduce(*prod),
-                                // Reduce/Reduce
-                                [Action::Reduce(prod1, ..), Action::Reduce(prod2, ..)] =>
+                                // Reduce/Reduce, more than two can happen at
+                                // the same time but for now we shall report
+                                // conflict on the first two for simplicity sake
+                                [Action::Reduce(prod1, ..), Action::Reduce(prod2, ..), ..] =>
                                     ConflictKind::ReduceReduce(*prod1,  *prod2),
                                 _ => unreachable!()
                             };
