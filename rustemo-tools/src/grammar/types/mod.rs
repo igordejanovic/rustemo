@@ -7,6 +7,7 @@ use std::{
 };
 
 use convert_case::{Boundary, Case, Casing};
+use rustemo::index::{SymbolIndex, SymbolVec};
 
 use crate::lang::rustemo_actions::Name;
 
@@ -17,7 +18,7 @@ mod tests;
 
 #[derive(Debug)]
 pub(crate) struct SymbolTypes {
-    symbol_types: Vec<SymbolType>,
+    symbol_types: SymbolVec<SymbolType>,
 }
 
 pub(crate) fn to_snake_case<S: AsRef<str>>(s: S) -> String {
@@ -30,9 +31,14 @@ pub(crate) fn to_pascal_case<S: AsRef<str>>(s: S) -> String {
     s.as_ref().to_case(Case::Pascal)
 }
 
-pub(crate) fn choice_name(prod: &Production) -> String {
+pub(crate) fn choice_name(
+    prod: &Production,
+    ref_type: Option<&String>,
+) -> String {
     if let Some(ref kind) = prod.kind {
         kind.clone()
+    } else if let Some(ref_type) = ref_type {
+        ref_type.to_owned()
     } else if prod.rhs.is_empty() {
         String::from("Empty")
     } else {
@@ -50,24 +56,25 @@ impl SymbolTypes {
         }
     }
 
-    pub(crate) fn get_type(&self, ty: &str) -> &SymbolType {
-        self.symbol_types.iter().find(|t| t.name == ty).unwrap()
+    pub(crate) fn get_type(&self, idx: SymbolIndex) -> &SymbolType {
+        &self.symbol_types[idx]
     }
 
     /// Returns a vector of all types inferred from the provided grammar.
     pub(crate) fn symbol_types(
         grammar: &Grammar,
         start_symbol: String,
-    ) -> Vec<SymbolType> {
-        let mut types = vec![];
+    ) -> SymbolVec<SymbolType> {
+        let mut types = SymbolVec::new();
         for terminal in &grammar.terminals {
+            assert!(types.len() == terminal.idx.into());
             // Each terminal produces `Terminal` kind which maps to String by default
             types.push(SymbolType {
                 name: terminal.name.clone(),
                 kind: SymbolTypeKind::Terminal,
                 choices: vec![],
                 optional: false,
-            })
+            });
         }
 
         // Each non-terminal produces Enum type
@@ -76,8 +83,6 @@ impl SymbolTypes {
             let mut optional = false;
 
             for production in nonterminal.productions(grammar) {
-                let choice_name = choice_name(production);
-
                 // Choices are deduced by the following rules:
                 //
                 // - No content references (e.g. just string matches) => plain
@@ -89,7 +94,7 @@ impl SymbolTypes {
                 let rhs = production.rhs_with_content(grammar);
                 choices.push(match rhs.len() {
                     0 => Choice {
-                        name: choice_name,
+                        name: choice_name(production, None),
                         kind: if production.rhs.is_empty() {
                             optional = true;
                             ChoiceKind::Empty
@@ -100,7 +105,7 @@ impl SymbolTypes {
                     1 if rhs[0].name.is_none() => {
                         let ref_type = grammar.symbol_name(rhs[0].symbol);
                         Choice {
-                            name: choice_name,
+                            name: choice_name(production, Some(&ref_type)),
                             kind: ChoiceKind::Ref {
                                 ref_type,
                                 recursive: Cell::new(false),
@@ -140,6 +145,7 @@ impl SymbolTypes {
                             })
                         }
 
+                        let choice_name = choice_name(production, None);
                         let struct_type = if production.kind.is_some() {
                             choice_name.clone()
                         } else {
@@ -147,7 +153,7 @@ impl SymbolTypes {
                         };
 
                         Choice {
-                            name: choice_name.clone(),
+                            name: choice_name,
                             kind: ChoiceKind::Struct {
                                 type_name: struct_type,
                                 fields,
@@ -289,7 +295,7 @@ impl SymbolTypes {
 
     /// Flags recursive types by performing a DFS over the types reference graph.
     fn find_recursions(
-        symbol_types: &mut Vec<SymbolType>,
+        symbol_types: &mut SymbolVec<SymbolType>,
         start_symbol: String,
     ) {
         let types: HashMap<String, &SymbolType> =

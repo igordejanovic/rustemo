@@ -28,6 +28,12 @@ macro_rules! create_index {
             }
         }
 
+        impl From<$index> for usize {
+            fn from(i: $index) -> Self {
+                i.0
+            }
+        }
+
         impl Default for $index {
             fn default() -> Self {
                 Self(0)

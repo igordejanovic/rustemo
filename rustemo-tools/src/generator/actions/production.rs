@@ -4,6 +4,7 @@ use syn::{parse::Parser, parse_quote};
 
 use crate::{
     api::Settings,
+    generator::action_name,
     grammar::{
         types::{
             to_snake_case, Choice, ChoiceKind, SymbolType, SymbolTypeKind,
@@ -15,16 +16,21 @@ use crate::{
 
 use super::ActionsGenerator;
 
-pub(crate) struct ProductionActionsGenerator {
-    types: SymbolTypes,
+pub(crate) struct ProductionActionsGenerator<'t> {
+    types: &'t SymbolTypes,
+    term_len: usize,
 }
 
-impl ProductionActionsGenerator {
+impl<'t> ProductionActionsGenerator<'t> {
     // TODO: Rework this to be aligned with conventions
     #[allow(clippy::new_ret_no_self)]
-    pub fn new(grammar: &Grammar) -> Box<dyn ActionsGenerator> {
+    pub fn new(
+        grammar: &Grammar,
+        types: &'t SymbolTypes,
+    ) -> Box<dyn ActionsGenerator + 't> {
         Box::new(Self {
-            types: SymbolTypes::new(grammar),
+            types,
+            term_len: grammar.terminals.len(),
         })
     }
 
@@ -139,9 +145,11 @@ impl ProductionActionsGenerator {
     }
 }
 
-impl ActionsGenerator for ProductionActionsGenerator {
+impl<'t> ActionsGenerator for ProductionActionsGenerator<'t> {
     fn nonterminal_types(&self, nonterminal: &NonTerminal) -> Vec<syn::Item> {
-        let ty = self.types.get_type(&nonterminal.name);
+        let ty = self
+            .types
+            .get_type(nonterminal.idx.to_symbol_index(self.term_len));
         let type_ident = Ident::new(&ty.name, Span::call_site());
 
         fn get_choice_type(
@@ -305,7 +313,9 @@ impl ActionsGenerator for ProductionActionsGenerator {
         nonterminal: &NonTerminal,
         _settings: &Settings,
     ) -> Vec<(String, syn::Item)> {
-        let ty = self.types.get_type(&nonterminal.name);
+        let ty = self
+            .types
+            .get_type(nonterminal.idx.to_symbol_index(self.term_len));
         let ret_type = Ident::new(&nonterminal.name, Span::call_site());
 
         match &ty.kind {
@@ -322,8 +332,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
                 .choices
                 .iter()
                 .map(|choice| {
-                    let action_name =
-                        to_snake_case(format!("{}_{}", ty.name, choice.name));
+                    let action_name = action_name(nonterminal, choice);
                     let action = Ident::new(&action_name, Span::call_site());
                     let args = self.get_action_args(ty, choice);
                     let body = self.get_action_body(ty, target_type, choice);
@@ -342,8 +351,7 @@ impl ActionsGenerator for ProductionActionsGenerator {
                 .choices
                 .iter()
                 .map(|choice| {
-                    let action_name =
-                        to_snake_case(format!("{}_{}", ty.name, choice.name));
+                    let action_name = action_name(nonterminal, choice);
                     let action = Ident::new(&action_name, Span::call_site());
                     let args = self.get_action_args(ty, choice);
 

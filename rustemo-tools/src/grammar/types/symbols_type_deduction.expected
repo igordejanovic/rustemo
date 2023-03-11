@@ -1,1730 +1,1732 @@
 SymbolTypes {
-    symbol_types: [
-        SymbolType {
-            name: "STOP",
-            kind: Terminal,
-            choices: [],
-            optional: false,
-        },
-        SymbolType {
-            name: "Num",
-            kind: Terminal,
-            choices: [],
-            optional: false,
-        },
-        SymbolType {
-            name: "Ta",
-            kind: Terminal,
-            choices: [],
-            optional: false,
-        },
-        SymbolType {
-            name: "Tb",
-            kind: Terminal,
-            choices: [],
-            optional: false,
-        },
-        SymbolType {
-            name: "Tc",
-            kind: Terminal,
-            choices: [],
-            optional: false,
-        },
-        SymbolType {
-            name: "EMPTY",
-            kind: Enum {
-                type_name: "EMPTY",
+    symbol_types: SymbolVec(
+        [
+            SymbolType {
+                name: "STOP",
+                kind: Terminal,
+                choices: [],
+                optional: false,
             },
-            choices: [],
-            optional: false,
-        },
-        SymbolType {
-            name: "AUG",
-            kind: Ref {
-                ref_type: "A",
-                recursive: Cell {
-                    value: false,
+            SymbolType {
+                name: "Num",
+                kind: Terminal,
+                choices: [],
+                optional: false,
+            },
+            SymbolType {
+                name: "Ta",
+                kind: Terminal,
+                choices: [],
+                optional: false,
+            },
+            SymbolType {
+                name: "Tb",
+                kind: Terminal,
+                choices: [],
+                optional: false,
+            },
+            SymbolType {
+                name: "Tc",
+                kind: Terminal,
+                choices: [],
+                optional: false,
+            },
+            SymbolType {
+                name: "EMPTY",
+                kind: Enum {
+                    type_name: "EMPTY",
                 },
+                choices: [],
+                optional: false,
             },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Ref {
-                        ref_type: "A",
-                        recursive: Cell {
-                            value: false,
+            SymbolType {
+                name: "AUG",
+                kind: Ref {
+                    ref_type: "A",
+                    recursive: Cell {
+                        value: false,
+                    },
+                },
+                choices: [
+                    Choice {
+                        name: "A",
+                        kind: Ref {
+                            ref_type: "A",
+                            recursive: Cell {
+                                value: false,
+                            },
                         },
                     },
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "A",
-            kind: Enum {
-                type_name: "A",
+                ],
+                optional: false,
             },
-            choices: [
-                Choice {
-                    name: "MyKind",
-                    kind: Struct {
-                        type_name: "MyKind",
-                        fields: [
-                            Field {
-                                name: "myb",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                            Field {
-                                name: "c",
-                                ref_type: "C",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                        ],
-                    },
+            SymbolType {
+                name: "A",
+                kind: Enum {
+                    type_name: "A",
                 },
-                Choice {
-                    name: "C2",
-                    kind: Struct {
-                        type_name: "AC2",
-                        fields: [
-                            Field {
-                                name: "b",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: false,
+                choices: [
+                    Choice {
+                        name: "MyKind",
+                        kind: Struct {
+                            type_name: "MyKind",
+                            fields: [
+                                Field {
+                                    name: "myb",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
                                 },
-                            },
-                            Field {
-                                name: "c",
-                                ref_type: "C",
-                                recursive: Cell {
-                                    value: false,
+                                Field {
+                                    name: "c",
+                                    ref_type: "C",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
                                 },
-                            },
-                        ],
-                    },
-                },
-                Choice {
-                    name: "MyD",
-                    kind: Ref {
-                        ref_type: "D",
-                        recursive: Cell {
-                            value: true,
+                            ],
                         },
                     },
-                },
-                Choice {
-                    name: "C4",
-                    kind: Ref {
-                        ref_type: "Num",
-                        recursive: Cell {
-                            value: false,
+                    Choice {
+                        name: "C2",
+                        kind: Struct {
+                            type_name: "AC2",
+                            fields: [
+                                Field {
+                                    name: "b",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                                Field {
+                                    name: "c",
+                                    ref_type: "C",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                            ],
                         },
                     },
-                },
-                Choice {
-                    name: "C5",
-                    kind: Ref {
-                        ref_type: "Recursive",
-                        recursive: Cell {
-                            value: false,
+                    Choice {
+                        name: "MyD",
+                        kind: Ref {
+                            ref_type: "D",
+                            recursive: Cell {
+                                value: true,
+                            },
                         },
                     },
-                },
-                Choice {
-                    name: "C6",
-                    kind: Ref {
-                        ref_type: "OneOrMoreRecursive",
-                        recursive: Cell {
-                            value: false,
+                    Choice {
+                        name: "Num",
+                        kind: Ref {
+                            ref_type: "Num",
+                            recursive: Cell {
+                                value: false,
+                            },
                         },
                     },
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "B",
-            kind: Ref {
-                ref_type: "C",
-                recursive: Cell {
-                    value: false,
-                },
-            },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Ref {
-                        ref_type: "C",
-                        recursive: Cell {
-                            value: false,
+                    Choice {
+                        name: "Recursive",
+                        kind: Ref {
+                            ref_type: "Recursive",
+                            recursive: Cell {
+                                value: false,
+                            },
                         },
                     },
-                },
-                Choice {
-                    name: "Empty",
-                    kind: Empty,
-                },
-            ],
-            optional: true,
-        },
-        SymbolType {
-            name: "C",
-            kind: Struct {
-                type_name: "C",
-            },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Struct {
-                        type_name: "CC1",
-                        fields: [
-                            Field {
-                                name: "b",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: true,
-                                },
+                    Choice {
+                        name: "OneOrMoreRecursive",
+                        kind: Ref {
+                            ref_type: "OneOrMoreRecursive",
+                            recursive: Cell {
+                                value: false,
                             },
-                        ],
-                    },
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "D",
-            kind: Enum {
-                type_name: "DNO",
-            },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Struct {
-                        type_name: "DC1",
-                        fields: [
-                            Field {
-                                name: "a",
-                                ref_type: "A",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                            Field {
-                                name: "b",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                        ],
-                    },
-                },
-                Choice {
-                    name: "C2",
-                    kind: Struct {
-                        type_name: "DC2",
-                        fields: [
-                            Field {
-                                name: "mya",
-                                ref_type: "A",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                            Field {
-                                name: "b_2",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                            Field {
-                                name: "myb",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                            Field {
-                                name: "b_4",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                            Field {
-                                name: "d",
-                                ref_type: "D",
-                                recursive: Cell {
-                                    value: true,
-                                },
-                            },
-                        ],
-                    },
-                },
-                Choice {
-                    name: "Empty",
-                    kind: Empty,
-                },
-            ],
-            optional: true,
-        },
-        SymbolType {
-            name: "F",
-            kind: Enum {
-                type_name: "F",
-            },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Struct {
-                        type_name: "FC1",
-                        fields: [
-                            Field {
-                                name: "a",
-                                ref_type: "A",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                            Field {
-                                name: "f",
-                                ref_type: "F",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                        ],
-                    },
-                },
-                Choice {
-                    name: "C2",
-                    kind: Ref {
-                        ref_type: "D",
-                        recursive: Cell {
-                            value: false,
                         },
                     },
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "OptionalRef1",
-            kind: Ref {
-                ref_type: "A",
-                recursive: Cell {
-                    value: false,
-                },
+                ],
+                optional: false,
             },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Ref {
-                        ref_type: "A",
-                        recursive: Cell {
-                            value: false,
+            SymbolType {
+                name: "B",
+                kind: Ref {
+                    ref_type: "C",
+                    recursive: Cell {
+                        value: false,
+                    },
+                },
+                choices: [
+                    Choice {
+                        name: "C",
+                        kind: Ref {
+                            ref_type: "C",
+                            recursive: Cell {
+                                value: false,
+                            },
                         },
                     },
-                },
-                Choice {
-                    name: "Empty",
-                    kind: Empty,
-                },
-            ],
-            optional: true,
-        },
-        SymbolType {
-            name: "OptionalRef2",
-            kind: Ref {
-                ref_type: "A",
-                recursive: Cell {
-                    value: false,
-                },
+                    Choice {
+                        name: "Empty",
+                        kind: Empty,
+                    },
+                ],
+                optional: true,
             },
-            choices: [
-                Choice {
-                    name: "Empty",
-                    kind: Empty,
+            SymbolType {
+                name: "C",
+                kind: Struct {
+                    type_name: "C",
                 },
-                Choice {
-                    name: "C2",
-                    kind: Ref {
-                        ref_type: "A",
-                        recursive: Cell {
-                            value: false,
+                choices: [
+                    Choice {
+                        name: "C1",
+                        kind: Struct {
+                            type_name: "CC1",
+                            fields: [
+                                Field {
+                                    name: "b",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: true,
+                                    },
+                                },
+                            ],
                         },
                     },
-                },
-            ],
-            optional: true,
-        },
-        SymbolType {
-            name: "OptionalRef3",
-            kind: Ref {
-                ref_type: "A",
-                recursive: Cell {
-                    value: false,
-                },
+                ],
+                optional: false,
             },
-            choices: [
-                Choice {
-                    name: "Empty",
-                    kind: Empty,
+            SymbolType {
+                name: "D",
+                kind: Enum {
+                    type_name: "DNO",
                 },
-                Choice {
-                    name: "C2",
-                    kind: Ref {
-                        ref_type: "A",
-                        recursive: Cell {
-                            value: false,
+                choices: [
+                    Choice {
+                        name: "C1",
+                        kind: Struct {
+                            type_name: "DC1",
+                            fields: [
+                                Field {
+                                    name: "a",
+                                    ref_type: "A",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                                Field {
+                                    name: "b",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                            ],
                         },
                     },
-                },
-            ],
-            optional: true,
-        },
-        SymbolType {
-            name: "Ref1",
-            kind: Ref {
-                ref_type: "A",
-                recursive: Cell {
-                    value: false,
-                },
-            },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Ref {
-                        ref_type: "A",
-                        recursive: Cell {
-                            value: false,
+                    Choice {
+                        name: "C2",
+                        kind: Struct {
+                            type_name: "DC2",
+                            fields: [
+                                Field {
+                                    name: "mya",
+                                    ref_type: "A",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                                Field {
+                                    name: "b_2",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                                Field {
+                                    name: "myb",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                                Field {
+                                    name: "b_4",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                                Field {
+                                    name: "d",
+                                    ref_type: "D",
+                                    recursive: Cell {
+                                        value: true,
+                                    },
+                                },
+                            ],
                         },
                     },
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "Ref2",
-            kind: Ref {
-                ref_type: "A",
-                recursive: Cell {
-                    value: false,
-                },
+                    Choice {
+                        name: "Empty",
+                        kind: Empty,
+                    },
+                ],
+                optional: true,
             },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Ref {
-                        ref_type: "A",
-                        recursive: Cell {
-                            value: false,
+            SymbolType {
+                name: "F",
+                kind: Enum {
+                    type_name: "F",
+                },
+                choices: [
+                    Choice {
+                        name: "C1",
+                        kind: Struct {
+                            type_name: "FC1",
+                            fields: [
+                                Field {
+                                    name: "a",
+                                    ref_type: "A",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                                Field {
+                                    name: "f",
+                                    ref_type: "F",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                            ],
                         },
                     },
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "OptionalStruct1",
-            kind: Struct {
-                type_name: "OptionalStruct1NO",
-            },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Struct {
-                        type_name: "OptionalStruct1C1",
-                        fields: [
-                            Field {
-                                name: "a",
-                                ref_type: "A",
-                                recursive: Cell {
-                                    value: false,
-                                },
+                    Choice {
+                        name: "D",
+                        kind: Ref {
+                            ref_type: "D",
+                            recursive: Cell {
+                                value: false,
                             },
-                            Field {
-                                name: "b",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                        ],
-                    },
-                },
-                Choice {
-                    name: "Empty",
-                    kind: Empty,
-                },
-            ],
-            optional: true,
-        },
-        SymbolType {
-            name: "OptionalStruct2",
-            kind: Struct {
-                type_name: "OptionalStruct2NO",
-            },
-            choices: [
-                Choice {
-                    name: "Empty",
-                    kind: Empty,
-                },
-                Choice {
-                    name: "C2",
-                    kind: Struct {
-                        type_name: "OptionalStruct2C2",
-                        fields: [
-                            Field {
-                                name: "mya",
-                                ref_type: "A",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                            Field {
-                                name: "b",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                        ],
-                    },
-                },
-            ],
-            optional: true,
-        },
-        SymbolType {
-            name: "Struct",
-            kind: Struct {
-                type_name: "Struct",
-            },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Struct {
-                        type_name: "StructC1",
-                        fields: [
-                            Field {
-                                name: "a",
-                                ref_type: "A",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                            Field {
-                                name: "b",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                        ],
-                    },
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "OptionalEnum1",
-            kind: Enum {
-                type_name: "OptionalEnum1NO",
-            },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Struct {
-                        type_name: "OptionalEnum1C1",
-                        fields: [
-                            Field {
-                                name: "a",
-                                ref_type: "A",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                            Field {
-                                name: "b",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                        ],
-                    },
-                },
-                Choice {
-                    name: "C2",
-                    kind: Ref {
-                        ref_type: "C",
-                        recursive: Cell {
-                            value: false,
                         },
                     },
-                },
-                Choice {
-                    name: "Empty",
-                    kind: Empty,
-                },
-            ],
-            optional: true,
-        },
-        SymbolType {
-            name: "OptionalEnum2",
-            kind: Enum {
-                type_name: "OptionalEnum2NO",
+                ],
+                optional: false,
             },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Struct {
-                        type_name: "OptionalEnum2C1",
-                        fields: [
-                            Field {
-                                name: "a",
-                                ref_type: "A",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                            Field {
-                                name: "b",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                        ],
+            SymbolType {
+                name: "OptionalRef1",
+                kind: Ref {
+                    ref_type: "A",
+                    recursive: Cell {
+                        value: false,
                     },
                 },
-                Choice {
-                    name: "Empty",
-                    kind: Empty,
-                },
-                Choice {
-                    name: "C3",
-                    kind: Struct {
-                        type_name: "OptionalEnum2C3",
-                        fields: [
-                            Field {
-                                name: "myc",
-                                ref_type: "C",
-                                recursive: Cell {
-                                    value: false,
-                                },
+                choices: [
+                    Choice {
+                        name: "A",
+                        kind: Ref {
+                            ref_type: "A",
+                            recursive: Cell {
+                                value: false,
                             },
-                        ],
-                    },
-                },
-            ],
-            optional: true,
-        },
-        SymbolType {
-            name: "Enum1",
-            kind: Enum {
-                type_name: "Enum1",
-            },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Struct {
-                        type_name: "Enum1C1",
-                        fields: [
-                            Field {
-                                name: "a",
-                                ref_type: "A",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                            Field {
-                                name: "b",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                        ],
-                    },
-                },
-                Choice {
-                    name: "C2",
-                    kind: Struct {
-                        type_name: "Enum1C2",
-                        fields: [
-                            Field {
-                                name: "myc",
-                                ref_type: "C",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                        ],
-                    },
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "Enum2",
-            kind: Enum {
-                type_name: "Enum2",
-            },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Struct {
-                        type_name: "Enum2C1",
-                        fields: [
-                            Field {
-                                name: "a",
-                                ref_type: "A",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                            Field {
-                                name: "b",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                        ],
-                    },
-                },
-                Choice {
-                    name: "C2",
-                    kind: Struct {
-                        type_name: "Enum2C2",
-                        fields: [
-                            Field {
-                                name: "myc",
-                                ref_type: "C",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                        ],
-                    },
-                },
-                Choice {
-                    name: "C3",
-                    kind: Plain,
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "MultiNonContent",
-            kind: Enum {
-                type_name: "MultiNonContent",
-            },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Plain,
-                },
-                Choice {
-                    name: "C2",
-                    kind: Plain,
-                },
-                Choice {
-                    name: "C3",
-                    kind: Plain,
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "MultiNonContentOptional",
-            kind: Enum {
-                type_name: "MultiNonContentOptionalNO",
-            },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Plain,
-                },
-                Choice {
-                    name: "C2",
-                    kind: Plain,
-                },
-                Choice {
-                    name: "C3",
-                    kind: Plain,
-                },
-                Choice {
-                    name: "Empty",
-                    kind: Empty,
-                },
-            ],
-            optional: true,
-        },
-        SymbolType {
-            name: "ZeroOrMore1",
-            kind: Vec {
-                ref_type: "B",
-                recursive: Cell {
-                    value: false,
-                },
-            },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Struct {
-                        type_name: "ZeroOrMore1C1",
-                        fields: [
-                            Field {
-                                name: "zero_or_more1",
-                                ref_type: "ZeroOrMore1",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                            Field {
-                                name: "b",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                        ],
-                    },
-                },
-                Choice {
-                    name: "C2",
-                    kind: Struct {
-                        type_name: "ZeroOrMore1C2",
-                        fields: [
-                            Field {
-                                name: "myb",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                        ],
-                    },
-                },
-                Choice {
-                    name: "Empty",
-                    kind: Empty,
-                },
-            ],
-            optional: true,
-        },
-        SymbolType {
-            name: "ZeroOrMore2",
-            kind: Vec {
-                ref_type: "B",
-                recursive: Cell {
-                    value: false,
-                },
-            },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Struct {
-                        type_name: "ZeroOrMore2C1",
-                        fields: [
-                            Field {
-                                name: "b",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                            Field {
-                                name: "z",
-                                ref_type: "ZeroOrMore2",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                        ],
-                    },
-                },
-                Choice {
-                    name: "C2",
-                    kind: Ref {
-                        ref_type: "B",
-                        recursive: Cell {
-                            value: false,
                         },
                     },
-                },
-                Choice {
-                    name: "Empty",
-                    kind: Empty,
-                },
-            ],
-            optional: true,
-        },
-        SymbolType {
-            name: "ZeroOrMore3",
-            kind: Enum {
-                type_name: "ZeroOrMore3NO",
+                    Choice {
+                        name: "Empty",
+                        kind: Empty,
+                    },
+                ],
+                optional: true,
             },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Struct {
-                        type_name: "ZeroOrMore3C1",
-                        fields: [
-                            Field {
-                                name: "b",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                            Field {
-                                name: "zero_or_more3",
-                                ref_type: "ZeroOrMore3",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                        ],
+            SymbolType {
+                name: "OptionalRef2",
+                kind: Ref {
+                    ref_type: "A",
+                    recursive: Cell {
+                        value: false,
                     },
                 },
-                Choice {
-                    name: "Empty",
-                    kind: Empty,
-                },
-                Choice {
-                    name: "C3",
-                    kind: Ref {
-                        ref_type: "B",
-                        recursive: Cell {
-                            value: false,
+                choices: [
+                    Choice {
+                        name: "Empty",
+                        kind: Empty,
+                    },
+                    Choice {
+                        name: "A",
+                        kind: Ref {
+                            ref_type: "A",
+                            recursive: Cell {
+                                value: false,
+                            },
                         },
                     },
-                },
-            ],
-            optional: true,
-        },
-        SymbolType {
-            name: "OneOrMore1",
-            kind: Enum {
-                type_name: "OneOrMore1",
+                ],
+                optional: true,
             },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Struct {
-                        type_name: "OneOrMore1C1",
-                        fields: [
-                            Field {
-                                name: "one_or_more1",
-                                ref_type: "OneOrMore1",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                            Field {
-                                name: "b",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                        ],
+            SymbolType {
+                name: "OptionalRef3",
+                kind: Ref {
+                    ref_type: "A",
+                    recursive: Cell {
+                        value: false,
                     },
                 },
-                Choice {
-                    name: "C2",
-                    kind: Ref {
-                        ref_type: "B",
-                        recursive: Cell {
-                            value: false,
+                choices: [
+                    Choice {
+                        name: "Empty",
+                        kind: Empty,
+                    },
+                    Choice {
+                        name: "A",
+                        kind: Ref {
+                            ref_type: "A",
+                            recursive: Cell {
+                                value: false,
+                            },
                         },
                     },
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "OneOrMore2",
-            kind: Vec {
-                ref_type: "B",
-                recursive: Cell {
-                    value: false,
-                },
+                ],
+                optional: true,
             },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Struct {
-                        type_name: "OneOrMore2C1",
-                        fields: [
-                            Field {
-                                name: "b",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                            Field {
-                                name: "one_or_more2",
-                                ref_type: "OneOrMore2",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                        ],
+            SymbolType {
+                name: "Ref1",
+                kind: Ref {
+                    ref_type: "A",
+                    recursive: Cell {
+                        value: false,
                     },
                 },
-                Choice {
-                    name: "C2",
-                    kind: Ref {
-                        ref_type: "B",
-                        recursive: Cell {
-                            value: false,
+                choices: [
+                    Choice {
+                        name: "A",
+                        kind: Ref {
+                            ref_type: "A",
+                            recursive: Cell {
+                                value: false,
+                            },
                         },
                     },
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "OneOrMore3",
-            kind: Enum {
-                type_name: "OneOrMore3",
+                ],
+                optional: false,
             },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Ref {
-                        ref_type: "B",
-                        recursive: Cell {
-                            value: false,
+            SymbolType {
+                name: "Ref2",
+                kind: Ref {
+                    ref_type: "A",
+                    recursive: Cell {
+                        value: false,
+                    },
+                },
+                choices: [
+                    Choice {
+                        name: "A",
+                        kind: Ref {
+                            ref_type: "A",
+                            recursive: Cell {
+                                value: false,
+                            },
                         },
                     },
-                },
-                Choice {
-                    name: "C2",
-                    kind: Struct {
-                        type_name: "OneOrMore3C2",
-                        fields: [
-                            Field {
-                                name: "b",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                            Field {
-                                name: "one_or_more3",
-                                ref_type: "OneOrMore3",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                        ],
-                    },
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "ZeroOrMoreSugar1",
-            kind: Ref {
-                ref_type: "Tc0",
-                recursive: Cell {
-                    value: false,
-                },
+                ],
+                optional: false,
             },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Ref {
-                        ref_type: "Tc0",
-                        recursive: Cell {
-                            value: false,
+            SymbolType {
+                name: "OptionalStruct1",
+                kind: Struct {
+                    type_name: "OptionalStruct1NO",
+                },
+                choices: [
+                    Choice {
+                        name: "C1",
+                        kind: Struct {
+                            type_name: "OptionalStruct1C1",
+                            fields: [
+                                Field {
+                                    name: "a",
+                                    ref_type: "A",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                                Field {
+                                    name: "b",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                            ],
                         },
                     },
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "Tc1",
-            kind: Enum {
-                type_name: "Tc1",
+                    Choice {
+                        name: "Empty",
+                        kind: Empty,
+                    },
+                ],
+                optional: true,
             },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Ref {
-                        ref_type: "Tc1",
-                        recursive: Cell {
-                            value: false,
+            SymbolType {
+                name: "OptionalStruct2",
+                kind: Struct {
+                    type_name: "OptionalStruct2NO",
+                },
+                choices: [
+                    Choice {
+                        name: "Empty",
+                        kind: Empty,
+                    },
+                    Choice {
+                        name: "C2",
+                        kind: Struct {
+                            type_name: "OptionalStruct2C2",
+                            fields: [
+                                Field {
+                                    name: "mya",
+                                    ref_type: "A",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                                Field {
+                                    name: "b",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                            ],
                         },
                     },
-                },
-                Choice {
-                    name: "C2",
-                    kind: Plain,
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "Tc0",
-            kind: Ref {
-                ref_type: "Tc1",
-                recursive: Cell {
-                    value: false,
-                },
+                ],
+                optional: true,
             },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Ref {
-                        ref_type: "Tc1",
-                        recursive: Cell {
-                            value: false,
+            SymbolType {
+                name: "Struct",
+                kind: Struct {
+                    type_name: "Struct",
+                },
+                choices: [
+                    Choice {
+                        name: "C1",
+                        kind: Struct {
+                            type_name: "StructC1",
+                            fields: [
+                                Field {
+                                    name: "a",
+                                    ref_type: "A",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                                Field {
+                                    name: "b",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                            ],
                         },
                     },
-                },
-                Choice {
-                    name: "Empty",
-                    kind: Empty,
-                },
-            ],
-            optional: true,
-        },
-        SymbolType {
-            name: "ZeroOrMoreSugar2",
-            kind: Ref {
-                ref_type: "A0",
-                recursive: Cell {
-                    value: false,
-                },
+                ],
+                optional: false,
             },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Ref {
-                        ref_type: "A0",
-                        recursive: Cell {
-                            value: false,
+            SymbolType {
+                name: "OptionalEnum1",
+                kind: Enum {
+                    type_name: "OptionalEnum1NO",
+                },
+                choices: [
+                    Choice {
+                        name: "C1",
+                        kind: Struct {
+                            type_name: "OptionalEnum1C1",
+                            fields: [
+                                Field {
+                                    name: "a",
+                                    ref_type: "A",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                                Field {
+                                    name: "b",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                            ],
                         },
                     },
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "A1",
-            kind: Vec {
-                ref_type: "A",
-                recursive: Cell {
-                    value: false,
-                },
-            },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Struct {
-                        type_name: "A1C1",
-                        fields: [
-                            Field {
-                                name: "a1",
-                                ref_type: "A1",
-                                recursive: Cell {
-                                    value: false,
-                                },
+                    Choice {
+                        name: "C",
+                        kind: Ref {
+                            ref_type: "C",
+                            recursive: Cell {
+                                value: false,
                             },
-                            Field {
-                                name: "a",
-                                ref_type: "A",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                        ],
-                    },
-                },
-                Choice {
-                    name: "C2",
-                    kind: Ref {
-                        ref_type: "A",
-                        recursive: Cell {
-                            value: false,
                         },
                     },
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "A0",
-            kind: Ref {
-                ref_type: "A1",
-                recursive: Cell {
-                    value: false,
-                },
+                    Choice {
+                        name: "Empty",
+                        kind: Empty,
+                    },
+                ],
+                optional: true,
             },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Ref {
-                        ref_type: "A1",
-                        recursive: Cell {
-                            value: false,
+            SymbolType {
+                name: "OptionalEnum2",
+                kind: Enum {
+                    type_name: "OptionalEnum2NO",
+                },
+                choices: [
+                    Choice {
+                        name: "C1",
+                        kind: Struct {
+                            type_name: "OptionalEnum2C1",
+                            fields: [
+                                Field {
+                                    name: "a",
+                                    ref_type: "A",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                                Field {
+                                    name: "b",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                            ],
                         },
                     },
-                },
-                Choice {
-                    name: "Empty",
-                    kind: Empty,
-                },
-            ],
-            optional: true,
-        },
-        SymbolType {
-            name: "ZeroOrMoreSugar3",
-            kind: Enum {
-                type_name: "ZeroOrMoreSugar3",
-            },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Ref {
-                        ref_type: "A0",
-                        recursive: Cell {
-                            value: false,
+                    Choice {
+                        name: "Empty",
+                        kind: Empty,
+                    },
+                    Choice {
+                        name: "C3",
+                        kind: Struct {
+                            type_name: "OptionalEnum2C3",
+                            fields: [
+                                Field {
+                                    name: "myc",
+                                    ref_type: "C",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                            ],
                         },
                     },
-                },
-                Choice {
-                    name: "C2",
-                    kind: Struct {
-                        type_name: "ZeroOrMoreSugar3C2",
-                        fields: [
-                            Field {
-                                name: "b",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                            Field {
-                                name: "c",
-                                ref_type: "C",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                        ],
-                    },
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "ZeroOrMoreSugar4",
-            kind: Enum {
-                type_name: "ZeroOrMoreSugar4",
+                ],
+                optional: true,
             },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Struct {
-                        type_name: "ZeroOrMoreSugar4C1",
-                        fields: [
-                            Field {
-                                name: "a0",
-                                ref_type: "A0",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                            Field {
-                                name: "b",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                        ],
-                    },
+            SymbolType {
+                name: "Enum1",
+                kind: Enum {
+                    type_name: "Enum1",
                 },
-                Choice {
-                    name: "C2",
-                    kind: Struct {
-                        type_name: "ZeroOrMoreSugar4C2",
-                        fields: [
-                            Field {
-                                name: "b",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: false,
+                choices: [
+                    Choice {
+                        name: "C1",
+                        kind: Struct {
+                            type_name: "Enum1C1",
+                            fields: [
+                                Field {
+                                    name: "a",
+                                    ref_type: "A",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
                                 },
-                            },
-                            Field {
-                                name: "c",
-                                ref_type: "C",
-                                recursive: Cell {
-                                    value: false,
+                                Field {
+                                    name: "b",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
                                 },
-                            },
-                        ],
-                    },
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "OneOrMoreSugar1",
-            kind: Ref {
-                ref_type: "Tc1",
-                recursive: Cell {
-                    value: false,
-                },
-            },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Ref {
-                        ref_type: "Tc1",
-                        recursive: Cell {
-                            value: false,
+                            ],
                         },
                     },
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "OneOrMoreSugar2",
-            kind: Ref {
-                ref_type: "A1",
-                recursive: Cell {
-                    value: false,
-                },
-            },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Ref {
-                        ref_type: "A1",
-                        recursive: Cell {
-                            value: false,
+                    Choice {
+                        name: "C2",
+                        kind: Struct {
+                            type_name: "Enum1C2",
+                            fields: [
+                                Field {
+                                    name: "myc",
+                                    ref_type: "C",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                            ],
                         },
                     },
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "OneOrMoreSugar3",
-            kind: Enum {
-                type_name: "OneOrMoreSugar3",
+                ],
+                optional: false,
             },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Ref {
-                        ref_type: "A1",
-                        recursive: Cell {
-                            value: false,
+            SymbolType {
+                name: "Enum2",
+                kind: Enum {
+                    type_name: "Enum2",
+                },
+                choices: [
+                    Choice {
+                        name: "C1",
+                        kind: Struct {
+                            type_name: "Enum2C1",
+                            fields: [
+                                Field {
+                                    name: "a",
+                                    ref_type: "A",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                                Field {
+                                    name: "b",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                            ],
                         },
                     },
-                },
-                Choice {
-                    name: "C2",
-                    kind: Struct {
-                        type_name: "OneOrMoreSugar3C2",
-                        fields: [
-                            Field {
-                                name: "b",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: false,
+                    Choice {
+                        name: "C2",
+                        kind: Struct {
+                            type_name: "Enum2C2",
+                            fields: [
+                                Field {
+                                    name: "myc",
+                                    ref_type: "C",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
                                 },
-                            },
-                            Field {
-                                name: "c",
-                                ref_type: "C",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                        ],
-                    },
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "OneOrMoreSugar4",
-            kind: Enum {
-                type_name: "OneOrMoreSugar4",
-            },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Struct {
-                        type_name: "OneOrMoreSugar4C1",
-                        fields: [
-                            Field {
-                                name: "a1",
-                                ref_type: "A1",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                            Field {
-                                name: "b",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                        ],
-                    },
-                },
-                Choice {
-                    name: "C2",
-                    kind: Struct {
-                        type_name: "OneOrMoreSugar4C2",
-                        fields: [
-                            Field {
-                                name: "b",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                            Field {
-                                name: "c",
-                                ref_type: "C",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                        ],
-                    },
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "OneOrMoreRecursive",
-            kind: Ref {
-                ref_type: "OneOrMoreRecursiveA",
-                recursive: Cell {
-                    value: false,
-                },
-            },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Ref {
-                        ref_type: "OneOrMoreRecursiveA",
-                        recursive: Cell {
-                            value: false,
+                            ],
                         },
                     },
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "OneOrMoreRecursiveA",
-            kind: Ref {
-                ref_type: "OneOrMoreRecursive1",
-                recursive: Cell {
-                    value: false,
-                },
+                    Choice {
+                        name: "C3",
+                        kind: Plain,
+                    },
+                ],
+                optional: false,
             },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Ref {
-                        ref_type: "OneOrMoreRecursive1",
-                        recursive: Cell {
-                            value: false,
+            SymbolType {
+                name: "MultiNonContent",
+                kind: Enum {
+                    type_name: "MultiNonContent",
+                },
+                choices: [
+                    Choice {
+                        name: "C1",
+                        kind: Plain,
+                    },
+                    Choice {
+                        name: "C2",
+                        kind: Plain,
+                    },
+                    Choice {
+                        name: "C3",
+                        kind: Plain,
+                    },
+                ],
+                optional: false,
+            },
+            SymbolType {
+                name: "MultiNonContentOptional",
+                kind: Enum {
+                    type_name: "MultiNonContentOptionalNO",
+                },
+                choices: [
+                    Choice {
+                        name: "C1",
+                        kind: Plain,
+                    },
+                    Choice {
+                        name: "C2",
+                        kind: Plain,
+                    },
+                    Choice {
+                        name: "C3",
+                        kind: Plain,
+                    },
+                    Choice {
+                        name: "Empty",
+                        kind: Empty,
+                    },
+                ],
+                optional: true,
+            },
+            SymbolType {
+                name: "ZeroOrMore1",
+                kind: Vec {
+                    ref_type: "B",
+                    recursive: Cell {
+                        value: false,
+                    },
+                },
+                choices: [
+                    Choice {
+                        name: "C1",
+                        kind: Struct {
+                            type_name: "ZeroOrMore1C1",
+                            fields: [
+                                Field {
+                                    name: "zero_or_more1",
+                                    ref_type: "ZeroOrMore1",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                                Field {
+                                    name: "b",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                            ],
                         },
                     },
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "OneOrMoreRecursive1",
-            kind: Vec {
-                ref_type: "OneOrMoreRecursive",
-                recursive: Cell {
-                    value: true,
-                },
-            },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Struct {
-                        type_name: "OneOrMoreRecursive1C1",
-                        fields: [
-                            Field {
-                                name: "one_or_more_recursive1",
-                                ref_type: "OneOrMoreRecursive1",
-                                recursive: Cell {
-                                    value: false,
+                    Choice {
+                        name: "C2",
+                        kind: Struct {
+                            type_name: "ZeroOrMore1C2",
+                            fields: [
+                                Field {
+                                    name: "myb",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
                                 },
-                            },
-                            Field {
-                                name: "one_or_more_recursive",
-                                ref_type: "OneOrMoreRecursive",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                        ],
-                    },
-                },
-                Choice {
-                    name: "C2",
-                    kind: Ref {
-                        ref_type: "OneOrMoreRecursive",
-                        recursive: Cell {
-                            value: true,
+                            ],
                         },
                     },
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "OptionalSugar1",
-            kind: Ref {
-                ref_type: "TcOpt",
-                recursive: Cell {
-                    value: false,
-                },
+                    Choice {
+                        name: "Empty",
+                        kind: Empty,
+                    },
+                ],
+                optional: true,
             },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Ref {
-                        ref_type: "TcOpt",
-                        recursive: Cell {
-                            value: false,
+            SymbolType {
+                name: "ZeroOrMore2",
+                kind: Vec {
+                    ref_type: "B",
+                    recursive: Cell {
+                        value: false,
+                    },
+                },
+                choices: [
+                    Choice {
+                        name: "C1",
+                        kind: Struct {
+                            type_name: "ZeroOrMore2C1",
+                            fields: [
+                                Field {
+                                    name: "b",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                                Field {
+                                    name: "z",
+                                    ref_type: "ZeroOrMore2",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                            ],
                         },
                     },
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "TcOpt",
-            kind: Enum {
-                type_name: "TcOptNO",
-            },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Plain,
-                },
-                Choice {
-                    name: "Empty",
-                    kind: Empty,
-                },
-            ],
-            optional: true,
-        },
-        SymbolType {
-            name: "OptionalSugar2",
-            kind: Ref {
-                ref_type: "AOpt",
-                recursive: Cell {
-                    value: false,
-                },
-            },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Ref {
-                        ref_type: "AOpt",
-                        recursive: Cell {
-                            value: false,
+                    Choice {
+                        name: "B",
+                        kind: Ref {
+                            ref_type: "B",
+                            recursive: Cell {
+                                value: false,
+                            },
                         },
                     },
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "AOpt",
-            kind: Ref {
-                ref_type: "A",
-                recursive: Cell {
-                    value: false,
-                },
+                    Choice {
+                        name: "Empty",
+                        kind: Empty,
+                    },
+                ],
+                optional: true,
             },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Ref {
-                        ref_type: "A",
-                        recursive: Cell {
-                            value: false,
+            SymbolType {
+                name: "ZeroOrMore3",
+                kind: Enum {
+                    type_name: "ZeroOrMore3NO",
+                },
+                choices: [
+                    Choice {
+                        name: "C1",
+                        kind: Struct {
+                            type_name: "ZeroOrMore3C1",
+                            fields: [
+                                Field {
+                                    name: "b",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                                Field {
+                                    name: "zero_or_more3",
+                                    ref_type: "ZeroOrMore3",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                            ],
                         },
                     },
-                },
-                Choice {
-                    name: "Empty",
-                    kind: Empty,
-                },
-            ],
-            optional: true,
-        },
-        SymbolType {
-            name: "OptionalSugar3",
-            kind: Enum {
-                type_name: "OptionalSugar3",
-            },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Ref {
-                        ref_type: "AOpt",
-                        recursive: Cell {
-                            value: false,
+                    Choice {
+                        name: "Empty",
+                        kind: Empty,
+                    },
+                    Choice {
+                        name: "B",
+                        kind: Ref {
+                            ref_type: "B",
+                            recursive: Cell {
+                                value: false,
+                            },
                         },
                     },
-                },
-                Choice {
-                    name: "C2",
-                    kind: Struct {
-                        type_name: "OptionalSugar3C2",
-                        fields: [
-                            Field {
-                                name: "b",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                            Field {
-                                name: "c",
-                                ref_type: "C",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                        ],
-                    },
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "OptionalSugar4",
-            kind: Enum {
-                type_name: "OptionalSugar4",
+                ],
+                optional: true,
             },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Struct {
-                        type_name: "OptionalSugar4C1",
-                        fields: [
-                            Field {
-                                name: "aopt",
-                                ref_type: "AOpt",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                            Field {
-                                name: "b",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: false,
-                                },
-                            },
-                        ],
-                    },
+            SymbolType {
+                name: "OneOrMore1",
+                kind: Enum {
+                    type_name: "OneOrMore1",
                 },
-                Choice {
-                    name: "C2",
-                    kind: Struct {
-                        type_name: "OptionalSugar4C2",
-                        fields: [
-                            Field {
-                                name: "b",
-                                ref_type: "B",
-                                recursive: Cell {
-                                    value: false,
+                choices: [
+                    Choice {
+                        name: "C1",
+                        kind: Struct {
+                            type_name: "OneOrMore1C1",
+                            fields: [
+                                Field {
+                                    name: "one_or_more1",
+                                    ref_type: "OneOrMore1",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
                                 },
-                            },
-                            Field {
-                                name: "c",
-                                ref_type: "C",
-                                recursive: Cell {
-                                    value: false,
+                                Field {
+                                    name: "b",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
                                 },
-                            },
-                        ],
-                    },
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "Recursive",
-            kind: Enum {
-                type_name: "Recursive",
-            },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Ref {
-                        ref_type: "RecursiveA",
-                        recursive: Cell {
-                            value: false,
+                            ],
                         },
                     },
-                },
-                Choice {
-                    name: "C2",
-                    kind: Plain,
-                },
-            ],
-            optional: false,
-        },
-        SymbolType {
-            name: "RecursiveA",
-            kind: Ref {
-                ref_type: "Recursive",
-                recursive: Cell {
-                    value: true,
-                },
-            },
-            choices: [
-                Choice {
-                    name: "C1",
-                    kind: Ref {
-                        ref_type: "Recursive",
-                        recursive: Cell {
-                            value: true,
+                    Choice {
+                        name: "B",
+                        kind: Ref {
+                            ref_type: "B",
+                            recursive: Cell {
+                                value: false,
+                            },
                         },
                     },
+                ],
+                optional: false,
+            },
+            SymbolType {
+                name: "OneOrMore2",
+                kind: Vec {
+                    ref_type: "B",
+                    recursive: Cell {
+                        value: false,
+                    },
                 },
-            ],
-            optional: false,
-        },
-    ],
+                choices: [
+                    Choice {
+                        name: "C1",
+                        kind: Struct {
+                            type_name: "OneOrMore2C1",
+                            fields: [
+                                Field {
+                                    name: "b",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                                Field {
+                                    name: "one_or_more2",
+                                    ref_type: "OneOrMore2",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                    Choice {
+                        name: "B",
+                        kind: Ref {
+                            ref_type: "B",
+                            recursive: Cell {
+                                value: false,
+                            },
+                        },
+                    },
+                ],
+                optional: false,
+            },
+            SymbolType {
+                name: "OneOrMore3",
+                kind: Enum {
+                    type_name: "OneOrMore3",
+                },
+                choices: [
+                    Choice {
+                        name: "B",
+                        kind: Ref {
+                            ref_type: "B",
+                            recursive: Cell {
+                                value: false,
+                            },
+                        },
+                    },
+                    Choice {
+                        name: "C2",
+                        kind: Struct {
+                            type_name: "OneOrMore3C2",
+                            fields: [
+                                Field {
+                                    name: "b",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                                Field {
+                                    name: "one_or_more3",
+                                    ref_type: "OneOrMore3",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
+                optional: false,
+            },
+            SymbolType {
+                name: "ZeroOrMoreSugar1",
+                kind: Ref {
+                    ref_type: "Tc0",
+                    recursive: Cell {
+                        value: false,
+                    },
+                },
+                choices: [
+                    Choice {
+                        name: "Tc0",
+                        kind: Ref {
+                            ref_type: "Tc0",
+                            recursive: Cell {
+                                value: false,
+                            },
+                        },
+                    },
+                ],
+                optional: false,
+            },
+            SymbolType {
+                name: "Tc1",
+                kind: Enum {
+                    type_name: "Tc1",
+                },
+                choices: [
+                    Choice {
+                        name: "Tc1",
+                        kind: Ref {
+                            ref_type: "Tc1",
+                            recursive: Cell {
+                                value: false,
+                            },
+                        },
+                    },
+                    Choice {
+                        name: "C2",
+                        kind: Plain,
+                    },
+                ],
+                optional: false,
+            },
+            SymbolType {
+                name: "Tc0",
+                kind: Ref {
+                    ref_type: "Tc1",
+                    recursive: Cell {
+                        value: false,
+                    },
+                },
+                choices: [
+                    Choice {
+                        name: "Tc1",
+                        kind: Ref {
+                            ref_type: "Tc1",
+                            recursive: Cell {
+                                value: false,
+                            },
+                        },
+                    },
+                    Choice {
+                        name: "Empty",
+                        kind: Empty,
+                    },
+                ],
+                optional: true,
+            },
+            SymbolType {
+                name: "ZeroOrMoreSugar2",
+                kind: Ref {
+                    ref_type: "A0",
+                    recursive: Cell {
+                        value: false,
+                    },
+                },
+                choices: [
+                    Choice {
+                        name: "A0",
+                        kind: Ref {
+                            ref_type: "A0",
+                            recursive: Cell {
+                                value: false,
+                            },
+                        },
+                    },
+                ],
+                optional: false,
+            },
+            SymbolType {
+                name: "A1",
+                kind: Vec {
+                    ref_type: "A",
+                    recursive: Cell {
+                        value: false,
+                    },
+                },
+                choices: [
+                    Choice {
+                        name: "C1",
+                        kind: Struct {
+                            type_name: "A1C1",
+                            fields: [
+                                Field {
+                                    name: "a1",
+                                    ref_type: "A1",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                                Field {
+                                    name: "a",
+                                    ref_type: "A",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                    Choice {
+                        name: "A",
+                        kind: Ref {
+                            ref_type: "A",
+                            recursive: Cell {
+                                value: false,
+                            },
+                        },
+                    },
+                ],
+                optional: false,
+            },
+            SymbolType {
+                name: "A0",
+                kind: Ref {
+                    ref_type: "A1",
+                    recursive: Cell {
+                        value: false,
+                    },
+                },
+                choices: [
+                    Choice {
+                        name: "A1",
+                        kind: Ref {
+                            ref_type: "A1",
+                            recursive: Cell {
+                                value: false,
+                            },
+                        },
+                    },
+                    Choice {
+                        name: "Empty",
+                        kind: Empty,
+                    },
+                ],
+                optional: true,
+            },
+            SymbolType {
+                name: "ZeroOrMoreSugar3",
+                kind: Enum {
+                    type_name: "ZeroOrMoreSugar3",
+                },
+                choices: [
+                    Choice {
+                        name: "A0",
+                        kind: Ref {
+                            ref_type: "A0",
+                            recursive: Cell {
+                                value: false,
+                            },
+                        },
+                    },
+                    Choice {
+                        name: "C2",
+                        kind: Struct {
+                            type_name: "ZeroOrMoreSugar3C2",
+                            fields: [
+                                Field {
+                                    name: "b",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                                Field {
+                                    name: "c",
+                                    ref_type: "C",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
+                optional: false,
+            },
+            SymbolType {
+                name: "ZeroOrMoreSugar4",
+                kind: Enum {
+                    type_name: "ZeroOrMoreSugar4",
+                },
+                choices: [
+                    Choice {
+                        name: "C1",
+                        kind: Struct {
+                            type_name: "ZeroOrMoreSugar4C1",
+                            fields: [
+                                Field {
+                                    name: "a0",
+                                    ref_type: "A0",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                                Field {
+                                    name: "b",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                    Choice {
+                        name: "C2",
+                        kind: Struct {
+                            type_name: "ZeroOrMoreSugar4C2",
+                            fields: [
+                                Field {
+                                    name: "b",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                                Field {
+                                    name: "c",
+                                    ref_type: "C",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
+                optional: false,
+            },
+            SymbolType {
+                name: "OneOrMoreSugar1",
+                kind: Ref {
+                    ref_type: "Tc1",
+                    recursive: Cell {
+                        value: false,
+                    },
+                },
+                choices: [
+                    Choice {
+                        name: "Tc1",
+                        kind: Ref {
+                            ref_type: "Tc1",
+                            recursive: Cell {
+                                value: false,
+                            },
+                        },
+                    },
+                ],
+                optional: false,
+            },
+            SymbolType {
+                name: "OneOrMoreSugar2",
+                kind: Ref {
+                    ref_type: "A1",
+                    recursive: Cell {
+                        value: false,
+                    },
+                },
+                choices: [
+                    Choice {
+                        name: "A1",
+                        kind: Ref {
+                            ref_type: "A1",
+                            recursive: Cell {
+                                value: false,
+                            },
+                        },
+                    },
+                ],
+                optional: false,
+            },
+            SymbolType {
+                name: "OneOrMoreSugar3",
+                kind: Enum {
+                    type_name: "OneOrMoreSugar3",
+                },
+                choices: [
+                    Choice {
+                        name: "A1",
+                        kind: Ref {
+                            ref_type: "A1",
+                            recursive: Cell {
+                                value: false,
+                            },
+                        },
+                    },
+                    Choice {
+                        name: "C2",
+                        kind: Struct {
+                            type_name: "OneOrMoreSugar3C2",
+                            fields: [
+                                Field {
+                                    name: "b",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                                Field {
+                                    name: "c",
+                                    ref_type: "C",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
+                optional: false,
+            },
+            SymbolType {
+                name: "OneOrMoreSugar4",
+                kind: Enum {
+                    type_name: "OneOrMoreSugar4",
+                },
+                choices: [
+                    Choice {
+                        name: "C1",
+                        kind: Struct {
+                            type_name: "OneOrMoreSugar4C1",
+                            fields: [
+                                Field {
+                                    name: "a1",
+                                    ref_type: "A1",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                                Field {
+                                    name: "b",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                    Choice {
+                        name: "C2",
+                        kind: Struct {
+                            type_name: "OneOrMoreSugar4C2",
+                            fields: [
+                                Field {
+                                    name: "b",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                                Field {
+                                    name: "c",
+                                    ref_type: "C",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
+                optional: false,
+            },
+            SymbolType {
+                name: "OneOrMoreRecursive",
+                kind: Ref {
+                    ref_type: "OneOrMoreRecursiveA",
+                    recursive: Cell {
+                        value: false,
+                    },
+                },
+                choices: [
+                    Choice {
+                        name: "OneOrMoreRecursiveA",
+                        kind: Ref {
+                            ref_type: "OneOrMoreRecursiveA",
+                            recursive: Cell {
+                                value: false,
+                            },
+                        },
+                    },
+                ],
+                optional: false,
+            },
+            SymbolType {
+                name: "OneOrMoreRecursiveA",
+                kind: Ref {
+                    ref_type: "OneOrMoreRecursive1",
+                    recursive: Cell {
+                        value: false,
+                    },
+                },
+                choices: [
+                    Choice {
+                        name: "OneOrMoreRecursive1",
+                        kind: Ref {
+                            ref_type: "OneOrMoreRecursive1",
+                            recursive: Cell {
+                                value: false,
+                            },
+                        },
+                    },
+                ],
+                optional: false,
+            },
+            SymbolType {
+                name: "OneOrMoreRecursive1",
+                kind: Vec {
+                    ref_type: "OneOrMoreRecursive",
+                    recursive: Cell {
+                        value: true,
+                    },
+                },
+                choices: [
+                    Choice {
+                        name: "C1",
+                        kind: Struct {
+                            type_name: "OneOrMoreRecursive1C1",
+                            fields: [
+                                Field {
+                                    name: "one_or_more_recursive1",
+                                    ref_type: "OneOrMoreRecursive1",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                                Field {
+                                    name: "one_or_more_recursive",
+                                    ref_type: "OneOrMoreRecursive",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                    Choice {
+                        name: "OneOrMoreRecursive",
+                        kind: Ref {
+                            ref_type: "OneOrMoreRecursive",
+                            recursive: Cell {
+                                value: true,
+                            },
+                        },
+                    },
+                ],
+                optional: false,
+            },
+            SymbolType {
+                name: "OptionalSugar1",
+                kind: Ref {
+                    ref_type: "TcOpt",
+                    recursive: Cell {
+                        value: false,
+                    },
+                },
+                choices: [
+                    Choice {
+                        name: "TcOpt",
+                        kind: Ref {
+                            ref_type: "TcOpt",
+                            recursive: Cell {
+                                value: false,
+                            },
+                        },
+                    },
+                ],
+                optional: false,
+            },
+            SymbolType {
+                name: "TcOpt",
+                kind: Enum {
+                    type_name: "TcOptNO",
+                },
+                choices: [
+                    Choice {
+                        name: "C1",
+                        kind: Plain,
+                    },
+                    Choice {
+                        name: "Empty",
+                        kind: Empty,
+                    },
+                ],
+                optional: true,
+            },
+            SymbolType {
+                name: "OptionalSugar2",
+                kind: Ref {
+                    ref_type: "AOpt",
+                    recursive: Cell {
+                        value: false,
+                    },
+                },
+                choices: [
+                    Choice {
+                        name: "AOpt",
+                        kind: Ref {
+                            ref_type: "AOpt",
+                            recursive: Cell {
+                                value: false,
+                            },
+                        },
+                    },
+                ],
+                optional: false,
+            },
+            SymbolType {
+                name: "AOpt",
+                kind: Ref {
+                    ref_type: "A",
+                    recursive: Cell {
+                        value: false,
+                    },
+                },
+                choices: [
+                    Choice {
+                        name: "A",
+                        kind: Ref {
+                            ref_type: "A",
+                            recursive: Cell {
+                                value: false,
+                            },
+                        },
+                    },
+                    Choice {
+                        name: "Empty",
+                        kind: Empty,
+                    },
+                ],
+                optional: true,
+            },
+            SymbolType {
+                name: "OptionalSugar3",
+                kind: Enum {
+                    type_name: "OptionalSugar3",
+                },
+                choices: [
+                    Choice {
+                        name: "AOpt",
+                        kind: Ref {
+                            ref_type: "AOpt",
+                            recursive: Cell {
+                                value: false,
+                            },
+                        },
+                    },
+                    Choice {
+                        name: "C2",
+                        kind: Struct {
+                            type_name: "OptionalSugar3C2",
+                            fields: [
+                                Field {
+                                    name: "b",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                                Field {
+                                    name: "c",
+                                    ref_type: "C",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
+                optional: false,
+            },
+            SymbolType {
+                name: "OptionalSugar4",
+                kind: Enum {
+                    type_name: "OptionalSugar4",
+                },
+                choices: [
+                    Choice {
+                        name: "C1",
+                        kind: Struct {
+                            type_name: "OptionalSugar4C1",
+                            fields: [
+                                Field {
+                                    name: "aopt",
+                                    ref_type: "AOpt",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                                Field {
+                                    name: "b",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                    Choice {
+                        name: "C2",
+                        kind: Struct {
+                            type_name: "OptionalSugar4C2",
+                            fields: [
+                                Field {
+                                    name: "b",
+                                    ref_type: "B",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                                Field {
+                                    name: "c",
+                                    ref_type: "C",
+                                    recursive: Cell {
+                                        value: false,
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
+                optional: false,
+            },
+            SymbolType {
+                name: "Recursive",
+                kind: Enum {
+                    type_name: "Recursive",
+                },
+                choices: [
+                    Choice {
+                        name: "RecursiveA",
+                        kind: Ref {
+                            ref_type: "RecursiveA",
+                            recursive: Cell {
+                                value: false,
+                            },
+                        },
+                    },
+                    Choice {
+                        name: "C2",
+                        kind: Plain,
+                    },
+                ],
+                optional: false,
+            },
+            SymbolType {
+                name: "RecursiveA",
+                kind: Ref {
+                    ref_type: "Recursive",
+                    recursive: Cell {
+                        value: true,
+                    },
+                },
+                choices: [
+                    Choice {
+                        name: "Recursive",
+                        kind: Ref {
+                            ref_type: "Recursive",
+                            recursive: Cell {
+                                value: true,
+                            },
+                        },
+                    },
+                ],
+                optional: false,
+            },
+        ],
+    ),
 }

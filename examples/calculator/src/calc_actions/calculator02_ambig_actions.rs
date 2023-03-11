@@ -23,7 +23,7 @@ pub fn e_c4(_ctx: &Context, e_1: E, e_3: E) -> E {
 pub fn e_c5(_ctx: &Context, e_1: E, e_3: E) -> E {
     f32::powf(e_1, e_3)
 }
-pub fn e_c6(_ctx: &Context, e: E) -> E {
+pub fn e_e(_ctx: &Context, e: E) -> E {
     e
 }
 pub fn e_num(_ctx: &Context, num: Num) -> E {

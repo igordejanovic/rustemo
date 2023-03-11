@@ -1,6 +1,7 @@
+use super::calculator01::Context;
+use super::calculator01::TokenKind;
 ///! This file is maintained by rustemo but can be modified manually.
 ///! All manual changes will be preserved except non-doc comments.
-use super::calculator01::{Context, TokenKind};
 use rustemo::lexer;
 pub type Input = str;
 #[allow(dead_code)]
@@ -17,13 +18,13 @@ pub struct EC1 {
 #[derive(Debug, Clone)]
 pub enum E {
     C1(EC1),
-    C2(T),
+    T(T),
 }
 pub fn e_c1(_ctx: &Context, e: E, t: T) -> E {
     E::C1(EC1 { e: Box::new(e), t })
 }
-pub fn e_c2(_ctx: &Context, t: T) -> E {
-    E::C2(t)
+pub fn e_t(_ctx: &Context, t: T) -> E {
+    E::T(t)
 }
 #[derive(Debug, Clone)]
 pub struct TC1 {
@@ -33,22 +34,22 @@ pub struct TC1 {
 #[derive(Debug, Clone)]
 pub enum T {
     C1(TC1),
-    C2(F),
+    F(F),
 }
 pub fn t_c1(_ctx: &Context, t: T, f: F) -> T {
     T::C1(TC1 { t: Box::new(t), f })
 }
-pub fn t_c2(_ctx: &Context, f: F) -> T {
-    T::C2(f)
+pub fn t_f(_ctx: &Context, f: F) -> T {
+    T::F(f)
 }
 #[derive(Debug, Clone)]
 pub enum F {
-    C1(Box<E>),
-    C2(Num),
+    E(Box<E>),
+    Num(Num),
 }
-pub fn f_c1(_ctx: &Context, e: E) -> F {
-    F::C1(Box::new(e))
+pub fn f_e(_ctx: &Context, e: E) -> F {
+    F::E(Box::new(e))
 }
-pub fn f_c2(_ctx: &Context, num: Num) -> F {
-    F::C2(num)
+pub fn f_num(_ctx: &Context, num: Num) -> F {
+    F::Num(num)
 }

@@ -42,10 +42,10 @@ pub struct File {
     pub grammar_rules: Option<GrammarRules>,
     pub terminal_rules: Option<TerminalRules>,
 }
-pub fn file_c1(ctx: &Context, grammar_rules: GrammarRules) -> File {
+pub fn file_grammar_rule1(ctx: &Context, grammar_rule1: GrammarRule1) -> File {
     File {
         file: ctx.file.clone(),
-        grammar_rules: Some(grammar_rules),
+        grammar_rules: Some(grammar_rule1),
         ..Default::default()
     }
 }
@@ -82,10 +82,10 @@ pub fn file_c4(
         terminal_rules: Some(terminal_rules),
     }
 }
-pub fn file_c5(ctx: &Context, terminal_rules: TerminalRules) -> File {
+pub fn file_terminal_rule1(ctx: &Context, terminal_rule1: TerminalRule1) -> File {
     File {
         file: ctx.file.clone(),
-        terminal_rules: Some(terminal_rules),
+        terminal_rules: Some(terminal_rule1),
         ..Default::default()
     }
 }
@@ -99,7 +99,7 @@ pub fn import_stm1_c1(
     import_stm1.push(import_stm);
     import_stm1
 }
-pub fn import_stm1_c2(_ctx: &Context, import_stm: ImportStm) -> ImportStm1 {
+pub fn import_stm1_import_stm(_ctx: &Context, import_stm: ImportStm) -> ImportStm1 {
     vec![import_stm]
 }
 #[derive(Debug, Clone)]
@@ -126,7 +126,10 @@ pub fn grammar_rule1_c1(
     grammar_rule1.push(grammar_rule);
     grammar_rule1
 }
-pub fn grammar_rule1_c2(_ctx: &Context, grammar_rule: GrammarRule) -> GrammarRule1 {
+pub fn grammar_rule1_grammar_rule(
+    _ctx: &Context,
+    grammar_rule: GrammarRule,
+) -> GrammarRule1 {
     vec![grammar_rule]
 }
 #[derive(Debug, Clone)]
@@ -164,7 +167,7 @@ pub fn grammar_rule_c2(
     }
 }
 pub type ActionOpt = Option<Action>;
-pub fn action_opt_c1(_ctx: &Context, action: Action) -> ActionOpt {
+pub fn action_opt_action(_ctx: &Context, action: Action) -> ActionOpt {
     Some(action)
 }
 pub fn action_opt_empty(_ctx: &Context) -> ActionOpt {
@@ -179,7 +182,10 @@ pub fn grammar_rule_rhs_c1(
     rhs.push(production);
     rhs
 }
-pub fn grammar_rule_rhs_c2(_ctx: &Context, production: Production) -> GrammarRuleRHS {
+pub fn grammar_rule_rhs_production(
+    _ctx: &Context,
+    production: Production,
+) -> GrammarRuleRHS {
     vec![production]
 }
 #[derive(Debug, Clone)]
@@ -187,7 +193,7 @@ pub struct Production {
     pub assignments: Assignments,
     pub meta: ProdMetaDatas,
 }
-pub fn production_c1(_ctx: &Context, assignments: Assignments) -> Production {
+pub fn production_assignment1(_ctx: &Context, assignments: Assignment1) -> Production {
     Production {
         assignments,
         meta: ProdMetaDatas::new(),
@@ -210,7 +216,10 @@ pub fn terminal_rule1_c1(
     terminal_rule1.push(terminal_rule);
     terminal_rule1
 }
-pub fn terminal_rule1_c2(_ctx: &Context, terminal_rule: TerminalRule) -> TerminalRule1 {
+pub fn terminal_rule1_terminal_rule(
+    _ctx: &Context,
+    terminal_rule: TerminalRule,
+) -> TerminalRule1 {
     vec![terminal_rule]
 }
 #[derive(Debug, Clone)]
@@ -298,10 +307,13 @@ pub fn prod_meta_data_nopse(_ctx: &Context) -> ProdMetaData {
 pub fn prod_meta_data_priority(_ctx: &Context, prio: IntConst) -> ProdMetaData {
     ProdMetaData::from([("priority".into(), ConstVal::Int(prio))])
 }
-pub fn prod_meta_data_c9(_ctx: &Context, user: UserMetaData) -> ProdMetaData {
+pub fn prod_meta_data_user_meta_data(
+    _ctx: &Context,
+    user: UserMetaData,
+) -> ProdMetaData {
     ProdMetaData::from([(user.name.into(), user.value)])
 }
-pub fn prod_meta_data_c10(_ctx: &Context, prod_kind: ProdKind) -> ProdMetaData {
+pub fn prod_meta_data_prod_kind(_ctx: &Context, prod_kind: ProdKind) -> ProdMetaData {
     ProdMetaData::from([("kind".into(), ConstVal::String(prod_kind))])
 }
 pub type ProdMetaDatas = ProdMetaData;
@@ -332,7 +344,10 @@ pub fn term_meta_data_dynamic(_ctx: &Context) -> TermMetaData {
 pub fn term_meta_data_priority(_ctx: &Context, prio: IntConst) -> TermMetaData {
     TermMetaData::from([("priority".into(), ConstVal::Int(prio))])
 }
-pub fn term_meta_data_c6(_ctx: &Context, user: UserMetaData) -> TermMetaData {
+pub fn term_meta_data_user_meta_data(
+    _ctx: &Context,
+    user: UserMetaData,
+) -> TermMetaData {
     TermMetaData::from([(user.name.into(), user.value)])
 }
 pub type TermMetaDatas = TermMetaData;
@@ -356,7 +371,7 @@ pub fn user_meta_data_c1(_ctx: &Context, name: Name, value: ConstVal) -> UserMet
     UserMetaData { name, value }
 }
 pub type ProdKind = Name;
-pub fn prod_kind_c1(_ctx: &Context, name: Name) -> ProdKind {
+pub fn prod_kind_name(_ctx: &Context, name: Name) -> ProdKind {
     name
 }
 #[derive(Debug, Clone)]
@@ -366,16 +381,16 @@ pub enum ConstVal {
     Bool(BoolConst),
     String(StrConst),
 }
-pub fn const_val_c1(_ctx: &Context, int_const: IntConst) -> ConstVal {
+pub fn const_val_int_const(_ctx: &Context, int_const: IntConst) -> ConstVal {
     ConstVal::Int(int_const)
 }
-pub fn const_val_c2(_ctx: &Context, float_const: FloatConst) -> ConstVal {
+pub fn const_val_float_const(_ctx: &Context, float_const: FloatConst) -> ConstVal {
     ConstVal::Float(float_const)
 }
-pub fn const_val_c3(_ctx: &Context, bool_const: BoolConst) -> ConstVal {
+pub fn const_val_bool_const(_ctx: &Context, bool_const: BoolConst) -> ConstVal {
     ConstVal::Bool(bool_const)
 }
-pub fn const_val_c4(_ctx: &Context, str_const: StrConst) -> ConstVal {
+pub fn const_val_str_const(_ctx: &Context, str_const: StrConst) -> ConstVal {
     ConstVal::String(str_const)
 }
 #[derive(Debug, Clone)]
@@ -384,13 +399,19 @@ pub enum Assignment {
     BoolAssignment(BoolAssignment),
     GrammarSymbolRef(GrammarSymbolRef),
 }
-pub fn assignment_c1(_ctx: &Context, plain_assignment: PlainAssignment) -> Assignment {
+pub fn assignment_plain_assignment(
+    _ctx: &Context,
+    plain_assignment: PlainAssignment,
+) -> Assignment {
     Assignment::PlainAssignment(plain_assignment)
 }
-pub fn assignment_c2(_ctx: &Context, bool_assignment: BoolAssignment) -> Assignment {
+pub fn assignment_bool_assignment(
+    _ctx: &Context,
+    bool_assignment: BoolAssignment,
+) -> Assignment {
     Assignment::BoolAssignment(bool_assignment)
 }
-pub fn assignment_c3(
+pub fn assignment_grammar_symbol_ref(
     _ctx: &Context,
     grammar_symbol_ref: GrammarSymbolRef,
 ) -> Assignment {
@@ -406,7 +427,7 @@ pub fn assignment1_c1(
     assignment1.push(assignment);
     assignment1
 }
-pub fn assignment1_c2(_ctx: &Context, assignment: Assignment) -> Assignment1 {
+pub fn assignment1_assignment(_ctx: &Context, assignment: Assignment) -> Assignment1 {
     vec![assignment]
 }
 #[derive(Debug, Clone)]
@@ -482,7 +503,7 @@ pub fn repetition_operator_c1(
     }
 }
 pub type RepetitionOperatorOpt = Option<RepetitionOperator>;
-pub fn repetition_operator_opt_c1(
+pub fn repetition_operator_opt_repetition_operator(
     _ctx: &Context,
     repetition_operator: RepetitionOperator,
 ) -> RepetitionOperatorOpt {
@@ -523,7 +544,7 @@ pub fn repetition_operator_op_optional_greedy(_ctx: &Context) -> RepetitionOpera
     RepetitionOperatorOp::OptionalGreedy
 }
 pub type RepetitionModifiersOpt = Option<RepetitionModifiers>;
-pub fn repetition_modifiers_opt_c1(
+pub fn repetition_modifiers_opt_repetition_modifiers(
     _ctx: &Context,
     repetition_modifiers: RepetitionModifiers,
 ) -> RepetitionModifiersOpt {
@@ -533,7 +554,7 @@ pub fn repetition_modifiers_opt_empty(_ctx: &Context) -> RepetitionModifiersOpt 
     None
 }
 pub type RepetitionModifiers = Vec<RepetitionModifier>;
-pub fn repetition_modifiers_c1(
+pub fn repetition_modifiers_repetition_modifier1(
     _ctx: &Context,
     repetition_modifier1: RepetitionModifier1,
 ) -> RepetitionModifiers {
@@ -548,14 +569,14 @@ pub fn repetition_modifier1_c1(
     repetition_modifier1.push(repetition_modifier);
     repetition_modifier1
 }
-pub fn repetition_modifier1_c2(
+pub fn repetition_modifier1_repetition_modifier(
     _ctx: &Context,
     repetition_modifier: RepetitionModifier,
 ) -> RepetitionModifier1 {
     vec![repetition_modifier]
 }
 pub type RepetitionModifier = Name;
-pub fn repetition_modifier_c1(_ctx: &Context, name: Name) -> RepetitionModifier {
+pub fn repetition_modifier_name(_ctx: &Context, name: Name) -> RepetitionModifier {
     name
 }
 #[derive(Debug, Clone)]
@@ -563,10 +584,10 @@ pub enum GrammarSymbol {
     Name(Name),
     StrConst(StrConst),
 }
-pub fn grammar_symbol_c1(_ctx: &Context, name: Name) -> GrammarSymbol {
+pub fn grammar_symbol_name(_ctx: &Context, name: Name) -> GrammarSymbol {
     GrammarSymbol::Name(name)
 }
-pub fn grammar_symbol_c2(_ctx: &Context, str_const: StrConst) -> GrammarSymbol {
+pub fn grammar_symbol_str_const(_ctx: &Context, str_const: StrConst) -> GrammarSymbol {
     GrammarSymbol::StrConst(str_const)
 }
 #[derive(Debug, Clone)]
@@ -574,9 +595,9 @@ pub enum Recognizer {
     StrConst(StrConst),
     RegexTerm(RegexTerm),
 }
-pub fn recognizer_c1(_ctx: &Context, str_const: StrConst) -> Recognizer {
+pub fn recognizer_str_const(_ctx: &Context, str_const: StrConst) -> Recognizer {
     Recognizer::StrConst(str_const)
 }
-pub fn recognizer_c2(_ctx: &Context, regex_term: RegexTerm) -> Recognizer {
+pub fn recognizer_regex_term(_ctx: &Context, regex_term: RegexTerm) -> Recognizer {
     Recognizer::RegexTerm(regex_term)
 }

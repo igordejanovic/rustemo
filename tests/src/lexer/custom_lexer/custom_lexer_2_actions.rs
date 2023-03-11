@@ -14,7 +14,7 @@ pub fn non_msbbyte<'i>(_ctx: &Context<'i>, token: Token<'i>) -> NonMSBByte {
     token.value[0]
 }
 pub type VarInts = VarInt1;
-pub fn var_ints_c1<'i>(_ctx: &Context<'i>, var_int1: VarInt1) -> VarInts {
+pub fn var_ints_var_int1(_ctx: &Context, var_int1: VarInt1) -> VarInts {
     var_int1
 }
 pub type VarInt1 = Vec<VarInt>;
@@ -26,7 +26,7 @@ pub fn var_int1_c1<'i>(
     var_int1.push(var_int);
     var_int1
 }
-pub fn var_int1_c2<'i>(_ctx: &Context<'i>, var_int: VarInt) -> VarInt1 {
+pub fn var_int1_var_int(_ctx: &Context, var_int: VarInt) -> VarInt1 {
     vec![var_int]
 }
 /// We are doing a conversion in this action. Other actions are generated.
@@ -59,11 +59,11 @@ pub fn msbbyte1_c1<'i>(
     msbbyte1.push(msbbyte);
     msbbyte1
 }
-pub fn msbbyte1_c2<'i>(_ctx: &Context<'i>, msbbyte: MSBByte) -> MSBByte1 {
+pub fn msbbyte1_msbbyte(_ctx: &Context, msbbyte: MSBByte) -> MSBByte1 {
     vec![msbbyte]
 }
 pub type MSBByte0 = Option<MSBByte1>;
-pub fn msbbyte0_c1<'i>(_ctx: &Context<'i>, msbbyte1: MSBByte1) -> MSBByte0 {
+pub fn msbbyte0_msbbyte1(_ctx: &Context, msbbyte1: MSBByte1) -> MSBByte0 {
     Some(msbbyte1)
 }
 pub fn msbbyte0_empty<'i>(_ctx: &Context<'i>) -> MSBByte0 {

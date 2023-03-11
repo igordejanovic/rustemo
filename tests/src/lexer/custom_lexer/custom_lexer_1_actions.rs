@@ -20,7 +20,7 @@ pub fn var_int<'i>(_ctx: &Context<'i>, token: Token<'i>) -> VarInt {
     res
 }
 pub type VarInts = VarInt1;
-pub fn var_ints_c1<'i>(_ctx: &Context<'i>, var_int1: VarInt1) -> VarInts {
+pub fn var_ints_var_int1(_ctx: &Context, var_int1: VarInt1) -> VarInts {
     var_int1
 }
 pub type VarInt1 = Vec<VarInt>;
@@ -32,6 +32,6 @@ pub fn var_int1_c1<'i>(
     var_int1.push(var_int);
     var_int1
 }
-pub fn var_int1_c2<'i>(_ctx: &Context<'i>, var_int: VarInt) -> VarInt1 {
+pub fn var_int1_var_int(_ctx: &Context, var_int: VarInt) -> VarInt1 {
     vec![var_int]
 }

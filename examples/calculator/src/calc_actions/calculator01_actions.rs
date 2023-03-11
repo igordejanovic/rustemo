@@ -11,20 +11,20 @@ pub type E = f32;
 pub fn e_c1(_ctx: &Context, e_1: E, t_3: T) -> E {
     e_1 + t_3
 }
-pub fn e_c2(_ctx: &Context, t: T) -> E {
+pub fn e_t(_ctx: &Context, t: T) -> E {
     t
 }
 pub type T = f32;
 pub fn t_c1(_ctx: &Context, t_1: T, f_3: F) -> T {
     t_1 * f_3
 }
-pub fn t_c2(_ctx: &Context, f: F) -> T {
+pub fn t_f(_ctx: &Context, f: F) -> T {
     f
 }
 pub type F = f32;
-pub fn f_c1(_ctx: &Context, e: E) -> F {
+pub fn f_e(_ctx: &Context, e: E) -> F {
     e
 }
-pub fn f_c2(_ctx: &Context, num: Num) -> F {
+pub fn f_num(_ctx: &Context, num: Num) -> F {
     num
 }

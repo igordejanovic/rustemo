@@ -12,7 +12,7 @@ use crate::{
     api::{settings::Settings, BuilderType, LexerType},
     error::{Error, Result},
     grammar::{
-        types::{choice_name, to_pascal_case, to_snake_case},
+        types::{to_pascal_case, to_snake_case, Choice, SymbolTypes},
         Grammar, NonTerminal, Production,
     },
     lang::{rustemo::RustemoParser, rustemo_actions::Recognizer},
@@ -61,7 +61,7 @@ pub fn generate_parser(
 
     let generator =
         ParserGenerator::new(grammar_path, &grammar, table, settings)?;
-    generator.generate(out_dir, out_dir_actions)?;
+    generator.generate(out_dir, out_dir_actions, &grammar)?;
     Ok(())
 }
 
@@ -138,7 +138,12 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         })
     }
 
-    fn generate(&self, out_dir: &Path, out_dir_actions: &Path) -> Result<()> {
+    fn generate(
+        &self,
+        out_dir: &Path,
+        out_dir_actions: &Path,
+        grammar: &Grammar,
+    ) -> Result<()> {
         let mut ast: syn::File = self.generate_parser_header()?;
         ast.items.extend(self.generate_parser_types()?);
 
@@ -157,12 +162,14 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         }
 
         if let BuilderType::Default = self.settings.builder_type {
-            ast.items.extend(self.generate_builder()?);
+            let types = SymbolTypes::new(grammar);
+            ast.items.extend(self.generate_builder(&types)?);
 
             // Generate actions
             if self.settings.actions {
                 generate_parser_actions(
                     self.grammar,
+                    &types,
                     &self.file_name,
                     out_dir_actions,
                     self.settings,
@@ -878,7 +885,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         Ok(ast)
     }
 
-    fn generate_builder(&self) -> Result<Vec<syn::Item>> {
+    fn generate_builder(&self, types: &SymbolTypes) -> Result<Vec<syn::Item>> {
         create_idents!(self, actions_file, root_symbol, builder,);
         let mut ast: Vec<syn::Item> = vec![];
         let context_var = format_ident!("context");
@@ -939,81 +946,85 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         let mut reduce_match_arms: Vec<syn::Arm> =
             self.grammar.productions().iter()
                                       .filter_map(|production| {
-            let nonterminal = &self.grammar.nonterminals[production.nonterminal];
-            if !nonterminal.reachable.get() {
-                has_nonreachable_nonterminals = true;
-                return None
-            }
-            let rhs_len = production.rhs.len();
-            let action = action_name(nonterminal, production);
-            let prod_kind = self.prod_kind_ident(production);
-            let nonterminal = format_ident!("{}", nonterminal.name);
+                let nonterminal = &self.grammar.nonterminals[production.nonterminal];
+                if !nonterminal.reachable.get() {
+                    has_nonreachable_nonterminals = true;
+                    return None
+                }
+                let rhs_len = production.rhs.len();
+                let choice = &types.get_type(
+                        nonterminal.idx.to_symbol_index(self.grammar.terminals.len()))
+                                       .choices[production.ntidx];
+                let action = format_ident!("{}", action_name(nonterminal, choice));
 
-            if rhs_len == 0 {
-                // Handle EMPTY reduction
-                Some(parse_quote!{
-                    ProdKind::#prod_kind => NonTerminal::#nonterminal(#actions_file::#action(#context_var))
-                })
-            } else {
-                // Special handling of production with only str match terms in RHS
-                if production.rhs_with_content(self.grammar).is_empty() {
-                    Some(parse_quote! {
-                        ProdKind::#prod_kind => {
-                            let _ = self.res_stack.split_off(self.res_stack.len()-#rhs_len).into_iter();
-                            NonTerminal::#nonterminal(#actions_file::#action(#context_var))
-                        }
+                let prod_kind = self.prod_kind_ident(production);
+                let nonterminal = format_ident!("{}", nonterminal.name);
+
+                if rhs_len == 0 {
+                    // Handle EMPTY reduction
+                    Some(parse_quote!{
+                        ProdKind::#prod_kind => NonTerminal::#nonterminal(#actions_file::#action(#context_var))
                     })
                 } else {
-                    let mut next_rep: Vec<syn::Expr> = repeat(
-                        parse_quote!{ i.next().unwrap() }
-                    ).take(rhs_len).collect();
-
-                    let match_expr: syn::Expr = if rhs_len > 1 {
-                        parse_quote!{ (#(#next_rep),*) }
-                    } else {
-                        next_rep.pop().unwrap()
-                    };
-
-                    let mut param_count = 0usize;
-                    let match_lhs_items: Vec<syn::Expr> = production.rhs_symbols()
-                                            .iter()
-                                            .map( |&symbol| {
-                        let param = format_ident!("p{}", param_count);
-                        if self.grammar.symbol_has_content(symbol) {
-                            param_count += 1;
-                            if self.grammar.is_term(symbol){
-                                let terminal = format_ident!("{}", self.grammar.symbol_to_term(symbol).name);
-                                parse_quote!{ Symbol::Terminal(Terminal::#terminal(#param)) }
-                            } else {
-                                let nonterminal = format_ident!("{}", self.grammar.symbol_to_nonterm(symbol).name);
-                                parse_quote!{ Symbol::NonTerminal(NonTerminal::#nonterminal(#param)) }
+                    // Special handling of production with only str match terms in RHS
+                    if production.rhs_with_content(self.grammar).is_empty() {
+                        Some(parse_quote! {
+                            ProdKind::#prod_kind => {
+                                let _ = self.res_stack.split_off(self.res_stack.len()-#rhs_len).into_iter();
+                                NonTerminal::#nonterminal(#actions_file::#action(#context_var))
                             }
+                        })
+                    } else {
+                        let mut next_rep: Vec<syn::Expr> = repeat(
+                            parse_quote!{ i.next().unwrap() }
+                        ).take(rhs_len).collect();
+
+                        let match_expr: syn::Expr = if rhs_len > 1 {
+                            parse_quote!{ (#(#next_rep),*) }
                         } else {
-                            parse_quote! { _ }
-                        }
-                    }).collect();
+                            next_rep.pop().unwrap()
+                        };
 
-                    let match_lhs: syn::Expr = if rhs_len > 1 {
-                        parse_quote! { (#(#match_lhs_items),*) }
-                    } else {
-                        parse_quote! { #(#match_lhs_items),* }
-                    };
-
-                    let params: Vec<syn::Ident> = (0..production.rhs_with_content(self.grammar).len())
-                        .map( |idx| format_ident! { "p{}", idx }).collect();
-
-                    Some(parse_quote! {
-                        ProdKind::#prod_kind => {
-                            let mut i = self.res_stack.split_off(self.res_stack.len()-#rhs_len).into_iter();
-                            match #match_expr {
-                                #match_lhs => NonTerminal::#nonterminal(#actions_file::#action(context, #(#params),*)),
-                                _ => panic!("Invalid symbol parse stack data.")
+                        let mut param_count = 0usize;
+                        let match_lhs_items: Vec<syn::Expr> = production.rhs_symbols()
+                                                .iter()
+                                                .map( |&symbol| {
+                            let param = format_ident!("p{}", param_count);
+                            if self.grammar.symbol_has_content(symbol) {
+                                param_count += 1;
+                                if self.grammar.is_term(symbol){
+                                    let terminal = format_ident!("{}", self.grammar.symbol_to_term(symbol).name);
+                                    parse_quote!{ Symbol::Terminal(Terminal::#terminal(#param)) }
+                                } else {
+                                    let nonterminal = format_ident!("{}", self.grammar.symbol_to_nonterm(symbol).name);
+                                    parse_quote!{ Symbol::NonTerminal(NonTerminal::#nonterminal(#param)) }
+                                }
+                            } else {
+                                parse_quote! { _ }
                             }
+                        }).collect();
 
-                        }
-                    })
+                        let match_lhs: syn::Expr = if rhs_len > 1 {
+                            parse_quote! { (#(#match_lhs_items),*) }
+                        } else {
+                            parse_quote! { #(#match_lhs_items),* }
+                        };
+
+                        let params: Vec<syn::Ident> = (0..production.rhs_with_content(self.grammar).len())
+                            .map( |idx| format_ident! { "p{}", idx }).collect();
+
+                        Some(parse_quote! {
+                            ProdKind::#prod_kind => {
+                                let mut i = self.res_stack.split_off(self.res_stack.len()-#rhs_len).into_iter();
+                                match #match_expr {
+                                    #match_lhs => NonTerminal::#nonterminal(#actions_file::#action(context, #(#params),*)),
+                                    _ => panic!("Invalid symbol parse stack data.")
+                                }
+
+                            }
+                        })
+                    }
                 }
-            }
         }).collect();
 
         if has_nonreachable_nonterminals {
@@ -1093,9 +1104,6 @@ fn action_to_syntax(action: &Action) -> syn::Expr {
     }
 }
 
-fn action_name(nonterminal: &NonTerminal, prod: &Production) -> syn::Ident {
-    format_ident!(
-        "{}",
-        to_snake_case(format!("{}_{}", nonterminal.name, choice_name(prod)))
-    )
+fn action_name(nonterminal: &NonTerminal, choice: &Choice) -> String {
+    to_snake_case(format!("{}_{}", nonterminal.name, &choice.name))
 }

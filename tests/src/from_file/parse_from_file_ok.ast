@@ -5,39 +5,39 @@ Ok(
                 Add {
                     left: Add(
                         Add {
-                            left: C5(
+                            left: Number(
                                 "2",
                             ),
                             right: Div(
                                 Div {
                                     left: Mul(
                                         Mul {
-                                            left: C5(
+                                            left: Number(
                                                 "5",
                                             ),
-                                            right: C5(
+                                            right: Number(
                                                 "7",
                                             ),
                                         },
                                     ),
-                                    right: C5(
+                                    right: Number(
                                         "2.3",
                                     ),
                                 },
                             ),
                         },
                     ),
-                    right: C5(
+                    right: Number(
                         "3",
                     ),
                 },
             ),
             right: Div(
                 Div {
-                    left: C5(
+                    left: Number(
                         "17",
                     ),
-                    right: C5(
+                    right: Number(
                         "2",
                     ),
                 },

@@ -2,9 +2,9 @@ Ok(
     A {
         b: None,
         ta0: Some(
-            C1(
-                C1(
-                    C1(
+            Ta1(
+                Ta1(
+                    Ta1(
                         C2,
                     ),
                 ),

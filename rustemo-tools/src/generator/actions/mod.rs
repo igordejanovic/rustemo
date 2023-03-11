@@ -14,7 +14,10 @@ use syn::{self, parse_quote};
 
 use crate::{
     api::{settings::Settings, LexerType},
-    grammar::{types::to_snake_case, Grammar, NonTerminal},
+    grammar::{
+        types::{to_snake_case, SymbolTypes},
+        Grammar, NonTerminal,
+    },
     Error,
 };
 use crate::{error::Result, grammar::Terminal};
@@ -56,6 +59,7 @@ pub(crate) trait ActionsGenerator {
 
 pub(crate) fn generate_parser_actions<F>(
     grammar: &Grammar,
+    types: &SymbolTypes,
     file_name: &str,
     out_dir_actions: F,
     settings: &Settings,
@@ -135,7 +139,7 @@ where
     }
 
     let generator: Box<dyn ActionsGenerator> =
-        production::ProductionActionsGenerator::new(grammar);
+        production::ProductionActionsGenerator::new(grammar, types);
 
     // Generate types and actions for terminals
     grammar

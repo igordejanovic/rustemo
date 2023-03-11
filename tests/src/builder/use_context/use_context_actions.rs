@@ -9,14 +9,14 @@ pub fn num(context: &Context, token: Token) -> Num {
     token.value.parse::<u32>().unwrap() + context.position as u32
 }
 pub type A = Num1;
-pub fn a_c1<'i>(_context: &Context<'i>, num1: Num1) -> A {
+pub fn a_num1(_ctx: &Context, num1: Num1) -> A {
     num1
 }
 pub type Num1 = Vec<Num>;
-pub fn num1_c1<'i>(_context: &Context<'i>, mut num1: Num1, num: Num) -> Num1 {
+pub fn num1_c1(_context: &Context, mut num1: Num1, num: Num) -> Num1 {
     num1.push(num);
     num1
 }
-pub fn num1_c2<'i>(_context: &Context<'i>, num: Num) -> Num1 {
+pub fn num1_num(_ctx: &Context, num: Num) -> Num1 {
     vec![num]
 }
