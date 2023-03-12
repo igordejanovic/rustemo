@@ -1,0 +1,19 @@
+Err(
+    Error {
+        message: "Can't use 'impl' as a valid Rust identifier.",
+        file: Some(
+            "<str>",
+        ),
+        location: Some(
+            Location {
+                start: LineBased(
+                    LineBased {
+                        line: 2,
+                        column: 13,
+                    },
+                ),
+                end: None,
+            },
+        ),
+    },
+)

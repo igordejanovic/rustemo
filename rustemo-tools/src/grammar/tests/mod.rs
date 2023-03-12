@@ -334,3 +334,53 @@ fn unreachable_rules() {
         format!("{:#?}", grammar)
     );
 }
+
+/// Test that no Rust identifiers are used as grammar rule or assignment LHS names.
+#[test]
+fn invalid_names_1() {
+    let grammar: rustemo::error::Result<Grammar> = r#"
+        S: A B;
+        B: fn;
+        terminals
+        fn: 'fn';
+    "#
+    .parse();
+
+    output_cmp!(
+        "src/grammar/tests/invalid_names_1.err",
+        format!("{:#?}", grammar)
+    );
+}
+
+#[test]
+fn invalid_names_2() {
+    let grammar: rustemo::error::Result<Grammar> = r#"
+        S: A for;
+        for: A;
+        terminals
+        A: 'a';
+    "#
+    .parse();
+
+    output_cmp!(
+        "src/grammar/tests/invalid_names_2.err",
+        format!("{:#?}", grammar)
+    );
+}
+
+#[test]
+fn invalid_names_3() {
+    let grammar: rustemo::error::Result<Grammar> = r#"
+        S: A impl=B;
+        B: 'b';
+        terminals
+        A: 'a';
+        B: 'b';
+    "#
+    .parse();
+
+    output_cmp!(
+        "src/grammar/tests/invalid_names_3.err",
+        format!("{:#?}", grammar)
+    );
+}

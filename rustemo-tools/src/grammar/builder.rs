@@ -106,7 +106,7 @@ impl GrammarBuilder {
 
         // Collect grammar terminals
         if let Some(grammar_terminals) = file.terminal_rules {
-            self.collect_terminals(grammar_terminals);
+            self.collect_terminals(grammar_terminals)?;
         }
 
         if let Some(rules) = file.grammar_rules {
@@ -171,9 +171,10 @@ impl GrammarBuilder {
     fn collect_terminals(
         &mut self,
         grammar_terminals: Vec<rustemo_actions::Terminal>,
-    ) {
+    ) -> Result<()> {
         for terminal in grammar_terminals {
             let term_idx = self.get_term_idx();
+            self.check_identifier(&terminal.name)?;
             self.terminals.insert(
                 terminal.name.as_ref().to_string(),
                 Terminal {
@@ -214,6 +215,8 @@ impl GrammarBuilder {
             }
         }
         log!("Terminal matches: {:?}", self.terminals_matches);
+
+        Ok(())
     }
 
     fn extract_productions_and_symbols(
@@ -246,6 +249,7 @@ impl GrammarBuilder {
         }
 
         for rule in rules {
+            self.check_identifier(&rule.name)?;
             // Create new nonterm index if needed
             let nt_idx;
             if let Some(nonterminal) = self.nonterminals.get(rule.name.as_ref())
@@ -287,6 +291,7 @@ impl GrammarBuilder {
                             match assignment {
                                 PlainAssignment(mut assign)
                                 | BoolAssignment(mut assign) => {
+                                    self.check_identifier(&assign.name)?;
                                     self.desugar_regex(
                                         &mut assign.gsymref,
                                         &mut desugar_productions,
@@ -738,6 +743,18 @@ impl GrammarBuilder {
             reachable: false.into(),
         };
         self.nonterminals.insert(name.into(), nt);
+    }
+
+    fn check_identifier(&self, name: &ValLoc<String>) -> Result<()> {
+        let result = syn::parse_str::<syn::Ident>(name.as_ref());
+        if result.is_err() {
+            err!(
+                format!("Can't use '{}' as a valid Rust identifier.", &name),
+                Some(self.file.clone()),
+                name.location
+            )?
+        }
+        Ok(())
     }
 }
 
