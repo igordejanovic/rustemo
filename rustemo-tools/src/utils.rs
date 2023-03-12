@@ -65,9 +65,7 @@ pub use output_cmp;
 #[macro_export]
 macro_rules! local_file {
     ($this:expr, $local_path:expr) => {
-        &std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-            .parent()
-            .unwrap()
+        &std::path::PathBuf::from(env!("CARGO_WORKSPACE_DIR"))
             .join($this)
             .with_file_name($local_path)
     };
