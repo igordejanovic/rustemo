@@ -1,13 +1,13 @@
 Ok(
     A {
         b: Some(
-            C1,
+            Tb,
         ),
         ta0: Some(
             Ta1(
                 Ta1(
                     Ta1(
-                        C2,
+                        Ta,
                     ),
                 ),
             ),

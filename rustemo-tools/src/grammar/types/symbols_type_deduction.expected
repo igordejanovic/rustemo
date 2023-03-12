@@ -731,15 +731,15 @@ SymbolTypes {
                 },
                 choices: [
                     Choice {
-                        name: "C1",
+                        name: "Ta",
                         kind: Plain,
                     },
                     Choice {
-                        name: "C2",
+                        name: "Tb",
                         kind: Plain,
                     },
                     Choice {
-                        name: "C3",
+                        name: "Tc",
                         kind: Plain,
                     },
                 ],
@@ -752,15 +752,15 @@ SymbolTypes {
                 },
                 choices: [
                     Choice {
-                        name: "C1",
+                        name: "Ta",
                         kind: Plain,
                     },
                     Choice {
-                        name: "C2",
+                        name: "Tb",
                         kind: Plain,
                     },
                     Choice {
-                        name: "C3",
+                        name: "Tc",
                         kind: Plain,
                     },
                     Choice {
@@ -1074,7 +1074,7 @@ SymbolTypes {
                         },
                     },
                     Choice {
-                        name: "C2",
+                        name: "Tc",
                         kind: Plain,
                     },
                 ],
@@ -1535,7 +1535,7 @@ SymbolTypes {
                 },
                 choices: [
                     Choice {
-                        name: "C1",
+                        name: "Tc",
                         kind: Plain,
                     },
                     Choice {
@@ -1700,7 +1700,7 @@ SymbolTypes {
                         },
                     },
                     Choice {
-                        name: "C2",
+                        name: "Tb",
                         kind: Plain,
                     },
                 ],

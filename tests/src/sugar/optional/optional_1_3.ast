@@ -1,7 +1,7 @@
 Ok(
     A {
         tc_opt: None,
-        b: C1,
+        b: Tb,
         num_opt: Some(
             "1",
         ),

@@ -1,7 +1,7 @@
 Ok(
     A {
         b: Some(
-            C1,
+            Tb,
         ),
         num1: [
             "1",

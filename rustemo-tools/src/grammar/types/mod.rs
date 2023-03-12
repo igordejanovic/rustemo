@@ -93,15 +93,29 @@ impl SymbolTypes {
                 //   where fields types are types of the referred symbols.
                 let rhs = production.rhs_with_content(grammar);
                 choices.push(match rhs.len() {
+                    // Empty production
+                    0 if production.rhs.is_empty() => {
+                        optional = true;
+                        Choice {
+                            name: choice_name(production, None),
+                            kind: ChoiceKind::Empty,
+                        }
+                    }
+                    // A single non-content reference
+                    0 if production.rhs.len() == 1 => {
+                        let ref_type =
+                            grammar.symbol_name(production.rhs_symbols()[0]);
+                        Choice {
+                            name: choice_name(production, Some(&ref_type)),
+                            kind: ChoiceKind::Plain,
+                        }
+                    }
+                    // Multiple non-content references
                     0 => Choice {
                         name: choice_name(production, None),
-                        kind: if production.rhs.is_empty() {
-                            optional = true;
-                            ChoiceKind::Empty
-                        } else {
-                            ChoiceKind::Plain
-                        },
+                        kind: ChoiceKind::Plain,
                     },
+                    // A single non-terminal reference
                     1 if rhs[0].name.is_none() => {
                         let ref_type = grammar.symbol_name(rhs[0].symbol);
                         Choice {
