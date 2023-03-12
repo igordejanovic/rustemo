@@ -1,0 +1,122 @@
+Ok(
+    Object(
+        Some(
+            [
+                Member {
+                    json_string: "\"glossary\"",
+                    value: Object(
+                        Some(
+                            [
+                                Member {
+                                    json_string: "\"title\"",
+                                    value: JsonString(
+                                        "\"example glossary\"",
+                                    ),
+                                },
+                                Member {
+                                    json_string: "\"GlossDiv\"",
+                                    value: Object(
+                                        Some(
+                                            [
+                                                Member {
+                                                    json_string: "\"title\"",
+                                                    value: JsonString(
+                                                        "\"S\"",
+                                                    ),
+                                                },
+                                                Member {
+                                                    json_string: "\"GlossList\"",
+                                                    value: Object(
+                                                        Some(
+                                                            [
+                                                                Member {
+                                                                    json_string: "\"GlossEntry\"",
+                                                                    value: Object(
+                                                                        Some(
+                                                                            [
+                                                                                Member {
+                                                                                    json_string: "\"ID\"",
+                                                                                    value: JsonString(
+                                                                                        "\"SGML\"",
+                                                                                    ),
+                                                                                },
+                                                                                Member {
+                                                                                    json_string: "\"SortAs\"",
+                                                                                    value: JsonString(
+                                                                                        "\"SGML\"",
+                                                                                    ),
+                                                                                },
+                                                                                Member {
+                                                                                    json_string: "\"GlossTerm\"",
+                                                                                    value: JsonString(
+                                                                                        "\"Standard Generalized Markup Language\"",
+                                                                                    ),
+                                                                                },
+                                                                                Member {
+                                                                                    json_string: "\"Acronym\"",
+                                                                                    value: JsonString(
+                                                                                        "\"SGML\"",
+                                                                                    ),
+                                                                                },
+                                                                                Member {
+                                                                                    json_string: "\"Abbrev\"",
+                                                                                    value: JsonString(
+                                                                                        "\"ISO 8879:1986\"",
+                                                                                    ),
+                                                                                },
+                                                                                Member {
+                                                                                    json_string: "\"GlossDef\"",
+                                                                                    value: Object(
+                                                                                        Some(
+                                                                                            [
+                                                                                                Member {
+                                                                                                    json_string: "\"para\"",
+                                                                                                    value: JsonString(
+                                                                                                        "\"A meta-markup language, used to create markup languages such as DocBook.\"",
+                                                                                                    ),
+                                                                                                },
+                                                                                                Member {
+                                                                                                    json_string: "\"GlossSeeAlso\"",
+                                                                                                    value: Array(
+                                                                                                        Some(
+                                                                                                            [
+                                                                                                                JsonString(
+                                                                                                                    "\"GML\"",
+                                                                                                                ),
+                                                                                                                JsonString(
+                                                                                                                    "\"XML\"",
+                                                                                                                ),
+                                                                                                            ],
+                                                                                                        ),
+                                                                                                    ),
+                                                                                                },
+                                                                                            ],
+                                                                                        ),
+                                                                                    ),
+                                                                                },
+                                                                                Member {
+                                                                                    json_string: "\"GlossSee\"",
+                                                                                    value: JsonString(
+                                                                                        "\"markup\"",
+                                                                                    ),
+                                                                                },
+                                                                            ],
+                                                                        ),
+                                                                    ),
+                                                                },
+                                                            ],
+                                                        ),
+                                                    ),
+                                                },
+                                            ],
+                                        ),
+                                    ),
+                                },
+                            ],
+                        ),
+                    ),
+                },
+            ],
+        ),
+    ),
+)

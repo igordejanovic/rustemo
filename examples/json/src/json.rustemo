@@ -1,0 +1,18 @@
+Value: False | True | Null | Object | Array | JsonNumber | JsonString;
+Object: "{" Member*[Comma] "}";
+Member: JsonString ":" Value;
+Array: "[" Value*[Comma] "]";
+
+terminals
+False: 'false';
+True: 'true';
+Null: 'null';
+Comma: ',';
+JsonNumber: /-?\d+(\.\d+)?(e|E[-+]?\d+)?/;
+JsonString: /"((\\")|[^"])*"/;
+
+OBracket: '[';
+CBracket: ']';
+OBrace: '{';
+CBrace: '}';
+Colon: ':';

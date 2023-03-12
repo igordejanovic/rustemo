@@ -4,6 +4,7 @@ members = [
         "rustemo-tools",
         "tests",
         "examples/calculator",
+        "examples/json",
 
         # Tutorials
         "docs/src/tutorials/calculator/calculator1",

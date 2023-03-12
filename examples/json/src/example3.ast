@@ -1,0 +1,152 @@
+Ok(
+    Object(
+        Some(
+            [
+                Member {
+                    json_string: "\"widget\"",
+                    value: Object(
+                        Some(
+                            [
+                                Member {
+                                    json_string: "\"debug\"",
+                                    value: JsonString(
+                                        "\"on\"",
+                                    ),
+                                },
+                                Member {
+                                    json_string: "\"window\"",
+                                    value: Object(
+                                        Some(
+                                            [
+                                                Member {
+                                                    json_string: "\"title\"",
+                                                    value: JsonString(
+                                                        "\"Sample Konfabulator Widget\"",
+                                                    ),
+                                                },
+                                                Member {
+                                                    json_string: "\"name\"",
+                                                    value: JsonString(
+                                                        "\"main_window\"",
+                                                    ),
+                                                },
+                                                Member {
+                                                    json_string: "\"width\"",
+                                                    value: JsonNumber(
+                                                        500.0,
+                                                    ),
+                                                },
+                                                Member {
+                                                    json_string: "\"height\"",
+                                                    value: JsonNumber(
+                                                        500.0,
+                                                    ),
+                                                },
+                                            ],
+                                        ),
+                                    ),
+                                },
+                                Member {
+                                    json_string: "\"image\"",
+                                    value: Object(
+                                        Some(
+                                            [
+                                                Member {
+                                                    json_string: "\"src\"",
+                                                    value: JsonString(
+                                                        "\"Images/Sun.png\"",
+                                                    ),
+                                                },
+                                                Member {
+                                                    json_string: "\"name\"",
+                                                    value: JsonString(
+                                                        "\"sun1\"",
+                                                    ),
+                                                },
+                                                Member {
+                                                    json_string: "\"hOffset\"",
+                                                    value: JsonNumber(
+                                                        250.0,
+                                                    ),
+                                                },
+                                                Member {
+                                                    json_string: "\"vOffset\"",
+                                                    value: JsonNumber(
+                                                        250.0,
+                                                    ),
+                                                },
+                                                Member {
+                                                    json_string: "\"alignment\"",
+                                                    value: JsonString(
+                                                        "\"center\"",
+                                                    ),
+                                                },
+                                            ],
+                                        ),
+                                    ),
+                                },
+                                Member {
+                                    json_string: "\"text\"",
+                                    value: Object(
+                                        Some(
+                                            [
+                                                Member {
+                                                    json_string: "\"data\"",
+                                                    value: JsonString(
+                                                        "\"Click Here\"",
+                                                    ),
+                                                },
+                                                Member {
+                                                    json_string: "\"size\"",
+                                                    value: JsonNumber(
+                                                        36.0,
+                                                    ),
+                                                },
+                                                Member {
+                                                    json_string: "\"style\"",
+                                                    value: JsonString(
+                                                        "\"bold\"",
+                                                    ),
+                                                },
+                                                Member {
+                                                    json_string: "\"name\"",
+                                                    value: JsonString(
+                                                        "\"text1\"",
+                                                    ),
+                                                },
+                                                Member {
+                                                    json_string: "\"hOffset\"",
+                                                    value: JsonNumber(
+                                                        250.0,
+                                                    ),
+                                                },
+                                                Member {
+                                                    json_string: "\"vOffset\"",
+                                                    value: JsonNumber(
+                                                        100.0,
+                                                    ),
+                                                },
+                                                Member {
+                                                    json_string: "\"alignment\"",
+                                                    value: JsonString(
+                                                        "\"center\"",
+                                                    ),
+                                                },
+                                                Member {
+                                                    json_string: "\"onMouseUp\"",
+                                                    value: JsonString(
+                                                        "\"sun1.opacity = (sun1.opacity / 100) * 90;\"",
+                                                    ),
+                                                },
+                                            ],
+                                        ),
+                                    ),
+                                },
+                            ],
+                        ),
+                    ),
+                },
+            ],
+        ),
+    ),
+)

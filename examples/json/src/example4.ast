@@ -1,0 +1,539 @@
+Ok(
+    Object(
+        Some(
+            [
+                Member {
+                    json_string: "\"web-app\"",
+                    value: Object(
+                        Some(
+                            [
+                                Member {
+                                    json_string: "\"servlet\"",
+                                    value: Array(
+                                        Some(
+                                            [
+                                                Object(
+                                                    Some(
+                                                        [
+                                                            Member {
+                                                                json_string: "\"servlet-name\"",
+                                                                value: JsonString(
+                                                                    "\"cofaxCDS\"",
+                                                                ),
+                                                            },
+                                                            Member {
+                                                                json_string: "\"servlet-class\"",
+                                                                value: JsonString(
+                                                                    "\"org.cofax.cds.CDSServlet\"",
+                                                                ),
+                                                            },
+                                                            Member {
+                                                                json_string: "\"init-param\"",
+                                                                value: Object(
+                                                                    Some(
+                                                                        [
+                                                                            Member {
+                                                                                json_string: "\"configGlossary:installationAt\"",
+                                                                                value: JsonString(
+                                                                                    "\"Philadelphia, PA\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"configGlossary:adminEmail\"",
+                                                                                value: JsonString(
+                                                                                    "\"ksm@pobox.com\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"configGlossary:poweredBy\"",
+                                                                                value: JsonString(
+                                                                                    "\"Cofax\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"configGlossary:poweredByIcon\"",
+                                                                                value: JsonString(
+                                                                                    "\"/images/cofax.gif\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"configGlossary:staticPath\"",
+                                                                                value: JsonString(
+                                                                                    "\"/content/static\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"templateProcessorClass\"",
+                                                                                value: JsonString(
+                                                                                    "\"org.cofax.WysiwygTemplate\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"templateLoaderClass\"",
+                                                                                value: JsonString(
+                                                                                    "\"org.cofax.FilesTemplateLoader\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"templatePath\"",
+                                                                                value: JsonString(
+                                                                                    "\"templates\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"templateOverridePath\"",
+                                                                                value: JsonString(
+                                                                                    "\"\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"defaultListTemplate\"",
+                                                                                value: JsonString(
+                                                                                    "\"listTemplate.htm\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"defaultFileTemplate\"",
+                                                                                value: JsonString(
+                                                                                    "\"articleTemplate.htm\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"useJSP\"",
+                                                                                value: False,
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"jspListTemplate\"",
+                                                                                value: JsonString(
+                                                                                    "\"listTemplate.jsp\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"jspFileTemplate\"",
+                                                                                value: JsonString(
+                                                                                    "\"articleTemplate.jsp\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"cachePackageTagsTrack\"",
+                                                                                value: JsonNumber(
+                                                                                    200.0,
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"cachePackageTagsStore\"",
+                                                                                value: JsonNumber(
+                                                                                    200.0,
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"cachePackageTagsRefresh\"",
+                                                                                value: JsonNumber(
+                                                                                    60.0,
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"cacheTemplatesTrack\"",
+                                                                                value: JsonNumber(
+                                                                                    100.0,
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"cacheTemplatesStore\"",
+                                                                                value: JsonNumber(
+                                                                                    50.0,
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"cacheTemplatesRefresh\"",
+                                                                                value: JsonNumber(
+                                                                                    15.0,
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"cachePagesTrack\"",
+                                                                                value: JsonNumber(
+                                                                                    200.0,
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"cachePagesStore\"",
+                                                                                value: JsonNumber(
+                                                                                    100.0,
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"cachePagesRefresh\"",
+                                                                                value: JsonNumber(
+                                                                                    10.0,
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"cachePagesDirtyRead\"",
+                                                                                value: JsonNumber(
+                                                                                    10.0,
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"searchEngineListTemplate\"",
+                                                                                value: JsonString(
+                                                                                    "\"forSearchEnginesList.htm\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"searchEngineFileTemplate\"",
+                                                                                value: JsonString(
+                                                                                    "\"forSearchEngines.htm\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"searchEngineRobotsDb\"",
+                                                                                value: JsonString(
+                                                                                    "\"WEB-INF/robots.db\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"useDataStore\"",
+                                                                                value: True,
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"dataStoreClass\"",
+                                                                                value: JsonString(
+                                                                                    "\"org.cofax.SqlDataStore\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"redirectionClass\"",
+                                                                                value: JsonString(
+                                                                                    "\"org.cofax.SqlRedirection\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"dataStoreName\"",
+                                                                                value: JsonString(
+                                                                                    "\"cofax\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"dataStoreDriver\"",
+                                                                                value: JsonString(
+                                                                                    "\"com.microsoft.jdbc.sqlserver.SQLServerDriver\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"dataStoreUrl\"",
+                                                                                value: JsonString(
+                                                                                    "\"jdbc:microsoft:sqlserver://LOCALHOST:1433;DatabaseName=goon\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"dataStoreUser\"",
+                                                                                value: JsonString(
+                                                                                    "\"sa\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"dataStorePassword\"",
+                                                                                value: JsonString(
+                                                                                    "\"dataStoreTestQuery\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"dataStoreTestQuery\"",
+                                                                                value: JsonString(
+                                                                                    "\"SET NOCOUNT ON;select test='test';\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"dataStoreLogFile\"",
+                                                                                value: JsonString(
+                                                                                    "\"/usr/local/tomcat/logs/datastore.log\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"dataStoreInitConns\"",
+                                                                                value: JsonNumber(
+                                                                                    10.0,
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"dataStoreMaxConns\"",
+                                                                                value: JsonNumber(
+                                                                                    100.0,
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"dataStoreConnUsageLimit\"",
+                                                                                value: JsonNumber(
+                                                                                    100.0,
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"dataStoreLogLevel\"",
+                                                                                value: JsonString(
+                                                                                    "\"debug\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"maxUrlLength\"",
+                                                                                value: JsonNumber(
+                                                                                    500.0,
+                                                                                ),
+                                                                            },
+                                                                        ],
+                                                                    ),
+                                                                ),
+                                                            },
+                                                        ],
+                                                    ),
+                                                ),
+                                                Object(
+                                                    Some(
+                                                        [
+                                                            Member {
+                                                                json_string: "\"servlet-name\"",
+                                                                value: JsonString(
+                                                                    "\"cofaxEmail\"",
+                                                                ),
+                                                            },
+                                                            Member {
+                                                                json_string: "\"servlet-class\"",
+                                                                value: JsonString(
+                                                                    "\"org.cofax.cds.EmailServlet\"",
+                                                                ),
+                                                            },
+                                                            Member {
+                                                                json_string: "\"init-param\"",
+                                                                value: Object(
+                                                                    Some(
+                                                                        [
+                                                                            Member {
+                                                                                json_string: "\"mailHost\"",
+                                                                                value: JsonString(
+                                                                                    "\"mail1\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"mailHostOverride\"",
+                                                                                value: JsonString(
+                                                                                    "\"mail2\"",
+                                                                                ),
+                                                                            },
+                                                                        ],
+                                                                    ),
+                                                                ),
+                                                            },
+                                                        ],
+                                                    ),
+                                                ),
+                                                Object(
+                                                    Some(
+                                                        [
+                                                            Member {
+                                                                json_string: "\"servlet-name\"",
+                                                                value: JsonString(
+                                                                    "\"cofaxAdmin\"",
+                                                                ),
+                                                            },
+                                                            Member {
+                                                                json_string: "\"servlet-class\"",
+                                                                value: JsonString(
+                                                                    "\"org.cofax.cds.AdminServlet\"",
+                                                                ),
+                                                            },
+                                                        ],
+                                                    ),
+                                                ),
+                                                Object(
+                                                    Some(
+                                                        [
+                                                            Member {
+                                                                json_string: "\"servlet-name\"",
+                                                                value: JsonString(
+                                                                    "\"fileServlet\"",
+                                                                ),
+                                                            },
+                                                            Member {
+                                                                json_string: "\"servlet-class\"",
+                                                                value: JsonString(
+                                                                    "\"org.cofax.cds.FileServlet\"",
+                                                                ),
+                                                            },
+                                                        ],
+                                                    ),
+                                                ),
+                                                Object(
+                                                    Some(
+                                                        [
+                                                            Member {
+                                                                json_string: "\"servlet-name\"",
+                                                                value: JsonString(
+                                                                    "\"cofaxTools\"",
+                                                                ),
+                                                            },
+                                                            Member {
+                                                                json_string: "\"servlet-class\"",
+                                                                value: JsonString(
+                                                                    "\"org.cofax.cms.CofaxToolsServlet\"",
+                                                                ),
+                                                            },
+                                                            Member {
+                                                                json_string: "\"init-param\"",
+                                                                value: Object(
+                                                                    Some(
+                                                                        [
+                                                                            Member {
+                                                                                json_string: "\"templatePath\"",
+                                                                                value: JsonString(
+                                                                                    "\"toolstemplates/\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"log\"",
+                                                                                value: JsonNumber(
+                                                                                    1.0,
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"logLocation\"",
+                                                                                value: JsonString(
+                                                                                    "\"/usr/local/tomcat/logs/CofaxTools.log\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"logMaxSize\"",
+                                                                                value: JsonString(
+                                                                                    "\"\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"dataLog\"",
+                                                                                value: JsonNumber(
+                                                                                    1.0,
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"dataLogLocation\"",
+                                                                                value: JsonString(
+                                                                                    "\"/usr/local/tomcat/logs/dataLog.log\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"dataLogMaxSize\"",
+                                                                                value: JsonString(
+                                                                                    "\"\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"removePageCache\"",
+                                                                                value: JsonString(
+                                                                                    "\"/content/admin/remove?cache=pages&id=\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"removeTemplateCache\"",
+                                                                                value: JsonString(
+                                                                                    "\"/content/admin/remove?cache=templates&id=\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"fileTransferFolder\"",
+                                                                                value: JsonString(
+                                                                                    "\"/usr/local/tomcat/webapps/content/fileTransferFolder\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"lookInContext\"",
+                                                                                value: JsonNumber(
+                                                                                    1.0,
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"adminGroupID\"",
+                                                                                value: JsonNumber(
+                                                                                    4.0,
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"betaServer\"",
+                                                                                value: True,
+                                                                            },
+                                                                        ],
+                                                                    ),
+                                                                ),
+                                                            },
+                                                        ],
+                                                    ),
+                                                ),
+                                            ],
+                                        ),
+                                    ),
+                                },
+                                Member {
+                                    json_string: "\"servlet-mapping\"",
+                                    value: Object(
+                                        Some(
+                                            [
+                                                Member {
+                                                    json_string: "\"cofaxCDS\"",
+                                                    value: JsonString(
+                                                        "\"/\"",
+                                                    ),
+                                                },
+                                                Member {
+                                                    json_string: "\"cofaxEmail\"",
+                                                    value: JsonString(
+                                                        "\"/cofaxutil/aemail/*\"",
+                                                    ),
+                                                },
+                                                Member {
+                                                    json_string: "\"cofaxAdmin\"",
+                                                    value: JsonString(
+                                                        "\"/admin/*\"",
+                                                    ),
+                                                },
+                                                Member {
+                                                    json_string: "\"fileServlet\"",
+                                                    value: JsonString(
+                                                        "\"/static/*\"",
+                                                    ),
+                                                },
+                                                Member {
+                                                    json_string: "\"cofaxTools\"",
+                                                    value: JsonString(
+                                                        "\"/tools/*\"",
+                                                    ),
+                                                },
+                                            ],
+                                        ),
+                                    ),
+                                },
+                                Member {
+                                    json_string: "\"taglib\"",
+                                    value: Object(
+                                        Some(
+                                            [
+                                                Member {
+                                                    json_string: "\"taglib-uri\"",
+                                                    value: JsonString(
+                                                        "\"cofax.tld\"",
+                                                    ),
+                                                },
+                                                Member {
+                                                    json_string: "\"taglib-location\"",
+                                                    value: JsonString(
+                                                        "\"/WEB-INF/tlds/cofax.tld\"",
+                                                    ),
+                                                },
+                                            ],
+                                        ),
+                                    ),
+                                },
+                            ],
+                        ),
+                    ),
+                },
+            ],
+        ),
+    ),
+)

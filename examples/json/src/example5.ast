@@ -1,0 +1,324 @@
+Ok(
+    Object(
+        Some(
+            [
+                Member {
+                    json_string: "\"menu\"",
+                    value: Object(
+                        Some(
+                            [
+                                Member {
+                                    json_string: "\"header\"",
+                                    value: JsonString(
+                                        "\"SVG Viewer\"",
+                                    ),
+                                },
+                                Member {
+                                    json_string: "\"items\"",
+                                    value: Array(
+                                        Some(
+                                            [
+                                                Object(
+                                                    Some(
+                                                        [
+                                                            Member {
+                                                                json_string: "\"id\"",
+                                                                value: JsonString(
+                                                                    "\"Open\"",
+                                                                ),
+                                                            },
+                                                        ],
+                                                    ),
+                                                ),
+                                                Object(
+                                                    Some(
+                                                        [
+                                                            Member {
+                                                                json_string: "\"id\"",
+                                                                value: JsonString(
+                                                                    "\"OpenNew\"",
+                                                                ),
+                                                            },
+                                                            Member {
+                                                                json_string: "\"label\"",
+                                                                value: JsonString(
+                                                                    "\"Open New\"",
+                                                                ),
+                                                            },
+                                                        ],
+                                                    ),
+                                                ),
+                                                Null,
+                                                Object(
+                                                    Some(
+                                                        [
+                                                            Member {
+                                                                json_string: "\"id\"",
+                                                                value: JsonString(
+                                                                    "\"ZoomIn\"",
+                                                                ),
+                                                            },
+                                                            Member {
+                                                                json_string: "\"label\"",
+                                                                value: JsonString(
+                                                                    "\"Zoom In\"",
+                                                                ),
+                                                            },
+                                                        ],
+                                                    ),
+                                                ),
+                                                Object(
+                                                    Some(
+                                                        [
+                                                            Member {
+                                                                json_string: "\"id\"",
+                                                                value: JsonString(
+                                                                    "\"ZoomOut\"",
+                                                                ),
+                                                            },
+                                                            Member {
+                                                                json_string: "\"label\"",
+                                                                value: JsonString(
+                                                                    "\"Zoom Out\"",
+                                                                ),
+                                                            },
+                                                        ],
+                                                    ),
+                                                ),
+                                                Object(
+                                                    Some(
+                                                        [
+                                                            Member {
+                                                                json_string: "\"id\"",
+                                                                value: JsonString(
+                                                                    "\"OriginalView\"",
+                                                                ),
+                                                            },
+                                                            Member {
+                                                                json_string: "\"label\"",
+                                                                value: JsonString(
+                                                                    "\"Original View\"",
+                                                                ),
+                                                            },
+                                                        ],
+                                                    ),
+                                                ),
+                                                Null,
+                                                Object(
+                                                    Some(
+                                                        [
+                                                            Member {
+                                                                json_string: "\"id\"",
+                                                                value: JsonString(
+                                                                    "\"Quality\"",
+                                                                ),
+                                                            },
+                                                        ],
+                                                    ),
+                                                ),
+                                                Object(
+                                                    Some(
+                                                        [
+                                                            Member {
+                                                                json_string: "\"id\"",
+                                                                value: JsonString(
+                                                                    "\"Pause\"",
+                                                                ),
+                                                            },
+                                                        ],
+                                                    ),
+                                                ),
+                                                Object(
+                                                    Some(
+                                                        [
+                                                            Member {
+                                                                json_string: "\"id\"",
+                                                                value: JsonString(
+                                                                    "\"Mute\"",
+                                                                ),
+                                                            },
+                                                        ],
+                                                    ),
+                                                ),
+                                                Null,
+                                                Object(
+                                                    Some(
+                                                        [
+                                                            Member {
+                                                                json_string: "\"id\"",
+                                                                value: JsonString(
+                                                                    "\"Find\"",
+                                                                ),
+                                                            },
+                                                            Member {
+                                                                json_string: "\"label\"",
+                                                                value: JsonString(
+                                                                    "\"Find...\"",
+                                                                ),
+                                                            },
+                                                        ],
+                                                    ),
+                                                ),
+                                                Object(
+                                                    Some(
+                                                        [
+                                                            Member {
+                                                                json_string: "\"id\"",
+                                                                value: JsonString(
+                                                                    "\"FindAgain\"",
+                                                                ),
+                                                            },
+                                                            Member {
+                                                                json_string: "\"label\"",
+                                                                value: JsonString(
+                                                                    "\"Find Again\"",
+                                                                ),
+                                                            },
+                                                        ],
+                                                    ),
+                                                ),
+                                                Object(
+                                                    Some(
+                                                        [
+                                                            Member {
+                                                                json_string: "\"id\"",
+                                                                value: JsonString(
+                                                                    "\"Copy\"",
+                                                                ),
+                                                            },
+                                                        ],
+                                                    ),
+                                                ),
+                                                Object(
+                                                    Some(
+                                                        [
+                                                            Member {
+                                                                json_string: "\"id\"",
+                                                                value: JsonString(
+                                                                    "\"CopyAgain\"",
+                                                                ),
+                                                            },
+                                                            Member {
+                                                                json_string: "\"label\"",
+                                                                value: JsonString(
+                                                                    "\"Copy Again\"",
+                                                                ),
+                                                            },
+                                                        ],
+                                                    ),
+                                                ),
+                                                Object(
+                                                    Some(
+                                                        [
+                                                            Member {
+                                                                json_string: "\"id\"",
+                                                                value: JsonString(
+                                                                    "\"CopySVG\"",
+                                                                ),
+                                                            },
+                                                            Member {
+                                                                json_string: "\"label\"",
+                                                                value: JsonString(
+                                                                    "\"Copy SVG\"",
+                                                                ),
+                                                            },
+                                                        ],
+                                                    ),
+                                                ),
+                                                Object(
+                                                    Some(
+                                                        [
+                                                            Member {
+                                                                json_string: "\"id\"",
+                                                                value: JsonString(
+                                                                    "\"ViewSVG\"",
+                                                                ),
+                                                            },
+                                                            Member {
+                                                                json_string: "\"label\"",
+                                                                value: JsonString(
+                                                                    "\"View SVG\"",
+                                                                ),
+                                                            },
+                                                        ],
+                                                    ),
+                                                ),
+                                                Object(
+                                                    Some(
+                                                        [
+                                                            Member {
+                                                                json_string: "\"id\"",
+                                                                value: JsonString(
+                                                                    "\"ViewSource\"",
+                                                                ),
+                                                            },
+                                                            Member {
+                                                                json_string: "\"label\"",
+                                                                value: JsonString(
+                                                                    "\"View Source\"",
+                                                                ),
+                                                            },
+                                                        ],
+                                                    ),
+                                                ),
+                                                Object(
+                                                    Some(
+                                                        [
+                                                            Member {
+                                                                json_string: "\"id\"",
+                                                                value: JsonString(
+                                                                    "\"SaveAs\"",
+                                                                ),
+                                                            },
+                                                            Member {
+                                                                json_string: "\"label\"",
+                                                                value: JsonString(
+                                                                    "\"Save As\"",
+                                                                ),
+                                                            },
+                                                        ],
+                                                    ),
+                                                ),
+                                                Null,
+                                                Object(
+                                                    Some(
+                                                        [
+                                                            Member {
+                                                                json_string: "\"id\"",
+                                                                value: JsonString(
+                                                                    "\"Help\"",
+                                                                ),
+                                                            },
+                                                        ],
+                                                    ),
+                                                ),
+                                                Object(
+                                                    Some(
+                                                        [
+                                                            Member {
+                                                                json_string: "\"id\"",
+                                                                value: JsonString(
+                                                                    "\"About\"",
+                                                                ),
+                                                            },
+                                                            Member {
+                                                                json_string: "\"label\"",
+                                                                value: JsonString(
+                                                                    "\"About Adobe CVG Viewer...\"",
+                                                                ),
+                                                            },
+                                                        ],
+                                                    ),
+                                                ),
+                                            ],
+                                        ),
+                                    ),
+                                },
+                            ],
+                        ),
+                    ),
+                },
+            ],
+        ),
+    ),
+)

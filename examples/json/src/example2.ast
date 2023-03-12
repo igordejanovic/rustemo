@@ -1,0 +1,101 @@
+Ok(
+    Object(
+        Some(
+            [
+                Member {
+                    json_string: "\"menu\"",
+                    value: Object(
+                        Some(
+                            [
+                                Member {
+                                    json_string: "\"id\"",
+                                    value: JsonString(
+                                        "\"file\"",
+                                    ),
+                                },
+                                Member {
+                                    json_string: "\"value\"",
+                                    value: JsonString(
+                                        "\"File\"",
+                                    ),
+                                },
+                                Member {
+                                    json_string: "\"popup\"",
+                                    value: Object(
+                                        Some(
+                                            [
+                                                Member {
+                                                    json_string: "\"menuitem\"",
+                                                    value: Array(
+                                                        Some(
+                                                            [
+                                                                Object(
+                                                                    Some(
+                                                                        [
+                                                                            Member {
+                                                                                json_string: "\"value\"",
+                                                                                value: JsonString(
+                                                                                    "\"New\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"onclick\"",
+                                                                                value: JsonString(
+                                                                                    "\"CreateNewDoc()\"",
+                                                                                ),
+                                                                            },
+                                                                        ],
+                                                                    ),
+                                                                ),
+                                                                Object(
+                                                                    Some(
+                                                                        [
+                                                                            Member {
+                                                                                json_string: "\"value\"",
+                                                                                value: JsonString(
+                                                                                    "\"Open\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"onclick\"",
+                                                                                value: JsonString(
+                                                                                    "\"OpenDoc()\"",
+                                                                                ),
+                                                                            },
+                                                                        ],
+                                                                    ),
+                                                                ),
+                                                                Object(
+                                                                    Some(
+                                                                        [
+                                                                            Member {
+                                                                                json_string: "\"value\"",
+                                                                                value: JsonString(
+                                                                                    "\"Close\"",
+                                                                                ),
+                                                                            },
+                                                                            Member {
+                                                                                json_string: "\"onclick\"",
+                                                                                value: JsonString(
+                                                                                    "\"CloseDoc()\"",
+                                                                                ),
+                                                                            },
+                                                                        ],
+                                                                    ),
+                                                                ),
+                                                            ],
+                                                        ),
+                                                    ),
+                                                },
+                                            ],
+                                        ),
+                                    ),
+                                },
+                            ],
+                        ),
+                    ),
+                },
+            ],
+        ),
+    ),
+)
