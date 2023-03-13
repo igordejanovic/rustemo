@@ -1,45 +1,78 @@
 # Lexers
 
-Rustemo provides lexer for parsing text which uses recognizers defined in the
-lexical part of the grammar (after keyword `terminals`) for lexing. If you have
-special requirements you can write your own lexer.
+Lexers are components that break an input sequence into its constituent parts called
+"tokens" or "lexemes". Given the current parsing context they return the next
+token from the input stream.
+
+To abstract over all possible inputs, Rustemo provides a trait `lexer::Input`
+which must be implemented by any type that can be used as an input to the
+parsing process. Types `str` and `[u8]` implement this trait and thus parsing a
+string or a sequence of bytes is possible out-of-the-box.
+
+String parsing is facilitated by so-called
+[recognizers](grammar_language.md#terminals), basically a string and regex
+patterns defined for each terminal in the `terminals` section of the grammar.
+This spec is used to configure the string lexer.
+
+For parsing other types you can provide your custom lexer.
 
 
+## Custom lexers
 
+To create the custom lexer implement trait `rustemo::lexer::Lexer` for your
+type. Method `next_token` should return a result holding the next token given
+the current parsing context.
 
-```admonish todo
-Fix the following section
+The lexer type should be named `<Parser name>Lexer` where `<Parser name>` is
+deduced from the grammar file name. The lexer type should be defined in a file
+`<grammar name)_lexer.rs` where `<grammar name>` is the base name of the grammar
+file.
+
+In the [tests project](https://github.com/igordejanovic/rustemo/tree/main/tests)
+a
+[custom_lexer](https://github.com/igordejanovic/rustemo/tree/main/tests/src/lexer/custom_lexer)
+test is given which demonstrates implementation of a custom lexer. The lexer
+implemented in this test is used to tokenize a sequence of varints which are
+variable-width integers used in [Google's protocol buffers wire
+format](https://protobuf.dev/programming-guides/encoding/#varints).
+
+So, our lexer has to figure out what is the next varint in the sequence of
+bytes. 
+
+There are more than one approach to handle this. Here is one (see the test for
+additional information).
+
+We start with the following grammar in a file, say `custom_lexer_2.rustemo`:
+
+```
+{{#include ../../tests/src/lexer/custom_lexer/custom_lexer_2.rustemo:lexer-doc}}
 ```
 
-### Custom recognizers
+We have defined that the input consists of one or more varint and that each
+varint contains zero or more `MSBByte` (a byte whose highest bit is set) and
+exactly one `NonMSBByte` (a byte whose highest bit is not set) at the end.
 
-If you are parsing arbitrary input (non-textual) you'll have to provide your own
-recognizers. In the grammar, you just have to provide terminal symbol without
-body, i.e. without string or regex recognizer. You will provide missing
-recognizers during grammar instantiation from Python. Although you don't supply
-body of the terminal you can define [disambiguation rules](./disambiguation.md)
-as usual.
+And in file `custom_lexer_2_lexer.rs` we specify our lexer:
 
-Lets say that we have a list of integers (real list of Python ints, not a text
-with numbers) and we have some weird requirement to break those numbers
-according to the following grammar:
+```rust
+{{#include ../../tests/src/lexer/custom_lexer/custom_lexer_2_lexer.rs:custom-lexer}}
+```
 
-    Numbers: all_less_than_five  ascending  all_less_than_five;
-    all_less_than_five: all_less_than_five  int_less_than_five
-                      | int_less_than_five;
-    
-    
-    terminals
-    // These terminals have no recognizers defined in the grammar
-    ascending: ;
-    int_less_than_five: ;
+The job of the lexer in this case is to return `STOP` if at the end of the input
+or to return a token of `MSBByte` kind containing a single byte at the current
+position if the higest bit is set or `NonMSBByte` otherwise.
 
-So, we should first match all numbers less than five and collect those, than we
-should match a list of ascending numbers and than list of less than five again.
-`int_less_than_five` and `ascending` are terminals/recognizers that will be
-defined in Python and passed to grammar construction. `int_less_than_five` will
-recognize Python integer that is, well, less than five. `ascending` will
-recognize a sublist of integers in ascending order.
+The transformation of a sequence of `(Non)MSBByte` to varint is done in semantic
+actions given in the file `custom_lexer_2_actions.rs`. The relevant
+(non-generated) part is this:
 
-More on this topic can be found in [a separate section](./recognizers.md).
+```rust
+{{#include ../../tests/src/lexer/custom_lexer/custom_lexer_2_actions.rs:lexer-doc}}
+```
+Now, the last part is to configure Rustemo to use the custom lexer. We do this
+either through the API by calling `lexer_type(LexerType::Custom)` (see the
+`build.rs` file in the tests project), or using `--lexer-type custom` if the
+parser is generated by the CLI tool.
 
+For more info see the [full test for custom
+lexers](https://github.com/igordejanovic/rustemo/tree/main/tests/src/lexer/custom_lexer).

@@ -6,6 +6,7 @@ use rustemo::{
     location::{Location, Position},
 };
 
+// ANCHOR: custom-lexer
 /// We are parsing a slice of bytes.
 pub type Input = [u8];
 
@@ -50,3 +51,4 @@ impl<'i> Lexer<'i, Input, StateIndex, TokenKind> for CustomLexer2Lexer {
         })
     }
 }
+// ANCHOR_END: custom-lexer

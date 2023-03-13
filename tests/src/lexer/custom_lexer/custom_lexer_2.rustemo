@@ -3,10 +3,11 @@
 //
 // In this variant we are doing more work in the parser. The lexer will
 // just recognize if the current byte is MSB or not.
-
+// ANCHOR: lexer-doc
 VarInts: VarInt+;
 VarInt: MSBByte* NonMSBByte;
 
 terminals
 MSBByte:;
 NonMSBByte:;
+// ANCHOR_END: lexer-doc

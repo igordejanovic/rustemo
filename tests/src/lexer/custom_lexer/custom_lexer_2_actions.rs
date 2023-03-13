@@ -29,6 +29,7 @@ pub fn var_int1_c1<'i>(
 pub fn var_int1_var_int(_ctx: &Context, var_int: VarInt) -> VarInt1 {
     vec![var_int]
 }
+/// ANCHOR: lexer-doc
 /// We are doing a conversion in this action. Other actions are generated.
 /// msbbyte0 is an option containing first bytes of the VarInt non_msbbyte
 /// contains the last byte
@@ -50,6 +51,7 @@ pub fn var_int_c1<'i>(
     }
     res
 }
+/// ANCHOR_END: lexer-doc
 pub type MSBByte1 = Vec<MSBByte>;
 pub fn msbbyte1_c1<'i>(
     _ctx: &Context<'i>,
