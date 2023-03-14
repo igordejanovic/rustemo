@@ -1,5 +1,8 @@
 # Rustemo
 
+[![Documentation
+Status](https://img.shields.io/badge/docs-latest-green.svg)](https://igordejanovic.github.io/rustemo/)
+
 LR/GLR parser generator for Rust (currently only LR).
 
 **In the early phase of development. DO NOT USE IN PRODUCTION!**
