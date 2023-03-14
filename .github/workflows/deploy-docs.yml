@@ -2,7 +2,7 @@ name: Deploy Rustemo book to Pages
 
 on:
   push:
-    branches: ["test-gh"]
+    branches: ["main"]
     paths:
       - 'docs/**'
       - '.github/workflows/deploy-docs.yml'
