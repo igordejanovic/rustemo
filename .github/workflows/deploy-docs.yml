@@ -1,0 +1,59 @@
+name: Deploy Rustemo book to Pages
+
+on:
+  push:
+    branches: ["test-gh"]
+    paths:
+      - 'docs/**'
+      - '.github/workflows/deploy-docs.yml'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+
+
+jobs:
+  # Single deploy job since we're just deploying
+  deploy-book:
+    runs-on: ubuntu-latest
+    container: igordejanovic/rustemo-docs-ci
+
+    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+    permissions:
+      pages: write      # to deploy to Pages
+      id-token: write   # to verify the deployment originates from an appropriate source
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Setup Pages
+        uses: actions/configure-pages@v2
+      - shell: bash
+        name: Setup mdbooks
+        run: |
+          echo "$GITHUB_WORKSPACE/bin" >> $GITHUB_PATH
+          wget -q https://github.com/igordejanovic/rustemo/releases/download/binary-artifacts-dummy-tag/mdbook.tar.gz
+          mkdir bin
+          tar -xvzf mdbook.tar.gz -C bin
+          chmod +x bin/*
+      - name: Build the book
+        run: |
+          cd docs
+          mdbook build
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: 'docs/book/html'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
+
