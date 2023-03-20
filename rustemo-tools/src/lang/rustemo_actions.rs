@@ -31,9 +31,9 @@ pub fn str_const(ctx: &Context, token: Token) -> StrConst {
         Some(ctx.location),
     )
 }
-pub type Action = ValLoc<String>;
-pub fn action(ctx: &Context, token: Token) -> Action {
-    Action::new(token.value[1..].into(), Some(ctx.location))
+pub type Annotation = ValLoc<String>;
+pub fn annotation(ctx: &Context, token: Token) -> Annotation {
+    Annotation::new(token.value[1..].into(), Some(ctx.location))
 }
 #[derive(Debug, Clone, Default)]
 pub struct File {
@@ -134,19 +134,19 @@ pub fn grammar_rule1_grammar_rule(
 }
 #[derive(Debug, Clone)]
 pub struct GrammarRule {
-    pub action: Option<Action>,
+    pub annotation: Option<Annotation>,
     pub name: Name,
     pub rhs: GrammarRuleRHS,
     pub meta: ProdMetaDatas,
 }
 pub fn grammar_rule_c1(
     _ctx: &Context,
-    action: Option<Action>,
+    annotation: Option<Annotation>,
     name: Name,
     rhs: GrammarRuleRHS,
 ) -> GrammarRule {
     GrammarRule {
-        action,
+        annotation,
         name,
         rhs,
         meta: ProdMetaDatas::new(),
@@ -154,23 +154,23 @@ pub fn grammar_rule_c1(
 }
 pub fn grammar_rule_c2(
     _ctx: &Context,
-    action: Option<Action>,
+    annotation: Option<Annotation>,
     name: Name,
     meta: ProdMetaDatas,
     rhs: GrammarRuleRHS,
 ) -> GrammarRule {
     GrammarRule {
-        action,
+        annotation,
         name,
         rhs,
         meta,
     }
 }
-pub type ActionOpt = Option<Action>;
-pub fn action_opt_action(_ctx: &Context, action: Action) -> ActionOpt {
-    Some(action)
+pub type AnnotationOpt = Option<Annotation>;
+pub fn annotation_opt_annotation(_ctx: &Context, annotation: Annotation) -> AnnotationOpt {
+    Some(annotation)
 }
-pub fn action_opt_empty(_ctx: &Context) -> ActionOpt {
+pub fn annotation_opt_empty(_ctx: &Context) -> AnnotationOpt {
     None
 }
 pub type GrammarRuleRHS = Vec<Production>;
@@ -225,19 +225,19 @@ pub fn terminal_rule1_terminal_rule(
 #[derive(Debug, Clone)]
 pub struct TerminalRule {
     pub name: Name,
-    pub action: Option<Action>,
+    pub annotation: Option<Annotation>,
     pub recognizer: Option<Recognizer>,
     pub meta: TermMetaDatas,
 }
 pub type Terminal = TerminalRule;
 pub fn terminal_rule_c1(
     _ctx: &Context,
-    action: Option<Action>,
+    annotation: Option<Annotation>,
     name: Name,
     recognizer: Recognizer,
 ) -> TerminalRule {
     TerminalRule {
-        action,
+        annotation,
         name,
         recognizer: Some(recognizer),
         meta: TermMetaDatas::new(),
@@ -245,11 +245,11 @@ pub fn terminal_rule_c1(
 }
 pub fn terminal_rule_c2(
     _ctx: &Context,
-    action: Option<Action>,
+    annotation: Option<Annotation>,
     name: Name,
 ) -> TerminalRule {
     TerminalRule {
-        action,
+        annotation,
         name,
         recognizer: None,
         meta: TermMetaDatas::new(),
@@ -257,13 +257,13 @@ pub fn terminal_rule_c2(
 }
 pub fn terminal_rule_c3(
     _ctx: &Context,
-    action: Option<Action>,
+    annotation: Option<Annotation>,
     name: Name,
     recognizer: Recognizer,
     meta: TermMetaDatas,
 ) -> TerminalRule {
     TerminalRule {
-        action,
+        annotation,
         name,
         recognizer: Some(recognizer),
         meta,
@@ -271,12 +271,12 @@ pub fn terminal_rule_c3(
 }
 pub fn terminal_rule_c4(
     _ctx: &Context,
-    action: Option<Action>,
+    annotation: Option<Annotation>,
     name: Name,
     meta: TermMetaDatas,
 ) -> TerminalRule {
     TerminalRule {
-        action,
+        annotation,
         name,
         recognizer: None,
         meta,

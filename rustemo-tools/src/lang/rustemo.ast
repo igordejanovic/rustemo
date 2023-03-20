@@ -481,7 +481,7 @@ Grammar {
                                         start: LineBased(
                                             LineBased {
                                                 line: 10,
-                                                column: 30,
+                                                column: 34,
                                             },
                                         ),
                                         end: None,
@@ -579,7 +579,7 @@ Grammar {
                                         start: LineBased(
                                             LineBased {
                                                 line: 11,
-                                                column: 30,
+                                                column: 34,
                                             },
                                         ),
                                         end: None,
@@ -615,7 +615,7 @@ Grammar {
                                         start: LineBased(
                                             LineBased {
                                                 line: 11,
-                                                column: 57,
+                                                column: 61,
                                             },
                                         ),
                                         end: None,
@@ -982,7 +982,7 @@ Grammar {
                                         start: LineBased(
                                             LineBased {
                                                 line: 19,
-                                                column: 57,
+                                                column: 61,
                                             },
                                         ),
                                         end: None,
@@ -1060,7 +1060,7 @@ Grammar {
                                         start: LineBased(
                                             LineBased {
                                                 line: 20,
-                                                column: 46,
+                                                column: 50,
                                             },
                                         ),
                                         end: None,
@@ -2904,7 +2904,7 @@ Grammar {
             Terminal {
                 idx: 0,
                 name: "STOP",
-                action: None,
+                annotation: None,
                 recognizer: None,
                 has_content: false,
                 reachable: Cell {
@@ -2916,7 +2916,7 @@ Grammar {
             Terminal {
                 idx: 1,
                 name: "Terminals",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -2945,7 +2945,7 @@ Grammar {
             Terminal {
                 idx: 2,
                 name: "Import",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -2974,7 +2974,7 @@ Grammar {
             Terminal {
                 idx: 3,
                 name: "As",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3003,7 +3003,7 @@ Grammar {
             Terminal {
                 idx: 4,
                 name: "Colon",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3032,7 +3032,7 @@ Grammar {
             Terminal {
                 idx: 5,
                 name: "SemiColon",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3061,7 +3061,7 @@ Grammar {
             Terminal {
                 idx: 6,
                 name: "Comma",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3090,7 +3090,7 @@ Grammar {
             Terminal {
                 idx: 7,
                 name: "OBrace",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3119,7 +3119,7 @@ Grammar {
             Terminal {
                 idx: 8,
                 name: "CBrace",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3148,7 +3148,7 @@ Grammar {
             Terminal {
                 idx: 9,
                 name: "OBracket",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3177,7 +3177,7 @@ Grammar {
             Terminal {
                 idx: 10,
                 name: "CBracket",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3206,7 +3206,7 @@ Grammar {
             Terminal {
                 idx: 11,
                 name: "OSBracket",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3235,7 +3235,7 @@ Grammar {
             Terminal {
                 idx: 12,
                 name: "CSBracket",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3264,7 +3264,7 @@ Grammar {
             Terminal {
                 idx: 13,
                 name: "Choice",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3293,7 +3293,7 @@ Grammar {
             Terminal {
                 idx: 14,
                 name: "ZeroOrMore",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3322,7 +3322,7 @@ Grammar {
             Terminal {
                 idx: 15,
                 name: "ZeroOrMoreGreedy",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3351,7 +3351,7 @@ Grammar {
             Terminal {
                 idx: 16,
                 name: "OneOrMore",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3380,7 +3380,7 @@ Grammar {
             Terminal {
                 idx: 17,
                 name: "OneOrMoreGreedy",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3409,7 +3409,7 @@ Grammar {
             Terminal {
                 idx: 18,
                 name: "Optional",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3438,7 +3438,7 @@ Grammar {
             Terminal {
                 idx: 19,
                 name: "OptionalGreedy",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3467,7 +3467,7 @@ Grammar {
             Terminal {
                 idx: 20,
                 name: "Equals",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3496,7 +3496,7 @@ Grammar {
             Terminal {
                 idx: 21,
                 name: "QEquals",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3525,7 +3525,7 @@ Grammar {
             Terminal {
                 idx: 22,
                 name: "Left",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3554,7 +3554,7 @@ Grammar {
             Terminal {
                 idx: 23,
                 name: "Right",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3583,7 +3583,7 @@ Grammar {
             Terminal {
                 idx: 24,
                 name: "Reduce",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3612,7 +3612,7 @@ Grammar {
             Terminal {
                 idx: 25,
                 name: "Shift",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3641,7 +3641,7 @@ Grammar {
             Terminal {
                 idx: 26,
                 name: "Dynamic",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3670,7 +3670,7 @@ Grammar {
             Terminal {
                 idx: 27,
                 name: "NOPS",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3699,7 +3699,7 @@ Grammar {
             Terminal {
                 idx: 28,
                 name: "NOPSE",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3728,7 +3728,7 @@ Grammar {
             Terminal {
                 idx: 29,
                 name: "Prefer",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3757,7 +3757,7 @@ Grammar {
             Terminal {
                 idx: 30,
                 name: "Finish",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3786,7 +3786,7 @@ Grammar {
             Terminal {
                 idx: 31,
                 name: "NoFinish",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3815,7 +3815,7 @@ Grammar {
             Terminal {
                 idx: 32,
                 name: "OComment",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3844,7 +3844,7 @@ Grammar {
             Terminal {
                 idx: 33,
                 name: "CComment",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -3873,7 +3873,7 @@ Grammar {
             Terminal {
                 idx: 34,
                 name: "Name",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     RegexTerm(
                         "[a-zA-Z_][a-zA-Z0-9_\\.]*",
@@ -3889,7 +3889,7 @@ Grammar {
             Terminal {
                 idx: 35,
                 name: "RegexTerm",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     RegexTerm(
                         "/(\\\\.|[^/\\\\])*/",
@@ -3905,7 +3905,7 @@ Grammar {
             Terminal {
                 idx: 36,
                 name: "IntConst",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     RegexTerm(
                         "\\d+",
@@ -3921,7 +3921,7 @@ Grammar {
             Terminal {
                 idx: 37,
                 name: "FloatConst",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     RegexTerm(
                         "[+-]?[0-9]+[.][0-9]*([e][+-]?[0-9]+)?",
@@ -3937,7 +3937,7 @@ Grammar {
             Terminal {
                 idx: 38,
                 name: "BoolConst",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     RegexTerm(
                         "true|false",
@@ -3953,7 +3953,7 @@ Grammar {
             Terminal {
                 idx: 39,
                 name: "StrConst",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     RegexTerm(
                         "(?s)(^'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')|(^\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\")",
@@ -3968,8 +3968,8 @@ Grammar {
             },
             Terminal {
                 idx: 40,
-                name: "Action",
-                action: None,
+                name: "Annotation",
+                annotation: None,
                 recognizer: Some(
                     RegexTerm(
                         "@[a-zA-Z0-9_]+",
@@ -3985,7 +3985,7 @@ Grammar {
             Terminal {
                 idx: 41,
                 name: "WS",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     RegexTerm(
                         "\\s+",
@@ -4001,7 +4001,7 @@ Grammar {
             Terminal {
                 idx: 42,
                 name: "CommentLine",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     RegexTerm(
                         "//.*",
@@ -4017,7 +4017,7 @@ Grammar {
             Terminal {
                 idx: 43,
                 name: "NotComment",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     RegexTerm(
                         "((\\*[^/])|[^\\s*/]|/[^\\*])+",
@@ -4037,7 +4037,7 @@ Grammar {
             NonTerminal {
                 idx: 0,
                 name: "EMPTY",
-                action: None,
+                annotation: None,
                 productions: [],
                 reachable: Cell {
                     value: false,
@@ -4046,7 +4046,7 @@ Grammar {
             NonTerminal {
                 idx: 1,
                 name: "AUG",
-                action: None,
+                annotation: None,
                 productions: [
                     0,
                 ],
@@ -4057,7 +4057,7 @@ Grammar {
             NonTerminal {
                 idx: 2,
                 name: "AUGL",
-                action: None,
+                annotation: None,
                 productions: [
                     1,
                 ],
@@ -4068,7 +4068,7 @@ Grammar {
             NonTerminal {
                 idx: 3,
                 name: "File",
-                action: None,
+                annotation: None,
                 productions: [
                     2,
                     5,
@@ -4083,7 +4083,7 @@ Grammar {
             NonTerminal {
                 idx: 4,
                 name: "GrammarRule1",
-                action: Some(
+                annotation: Some(
                     "vec",
                 ),
                 productions: [
@@ -4097,7 +4097,7 @@ Grammar {
             NonTerminal {
                 idx: 5,
                 name: "ImportStm1",
-                action: Some(
+                annotation: Some(
                     "vec",
                 ),
                 productions: [
@@ -4111,7 +4111,7 @@ Grammar {
             NonTerminal {
                 idx: 6,
                 name: "TerminalRule1",
-                action: Some(
+                annotation: Some(
                     "vec",
                 ),
                 productions: [
@@ -4125,7 +4125,7 @@ Grammar {
             NonTerminal {
                 idx: 7,
                 name: "ImportStm",
-                action: None,
+                annotation: None,
                 productions: [
                     13,
                     14,
@@ -4137,7 +4137,7 @@ Grammar {
             NonTerminal {
                 idx: 8,
                 name: "GrammarRule",
-                action: None,
+                annotation: None,
                 productions: [
                     15,
                     18,
@@ -4148,8 +4148,8 @@ Grammar {
             },
             NonTerminal {
                 idx: 9,
-                name: "ActionOpt",
-                action: None,
+                name: "AnnotationOpt",
+                annotation: None,
                 productions: [
                     16,
                     17,
@@ -4161,7 +4161,7 @@ Grammar {
             NonTerminal {
                 idx: 10,
                 name: "GrammarRuleRHS",
-                action: None,
+                annotation: None,
                 productions: [
                     19,
                     20,
@@ -4173,7 +4173,7 @@ Grammar {
             NonTerminal {
                 idx: 11,
                 name: "Production",
-                action: None,
+                annotation: None,
                 productions: [
                     21,
                     24,
@@ -4185,7 +4185,7 @@ Grammar {
             NonTerminal {
                 idx: 12,
                 name: "Assignment1",
-                action: Some(
+                annotation: Some(
                     "vec",
                 ),
                 productions: [
@@ -4199,7 +4199,7 @@ Grammar {
             NonTerminal {
                 idx: 13,
                 name: "TerminalRule",
-                action: None,
+                annotation: None,
                 productions: [
                     25,
                     26,
@@ -4213,7 +4213,7 @@ Grammar {
             NonTerminal {
                 idx: 14,
                 name: "ProdMetaData",
-                action: None,
+                annotation: None,
                 productions: [
                     29,
                     30,
@@ -4233,7 +4233,7 @@ Grammar {
             NonTerminal {
                 idx: 15,
                 name: "ProdMetaDatas",
-                action: None,
+                annotation: None,
                 productions: [
                     39,
                     40,
@@ -4245,7 +4245,7 @@ Grammar {
             NonTerminal {
                 idx: 16,
                 name: "TermMetaData",
-                action: None,
+                annotation: None,
                 productions: [
                     41,
                     42,
@@ -4261,7 +4261,7 @@ Grammar {
             NonTerminal {
                 idx: 17,
                 name: "TermMetaDatas",
-                action: None,
+                annotation: None,
                 productions: [
                     47,
                     48,
@@ -4273,7 +4273,7 @@ Grammar {
             NonTerminal {
                 idx: 18,
                 name: "UserMetaData",
-                action: None,
+                annotation: None,
                 productions: [
                     49,
                 ],
@@ -4284,7 +4284,7 @@ Grammar {
             NonTerminal {
                 idx: 19,
                 name: "ProdKind",
-                action: None,
+                annotation: None,
                 productions: [
                     50,
                 ],
@@ -4295,7 +4295,7 @@ Grammar {
             NonTerminal {
                 idx: 20,
                 name: "ConstVal",
-                action: None,
+                annotation: None,
                 productions: [
                     51,
                     52,
@@ -4309,7 +4309,7 @@ Grammar {
             NonTerminal {
                 idx: 21,
                 name: "Assignment",
-                action: None,
+                annotation: None,
                 productions: [
                     55,
                     56,
@@ -4322,7 +4322,7 @@ Grammar {
             NonTerminal {
                 idx: 22,
                 name: "PlainAssignment",
-                action: None,
+                annotation: None,
                 productions: [
                     58,
                 ],
@@ -4333,7 +4333,7 @@ Grammar {
             NonTerminal {
                 idx: 23,
                 name: "BoolAssignment",
-                action: None,
+                annotation: None,
                 productions: [
                     59,
                 ],
@@ -4344,7 +4344,7 @@ Grammar {
             NonTerminal {
                 idx: 24,
                 name: "ProductionGroup",
-                action: None,
+                annotation: None,
                 productions: [
                     60,
                 ],
@@ -4355,7 +4355,7 @@ Grammar {
             NonTerminal {
                 idx: 25,
                 name: "GrammarSymbolRef",
-                action: None,
+                annotation: None,
                 productions: [
                     61,
                     64,
@@ -4367,7 +4367,7 @@ Grammar {
             NonTerminal {
                 idx: 26,
                 name: "RepetitionOperatorOpt",
-                action: None,
+                annotation: None,
                 productions: [
                     62,
                     63,
@@ -4379,7 +4379,7 @@ Grammar {
             NonTerminal {
                 idx: 27,
                 name: "RepetitionOperator",
-                action: None,
+                annotation: None,
                 productions: [
                     65,
                 ],
@@ -4390,7 +4390,7 @@ Grammar {
             NonTerminal {
                 idx: 28,
                 name: "RepetitionModifiersOpt",
-                action: None,
+                annotation: None,
                 productions: [
                     66,
                     67,
@@ -4402,7 +4402,7 @@ Grammar {
             NonTerminal {
                 idx: 29,
                 name: "RepetitionOperatorOp",
-                action: None,
+                annotation: None,
                 productions: [
                     68,
                     69,
@@ -4418,7 +4418,7 @@ Grammar {
             NonTerminal {
                 idx: 30,
                 name: "RepetitionModifiers",
-                action: None,
+                annotation: None,
                 productions: [
                     74,
                 ],
@@ -4429,7 +4429,7 @@ Grammar {
             NonTerminal {
                 idx: 31,
                 name: "RepetitionModifier1",
-                action: Some(
+                annotation: Some(
                     "vec",
                 ),
                 productions: [
@@ -4443,7 +4443,7 @@ Grammar {
             NonTerminal {
                 idx: 32,
                 name: "RepetitionModifier",
-                action: None,
+                annotation: None,
                 productions: [
                     77,
                 ],
@@ -4454,7 +4454,7 @@ Grammar {
             NonTerminal {
                 idx: 33,
                 name: "GrammarSymbol",
-                action: None,
+                annotation: None,
                 productions: [
                     78,
                     79,
@@ -4466,7 +4466,7 @@ Grammar {
             NonTerminal {
                 idx: 34,
                 name: "Recognizer",
-                action: None,
+                annotation: None,
                 productions: [
                     80,
                     81,
@@ -4478,7 +4478,7 @@ Grammar {
             NonTerminal {
                 idx: 35,
                 name: "Layout",
-                action: None,
+                annotation: None,
                 productions: [
                     82,
                 ],
@@ -4489,7 +4489,7 @@ Grammar {
             NonTerminal {
                 idx: 36,
                 name: "LayoutItem1",
-                action: Some(
+                annotation: Some(
                     "vec",
                 ),
                 productions: [
@@ -4503,7 +4503,7 @@ Grammar {
             NonTerminal {
                 idx: 37,
                 name: "LayoutItem0",
-                action: Some(
+                annotation: Some(
                     "vec",
                 ),
                 productions: [
@@ -4517,7 +4517,7 @@ Grammar {
             NonTerminal {
                 idx: 38,
                 name: "LayoutItem",
-                action: None,
+                annotation: None,
                 productions: [
                     87,
                     88,
@@ -4529,7 +4529,7 @@ Grammar {
             NonTerminal {
                 idx: 39,
                 name: "Comment",
-                action: None,
+                annotation: None,
                 productions: [
                     89,
                     90,
@@ -4541,7 +4541,7 @@ Grammar {
             NonTerminal {
                 idx: 40,
                 name: "Corncs",
-                action: None,
+                annotation: None,
                 productions: [
                     91,
                 ],
@@ -4552,7 +4552,7 @@ Grammar {
             NonTerminal {
                 idx: 41,
                 name: "Cornc1",
-                action: Some(
+                annotation: Some(
                     "vec",
                 ),
                 productions: [
@@ -4566,7 +4566,7 @@ Grammar {
             NonTerminal {
                 idx: 42,
                 name: "Cornc0",
-                action: Some(
+                annotation: Some(
                     "vec",
                 ),
                 productions: [
@@ -4580,7 +4580,7 @@ Grammar {
             NonTerminal {
                 idx: 43,
                 name: "Cornc",
-                action: None,
+                annotation: None,
                 productions: [
                     96,
                     97,
@@ -4595,7 +4595,7 @@ Grammar {
     nonterm_by_name: {
         "AUG": 45,
         "AUGL": 46,
-        "ActionOpt": 53,
+        "AnnotationOpt": 53,
         "Assignment": 65,
         "Assignment1": 56,
         "BoolAssignment": 67,
@@ -4639,7 +4639,7 @@ Grammar {
         "UserMetaData": 62,
     },
     term_by_name: {
-        "Action": 40,
+        "Annotation": 40,
         "As": 3,
         "BoolConst": 38,
         "CBrace": 8,

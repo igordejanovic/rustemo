@@ -180,7 +180,7 @@ impl GrammarBuilder {
                 Terminal {
                     idx: term_idx,
                     name: terminal.name.into(),
-                    action: terminal.action.map(|a| a.into()),
+                    annotation: terminal.annotation.map(|a| a.into()),
                     has_content: match &terminal.recognizer {
                         Some(recognizer) => match recognizer {
                             // Terminal has no content only if it is a string match
@@ -231,7 +231,7 @@ impl GrammarBuilder {
                 idx: nt_idx,
                 name: "EMPTY".to_string(),
                 productions: vec![],
-                action: None,
+                annotation: None,
                 reachable: false.into(),
             },
         );
@@ -365,7 +365,10 @@ impl GrammarBuilder {
                     .or_insert_with(|| NonTerminal {
                         idx: nt_idx,
                         name: rule.name.as_ref().into(),
-                        action: rule.action.as_ref().map(|a| a.as_ref().into()),
+                        annotation: rule
+                            .annotation
+                            .as_ref()
+                            .map(|a| a.as_ref().into()),
                         ..Default::default()
                     });
                 nonterminal.productions.push(prod_idx);
@@ -663,7 +666,7 @@ impl GrammarBuilder {
         let nt = NonTerminal {
             idx: nt_idx,
             name: name.as_ref().clone(),
-            action: Some("vec".into()),
+            annotation: Some("vec".into()),
             productions: (0..2)
                 .map(|idx| {
                     let prod_idx = self.get_prod_idx();
@@ -716,7 +719,7 @@ impl GrammarBuilder {
         let nt = NonTerminal {
             idx: nt_idx,
             name: name.as_ref().clone(),
-            action: Some("vec".into()),
+            annotation: Some("vec".into()),
             productions: (0..2)
                 .map(|idx| {
                     let prod_idx = self.get_prod_idx();

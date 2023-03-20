@@ -266,7 +266,7 @@ impl SymbolTypes {
                 no_match: false,
                 ..
             } if single == recurse
-                && matches! { nt.action, Some(ref action) if action == "vec" } =>
+                && matches! { nt.annotation, Some(ref action) if action == "vec" } =>
             {
                 SymbolTypeKind::Vec {
                     ref_type: single,

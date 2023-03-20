@@ -7,17 +7,17 @@ File: GrammarRule+
 ImportStm: 'import' path=StrConst
          | 'import' path=StrConst 'as' Name;
 
-GrammarRule: Action? Name ':' rhs=GrammarRuleRHS ';'
-           | Action? Name '{' meta=ProdMetaDatas '}' ':' rhs=GrammarRuleRHS ';';
+GrammarRule: Annotation? Name ':' rhs=GrammarRuleRHS ';'
+           | Annotation? Name '{' meta=ProdMetaDatas '}' ':' rhs=GrammarRuleRHS ';';
 GrammarRuleRHS {left, 5}: rhs=GrammarRuleRHS '|' Production
                         | Production;
 Production: Assignment+
           | Assignment+ '{' meta=ProdMetaDatas '}';
 
-TerminalRule {left, 15}: Action? Name ':' Recognizer ';'
-                       | Action? Name ':' ';'
-                       | Action? Name ':' Recognizer '{' meta=TermMetaDatas '}' ';'
-                       | Action? Name ':' '{' meta=TermMetaDatas '}' ';';
+TerminalRule {left, 15}: Annotation? Name ':' Recognizer ';'
+                       | Annotation? Name ':' ';'
+                       | Annotation? Name ':' Recognizer '{' meta=TermMetaDatas '}' ';'
+                       | Annotation? Name ':' '{' meta=TermMetaDatas '}' ';';
 
 ProdMetaData: 'left' {Left} | 'reduce' {Reduce} | 'right' {Right} | 'shift' {Shift}
             | 'dynamic' {Dynamic} | 'nops' {NOPS} | 'nopse' {NOPSE}
@@ -108,7 +108,7 @@ IntConst: /\d+/;
 FloatConst: /[+-]?[0-9]+[.][0-9]*([e][+-]?[0-9]+)?/;
 BoolConst: /true|false/;
 StrConst: /(?s)(^'[^'\\]*(?:\\.[^'\\]*)*')|(^"[^"\\]*(?:\\.[^"\\]*)*")/;
-Action: /@[a-zA-Z0-9_]+/;
+Annotation: /@[a-zA-Z0-9_]+/;
 WS: /\s+/;
 CommentLine: /\/\/.*/;
 NotComment: /((\*[^\/])|[^\s*\/]|\/[^\*])+/;

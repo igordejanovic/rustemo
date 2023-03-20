@@ -77,7 +77,7 @@ macro_rules! grammar_elem {
 pub struct Terminal {
     pub idx: TermIndex,
     pub name: String,
-    pub action: Option<String>,
+    pub annotation: Option<String>,
     pub recognizer: Option<Recognizer>,
 
     /// Terminal will carry content if it is a non-constant match (e.g. a regex
@@ -97,7 +97,7 @@ grammar_elem!(Terminal);
 pub struct NonTerminal {
     pub idx: NonTermIndex,
     pub name: String,
-    pub action: Option<String>,
+    pub annotation: Option<String>,
     pub productions: Vec<ProdIndex>,
 
     /// Is this non-terminal reachable from the start rule.

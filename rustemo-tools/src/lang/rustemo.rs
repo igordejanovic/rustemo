@@ -30,7 +30,7 @@ lazy_static! {
     ref REGEX_BOOLCONST : Regex = Regex::new(concat!("^", "true|false")).unwrap(); static
     ref REGEX_STRCONST : Regex = Regex::new(concat!("^",
     "(?s)(^'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')|(^\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\")"))
-    .unwrap(); static ref REGEX_ACTION : Regex = Regex::new(concat!("^",
+    .unwrap(); static ref REGEX_ANNOTATION : Regex = Regex::new(concat!("^",
     "@[a-zA-Z0-9_]+")).unwrap(); static ref REGEX_WS : Regex = Regex::new(concat!("^",
     "\\s+")).unwrap(); static ref REGEX_COMMENTLINE : Regex = Regex::new(concat!("^",
     "//.*")).unwrap(); static ref REGEX_NOTCOMMENT : Regex = Regex::new(concat!("^",
@@ -78,7 +78,7 @@ pub enum TokenKind {
     FloatConst,
     BoolConst,
     StrConst,
-    Action,
+    Annotation,
     WS,
     CommentLine,
     NotComment,
@@ -126,7 +126,7 @@ impl AsStr for TokenKind {
             TokenKind::FloatConst => "FloatConst",
             TokenKind::BoolConst => "BoolConst",
             TokenKind::StrConst => "StrConst",
-            TokenKind::Action => "Action",
+            TokenKind::Annotation => "Annotation",
             TokenKind::WS => "WS",
             TokenKind::CommentLine => "CommentLine",
             TokenKind::NotComment => "NotComment",
@@ -175,7 +175,7 @@ impl From<TermIndex> for TokenKind {
             37usize => TokenKind::FloatConst,
             38usize => TokenKind::BoolConst,
             39usize => TokenKind::StrConst,
-            40usize => TokenKind::Action,
+            40usize => TokenKind::Annotation,
             41usize => TokenKind::WS,
             42usize => TokenKind::CommentLine,
             43usize => TokenKind::NotComment,
@@ -225,7 +225,7 @@ impl From<TokenKind> for TermIndex {
             TokenKind::FloatConst => TermIndex(37usize),
             TokenKind::BoolConst => TermIndex(38usize),
             TokenKind::StrConst => TermIndex(39usize),
-            TokenKind::Action => TermIndex(40usize),
+            TokenKind::Annotation => TermIndex(40usize),
             TokenKind::WS => TermIndex(41usize),
             TokenKind::CommentLine => TermIndex(42usize),
             TokenKind::NotComment => TermIndex(43usize),
@@ -249,8 +249,8 @@ pub enum ProdKind {
     ImportStmP1,
     ImportStmP2,
     GrammarRuleP1,
-    ActionOptP1,
-    ActionOptP2,
+    AnnotationOptP1,
+    AnnotationOptP2,
     GrammarRuleP2,
     GrammarRuleRHSP1,
     GrammarRuleRHSP2,
@@ -351,8 +351,8 @@ impl AsStr for ProdKind {
             ProdKind::ImportStmP1 => "ImportStmP1",
             ProdKind::ImportStmP2 => "ImportStmP2",
             ProdKind::GrammarRuleP1 => "GrammarRuleP1",
-            ProdKind::ActionOptP1 => "ActionOptP1",
-            ProdKind::ActionOptP2 => "ActionOptP2",
+            ProdKind::AnnotationOptP1 => "AnnotationOptP1",
+            ProdKind::AnnotationOptP2 => "AnnotationOptP2",
             ProdKind::GrammarRuleP2 => "GrammarRuleP2",
             ProdKind::GrammarRuleRHSP1 => "GrammarRuleRHSP1",
             ProdKind::GrammarRuleRHSP2 => "GrammarRuleRHSP2",
@@ -460,12 +460,12 @@ impl std::fmt::Display for ProdKind {
             ProdKind::ImportStmP1 => "ImportStm: Import StrConst",
             ProdKind::ImportStmP2 => "ImportStm: Import StrConst As Name",
             ProdKind::GrammarRuleP1 => {
-                "GrammarRule: ActionOpt Name Colon GrammarRuleRHS SemiColon"
+                "GrammarRule: AnnotationOpt Name Colon GrammarRuleRHS SemiColon"
             }
-            ProdKind::ActionOptP1 => "ActionOpt: Action",
-            ProdKind::ActionOptP2 => "ActionOpt: ",
+            ProdKind::AnnotationOptP1 => "AnnotationOpt: Annotation",
+            ProdKind::AnnotationOptP2 => "AnnotationOpt: ",
             ProdKind::GrammarRuleP2 => {
-                "GrammarRule: ActionOpt Name OBrace ProdMetaDatas CBrace Colon GrammarRuleRHS SemiColon"
+                "GrammarRule: AnnotationOpt Name OBrace ProdMetaDatas CBrace Colon GrammarRuleRHS SemiColon"
             }
             ProdKind::GrammarRuleRHSP1 => {
                 "GrammarRuleRHS: GrammarRuleRHS Choice Production"
@@ -478,14 +478,16 @@ impl std::fmt::Display for ProdKind {
                 "Production: Assignment1 OBrace ProdMetaDatas CBrace"
             }
             ProdKind::TerminalRuleP1 => {
-                "TerminalRule: ActionOpt Name Colon Recognizer SemiColon"
+                "TerminalRule: AnnotationOpt Name Colon Recognizer SemiColon"
             }
-            ProdKind::TerminalRuleP2 => "TerminalRule: ActionOpt Name Colon SemiColon",
+            ProdKind::TerminalRuleP2 => {
+                "TerminalRule: AnnotationOpt Name Colon SemiColon"
+            }
             ProdKind::TerminalRuleP3 => {
-                "TerminalRule: ActionOpt Name Colon Recognizer OBrace TermMetaDatas CBrace SemiColon"
+                "TerminalRule: AnnotationOpt Name Colon Recognizer OBrace TermMetaDatas CBrace SemiColon"
             }
             ProdKind::TerminalRuleP4 => {
-                "TerminalRule: ActionOpt Name Colon OBrace TermMetaDatas CBrace SemiColon"
+                "TerminalRule: AnnotationOpt Name Colon OBrace TermMetaDatas CBrace SemiColon"
             }
             ProdKind::ProdMetaDataLeft => "ProdMetaData: Left",
             ProdKind::ProdMetaDataReduce => "ProdMetaData: Reduce",
@@ -608,8 +610,8 @@ impl From<ProdIndex> for ProdKind {
             13usize => ProdKind::ImportStmP1,
             14usize => ProdKind::ImportStmP2,
             15usize => ProdKind::GrammarRuleP1,
-            16usize => ProdKind::ActionOptP1,
-            17usize => ProdKind::ActionOptP2,
+            16usize => ProdKind::AnnotationOptP1,
+            17usize => ProdKind::AnnotationOptP2,
             18usize => ProdKind::GrammarRuleP2,
             19usize => ProdKind::GrammarRuleRHSP1,
             20usize => ProdKind::GrammarRuleRHSP2,
@@ -740,7 +742,7 @@ pub enum Terminal {
     FloatConst(rustemo_actions::FloatConst),
     BoolConst(rustemo_actions::BoolConst),
     StrConst(rustemo_actions::StrConst),
-    Action(rustemo_actions::Action),
+    Annotation(rustemo_actions::Annotation),
 }
 #[derive(Debug)]
 pub enum NonTerminal {
@@ -750,7 +752,7 @@ pub enum NonTerminal {
     TerminalRule1(rustemo_actions::TerminalRule1),
     ImportStm(rustemo_actions::ImportStm),
     GrammarRule(rustemo_actions::GrammarRule),
-    ActionOpt(rustemo_actions::ActionOpt),
+    AnnotationOpt(rustemo_actions::AnnotationOpt),
     GrammarRuleRHS(rustemo_actions::GrammarRuleRHS),
     Production(rustemo_actions::Production),
     Assignment1(rustemo_actions::Assignment1),
@@ -16675,8 +16677,8 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             }
         },
         |input: &str| {
-            logn!("Recognizing <{}> -- ", "Action");
-            let match_str = REGEX_ACTION.find(input);
+            logn!("Recognizing <{}> -- ", "Annotation");
+            let match_str = REGEX_ANNOTATION.find(input);
             match match_str {
                 Some(x) => {
                     let x_str = x.as_str();
@@ -16824,8 +16826,8 @@ impl<'i> LRBuilder<'i, Input, TokenKind> for RustemoBuilder {
             TokenKind::StrConst => {
                 Terminal::StrConst(rustemo_actions::str_const(context, token))
             }
-            TokenKind::Action => {
-                Terminal::Action(rustemo_actions::action(context, token))
+            TokenKind::Annotation => {
+                Terminal::Annotation(rustemo_actions::annotation(context, token))
             }
             _ => panic!("Shift of unreachable terminal!"),
         };
@@ -17057,7 +17059,7 @@ impl<'i> LRBuilder<'i, Input, TokenKind> for RustemoBuilder {
                     i.next().unwrap(),
                 ) {
                     (
-                        Symbol::NonTerminal(NonTerminal::ActionOpt(p0)),
+                        Symbol::NonTerminal(NonTerminal::AnnotationOpt(p0)),
                         Symbol::Terminal(Terminal::Name(p1)),
                         _,
                         Symbol::NonTerminal(NonTerminal::GrammarRuleRHS(p2)),
@@ -17070,22 +17072,24 @@ impl<'i> LRBuilder<'i, Input, TokenKind> for RustemoBuilder {
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
-            ProdKind::ActionOptP1 => {
+            ProdKind::AnnotationOptP1 => {
                 let mut i = self
                     .res_stack
                     .split_off(self.res_stack.len() - 1usize)
                     .into_iter();
                 match i.next().unwrap() {
-                    Symbol::Terminal(Terminal::Action(p0)) => {
-                        NonTerminal::ActionOpt(
-                            rustemo_actions::action_opt_action(context, p0),
+                    Symbol::Terminal(Terminal::Annotation(p0)) => {
+                        NonTerminal::AnnotationOpt(
+                            rustemo_actions::annotation_opt_annotation(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
-            ProdKind::ActionOptP2 => {
-                NonTerminal::ActionOpt(rustemo_actions::action_opt_empty(context))
+            ProdKind::AnnotationOptP2 => {
+                NonTerminal::AnnotationOpt(
+                    rustemo_actions::annotation_opt_empty(context),
+                )
             }
             ProdKind::GrammarRuleP2 => {
                 let mut i = self
@@ -17103,7 +17107,7 @@ impl<'i> LRBuilder<'i, Input, TokenKind> for RustemoBuilder {
                     i.next().unwrap(),
                 ) {
                     (
-                        Symbol::NonTerminal(NonTerminal::ActionOpt(p0)),
+                        Symbol::NonTerminal(NonTerminal::AnnotationOpt(p0)),
                         Symbol::Terminal(Terminal::Name(p1)),
                         _,
                         Symbol::NonTerminal(NonTerminal::ProdMetaDatas(p2)),
@@ -17233,7 +17237,7 @@ impl<'i> LRBuilder<'i, Input, TokenKind> for RustemoBuilder {
                     i.next().unwrap(),
                 ) {
                     (
-                        Symbol::NonTerminal(NonTerminal::ActionOpt(p0)),
+                        Symbol::NonTerminal(NonTerminal::AnnotationOpt(p0)),
                         Symbol::Terminal(Terminal::Name(p1)),
                         _,
                         Symbol::NonTerminal(NonTerminal::Recognizer(p2)),
@@ -17258,7 +17262,7 @@ impl<'i> LRBuilder<'i, Input, TokenKind> for RustemoBuilder {
                     i.next().unwrap(),
                 ) {
                     (
-                        Symbol::NonTerminal(NonTerminal::ActionOpt(p0)),
+                        Symbol::NonTerminal(NonTerminal::AnnotationOpt(p0)),
                         Symbol::Terminal(Terminal::Name(p1)),
                         _,
                         _,
@@ -17286,7 +17290,7 @@ impl<'i> LRBuilder<'i, Input, TokenKind> for RustemoBuilder {
                     i.next().unwrap(),
                 ) {
                     (
-                        Symbol::NonTerminal(NonTerminal::ActionOpt(p0)),
+                        Symbol::NonTerminal(NonTerminal::AnnotationOpt(p0)),
                         Symbol::Terminal(Terminal::Name(p1)),
                         _,
                         Symbol::NonTerminal(NonTerminal::Recognizer(p2)),
@@ -17317,7 +17321,7 @@ impl<'i> LRBuilder<'i, Input, TokenKind> for RustemoBuilder {
                     i.next().unwrap(),
                 ) {
                     (
-                        Symbol::NonTerminal(NonTerminal::ActionOpt(p0)),
+                        Symbol::NonTerminal(NonTerminal::AnnotationOpt(p0)),
                         Symbol::Terminal(Terminal::Name(p1)),
                         _,
                         _,

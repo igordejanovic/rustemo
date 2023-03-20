@@ -145,7 +145,7 @@ Grammar {
             Terminal {
                 idx: 0,
                 name: "STOP",
-                action: None,
+                annotation: None,
                 recognizer: None,
                 has_content: false,
                 reachable: Cell {
@@ -157,7 +157,7 @@ Grammar {
             Terminal {
                 idx: 1,
                 name: "some_term",
-                action: None,
+                annotation: None,
                 recognizer: Some(
                     StrConst(
                         ValLoc {
@@ -190,7 +190,7 @@ Grammar {
             NonTerminal {
                 idx: 0,
                 name: "EMPTY",
-                action: None,
+                annotation: None,
                 productions: [],
                 reachable: Cell {
                     value: false,
@@ -199,7 +199,7 @@ Grammar {
             NonTerminal {
                 idx: 1,
                 name: "AUG",
-                action: None,
+                annotation: None,
                 productions: [
                     0,
                 ],
@@ -210,7 +210,7 @@ Grammar {
             NonTerminal {
                 idx: 2,
                 name: "S",
-                action: None,
+                annotation: None,
                 productions: [
                     1,
                     2,
@@ -222,7 +222,7 @@ Grammar {
             NonTerminal {
                 idx: 3,
                 name: "A",
-                action: None,
+                annotation: None,
                 productions: [
                     3,
                 ],
@@ -233,7 +233,7 @@ Grammar {
             NonTerminal {
                 idx: 4,
                 name: "B",
-                action: None,
+                annotation: None,
                 productions: [
                     4,
                 ],
