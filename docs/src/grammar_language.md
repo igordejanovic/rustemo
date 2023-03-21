@@ -344,7 +344,8 @@ The result will be:
 {{#include ../../tests/src/sugar/zero_or_more/zero_or_more_2_1.ast}}
 ```
 
-But, contrary to one-or-more we may match zero time. For example, if input is `c a` we get:
+But, contrary to one-or-more we may match zero times. For example, if input is
+`c a` we get:
 
 ```
 {{#include ../../tests/src/sugar/zero_or_more/zero_or_more_2_2.ast}}
