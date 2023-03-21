@@ -111,10 +111,11 @@ LR/GLR parser generator for Rust (currently only LR).
 - [ ] Visualizations/debugging of GLR parsing process.
 
 ### Post v1.0
-- [ ] Investigate possibility to implement Elkhound style of LR/GLR switching
-- [ ] Investigate possibility to implement incremental parsing
+- [ ] Error recovery, e.g. [an approach taken by tree-sitter](https://github.com/tree-sitter/tree-sitter/issues/224).
+- [ ] Incremental parsing (reparse just the changed part of the input).
+- [ ] Elkhound style of LR/GLR switching.
 - [ ] Tooling for working with Rustemo grammars (e.g. LSP server, plugins for
-      popular editors)
+      popular editors).
 
 
 ## License
