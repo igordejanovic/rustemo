@@ -14,5 +14,4 @@
   - [Calculator](./tutorials/calculator/calculator.md)
 - [Contributing](../../CONTRIBUTING.md)
 - [Bootstrapping](bootstrapping.md)
-- [Random notes](random_notes.md)
 - [Architecture](architecture.md)

@@ -289,11 +289,12 @@ The result will be:
 
 ```admonish note
 We see in the previous example that default AST building actions will drop
-string matches as fixed content is not interesting for analysis and
-usually represent syntax noise which is needed only for performing correct
-parsing. Also, we see that one-or-more will be transformed to a `Vec` of matched
-values. Of, course, this is just the default. You can change it to fit your needs.
-To learn more see the section on [builders](./builders.md).
+string matches as fixed content is not interesting for analysis and usually
+represent syntax noise which is needed only for performing correct parsing.
+Also, we see that one-or-more will be transformed to a `Vec` of matched values
+(using the `vec` [annotation](#rule-annotations), see bellow). Of, course, this
+is just the default. You can change it to fit your needs. To learn more see the
+section on [builders](./builders.md).
 ```
 
 ```admonish note
@@ -614,26 +615,38 @@ See the next section.
 ```
 
 
-## Referencing semantic actions from a grammar
+## Rule annotations
 
-```admonish todo
-This needs to be reworked.
+Rule annotation are written before grammar rule name using `@action_name`
+syntax. Annotations are special built-in meta-data used to change the generated
+AST types and/or actions.
+
+Currently, there is only one annotation available - `vec`, which is used to
+annotate rules that represent zero-or-more or one-or-more patterns. When this
+annotation is applied the resulting AST type will be `Vec`. Automatically
+generated actions will take this into account if default builder is used (see
+[the section on builders](./builders.md)).
+
+`vec` annotation is implicitly used in `*` and `+` syntax sugar. See [the
+relevant sections](#one-or-more-1) for the equivalent grammars using the `vec`
+annotation.
+
+For example, you can use `@vec` annotation in grammar rules that have the
+following patterns:
+
 ```
-By default action with the name same as the rule name will be searched in the
-accompanying `<grammar>_actions.py` file or `actions` dict. You can override
-this by specifying action name for the rule directly in the grammar using `@`
-syntax. In that case a name given after `@` will be used instead of a rule name.
+// This will be a vector of Bs. The vector may be empty.
+@vec
+A: A B | B | EMPTY;
 
-For example:
+// This is the same but the vector must have at least one element after
+// a successful parse (and here we've changed the order in the first production)
+@vec
+A: B A | B;
+```
 
-    @myaction
-    some_rule: first second;
-
-For rule `some_rule` action with the name `myaction` will be searched in the
-`<grammar>_actions.py` module, `actions` dict or built-in actions provided by
-the `parglare.actions` module. This is helpful if you have some common action
-that can be used for multiple rules in your grammar. Also this can be used to
-specify built-in action to be used for a rule directly in the grammar.
+This is just a convenience and a way to have a default type generated up-front.
+You can always change AST types manually.
 
 
 ## User meta-data
