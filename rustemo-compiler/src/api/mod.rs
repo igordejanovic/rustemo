@@ -21,7 +21,7 @@ pub struct RustemoSettings(Settings);
 /// # Example
 ///
 /// ```rust
-/// rustemo_tools::with_settings().force(true).process_dir(some_dir);
+/// rustemo_compiler::with_settings().force(true).process_dir(some_dir);
 /// ```
 pub fn with_settings() -> RustemoSettings {
     RustemoSettings(Settings::default())

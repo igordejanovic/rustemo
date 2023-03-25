@@ -1,6 +1,6 @@
 use std::{env, path::PathBuf, process::exit};
 
-use rustemo_tools::api::{BuilderType, LexerType, RustemoSettings};
+use rustemo_compiler::api::{BuilderType, LexerType, RustemoSettings};
 
 fn main() {
     let root_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
@@ -8,7 +8,7 @@ fn main() {
     let out_dir =
         PathBuf::from(env::var("OUT_DIR").expect("Cargo didn't set OUT_DIR"));
 
-    let settings = rustemo_tools::with_settings().force(true);
+    let settings = rustemo_compiler::with_settings().force(true);
 
     #[allow(clippy::type_complexity)]
     let tests: &[(

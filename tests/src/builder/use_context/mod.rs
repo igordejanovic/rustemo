@@ -1,5 +1,5 @@
 use rustemo::rustemo_mod;
-use rustemo_tools::output_cmp;
+use rustemo_compiler::output_cmp;
 mod use_context_actions;
 
 rustemo_mod!(use_context, "/src/builder/use_context");

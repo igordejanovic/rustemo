@@ -6,7 +6,7 @@ mod json_actions;
 #[cfg(test)]
 mod tests {
     use crate::json::JsonParser;
-    use rustemo_tools::{local_file, output_cmp};
+    use rustemo_compiler::{local_file, output_cmp};
 
     #[test]
     fn json_1() {

@@ -12,4 +12,4 @@ rustemo = { version = "0.1.0", path = "../../../../../rustemo" }
 
 [dev-dependencies]
 # For output_cmp for testing
-rustemo-tools = { path = "../../../../../rustemo-tools" }
+rustemo-compiler = { path = "../../../../../rustemo-compiler" }

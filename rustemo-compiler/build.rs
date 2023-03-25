@@ -5,7 +5,7 @@ use std::path::PathBuf;
 use std::process::{exit, Command};
 use std::{env, fs};
 
-const PROJECT: &str = "rustemo-tools";
+const PROJECT: &str = "rustemo-compiler";
 
 fn main() {
     // Rebuild if head changed to include the new git hash.

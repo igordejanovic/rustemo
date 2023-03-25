@@ -16,7 +16,7 @@ fn grammar_from_string() {
         "#
     .parse()
     .unwrap();
-    assert!(type_of(&grammar) == "rustemo_tools::grammar::Grammar");
+    assert!(type_of(&grammar) == "rustemo_compiler::grammar::Grammar");
 }
 
 #[test]

@@ -1,8 +1,8 @@
 [package]
-name = "rustemo-tools"
+name = "rustemo-compiler"
 version = "0.1.0"
 edition = "2021"
-description = "Rustemo development tools"
+description = "Rustemo compiler and development tools"
 keywords = ["parser", "generator", "LR", "grammar"]
 repository = "https://github.com/igordejanovic/rustemo"
 categories = ["parsing"]

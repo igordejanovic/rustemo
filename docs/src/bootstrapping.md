@@ -27,7 +27,7 @@ won't need bootstrapping and should proceed as usual with Cargo commands.
 But, if you do need to change the rustemo grammar or parser code generator you
 should install bootstrapping binary with the following command.
 
-    $ cargo install --path rustemo-tools --features bootstrap --debug
+    $ cargo install --path rustemo-compiler --features bootstrap --debug
 
 The `--debug` switch is optional but will provide faster build and the built
 binary will provide better error reports in case of problems.

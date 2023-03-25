@@ -1,6 +1,6 @@
 // Use the generated parser
 use crate::calculator::CalculatorParser;
-use rustemo_tools::output_cmp;
+use rustemo_compiler::output_cmp;
 
 #[test]
 fn calculator2_1() {

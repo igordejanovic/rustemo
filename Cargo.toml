@@ -1,7 +1,7 @@
 [workspace]
 members = [
         "rustemo",
-        "rustemo-tools",
+        "rustemo-compiler",
         "tests",
         "examples/calculator",
         "examples/json",

@@ -1,7 +1,7 @@
 mod custom_builder_builder;
 
 use rustemo::rustemo_mod;
-use rustemo_tools::output_cmp;
+use rustemo_compiler::output_cmp;
 
 use self::custom_builder::CustomBuilderParser;
 

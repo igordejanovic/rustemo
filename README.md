@@ -69,7 +69,7 @@ LR/GLR parser generator for Rust (currently only LR).
 
 ### v0.1.0
 - [x] LR parsing.
-- [x] Bootstrapping. Rustemo is [implemented in itself](./rustemo-tools/src/lang/).
+- [x] Bootstrapping. Rustemo is [implemented in itself](./rustemo-compiler/src/lang/).
 - [x] Built-in lexer for parsing strings. Support for custom lexers.
 - [x] Built-in builders: AST, generic CST, slice builder. Support for custom
       builders. Passing context to actions. See [the tests](./tests/src/builder) .

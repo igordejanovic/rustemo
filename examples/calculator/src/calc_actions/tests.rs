@@ -1,5 +1,5 @@
 mod calculator01_calc_tests {
-    use rustemo_tools::output_cmp;
+    use rustemo_compiler::output_cmp;
 
     use crate::calc_actions::calculator01::Calculator01Parser;
 
