@@ -1,6 +1,6 @@
 use std::{env, path::PathBuf, process::exit};
 
-use rustemo_compiler::api::{BuilderType, LexerType, RustemoSettings};
+use rustemo_compiler::{BuilderType, LexerType, RustemoSettings};
 
 fn main() {
     let root_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));

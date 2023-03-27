@@ -1,14 +1,12 @@
 use std::fs;
 use std::path::{Path, PathBuf};
 
-pub use crate::table::TableType;
-pub use crate::{Error, Result};
+use crate::table::TableType;
+use crate::{Error, Result};
 
-pub use crate::generator::generate_parser;
+use crate::generator::generate_parser;
 
-pub use self::settings::{BuilderType, LexerType, ParserAlgo, Settings};
-
-pub(crate) mod settings;
+use crate::settings::{BuilderType, LexerType, ParserAlgo, Settings};
 
 /// A wrapper type around `Settings` used for a builder pattern style
 /// configuration. It is not meant to be constructed directly but through

@@ -9,13 +9,13 @@ use std::{
 use syn::{parse_quote, Ident};
 
 use crate::{
-    api::{settings::Settings, BuilderType, LexerType},
     error::{Error, Result},
     grammar::{
         types::{to_pascal_case, to_snake_case, Choice, SymbolTypes},
         Grammar, NonTerminal, Production,
     },
     lang::{rustemo::RustemoParser, rustemo_actions::Recognizer},
+    settings::{BuilderType, LexerType, Settings},
     table::{Action, LRTable},
 };
 

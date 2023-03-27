@@ -20,9 +20,9 @@ use rustemo::{
 };
 
 use crate::{
-    api::{settings::Settings, ParserAlgo},
     grammar::{Associativity, Priority, Terminal, DEFAULT_PRIORITY},
     lang::{rustemo::ProdKind, rustemo_actions::Recognizer},
+    settings::{ParserAlgo, Settings},
 };
 
 use super::grammar::{res_symbol, Grammar};
@@ -1276,9 +1276,9 @@ mod tests {
         first_sets, follow_sets, ItemIndex, LRTable, TableType,
     };
     use crate::{
-        api::settings::Settings,
         grammar::Grammar,
         output_cmp,
+        settings::Settings,
         table::{Follow, LRItem},
     };
     use rustemo::{

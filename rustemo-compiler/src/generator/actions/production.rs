@@ -3,7 +3,6 @@ use quote::quote;
 use syn::{parse::Parser, parse_quote};
 
 use crate::{
-    api::Settings,
     generator::action_name,
     grammar::{
         types::{
@@ -12,6 +11,7 @@ use crate::{
         },
         Grammar, NonTerminal,
     },
+    settings::Settings,
 };
 
 use super::ActionsGenerator;

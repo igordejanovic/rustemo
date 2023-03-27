@@ -12,15 +12,15 @@ use proc_macro2::{Ident, Span};
 use quote::format_ident;
 use syn::{self, parse_quote};
 
+use crate::{error::Result, grammar::Terminal};
 use crate::{
-    api::{settings::Settings, LexerType},
     grammar::{
         types::{to_snake_case, SymbolTypes},
         Grammar, NonTerminal,
     },
+    settings::{LexerType, Settings},
     Error,
 };
-use crate::{error::Result, grammar::Terminal};
 
 mod production;
 

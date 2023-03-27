@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use clap::Parser;
-use rustemo_compiler::api::{
+use rustemo_compiler::{
     with_settings, BuilderType, LexerType, ParserAlgo, TableType,
 };
 
