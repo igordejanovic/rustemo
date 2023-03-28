@@ -25,14 +25,16 @@ pub fn with_settings() -> RustemoSettings {
     RustemoSettings(Settings::default())
 }
 
-/// Recursivelly process a given dir and generate a parser for each found
+/// Recursively process a given dir and generate a parser for each found
 /// grammar with default settings.
 ///
 /// # Errors
 ///
 /// In case of an error a value of `rustemo::Error` is returned.
 pub fn process_dir<P: AsRef<Path>>(dir: P) -> Result<()> {
-    with_settings().process_dir(dir.as_ref())?;
+    with_settings()
+        .root_dir(PathBuf::from(dir.as_ref()))
+        .process_dir()?;
     Ok(())
 }
 
@@ -47,12 +49,28 @@ pub fn process_grammar<P: AsRef<Path>>(grammar: P) -> Result<()> {
 }
 
 impl RustemoSettings {
-    pub fn out_dir(mut self, out_dir: Option<PathBuf>) -> Self {
-        self.0.out_dir = out_dir;
+    pub fn root_dir(mut self, root_dir: PathBuf) -> Self {
+        self.0.root_dir = Some(root_dir);
         self
     }
-    pub fn out_dir_actions(mut self, out_dir: Option<PathBuf>) -> Self {
-        self.0.out_dir_actions = out_dir;
+    pub fn out_dir_root(mut self, out_dir: PathBuf) -> Self {
+        self.0.out_dir_root = Some(out_dir);
+        self
+    }
+    pub fn out_dir_actions_root(mut self, out_dir: PathBuf) -> Self {
+        self.0.out_dir_actions_root = Some(out_dir);
+        self
+    }
+    pub fn in_source_tree(mut self) -> Self {
+        self.0.out_dir_root = None;
+        self.0.out_dir_actions_root = None;
+        self
+    }
+    pub fn actions_in_source_tree(mut self) -> Self {
+        if !matches!(self.0.builder_type, BuilderType::Default) {
+            panic!("Settings 'actions_in_source_tree' is only available for the default builder type!");
+        }
+        self.0.out_dir_actions_root = None;
         self
     }
     pub fn exclude(mut self, exclude: Vec<String>) -> Self {
@@ -103,54 +121,68 @@ impl RustemoSettings {
         self.0.force = force;
         self
     }
-    pub fn process_dir(&self, root_dir: &Path) -> Result<()> {
-        if !root_dir.exists() {
-            return Err(Error::Error("Folder doesn't exist.".to_string()));
-        }
-        let visitor = |grammar: &Path| -> Result<()> {
-            println!("Generating parser for grammar {:?}", grammar);
+    pub fn process_dir(&self) -> Result<()> {
+        if let Some(root_dir) = &self.0.root_dir {
+            if !root_dir.exists() {
+                return Err(Error::Error("Folder doesn't exist.".to_string()));
+            }
 
-            let relative_outdir = |p: &Path| -> PathBuf {
-                p.join(
-                    grammar
-                        .parent()
-                        .unwrap_or_else(|| panic!("Cannot find parent of '{grammar:?}' file."))
-                        .strip_prefix(root_dir)
-                        .unwrap_or_else(|_| panic!("Cannot remove prefix '{root_dir:?}' from '{grammar:?}'."))
-                    )
+            let visitor = |grammar: &Path| -> Result<()> {
+                self.process_grammar(grammar)?;
+                Ok(())
             };
 
-            let out_dir = self.0.out_dir.as_ref().map(|p| relative_outdir(p));
-            let out_dir_actions =
-                self.0.out_dir_actions.as_ref().map(|p| relative_outdir(p));
-
-            if let Some(ref dir) = out_dir {
-                println!("Parser out dir: {dir:?}");
-            }
-            if let Some(ref dir) = out_dir_actions {
-                println!("Actions out dir: {dir:?}");
-            }
-
-            generate_parser(
-                grammar,
-                out_dir.as_deref(),
-                out_dir_actions.as_deref(),
-                &self.0,
-            )
-        };
-
-        self.visit_dirs(root_dir.as_ref(), &visitor)
+            self.visit_dirs(root_dir, &visitor)
+        } else {
+            Err(Error::Error("Root dir must be set!".to_string()))
+        }
     }
 
-    pub fn process_grammar(&self, grammar_file: &Path) -> Result<()> {
+    pub fn process_grammar(&self, grammar: &Path) -> Result<()> {
+        println!("Generating parser for grammar {:?}", grammar);
+        let relative_outdir = |p: &Path| -> Result<PathBuf> {
+            Ok(p.join(
+                grammar
+                    .parent()
+                    .ok_or(Error::Error("Cannot find parent of '{grammar:?}' file.".to_string()))?
+                    .strip_prefix(self.0.root_dir.as_ref().expect("'root_dir' must be set!"))
+                    .or(Err(Error::Error("Cannot remove prefix '{root_dir:?}' from '{grammar:?}'.".to_string())))?
+                ))
+        };
+
+        let out_dir =
+            match self.0.out_dir_root.as_ref().map(|p| relative_outdir(p)) {
+                Some(result) => Some(result?),
+                None => None,
+            };
+
+        let out_dir_actions = match self
+            .0
+            .out_dir_actions_root
+            .as_ref()
+            .map(|p| relative_outdir(p))
+        {
+            Some(result) => Some(result?),
+            None => None,
+        };
+
+        if let Some(ref dir) = out_dir {
+            println!("Parser out dir: {dir:?}");
+        }
+        if let Some(ref dir) = out_dir_actions {
+            println!("Actions out dir: {dir:?}");
+        }
+
         generate_parser(
-            grammar_file,
-            self.0.out_dir.as_deref(),
-            self.0.out_dir_actions.as_deref(),
+            grammar,
+            out_dir.as_deref(),
+            out_dir_actions.as_deref(),
             &self.0,
         )
     }
 
+    /// Recursively visits dirs starting from the given `dir` and calls
+    /// `visitor` for each Rustemo grammar found.
     fn visit_dirs(
         &self,
         dir: &Path,

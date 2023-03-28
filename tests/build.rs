@@ -42,7 +42,7 @@ fn main() {
             "builder/use_context",
             Box::new(|s| {
                 // We want actions generated in the source tree.
-                s.force(false).out_dir_actions(None)
+                s.force(false).actions_in_source_tree()
             }),
         ),
         // Lexer
@@ -51,7 +51,7 @@ fn main() {
             Box::new(|s| {
                 s.lexer_type(LexerType::Custom)
                     .force(false)
-                    .out_dir_actions(None)
+                    .actions_in_source_tree()
             }),
         ),
     ];
@@ -62,13 +62,31 @@ fn main() {
         if let Err(e) = config(
             settings
                 .clone()
-                .out_dir(Some(dir.clone()))
-                .out_dir_actions(Some(dir)),
+                .out_dir_root(dir.clone())
+                .out_dir_actions_root(dir),
         )
-        .process_dir(&root_dir.join(p))
+        .root_dir(root_dir.join(p))
+        .process_dir()
         {
             eprintln!("{}", e);
             exit(1);
         }
+    }
+
+    // Testing code generation in the source tree
+    let settings = rustemo_compiler::with_settings().force(true);
+    if let Err(e) = settings
+        .in_source_tree()
+        .process_grammar(&root_dir.join("src/output_dir/output_dir.rustemo"))
+    {
+        eprintln!("{}", e);
+        exit(1);
+    }
+    let settings = rustemo_compiler::with_settings().force(true);
+    if let Err(e) = settings.actions_in_source_tree().process_grammar(
+        &root_dir.join("src/output_dir/output_dir_act.rustemo"),
+    ) {
+        eprintln!("{}", e);
+        exit(1);
     }
 }

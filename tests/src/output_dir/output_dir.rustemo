@@ -1,0 +1,6 @@
+A: B+ Num;
+B: 'b';
+
+terminals
+Tb: 'b';
+Num: /\d+/;

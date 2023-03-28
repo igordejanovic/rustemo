@@ -25,9 +25,13 @@ struct Cli {
     #[clap(value_parser, value_name="GRAMMAR FILE/DIR", value_hint = clap::ValueHint::AnyPath)]
     grammar_file_or_dir: PathBuf,
 
-    /// Output directory for the parser. Default is the same as input grammar file.
-    #[clap(short, long, value_name="OUT DIR", value_hint = clap::ValueHint::DirPath)]
-    outdir: Option<PathBuf>,
+    /// Output root directory for the parser. Default is the same as input grammar file.
+    #[clap(short, long, value_name="OUT DIR ROOT", value_hint = clap::ValueHint::DirPath)]
+    outdir_root: Option<PathBuf>,
+
+    /// Output directory for actions. Default is the same as input grammar file.
+    #[clap(short='a', long, value_name="OUT DIR ACTIONS ROOT", value_hint = clap::ValueHint::DirPath)]
+    outdir_actions_root: Option<PathBuf>,
 
     /// Prefer shifts in case of possible shift/reduce conflicts.
     #[clap(long)]
@@ -65,10 +69,6 @@ struct Cli {
     #[clap(long)]
     print_table: bool,
 
-    /// Output directory for actions. Default is the same as input grammar file.
-    #[clap(short='a', long, value_name="OUT DIR ACTIONS", value_hint = clap::ValueHint::DirPath)]
-    outdir_actions: Option<PathBuf>,
-
     /// Exclude dirs containing these parts. Used with dir processing.
     #[clap(short, long, value_parser)]
     exclude: Vec<String>,
@@ -81,7 +81,7 @@ struct Cli {
 fn main() {
     let cli = Cli::parse();
 
-    let settings = with_settings()
+    let mut settings = with_settings()
         .force(cli.force)
         .actions(!cli.noactions)
         .exclude(cli.exclude)
@@ -93,14 +93,19 @@ fn main() {
         .print_table(cli.print_table)
         .parser_algo(cli.parser_algo)
         .lexer_type(cli.lexer_type)
-        .builder_type(cli.builder_type)
-        .out_dir(cli.outdir)
-        .out_dir_actions(cli.outdir_actions);
+        .builder_type(cli.builder_type);
+
+    if let Some(outdir_root) = cli.outdir_root {
+        settings = settings.out_dir_root(outdir_root);
+    }
+    if let Some(outdir_actions_root) = cli.outdir_actions_root {
+        settings = settings.out_dir_actions_root(outdir_actions_root);
+    }
 
     let result = if cli.grammar_file_or_dir.is_file() {
         settings.process_grammar(&cli.grammar_file_or_dir)
     } else {
-        settings.process_dir(&cli.grammar_file_or_dir)
+        settings.root_dir(cli.grammar_file_or_dir).process_dir()
     };
 
     if let Err(e) = result {

@@ -42,8 +42,21 @@ impl Default for BuilderType {
 
 #[derive(Debug, Clone)]
 pub struct Settings {
-    pub out_dir: Option<PathBuf>,
-    pub out_dir_actions: Option<PathBuf>,
+    /// Output root for the generated parser. If `None` the parser is generated
+    /// in the source tree next to the grammar.
+    pub out_dir_root: Option<PathBuf>,
+
+    /// Output root for the generated actions when default builder is used. If
+    /// `None` actions are generated in the source tree next to the grammar.
+    pub out_dir_actions_root: Option<PathBuf>,
+
+    /// Root dir used to calculate output file path from the input grammar path
+    /// when the `out_dir_root` is not `None`.
+    /// It can be overriden explicitly or when using `process_dir` call.
+    /// It is an error if `root_dir` is `None`, `our_dir_root` is set an
+    /// `CARGO_MANIFEST_DIR` env variable cannot be found.
+    pub root_dir: Option<PathBuf>,
+
     pub prefer_shifts: bool,
     pub prefer_shifts_over_empty: bool,
     pub table_type: TableType,
@@ -72,9 +85,19 @@ pub struct Settings {
 
 impl Default for Settings {
     fn default() -> Self {
+        // If called from cargo build use OUT_DIR as a default out_dir folder
+        // for both parser and actions.
+        let out_dir_root =
+            std::env::var("OUT_DIR").map_or(None, |d| Some(PathBuf::from(d)));
+
+        // By default root dir is the root of the cargo project.
+        let root_dir = std::env::var("CARGO_MANIFEST_DIR")
+            .map_or(None, |d| Some(PathBuf::from(d)));
+
         Self {
-            out_dir: None,
-            out_dir_actions: None,
+            root_dir,
+            out_dir_root: out_dir_root.clone(),
+            out_dir_actions_root: out_dir_root,
             prefer_shifts: false,
             prefer_shifts_over_empty: true,
             table_type: Default::default(),
