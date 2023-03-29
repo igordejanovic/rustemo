@@ -1,15 +1,77 @@
 # Configuration
 
+The parser generator configuration is exposed through API calls which can be
+imported from the root of the `rustemo_compiler` crate:
 
+- `pub fn process_dir<P: AsRef<Path>>(dir: P)` - recursivelly visit all the
+  grammars starting from the given directory and generate the parsers and
+  actions.
+- `pub fn process_grammar<P: AsRef<Path>>(grammar: P)` - generate the parser and
+  actions for the given grammar.
+- `with_settings()` - returns a default `RustemoSettings` which can be further
+  configured using chained calls.
 
-## Configuration
+These are meant to be called from the `build.rs` scripts. The most basic usage would be:
 
+```rust
+{{#include ../../examples/calculator/build.rs }}
+```
 
+In this example we are using the default settings and run the recursive
+processing of the project dir as determined by the cargo `CARGO_MANIFEST_DIR`
+environment variable. By default, it will generate both parser and actions in
+the cargo output dir as determined by `OUT_DIR` env variable.
 
-## `build.rs` scripts
+You can change the default output to be the source tree, i.e. to generate
+parser/actions next to the grammar file by calling:
 
+```rust
+rustemo_compier::with_settings().in_source_tree().process_dir()
+```
 
+This will create default settings, change settings to generate the parser in the
+source tree and then process the current project directory.
 
-## Using API
+It is usually discouraged to modify the source tree from the `build.rs` script
+but in the case of actions it is usually necessary as the actions are generated
+and manually maintained. To generate just the actions in the source tree while
+keeping the parser in the output folder you can do the following:
 
+```rust
+rustemo_compier::with_settings().actions_in_source_tree().process_dir()
+```
+
+```admonish note
+When running rustemo from `build.rs` your crate must have a build dependency to
+`rustemo-compiler`. If you don't want this than you can always resort to
+building your parser using [rustemo CLI](./cli.md).
+```
+
+```admonish todo
+For the full docs on the settings provided see the [crate docs](). Provide the link...
+```
+
+## Using generated modules
+
+When the parser/actions is generated in the source tree you use it as any other
+Rust module but when any of them is generated in the output you can't include
+them in the module tree as they are generated in the output dir.
+
+To be able to include modules from the output dirs you use `rustemo_mod!` macro:
+
+```rust
+rustemo_mod! {pub(crate) rustemo, "/src/lang"}
+```
+
+or
+
+```rust
+rustemo_mod!(generic_tree, "/src/builder/generic_tree");
+```
+
+This macro accepts two parameters. The first is a usual syntax used with `mod`
+(attributes, visibility and the name of the module) while the second parameter
+is the path to the module/grammar from the project root. This second parameter
+is needed for the macro to be able to calculate the full path in the output
+folder.
 
