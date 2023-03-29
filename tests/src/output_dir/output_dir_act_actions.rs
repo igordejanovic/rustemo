@@ -1,8 +1,8 @@
-use super::output_dir_act::Context;
-use super::output_dir_act::TokenKind;
 ///! This file is maintained by rustemo but can be modified manually.
 ///! All manual changes will be preserved except non-doc comments.
 use rustemo::lexer;
+use super::output_dir_act::Context;
+use super::output_dir_act::TokenKind;
 pub type Input = str;
 #[allow(dead_code)]
 pub type Token<'i> = lexer::Token<'i, Input, TokenKind>;
