@@ -5,7 +5,9 @@ Status](https://img.shields.io/badge/docs-latest-green.svg)](https://igordejanov
 
 LR/GLR parser generator for Rust (currently only LR).
 
-**In the early phase of development. DO NOT USE IN PRODUCTION!**
+**Status:** In beta. Fairly complete feature set for the initial release. Docs
+is WIP. Not yet optimized for speed so don't expect blazing performance.
+Feedback welcome!
 
 ## Aspirations
 
