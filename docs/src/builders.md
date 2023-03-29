@@ -10,7 +10,7 @@ Currently Rustemo can be configured with three builder types:
   When default builder is used, Rustemo will perform type inference for AST node
   types based on the grammar. The builder, AST types and actions for creating
   instances of AST nodes will be generated.
-  
+
 - **Generic tree builder**
 
   This builder builds a tree where each node is of `TreeNode` type.
@@ -31,11 +31,7 @@ The builder will be generated inside `<lang>.rs` file where `<lang>` is the name
 of the grammar. The actions will be generated into `<lang>_actions.rs` file.
 
 ```admonish note
-There are two approaches where generated files are stored. See... 
-```
-
-```admonish todo
-Provide a link to the part of the docs where generation approaches are described.
+There are two approaches where generated files are stored. See [the configuration section](./configuration.md).
 ```
 
 ### AST type inference
@@ -46,43 +42,64 @@ parser and tune it later.
 
 The inference is done by the following rules:
 
-```admonish todo
-Specify rules.
+Each non-terminal grammar rule will be of an `enum` type. The enum variants will
+be:
+1. If only non-content matches are in the production (e.g. just string matches)
+   -> plain variant without inner content
+2. A single content match (e.g. regex match) or rule reference without
+   assignment -> variant with referred type as its content.
+3. Multiple content matches and/or assignments -> a `struct` type where fields
+   types are of the referred symbols.
+
+In addtion, production kinds and assignments LHS names are used for
+fields/function/type naming. Also, cycle refs are broken using `Box`.
+
+Probably the best way to explain is by using an example. For example, if we have
+the following grammar:
+
+```
+{{#include ../../examples/calculator/src/ast_actions/calculator04_ambig_lhs.rustemo}}
 ```
 
+we get these generated actions/types:
+```rust
+{{#include ../../examples/calculator/src/ast_actions/calculator04_ambig_lhs_actions.rs}}
+```
+
+We see that each grammar rule will have its corresponding type defined. Also,
+each production and each terminal will have an actions (Rust function)
+generated. You can change these manually and your manual modifications will be
+preserved on the next code generation as long as the name is the same.
+
+```admonish tip
+On each code generation the existing `<>_actions.rs` file is parsed using [syn
+crate](https://docs.rs/syn/latest/syn/) and each type and action that is missing
+in the existing file is regenerated at the end of the file while the existing
+items are left untouched. The only items that cannot be preserved are non-doc
+comments.
+
+This enables you to regenerate types/actions by just deleting them from the
+actions file and let rustemo run. If you want to regenerate actions/types from
+scratch just delete the whole file.
+```
+
+Here is an example of generated and manually modified actions for the same grammar above:
+
+```rust
+{{#include ../../examples/calculator/src/calc_actions/calculator04_ambig_lhs_actions.rs}}
+```
+
+In these actions we are doing actual calculations. For the full explanation see
+[the calculator tutorial](tutorials/calculator/calculator.md).
+
+```admonish tip
 Lexing context is passed to actions as a first parameter. This can be used to
 write semantic actions which utilize lexing information like position or
 surrounding content. For example, layout parser used with string lexer can use
 this to construct and return a borrowed string slice which span the layout
 preceding a next valid token. To be able to return a string slice, layout
 actions need access to the input string and start/end positions.
-
-For example, if we have this grammar:
-
 ```
-{{#include ../../examples/calculator/src/ast_actions/calculator02_ambig.rustemo}}
-```
-
-we get these generated actions/types:
-```rust
-{{#include ../../examples/calculator/src/ast_actions/calculator02_ambig_actions.rs}}
-```
-
-We see that each grammar rule will have its corresponding type defined. Also,
-each production and each terminal will have an actions (Rust function)
-generated. You can change these manually and your manual modifications will be
-preserved on the next code generation.
-
-
-Here is an example of generated and manually modified actions for the same grammar above:
-
-```rust
-{{#include ../../examples/calculator/src/calc_actions/calculator02_ambig_actions.rs}}
-```
-
-In these actions we are doing actual calculations. For the full explanation see
-[the calculator tutorial](tutorials/calculator/calculator.md).
-
 
 ## Generic tree builder
 
@@ -168,5 +185,3 @@ done for `shift/reduce` operations:
 ```admonish tip
 You can see the full test [here](https://github.com/igordejanovic/rustemo/tree/main/tests/src/builder/custom_builder).
 ```
-
-
