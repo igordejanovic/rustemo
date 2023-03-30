@@ -44,7 +44,9 @@ rustemo_compier::with_settings().actions_in_source_tree().process_dir()
 ```admonish note
 When running rustemo from `build.rs` your crate must have a build dependency to
 `rustemo-compiler`. If you don't want this than you can always resort to
-building your parser using [rustemo CLI](./cli.md).
+building your parser using [rustemo CLI](./cli.md). Just don't forget to
+manually regenerate the parser and commit changes to your version control system
+when you change the grammar.
 ```
 
 ```admonish todo
