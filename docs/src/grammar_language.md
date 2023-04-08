@@ -132,8 +132,9 @@ regex terminal by name in grammar rules.
 ## Usual patterns
 
 This section explains how some common grammar patterns can be written using just
-a plain BNF notation. Afterwards we'll see some syntax sugar extensions which
-can be used to write these patterns in a more compact and readable form.
+a plain Rustemo BNF-like notation. Afterwards we'll see some syntax sugar
+extensions which can be used to write these patterns in a more compact and
+readable form.
 
 ### One or more
 
@@ -560,59 +561,47 @@ succeed, i.e. it is empty recognition.
 
 ## Named matches (*assignments*)
 
-```admonish todo
-This needs to be reworked.
+In the section on [builders](./builders.md) you can see that struct fields
+deduced from rules, as well as generated semantic actions parameters, are named
+based on the `<name>=<rule reference>` part of the grammar. We call these `named
+matches` or `assignments`.
+
+`Named matches` enable giving a name to a rule reference directly in the
+grammar.
+
+In the calculator example:
+
 ```
-In section on [builders](builders.md) you can see that semantic action (Python
-callable) connected to a rule will be called with two parameters: a context and
-a list of sub-expressions evaluation results. This require you to use positional
-access in the list of sub-expressions.
-
-`Named matches` (a.k.a `assignments`) enable giving a name to the sub-expression
-directly in the grammar.
-
-For example:
-
-    S: first=A second=Digit+[Comma];
-
-    terminals
-    A: "a";
-    Digit: /\d+/;
-    Comma: ",";
-
-In this example root rule matches one `a` and then one or more digit separated
-by a comma. You can see that the first sub-expression (`a` match) is assigned to
-`first` while the second sub-expression `Digit+[Comma]` is assigned to `second`.
-
-`first` and `second` will now be an additional keyword parameters passed to the
-semantic action. The values passed in using these parameters will be the results
-of evaluation of the rules referenced by the assignments.
-
-There are two kind of assignments:
-
--   plain assignment (`=`) &#x2013; will collect RHS and pass it to the action
-    under the names given by LHS,
--   bool assignment (`?=`) &#x2013; will pass `True` if the match return
-    non-empty result. If the result of RHS is empty the assignment will result
-    in `False` being passed to the action.
-
-<!-- Each rule using named matches result in a dynamically created Python class named -->
-<!-- after the rule. These classes are kept in a dictionary `grammar.classes` and -->
-<!-- used to instantiate Python objects during parsing by an implicitly set [built-in -->
-<!-- `obj` action](./actions.md#built-in-actions). -->
-
-Thus, for rules using named matches, default action is to create object with
-attributes whose names are those of LHS of the assignments and values are from
-RHS of the assignments (or boolean values for `bool` assignments). Each object
-is an instance of corresponding dynamically created Python class.
-
-Effectively, using named matches enables automatic creation of a nice AST.
-
-```admonish tip
-You can, of course, override default action either in the grammar
-using `@` syntax or using `actions` dict given to the parser.
-See the next section.
+{{#include ../../examples/calculator/src/ast_actions/calculator04_ambig_lhs.rustemo}}
 ```
+
+we can see usage of assignments to name recursive references to `E` in the first
+four alternatives as `left` and `right` since we are defining binary operations,
+while the fifth alternative for power operation uses more descriptive names
+`base` and `exp`.
+
+Now, with this in place, generated type for `E` and two operations (`/` and
+`^`), and the semantic action for `+` operation will be:
+
+```rust
+{{#include ../../examples/calculator/src/ast_actions/calculator04_ambig_lhs_actions.rs:named-matches}}
+```
+
+```admonish note
+This is just a snippet from the calculator example for the sake of brevity.
+```
+
+Notice the names of fields in `Div` and `Pow` structs. Also, the name of
+parameters in `e_add` action. They are derived from the assignments.
+
+Without the usage of assignments, the same generated types and action would be:
+
+```rust
+{{#include ../../examples/calculator/src/ast_actions/calculator03_ambig_prodkind_actions.rs:named-matches}}
+```
+
+Where these names are based on the name of the referenced rule and the position
+inside the production.
 
 
 ## Rule annotations

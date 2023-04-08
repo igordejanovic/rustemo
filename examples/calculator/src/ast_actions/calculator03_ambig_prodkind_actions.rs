@@ -25,6 +25,7 @@ pub struct Mul {
     pub e_1: Box<E>,
     pub e_3: Box<E>,
 }
+/// ANCHOR: named-matches
 #[derive(Debug, Clone)]
 pub struct Div {
     pub e_1: Box<E>,
@@ -51,6 +52,7 @@ pub fn e_add(_ctx: &Context, e_1: E, e_3: E) -> E {
         e_3: Box::new(e_3),
     })
 }
+/// ANCHOR_END: named-matches
 pub fn e_sub(_ctx: &Context, e_1: E, e_3: E) -> E {
     E::Sub(Sub {
         e_1: Box::new(e_1),
