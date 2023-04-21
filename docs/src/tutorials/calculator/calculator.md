@@ -639,7 +639,7 @@ productions kinds. Nice!
 
 But, what about fields. It is certainly not nice to have those generic `e_1,
 e_3` names. To fix these we can use
-[assignments](../../../grammar_language.md#named-matches-assignments) which is a
+[assignments](../../grammar_language.md#named-matches-assignments) which is a
 mechanism to both define AST nodes' field names and specify to the parser what
 to retain in the AST during parsing. Some parts of the input are syntax noise
 and should not be kept in the AST.
