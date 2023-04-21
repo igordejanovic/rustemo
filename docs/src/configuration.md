@@ -73,7 +73,7 @@ rustemo_mod!(generic_tree, "/src/builder/generic_tree");
 
 This macro accepts two parameters. The first is a usual syntax used with `mod`
 (attributes, visibility and the name of the module) while the second parameter
-is the path to the module/grammar from the project root. This second parameter
-is needed for the macro to be able to calculate the full path in the output
-folder.
+is the path to the module/grammar directory from the project root. This second
+parameter is needed for the macro to be able to calculate the full path in the
+output folder.
 

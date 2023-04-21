@@ -1,6 +1,5 @@
 # Summary
 
-- [Docs setup](docs_setup.md)
 - [Introduction](introduction.md)
 - [Grammar language](grammar_language.md)
 - [Configuration](configuration.md)
@@ -15,3 +14,4 @@
 - [Contributing](../../CONTRIBUTING.md)
 - [Bootstrapping](bootstrapping.md)
 - [Architecture](architecture.md)
+- [Docs setup](docs_setup.md)

@@ -6,6 +6,10 @@ from the parglare that need to be reworked.
 
 # Introduction
 
+The best place to start at the moment is [the calculator
+tutorial](./tutorials/calculator/calculator.md) with a reference to [grammar
+language](grammar_language.md) as needed.
+
 # Overview
 
 
