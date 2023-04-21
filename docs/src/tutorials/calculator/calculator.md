@@ -123,14 +123,10 @@ expected at that location.
 For example, if we forget colon after the rule name we get:
 
 ```
-Error at <str>:1:11:
+Error at calculator.rustemo:1:11:
 	...Expression -->Operand Operato...
 	Expected one of Colon, OBrace.
 Parser(s) not generated.
-```
-
-```admonish todo
-Errors should have filename info.
 ```
 
 After the parser generator is run successfully you should have files
@@ -157,10 +153,6 @@ Our generated parser code calls Rustemo code so we must add `rustemo` crate as a
 dependency. Since we are using regular expressions in our grammar we also need
 `regex` and `lazy_static`.
 
-```admonish todo
-This transitive dependencies should be handled automatically.
-```
-
 Let's add `rustemo`.
 
 ```sh
@@ -179,7 +171,7 @@ cargo add lazy_static
 
 Your `Cargo.toml` should look like this:
 ```toml
-{{#include ./calculator1/Cargo.toml }}
+{{#include ./calculator1/Cargo.toml:tutorial }}
 ```
 
 ## Running the parser
@@ -301,7 +293,8 @@ the error at the occurrence of the second operation.
 
 Let's extend our grammar to allow for expressions of arbitrary length.
 
-We can represent the expression as an Abstract Syntax Tree (AST):
+First, we shall start from the idea the each expression can be represented as an
+Abstract Syntax Tree (AST):
 
 ```dot process
 digraph tree1 {
@@ -457,7 +450,7 @@ curly braces per production or per grammar rule.
 Add link to meta-data/priority/associativity specification.
 ```
 
-The priority is specified by integer number. The default priority is 10.
+The priority is specified by an integer number. The default priority is 10.
 Productions with higher priority will be the first to be reduced. Think of the
 reduction as producing a tree node where the node type is determined by the
 left-hand side of the production while the children are right-hand side.
@@ -468,7 +461,8 @@ Ok, knowing this let's extend our grammar:
 {{#include ./calculator2/src/calculator-ambig2.rustemo}}
 ```
 
-Nice, we now have priorities defined. So, in the above conflict, division will
+Nice, we now have priorities defined. `+` and `-` operations are of priority `1`
+while `*` and `/` are of priority `2`. So, in the above conflict, division will
 be reduced before `Minus` symbol (subtraction) is taken into consideration.
 
 Let's run `rustemo` again:
@@ -565,8 +559,8 @@ Ok(
 That's it! We have a working grammar. It wasn't that hard after all, was it? :)
 
 But, the work is not over yet. We got a parser but the AST is not that pretty
-and how can we evaluate our expressions? If you want to learn how to that read
-on.
+and how can we evaluate our expressions? If you want to learn how to do that
+read on.
 
 ## Improving AST
 
@@ -644,14 +638,11 @@ productions kinds. Nice!
 ```
 
 But, what about fields. It is certainly not nice to have those generic `e_1,
-e_3` names. To fix these we can use [assignments]() which is a mechanism to both
-define AST nodes' field names and specify to the parser what to retain in the
-AST during parsing. Some parts of the input are syntax noise and should not be
-kept in the AST.
-
-```admonish todo
-Add link to the section on assignments.
-```
+e_3` names. To fix these we can use
+[assignments](../../../grammar_language.md#named-matches-assignments) which is a
+mechanism to both define AST nodes' field names and specify to the parser what
+to retain in the AST during parsing. Some parts of the input are syntax noise
+and should not be kept in the AST.
 
 To change field names add assignments for `left` and `right` operands in each
 operation:
@@ -817,9 +808,9 @@ exercises bellow.
    ```
 
    Extend `main.rs` to accept input line-by-line. Whenever the user enter
-   assignment to the variable the parser the program will update its internal
-   state by evaluating RHS of the assignment and keeping variable values in some
-   mapping data structure of your choice. Each defined variable can be used in
+   assignment to the variable the program will update its internal state by
+   evaluating RHS of the assignment and keeping variable values in some mapping
+   data structure of your choice. Each defined variable can be used in
    subsequent expressions. When the user enters just an expression without
    assignment the parser should evaluate and print the result.
 
