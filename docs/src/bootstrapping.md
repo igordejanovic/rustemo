@@ -38,8 +38,8 @@ the rest of the code and install the binary.
 
 You can verify that the bootstrapping binary is used by checking the version:
 
-    $ rustemo --version
-    rustemo 0.1.0-1a45d75ca4-bootstrap
+    $ rcomp --version
+    rustemo-compiler 0.1.0-1a45d75ca4-bootstrap
 
 ```admonish note
 It is assumed that the `main` branch contains a working parser.
@@ -50,9 +50,9 @@ When the bootstrapping binary is installed you develop as usual and run tests:
     $ cargo test
 
 Whenever you change the rustemo grammar you should regenerate the parser code
-with `rustemo` binary:
+with `rcomp` binary:
 
-    rustemo rustemo/src/lang/rustemo.rustemo
+    rcomp rustemo/src/lang/rustemo.rustemo
 
 If bootstrapping binary is used, code generation templates from the working tree
 when the binary was last built are used. Thus, regenerate bootstrapping binary
