@@ -223,20 +223,17 @@ impl Settings {
                 ))
         };
 
-        let out_dir =
-            match self.out_dir_root.as_ref().map(|p| relative_outdir(p)) {
-                Some(result) => Some(result?),
-                None => None,
-            };
+        let out_dir = self
+            .out_dir_root
+            .as_ref()
+            .map(|p| relative_outdir(p))
+            .transpose()?;
 
-        let out_dir_actions = match self
+        let out_dir_actions = self
             .out_dir_actions_root
             .as_ref()
             .map(|p| relative_outdir(p))
-        {
-            Some(result) => Some(result?),
-            None => None,
-        };
+            .transpose()?;
 
         if let Some(ref dir) = out_dir {
             println!("Parser out dir: {dir:?}");
@@ -249,7 +246,7 @@ impl Settings {
             grammar,
             out_dir.as_deref(),
             out_dir_actions.as_deref(),
-            &self,
+            self,
         )
     }
 
