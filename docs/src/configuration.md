@@ -3,12 +3,14 @@
 The parser generator configuration is exposed through API calls which can be
 imported from the root of the `rustemo_compiler` crate:
 
+- `pub fn process_crate_dir()` - recursivelly visit all the grammars starting
+  from the crate root directory and generate the parsers and actions.
 - `pub fn process_dir<P: AsRef<Path>>(dir: P)` - recursivelly visit all the
   grammars starting from the given directory and generate the parsers and
   actions.
 - `pub fn process_grammar<P: AsRef<Path>>(grammar: P)` - generate the parser and
   actions for the given grammar.
-- `with_settings()` - returns a default `RustemoSettings` which can be further
+- `Settings::new()` - returns a default `Settings` which can be further
   configured using chained calls.
 
 These are meant to be called from the `build.rs` scripts. The most basic usage would be:
@@ -26,7 +28,7 @@ You can change the default output to be the source tree, i.e. to generate
 parser/actions next to the grammar file by calling:
 
 ```rust
-rustemo_compier::with_settings().in_source_tree().process_dir()
+rustemo_compiler::Settings::new().in_source_tree().process_dir()
 ```
 
 This will create default settings, change settings to generate the parser in the
@@ -38,7 +40,7 @@ and manually maintained. To generate just the actions in the source tree while
 keeping the parser in the output folder you can do the following:
 
 ```rust
-rustemo_compier::with_settings().actions_in_source_tree().process_dir()
+rustemo_compiler::Settings::new().actions_in_source_tree().process_dir()
 ```
 
 ```admonish note

@@ -132,7 +132,7 @@ For details see [the full
 test](https://github.com/igordejanovic/rustemo/tree/main/tests/src/builder/generic_tree).
 
 ```admonish note
-Generic builder can be configured by `RustemoSettings::builder_type(BuilderType::Generic)`
+Generic builder can be configured by `Settings::new().builder_type(BuilderType::Generic)`
 settings API, exposed through `--builder-type generic` in the `rustemo` CLI.
 ```
 

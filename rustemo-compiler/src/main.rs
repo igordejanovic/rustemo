@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use clap::Parser;
 use rustemo_compiler::{
-    with_settings, BuilderType, LexerType, ParserAlgo, TableType,
+    BuilderType, LexerType, ParserAlgo, TableType, Settings
 };
 
 #[derive(Parser)]
@@ -81,7 +81,7 @@ struct Cli {
 fn main() {
     let cli = Cli::parse();
 
-    let mut settings = with_settings()
+    let mut settings = Settings::new()
         .force(cli.force)
         .actions(!cli.noactions)
         .exclude(cli.exclude)
