@@ -46,45 +46,25 @@ impl Default for BuilderType {
 
 #[derive(Debug, Clone)]
 pub struct Settings {
-    /// Output root for the generated parser. If `None` the parser is generated
-    /// in the source tree next to the grammar.
-    pub out_dir_root: Option<PathBuf>,
+    pub(crate) out_dir_root: Option<PathBuf>,
+    pub(crate) out_dir_actions_root: Option<PathBuf>,
+    pub(crate) root_dir: Option<PathBuf>,
 
-    /// Output root for the generated actions when default builder is used. If
-    /// `None` actions are generated in the source tree next to the grammar.
-    pub out_dir_actions_root: Option<PathBuf>,
+    pub(crate) prefer_shifts: bool,
+    pub(crate) prefer_shifts_over_empty: bool,
+    pub(crate) table_type: TableType,
+    pub(crate) parser_algo: ParserAlgo,
+    pub(crate) print_table: bool,
+    pub(crate) exclude: Vec<String>,
+    pub(crate) actions: bool,
 
-    /// Root dir used to calculate output file path from the input grammar path
-    /// when the `out_dir_root` is not `None`.
-    /// It can be overriden explicitly or when using `process_dir` call.
-    /// It is an error if `root_dir` is `None`, `our_dir_root` is set an
-    /// `CARGO_MANIFEST_DIR` env variable cannot be found.
-    pub root_dir: Option<PathBuf>,
+    pub(crate) lexer_type: LexerType,
+    pub(crate) builder_type: BuilderType,
 
-    pub prefer_shifts: bool,
-    pub prefer_shifts_over_empty: bool,
-    pub table_type: TableType,
-    pub parser_algo: ParserAlgo,
-    pub print_table: bool,
-    pub exclude: Vec<String>,
-    pub actions: bool,
+    pub(crate) partial_parse: bool,
+    pub(crate) skip_ws: bool,
 
-    /// What kind of lexer should be used.
-    pub lexer_type: LexerType,
-
-    /// What builder should be generated.
-    pub builder_type: BuilderType,
-
-    /// If partial parse is allowed parsing can succeed even if the parser
-    /// didn't reach the end of the input. Use with care, especially with GLR
-    /// parsing as it may lead to a large number of partial solutions.
-    pub partial_parse: bool,
-
-    /// Should whitespace be skipped. Not used if Layout rule exists in the Grammar.
-    pub skip_ws: bool,
-
-    /// Should actions file be recreated if exist. Use with care.
-    pub force: bool,
+    pub(crate) force: bool,
 }
 
 impl Default for Settings {
@@ -119,26 +99,46 @@ impl Default for Settings {
 }
 
 impl Settings {
+    /// Creates a default instance.
     pub fn new() -> Self {
         Settings::default()
     }
+
+    /// Root dir used to calculate output file path from the input grammar path
+    /// when the `out_dir_root` is not `None`.
+    /// It can be overridden explicitly or when using `process_dir` call.
+    /// It is an error if `root_dir` is `None`, `our_dir_root` is set and
+    /// `CARGO_MANIFEST_DIR` env variable cannot be found.
     pub fn root_dir(mut self, root_dir: PathBuf) -> Self {
         self.root_dir = Some(root_dir);
         self
     }
+
+    /// Sets output root for the generated parser. By default, the parser is
+    /// generated in the source tree next to the grammar.
     pub fn out_dir_root(mut self, out_dir: PathBuf) -> Self {
         self.out_dir_root = Some(out_dir);
         self
     }
+
+    /// Output root for the generated actions when default builder is used. By
+    /// default, actions are generated in the source tree next to the grammar.
     pub fn out_dir_actions_root(mut self, out_dir: PathBuf) -> Self {
         self.out_dir_actions_root = Some(out_dir);
         self
     }
+
+    /// Generate both parser and actions (for default builder) in the source
+    /// tree, next to the grammar. By default, parser and actions are generated
+    /// in out `OUT_DIR`.
     pub fn in_source_tree(mut self) -> Self {
         self.out_dir_root = None;
         self.out_dir_actions_root = None;
         self
     }
+
+    /// Generate actions in the source tree (if the default builder is used),
+    /// next to the grammar. By default, actions are generated in out `OUT_DIR`.
     pub fn actions_in_source_tree(mut self) -> Self {
         if !matches!(self.builder_type, BuilderType::Default) {
             panic!("Settings 'actions_in_source_tree' is only available for the default builder type!");
@@ -146,54 +146,88 @@ impl Settings {
         self.out_dir_actions_root = None;
         self
     }
+
+    /// Excludes path from processing. If path contains any of the string given
+    /// in `exclude` vector it will be skipped.
     pub fn exclude(mut self, exclude: Vec<String>) -> Self {
         self.exclude = exclude;
         self
     }
+
+    /// When there are competing REDUCE and SHIFT operations, this settings will
+    /// always favor SHIFT.
     pub fn prefer_shifts(mut self, prefer: bool) -> Self {
         self.prefer_shifts = prefer;
         self
     }
+
+    /// When there are competing EMPTY reduction and SHIFT, this settings will
+    /// always favor SHIFT.
     pub fn prefer_shifts_over_empty(mut self, prefer: bool) -> Self {
         self.prefer_shifts_over_empty = prefer;
         self
     }
+
+    /// LR table type to construct.
     pub fn table_type(mut self, table_type: TableType) -> Self {
         self.table_type = table_type;
         self
     }
+
+    /// LR algorithm to use, currently only LR is implemented.
     pub fn parser_algo(mut self, parser_algo: ParserAlgo) -> Self {
         self.parser_algo = parser_algo;
         self
     }
+
+    /// Sets lexer type. Default lexer is used for string inputs and is based on
+    /// regex/string matches from the grammar.
     pub fn lexer_type(mut self, lexer_type: LexerType) -> Self {
         self.lexer_type = lexer_type;
         self
     }
+
+    /// Sets builder type. The default builder will deduce AST types and actions.
     pub fn builder_type(mut self, builder_type: BuilderType) -> Self {
         self.builder_type = builder_type;
         self
     }
+
     pub fn print_table(mut self, print_table: bool) -> Self {
         self.print_table = print_table;
         self
     }
+
+    /// If partial parse is allowed parsing can succeed even if the parser
+    /// didn't reach the end of the input. Use with care, especially with GLR
+    /// parsing as it may lead to a large number of partial solutions.
     pub fn partial_parse(mut self, partial_parse: bool) -> Self {
         self.partial_parse = partial_parse;
         self
     }
+
+    /// Should whitespaces be skipped. `true` by default. Not used if Layout
+    /// rule exists in the Grammar. Used only in the default lexer.
     pub fn skip_ws(mut self, skip_ws: bool) -> Self {
         self.skip_ws = skip_ws;
         self
     }
+
+    /// Should actions be generated. `true` by default. Used only if default
+    /// builder is used.
     pub fn actions(mut self, actions: bool) -> Self {
         self.actions = actions;
         self
     }
+
+    /// Should actions file be recreated if exist. Use with care.
     pub fn force(mut self, force: bool) -> Self {
         self.force = force;
         self
     }
+
+    /// Recursively traverse the root dir and process each Rustemo grammar found.
+    /// Used as the last call to the configured [Settings] value.
     pub fn process_dir(&self) -> Result<()> {
         if let Some(root_dir) = &self.root_dir {
             if !root_dir.exists() {
@@ -211,6 +245,9 @@ impl Settings {
         }
     }
 
+    /// Process the given grammar and generates the parser and actions (if
+    /// default builder is used). Used as the last call to the configured
+    /// [Settings] value.
     pub fn process_grammar(&self, grammar: &Path) -> Result<()> {
         println!("Generating parser for grammar {:?}", grammar);
         let relative_outdir = |p: &Path| -> Result<PathBuf> {

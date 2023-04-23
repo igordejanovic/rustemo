@@ -1,3 +1,5 @@
+//! Rustemo compiler. Run `rcomp --help` for more information.
+
 use std::path::PathBuf;
 
 use clap::Parser;
