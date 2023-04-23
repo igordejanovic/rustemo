@@ -604,6 +604,43 @@ Where these names are based on the name of the referenced rule and the position
 inside the production.
 
 
+## Rule/production meta-data
+Rules and productions may specify additional meta-data that can be used to guide
+the parsing decisions. Meta-data is specified inside curly braces right after
+the name of the rule, if it is a rule-level meta-data, or after the production
+body, if it is a production-level meta-data. If a meta-data is applied to the
+grammar rule it is in effect for all production of the rule, but if the same
+meta-data is defined for the production it takes precedence.
+
+Currently, there are two kinds of meta-data used during parser construction:
+priorities and associativities.
+
+
+### Priorities
+
+Priorities are used to decide
+
+
+
+
+### Associativities
+### User meta-data
+Arbitrary meta-data can be attached to rules or productions. The form of each is
+`<name>: <value>` where `<name>` should be any valid Rust identifier while
+`<value>` can be any of:
+
+- integer number
+- float number
+- string in double or single quotes
+- keywords `true` or `false` for boolean values
+
+### Example
+This test shows various meta-data applied at both rule and production level.
+
+```rust
+{{#include ../../rustemo-compiler/src/grammar/tests/mod.rs:meta-data-inheritance}}
+```
+
 ## Rule annotations
 
 Rule annotation are written before grammar rule name using `@action_name`
