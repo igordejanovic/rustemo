@@ -19,7 +19,8 @@ pub struct RustemoSettings(Settings);
 /// # Example
 ///
 /// ```rust
-/// rustemo_compiler::with_settings().force(true).process_dir(some_dir);
+/// rustemo_compiler::with_settings()
+///     .partial_parse(true).actions_in_source_tree().process_dir()
 /// ```
 pub fn with_settings() -> RustemoSettings {
     RustemoSettings(Settings::default())
@@ -28,9 +29,15 @@ pub fn with_settings() -> RustemoSettings {
 /// Recursively process a given dir and generate a parser for each found
 /// grammar with default settings.
 ///
+/// # Example
+///
+/// ```rust
+/// rustemo_compiler::process_dir("~/my_project")
+/// ```
+///
 /// # Errors
 ///
-/// In case of an error a value of `rustemo::Error` is returned.
+/// In case of an error a value of [rustemo::Error] is returned.
 pub fn process_dir<P: AsRef<Path>>(dir: P) -> Result<()> {
     with_settings()
         .root_dir(PathBuf::from(dir.as_ref()))
@@ -42,7 +49,7 @@ pub fn process_dir<P: AsRef<Path>>(dir: P) -> Result<()> {
 ///
 /// # Errors
 ///
-/// In case of an error a value of `rustemo::Error` is returned.
+/// In case of an error a value of [rustemo::Error] is returned.
 pub fn process_grammar<P: AsRef<Path>>(grammar: P) -> Result<()> {
     with_settings().process_grammar(grammar.as_ref())?;
     Ok(())

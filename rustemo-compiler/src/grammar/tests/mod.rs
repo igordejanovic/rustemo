@@ -206,6 +206,7 @@ fn productions_meta_data() {
     );
 }
 
+// ANCHOR: meta-data-inheritance
 #[test]
 fn productions_meta_data_inheritance() {
     let grammar: Grammar = r#"
@@ -257,6 +258,7 @@ fn productions_meta_data_inheritance() {
     // Inherited
     assert_eq!(grammar.productions[ProdIndex(6)].assoc, Associativity::Left);
 }
+// ANCHOR_END: meta-data-inheritance
 
 #[test]
 fn regex_sugar_zero_or_more() {
