@@ -9,6 +9,8 @@ LR/GLR parser generator for Rust (currently only LR).
 is WIP. Not yet optimized for speed so don't expect blazing performance.
 Feedback welcome!
 
+Be sure to check [the docs](https://igordejanovic.github.io/rustemo/)!
+
 ## Aspirations
 
 - **Both LR and GLR parsing from the same grammar**
