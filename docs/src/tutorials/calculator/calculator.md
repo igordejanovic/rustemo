@@ -2,7 +2,7 @@
 
 ```admonish note
 This tutorial assumes that you have Rustemo CLI properly installed. Refer to
-section Installation if you have trouble running `rustemo` command.
+section Installation if you have trouble running `rcomp` command.
 ```
 
 
@@ -93,7 +93,7 @@ encode that in a regex also:
 ```
 
 Symbols `+` and `*` have a special interpretation in regular expressions so we
-must escape them. Symbol `/` is used to start/end the regex in rustemo so we
+must escape them. Symbol `/` is used to start/end the regex in Rustemo so we
 must escape that also.
 
 Now, our full grammar is:
@@ -110,10 +110,10 @@ but let's now move on.
 
 ## Generating the parser
 
-Let's run `rustemo` command to generate the parser code from the grammar:
+Let's run `rcomp` command to generate the parser code from the grammar:
 
 ```sh
-rustemo calculator.rustemo
+rcomp calculator.rustemo
 ```
 
 If you get no output there were no errors. If you made an error in the grammar
@@ -138,7 +138,7 @@ together with functions/actions used by the builder during the parsing process
 to construct the AST.
 
 ```admonish note "Regenerating the parser"
-`calculator.rs` is regenerated whenever you run `rustemo` command.
+`calculator.rs` is regenerated whenever you run `rcomp` command.
 
 Actions in file `calculator_actions.rs`, on the other hand, are not fully
 regenerated. Only missing actions/types will be regenerated. This enables you to
@@ -375,10 +375,10 @@ Of course, you can use either references or strings, or even combine the two
 approaches.
 ```
 
-Let's run `rustemo` over our new grammar to generate the parser.
+Let's run `rcomp` over our new grammar to generate the parser.
 
 ```
-$ rustemo calculator.rustemo
+$ rcomp calculator.rustemo
 In State 7:E
 E: E Plus E .    {STOP, Plus, Minus, Mul, Div}
 E: E . Plus E    {STOP, Plus, Minus, Mul, Div}
@@ -465,10 +465,10 @@ Nice, we now have priorities defined. `+` and `-` operations are of priority `1`
 while `*` and `/` are of priority `2`. So, in the above conflict, division will
 be reduced before `Minus` symbol (subtraction) is taken into consideration.
 
-Let's run `rustemo` again:
+Let's run `rcomp` again:
 
 ```
-$ rustemo calculator.rustemo
+$ rcomp calculator.rustemo
 ...
 8 conflict(s). 8 Shift/Reduce and 0 Reduce/Reduce.
 Error: Grammar is not deterministic. There are conflicts.
@@ -505,10 +505,10 @@ Let's fix our grammar:
 {{#include ./calculator2/src/calculator.rustemo}}
 ```
 
-And run `rustemo` again.
+And run `rcomp` again.
 
 ```sh
-$ rustemo calculator.rustemo
+$ rcomp calculator.rustemo
 $
 ```
 
@@ -564,12 +564,12 @@ read on.
 
 ## Improving AST
 
-When we run `rustemo` for our grammar we got two files generated:
-`calculator.rs` and `calculator_actions.rs`. The first one is the parser that is
-regenerated from scratch whenever we run `rustemo`. The second contains AST
-nodes' types and actions used by the parser to construct AST nodes during
-parsing. This file can be manually modified and the modification will be
-retained when `rustemo` is run as we shall see in the next section.
+When we run `rcomp` for our grammar we got two files generated: `calculator.rs`
+and `calculator_actions.rs`. The first one is the parser that is regenerated
+from scratch whenever we run `rcomp`. The second contains AST nodes' types and
+actions used by the parser to construct AST nodes during parsing. This file can
+be manually modified and the modification will be retained when `rcomp` is run
+as we shall see in the next section.
 
 At this point we shall focus on the form of AST types that Rustemo generated for
 us. Open `calculator_actions.rs` file and examine its content. We can see that
@@ -627,7 +627,7 @@ Regenerate the parser, but first delete actions so they can be regenerated also.
 
 ```sh
 $ rm calculator_actions.rs
-$ rustemo calculator.rustemo
+$ rcomp calculator.rustemo
 ```
 
 Now, if we open `calculator_actions.rs` we'll see that structs are named after
@@ -651,8 +651,8 @@ operation:
 {{#include calculator4/src/calculator.rustemo}}
 ```
 
-Delete actions and rerun `rustemo`. Now you'll see that the generated structs
-have nicely named fields.
+Delete actions and rerun `rcomp`. Now you'll see that the generated structs have
+nicely named fields.
 
 ```rust
 {{#rustdoc_include calculator4/src/calculator_actions.rs:structs}}
@@ -701,8 +701,8 @@ case, each reduction should basically be a calculation of a sub-expression
 result.
 
 As you have seen in the previous section, you need to delete actions if you want
-them regenerated on each `rustemo` run. You can also remove some parts of it and
-those parts will get regenerated. The logic is that `rustemo` will only add
+them regenerated on each Rustemo run. You can also remove some parts of it and
+those parts will get regenerated. The logic is that Rustemo will only add
 missing parts (identified by its name) of the file (missing AST types and action
 functions) but will not modify already existing. This enables manual
 modification of parts we want to tune to our likings.
