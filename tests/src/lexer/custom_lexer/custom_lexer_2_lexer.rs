@@ -28,16 +28,16 @@ impl<'i> Lexer<'i, Input, StateIndex, TokenKind> for CustomLexer2Lexer {
         context: &mut Context<'i, Input, StateIndex>,
     ) -> Result<Token<'i, Input, TokenKind>> {
         let value;
-        let kind: lexer::TokenKind<TokenKind>;
+        let kind: TokenKind;
         if context.position >= context.input.len() {
             value = &[][..];
-            kind = lexer::TokenKind::STOP;
+            kind = TokenKind::STOP;
         } else {
             value = &context.input[context.position..=context.position];
             if value[0] & 0b1000_0000 != 0 {
-                kind = lexer::TokenKind::Kind(TokenKind::MSBByte);
+                kind = TokenKind::MSBByte;
             } else {
-                kind = lexer::TokenKind::Kind(TokenKind::NonMSBByte);
+                kind = TokenKind::NonMSBByte;
             };
         }
 

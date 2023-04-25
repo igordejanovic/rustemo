@@ -5,9 +5,7 @@ Ok(
         children: [
             TermNode {
                 token: Token {
-                    kind: Kind(
-                        Digit,
-                    ),
+                    kind: Digit,
                     value: "4",
                     location: Location {
                         start: LineBased(
@@ -35,9 +33,7 @@ Ok(
                 children: [
                     TermNode {
                         token: Token {
-                            kind: Kind(
-                                Digit,
-                            ),
+                            kind: Digit,
                             value: "2",
                             location: Location {
                                 start: LineBased(
@@ -61,9 +57,7 @@ Ok(
                     },
                     TermNode {
                         token: Token {
-                            kind: Kind(
-                                Digit,
-                            ),
+                            kind: Digit,
                             value: "6",
                             location: Location {
                                 start: LineBased(
@@ -100,9 +94,7 @@ Ok(
                         children: [
                             TermNode {
                                 token: Token {
-                                    kind: Kind(
-                                        Digit,
-                                    ),
+                                    kind: Digit,
                                     value: "8",
                                     location: Location {
                                         start: LineBased(
@@ -133,9 +125,7 @@ Ok(
                     },
                     TermNode {
                         token: Token {
-                            kind: Kind(
-                                Digit,
-                            ),
+                            kind: Digit,
                             value: "9",
                             location: Location {
                                 start: LineBased(

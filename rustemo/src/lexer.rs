@@ -1,6 +1,5 @@
 use crate::{
     error::Result,
-    index::TermIndex,
     location::{LineBased, Location, Position},
 };
 use core::fmt::Debug;
@@ -59,48 +58,14 @@ pub trait Input: ToOwned {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
-pub enum TokenKind<K> {
-    STOP,
-    Kind(K),
-}
-
 pub trait AsStr {
     fn as_str(&self) -> &'static str;
-}
-
-impl<K: AsStr> AsStr for TokenKind<K> {
-    fn as_str(&self) -> &'static str {
-        match self {
-            TokenKind::STOP => "STOP",
-            TokenKind::Kind(k) => k.as_str(),
-        }
-    }
-}
-
-impl<K: From<TermIndex>> From<TermIndex> for TokenKind<K> {
-    fn from(idx: TermIndex) -> Self {
-        if idx.0 == 0 {
-            TokenKind::STOP
-        } else {
-            TokenKind::Kind(K::from(idx))
-        }
-    }
-}
-
-impl<K: Into<TermIndex>> From<TokenKind<K>> for TermIndex {
-    fn from(token_kind: TokenKind<K>) -> Self {
-        match token_kind {
-            TokenKind::STOP => TermIndex(0),
-            TokenKind::Kind(k) => k.into(),
-        }
-    }
 }
 
 /// `Token` represent a single token from the input stream.
 #[derive(Debug)]
 pub struct Token<'i, I: Input + ?Sized, TK> {
-    pub kind: TokenKind<TK>,
+    pub kind: TK,
 
     /// The part of the input stream that this token represents.
     pub value: &'i I,

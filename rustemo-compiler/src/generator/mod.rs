@@ -317,7 +317,9 @@ impl<'g, 's> ParserGenerator<'g, 's> {
     fn generate_parser_types(&self) -> Result<Vec<syn::Item>> {
         let mut ast: Vec<syn::Item> = vec![];
 
-        let term_kind_variants: Vec<syn::Variant> = self.grammar.terminals[1..]
+        let token_kind_variants: Vec<syn::Variant> = self
+            .grammar
+            .terminals
             .iter()
             .map(|t| {
                 let name = format_ident!("{}", t.name);
@@ -327,13 +329,16 @@ impl<'g, 's> ParserGenerator<'g, 's> {
 
         ast.push(parse_quote! {
             #[allow(clippy::upper_case_acronyms)]
-            #[derive(Debug, Clone, Copy)]
+            #[derive(Debug, Default, Clone, Copy)]
             pub enum TokenKind {
-                #(#term_kind_variants),*
+                #[default]
+                #(#token_kind_variants),*
             }
         });
 
-        let as_str_arms: Vec<syn::Arm> = self.grammar.terminals[1..]
+        let as_str_arms: Vec<syn::Arm> = self
+            .grammar
+            .terminals
             .iter()
             .map(|t| {
                 let name = format_ident!("{}", t.name);
@@ -352,20 +357,21 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             }
         });
 
-        let (from_arms, into_arms): (Vec<syn::Arm>, Vec<syn::Arm>) =
-            self.grammar.terminals[1..]
-                .iter()
-                .map(|t| {
-                    let name = format_ident!("{}", t.name);
-                    let idx = t.idx.0;
-                    (
-                        parse_quote! { #idx => TokenKind::#name },
-                        parse_quote! { TokenKind::#name => TermIndex(#idx) },
-                    )
-                })
-                .collect::<Vec<_>>()
-                .into_iter()
-                .unzip();
+        let (from_arms, into_arms): (Vec<syn::Arm>, Vec<syn::Arm>) = self
+            .grammar
+            .terminals
+            .iter()
+            .map(|t| {
+                let name = format_ident!("{}", t.name);
+                let idx = t.idx.0;
+                (
+                    parse_quote! { #idx => TokenKind::#name },
+                    parse_quote! { TokenKind::#name => TermIndex(#idx) },
+                )
+            })
+            .collect::<Vec<_>>()
+            .into_iter()
+            .unzip();
         ast.push(parse_quote! {
             impl From<TermIndex> for TokenKind {
                 fn from(term_index: TermIndex) -> Self {
@@ -1034,40 +1040,35 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         }
         let reduce_match_arms = reduce_match_arms;
 
-        ast.push(
-            parse_quote! {
-                impl<'i> LRBuilder<'i, Input, TokenKind> for #builder
-                {
+        ast.push(parse_quote! {
+            impl<'i> LRBuilder<'i, Input, TokenKind> for #builder
+            {
 
-                    #![allow(unused_variables)]
-                    fn shift_action(
-                        &mut self,
-                        #context_var: &mut Context<'i>,
-                        token: Token<'i, Input, TokenKind>) {
-                        let kind = match token.kind {
-                            lexer::TokenKind::Kind(kind) => kind,
-                            lexer::TokenKind::STOP => panic!("Cannot shift STOP token!"),
-                        };
-                        let val = match kind {
-                            #(#shift_match_arms),*
-                        };
-                        self.res_stack.push(Symbol::Terminal(val));
-                    }
-
-                    fn reduce_action(
-                        &mut self,
-                        #context_var: &mut Context<'i>,
-                        prod_idx: ProdIndex,
-                        _prod_len: usize) {
-                        let prod = match ProdKind::from(prod_idx) {
-                            #(#reduce_match_arms),*
-                        };
-                        self.res_stack.push(Symbol::NonTerminal(prod));
-                    }
-
+                #![allow(unused_variables)]
+                fn shift_action(
+                    &mut self,
+                    #context_var: &mut Context<'i>,
+                    token: Token<'i, Input, TokenKind>) {
+                    let val = match token.kind {
+                        TokenKind::STOP => panic!("Cannot shift STOP token!"),
+                        #(#shift_match_arms),*
+                    };
+                    self.res_stack.push(Symbol::Terminal(val));
                 }
+
+                fn reduce_action(
+                    &mut self,
+                    #context_var: &mut Context<'i>,
+                    prod_idx: ProdIndex,
+                    _prod_len: usize) {
+                    let prod = match ProdKind::from(prod_idx) {
+                        #(#reduce_match_arms),*
+                    };
+                    self.res_stack.push(Symbol::NonTerminal(prod));
+                }
+
             }
-        );
+        });
 
         Ok(ast)
     }

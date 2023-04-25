@@ -167,7 +167,10 @@ pub fn grammar_rule_c2(
     }
 }
 pub type AnnotationOpt = Option<Annotation>;
-pub fn annotation_opt_annotation(_ctx: &Context, annotation: Annotation) -> AnnotationOpt {
+pub fn annotation_opt_annotation(
+    _ctx: &Context,
+    annotation: Annotation,
+) -> AnnotationOpt {
     Some(annotation)
 }
 pub fn annotation_opt_empty(_ctx: &Context) -> AnnotationOpt {

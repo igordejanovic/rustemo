@@ -26,11 +26,11 @@ impl<'i> Lexer<'i, Input, StateIndex, TokenKind> for CustomLexer1Lexer {
         context: &mut Context<'i, Input, StateIndex>,
     ) -> Result<Token<'i, Input, TokenKind>> {
         let value;
-        let kind: lexer::TokenKind<TokenKind>;
+        let kind: TokenKind;
         let mut pos = context.position;
         if context.position >= context.input.len() {
             value = &[][..];
-            kind = lexer::TokenKind::STOP;
+            kind = TokenKind::STOP;
         } else {
             // Increase position as long as the highest bit is set.
             while (context.input[pos] & 0b1000_0000) != 0 {
@@ -38,7 +38,7 @@ impl<'i> Lexer<'i, Input, StateIndex, TokenKind> for CustomLexer1Lexer {
             }
             // Token value is the slice of the input where VarInt is reconized.
             value = &context.input[context.position..=pos];
-            kind = lexer::TokenKind::Kind(TokenKind::VarInt);
+            kind = TokenKind::VarInt;
         }
 
         Ok(Token {

@@ -167,7 +167,6 @@ where
         .nonterminals()
         .iter()
         .filter(|nt| nt.reachable.get())
-        .into_iter()
         .for_each(|nonterminal| {
             // Add non-terminal type
             if !type_names.contains(&nonterminal.name) {

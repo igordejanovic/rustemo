@@ -150,17 +150,12 @@ impl Display for Grammar {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Default, PartialEq, Eq)]
 pub enum Associativity {
+    #[default]
     None,
     Left,
     Right,
-}
-
-impl Default for Associativity {
-    fn default() -> Self {
-        Associativity::None
-    }
 }
 
 pub type Priority = u32;

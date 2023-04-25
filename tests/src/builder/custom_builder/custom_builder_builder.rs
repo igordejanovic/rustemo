@@ -39,11 +39,7 @@ impl<'i> LRBuilder<'i, str, TokenKind> for CustomBuilderBuilder {
         _context: &mut Context<'i>,
         token: Token<'i, str, TokenKind>,
     ) {
-        let kind = match token.kind {
-            lexer::TokenKind::Kind(kind) => kind,
-            lexer::TokenKind::STOP => panic!("Cannot shift STOP token!"),
-        };
-        if let TokenKind::Num = kind {
+        if let TokenKind::Num = token.kind {
             self.stack.push(token.value.parse().unwrap())
         }
     }

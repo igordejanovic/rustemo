@@ -35,17 +35,12 @@ pub enum Action {
 }
 
 #[allow(non_camel_case_types)]
-#[derive(Debug, Clone, PartialEq, Eq, ValueEnum)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, ValueEnum)]
 pub enum TableType {
     LALR, // http://publications.csail.mit.edu/lcs/pubs/pdf/MIT-LCS-TR-065.pdf
+    #[default]
     LALR_PAGERW, // https://doi.org/10.1007/BF00290336
     LALR_RN, // https://doi.org/10.1145/1146809.1146810
-}
-
-impl Default for TableType {
-    fn default() -> Self {
-        TableType::LALR_PAGERW
-    }
 }
 
 type Firsts = BTreeSet<SymbolIndex>;

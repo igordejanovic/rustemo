@@ -2,7 +2,7 @@ use crate::debug::log;
 use crate::err;
 use crate::error::{Error, Result};
 use crate::index::{StateIndex, TermIndex};
-use crate::lexer::{AsStr, Context, Input, Lexer, Token, TokenKind};
+use crate::lexer::{AsStr, Context, Input, Lexer, Token};
 use crate::location::Location;
 
 /// A lexer that operates over string inputs and uses generated string and regex
@@ -50,7 +50,7 @@ where
 impl<'i, D, TK> Lexer<'i, str, StateIndex, TK> for LRStringLexer<D>
 where
     D: LexerDefinition<Recognizer = for<'a> fn(&'a str) -> Option<&'a str>>,
-    TK: From<TermIndex> + AsStr,
+    TK: From<TermIndex> + AsStr + Default,
 {
     fn next_token(
         &self,
@@ -63,7 +63,7 @@ where
             "Trying recognizers: {:?}",
             self.definition
                 .recognizers(context.state)
-                .map(|(_, term_idx)| TokenKind::<TK>::from(term_idx).as_str())
+                .map(|(_, term_idx)| <TK>::from(term_idx).as_str())
                 .collect::<Vec<_>>()
         );
         let token: Option<Token<'i, str, TK>> = self
@@ -91,7 +91,7 @@ where
                     // no new tokens can be found to try to complete what we
                     // have seen so far.
                     Ok(Token {
-                        kind: TokenKind::STOP,
+                        kind: TK::default(),
                         value: "",
                         location: context.location,
                     })
@@ -99,9 +99,7 @@ where
                     let expected = self
                         .definition
                         .recognizers(context.state)
-                        .map(|(_, term_idx)| {
-                            TokenKind::<TK>::from(term_idx).as_str()
-                        })
+                        .map(|(_, term_idx)| TK::from(term_idx).as_str())
                         .collect::<Vec<_>>();
                     let expected = if expected.len() > 1 {
                         format!("one of {}", expected.join(", "))

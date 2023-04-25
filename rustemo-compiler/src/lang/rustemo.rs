@@ -37,8 +37,10 @@ lazy_static! {
     "((\\*[^/])|[^\\s*/]|/[^\\*])+")).unwrap();
 }
 #[allow(clippy::upper_case_acronyms)]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Default, Clone, Copy)]
 pub enum TokenKind {
+    #[default]
+    STOP,
     Terminals,
     Import,
     As,
@@ -87,6 +89,7 @@ impl AsStr for TokenKind {
     #[allow(dead_code)]
     fn as_str(&self) -> &'static str {
         match self {
+            TokenKind::STOP => "STOP",
             TokenKind::Terminals => "Terminals",
             TokenKind::Import => "Import",
             TokenKind::As => "As",
@@ -136,6 +139,7 @@ impl AsStr for TokenKind {
 impl From<TermIndex> for TokenKind {
     fn from(term_index: TermIndex) -> Self {
         match term_index.0 {
+            0usize => TokenKind::STOP,
             1usize => TokenKind::Terminals,
             2usize => TokenKind::Import,
             3usize => TokenKind::As,
@@ -186,6 +190,7 @@ impl From<TermIndex> for TokenKind {
 impl From<TokenKind> for TermIndex {
     fn from(token_kind: TokenKind) -> Self {
         match token_kind {
+            TokenKind::STOP => TermIndex(0usize),
             TokenKind::Terminals => TermIndex(1usize),
             TokenKind::Import => TermIndex(2usize),
             TokenKind::As => TermIndex(3usize),
@@ -16774,11 +16779,8 @@ impl<'i> LRBuilder<'i, Input, TokenKind> for RustemoBuilder {
         context: &mut Context<'i>,
         token: Token<'i, Input, TokenKind>,
     ) {
-        let kind = match token.kind {
-            lexer::TokenKind::Kind(kind) => kind,
-            lexer::TokenKind::STOP => panic!("Cannot shift STOP token!"),
-        };
-        let val = match kind {
+        let val = match token.kind {
+            TokenKind::STOP => panic!("Cannot shift STOP token!"),
             TokenKind::Terminals => Terminal::Terminals,
             TokenKind::Import => Terminal::Import,
             TokenKind::As => Terminal::As,

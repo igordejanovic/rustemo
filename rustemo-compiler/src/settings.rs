@@ -7,41 +7,26 @@ use std::path::{Path, PathBuf};
 
 use crate::generator::generate_parser;
 
-#[derive(Debug, Clone, ArgEnum)]
+#[derive(Debug, Default, Clone, ArgEnum)]
 pub enum ParserAlgo {
+    #[default]
     LR,
     GLR,
 }
 
-impl Default for ParserAlgo {
-    fn default() -> Self {
-        ParserAlgo::LR
-    }
-}
-
-#[derive(Debug, Clone, ArgEnum)]
+#[derive(Debug, Default, Clone, ArgEnum)]
 pub enum LexerType {
+    #[default]
     Default,
     Custom,
 }
 
-impl Default for LexerType {
-    fn default() -> Self {
-        LexerType::Default
-    }
-}
-
-#[derive(Debug, Clone, ArgEnum)]
+#[derive(Debug, Default, Clone, ArgEnum)]
 pub enum BuilderType {
+    #[default]
     Default,
     Generic,
     Custom,
-}
-
-impl Default for BuilderType {
-    fn default() -> Self {
-        BuilderType::Default
-    }
 }
 
 #[derive(Debug, Clone)]

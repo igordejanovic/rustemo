@@ -17,9 +17,7 @@ Ok(
                                 children: [
                                     TermNode {
                                         token: Token {
-                                            kind: Kind(
-                                                Ta,
-                                            ),
+                                            kind: Ta,
                                             value: "a",
                                             location: Location {
                                                 start: LineBased(
@@ -43,9 +41,7 @@ Ok(
                                     },
                                     TermNode {
                                         token: Token {
-                                            kind: Kind(
-                                                Num,
-                                            ),
+                                            kind: Num,
                                             value: "42",
                                             location: Location {
                                                 start: LineBased(
@@ -81,9 +77,7 @@ Ok(
                         children: [
                             TermNode {
                                 token: Token {
-                                    kind: Kind(
-                                        Ta,
-                                    ),
+                                    kind: Ta,
                                     value: "a",
                                     location: Location {
                                         start: LineBased(
@@ -109,9 +103,7 @@ Ok(
                             },
                             TermNode {
                                 token: Token {
-                                    kind: Kind(
-                                        Num,
-                                    ),
+                                    kind: Num,
                                     value: "3",
                                     location: Location {
                                         start: LineBased(
@@ -145,9 +137,7 @@ Ok(
             },
             TermNode {
                 token: Token {
-                    kind: Kind(
-                        B,
-                    ),
+                    kind: B,
                     value: "b",
                     location: Location {
                         start: LineBased(

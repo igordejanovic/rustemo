@@ -11,10 +11,7 @@ fn main() {
     let settings = rustemo_compiler::Settings::new().force(true);
 
     #[allow(clippy::type_complexity)]
-    let tests: &[(
-        &str,
-        Box<dyn Fn(Settings) -> Settings>,
-    )] = &[
+    let tests: &[(&str, Box<dyn Fn(Settings) -> Settings>)] = &[
         ("rule_patterns", Box::new(|s| s)),
         ("sugar", Box::new(|s| s)),
         ("ambiguity", Box::new(|s| s.prefer_shifts(true))),

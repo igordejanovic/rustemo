@@ -25,8 +25,10 @@ lazy_static! {
     static ref REGEX_NUM : Regex = Regex::new(concat!("^", "\\d+")).unwrap();
 }
 #[allow(clippy::upper_case_acronyms)]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Default, Clone, Copy)]
 pub enum TokenKind {
+    #[default]
+    STOP,
     Tb,
     Num,
 }
@@ -34,6 +36,7 @@ impl AsStr for TokenKind {
     #[allow(dead_code)]
     fn as_str(&self) -> &'static str {
         match self {
+            TokenKind::STOP => "STOP",
             TokenKind::Tb => "Tb",
             TokenKind::Num => "Num",
         }
@@ -42,6 +45,7 @@ impl AsStr for TokenKind {
 impl From<TermIndex> for TokenKind {
     fn from(term_index: TermIndex) -> Self {
         match term_index.0 {
+            0usize => TokenKind::STOP,
             1usize => TokenKind::Tb,
             2usize => TokenKind::Num,
             _ => unreachable!(),
@@ -51,6 +55,7 @@ impl From<TermIndex> for TokenKind {
 impl From<TokenKind> for TermIndex {
     fn from(token_kind: TokenKind) -> Self {
         match token_kind {
+            TokenKind::STOP => TermIndex(0usize),
             TokenKind::Tb => TermIndex(1usize),
             TokenKind::Num => TermIndex(2usize),
         }
@@ -287,11 +292,8 @@ impl<'i> LRBuilder<'i, Input, TokenKind> for OutputDirBuilder {
         context: &mut Context<'i>,
         token: Token<'i, Input, TokenKind>,
     ) {
-        let kind = match token.kind {
-            lexer::TokenKind::Kind(kind) => kind,
-            lexer::TokenKind::STOP => panic!("Cannot shift STOP token!"),
-        };
-        let val = match kind {
+        let val = match token.kind {
+            TokenKind::STOP => panic!("Cannot shift STOP token!"),
             TokenKind::Tb => Terminal::Tb,
             TokenKind::Num => Terminal::Num(output_dir_actions::num(context, token)),
         };
