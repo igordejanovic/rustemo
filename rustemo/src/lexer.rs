@@ -48,7 +48,7 @@ pub trait Input: ToOwned {
     /// Location is an input-specific concept. E.g. for text it is line/column.
     fn location_after(&self, location: Location) -> Location;
 
-    /// Given the current location return a span starting from the current
+    /// Given the current location returns a span starting from the current
     /// location and extending over self. The `self.start` should not be changed,
     /// only `self.end` where `self.end` should be `self.start`
     fn location_span(&self, location: Location) -> Location {

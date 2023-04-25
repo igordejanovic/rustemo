@@ -12,7 +12,7 @@ string or a sequence of bytes is possible out-of-the-box.
 String parsing is facilitated by so-called
 [recognizers](grammar_language.md#terminals), basically a string and regex
 patterns defined for each terminal in the `terminals` section of the grammar.
-This spec is used to configure the string lexer.
+Recognizers are used to configure the string lexer.
 
 For parsing other types you can provide your custom lexer.
 
