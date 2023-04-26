@@ -4,8 +4,10 @@ use std::io;
 use crate::calculator::CalculatorParser;
 
 // Include generated modules
+#[rustfmt::skip]
 mod calculator;
 #[allow(unused)]
+#[rustfmt::skip]
 mod calculator_actions;
 // ANCHOR_END: header
 
