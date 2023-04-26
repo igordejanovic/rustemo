@@ -7,7 +7,7 @@ with the implementation.
 # Introduction
 
 Rustemo is a LR/GLR parser generator for Rust (aka
-[compiler-compiler](https://en.wikipedia.org/wiki/Compiler-compiler)). These
+[compiler-compiler](https://en.wikipedia.org/wiki/Compiler-compiler)). This
 kind of tools you need if you want to analyze arbitrary textual files (e.g.
 program files, recipes, prose) where regexes just don't cut it or to make your
 own programming language.
@@ -16,7 +16,7 @@ own programming language.
 Only LR is implemented at the moment. See the roadmap in the [README](https://github.com/igordejanovic/rustemo/#roadmap-tentative).
 ```
 
-Basically, these kind of tools, based on some kind of declarative specification
+Basically, this kind of tools, based on some kind of declarative specification
 (formal grammar), produce a program that can transform unstructured text (a
 sequence of characters, or more generally a sequence of tokens) to a structured
 (tree-like or graph-like) form which is easier to further analyse
