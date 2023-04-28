@@ -48,7 +48,22 @@ pub fn generate_parser(
 
     let mut parser = RustemoParser::new();
     let file = parser.parse_file(grammar_path)?;
-    let grammar = file.try_into()?;
+    let grammar: Grammar = file.try_into()?;
+
+    // Check recognizers definition. If default string lexer is used all
+    // recognizers must be defined. If custom lexer is used no recognizer should
+    // be defined.
+    if let LexerType::Default = settings.lexer_type {
+        for term in &grammar.terminals {
+            if term.idx != TermIndex(0) && term.recognizer.is_none() {
+                return Err(Error::Error(format!(
+                    "Recognizer not defined for terminal '{}'.",
+                    term.name
+                )));
+            }
+        }
+    }
+
     let table = LRTable::new(&grammar, settings);
 
     let conflicts = table.get_conflicts();

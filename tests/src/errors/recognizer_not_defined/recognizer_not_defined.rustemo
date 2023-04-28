@@ -1,0 +1,4 @@
+A: B+;
+
+terminals
+B:;   // recognizer must be defined for default lexer but not for custom lexer.
