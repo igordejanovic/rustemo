@@ -232,7 +232,6 @@ pub struct TerminalRule {
     pub recognizer: Option<Recognizer>,
     pub meta: TermMetaDatas,
 }
-pub type Terminal = TerminalRule;
 pub fn terminal_rule_c1(
     _ctx: &Context,
     annotation: Option<Annotation>,

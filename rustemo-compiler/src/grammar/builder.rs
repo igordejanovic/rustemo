@@ -170,7 +170,7 @@ impl GrammarBuilder {
 
     fn collect_terminals(
         &mut self,
-        grammar_terminals: Vec<rustemo_actions::Terminal>,
+        grammar_terminals: Vec<rustemo_actions::TerminalRule>,
     ) -> Result<()> {
         for terminal in grammar_terminals {
             let term_idx = self.get_term_idx();
