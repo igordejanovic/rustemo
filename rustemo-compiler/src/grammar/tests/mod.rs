@@ -119,7 +119,7 @@ fn terminals_regex() {
             .unwrap()
         {
             Recognizer::StrConst(_) => false,
-            Recognizer::RegexTerm(regex) => regex == term_regex,
+            Recognizer::RegexTerm(regex) => regex.as_ref() == term_regex,
         });
     }
 

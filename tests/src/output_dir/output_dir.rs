@@ -5,25 +5,23 @@ use rustemo::lexer::{self, Token, AsStr};
 use rustemo::parser::Parser;
 use rustemo::builder::Builder;
 use rustemo::Result;
-use rustemo::lr::lexer::{LRStringLexer, LexerDefinition, RecognizerIterator};
+use rustemo::lr::lexer::{
+    StringRecognizer, LRStringLexer, LexerDefinition, RecognizerIterator,
+};
 use rustemo::lr::builder::LRBuilder;
 use rustemo::lr::parser::{LRParser, ParserDefinition};
 use rustemo::lr::parser::Action::{self, Shift, Reduce, Accept, Error};
 use rustemo::index::{StateIndex, TermIndex, NonTermIndex, ProdIndex};
-use rustemo::grammar::TerminalsState;
 use rustemo::debug::{log, logn};
-const TERMINAL_NO: usize = 3usize;
-const NONTERMINAL_NO: usize = 5usize;
-const STATE_NO: usize = 7usize;
+const TERMINAL_COUNT: usize = 3usize;
+const NONTERMINAL_COUNT: usize = 5usize;
+const STATE_COUNT: usize = 7usize;
 #[allow(dead_code)]
 const MAX_ACTIONS: usize = 2usize;
+use once_cell::sync::Lazy;
 use super::output_dir_actions;
 pub type Input = str;
 pub type Context<'i> = lexer::Context<'i, Input, StateIndex>;
-use lazy_static::lazy_static;
-lazy_static! {
-    static ref REGEX_NUM : Regex = Regex::new(concat!("^", "\\d+")).unwrap();
-}
 #[allow(clippy::upper_case_acronyms)]
 #[derive(Debug, Default, Clone, Copy)]
 pub enum TokenKind {
@@ -120,8 +118,8 @@ pub enum NonTerminal {
     B(output_dir_actions::B),
 }
 pub struct OutputDirParserDefinition {
-    actions: [[Action; TERMINAL_NO]; STATE_NO],
-    gotos: [[Option<StateIndex>; NONTERMINAL_NO]; STATE_NO],
+    actions: [[Action; TERMINAL_COUNT]; STATE_COUNT],
+    gotos: [[Option<StateIndex>; NONTERMINAL_COUNT]; STATE_COUNT],
 }
 pub(crate) static PARSER_DEFINITION: OutputDirParserDefinition = OutputDirParserDefinition {
     actions: [
@@ -203,69 +201,160 @@ impl OutputDirParser {
         parser.parse(context, &lexer, &mut builder)
     }
 }
-pub struct OutputDirLexerDefinition {
-    terminals_for_state: TerminalsState<MAX_ACTIONS, STATE_NO>,
-    recognizers: [fn(&str) -> Option<&str>; TERMINAL_NO],
+pub(crate) static RECOGNIZERS: [Option<Lazy<Regex>>; TERMINAL_COUNT] = [
+    None,
+    None,
+    Some(Lazy::new(|| { Regex::new(concat!("^", "\\d+")).unwrap() })),
+];
+#[allow(dead_code)]
+pub enum Recognizer {
+    Stop,
+    StrMatch(&'static str),
+    RegexMatch(usize),
 }
-#[allow(clippy::single_char_pattern)]
-pub(crate) static LEXER_DEFINITION: OutputDirLexerDefinition = OutputDirLexerDefinition {
-    terminals_for_state: [
-        [Some(1usize), None],
-        [Some(1usize), Some(2usize)],
-        [Some(0usize), None],
-        [Some(1usize), Some(2usize)],
-        [Some(1usize), Some(2usize)],
-        [Some(0usize), None],
-        [Some(1usize), Some(2usize)],
-    ],
-    recognizers: [
-        |input: &str| {
-            logn!("Recognizing <STOP> -- ");
-            if input.is_empty() {
-                log!("recognized");
-                Some("")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "Tb");
-            if input.starts_with("b") {
-                log!("recognized");
-                Some("b")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "Num");
-            let match_str = REGEX_NUM.find(input);
-            match match_str {
-                Some(x) => {
-                    let x_str = x.as_str();
-                    log!("recognized <{}>", x_str);
-                    Some(x_str)
-                }
-                None => {
+pub struct TokenRecognizer {
+    token_kind: TokenKind,
+    recognizer: Recognizer,
+    finish: bool,
+}
+impl StringRecognizer<TokenKind> for TokenRecognizer {
+    fn recognize<'i>(&self, input: &'i str) -> Option<&'i str> {
+        match &self.recognizer {
+            Recognizer::StrMatch(s) => {
+                logn!("Recognizing <{:?}> -- ", self.token_kind());
+                if input.starts_with(s) {
+                    log!("recognized");
+                    Some(s)
+                } else {
                     log!("not recognized");
                     None
                 }
             }
-        },
+            Recognizer::RegexMatch(r) => {
+                logn!("Recognizing <{:?}> -- ", self.token_kind());
+                let match_str = RECOGNIZERS[*r].as_ref().unwrap().find(input);
+                match match_str {
+                    Some(x) => {
+                        let x_str = x.as_str();
+                        log!("recognized <{}>", x_str);
+                        Some(x_str)
+                    }
+                    None => {
+                        log!("not recognized");
+                        None
+                    }
+                }
+            }
+            Recognizer::Stop => {
+                logn!("Recognizing <STOP> -- ");
+                if input.is_empty() {
+                    log!("recognized");
+                    Some("")
+                } else {
+                    log!("not recognized");
+                    None
+                }
+            }
+        }
+    }
+    #[inline]
+    fn token_kind(&self) -> TokenKind {
+        self.token_kind
+    }
+    #[inline]
+    fn finish(&self) -> bool {
+        self.finish
+    }
+}
+pub struct OutputDirLexerDefinition {
+    token_rec_for_state: [[Option<TokenRecognizer>; MAX_ACTIONS]; STATE_COUNT],
+}
+#[allow(clippy::single_char_pattern)]
+pub(crate) static LEXER_DEFINITION: OutputDirLexerDefinition = OutputDirLexerDefinition {
+    token_rec_for_state: [
+        [
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Tb,
+                recognizer: Recognizer::StrMatch("b"),
+                finish: true,
+            }),
+            None,
+        ],
+        [
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Tb,
+                recognizer: Recognizer::StrMatch("b"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Num,
+                recognizer: Recognizer::RegexMatch(2usize),
+                finish: true,
+            }),
+        ],
+        [
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            None,
+        ],
+        [
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Tb,
+                recognizer: Recognizer::StrMatch("b"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Num,
+                recognizer: Recognizer::RegexMatch(2usize),
+                finish: true,
+            }),
+        ],
+        [
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Tb,
+                recognizer: Recognizer::StrMatch("b"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Num,
+                recognizer: Recognizer::RegexMatch(2usize),
+                finish: true,
+            }),
+        ],
+        [
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            None,
+        ],
+        [
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Tb,
+                recognizer: Recognizer::StrMatch("b"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Num,
+                recognizer: Recognizer::RegexMatch(2usize),
+                finish: true,
+            }),
+        ],
     ],
 };
 impl LexerDefinition for OutputDirLexerDefinition {
-    type Recognizer = for<'i> fn(&'i str) -> Option<&'i str>;
+    type TokenRecognizer = TokenRecognizer;
     fn recognizers(
         &self,
         state_index: StateIndex,
-    ) -> RecognizerIterator<Self::Recognizer> {
+    ) -> RecognizerIterator<Self::TokenRecognizer> {
         RecognizerIterator {
-            terminals_for_state: &LEXER_DEFINITION
-                .terminals_for_state[state_index.0][..],
-            recognizers: &LEXER_DEFINITION.recognizers,
+            token_rec_for_state: &LEXER_DEFINITION
+                .token_rec_for_state[state_index.0][..],
             index: 0,
         }
     }

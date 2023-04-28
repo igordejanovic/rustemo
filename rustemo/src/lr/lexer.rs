@@ -5,6 +5,12 @@ use crate::index::{StateIndex, TermIndex};
 use crate::lexer::{AsStr, Context, Input, Lexer, Token};
 use crate::location::Location;
 
+pub trait StringRecognizer<TK> {
+    fn recognize<'i>(&self, input: &'i str) -> Option<&'i str>;
+    fn token_kind(&self) -> TK;
+    fn finish(&self) -> bool;
+}
+
 /// A lexer that operates over string inputs and uses generated string and regex
 /// recognizers provided by the parser table.
 pub struct LRStringLexer<D: 'static> {
@@ -13,9 +19,9 @@ pub struct LRStringLexer<D: 'static> {
     skip_ws: bool,
 }
 
-impl<D> LRStringLexer<D>
+impl<D, TR> LRStringLexer<D>
 where
-    D: LexerDefinition<Recognizer = for<'a> fn(&'a str) -> Option<&'a str>>,
+    D: LexerDefinition<TokenRecognizer = TR>,
 {
     pub fn new(
         definition: &'static D,
@@ -47,10 +53,11 @@ where
     }
 }
 
-impl<'i, D, TK> Lexer<'i, str, StateIndex, TK> for LRStringLexer<D>
+impl<'i, D, TK, TR> Lexer<'i, str, StateIndex, TK> for LRStringLexer<D>
 where
-    D: LexerDefinition<Recognizer = for<'a> fn(&'a str) -> Option<&'a str>>,
+    D: LexerDefinition<TokenRecognizer = TR>,
     TK: From<TermIndex> + AsStr + Default,
+    TR: StringRecognizer<TK> + 'static,
 {
     fn next_token(
         &self,
@@ -63,20 +70,23 @@ where
             "Trying recognizers: {:?}",
             self.definition
                 .recognizers(context.state)
-                .map(|(_, term_idx)| <TK>::from(term_idx).as_str())
+                .map(|recognizer| recognizer.token_kind().as_str())
                 .collect::<Vec<_>>()
         );
         let token: Option<Token<'i, str, TK>> = self
             .definition
             .recognizers(context.state)
-            .map(|(recognizer, token_kind)| {
-                (recognizer(&context.input[context.position..]), token_kind)
+            .map(|recognizer| {
+                (
+                    recognizer.recognize(&context.input[context.position..]),
+                    recognizer.token_kind(),
+                )
             })
             // Skip unsuccesful recognition
             .skip_while(|(recognized, _)| recognized.is_none())
             // Create tokens
             .map(|(recognized, token_kind)| Token {
-                kind: token_kind.into(),
+                kind: token_kind,
                 value: recognized.unwrap(),
                 location: recognized.unwrap().location_span(context.location),
             })
@@ -99,7 +109,7 @@ where
                     let expected = self
                         .definition
                         .recognizers(context.state)
-                        .map(|(_, term_idx)| TK::from(term_idx).as_str())
+                        .map(|recognizer| recognizer.token_kind().as_str())
                         .collect::<Vec<_>>();
                     let expected = if expected.len() > 1 {
                         format!("one of {}", expected.join(", "))
@@ -122,33 +132,27 @@ where
 }
 
 pub trait LexerDefinition {
-    type Recognizer;
+    type TokenRecognizer;
     /// For the given state, returns iterator of recognizers that should be
     /// tried in order.
     fn recognizers(
         &self,
         state_index: StateIndex,
-    ) -> RecognizerIterator<Self::Recognizer>;
+    ) -> RecognizerIterator<Self::TokenRecognizer>;
 }
 
 pub struct RecognizerIterator<R: 'static> {
-    pub terminals_for_state: &'static [Option<usize>],
-    pub recognizers: &'static [R],
+    pub token_rec_for_state: &'static [Option<R>],
     pub index: usize,
 }
 
 impl<R> Iterator for RecognizerIterator<R> {
-    type Item = (&'static R, TermIndex);
+    type Item = &'static R;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.index < self.terminals_for_state.len() {
-            match self.terminals_for_state[self.index] {
-                Some(term_idx) => {
-                    self.index += 1;
-                    Some((&self.recognizers[term_idx], TermIndex(term_idx)))
-                }
-                None => None,
-            }
+        if self.index < self.token_rec_for_state.len() {
+            self.index += 1;
+            self.token_rec_for_state[self.index - 1].as_ref()
         } else {
             None
         }

@@ -3876,7 +3876,20 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     RegexTerm(
-                        "[a-zA-Z_][a-zA-Z0-9_\\.]*",
+                        ValLoc {
+                            value: "[a-zA-Z_][a-zA-Z0-9_\\.]*",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 105,
+                                            column: 6,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: true,
@@ -3892,7 +3905,20 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     RegexTerm(
-                        "/(\\\\.|[^/\\\\])*/",
+                        ValLoc {
+                            value: "/(\\\\.|[^/\\\\])*/",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 106,
+                                            column: 11,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: true,
@@ -3908,7 +3934,20 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     RegexTerm(
-                        "\\d+",
+                        ValLoc {
+                            value: "\\d+",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 107,
+                                            column: 10,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: true,
@@ -3924,7 +3963,20 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     RegexTerm(
-                        "[+-]?[0-9]+[.][0-9]*([e][+-]?[0-9]+)?",
+                        ValLoc {
+                            value: "[+-]?[0-9]+[.][0-9]*([e][+-]?[0-9]+)?",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 108,
+                                            column: 12,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: true,
@@ -3940,7 +3992,20 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     RegexTerm(
-                        "true|false",
+                        ValLoc {
+                            value: "true|false",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 109,
+                                            column: 11,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: true,
@@ -3956,7 +4021,20 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     RegexTerm(
-                        "(?s)(^'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')|(^\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\")",
+                        ValLoc {
+                            value: "(?s)(^'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')|(^\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\")",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 110,
+                                            column: 10,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: true,
@@ -3972,7 +4050,20 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     RegexTerm(
-                        "@[a-zA-Z0-9_]+",
+                        ValLoc {
+                            value: "@[a-zA-Z0-9_]+",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 111,
+                                            column: 12,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: true,
@@ -3988,7 +4079,20 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     RegexTerm(
-                        "\\s+",
+                        ValLoc {
+                            value: "\\s+",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 112,
+                                            column: 4,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: true,
@@ -4004,7 +4108,20 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     RegexTerm(
-                        "//.*",
+                        ValLoc {
+                            value: "//.*",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 113,
+                                            column: 13,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: true,
@@ -4020,7 +4137,20 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     RegexTerm(
-                        "((\\*[^/])|[^\\s*/]|/[^\\*])+",
+                        ValLoc {
+                            value: "((\\*[^/])|[^\\s*/]|/[^\\*])+",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 114,
+                                            column: 12,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: true,

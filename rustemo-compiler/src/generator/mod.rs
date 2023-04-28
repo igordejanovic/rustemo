@@ -12,7 +12,7 @@ use crate::{
     error::{Error, Result},
     grammar::{
         types::{to_pascal_case, to_snake_case, Choice, SymbolTypes},
-        Grammar, NonTerminal, Production,
+        Grammar, NonTerminal, Production, Terminal,
     },
     lang::{rustemo::RustemoParser, rustemo_actions::Recognizer},
     settings::{BuilderType, LexerType, Settings},
@@ -251,17 +251,16 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             use rustemo::parser::Parser;
             use rustemo::builder::Builder;
             use rustemo::Result;
-            use rustemo::lr::lexer::{LRStringLexer, LexerDefinition, RecognizerIterator};
+            use rustemo::lr::lexer::{StringRecognizer, LRStringLexer, LexerDefinition, RecognizerIterator};
             #builder_import
             use rustemo::lr::parser::{LRParser, ParserDefinition};
             use rustemo::lr::parser::Action::{self, Shift, Reduce, Accept, Error};
             use rustemo::index::{StateIndex, TermIndex, NonTermIndex, ProdIndex};
-            use rustemo::grammar::TerminalsState;
             use rustemo::debug::{log, logn};
 
-            const TERMINAL_NO: usize = #term_count;
-            const NONTERMINAL_NO: usize = #nonterm_count;
-            const STATE_NO: usize = #states_count;
+            const TERMINAL_COUNT: usize = #term_count;
+            const NONTERMINAL_COUNT: usize = #nonterm_count;
+            const STATE_COUNT: usize = #states_count;
             #[allow(dead_code)]
             const MAX_ACTIONS: usize = #max_actions;
 
@@ -270,6 +269,10 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         if let LexerType::Custom = self.settings.lexer_type {
             header.items.push(parse_quote! {
                 use super::#lexer_file::#lexer;
+            });
+        } else {
+            header.items.push(parse_quote! {
+                use once_cell::sync::Lazy;
             });
         }
 
@@ -297,34 +300,6 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         header.items.push(parse_quote! {
             pub type Context<'i> = lexer::Context<'i, Input, StateIndex>;
         });
-
-        // Lazy init of regexes
-        let (regex_names, regex_matches): (Vec<_>, Vec<_>) = self
-            .grammar
-            .terminals
-            .iter()
-            .filter_map(|t| {
-                if let Some(Recognizer::RegexTerm(regex_match)) = &t.recognizer
-                {
-                    let regex_name =
-                        format_ident!("REGEX_{}", t.name.to_uppercase());
-                    Some((regex_name, regex_match))
-                } else {
-                    None
-                }
-            })
-            .unzip();
-        if !regex_names.is_empty() {
-            header.items.push(parse_quote! {
-                use lazy_static::lazy_static;
-            });
-            header.items.push(parse_quote! {
-           lazy_static! {
-               #(static ref #regex_names: Regex = Regex::new(concat!("^", #regex_matches)).unwrap();
-               )*
-           }
-        })
-        }
 
         Ok(header)
     }
@@ -563,8 +538,8 @@ impl<'g, 's> ParserGenerator<'g, 's> {
 
         ast.push(parse_quote! {
             pub struct #parser_definition {
-                actions: [[Action; TERMINAL_NO]; STATE_NO],
-                gotos: [[Option<StateIndex>; NONTERMINAL_NO]; STATE_NO]
+                actions: [[Action; TERMINAL_COUNT]; STATE_COUNT],
+                gotos: [[Option<StateIndex>; NONTERMINAL_COUNT]; STATE_COUNT]
             }
 
         });
@@ -775,12 +750,114 @@ impl<'g, 's> ParserGenerator<'g, 's> {
 
     fn generate_lexer_definition(&self) -> Result<Vec<syn::Item>> {
         create_idents!(self, lexer_definition,);
+
         let mut ast: Vec<syn::Item> = vec![];
+
+        if let LexerType::Default = self.settings.lexer_type {
+            let regex_recognizers: Vec<syn::Expr> = self
+                .grammar
+                .terminals
+                .iter()
+                .map(|term| {
+                    if let Some(Recognizer::RegexTerm(r)) = &term.recognizer {
+                        let r = r.as_ref();
+                        parse_quote! {
+                            Some(Lazy::new(|| {
+                                Regex::new(concat!("^", #r)).unwrap()
+                            }))
+                        }
+                    } else {
+                        parse_quote! { None }
+                    }
+                })
+                .collect();
+
+            ast.push(parse_quote!{
+                pub(crate) static RECOGNIZERS: [Option<Lazy<Regex>>; TERMINAL_COUNT]  = [
+                    #(#regex_recognizers,)*
+                ];
+            });
+
+            ast.push(parse_quote! {
+                #[allow(dead_code)]
+                pub enum Recognizer {
+                    Stop,
+                    StrMatch(&'static str),
+                    RegexMatch(usize)
+                }
+            });
+            ast.push(parse_quote! {
+                pub struct TokenRecognizer {
+                    token_kind: TokenKind,
+                    recognizer: Recognizer,
+                    finish: bool
+                }
+            });
+            ast.push(parse_quote!{
+                impl StringRecognizer<TokenKind> for TokenRecognizer {
+
+                    fn recognize<'i>(&self, input: &'i str) -> Option<&'i str> {
+                        match &self.recognizer {
+                            Recognizer::StrMatch(s) => {
+                                logn!("Recognizing <{:?}> -- ", self.token_kind());
+                                if input.starts_with(s){
+                                    log!("recognized");
+                                    Some(s)
+                                } else {
+                                    log!("not recognized");
+                                    None
+                                }
+                            },
+                            Recognizer::RegexMatch(r) => {
+                                logn!("Recognizing <{:?}> -- ", self.token_kind());
+                                let match_str = RECOGNIZERS[*r].as_ref().unwrap().find(input);
+                                match match_str {
+                                    Some(x) => {
+                                        let x_str = x.as_str();
+                                        log!("recognized <{}>", x_str);
+                                        Some(x_str)
+                                    },
+                                    None => {
+                                        log!("not recognized");
+                                        None
+                                    }
+                                }
+                            },
+                            Recognizer::Stop=> {
+                                logn!("Recognizing <STOP> -- ");
+                                if input.is_empty() {
+                                    log!("recognized");
+                                    Some("")
+                                } else {
+                                    log!("not recognized");
+                                    None
+                                }
+                            },
+                        }
+                    }
+
+                    #[inline]
+                    fn token_kind(&self) -> TokenKind {
+                        self.token_kind
+                    }
+
+                    #[inline]
+                    fn finish(&self) -> bool {
+                        self.finish
+                    }
+                }
+            })
+        } else {
+            ast.push(parse_quote! {
+                pub struct TokenRecognizer {
+                    token_kind: TokenKind,
+                }
+            });
+        }
 
         ast.push(parse_quote! {
             pub struct #lexer_definition {
-                terminals_for_state: TerminalsState<MAX_ACTIONS, STATE_NO>,
-                recognizers: [fn(&str) -> Option<&str>; TERMINAL_NO]
+                token_rec_for_state: [[Option<TokenRecognizer>; MAX_ACTIONS]; STATE_COUNT],
             }
         });
 
@@ -800,8 +877,44 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                     .sorted_terminals
                     .iter()
                     .map(|x| {
-                        let x = x.0;
-                        parse_quote! { Some(#x) }
+                        let term: &Terminal = &self.grammar.terminals[*x];
+                        let token_kind = format_ident!("{}", &term.name);
+                        if let LexerType::Default = self.settings.lexer_type {
+                            let recognizer: syn::Expr = match term.recognizer {
+                                Some(ref rec) => {
+                                    match rec {
+                                        Recognizer::StrConst(ref s) =>
+                                            {
+                                                let s: &String = s.as_ref();
+                                                parse_quote! { Recognizer::StrMatch(#s) }
+                                            }
+                                        Recognizer::RegexTerm(_) =>
+                                            {
+                                                let idx: usize = (*x).into();
+                                                parse_quote! { Recognizer::RegexMatch(#idx) }
+                                            }
+                                    }
+                                },
+                                None => if term.idx == TermIndex(0) {
+                                    parse_quote! { Recognizer::Stop }
+                                } else {
+                                    panic!("This shouldn't happen. Recognizer must be defined!");
+                                }
+                            };
+                            parse_quote! {
+                                Some(TokenRecognizer{
+                                    token_kind: TokenKind::#token_kind,
+                                    recognizer: #recognizer,
+                                    finish: true
+                                })
+                            }
+                        } else {
+                            parse_quote! {
+                                Some(TokenRecognizer{
+                                    token_kind: TokenKind::#token_kind,
+                                })
+                            }
+                        }
                     })
                     .chain(
                         // Fill the rest with "None"
@@ -816,73 +929,11 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             })
             .collect();
 
-        let mut recognizers: Vec<syn::Expr> = vec![];
-        for terminal in &self.grammar.terminals {
-            let term_name = &terminal.name;
-            let term_ident =
-                format_ident!("REGEX_{}", term_name.to_uppercase());
-            if let Some(recognizer) = &terminal.recognizer {
-                match recognizer {
-                    Recognizer::StrConst(str_match) => {
-                        let str_match = str_match.as_ref();
-                        recognizers.push(parse_quote! {
-                            |input: &str| {
-                                logn!("Recognizing <{}> -- ", #term_name);
-                                if input.starts_with(#str_match){
-                                    log!("recognized");
-                                    Some(#str_match)
-                                } else {
-                                    log!("not recognized");
-                                    None
-                                }
-                            }
-                        });
-                    }
-                    Recognizer::RegexTerm(_) => {
-                        recognizers.push(parse_quote! {
-                            |input: &str| {
-                                logn!("Recognizing <{}> -- ", #term_name);
-                                let match_str = #term_ident.find(input);
-                                match match_str {
-                                    Some(x) => {
-                                        let x_str = x.as_str();
-                                        log!("recognized <{}>", x_str);
-                                        Some(x_str)
-                                    },
-                                    None => {
-                                        log!("not recognized");
-                                        None
-                                    }
-                                }
-                            }
-                        });
-                    }
-                }
-            } else if terminal.idx == TermIndex(0) {
-                recognizers.push(parse_quote! {
-                    |input: &str| {
-                        logn!("Recognizing <STOP> -- ");
-                        if input.is_empty() {
-                            log!("recognized");
-                            Some("")
-                        } else {
-                            log!("not recognized");
-                            None
-                        }
-                    }
-                });
-            } else {
-                // TODO: Custom recognizers?
-                unreachable!()
-            }
-        }
-
         ast.push(
             parse_quote!{
                 #[allow(clippy::single_char_pattern)]
                 pub(in crate) static LEXER_DEFINITION: #lexer_definition = #lexer_definition {
-                    terminals_for_state: [#(#terminals_for_state),*],
-                    recognizers: [#(#recognizers),*],
+                    token_rec_for_state: [#(#terminals_for_state),*],
                 };
             }
         );
@@ -890,12 +941,11 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         ast.push(
             parse_quote!{
                 impl LexerDefinition for #lexer_definition {
-                    type Recognizer = for<'i> fn(&'i str) -> Option<&'i str>;
+                    type TokenRecognizer = TokenRecognizer;
 
-                    fn recognizers(&self, state_index: StateIndex) -> RecognizerIterator<Self::Recognizer> {
+                    fn recognizers(&self, state_index: StateIndex) -> RecognizerIterator<Self::TokenRecognizer> {
                         RecognizerIterator {
-                            terminals_for_state: &LEXER_DEFINITION.terminals_for_state[state_index.0][..],
-                            recognizers: &LEXER_DEFINITION.recognizers,
+                            token_rec_for_state: &LEXER_DEFINITION.token_rec_for_state[state_index.0][..],
                             index: 0
                         }
                     }

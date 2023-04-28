@@ -151,7 +151,7 @@ have a working parser with default AST output which can be later tuned as needed
 
 Our generated parser code calls Rustemo code so we must add `rustemo` crate as a
 dependency. Since we are using regular expressions in our grammar we also need
-`regex` and `lazy_static`.
+`regex` and `once_cell`.
 
 Let's add `rustemo`.
 
@@ -166,7 +166,7 @@ Change previous line to install from cargo.io when published.
 Let's add other dependencies:
 ```sh
 cargo add regex --no-default-features --features std,unicode-perl
-cargo add lazy_static
+cargo add once_cell
 ```
 
 Your `Cargo.toml` should look like this:

@@ -5,37 +5,23 @@ use rustemo::lexer::{self, Token, AsStr};
 use rustemo::parser::Parser;
 use rustemo::builder::Builder;
 use rustemo::Result;
-use rustemo::lr::lexer::{LRStringLexer, LexerDefinition, RecognizerIterator};
+use rustemo::lr::lexer::{
+    StringRecognizer, LRStringLexer, LexerDefinition, RecognizerIterator,
+};
 use rustemo::lr::builder::{LRBuilder, SliceBuilder};
 use rustemo::lr::parser::{LRParser, ParserDefinition};
 use rustemo::lr::parser::Action::{self, Shift, Reduce, Accept, Error};
 use rustemo::index::{StateIndex, TermIndex, NonTermIndex, ProdIndex};
-use rustemo::grammar::TerminalsState;
 use rustemo::debug::{log, logn};
-const TERMINAL_NO: usize = 44usize;
-const NONTERMINAL_NO: usize = 44usize;
-const STATE_NO: usize = 141usize;
+const TERMINAL_COUNT: usize = 44usize;
+const NONTERMINAL_COUNT: usize = 44usize;
+const STATE_COUNT: usize = 141usize;
 #[allow(dead_code)]
 const MAX_ACTIONS: usize = 15usize;
+use once_cell::sync::Lazy;
 use super::rustemo_actions;
 pub type Input = str;
 pub type Context<'i> = lexer::Context<'i, Input, StateIndex>;
-use lazy_static::lazy_static;
-lazy_static! {
-    static ref REGEX_NAME : Regex = Regex::new(concat!("^", "[a-zA-Z_][a-zA-Z0-9_\\.]*"))
-    .unwrap(); static ref REGEX_REGEXTERM : Regex = Regex::new(concat!("^",
-    "/(\\\\.|[^/\\\\])*/")).unwrap(); static ref REGEX_INTCONST : Regex =
-    Regex::new(concat!("^", "\\d+")).unwrap(); static ref REGEX_FLOATCONST : Regex =
-    Regex::new(concat!("^", "[+-]?[0-9]+[.][0-9]*([e][+-]?[0-9]+)?")).unwrap(); static
-    ref REGEX_BOOLCONST : Regex = Regex::new(concat!("^", "true|false")).unwrap(); static
-    ref REGEX_STRCONST : Regex = Regex::new(concat!("^",
-    "(?s)(^'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')|(^\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\")"))
-    .unwrap(); static ref REGEX_ANNOTATION : Regex = Regex::new(concat!("^",
-    "@[a-zA-Z0-9_]+")).unwrap(); static ref REGEX_WS : Regex = Regex::new(concat!("^",
-    "\\s+")).unwrap(); static ref REGEX_COMMENTLINE : Regex = Regex::new(concat!("^",
-    "//.*")).unwrap(); static ref REGEX_NOTCOMMENT : Regex = Regex::new(concat!("^",
-    "((\\*[^/])|[^\\s*/]|/[^\\*])+")).unwrap();
-}
 #[allow(clippy::upper_case_acronyms)]
 #[derive(Debug, Default, Clone, Copy)]
 pub enum TokenKind {
@@ -785,8 +771,8 @@ pub enum NonTerminal {
     Recognizer(rustemo_actions::Recognizer),
 }
 pub struct RustemoParserDefinition {
-    actions: [[Action; TERMINAL_NO]; STATE_NO],
-    gotos: [[Option<StateIndex>; NONTERMINAL_NO]; STATE_NO],
+    actions: [[Action; TERMINAL_COUNT]; STATE_COUNT],
+    gotos: [[Option<StateIndex>; NONTERMINAL_COUNT]; STATE_COUNT],
 }
 pub(crate) static PARSER_DEFINITION: RustemoParserDefinition = RustemoParserDefinition {
     actions: [
@@ -13845,18 +13831,159 @@ impl Default for RustemoLayoutParser {
         Self(LRParser::new(&PARSER_DEFINITION, StateIndex(122usize)))
     }
 }
+pub(crate) static RECOGNIZERS: [Option<Lazy<Regex>>; TERMINAL_COUNT] = [
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    Some(
+        Lazy::new(|| { Regex::new(concat!("^", "[a-zA-Z_][a-zA-Z0-9_\\.]*")).unwrap() }),
+    ),
+    Some(Lazy::new(|| { Regex::new(concat!("^", "/(\\\\.|[^/\\\\])*/")).unwrap() })),
+    Some(Lazy::new(|| { Regex::new(concat!("^", "\\d+")).unwrap() })),
+    Some(
+        Lazy::new(|| {
+            Regex::new(concat!("^", "[+-]?[0-9]+[.][0-9]*([e][+-]?[0-9]+)?")).unwrap()
+        }),
+    ),
+    Some(Lazy::new(|| { Regex::new(concat!("^", "true|false")).unwrap() })),
+    Some(
+        Lazy::new(|| {
+            Regex::new(
+                    concat!(
+                        "^",
+                        "(?s)(^'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')|(^\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\")"
+                    ),
+                )
+                .unwrap()
+        }),
+    ),
+    Some(Lazy::new(|| { Regex::new(concat!("^", "@[a-zA-Z0-9_]+")).unwrap() })),
+    Some(Lazy::new(|| { Regex::new(concat!("^", "\\s+")).unwrap() })),
+    Some(Lazy::new(|| { Regex::new(concat!("^", "//.*")).unwrap() })),
+    Some(
+        Lazy::new(|| {
+            Regex::new(concat!("^", "((\\*[^/])|[^\\s*/]|/[^\\*])+")).unwrap()
+        }),
+    ),
+];
+#[allow(dead_code)]
+pub enum Recognizer {
+    Stop,
+    StrMatch(&'static str),
+    RegexMatch(usize),
+}
+pub struct TokenRecognizer {
+    token_kind: TokenKind,
+    recognizer: Recognizer,
+    finish: bool,
+}
+impl StringRecognizer<TokenKind> for TokenRecognizer {
+    fn recognize<'i>(&self, input: &'i str) -> Option<&'i str> {
+        match &self.recognizer {
+            Recognizer::StrMatch(s) => {
+                logn!("Recognizing <{:?}> -- ", self.token_kind());
+                if input.starts_with(s) {
+                    log!("recognized");
+                    Some(s)
+                } else {
+                    log!("not recognized");
+                    None
+                }
+            }
+            Recognizer::RegexMatch(r) => {
+                logn!("Recognizing <{:?}> -- ", self.token_kind());
+                let match_str = RECOGNIZERS[*r].as_ref().unwrap().find(input);
+                match match_str {
+                    Some(x) => {
+                        let x_str = x.as_str();
+                        log!("recognized <{}>", x_str);
+                        Some(x_str)
+                    }
+                    None => {
+                        log!("not recognized");
+                        None
+                    }
+                }
+            }
+            Recognizer::Stop => {
+                logn!("Recognizing <STOP> -- ");
+                if input.is_empty() {
+                    log!("recognized");
+                    Some("")
+                } else {
+                    log!("not recognized");
+                    None
+                }
+            }
+        }
+    }
+    #[inline]
+    fn token_kind(&self) -> TokenKind {
+        self.token_kind
+    }
+    #[inline]
+    fn finish(&self) -> bool {
+        self.finish
+    }
+}
 pub struct RustemoLexerDefinition {
-    terminals_for_state: TerminalsState<MAX_ACTIONS, STATE_NO>,
-    recognizers: [fn(&str) -> Option<&str>; TERMINAL_NO],
+    token_rec_for_state: [[Option<TokenRecognizer>; MAX_ACTIONS]; STATE_COUNT],
 }
 #[allow(clippy::single_char_pattern)]
 pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinition {
-    terminals_for_state: [
+    token_rec_for_state: [
         [
-            Some(1usize),
-            Some(2usize),
-            Some(34usize),
-            Some(40usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Terminals,
+                recognizer: Recognizer::StrMatch("terminals"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Import,
+                recognizer: Recognizer::StrMatch("import"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Annotation,
+                recognizer: Recognizer::RegexMatch(40usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -13870,8 +13997,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(34usize),
-            Some(40usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Annotation,
+                recognizer: Recognizer::RegexMatch(40usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -13887,7 +14022,11 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -13904,7 +14043,11 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(34usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -13921,7 +14064,11 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(0usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -13938,10 +14085,26 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(0usize),
-            Some(1usize),
-            Some(34usize),
-            Some(40usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Terminals,
+                recognizer: Recognizer::StrMatch("terminals"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Annotation,
+                recognizer: Recognizer::RegexMatch(40usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -13955,9 +14118,21 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(2usize),
-            Some(34usize),
-            Some(40usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Import,
+                recognizer: Recognizer::StrMatch("import"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Annotation,
+                recognizer: Recognizer::RegexMatch(40usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -13972,9 +14147,21 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(2usize),
-            Some(34usize),
-            Some(40usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Import,
+                recognizer: Recognizer::StrMatch("import"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Annotation,
+                recognizer: Recognizer::RegexMatch(40usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -13989,10 +14176,26 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(0usize),
-            Some(1usize),
-            Some(34usize),
-            Some(40usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Terminals,
+                recognizer: Recognizer::StrMatch("terminals"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Annotation,
+                recognizer: Recognizer::RegexMatch(40usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14006,7 +14209,11 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(34usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14023,9 +14230,21 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(0usize),
-            Some(34usize),
-            Some(40usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Annotation,
+                recognizer: Recognizer::RegexMatch(40usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14040,7 +14259,11 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(34usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14057,9 +14280,21 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(0usize),
-            Some(34usize),
-            Some(40usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Annotation,
+                recognizer: Recognizer::RegexMatch(40usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14074,10 +14309,26 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(2usize),
-            Some(3usize),
-            Some(34usize),
-            Some(40usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Import,
+                recognizer: Recognizer::StrMatch("import"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::As,
+                recognizer: Recognizer::StrMatch("as"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Annotation,
+                recognizer: Recognizer::RegexMatch(40usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14091,8 +14342,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(34usize),
-            Some(40usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Annotation,
+                recognizer: Recognizer::RegexMatch(40usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14108,10 +14367,26 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(0usize),
-            Some(1usize),
-            Some(34usize),
-            Some(40usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Terminals,
+                recognizer: Recognizer::StrMatch("terminals"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Annotation,
+                recognizer: Recognizer::RegexMatch(40usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14125,10 +14400,26 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(0usize),
-            Some(1usize),
-            Some(34usize),
-            Some(40usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Terminals,
+                recognizer: Recognizer::StrMatch("terminals"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Annotation,
+                recognizer: Recognizer::RegexMatch(40usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14142,9 +14433,21 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(2usize),
-            Some(34usize),
-            Some(40usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Import,
+                recognizer: Recognizer::StrMatch("import"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Annotation,
+                recognizer: Recognizer::RegexMatch(40usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14159,8 +14462,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(4usize),
-            Some(7usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Colon,
+                recognizer: Recognizer::StrMatch(":"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14176,9 +14487,21 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(0usize),
-            Some(34usize),
-            Some(40usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Annotation,
+                recognizer: Recognizer::RegexMatch(40usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14193,7 +14516,11 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(4usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Colon,
+                recognizer: Recognizer::StrMatch(":"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14210,7 +14537,11 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(34usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14227,9 +14558,21 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(0usize),
-            Some(34usize),
-            Some(40usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Annotation,
+                recognizer: Recognizer::RegexMatch(40usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14244,8 +14587,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(34usize),
-            Some(40usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Annotation,
+                recognizer: Recognizer::RegexMatch(40usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14261,9 +14612,21 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(9usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14278,15 +14641,51 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(26usize),
-            Some(24usize),
-            Some(23usize),
-            Some(25usize),
-            Some(28usize),
-            Some(22usize),
-            Some(27usize),
-            Some(34usize),
-            Some(36usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Dynamic,
+                recognizer: Recognizer::StrMatch("dynamic"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Reduce,
+                recognizer: Recognizer::StrMatch("reduce"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Right,
+                recognizer: Recognizer::StrMatch("right"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Shift,
+                recognizer: Recognizer::StrMatch("shift"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::NOPSE,
+                recognizer: Recognizer::StrMatch("nopse"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Left,
+                recognizer: Recognizer::StrMatch("left"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::NOPS,
+                recognizer: Recognizer::StrMatch("nops"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::IntConst,
+                recognizer: Recognizer::RegexMatch(36usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14295,10 +14694,26 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(5usize),
-            Some(7usize),
-            Some(35usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::RegexTerm,
+                recognizer: Recognizer::RegexMatch(35usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14312,9 +14727,21 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(2usize),
-            Some(34usize),
-            Some(40usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Import,
+                recognizer: Recognizer::StrMatch("import"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Annotation,
+                recognizer: Recognizer::RegexMatch(40usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14329,9 +14756,21 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(0usize),
-            Some(34usize),
-            Some(40usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Annotation,
+                recognizer: Recognizer::RegexMatch(40usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14346,9 +14785,21 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(9usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14363,42 +14814,162 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(15usize),
-            Some(17usize),
-            Some(19usize),
-            Some(21usize),
-            Some(5usize),
-            Some(7usize),
-            Some(9usize),
-            Some(10usize),
-            Some(13usize),
-            Some(14usize),
-            Some(16usize),
-            Some(18usize),
-            Some(20usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::ZeroOrMoreGreedy,
+                recognizer: Recognizer::StrMatch("*!"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OneOrMoreGreedy,
+                recognizer: Recognizer::StrMatch("+!"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OptionalGreedy,
+                recognizer: Recognizer::StrMatch("?!"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::QEquals,
+                recognizer: Recognizer::StrMatch("?="),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::ZeroOrMore,
+                recognizer: Recognizer::StrMatch("*"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OneOrMore,
+                recognizer: Recognizer::StrMatch("+"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Optional,
+                recognizer: Recognizer::StrMatch("?"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Equals,
+                recognizer: Recognizer::StrMatch("="),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
         ],
         [
-            Some(15usize),
-            Some(17usize),
-            Some(19usize),
-            Some(5usize),
-            Some(7usize),
-            Some(9usize),
-            Some(10usize),
-            Some(13usize),
-            Some(14usize),
-            Some(16usize),
-            Some(18usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::ZeroOrMoreGreedy,
+                recognizer: Recognizer::StrMatch("*!"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OneOrMoreGreedy,
+                recognizer: Recognizer::StrMatch("+!"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OptionalGreedy,
+                recognizer: Recognizer::StrMatch("?!"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::ZeroOrMore,
+                recognizer: Recognizer::StrMatch("*"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OneOrMore,
+                recognizer: Recognizer::StrMatch("+"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Optional,
+                recognizer: Recognizer::StrMatch("?"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
         ],
         [
-            Some(5usize),
-            Some(13usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14414,9 +14985,21 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(5usize),
-            Some(10usize),
-            Some(13usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14431,13 +15014,41 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(5usize),
-            Some(7usize),
-            Some(9usize),
-            Some(10usize),
-            Some(13usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14448,13 +15059,41 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(5usize),
-            Some(7usize),
-            Some(9usize),
-            Some(10usize),
-            Some(13usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14465,13 +15104,41 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(5usize),
-            Some(7usize),
-            Some(9usize),
-            Some(10usize),
-            Some(13usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14482,13 +15149,41 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(5usize),
-            Some(7usize),
-            Some(9usize),
-            Some(10usize),
-            Some(13usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14499,30 +15194,110 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(15usize),
-            Some(17usize),
-            Some(19usize),
-            Some(5usize),
-            Some(7usize),
-            Some(9usize),
-            Some(10usize),
-            Some(13usize),
-            Some(14usize),
-            Some(16usize),
-            Some(18usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::ZeroOrMoreGreedy,
+                recognizer: Recognizer::StrMatch("*!"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OneOrMoreGreedy,
+                recognizer: Recognizer::StrMatch("+!"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OptionalGreedy,
+                recognizer: Recognizer::StrMatch("?!"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::ZeroOrMore,
+                recognizer: Recognizer::StrMatch("*"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OneOrMore,
+                recognizer: Recognizer::StrMatch("+"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Optional,
+                recognizer: Recognizer::StrMatch("?"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
         ],
         [
-            Some(5usize),
-            Some(7usize),
-            Some(9usize),
-            Some(10usize),
-            Some(13usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14533,25 +15308,85 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(15usize),
-            Some(17usize),
-            Some(19usize),
-            Some(5usize),
-            Some(7usize),
-            Some(9usize),
-            Some(10usize),
-            Some(13usize),
-            Some(14usize),
-            Some(16usize),
-            Some(18usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::ZeroOrMoreGreedy,
+                recognizer: Recognizer::StrMatch("*!"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OneOrMoreGreedy,
+                recognizer: Recognizer::StrMatch("+!"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OptionalGreedy,
+                recognizer: Recognizer::StrMatch("?!"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::ZeroOrMore,
+                recognizer: Recognizer::StrMatch("*"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OneOrMore,
+                recognizer: Recognizer::StrMatch("+"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Optional,
+                recognizer: Recognizer::StrMatch("?"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
         ],
         [
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14567,8 +15402,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14584,8 +15427,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14601,8 +15452,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14618,8 +15477,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14635,8 +15502,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14652,8 +15527,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14669,9 +15552,21 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(4usize),
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Colon,
+                recognizer: Recognizer::StrMatch(":"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14686,8 +15581,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14703,8 +15606,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14720,8 +15631,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14737,8 +15656,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14754,8 +15681,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14771,9 +15706,21 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(0usize),
-            Some(34usize),
-            Some(40usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Annotation,
+                recognizer: Recognizer::RegexMatch(40usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14788,12 +15735,36 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(31usize),
-            Some(26usize),
-            Some(29usize),
-            Some(30usize),
-            Some(34usize),
-            Some(36usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::NoFinish,
+                recognizer: Recognizer::StrMatch("nofinish"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Dynamic,
+                recognizer: Recognizer::StrMatch("dynamic"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Prefer,
+                recognizer: Recognizer::StrMatch("prefer"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Finish,
+                recognizer: Recognizer::StrMatch("finish"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::IntConst,
+                recognizer: Recognizer::RegexMatch(36usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14805,8 +15776,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(5usize),
-            Some(7usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14822,8 +15801,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(5usize),
-            Some(7usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14839,8 +15826,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(5usize),
-            Some(7usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14856,8 +15851,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(10usize),
-            Some(13usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14873,9 +15876,21 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(9usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14890,9 +15905,21 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(9usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14907,10 +15934,26 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(0usize),
-            Some(1usize),
-            Some(34usize),
-            Some(40usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Terminals,
+                recognizer: Recognizer::StrMatch("terminals"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Annotation,
+                recognizer: Recognizer::RegexMatch(40usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14924,9 +15967,21 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(9usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14941,15 +15996,51 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(26usize),
-            Some(24usize),
-            Some(23usize),
-            Some(25usize),
-            Some(28usize),
-            Some(22usize),
-            Some(27usize),
-            Some(34usize),
-            Some(36usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Dynamic,
+                recognizer: Recognizer::StrMatch("dynamic"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Reduce,
+                recognizer: Recognizer::StrMatch("reduce"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Right,
+                recognizer: Recognizer::StrMatch("right"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Shift,
+                recognizer: Recognizer::StrMatch("shift"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::NOPSE,
+                recognizer: Recognizer::StrMatch("nopse"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Left,
+                recognizer: Recognizer::StrMatch("left"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::NOPS,
+                recognizer: Recognizer::StrMatch("nops"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::IntConst,
+                recognizer: Recognizer::RegexMatch(36usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14958,13 +16049,41 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(5usize),
-            Some(7usize),
-            Some(9usize),
-            Some(10usize),
-            Some(13usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14975,14 +16094,46 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(5usize),
-            Some(7usize),
-            Some(9usize),
-            Some(10usize),
-            Some(11usize),
-            Some(13usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OSBracket,
+                recognizer: Recognizer::StrMatch("["),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -14992,14 +16143,46 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(5usize),
-            Some(7usize),
-            Some(9usize),
-            Some(10usize),
-            Some(11usize),
-            Some(13usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OSBracket,
+                recognizer: Recognizer::StrMatch("["),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15009,14 +16192,46 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(5usize),
-            Some(7usize),
-            Some(9usize),
-            Some(10usize),
-            Some(11usize),
-            Some(13usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OSBracket,
+                recognizer: Recognizer::StrMatch("["),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15026,14 +16241,46 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(5usize),
-            Some(7usize),
-            Some(9usize),
-            Some(10usize),
-            Some(11usize),
-            Some(13usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OSBracket,
+                recognizer: Recognizer::StrMatch("["),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15043,14 +16290,46 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(5usize),
-            Some(7usize),
-            Some(9usize),
-            Some(10usize),
-            Some(11usize),
-            Some(13usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OSBracket,
+                recognizer: Recognizer::StrMatch("["),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15060,14 +16339,46 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(5usize),
-            Some(7usize),
-            Some(9usize),
-            Some(10usize),
-            Some(11usize),
-            Some(13usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OSBracket,
+                recognizer: Recognizer::StrMatch("["),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15077,13 +16388,41 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(5usize),
-            Some(7usize),
-            Some(9usize),
-            Some(10usize),
-            Some(13usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15094,13 +16433,41 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(5usize),
-            Some(7usize),
-            Some(9usize),
-            Some(10usize),
-            Some(13usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15111,14 +16478,46 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(5usize),
-            Some(7usize),
-            Some(9usize),
-            Some(10usize),
-            Some(11usize),
-            Some(13usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OSBracket,
+                recognizer: Recognizer::StrMatch("["),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15128,13 +16527,41 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(5usize),
-            Some(7usize),
-            Some(9usize),
-            Some(10usize),
-            Some(13usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15145,10 +16572,26 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(36usize),
-            Some(37usize),
-            Some(38usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::IntConst,
+                recognizer: Recognizer::RegexMatch(36usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::FloatConst,
+                recognizer: Recognizer::RegexMatch(37usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::BoolConst,
+                recognizer: Recognizer::RegexMatch(38usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15162,15 +16605,51 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(26usize),
-            Some(24usize),
-            Some(23usize),
-            Some(25usize),
-            Some(28usize),
-            Some(22usize),
-            Some(27usize),
-            Some(34usize),
-            Some(36usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Dynamic,
+                recognizer: Recognizer::StrMatch("dynamic"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Reduce,
+                recognizer: Recognizer::StrMatch("reduce"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Right,
+                recognizer: Recognizer::StrMatch("right"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Shift,
+                recognizer: Recognizer::StrMatch("shift"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::NOPSE,
+                recognizer: Recognizer::StrMatch("nopse"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Left,
+                recognizer: Recognizer::StrMatch("left"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::NOPS,
+                recognizer: Recognizer::StrMatch("nops"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::IntConst,
+                recognizer: Recognizer::RegexMatch(36usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15179,7 +16658,11 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(4usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Colon,
+                recognizer: Recognizer::StrMatch(":"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15196,8 +16679,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15213,8 +16704,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15230,8 +16729,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15247,8 +16754,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15264,7 +16779,11 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(4usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Colon,
+                recognizer: Recognizer::StrMatch(":"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15281,8 +16800,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15298,8 +16825,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15315,8 +16850,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15332,8 +16875,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15349,9 +16900,21 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(0usize),
-            Some(34usize),
-            Some(40usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Annotation,
+                recognizer: Recognizer::RegexMatch(40usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15366,12 +16929,36 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(31usize),
-            Some(26usize),
-            Some(29usize),
-            Some(30usize),
-            Some(34usize),
-            Some(36usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::NoFinish,
+                recognizer: Recognizer::StrMatch("nofinish"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Dynamic,
+                recognizer: Recognizer::StrMatch("dynamic"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Prefer,
+                recognizer: Recognizer::StrMatch("prefer"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Finish,
+                recognizer: Recognizer::StrMatch("finish"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::IntConst,
+                recognizer: Recognizer::RegexMatch(36usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15383,47 +16970,179 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(15usize),
-            Some(17usize),
-            Some(19usize),
-            Some(5usize),
-            Some(7usize),
-            Some(9usize),
-            Some(10usize),
-            Some(13usize),
-            Some(14usize),
-            Some(16usize),
-            Some(18usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::ZeroOrMoreGreedy,
+                recognizer: Recognizer::StrMatch("*!"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OneOrMoreGreedy,
+                recognizer: Recognizer::StrMatch("+!"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OptionalGreedy,
+                recognizer: Recognizer::StrMatch("?!"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::ZeroOrMore,
+                recognizer: Recognizer::StrMatch("*"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OneOrMore,
+                recognizer: Recognizer::StrMatch("+"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Optional,
+                recognizer: Recognizer::StrMatch("?"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
         ],
         [
-            Some(15usize),
-            Some(17usize),
-            Some(19usize),
-            Some(5usize),
-            Some(7usize),
-            Some(9usize),
-            Some(10usize),
-            Some(13usize),
-            Some(14usize),
-            Some(16usize),
-            Some(18usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::ZeroOrMoreGreedy,
+                recognizer: Recognizer::StrMatch("*!"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OneOrMoreGreedy,
+                recognizer: Recognizer::StrMatch("+!"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OptionalGreedy,
+                recognizer: Recognizer::StrMatch("?!"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::ZeroOrMore,
+                recognizer: Recognizer::StrMatch("*"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OneOrMore,
+                recognizer: Recognizer::StrMatch("+"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Optional,
+                recognizer: Recognizer::StrMatch("?"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
         ],
         [
-            Some(5usize),
-            Some(7usize),
-            Some(9usize),
-            Some(10usize),
-            Some(13usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15434,13 +17153,41 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(5usize),
-            Some(7usize),
-            Some(9usize),
-            Some(10usize),
-            Some(13usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15451,9 +17198,21 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(5usize),
-            Some(10usize),
-            Some(13usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15468,8 +17227,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15485,7 +17252,11 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(34usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15502,13 +17273,41 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(5usize),
-            Some(7usize),
-            Some(9usize),
-            Some(10usize),
-            Some(13usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15519,13 +17318,41 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(5usize),
-            Some(7usize),
-            Some(9usize),
-            Some(10usize),
-            Some(13usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15536,8 +17363,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15553,8 +17388,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15570,8 +17413,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15587,8 +17438,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15604,8 +17463,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15621,8 +17488,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15638,9 +17513,21 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(9usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15655,12 +17542,36 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(31usize),
-            Some(26usize),
-            Some(29usize),
-            Some(30usize),
-            Some(34usize),
-            Some(36usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::NoFinish,
+                recognizer: Recognizer::StrMatch("nofinish"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Dynamic,
+                recognizer: Recognizer::StrMatch("dynamic"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Prefer,
+                recognizer: Recognizer::StrMatch("prefer"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Finish,
+                recognizer: Recognizer::StrMatch("finish"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::IntConst,
+                recognizer: Recognizer::RegexMatch(36usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15672,7 +17583,11 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(5usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15689,8 +17604,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15706,9 +17629,21 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(5usize),
-            Some(10usize),
-            Some(13usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15723,8 +17658,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(12usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CSBracket,
+                recognizer: Recognizer::StrMatch("]"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15740,8 +17683,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(12usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CSBracket,
+                recognizer: Recognizer::StrMatch("]"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15757,8 +17708,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(12usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CSBracket,
+                recognizer: Recognizer::StrMatch("]"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15774,8 +17733,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(5usize),
-            Some(13usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15791,8 +17758,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(8usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBrace,
+                recognizer: Recognizer::StrMatch("}"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15808,9 +17783,21 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(0usize),
-            Some(34usize),
-            Some(40usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Annotation,
+                recognizer: Recognizer::RegexMatch(40usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15825,7 +17812,11 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(5usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15842,7 +17833,11 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(34usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15859,13 +17854,41 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(5usize),
-            Some(7usize),
-            Some(9usize),
-            Some(10usize),
-            Some(13usize),
-            Some(34usize),
-            Some(39usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::SemiColon,
+                recognizer: Recognizer::StrMatch(";"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBrace,
+                recognizer: Recognizer::StrMatch("{"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OBracket,
+                recognizer: Recognizer::StrMatch("("),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CBracket,
+                recognizer: Recognizer::StrMatch(")"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Choice,
+                recognizer: Recognizer::StrMatch("|"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::StrConst,
+                recognizer: Recognizer::RegexMatch(39usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15876,10 +17899,26 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(0usize),
-            Some(1usize),
-            Some(34usize),
-            Some(40usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Terminals,
+                recognizer: Recognizer::StrMatch("terminals"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Annotation,
+                recognizer: Recognizer::RegexMatch(40usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15893,9 +17932,21 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(0usize),
-            Some(34usize),
-            Some(40usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Name,
+                recognizer: Recognizer::RegexMatch(34usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Annotation,
+                recognizer: Recognizer::RegexMatch(40usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15910,8 +17961,16 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(6usize),
-            Some(12usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Comma,
+                recognizer: Recognizer::StrMatch(","),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CSBracket,
+                recognizer: Recognizer::StrMatch("]"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15927,10 +17986,26 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(0usize),
-            Some(32usize),
-            Some(41usize),
-            Some(42usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OComment,
+                recognizer: Recognizer::StrMatch("/*"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::WS,
+                recognizer: Recognizer::RegexMatch(41usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CommentLine,
+                recognizer: Recognizer::RegexMatch(42usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15944,11 +18019,31 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(32usize),
-            Some(33usize),
-            Some(41usize),
-            Some(42usize),
-            Some(43usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OComment,
+                recognizer: Recognizer::StrMatch("/*"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CComment,
+                recognizer: Recognizer::StrMatch("*/"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::WS,
+                recognizer: Recognizer::RegexMatch(41usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CommentLine,
+                recognizer: Recognizer::RegexMatch(42usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::NotComment,
+                recognizer: Recognizer::RegexMatch(43usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15961,10 +18056,26 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(0usize),
-            Some(32usize),
-            Some(41usize),
-            Some(42usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OComment,
+                recognizer: Recognizer::StrMatch("/*"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::WS,
+                recognizer: Recognizer::RegexMatch(41usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CommentLine,
+                recognizer: Recognizer::RegexMatch(42usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15978,12 +18089,36 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(0usize),
-            Some(32usize),
-            Some(33usize),
-            Some(41usize),
-            Some(42usize),
-            Some(43usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OComment,
+                recognizer: Recognizer::StrMatch("/*"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CComment,
+                recognizer: Recognizer::StrMatch("*/"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::WS,
+                recognizer: Recognizer::RegexMatch(41usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CommentLine,
+                recognizer: Recognizer::RegexMatch(42usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::NotComment,
+                recognizer: Recognizer::RegexMatch(43usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -15995,7 +18130,11 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(0usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -16012,10 +18151,26 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(0usize),
-            Some(32usize),
-            Some(41usize),
-            Some(42usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OComment,
+                recognizer: Recognizer::StrMatch("/*"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::WS,
+                recognizer: Recognizer::RegexMatch(41usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CommentLine,
+                recognizer: Recognizer::RegexMatch(42usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -16029,7 +18184,11 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(0usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -16046,10 +18205,26 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(0usize),
-            Some(32usize),
-            Some(41usize),
-            Some(42usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OComment,
+                recognizer: Recognizer::StrMatch("/*"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::WS,
+                recognizer: Recognizer::RegexMatch(41usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CommentLine,
+                recognizer: Recognizer::RegexMatch(42usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -16063,10 +18238,26 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(0usize),
-            Some(32usize),
-            Some(41usize),
-            Some(42usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OComment,
+                recognizer: Recognizer::StrMatch("/*"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::WS,
+                recognizer: Recognizer::RegexMatch(41usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CommentLine,
+                recognizer: Recognizer::RegexMatch(42usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -16080,11 +18271,31 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(32usize),
-            Some(33usize),
-            Some(41usize),
-            Some(42usize),
-            Some(43usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OComment,
+                recognizer: Recognizer::StrMatch("/*"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CComment,
+                recognizer: Recognizer::StrMatch("*/"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::WS,
+                recognizer: Recognizer::RegexMatch(41usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CommentLine,
+                recognizer: Recognizer::RegexMatch(42usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::NotComment,
+                recognizer: Recognizer::RegexMatch(43usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -16097,11 +18308,31 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(32usize),
-            Some(33usize),
-            Some(41usize),
-            Some(42usize),
-            Some(43usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OComment,
+                recognizer: Recognizer::StrMatch("/*"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CComment,
+                recognizer: Recognizer::StrMatch("*/"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::WS,
+                recognizer: Recognizer::RegexMatch(41usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CommentLine,
+                recognizer: Recognizer::RegexMatch(42usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::NotComment,
+                recognizer: Recognizer::RegexMatch(43usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -16114,11 +18345,31 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(32usize),
-            Some(33usize),
-            Some(41usize),
-            Some(42usize),
-            Some(43usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OComment,
+                recognizer: Recognizer::StrMatch("/*"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CComment,
+                recognizer: Recognizer::StrMatch("*/"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::WS,
+                recognizer: Recognizer::RegexMatch(41usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CommentLine,
+                recognizer: Recognizer::RegexMatch(42usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::NotComment,
+                recognizer: Recognizer::RegexMatch(43usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -16131,7 +18382,11 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(33usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CComment,
+                recognizer: Recognizer::StrMatch("*/"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -16148,11 +18403,31 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(32usize),
-            Some(33usize),
-            Some(41usize),
-            Some(42usize),
-            Some(43usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OComment,
+                recognizer: Recognizer::StrMatch("/*"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CComment,
+                recognizer: Recognizer::StrMatch("*/"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::WS,
+                recognizer: Recognizer::RegexMatch(41usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CommentLine,
+                recognizer: Recognizer::RegexMatch(42usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::NotComment,
+                recognizer: Recognizer::RegexMatch(43usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -16165,7 +18440,11 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(33usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CComment,
+                recognizer: Recognizer::StrMatch("*/"),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -16182,11 +18461,31 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(32usize),
-            Some(33usize),
-            Some(41usize),
-            Some(42usize),
-            Some(43usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OComment,
+                recognizer: Recognizer::StrMatch("/*"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CComment,
+                recognizer: Recognizer::StrMatch("*/"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::WS,
+                recognizer: Recognizer::RegexMatch(41usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CommentLine,
+                recognizer: Recognizer::RegexMatch(42usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::NotComment,
+                recognizer: Recognizer::RegexMatch(43usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -16199,10 +18498,26 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(0usize),
-            Some(32usize),
-            Some(41usize),
-            Some(42usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OComment,
+                recognizer: Recognizer::StrMatch("/*"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::WS,
+                recognizer: Recognizer::RegexMatch(41usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CommentLine,
+                recognizer: Recognizer::RegexMatch(42usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -16216,12 +18531,36 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(0usize),
-            Some(32usize),
-            Some(33usize),
-            Some(41usize),
-            Some(42usize),
-            Some(43usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OComment,
+                recognizer: Recognizer::StrMatch("/*"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CComment,
+                recognizer: Recognizer::StrMatch("*/"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::WS,
+                recognizer: Recognizer::RegexMatch(41usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CommentLine,
+                recognizer: Recognizer::RegexMatch(42usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::NotComment,
+                recognizer: Recognizer::RegexMatch(43usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -16233,11 +18572,31 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
         ],
         [
-            Some(32usize),
-            Some(33usize),
-            Some(41usize),
-            Some(42usize),
-            Some(43usize),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::OComment,
+                recognizer: Recognizer::StrMatch("/*"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CComment,
+                recognizer: Recognizer::StrMatch("*/"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::WS,
+                recognizer: Recognizer::RegexMatch(41usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::CommentLine,
+                recognizer: Recognizer::RegexMatch(42usize),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::NotComment,
+                recognizer: Recognizer::RegexMatch(43usize),
+                finish: true,
+            }),
             None,
             None,
             None,
@@ -16249,510 +18608,17 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
             None,
             None,
         ],
-    ],
-    recognizers: [
-        |input: &str| {
-            logn!("Recognizing <STOP> -- ");
-            if input.is_empty() {
-                log!("recognized");
-                Some("")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "Terminals");
-            if input.starts_with("terminals") {
-                log!("recognized");
-                Some("terminals")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "Import");
-            if input.starts_with("import") {
-                log!("recognized");
-                Some("import")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "As");
-            if input.starts_with("as") {
-                log!("recognized");
-                Some("as")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "Colon");
-            if input.starts_with(":") {
-                log!("recognized");
-                Some(":")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "SemiColon");
-            if input.starts_with(";") {
-                log!("recognized");
-                Some(";")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "Comma");
-            if input.starts_with(",") {
-                log!("recognized");
-                Some(",")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "OBrace");
-            if input.starts_with("{") {
-                log!("recognized");
-                Some("{")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "CBrace");
-            if input.starts_with("}") {
-                log!("recognized");
-                Some("}")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "OBracket");
-            if input.starts_with("(") {
-                log!("recognized");
-                Some("(")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "CBracket");
-            if input.starts_with(")") {
-                log!("recognized");
-                Some(")")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "OSBracket");
-            if input.starts_with("[") {
-                log!("recognized");
-                Some("[")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "CSBracket");
-            if input.starts_with("]") {
-                log!("recognized");
-                Some("]")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "Choice");
-            if input.starts_with("|") {
-                log!("recognized");
-                Some("|")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "ZeroOrMore");
-            if input.starts_with("*") {
-                log!("recognized");
-                Some("*")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "ZeroOrMoreGreedy");
-            if input.starts_with("*!") {
-                log!("recognized");
-                Some("*!")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "OneOrMore");
-            if input.starts_with("+") {
-                log!("recognized");
-                Some("+")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "OneOrMoreGreedy");
-            if input.starts_with("+!") {
-                log!("recognized");
-                Some("+!")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "Optional");
-            if input.starts_with("?") {
-                log!("recognized");
-                Some("?")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "OptionalGreedy");
-            if input.starts_with("?!") {
-                log!("recognized");
-                Some("?!")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "Equals");
-            if input.starts_with("=") {
-                log!("recognized");
-                Some("=")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "QEquals");
-            if input.starts_with("?=") {
-                log!("recognized");
-                Some("?=")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "Left");
-            if input.starts_with("left") {
-                log!("recognized");
-                Some("left")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "Right");
-            if input.starts_with("right") {
-                log!("recognized");
-                Some("right")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "Reduce");
-            if input.starts_with("reduce") {
-                log!("recognized");
-                Some("reduce")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "Shift");
-            if input.starts_with("shift") {
-                log!("recognized");
-                Some("shift")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "Dynamic");
-            if input.starts_with("dynamic") {
-                log!("recognized");
-                Some("dynamic")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "NOPS");
-            if input.starts_with("nops") {
-                log!("recognized");
-                Some("nops")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "NOPSE");
-            if input.starts_with("nopse") {
-                log!("recognized");
-                Some("nopse")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "Prefer");
-            if input.starts_with("prefer") {
-                log!("recognized");
-                Some("prefer")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "Finish");
-            if input.starts_with("finish") {
-                log!("recognized");
-                Some("finish")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "NoFinish");
-            if input.starts_with("nofinish") {
-                log!("recognized");
-                Some("nofinish")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "OComment");
-            if input.starts_with("/*") {
-                log!("recognized");
-                Some("/*")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "CComment");
-            if input.starts_with("*/") {
-                log!("recognized");
-                Some("*/")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "Name");
-            let match_str = REGEX_NAME.find(input);
-            match match_str {
-                Some(x) => {
-                    let x_str = x.as_str();
-                    log!("recognized <{}>", x_str);
-                    Some(x_str)
-                }
-                None => {
-                    log!("not recognized");
-                    None
-                }
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "RegexTerm");
-            let match_str = REGEX_REGEXTERM.find(input);
-            match match_str {
-                Some(x) => {
-                    let x_str = x.as_str();
-                    log!("recognized <{}>", x_str);
-                    Some(x_str)
-                }
-                None => {
-                    log!("not recognized");
-                    None
-                }
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "IntConst");
-            let match_str = REGEX_INTCONST.find(input);
-            match match_str {
-                Some(x) => {
-                    let x_str = x.as_str();
-                    log!("recognized <{}>", x_str);
-                    Some(x_str)
-                }
-                None => {
-                    log!("not recognized");
-                    None
-                }
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "FloatConst");
-            let match_str = REGEX_FLOATCONST.find(input);
-            match match_str {
-                Some(x) => {
-                    let x_str = x.as_str();
-                    log!("recognized <{}>", x_str);
-                    Some(x_str)
-                }
-                None => {
-                    log!("not recognized");
-                    None
-                }
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "BoolConst");
-            let match_str = REGEX_BOOLCONST.find(input);
-            match match_str {
-                Some(x) => {
-                    let x_str = x.as_str();
-                    log!("recognized <{}>", x_str);
-                    Some(x_str)
-                }
-                None => {
-                    log!("not recognized");
-                    None
-                }
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "StrConst");
-            let match_str = REGEX_STRCONST.find(input);
-            match match_str {
-                Some(x) => {
-                    let x_str = x.as_str();
-                    log!("recognized <{}>", x_str);
-                    Some(x_str)
-                }
-                None => {
-                    log!("not recognized");
-                    None
-                }
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "Annotation");
-            let match_str = REGEX_ANNOTATION.find(input);
-            match match_str {
-                Some(x) => {
-                    let x_str = x.as_str();
-                    log!("recognized <{}>", x_str);
-                    Some(x_str)
-                }
-                None => {
-                    log!("not recognized");
-                    None
-                }
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "WS");
-            let match_str = REGEX_WS.find(input);
-            match match_str {
-                Some(x) => {
-                    let x_str = x.as_str();
-                    log!("recognized <{}>", x_str);
-                    Some(x_str)
-                }
-                None => {
-                    log!("not recognized");
-                    None
-                }
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "CommentLine");
-            let match_str = REGEX_COMMENTLINE.find(input);
-            match match_str {
-                Some(x) => {
-                    let x_str = x.as_str();
-                    log!("recognized <{}>", x_str);
-                    Some(x_str)
-                }
-                None => {
-                    log!("not recognized");
-                    None
-                }
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "NotComment");
-            let match_str = REGEX_NOTCOMMENT.find(input);
-            match match_str {
-                Some(x) => {
-                    let x_str = x.as_str();
-                    log!("recognized <{}>", x_str);
-                    Some(x_str)
-                }
-                None => {
-                    log!("not recognized");
-                    None
-                }
-            }
-        },
     ],
 };
 impl LexerDefinition for RustemoLexerDefinition {
-    type Recognizer = for<'i> fn(&'i str) -> Option<&'i str>;
+    type TokenRecognizer = TokenRecognizer;
     fn recognizers(
         &self,
         state_index: StateIndex,
-    ) -> RecognizerIterator<Self::Recognizer> {
+    ) -> RecognizerIterator<Self::TokenRecognizer> {
         RecognizerIterator {
-            terminals_for_state: &LEXER_DEFINITION
-                .terminals_for_state[state_index.0][..],
-            recognizers: &LEXER_DEFINITION.recognizers,
+            token_rec_for_state: &LEXER_DEFINITION
+                .token_rec_for_state[state_index.0][..],
             index: 0,
         }
     }

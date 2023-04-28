@@ -5,26 +5,23 @@ use rustemo::lexer::{self, Token, AsStr};
 use rustemo::parser::Parser;
 use rustemo::builder::Builder;
 use rustemo::Result;
-use rustemo::lr::lexer::{LRStringLexer, LexerDefinition, RecognizerIterator};
+use rustemo::lr::lexer::{
+    StringRecognizer, LRStringLexer, LexerDefinition, RecognizerIterator,
+};
 use rustemo::lr::builder::LRBuilder;
 use rustemo::lr::parser::{LRParser, ParserDefinition};
 use rustemo::lr::parser::Action::{self, Shift, Reduce, Accept, Error};
 use rustemo::index::{StateIndex, TermIndex, NonTermIndex, ProdIndex};
-use rustemo::grammar::TerminalsState;
 use rustemo::debug::{log, logn};
-const TERMINAL_NO: usize = 6usize;
-const NONTERMINAL_NO: usize = 3usize;
-const STATE_NO: usize = 11usize;
+const TERMINAL_COUNT: usize = 6usize;
+const NONTERMINAL_COUNT: usize = 3usize;
+const STATE_COUNT: usize = 11usize;
 #[allow(dead_code)]
 const MAX_ACTIONS: usize = 5usize;
+use once_cell::sync::Lazy;
 use super::calculator_actions;
 pub type Input = str;
 pub type Context<'i> = lexer::Context<'i, Input, StateIndex>;
-use lazy_static::lazy_static;
-lazy_static! {
-    static ref REGEX_NUMBER : Regex = Regex::new(concat!("^", "\\d+(\\.\\d+)?"))
-    .unwrap();
-}
 #[allow(clippy::upper_case_acronyms)]
 #[derive(Debug, Default, Clone, Copy)]
 pub enum TokenKind {
@@ -138,8 +135,8 @@ pub enum NonTerminal {
     E(calculator_actions::E),
 }
 pub struct CalculatorParserDefinition {
-    actions: [[Action; TERMINAL_NO]; STATE_NO],
-    gotos: [[Option<StateIndex>; NONTERMINAL_NO]; STATE_NO],
+    actions: [[Action; TERMINAL_COUNT]; STATE_COUNT],
+    gotos: [[Option<StateIndex>; NONTERMINAL_COUNT]; STATE_COUNT],
 }
 pub(crate) static PARSER_DEFINITION: CalculatorParserDefinition = CalculatorParserDefinition {
     actions: [
@@ -253,103 +250,310 @@ impl CalculatorParser {
         parser.parse(context, &lexer, &mut builder)
     }
 }
-pub struct CalculatorLexerDefinition {
-    terminals_for_state: TerminalsState<MAX_ACTIONS, STATE_NO>,
-    recognizers: [fn(&str) -> Option<&str>; TERMINAL_NO],
+#[allow(dead_code)]
+pub enum Recognizer {
+    Stop,
+    StrMatch(&'static str),
+    RegexMatch(Lazy<Regex>),
 }
-#[allow(clippy::single_char_pattern)]
-pub(crate) static LEXER_DEFINITION: CalculatorLexerDefinition = CalculatorLexerDefinition {
-    terminals_for_state: [
-        [Some(1usize), None, None, None, None],
-        [Some(0usize), Some(2usize), Some(3usize), Some(4usize), Some(5usize)],
-        [Some(0usize), Some(2usize), Some(3usize), Some(4usize), Some(5usize)],
-        [Some(1usize), None, None, None, None],
-        [Some(1usize), None, None, None, None],
-        [Some(1usize), None, None, None, None],
-        [Some(1usize), None, None, None, None],
-        [Some(0usize), Some(2usize), Some(3usize), Some(4usize), Some(5usize)],
-        [Some(0usize), Some(2usize), Some(3usize), Some(4usize), Some(5usize)],
-        [Some(0usize), Some(2usize), Some(3usize), Some(4usize), Some(5usize)],
-        [Some(0usize), Some(2usize), Some(3usize), Some(4usize), Some(5usize)],
-    ],
-    recognizers: [
-        |input: &str| {
-            logn!("Recognizing <STOP> -- ");
-            if input.is_empty() {
-                log!("recognized");
-                Some("")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "Number");
-            let match_str = REGEX_NUMBER.find(input);
-            match match_str {
-                Some(x) => {
-                    let x_str = x.as_str();
-                    log!("recognized <{}>", x_str);
-                    Some(x_str)
-                }
-                None => {
+pub struct TokenRecognizer {
+    token_kind: TokenKind,
+    recognizer: Recognizer,
+    finish: bool,
+}
+impl StringRecognizer<TokenKind> for TokenRecognizer {
+    fn recognize<'i>(&self, input: &'i str) -> Option<&'i str> {
+        match &self.recognizer {
+            Recognizer::StrMatch(s) => {
+                logn!("Recognizing <{:?}> -- ", self.token_kind());
+                if input.starts_with(s) {
+                    log!("recognized");
+                    Some(s)
+                } else {
                     log!("not recognized");
                     None
                 }
             }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "Plus");
-            if input.starts_with("+") {
-                log!("recognized");
-                Some("+")
-            } else {
-                log!("not recognized");
-                None
+            Recognizer::RegexMatch(r) => {
+                logn!("Recognizing <{:?}> -- ", self.token_kind());
+                let match_str = r.find(input);
+                match match_str {
+                    Some(x) => {
+                        let x_str = x.as_str();
+                        log!("recognized <{}>", x_str);
+                        Some(x_str)
+                    }
+                    None => {
+                        log!("not recognized");
+                        None
+                    }
+                }
             }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "Minus");
-            if input.starts_with("-") {
-                log!("recognized");
-                Some("-")
-            } else {
-                log!("not recognized");
-                None
+            Recognizer::Stop => {
+                logn!("Recognizing <STOP> -- ");
+                if input.is_empty() {
+                    log!("recognized");
+                    Some("")
+                } else {
+                    log!("not recognized");
+                    None
+                }
             }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "Mul");
-            if input.starts_with("*") {
-                log!("recognized");
-                Some("*")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
-        |input: &str| {
-            logn!("Recognizing <{}> -- ", "Div");
-            if input.starts_with("/") {
-                log!("recognized");
-                Some("/")
-            } else {
-                log!("not recognized");
-                None
-            }
-        },
+        }
+    }
+    #[inline]
+    fn token_kind(&self) -> TokenKind {
+        self.token_kind
+    }
+    #[inline]
+    fn finish(&self) -> bool {
+        self.finish
+    }
+}
+pub struct CalculatorLexerDefinition {
+    token_rec_for_state: [[Option<TokenRecognizer>; MAX_ACTIONS]; STATE_COUNT],
+}
+#[allow(clippy::single_char_pattern)]
+pub(crate) static LEXER_DEFINITION: CalculatorLexerDefinition = CalculatorLexerDefinition {
+    token_rec_for_state: [
+        [
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Number,
+                recognizer: Recognizer::RegexMatch(
+                    Lazy::new(|| { Regex::new(concat!("^", "\\d+(\\.\\d+)?")).unwrap() }),
+                ),
+                finish: true,
+            }),
+            None,
+            None,
+            None,
+            None,
+        ],
+        [
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Plus,
+                recognizer: Recognizer::StrMatch("+"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Minus,
+                recognizer: Recognizer::StrMatch("-"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Mul,
+                recognizer: Recognizer::StrMatch("*"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Div,
+                recognizer: Recognizer::StrMatch("/"),
+                finish: true,
+            }),
+        ],
+        [
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Plus,
+                recognizer: Recognizer::StrMatch("+"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Minus,
+                recognizer: Recognizer::StrMatch("-"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Mul,
+                recognizer: Recognizer::StrMatch("*"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Div,
+                recognizer: Recognizer::StrMatch("/"),
+                finish: true,
+            }),
+        ],
+        [
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Number,
+                recognizer: Recognizer::RegexMatch(
+                    Lazy::new(|| { Regex::new(concat!("^", "\\d+(\\.\\d+)?")).unwrap() }),
+                ),
+                finish: true,
+            }),
+            None,
+            None,
+            None,
+            None,
+        ],
+        [
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Number,
+                recognizer: Recognizer::RegexMatch(
+                    Lazy::new(|| { Regex::new(concat!("^", "\\d+(\\.\\d+)?")).unwrap() }),
+                ),
+                finish: true,
+            }),
+            None,
+            None,
+            None,
+            None,
+        ],
+        [
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Number,
+                recognizer: Recognizer::RegexMatch(
+                    Lazy::new(|| { Regex::new(concat!("^", "\\d+(\\.\\d+)?")).unwrap() }),
+                ),
+                finish: true,
+            }),
+            None,
+            None,
+            None,
+            None,
+        ],
+        [
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Number,
+                recognizer: Recognizer::RegexMatch(
+                    Lazy::new(|| { Regex::new(concat!("^", "\\d+(\\.\\d+)?")).unwrap() }),
+                ),
+                finish: true,
+            }),
+            None,
+            None,
+            None,
+            None,
+        ],
+        [
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Plus,
+                recognizer: Recognizer::StrMatch("+"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Minus,
+                recognizer: Recognizer::StrMatch("-"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Mul,
+                recognizer: Recognizer::StrMatch("*"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Div,
+                recognizer: Recognizer::StrMatch("/"),
+                finish: true,
+            }),
+        ],
+        [
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Plus,
+                recognizer: Recognizer::StrMatch("+"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Minus,
+                recognizer: Recognizer::StrMatch("-"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Mul,
+                recognizer: Recognizer::StrMatch("*"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Div,
+                recognizer: Recognizer::StrMatch("/"),
+                finish: true,
+            }),
+        ],
+        [
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Plus,
+                recognizer: Recognizer::StrMatch("+"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Minus,
+                recognizer: Recognizer::StrMatch("-"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Mul,
+                recognizer: Recognizer::StrMatch("*"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Div,
+                recognizer: Recognizer::StrMatch("/"),
+                finish: true,
+            }),
+        ],
+        [
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Plus,
+                recognizer: Recognizer::StrMatch("+"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Minus,
+                recognizer: Recognizer::StrMatch("-"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Mul,
+                recognizer: Recognizer::StrMatch("*"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Div,
+                recognizer: Recognizer::StrMatch("/"),
+                finish: true,
+            }),
+        ],
     ],
 };
 impl LexerDefinition for CalculatorLexerDefinition {
-    type Recognizer = for<'i> fn(&'i str) -> Option<&'i str>;
+    type TokenRecognizer = TokenRecognizer;
     fn recognizers(
         &self,
         state_index: StateIndex,
-    ) -> RecognizerIterator<Self::Recognizer> {
+    ) -> RecognizerIterator<Self::TokenRecognizer> {
         RecognizerIterator {
-            terminals_for_state: &LEXER_DEFINITION
-                .terminals_for_state[state_index.0][..],
-            recognizers: &LEXER_DEFINITION.recognizers,
+            token_rec_for_state: &LEXER_DEFINITION
+                .token_rec_for_state[state_index.0][..],
             index: 0,
         }
     }

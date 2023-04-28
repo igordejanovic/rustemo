@@ -8,9 +8,12 @@ pub type Token<'i> = lexer::Token<'i, str, TokenKind>;
 pub fn name(ctx: &Context, token: Token) -> Name {
     Name::new(token.value.into(), Some(ctx.location))
 }
-pub type RegexTerm = String;
-pub fn regex_term(_ctx: &Context, token: Token) -> RegexTerm {
-    token.value[1..token.value.len() - 1].replace(r"\/", "/")
+pub type RegexTerm = ValLoc<String>;
+pub fn regex_term(ctx: &Context, token: Token) -> RegexTerm {
+    RegexTerm::new(
+        token.value[1..token.value.len() - 1].replace(r"\/", "/"),
+        Some(ctx.location),
+    )
 }
 pub type IntConst = ValLoc<u32>;
 pub fn int_const(ctx: &Context, token: Token) -> IntConst {

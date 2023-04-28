@@ -166,7 +166,20 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     RegexTerm(
-                        "\"[^\"]+\"",
+                        ValLoc {
+                            value: "\"[^\"]+\"",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 7,
+                                            column: 21,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: true,
@@ -182,7 +195,20 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     RegexTerm(
-                        "\\d{2,5}",
+                        ValLoc {
+                            value: "\\d{2,5}",
+                            location: Some(
+                                Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 8,
+                                            column: 20,
+                                        },
+                                    ),
+                                    end: None,
+                                },
+                            ),
+                        },
                     ),
                 ),
                 has_content: true,
