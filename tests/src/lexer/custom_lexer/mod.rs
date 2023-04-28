@@ -4,7 +4,9 @@ use std::fs;
 use std::path::PathBuf;
 
 use self::custom_lexer_1::CustomLexer1Parser;
+use self::custom_lexer_1_lexer::MyCustomLexer1;
 use self::custom_lexer_2::CustomLexer2Parser;
+use self::custom_lexer_2_lexer::MyCustomLexer2;
 
 mod custom_lexer_1_lexer;
 mod custom_lexer_2_lexer;
@@ -25,7 +27,7 @@ fn custom_lexer_1() {
     .iter()
     .collect::<PathBuf>();
     let bytes = std::fs::read(bytes_file).unwrap();
-    let result = CustomLexer1Parser::parse(&*bytes);
+    let result = CustomLexer1Parser::new(MyCustomLexer1::new()).parse(&bytes);
     output_cmp!(
         "src/lexer/custom_lexer/custom_lexer_1.ast",
         format!("{:#?}", result)
@@ -40,8 +42,10 @@ fn custom_lexer_2() {
     ]
     .iter()
     .collect::<PathBuf>();
+    // ANCHOR: custom-lexer
     let bytes = std::fs::read(bytes_file).unwrap();
-    let result = CustomLexer2Parser::parse(&*bytes);
+    let result = CustomLexer2Parser::new(MyCustomLexer2::new()).parse(&bytes);
+    // ANCHOR_END: custom-lexer
     output_cmp!(
         "src/lexer/custom_lexer/custom_lexer_2.ast",
         format!("{:#?}", result)

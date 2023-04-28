@@ -1,12 +1,13 @@
 pub(crate) mod actions;
 
 use quote::format_ident;
+use quote::quote;
 use rustemo::index::TermIndex;
 use std::{
     iter::repeat,
     path::{Path, PathBuf},
 };
-use syn::{parse_quote, Ident};
+use syn::{parse::Parser, parse_quote, Ident};
 
 use crate::{
     error::{Error, Result},
@@ -88,10 +89,7 @@ struct ParserGenerator<'g, 's> {
     root_symbol: Ident,
     parser: Ident,
     layout_parser: Ident,
-    builder: Ident,
     parser_definition: Ident,
-    lexer: Ident,
-    lexer_definition: Ident,
     actions_file: Ident,
     lexer_file: Ident,
     builder_file: Ident,
@@ -127,10 +125,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             format_ident!("{}", grammar.symbol_name(grammar.start_index));
         let parser = format_ident!("{}Parser", parser_name);
         let layout_parser = format_ident!("{}LayoutParser", parser_name);
-        let builder = format_ident!("{}Builder", parser_name);
         let parser_definition = format_ident!("{}Definition", parser);
-        let lexer = format_ident!("{}Lexer", parser_name);
-        let lexer_definition = format_ident!("{}Definition", lexer);
         let actions_file = format_ident!("{}_actions", file_name);
         let lexer_file = format_ident!("{}_lexer", file_name);
         let builder_file = format_ident!("{}_builder", file_name);
@@ -140,10 +135,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             root_symbol,
             parser,
             layout_parser,
-            builder,
             parser_definition,
-            lexer,
-            lexer_definition,
             actions_file,
             lexer_file,
             builder_file,
@@ -172,9 +164,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             ast.items.extend(self.generate_layout_parser()?);
         }
 
-        if let LexerType::Default = self.settings.lexer_type {
-            ast.items.extend(self.generate_lexer_definition()?);
-        }
+        ast.items.extend(self.generate_lexer_definition()?);
 
         if let BuilderType::Default = self.settings.builder_type {
             let types = SymbolTypes::new(grammar);
@@ -211,14 +201,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
     }
 
     fn generate_parser_header(&self) -> Result<syn::File> {
-        create_idents!(
-            self,
-            lexer_file,
-            lexer,
-            actions_file,
-            builder,
-            builder_file
-        );
+        create_idents!(self, lexer_file, actions_file,);
 
         let max_actions = self
             .table
@@ -266,27 +249,27 @@ impl<'g, 's> ParserGenerator<'g, 's> {
 
         };
 
-        if let LexerType::Custom = self.settings.lexer_type {
-            header.items.push(parse_quote! {
-                use super::#lexer_file::#lexer;
-            });
-        } else {
+        if let LexerType::Default = self.settings.lexer_type {
             header.items.push(parse_quote! {
                 use once_cell::sync::Lazy;
             });
+        } else {
+            header.items.push(parse_quote! {
+                use rustemo::lexer::Lexer;
+            });
         }
 
-        header.items.push(match self.settings.builder_type {
-            BuilderType::Default => parse_quote! {
+        match self.settings.builder_type {
+            BuilderType::Default => header.items.push(parse_quote! {
                 use super::#actions_file;
-            },
-            BuilderType::Generic => parse_quote! {
-                use rustemo::lr::builder::{TreeNode, TreeBuilder as #builder};
-            },
-            BuilderType::Custom => parse_quote! {
-                use super::#builder_file::{self, #builder};
-            },
-        });
+            }),
+            BuilderType::Generic => header.items.push(parse_quote! {
+                use rustemo::lr::builder::{TreeNode, TreeBuilder};
+            }),
+            BuilderType::Custom => header.items.push(parse_quote! {
+                use std::cell::RefCell;
+            }),
+        }
 
         header.items.push(match self.settings.lexer_type {
             LexerType::Default => parse_quote! {
@@ -522,18 +505,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
     }
 
     fn generate_parser_definition(&self) -> Result<Vec<syn::Item>> {
-        create_idents!(
-            self,
-            parser,
-            parser_definition,
-            layout_parser,
-            actions_file,
-            root_symbol,
-            builder_file,
-            builder,
-            lexer,
-        );
-        let parser_file = format_ident!("{}", self.file_name);
+        create_idents!(self, parser, parser_definition, layout_parser,);
         let mut ast: Vec<syn::Item> = vec![];
 
         ast.push(parse_quote! {
@@ -606,13 +578,6 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             }
         });
 
-        ast.push(parse_quote! {
-            #[derive(Default)]
-            pub struct #parser{
-                content: Option<<Input as ToOwned>::Owned>
-            }
-        });
-
         let partial_parse: syn::Expr = if self.settings.partial_parse {
             parse_quote! { true }
         } else {
@@ -624,7 +589,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             parse_stmt.push(parse_quote! {
                 loop {
                     log!("** Parsing content");
-                    let result = parser.parse(context, &lexer, &mut builder);
+                    let result = parser.parse(context, lexer, builder);
                     if result.is_err() {
                         let pos = context.position;
                         log!("** Parsing layout");
@@ -638,7 +603,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             });
         } else {
             let ret_expr: syn::Expr = parse_quote! {
-                parser.parse(context, &lexer, &mut builder)
+                parser.parse(context, lexer, builder)
             };
             parse_stmt.push(syn::Stmt::Expr(ret_expr));
         }
@@ -647,51 +612,127 @@ impl<'g, 's> ParserGenerator<'g, 's> {
 
         let parse_result: syn::Type = match self.settings.builder_type {
             BuilderType::Default => parse_quote! {
-                #actions_file::#root_symbol
+                <DefaultBuilder as Builder>::Output
             },
             BuilderType::Generic => parse_quote! {
-                TreeNode<'i, str, super::#parser_file::TokenKind>
+                <TreeBuilder<'i, Input, TokenKind> as Builder>::Output
             },
             BuilderType::Custom => parse_quote! {
-                #builder_file::#root_symbol
+                B::Output
             },
         };
 
-        let lexer_instance: syn::Stmt = match self.settings.lexer_type {
-            LexerType::Default => parse_quote! {
-                let lexer = LRStringLexer::new(&LEXER_DEFINITION, #partial_parse, #skip_ws);
-            },
-            LexerType::Custom => parse_quote! {
-                let lexer = #lexer::new();
-            },
+        let mut lexer_instance: Vec<syn::Stmt> = vec![];
+        match self.settings.lexer_type {
+            LexerType::Default => {
+                lexer_instance.push(parse_quote! {
+                    let local_lexer = LRStringLexer::new(&LEXER_DEFINITION, #partial_parse, #skip_ws);
+                });
+                lexer_instance.push(parse_quote! {
+                    let lexer = &local_lexer;
+                })
+            }
+            LexerType::Custom => lexer_instance.push(parse_quote! {
+                let lexer = &self.lexer;
+            }),
         };
+
+        let mut builder_instance: Vec<syn::Stmt> = vec![];
+        match self.settings.builder_type {
+            BuilderType::Default => {
+                builder_instance.push(
+                    parse_quote!{let mut local_builder = DefaultBuilder::new();}
+                );
+                builder_instance.push(
+                    parse_quote!{let builder = &mut local_builder;}
+                )
+            },
+            BuilderType::Generic => {
+                builder_instance.push(
+                    parse_quote!{let mut local_builder = TreeBuilder::new();}
+                );
+                builder_instance.push(
+                    parse_quote!{let builder = &mut local_builder;}
+                )
+            },
+            BuilderType::Custom =>
+                // In case of the custom builder we use "interior mutability"
+                // pattern thorough RefCell type as we need parser to use shared
+                // reference while the inner builder needs to be mutable as it
+                // keeps the output of the build process. But, we know for sure
+                // that there will be only one mutable reference to the builder.
+                builder_instance.push(parse_quote!{let builder = &mut *self.builder.borrow_mut();})
+        };
+
+        let mut new_parameters: Vec<syn::FnArg> = vec![];
+        let mut parser_fields: Vec<syn::Field> = vec![];
+        let mut parser_fields_values: Vec<syn::FieldValue> = vec![];
+        let mut parser_generics: syn::Generics = parse_quote! {};
+        let mut parser_impl_generics: syn::Generics = parse_quote! {};
+        parser_impl_generics.params.push(parse_quote! { 'i });
+        if let LexerType::Custom = self.settings.lexer_type {
+            new_parameters.push(parse_quote! { lexer: L });
+            parser_fields.push(
+                syn::Field::parse_named.parse2(quote! { lexer: L }).unwrap(),
+            );
+            parser_fields_values.push(parse_quote! { lexer });
+            parser_generics.params.push(parse_quote! { L });
+            parser_impl_generics
+                .params
+                .push(parse_quote! { L: Lexer<Input, StateIndex, TokenKind> });
+        }
+        if let BuilderType::Custom = self.settings.builder_type {
+            new_parameters.push(parse_quote! { builder: B });
+            parser_fields.push(
+                syn::Field::parse_named
+                    .parse2(quote! { builder: RefCell<B> })
+                    .unwrap(),
+            );
+            parser_fields_values
+                .push(parse_quote! { builder: RefCell::new(builder) });
+            parser_generics.params.push(parse_quote! { B });
+            parser_impl_generics
+                .params
+                .push(parse_quote! { B: LRBuilder<'i, Input, TokenKind> });
+        }
+
+        ast.push(parse_quote! {
+            #[derive(Default)]
+            pub struct #parser #parser_generics{
+                content: Option<<Input as ToOwned>::Owned>,
+                #(#parser_fields),*
+            }
+        });
 
         ast.push(parse_quote! {
             #[allow(dead_code)]
-            impl #parser
+            impl #parser_impl_generics #parser #parser_generics
             {
-                pub fn new() -> Self {
-                    Default::default()
+                pub fn new(#(#new_parameters),*) -> Self {
+                    Self {
+                        content: None,
+                        #(#parser_fields_values),*
+                    }
                 }
 
                 #[allow(clippy::needless_lifetimes)]
-                pub fn parse_file<'i, P: AsRef<std::path::Path>>(&'i mut self, file: P)
+                pub fn parse_file<P: AsRef<std::path::Path>>(&'i mut self, file: P)
                                                              -> Result<#parse_result> {
                     self.content = Some(<Input as rustemo::lexer::Input>::read_file(&file)?);
                     let mut context = Context::new(
                         file.as_ref().to_string_lossy().to_string(),
                         self.content.as_ref().unwrap());
-                    Self::inner_parse(&mut context)
+                    self.inner_parse(&mut context)
                 }
                 #[allow(clippy::needless_lifetimes)]
-                pub fn parse<'i>(input: &'i Input) -> Result<#parse_result> {
+                pub fn parse(&self, input: &'i Input) -> Result<#parse_result> {
                     let mut context = Context::new("<str>".to_string(), input);
-                    Self::inner_parse(&mut context)
+                    self.inner_parse(&mut context)
                 }
                 #[allow(clippy::needless_lifetimes)]
-                fn inner_parse<'i>(context: &mut Context<'i>) -> Result<#parse_result> {
-                    #lexer_instance
-                    let mut builder = #builder::new();
+                fn inner_parse(&self, context: &mut Context<'i>) -> Result<#parse_result> {
+                    #(#lexer_instance);*
+                    #(#builder_instance);*
                     let mut parser = LRParser::new(&PARSER_DEFINITION, StateIndex(0));
                     #(#parse_stmt)*
                 }
@@ -702,12 +743,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
     }
 
     fn generate_layout_parser(&self) -> Result<Vec<syn::Item>> {
-        create_idents!(
-            self,
-            parser_definition,
-            lexer_definition,
-            layout_parser,
-        );
+        create_idents!(self, parser_definition, layout_parser,);
         let layout_state = &self.table.layout_state.expect("No Layout state!");
         let mut ast: Vec<syn::Item> = vec![];
         let layout_state = layout_state.0;
@@ -728,7 +764,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                     let mut builder = SliceBuilder::new();
 
                     context.layout_ahead = <LRParser<#parser_definition>
-                                            as rustemo::parser::Parser<'_, Input, LRStringLexer<#lexer_definition>,
+                                            as rustemo::parser::Parser<'_, Input, LRStringLexer<DefaultLexerDefinition>,
                                                 SliceBuilder<'_, Input>,
                                                 StateIndex,
                                                 TokenKind>>::parse(&mut #layout_parser::default().0,
@@ -749,8 +785,6 @@ impl<'g, 's> ParserGenerator<'g, 's> {
     }
 
     fn generate_lexer_definition(&self) -> Result<Vec<syn::Item>> {
-        create_idents!(self, lexer_definition,);
-
         let mut ast: Vec<syn::Item> = vec![];
 
         if let LexerType::Default = self.settings.lexer_type {
@@ -849,6 +883,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             })
         } else {
             ast.push(parse_quote! {
+                #[allow(dead_code)]
                 pub struct TokenRecognizer {
                     token_kind: TokenKind,
                 }
@@ -856,7 +891,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         }
 
         ast.push(parse_quote! {
-            pub struct #lexer_definition {
+            pub struct DefaultLexerDefinition {
                 token_rec_for_state: [[Option<TokenRecognizer>; MAX_ACTIONS]; STATE_COUNT],
             }
         });
@@ -932,7 +967,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         ast.push(
             parse_quote!{
                 #[allow(clippy::single_char_pattern)]
-                pub(in crate) static LEXER_DEFINITION: #lexer_definition = #lexer_definition {
+                pub(in crate) static LEXER_DEFINITION: DefaultLexerDefinition = DefaultLexerDefinition {
                     token_rec_for_state: [#(#terminals_for_state),*],
                 };
             }
@@ -940,7 +975,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
 
         ast.push(
             parse_quote!{
-                impl LexerDefinition for #lexer_definition {
+                impl LexerDefinition for DefaultLexerDefinition {
                     type TokenRecognizer = TokenRecognizer;
 
                     fn recognizers(&self, state_index: StateIndex) -> RecognizerIterator<Self::TokenRecognizer> {
@@ -957,18 +992,18 @@ impl<'g, 's> ParserGenerator<'g, 's> {
     }
 
     fn generate_builder(&self, types: &SymbolTypes) -> Result<Vec<syn::Item>> {
-        create_idents!(self, actions_file, root_symbol, builder,);
+        create_idents!(self, actions_file, root_symbol,);
         let mut ast: Vec<syn::Item> = vec![];
         let context_var = format_ident!("context");
 
         ast.push(parse_quote! {
-            struct #builder {
+            pub struct DefaultBuilder {
                 res_stack: Vec<Symbol>,
             }
         });
 
         ast.push(parse_quote! {
-            impl Builder for #builder
+            impl Builder for DefaultBuilder
             {
                 type Output = #actions_file::#root_symbol;
 
@@ -1106,7 +1141,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         let reduce_match_arms = reduce_match_arms;
 
         ast.push(parse_quote! {
-            impl<'i> LRBuilder<'i, Input, TokenKind> for #builder
+            impl<'i> LRBuilder<'i, Input, TokenKind> for DefaultBuilder
             {
 
                 #![allow(unused_variables)]

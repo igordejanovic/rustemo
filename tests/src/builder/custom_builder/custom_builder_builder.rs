@@ -12,12 +12,12 @@ pub type E = i32;
 pub type Context<'i> = lexer::Context<'i, str, StateIndex>;
 
 /// Custom builder that perform arithmetic operations.
-pub struct CustomBuilderBuilder {
+pub struct MyCustomBuilder {
     // A stack used to shift numbers and keep intermediate result
     stack: Vec<E>,
 }
 
-impl Builder for CustomBuilderBuilder {
+impl Builder for MyCustomBuilder {
     // Result of the build process will be a number
     type Output = E;
 
@@ -33,7 +33,7 @@ impl Builder for CustomBuilderBuilder {
 // ANCHOR_END: custom-builder-base
 
 // ANCHOR: custom-builder-lr
-impl<'i> LRBuilder<'i, str, TokenKind> for CustomBuilderBuilder {
+impl<'i> LRBuilder<'i, str, TokenKind> for MyCustomBuilder {
     fn shift_action(
         &mut self,
         _context: &mut Context<'i>,

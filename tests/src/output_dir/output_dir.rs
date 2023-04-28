@@ -172,33 +172,41 @@ pub struct OutputDirParser {
     content: Option<<Input as ToOwned>::Owned>,
 }
 #[allow(dead_code)]
-impl OutputDirParser {
+impl<'i> OutputDirParser {
     pub fn new() -> Self {
-        Default::default()
+        Self { content: None }
     }
     #[allow(clippy::needless_lifetimes)]
-    pub fn parse_file<'i, P: AsRef<std::path::Path>>(
+    pub fn parse_file<P: AsRef<std::path::Path>>(
         &'i mut self,
         file: P,
-    ) -> Result<output_dir_actions::A> {
+    ) -> Result<<DefaultBuilder as Builder>::Output> {
         self.content = Some(<Input as rustemo::lexer::Input>::read_file(&file)?);
         let mut context = Context::new(
             file.as_ref().to_string_lossy().to_string(),
             self.content.as_ref().unwrap(),
         );
-        Self::inner_parse(&mut context)
+        self.inner_parse(&mut context)
     }
     #[allow(clippy::needless_lifetimes)]
-    pub fn parse<'i>(input: &'i Input) -> Result<output_dir_actions::A> {
+    pub fn parse(
+        &self,
+        input: &'i Input,
+    ) -> Result<<DefaultBuilder as Builder>::Output> {
         let mut context = Context::new("<str>".to_string(), input);
-        Self::inner_parse(&mut context)
+        self.inner_parse(&mut context)
     }
     #[allow(clippy::needless_lifetimes)]
-    fn inner_parse<'i>(context: &mut Context<'i>) -> Result<output_dir_actions::A> {
-        let lexer = LRStringLexer::new(&LEXER_DEFINITION, false, true);
-        let mut builder = OutputDirBuilder::new();
+    fn inner_parse(
+        &self,
+        context: &mut Context<'i>,
+    ) -> Result<<DefaultBuilder as Builder>::Output> {
+        let local_lexer = LRStringLexer::new(&LEXER_DEFINITION, false, true);
+        let lexer = &local_lexer;
+        let mut local_builder = DefaultBuilder::new();
+        let builder = &mut local_builder;
         let mut parser = LRParser::new(&PARSER_DEFINITION, StateIndex(0));
-        parser.parse(context, &lexer, &mut builder)
+        parser.parse(context, lexer, builder)
     }
 }
 pub(crate) static RECOGNIZERS: [Option<Lazy<Regex>>; TERMINAL_COUNT] = [
@@ -266,11 +274,11 @@ impl StringRecognizer<TokenKind> for TokenRecognizer {
         self.finish
     }
 }
-pub struct OutputDirLexerDefinition {
+pub struct DefaultLexerDefinition {
     token_rec_for_state: [[Option<TokenRecognizer>; MAX_ACTIONS]; STATE_COUNT],
 }
 #[allow(clippy::single_char_pattern)]
-pub(crate) static LEXER_DEFINITION: OutputDirLexerDefinition = OutputDirLexerDefinition {
+pub(crate) static LEXER_DEFINITION: DefaultLexerDefinition = DefaultLexerDefinition {
     token_rec_for_state: [
         [
             Some(TokenRecognizer {
@@ -346,7 +354,7 @@ pub(crate) static LEXER_DEFINITION: OutputDirLexerDefinition = OutputDirLexerDef
         ],
     ],
 };
-impl LexerDefinition for OutputDirLexerDefinition {
+impl LexerDefinition for DefaultLexerDefinition {
     type TokenRecognizer = TokenRecognizer;
     fn recognizers(
         &self,
@@ -359,10 +367,10 @@ impl LexerDefinition for OutputDirLexerDefinition {
         }
     }
 }
-struct OutputDirBuilder {
+pub struct DefaultBuilder {
     res_stack: Vec<Symbol>,
 }
-impl Builder for OutputDirBuilder {
+impl Builder for DefaultBuilder {
     type Output = output_dir_actions::A;
     fn new() -> Self {
         Self { res_stack: vec![] }
@@ -374,7 +382,7 @@ impl Builder for OutputDirBuilder {
         }
     }
 }
-impl<'i> LRBuilder<'i, Input, TokenKind> for OutputDirBuilder {
+impl<'i> LRBuilder<'i, Input, TokenKind> for DefaultBuilder {
     #![allow(unused_variables)]
     fn shift_action(
         &mut self,

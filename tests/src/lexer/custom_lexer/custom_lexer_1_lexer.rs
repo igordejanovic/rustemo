@@ -9,19 +9,19 @@ use rustemo::{
 /// We are parsing a slice of bytes.
 pub type Input = [u8];
 
-pub struct CustomLexer1Lexer();
+pub struct MyCustomLexer1();
 
-impl CustomLexer1Lexer {
+impl MyCustomLexer1 {
     pub fn new() -> Self {
-        CustomLexer1Lexer()
+        MyCustomLexer1()
     }
 }
 
 /// This custom lexer will recognize a VarInt in the input by returning a slice
 /// of the input where first bytes has highest bit set while the last byte
 /// highest bit is .
-impl<'i> Lexer<'i, Input, StateIndex, TokenKind> for CustomLexer1Lexer {
-    fn next_token(
+impl Lexer<Input, StateIndex, TokenKind> for MyCustomLexer1 {
+    fn next_token<'i>(
         &self,
         context: &mut Context<'i, Input, StateIndex>,
     ) -> Result<Token<'i, Input, TokenKind>> {

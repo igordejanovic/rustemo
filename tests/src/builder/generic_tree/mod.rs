@@ -9,7 +9,7 @@ rustemo_mod!(generic_tree, "/src/builder/generic_tree");
 // ANCHOR: generic_tree
 #[test]
 fn generic_tree() {
-    let result = GenericTreeParser::parse("a 42 a 3 b");
+    let result = GenericTreeParser::new().parse("a 42 a 3 b");
     output_cmp!(
         "src/builder/generic_tree/generic_tree.ast",
         format!("{:#?}", result)

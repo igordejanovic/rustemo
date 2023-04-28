@@ -18,12 +18,12 @@ use std::{cmp::min, iter::once, ops::Range, path::Path};
 ///   grammar. This is the type that describes the kinds of token lexer can
 ///   produce.
 ///
-pub trait Lexer<'i, I: Input + ?Sized, ST, TK> {
+pub trait Lexer<I: Input + ?Sized, ST, TK> {
     /// Given the current context, this method should return a result with token
     /// found ahead of the current location or error indicating what is
     /// expected. Context should be updated to reflect the progress in the
     /// input, i.e. its
-    fn next_token(
+    fn next_token<'i>(
         &self,
         context: &mut Context<'i, I, ST>,
     ) -> Result<Token<'i, I, TK>>;

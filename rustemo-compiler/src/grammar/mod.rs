@@ -327,7 +327,7 @@ impl FromStr for Grammar {
 impl Grammar {
     /// Parses given string and constructs a Grammar instance
     fn from_string<G: AsRef<str>>(grammar_str: G) -> Result<Self> {
-        RustemoParser::parse(grammar_str.as_ref())?.try_into()
+        RustemoParser::new().parse(grammar_str.as_ref())?.try_into()
     }
 
     /// Parses given file and constructs a Grammar instance

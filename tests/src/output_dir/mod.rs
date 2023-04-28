@@ -19,7 +19,7 @@ mod output_dir_act_actions;
 
 #[test]
 fn output_dir() {
-    let result = OutputDirParser::parse("b b b 1");
+    let result = OutputDirParser::new().parse("b b b 1");
     output_cmp!("src/output_dir/output_dir.ast", format!("{:#?}", result));
 
     // Both parser and actions are generated in the source tree
@@ -29,7 +29,7 @@ fn output_dir() {
 
 #[test]
 fn output_dir_act() {
-    let result = OutputDirActParser::parse("b b b 1");
+    let result = OutputDirActParser::new().parse("b b b 1");
     output_cmp!(
         "src/output_dir/output_dir_act.ast",
         format!("{:#?}", result)

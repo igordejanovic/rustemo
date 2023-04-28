@@ -9,7 +9,7 @@ use self::use_context::UseContextParser;
 // ANCHOR: use_context
 #[test]
 fn use_context() {
-    let result = UseContextParser::parse("a 1 42 b");
+    let result = UseContextParser::new().parse("a 1 42 b");
     output_cmp!(
         "src/builder/use_context/use_context.ast",
         format!("{:#?}", result)

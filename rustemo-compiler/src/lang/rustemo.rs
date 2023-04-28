@@ -13765,35 +13765,43 @@ pub struct RustemoParser {
     content: Option<<Input as ToOwned>::Owned>,
 }
 #[allow(dead_code)]
-impl RustemoParser {
+impl<'i> RustemoParser {
     pub fn new() -> Self {
-        Default::default()
+        Self { content: None }
     }
     #[allow(clippy::needless_lifetimes)]
-    pub fn parse_file<'i, P: AsRef<std::path::Path>>(
+    pub fn parse_file<P: AsRef<std::path::Path>>(
         &'i mut self,
         file: P,
-    ) -> Result<rustemo_actions::File> {
+    ) -> Result<<DefaultBuilder as Builder>::Output> {
         self.content = Some(<Input as rustemo::lexer::Input>::read_file(&file)?);
         let mut context = Context::new(
             file.as_ref().to_string_lossy().to_string(),
             self.content.as_ref().unwrap(),
         );
-        Self::inner_parse(&mut context)
+        self.inner_parse(&mut context)
     }
     #[allow(clippy::needless_lifetimes)]
-    pub fn parse<'i>(input: &'i Input) -> Result<rustemo_actions::File> {
+    pub fn parse(
+        &self,
+        input: &'i Input,
+    ) -> Result<<DefaultBuilder as Builder>::Output> {
         let mut context = Context::new("<str>".to_string(), input);
-        Self::inner_parse(&mut context)
+        self.inner_parse(&mut context)
     }
     #[allow(clippy::needless_lifetimes)]
-    fn inner_parse<'i>(context: &mut Context<'i>) -> Result<rustemo_actions::File> {
-        let lexer = LRStringLexer::new(&LEXER_DEFINITION, false, false);
-        let mut builder = RustemoBuilder::new();
+    fn inner_parse(
+        &self,
+        context: &mut Context<'i>,
+    ) -> Result<<DefaultBuilder as Builder>::Output> {
+        let local_lexer = LRStringLexer::new(&LEXER_DEFINITION, false, false);
+        let lexer = &local_lexer;
+        let mut local_builder = DefaultBuilder::new();
+        let builder = &mut local_builder;
         let mut parser = LRParser::new(&PARSER_DEFINITION, StateIndex(0));
         loop {
             log!("** Parsing content");
-            let result = parser.parse(context, &lexer, &mut builder);
+            let result = parser.parse(context, lexer, builder);
             if result.is_err() {
                 let pos = context.position;
                 log!("** Parsing layout");
@@ -13818,7 +13826,7 @@ impl RustemoLayoutParser {
         > as rustemo::parser::Parser<
             '_,
             Input,
-            LRStringLexer<RustemoLexerDefinition>,
+            LRStringLexer<DefaultLexerDefinition>,
             SliceBuilder<'_, Input>,
             StateIndex,
             TokenKind,
@@ -13957,11 +13965,11 @@ impl StringRecognizer<TokenKind> for TokenRecognizer {
         self.finish
     }
 }
-pub struct RustemoLexerDefinition {
+pub struct DefaultLexerDefinition {
     token_rec_for_state: [[Option<TokenRecognizer>; MAX_ACTIONS]; STATE_COUNT],
 }
 #[allow(clippy::single_char_pattern)]
-pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinition {
+pub(crate) static LEXER_DEFINITION: DefaultLexerDefinition = DefaultLexerDefinition {
     token_rec_for_state: [
         [
             Some(TokenRecognizer {
@@ -18610,7 +18618,7 @@ pub(crate) static LEXER_DEFINITION: RustemoLexerDefinition = RustemoLexerDefinit
         ],
     ],
 };
-impl LexerDefinition for RustemoLexerDefinition {
+impl LexerDefinition for DefaultLexerDefinition {
     type TokenRecognizer = TokenRecognizer;
     fn recognizers(
         &self,
@@ -18623,10 +18631,10 @@ impl LexerDefinition for RustemoLexerDefinition {
         }
     }
 }
-struct RustemoBuilder {
+pub struct DefaultBuilder {
     res_stack: Vec<Symbol>,
 }
-impl Builder for RustemoBuilder {
+impl Builder for DefaultBuilder {
     type Output = rustemo_actions::File;
     fn new() -> Self {
         Self { res_stack: vec![] }
@@ -18638,7 +18646,7 @@ impl Builder for RustemoBuilder {
         }
     }
 }
-impl<'i> LRBuilder<'i, Input, TokenKind> for RustemoBuilder {
+impl<'i> LRBuilder<'i, Input, TokenKind> for DefaultBuilder {
     #![allow(unused_variables)]
     fn shift_action(
         &mut self,

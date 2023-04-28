@@ -7,7 +7,7 @@ use crate::{
 pub trait Parser<'i, I, L, B, ST, TK>
 where
     I: Input + ?Sized,
-    L: Lexer<'i, I, ST, TK>,
+    L: Lexer<I, ST, TK>,
     B: Builder,
 {
     fn parse(

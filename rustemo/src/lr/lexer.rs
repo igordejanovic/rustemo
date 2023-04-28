@@ -53,13 +53,13 @@ where
     }
 }
 
-impl<'i, D, TK, TR> Lexer<'i, str, StateIndex, TK> for LRStringLexer<D>
+impl<D, TK, TR> Lexer<str, StateIndex, TK> for LRStringLexer<D>
 where
     D: LexerDefinition<TokenRecognizer = TR>,
     TK: From<TermIndex> + AsStr + Default,
     TR: StringRecognizer<TK> + 'static,
 {
-    fn next_token(
+    fn next_token<'i>(
         &self,
         context: &mut Context<'i, str, StateIndex>,
     ) -> Result<Token<'i, str, TK>> {

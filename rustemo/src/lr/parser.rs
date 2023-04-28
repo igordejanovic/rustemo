@@ -104,7 +104,7 @@ impl<'i, I, D, L, B, TK> Parser<'i, I, L, B, StateIndex, TK> for LRParser<D>
 where
     I: Debug + Input + ?Sized,
     D: ParserDefinition,
-    L: Lexer<'i, I, StateIndex, TK>,
+    L: Lexer<I, StateIndex, TK>,
     B: LRBuilder<'i, I, TK>,
     TK: Debug + Into<TermIndex> + Copy,
 {

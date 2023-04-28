@@ -10,11 +10,11 @@ use rustemo::{
 /// We are parsing a slice of bytes.
 pub type Input = [u8];
 
-pub struct CustomLexer2Lexer();
+pub struct MyCustomLexer2();
 
-impl CustomLexer2Lexer {
+impl MyCustomLexer2 {
     pub fn new() -> Self {
-        CustomLexer2Lexer()
+        MyCustomLexer2()
     }
 }
 
@@ -22,8 +22,8 @@ impl CustomLexer2Lexer {
 /// constituents: MSBByte (if highest bit is set), NonMSBByte (highest bit is
 /// not set). How these bytes is organized into VarInts is defined by the
 /// grammar and the transformation to a numeric value is done in actions.
-impl<'i> Lexer<'i, Input, StateIndex, TokenKind> for CustomLexer2Lexer {
-    fn next_token(
+impl Lexer<Input, StateIndex, TokenKind> for MyCustomLexer2 {
+    fn next_token<'i>(
         &self,
         context: &mut Context<'i, Input, StateIndex>,
     ) -> Result<Token<'i, Input, TokenKind>> {

@@ -22,7 +22,7 @@ fn main() {
         .expect("Failed to read line.");
 
     // Parse the line and get the result.
-    let result = CalculatorParser::parse(&expression);
+    let result = CalculatorParser::new().parse(&expression);
 
     // Print the result using Debug formatter.
     println!("{:#?}", result);

@@ -221,40 +221,56 @@ pub struct CalculatorParser {
     content: Option<<Input as ToOwned>::Owned>,
 }
 #[allow(dead_code)]
-impl CalculatorParser {
+impl<'i> CalculatorParser {
     pub fn new() -> Self {
-        Default::default()
+        Self { content: None }
     }
     #[allow(clippy::needless_lifetimes)]
-    pub fn parse_file<'i, P: AsRef<std::path::Path>>(
+    pub fn parse_file<P: AsRef<std::path::Path>>(
         &'i mut self,
         file: P,
-    ) -> Result<calculator_actions::E> {
+    ) -> Result<<DefaultBuilder as Builder>::Output> {
         self.content = Some(<Input as rustemo::lexer::Input>::read_file(&file)?);
         let mut context = Context::new(
             file.as_ref().to_string_lossy().to_string(),
             self.content.as_ref().unwrap(),
         );
-        Self::inner_parse(&mut context)
+        self.inner_parse(&mut context)
     }
     #[allow(clippy::needless_lifetimes)]
-    pub fn parse<'i>(input: &'i Input) -> Result<calculator_actions::E> {
+    pub fn parse(
+        &self,
+        input: &'i Input,
+    ) -> Result<<DefaultBuilder as Builder>::Output> {
         let mut context = Context::new("<str>".to_string(), input);
-        Self::inner_parse(&mut context)
+        self.inner_parse(&mut context)
     }
     #[allow(clippy::needless_lifetimes)]
-    fn inner_parse<'i>(context: &mut Context<'i>) -> Result<calculator_actions::E> {
-        let lexer = LRStringLexer::new(&LEXER_DEFINITION, false, true);
-        let mut builder = CalculatorBuilder::new();
+    fn inner_parse(
+        &self,
+        context: &mut Context<'i>,
+    ) -> Result<<DefaultBuilder as Builder>::Output> {
+        let local_lexer = LRStringLexer::new(&LEXER_DEFINITION, false, true);
+        let lexer = &local_lexer;
+        let mut local_builder = DefaultBuilder::new();
+        let builder = &mut local_builder;
         let mut parser = LRParser::new(&PARSER_DEFINITION, StateIndex(0));
-        parser.parse(context, &lexer, &mut builder)
+        parser.parse(context, lexer, builder)
     }
 }
+pub(crate) static RECOGNIZERS: [Option<Lazy<Regex>>; TERMINAL_COUNT] = [
+    None,
+    Some(Lazy::new(|| { Regex::new(concat!("^", "\\d+(\\.\\d+)?")).unwrap() })),
+    None,
+    None,
+    None,
+    None,
+];
 #[allow(dead_code)]
 pub enum Recognizer {
     Stop,
     StrMatch(&'static str),
-    RegexMatch(Lazy<Regex>),
+    RegexMatch(usize),
 }
 pub struct TokenRecognizer {
     token_kind: TokenKind,
@@ -276,7 +292,7 @@ impl StringRecognizer<TokenKind> for TokenRecognizer {
             }
             Recognizer::RegexMatch(r) => {
                 logn!("Recognizing <{:?}> -- ", self.token_kind());
-                let match_str = r.find(input);
+                let match_str = RECOGNIZERS[*r].as_ref().unwrap().find(input);
                 match match_str {
                     Some(x) => {
                         let x_str = x.as_str();
@@ -310,18 +326,16 @@ impl StringRecognizer<TokenKind> for TokenRecognizer {
         self.finish
     }
 }
-pub struct CalculatorLexerDefinition {
+pub struct DefaultLexerDefinition {
     token_rec_for_state: [[Option<TokenRecognizer>; MAX_ACTIONS]; STATE_COUNT],
 }
 #[allow(clippy::single_char_pattern)]
-pub(crate) static LEXER_DEFINITION: CalculatorLexerDefinition = CalculatorLexerDefinition {
+pub(crate) static LEXER_DEFINITION: DefaultLexerDefinition = DefaultLexerDefinition {
     token_rec_for_state: [
         [
             Some(TokenRecognizer {
                 token_kind: TokenKind::Number,
-                recognizer: Recognizer::RegexMatch(
-                    Lazy::new(|| { Regex::new(concat!("^", "\\d+(\\.\\d+)?")).unwrap() }),
-                ),
+                recognizer: Recognizer::RegexMatch(1usize),
                 finish: true,
             }),
             None,
@@ -386,9 +400,7 @@ pub(crate) static LEXER_DEFINITION: CalculatorLexerDefinition = CalculatorLexerD
         [
             Some(TokenRecognizer {
                 token_kind: TokenKind::Number,
-                recognizer: Recognizer::RegexMatch(
-                    Lazy::new(|| { Regex::new(concat!("^", "\\d+(\\.\\d+)?")).unwrap() }),
-                ),
+                recognizer: Recognizer::RegexMatch(1usize),
                 finish: true,
             }),
             None,
@@ -399,9 +411,7 @@ pub(crate) static LEXER_DEFINITION: CalculatorLexerDefinition = CalculatorLexerD
         [
             Some(TokenRecognizer {
                 token_kind: TokenKind::Number,
-                recognizer: Recognizer::RegexMatch(
-                    Lazy::new(|| { Regex::new(concat!("^", "\\d+(\\.\\d+)?")).unwrap() }),
-                ),
+                recognizer: Recognizer::RegexMatch(1usize),
                 finish: true,
             }),
             None,
@@ -412,9 +422,7 @@ pub(crate) static LEXER_DEFINITION: CalculatorLexerDefinition = CalculatorLexerD
         [
             Some(TokenRecognizer {
                 token_kind: TokenKind::Number,
-                recognizer: Recognizer::RegexMatch(
-                    Lazy::new(|| { Regex::new(concat!("^", "\\d+(\\.\\d+)?")).unwrap() }),
-                ),
+                recognizer: Recognizer::RegexMatch(1usize),
                 finish: true,
             }),
             None,
@@ -425,9 +433,7 @@ pub(crate) static LEXER_DEFINITION: CalculatorLexerDefinition = CalculatorLexerD
         [
             Some(TokenRecognizer {
                 token_kind: TokenKind::Number,
-                recognizer: Recognizer::RegexMatch(
-                    Lazy::new(|| { Regex::new(concat!("^", "\\d+(\\.\\d+)?")).unwrap() }),
-                ),
+                recognizer: Recognizer::RegexMatch(1usize),
                 finish: true,
             }),
             None,
@@ -545,7 +551,7 @@ pub(crate) static LEXER_DEFINITION: CalculatorLexerDefinition = CalculatorLexerD
         ],
     ],
 };
-impl LexerDefinition for CalculatorLexerDefinition {
+impl LexerDefinition for DefaultLexerDefinition {
     type TokenRecognizer = TokenRecognizer;
     fn recognizers(
         &self,
@@ -558,10 +564,10 @@ impl LexerDefinition for CalculatorLexerDefinition {
         }
     }
 }
-struct CalculatorBuilder {
+pub struct DefaultBuilder {
     res_stack: Vec<Symbol>,
 }
-impl Builder for CalculatorBuilder {
+impl Builder for DefaultBuilder {
     type Output = calculator_actions::E;
     fn new() -> Self {
         Self { res_stack: vec![] }
@@ -573,7 +579,7 @@ impl Builder for CalculatorBuilder {
         }
     }
 }
-impl<'i> LRBuilder<'i, Input, TokenKind> for CalculatorBuilder {
+impl<'i> LRBuilder<'i, Input, TokenKind> for DefaultBuilder {
     #![allow(unused_variables)]
     fn shift_action(
         &mut self,
