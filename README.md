@@ -5,9 +5,11 @@ Status](https://img.shields.io/badge/docs-latest-green.svg)](https://igordejanov
 
 LR/GLR parser generator for Rust (currently only LR).
 
-**Status:** In beta. Fairly complete feature set for the initial release. Docs
-is WIP. Not yet optimized for speed so don't expect blazing performance.
-Feedback welcome!
+**Status:** In beta. Fairly complete feature set for the initial release. Some
+parts of docs are WIP. Release is due as soon as the docs are completed. Not yet
+optimized for speed so don't expect blazing performance. 
+
+Feedback is welcome!
 
 Be sure to check [the docs](https://igordejanovic.github.io/rustemo/)!
 
@@ -48,7 +50,7 @@ Be sure to check [the docs](https://igordejanovic.github.io/rustemo/)!
   Default lexers and builders are provided/generated out-of-the box but the user
   can choose to write custom lexer and/or builder.
 
-  When custom lexer/builder is provided Rustemo can be used to parse virtually
+  When a custom lexer/builder is provided Rustemo can be used to parse virtually
   any kind of sequence and also build any kind of output.
 
 - **Inference of AST node types from the grammar**
@@ -85,21 +87,20 @@ Be sure to check [the docs](https://igordejanovic.github.io/rustemo/)!
 - [x] Repetition modifiers (e.g. separator)
 - [x] Disambiguation filters: priorities, associativities.
 - [x] Rule/production meta-data. E.g. production kinds.
-- [x] CLI and API. A `rustemo` is available that can be called on Rustemo
-      grammars. Also an API enables integrating parser compiling into Rust
-      `build.rs` scripts. See [the calculator example](./examples/calculator/)
-      or [integration tests](./tests/).
+- [x] CLI and API. A `rcomp` compiler CLI is available that can be called on
+      Rustemo grammars. Also an API enables integrating parser compiling into
+      Rust `build.rs` scripts. See [the calculator
+      example](./examples/calculator/) or [integration tests](./tests/).
 - [x] Tracking of position and reporting error with line/column works.
 - [x] Support for a layout (comments, whitespaces given as CFG). It is
       implemented as a special grammar rule and parsed by the LR parser. Result
-      is be passed by context to actions which can do whatever they please. E.g.
-      a generic tree builder keep layout on the following tree leaf. See [the
+      is passed by context to actions which can do whatever they please. E.g. a
+      generic tree builder keeps layout on the following tree leaf. See [the
       tests](./tests/src/layout).
-- [x] Better error reporting during grammar analysis and state machine building.
-      Basic error reporting is implemented at the moment without full location
-      info.
-- [ ] Docs (will mostly be based on parglare docs for the grammar language).
-      There are some WIP in the docs folder.
+- [x] Detailed error reporting during grammar analysis and state machine building.
+- [ ] Docs. Fairly complete but still WIP, mostly based on parglare docs for
+      the grammar language.
+- [ ] First release to crates.io!
 
 ### v0.2.0
 - [ ] GLR parsing based on Right-Nulled GLR algorithm (RNGLR).
@@ -141,8 +142,8 @@ dual licensed as above, without any additional terms or conditions.
 
 ## Credits
 
-Bootstrapping approach and the pieces of code are based on the [LALRPOP
-project](https://github.com/lalrpop/lalrpop).
+Bootstrapping approach and the idea of macro for loading the generated code are
+based on the approach taken in the [LALRPOP project](https://github.com/lalrpop/lalrpop).
 
 
 ## Similar projects
