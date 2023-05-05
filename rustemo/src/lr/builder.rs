@@ -1,6 +1,6 @@
 use crate::{
     builder::Builder,
-    index::{ProdIndex, StateIndex},
+    index::ProdIndex,
     lexer::{Context, Input, Token},
 };
 
@@ -17,7 +17,7 @@ pub trait LRBuilder<'i, I: Input + ?Sized, TK>: Builder {
     /// * `token` - A token recognized in the input.
     fn shift_action(
         &mut self,
-        context: &mut Context<'i, I, StateIndex>,
+        context: &mut Context<'i, I>,
         token: Token<'i, I, TK>,
     );
 
@@ -31,7 +31,7 @@ pub trait LRBuilder<'i, I: Input + ?Sized, TK>: Builder {
     ///                subresults from the stack
     fn reduce_action(
         &mut self,
-        context: &mut Context<'i, I, StateIndex>,
+        context: &mut Context<'i, I>,
         prod_idx: ProdIndex,
         prod_len: usize,
     );
@@ -59,7 +59,7 @@ impl<'i, I: Input + ?Sized, TK> LRBuilder<'i, I, TK>
 {
     fn shift_action(
         &mut self,
-        context: &mut Context<'i, I, StateIndex>,
+        context: &mut Context<'i, I>,
         token: Token<'i, I, TK>,
     ) {
         self.res_stack.push(TreeNode::TermNode {
@@ -71,7 +71,7 @@ impl<'i, I: Input + ?Sized, TK> LRBuilder<'i, I, TK>
 
     fn reduce_action(
         &mut self,
-        context: &mut Context<'i, I, StateIndex>,
+        context: &mut Context<'i, I>,
         prod_idx: ProdIndex,
         prod_len: usize,
     ) {
@@ -130,7 +130,7 @@ impl<'i, I: Input + ?Sized> Builder for SliceBuilder<'i, I> {
 impl<'i, I: Input + ?Sized, TK> LRBuilder<'i, I, TK> for SliceBuilder<'i, I> {
     fn shift_action(
         &mut self,
-        _context: &mut Context<'i, I, StateIndex>,
+        _context: &mut Context<'i, I>,
         _token: Token<'i, I, TK>,
     ) {
         // We do nothing on shift
@@ -138,7 +138,7 @@ impl<'i, I: Input + ?Sized, TK> LRBuilder<'i, I, TK> for SliceBuilder<'i, I> {
 
     fn reduce_action(
         &mut self,
-        context: &mut Context<'i, I, StateIndex>,
+        context: &mut Context<'i, I>,
         _prod_idx: ProdIndex,
         _prod_len: usize,
     ) {

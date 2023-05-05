@@ -1,4 +1,4 @@
-use super::custom_lexer_1::TokenKind;
+use super::custom_lexer_1::{TokenKind, TokenRecognizer};
 use rustemo::{
     error::Result,
     index::StateIndex,
@@ -17,14 +17,24 @@ impl MyCustomLexer1 {
     }
 }
 
+impl lexer::TokenRecognizer for TokenRecognizer {
+    type TokenKind = TokenKind;
+    type Input = Input;
+
+    fn token_kind(&self) -> Self::TokenKind {
+        self.token_kind
+    }
+}
+
 /// This custom lexer will recognize a VarInt in the input by returning a slice
 /// of the input where first bytes has highest bit set while the last byte
 /// highest bit is .
-impl Lexer<Input, StateIndex, TokenKind> for MyCustomLexer1 {
+impl Lexer<Input, TokenRecognizer> for MyCustomLexer1 {
     fn next_token<'i>(
         &self,
-        context: &mut Context<'i, Input, StateIndex>,
-    ) -> Result<Token<'i, Input, TokenKind>> {
+        context: &mut Context<'i, Input>,
+        _token_recognizers: &[&TokenRecognizer],
+    ) -> Option<Token<'i, Input, TokenKind>> {
         let value;
         let kind: TokenKind;
         let mut pos = context.position;
@@ -41,7 +51,7 @@ impl Lexer<Input, StateIndex, TokenKind> for MyCustomLexer1 {
             kind = TokenKind::VarInt;
         }
 
-        Ok(Token {
+        Some(Token {
             kind,
             value,
             location: Location {

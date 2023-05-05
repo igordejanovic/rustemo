@@ -1,22 +1,25 @@
 use crate::debug::log;
 use crate::error::Result;
 use crate::index::{NonTermIndex, ProdIndex, StateIndex, TermIndex};
-use crate::lexer::{Context, Input, Lexer};
+use crate::lexer::{AsStr, Context, Input, Lexer, Token, TokenRecognizer};
+use crate::location::Location;
 use crate::parser::Parser;
 use crate::{err, Error};
 use std::fmt::{Debug, Display};
+use std::marker::PhantomData;
 use std::ops::Range;
 
 use super::builder::LRBuilder;
 
 /// Provides LR actions and GOTOs given the state and term/nonterm.
-pub trait ParserDefinition {
+pub trait ParserDefinition<TR: TokenRecognizer> {
     fn action(&self, state: StateIndex, term_index: TermIndex) -> Action;
     fn goto(
         &self,
         state: StateIndex,
         nonterm_index: NonTermIndex,
     ) -> StateIndex;
+    fn recognizers(&self, state: StateIndex) -> Vec<&TR>;
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -53,41 +56,48 @@ impl Display for Action {
 }
 
 #[derive(Debug)]
-pub struct LRParser<D: ParserDefinition + 'static> {
+pub struct LRParser<D: ParserDefinition<TR> + 'static, TR: TokenRecognizer> {
     definition: &'static D,
     parse_stack: Vec<StackItem>,
+    partial_parse: bool,
+    phantom: PhantomData<TR>,
 }
 
-impl<D: ParserDefinition> LRParser<D> {
-    pub fn new(definition: &'static D, state: StateIndex) -> Self {
+impl<D: ParserDefinition<TR>, TR: TokenRecognizer> LRParser<D, TR> {
+    pub fn new(
+        definition: &'static D,
+        state: StateIndex,
+        partial_parse: bool,
+    ) -> Self {
         Self {
             definition,
             parse_stack: vec![StackItem { state, range: 0..0 }],
+            partial_parse,
+            phantom: PhantomData,
         }
     }
 
     #[inline]
     fn push_state<I: Input + ?Sized>(
         &mut self,
-        context: &mut Context<I, StateIndex>,
+        context: &mut Context<I>,
         state: StateIndex,
     ) {
         self.parse_stack.push(StackItem {
             state,
             range: context.range.start..context.range.end,
         });
-        context.state = state;
     }
 
     #[inline]
     fn pop_states<I: Input + ?Sized>(
         &mut self,
-        context: &mut Context<I, StateIndex>,
+        context: &mut Context<I>,
         states: usize,
     ) -> (StateIndex, Range<usize>) {
         let states_removed =
             self.parse_stack.split_off(self.parse_stack.len() - states);
-        context.state = self.parse_stack.last().unwrap().state;
+        let state = self.parse_stack.last().unwrap().state;
 
         let range = if states == 0 {
             // EMPTY reduction
@@ -96,21 +106,74 @@ impl<D: ParserDefinition> LRParser<D> {
             states_removed[0].range.start
                 ..states_removed.last().unwrap().range.end
         };
-        (context.state, range)
+        (state, range)
+    }
+
+    fn next_token<'i, I, L>(
+        &self,
+        lexer: &L,
+        context: &mut Context<'i, I>,
+        state: StateIndex,
+    ) -> Result<Token<'i, I, <TR as TokenRecognizer>::TokenKind>>
+    where
+        L: Lexer<I, TR>,
+        I: Input + ?Sized,
+    {
+        let expected_recognizers = self.definition.recognizers(state);
+        let stop_kind = <TR as TokenRecognizer>::TokenKind::default();
+        lexer
+            .next_token(context, &expected_recognizers)
+            .or_else(|| {
+                if self.partial_parse
+                    && expected_recognizers
+                        .iter()
+                        .any(|tr| tr.token_kind() == stop_kind)
+                {
+                    Some(Token {
+                        kind: stop_kind,
+                        value: context
+                            .input
+                            .slice(&(context.position..context.position)),
+                        location: context.location,
+                    })
+                } else {
+                    None
+                }
+            })
+            .ok_or_else(|| {
+                let expected = expected_recognizers
+                    .iter()
+                    .map(|recognizer| recognizer.token_kind().as_str())
+                    .collect::<Vec<_>>();
+                let expected = if expected.len() > 1 {
+                    format!("one of {}", expected.join(", "))
+                } else {
+                    expected[0].into()
+                };
+                Error::Error {
+                    message: format!(
+                        "...{}...\nExpected {}.",
+                        context.input.context_str(context.position),
+                        expected
+                    ),
+                    file: Some(context.file.clone()),
+                    location: Some(Location::from(context)),
+                }
+            })
     }
 }
 
-impl<'i, I, D, L, B, TK> Parser<'i, I, L, B, StateIndex, TK> for LRParser<D>
+impl<'i, I, D, L, B, TR> Parser<'i, I, L, B, TR> for LRParser<D, TR>
 where
     I: Debug + Input + ?Sized,
-    D: ParserDefinition,
-    L: Lexer<I, StateIndex, TK>,
-    B: LRBuilder<'i, I, TK>,
-    TK: Debug + Into<TermIndex> + Copy,
+    D: ParserDefinition<TR>,
+    L: Lexer<I, TR>,
+    TR: TokenRecognizer,
+    B: LRBuilder<'i, I, <TR as TokenRecognizer>::TokenKind>,
 {
     fn parse(
         &mut self,
-        context: &mut Context<'i, I, StateIndex>,
+        context: &mut Context<'i, I>,
         lexer: &L,
         builder: &mut B,
     ) -> Result<B::Output> {
@@ -119,17 +182,16 @@ where
             context.position,
             context.input.context_str(context.position)
         );
-        context.state = self.parse_stack.last().unwrap().state;
-        let mut next_token = lexer.next_token(context)?;
+
+        let mut state = self.parse_stack.last().unwrap().state;
+
+        let mut next_token = self.next_token(lexer, context, state)?;
         loop {
-            let current_state = self.parse_stack.last().unwrap().state;
             log!("Stack: {:?}", self.parse_stack);
-            log!("Current state: {:?}", current_state);
+            log!("Current state: {:?}", state);
             log!("Token ahead: {:?}", next_token);
 
-            let action = self
-                .definition
-                .action(current_state, next_token.kind.into());
+            let action = self.definition.action(state, next_token.kind.into());
 
             log!("Action: {:?}", action);
 
@@ -140,8 +202,9 @@ where
                         state_id,
                         next_token
                     );
+                    state = state_id;
                     context.range = context.position..(context.position + next_token.value.len());
-                    self.push_state(context, state_id);
+                    self.push_state(context, state);
 
                     let new_location = next_token.value.location_after(context.location);
                     context.layout = context.layout_ahead;
@@ -154,7 +217,7 @@ where
                         context.input.context_str(context.position)
                     );
                     context.location = new_location;
-                    next_token = lexer.next_token(context)?;
+                    next_token = self.next_token(lexer, context, state)?;
                 }
                 Action::Reduce(prod_idx, prod_len, nonterm_id) => {
                     log!(
@@ -166,9 +229,9 @@ where
                     let (from_state, range) =
                         self.pop_states(context, prod_len);
                     context.range = range;
-                    let to_state = self.definition.goto(from_state, nonterm_id);
-                    self.push_state(context, to_state);
-                    log!("GOTO {:?} -> {:?}", from_state, to_state);
+                    state = self.definition.goto(from_state, nonterm_id);
+                    self.push_state(context, state);
+                    log!("GOTO {:?} -> {:?}", from_state, state);
                     builder.reduce_action(context, prod_idx, prod_len);
                 }
                 Action::Accept => break,
@@ -178,7 +241,7 @@ where
                 // It may happen that a wrong recognition is done in the content
                 // after a layout. Also, in the future, if parser composition
                 // would be done similar problem may arise.
-                Action::Error => err!(format!("Can't continue in state {current_state} with lookahead {next_token:?}."))?,
+                Action::Error => err!(format!("Can't continue in state {state} with lookahead {next_token:?}."))?,
             }
         }
         Ok(builder.get_result())

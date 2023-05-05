@@ -1,4 +1,4 @@
-use super::custom_lexer_2::TokenKind;
+use super::custom_lexer_2::{TokenKind, TokenRecognizer};
 use rustemo::{
     error::Result,
     index::StateIndex,
@@ -18,15 +18,25 @@ impl MyCustomLexer2 {
     }
 }
 
+impl lexer::TokenRecognizer for TokenRecognizer {
+    type TokenKind = TokenKind;
+    type Input = Input;
+
+    fn token_kind(&self) -> Self::TokenKind {
+        self.token_kind
+    }
+}
+
 /// In this custom lexer we are not recognizing a full VarInts but only its
 /// constituents: MSBByte (if highest bit is set), NonMSBByte (highest bit is
 /// not set). How these bytes is organized into VarInts is defined by the
 /// grammar and the transformation to a numeric value is done in actions.
-impl Lexer<Input, StateIndex, TokenKind> for MyCustomLexer2 {
+impl Lexer<Input, TokenRecognizer> for MyCustomLexer2 {
     fn next_token<'i>(
         &self,
-        context: &mut Context<'i, Input, StateIndex>,
-    ) -> Result<Token<'i, Input, TokenKind>> {
+        context: &mut Context<'i, Input>,
+        _token_recognizers: &[&TokenRecognizer],
+    ) -> Option<Token<'i, Input, TokenKind>> {
         let value;
         let kind: TokenKind;
         if context.position >= context.input.len() {
@@ -41,7 +51,7 @@ impl Lexer<Input, StateIndex, TokenKind> for MyCustomLexer2 {
             };
         }
 
-        Ok(Token {
+        Some(Token {
             kind,
             value,
             location: Location {

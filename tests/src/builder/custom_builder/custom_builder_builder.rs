@@ -9,7 +9,7 @@ use super::custom_builder::{ProdKind, TokenKind};
 
 // ANCHOR: custom-builder-base
 pub type E = i32;
-pub type Context<'i> = lexer::Context<'i, str, StateIndex>;
+pub type Context<'i> = lexer::Context<'i, str>;
 
 /// Custom builder that perform arithmetic operations.
 pub struct MyCustomBuilder {

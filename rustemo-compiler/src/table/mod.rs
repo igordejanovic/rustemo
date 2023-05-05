@@ -1663,12 +1663,12 @@ mod tests {
 
         assert_eq!(lr_state.items.len(), 4);
 
-        itertools::izip!(&lr_state.items, prods, follow_sets)
-            .into_iter()
-            .for_each(|(item, prod, follows)| {
+        itertools::izip!(&lr_state.items, prods, follow_sets).for_each(
+            |(item, prod, follows)| {
                 assert_eq!(item.prod, prod.into());
                 assert!(item.follow.borrow().iter().eq(follows.iter()));
-            });
+            },
+        );
 
         log!("{:?}", lr_state);
     }

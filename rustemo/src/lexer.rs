@@ -1,6 +1,8 @@
 use crate::{
     error::Result,
+    index::TermIndex,
     location::{LineBased, Location, Position},
+    log,
 };
 use core::fmt::Debug;
 use std::{cmp::min, iter::once, ops::Range, path::Path};
@@ -18,15 +20,110 @@ use std::{cmp::min, iter::once, ops::Range, path::Path};
 ///   grammar. This is the type that describes the kinds of token lexer can
 ///   produce.
 ///
-pub trait Lexer<I: Input + ?Sized, ST, TK> {
+pub trait Lexer<I: Input + ?Sized, TR: TokenRecognizer> {
     /// Given the current context, this method should return a result with token
     /// found ahead of the current location or error indicating what is
     /// expected. Context should be updated to reflect the progress in the
     /// input, i.e. its
     fn next_token<'i>(
         &self,
-        context: &mut Context<'i, I, ST>,
-    ) -> Result<Token<'i, I, TK>>;
+        context: &mut Context<'i, I>,
+        token_recognizers: &[&TR],
+    ) -> Option<Token<'i, I, <TR as TokenRecognizer>::TokenKind>>;
+}
+
+/// Token recognizers are types which can recognize a token in the input. For
+/// custom lexers it only provides the token kind as the lexers are implementing
+/// a custom recognition logic.
+pub trait TokenRecognizer {
+    type TokenKind: From<TermIndex>
+        + Into<TermIndex>
+        + PartialEq
+        + AsStr
+        + Default
+        + Debug
+        + Copy;
+    type Input: Input + ?Sized;
+
+    fn token_kind(&self) -> Self::TokenKind;
+
+    fn finish(&self) -> bool {
+        false
+    }
+
+    fn recognize<'i>(
+        &self,
+        _input: &'i Self::Input,
+    ) -> Option<&'i Self::Input> {
+        panic!("Recognize is not defined. Implement it in your lexer.")
+    }
+}
+
+/// A lexer that operates over string inputs and uses generated string and regex
+/// recognizers provided by the parser table.
+pub struct StringLexer {
+    skip_ws: bool,
+}
+
+impl StringLexer {
+    pub fn new(skip_ws: bool) -> Self {
+        Self { skip_ws }
+    }
+
+    fn skip(context: &mut Context<str>) {
+        let skipped_len = context.input[context.position..]
+            .chars()
+            .take_while(|x| x.is_whitespace())
+            .count();
+        let skipped =
+            &context.input[context.position..context.position + skipped_len];
+        log!("Skipped ws: {}", skipped.len());
+        if skipped_len > 0 {
+            context.layout_ahead = Some(skipped);
+            context.position += skipped_len;
+        } else {
+            context.layout_ahead = None;
+        }
+        context.location = skipped.location_after(context.location);
+    }
+}
+
+impl<TR: TokenRecognizer<Input = str>> Lexer<str, TR> for StringLexer {
+    fn next_token<'i>(
+        &self,
+        context: &mut Context<'i, str>,
+        token_recognizers: &[&TR],
+    ) -> Option<Token<'i, str, <TR as TokenRecognizer>::TokenKind>> {
+        if self.skip_ws {
+            Self::skip(context);
+        }
+        log!(
+            "Trying recognizers: {:?}",
+            token_recognizers
+                .iter()
+                .map(|tr| tr.token_kind())
+                .collect::<Vec<_>>()
+        );
+
+        token_recognizers
+            .iter()
+            .map(|tr| {
+                (
+                    tr.recognize(&context.input[context.position..]),
+                    tr.token_kind(),
+                )
+            })
+            // Skip unsuccesful recognition
+            .skip_while(|(recognized, _)| recognized.is_none())
+            // Create tokens
+            .map(|(recognized, token_kind)| Token {
+                kind: token_kind,
+                value: recognized.unwrap(),
+                location: recognized.unwrap().location_span(context.location),
+            })
+            // Take the first token or return None if no tokens are found.
+            .next()
+    }
 }
 
 /// This trait must be implemented by all types that should be parsed by
@@ -87,7 +184,7 @@ pub struct Token<'i, I: Input + ?Sized, TK> {
 /// Lexer context is used to keep the lexing state. It provides necessary
 /// information to parsers and actions.
 #[derive(Debug)]
-pub struct Context<'i, I: Input + ?Sized, ST> {
+pub struct Context<'i, I: Input + ?Sized> {
     /// File path of the parsed content. `<str>` In case of static string.
     pub file: String,
 
@@ -115,13 +212,9 @@ pub struct Context<'i, I: Input + ?Sized, ST> {
 
     /// Layout before the lookahead token (e.g. whitespaces, comments...)
     pub layout_ahead: Option<&'i I>,
-
-    /// An arbitrary state used by the parser. E.g. for LR it is the current
-    /// state of the automaton.
-    pub state: ST,
 }
 
-impl<'i, I: Input + ?Sized, ST: Default> Context<'i, I, ST> {
+impl<'i, I: Input + ?Sized> Context<'i, I> {
     pub fn new(file: String, input: &'i I) -> Self {
         Self {
             file,
@@ -130,7 +223,6 @@ impl<'i, I: Input + ?Sized, ST: Default> Context<'i, I, ST> {
             location: I::start_location(),
             layout: None,
             layout_ahead: None,
-            state: ST::default(),
             range: 0..0,
         }
     }
@@ -242,10 +334,8 @@ impl Input for [u8] {
     }
 }
 
-impl<'i, I: Input + ?Sized, ST: Default> From<&mut Context<'i, I, ST>>
-    for Location
-{
-    fn from(context: &mut Context<I, ST>) -> Self {
+impl<'i, I: Input + ?Sized> From<&mut Context<'i, I>> for Location {
+    fn from(context: &mut Context<I>) -> Self {
         context.location
     }
 }
