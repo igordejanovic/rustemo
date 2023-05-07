@@ -231,7 +231,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             use std::hash::{Hash, Hasher};
 
             use rustemo::Result;
-            use rustemo::lexer::{self, Token, AsStr, StringLexer};
+            use rustemo::lexer::{self, Token, AsStr};
             use rustemo::parser::Parser;
             use rustemo::builder::Builder;
             #builder_import
@@ -255,6 +255,9 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             });
             header.items.push(parse_quote! {
                 use once_cell::sync::Lazy;
+            });
+            header.items.push(parse_quote! {
+                use rustemo::lexer::StringLexer;
             });
         } else {
             header.items.push(parse_quote! {
@@ -966,6 +969,17 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                     pub token_kind: TokenKind,
                 }
             });
+
+            ast.push(parse_quote! {
+                impl lexer::TokenRecognizer for TokenRecognizer {
+                    type TokenKind = TokenKind;
+                    type Input = Input;
+
+                    fn token_kind(&self) -> Self::TokenKind {
+                        self.token_kind
+                    }
+                }
+            })
         }
 
         ast.push(parse_quote! {

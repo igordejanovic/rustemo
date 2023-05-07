@@ -17,15 +17,6 @@ impl MyCustomLexer1 {
     }
 }
 
-impl lexer::TokenRecognizer for TokenRecognizer {
-    type TokenKind = TokenKind;
-    type Input = Input;
-
-    fn token_kind(&self) -> Self::TokenKind {
-        self.token_kind
-    }
-}
-
 /// This custom lexer will recognize a VarInt in the input by returning a slice
 /// of the input where first bytes has highest bit set while the last byte
 /// highest bit is .

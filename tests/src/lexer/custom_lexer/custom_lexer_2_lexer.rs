@@ -18,15 +18,6 @@ impl MyCustomLexer2 {
     }
 }
 
-impl lexer::TokenRecognizer for TokenRecognizer {
-    type TokenKind = TokenKind;
-    type Input = Input;
-
-    fn token_kind(&self) -> Self::TokenKind {
-        self.token_kind
-    }
-}
-
 /// In this custom lexer we are not recognizing a full VarInts but only its
 /// constituents: MSBByte (if highest bit is set), NonMSBByte (highest bit is
 /// not set). How these bytes is organized into VarInts is defined by the

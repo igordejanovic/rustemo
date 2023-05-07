@@ -2,7 +2,7 @@
 use std::fmt::Debug;
 use std::hash::{Hash, Hasher};
 use rustemo::Result;
-use rustemo::lexer::{self, Token, AsStr, StringLexer};
+use rustemo::lexer::{self, Token, AsStr};
 use rustemo::parser::Parser;
 use rustemo::builder::Builder;
 use rustemo::lr::builder::LRBuilder;
@@ -18,6 +18,7 @@ const STATE_COUNT: usize = 11usize;
 const MAX_ACTIONS: usize = 5usize;
 use regex::Regex;
 use once_cell::sync::Lazy;
+use rustemo::lexer::StringLexer;
 use super::calculator_actions;
 pub type Input = str;
 pub type Context<'i> = lexer::Context<'i, Input>;
