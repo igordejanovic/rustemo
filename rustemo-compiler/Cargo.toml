@@ -27,6 +27,7 @@ quote = "1.0.20"
 syn = { version = "1.0.98", features = ["parsing", "full", "printing"] }
 proc-macro2 = "1.0.43"
 prettyplease = "0.1.18"
+colored = "2"
 
 # Needed by rustemo generated parsers.
 rustemo = { path = "../rustemo", version = "0.1"}

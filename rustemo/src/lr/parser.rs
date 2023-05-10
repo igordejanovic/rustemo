@@ -5,6 +5,7 @@ use crate::lexer::{AsStr, Context, Input, Lexer, Token, TokenRecognizer};
 use crate::location::Location;
 use crate::parser::Parser;
 use crate::{err, Error};
+use colored::*;
 use std::fmt::{Debug, Display};
 use std::marker::PhantomData;
 use std::ops::Range;
@@ -197,8 +198,8 @@ where
 
             match action {
                 Action::Shift(state_id) => {
-                    log!(
-                        "Shifting to state {:?} with token {:?}",
+                    log!("{} to state {:?} with token {:?}",
+                        "Shifting".bold().green(),
                         state_id,
                         next_token
                     );
@@ -221,7 +222,8 @@ where
                 }
                 Action::Reduce(prod_idx, prod_len, nonterm_id) => {
                     log!(
-                        "Reduce by production '{}', size {:?}, non-terminal {:?}",
+                        "{} by production '{}', size {:?}, non-terminal {:?}",
+                        "Reduce".bold().green(),
                         prod_idx,
                         prod_len,
                         nonterm_id

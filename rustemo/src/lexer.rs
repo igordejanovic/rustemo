@@ -4,6 +4,7 @@ use crate::{
     location::{LineBased, Location, Position},
     log,
 };
+use colored::*;
 use core::fmt::Debug;
 use std::{cmp::min, iter::once, ops::Range, path::Path};
 
@@ -77,7 +78,7 @@ impl StringLexer {
             .count();
         let skipped =
             &context.input[context.position..context.position + skipped_len];
-        log!("Skipped ws: {}", skipped.len());
+        log!("{} {}", "Skipped ws:".bold().green(), skipped.len());
         if skipped_len > 0 {
             context.layout_ahead = Some(skipped);
             context.position += skipped_len;
@@ -98,7 +99,8 @@ impl<TR: TokenRecognizer<Input = str>> Lexer<str, TR> for StringLexer {
             Self::skip(context);
         }
         log!(
-            "Trying recognizers: {:?}",
+            "{} {:?}",
+            "Trying recognizers:".green(),
             token_recognizers
                 .iter()
                 .map(|tr| tr.token_kind())

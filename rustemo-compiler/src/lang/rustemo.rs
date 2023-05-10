@@ -18,6 +18,7 @@ const STATE_COUNT: usize = 141usize;
 const MAX_ACTIONS: usize = 15usize;
 use regex::Regex;
 use once_cell::sync::Lazy;
+use colored::*;
 use super::rustemo_actions;
 pub type Input = str;
 pub type Context<'i> = lexer::Context<'i, Input>;
@@ -18576,37 +18577,37 @@ impl lexer::TokenRecognizer for TokenRecognizer {
     fn recognize<'i>(&self, input: &'i str) -> Option<&'i str> {
         match &self.recognizer {
             Recognizer::StrMatch(s) => {
-                logn!("Recognizing <{:?}> -- ", self.token_kind());
+                logn!("{} <{:?}> --", "\tRecognizing".green(), self.token_kind());
                 if input.starts_with(s) {
-                    log!("recognized");
+                    log!("{}", "recognized".bold().green());
                     Some(s)
                 } else {
-                    log!("not recognized");
+                    log!("{}", "not recognized".red());
                     None
                 }
             }
             Recognizer::RegexMatch(r) => {
-                logn!("Recognizing <{:?}> -- ", self.token_kind());
+                logn!("{} <{:?}> --", "\tRecognizing".green(), self.token_kind());
                 let match_str = RECOGNIZERS[*r].as_ref().unwrap().find(input);
                 match match_str {
                     Some(x) => {
                         let x_str = x.as_str();
-                        log!("recognized <{}>", x_str);
+                        log!("{} <{}>", "recognized".bold().green(), x_str);
                         Some(x_str)
                     }
                     None => {
-                        log!("not recognized");
+                        log!("{}", "not recognized".red());
                         None
                     }
                 }
             }
             Recognizer::Stop => {
-                logn!("Recognizing <STOP> -- ");
+                logn!("{}  <STOP> -- ","\tRecognizing".green());
                 if input.is_empty() {
-                    log!("recognized");
+                    log!("{}", "recognized".bold().green());
                     Some("")
                 } else {
-                    log!("not recognized");
+                    log!("{}", "not recognized".red());
                     None
                 }
             }
