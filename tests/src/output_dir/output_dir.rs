@@ -8,7 +8,7 @@ use rustemo::builder::Builder;
 use rustemo::lr::builder::LRBuilder;
 use rustemo::lr::parser::{LRParser, ParserDefinition};
 use rustemo::lr::parser::Action::{self, Shift, Reduce, Accept, Error};
-use rustemo::index::{StateIndex, TermIndex, NonTermIndex, ProdIndex};
+use rustemo::index::TermIndex;
 #[allow(unused_imports)]
 use rustemo::debug::{log, logn};
 use colored::*;
@@ -61,7 +61,7 @@ impl From<TokenKind> for TermIndex {
     }
 }
 #[allow(clippy::enum_variant_names)]
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub enum ProdKind {
     AP1,
     B1P1,
@@ -90,15 +90,49 @@ impl std::fmt::Display for ProdKind {
         write!(f, "{}", name)
     }
 }
-impl From<ProdIndex> for ProdKind {
-    fn from(prod_index: ProdIndex) -> Self {
-        match prod_index.0 {
-            1usize => ProdKind::AP1,
-            2usize => ProdKind::B1P1,
-            3usize => ProdKind::B1P2,
-            4usize => ProdKind::BP1,
-            _ => unreachable!(),
+#[allow(clippy::upper_case_acronyms)]
+#[allow(dead_code)]
+#[derive(Clone, Copy, Debug)]
+pub enum NonTermKind {
+    EMPTY,
+    AUG,
+    A,
+    B1,
+    B,
+}
+impl From<ProdKind> for NonTermKind {
+    fn from(prod: ProdKind) -> Self {
+        match prod {
+            ProdKind::AP1 => NonTermKind::A,
+            ProdKind::B1P1 => NonTermKind::B1,
+            ProdKind::B1P2 => NonTermKind::B1,
+            ProdKind::BP1 => NonTermKind::B,
         }
+    }
+}
+#[allow(clippy::enum_variant_names)]
+#[derive(Clone, Copy, Debug)]
+pub enum State {
+    AUGS0,
+    TbS1,
+    AS2,
+    B1S3,
+    BS4,
+    NumS5,
+    BS6,
+}
+impl std::fmt::Display for State {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let name = match self {
+            State::AUGS0 => "0:AUG",
+            State::TbS1 => "1:Tb",
+            State::AS2 => "2:A",
+            State::B1S3 => "3:B1",
+            State::BS4 => "4:B",
+            State::NumS5 => "5:Num",
+            State::BS6 => "6:B",
+        };
+        write!(f, "{name}")
     }
 }
 #[derive(Debug)]
@@ -119,43 +153,25 @@ pub enum NonTerminal {
     B(output_dir_actions::B),
 }
 pub struct OutputDirParserDefinition {
-    actions: [[Action; TERMINAL_COUNT]; STATE_COUNT],
-    gotos: [[Option<StateIndex>; NONTERMINAL_COUNT]; STATE_COUNT],
+    actions: [[Action<State, ProdKind>; TERMINAL_COUNT]; STATE_COUNT],
+    gotos: [[Option<State>; NONTERMINAL_COUNT]; STATE_COUNT],
     token_recognizers: [[Option<TokenRecognizer>; 2usize]; STATE_COUNT],
 }
 pub(crate) static PARSER_DEFINITION: OutputDirParserDefinition = OutputDirParserDefinition {
     actions: [
-        [Error, Shift(StateIndex(1usize)), Error],
-        [
-            Error,
-            Reduce(ProdIndex(4usize), 1usize, NonTermIndex(4usize)),
-            Reduce(ProdIndex(4usize), 1usize, NonTermIndex(4usize)),
-        ],
+        [Error, Shift(State::TbS1), Error],
+        [Error, Reduce(ProdKind::BP1, 1usize), Reduce(ProdKind::BP1, 1usize)],
         [Accept, Error, Error],
-        [Error, Shift(StateIndex(1usize)), Shift(StateIndex(5usize))],
-        [
-            Error,
-            Reduce(ProdIndex(3usize), 1usize, NonTermIndex(3usize)),
-            Reduce(ProdIndex(3usize), 1usize, NonTermIndex(3usize)),
-        ],
-        [Reduce(ProdIndex(1usize), 2usize, NonTermIndex(2usize)), Error, Error],
-        [
-            Error,
-            Reduce(ProdIndex(2usize), 2usize, NonTermIndex(3usize)),
-            Reduce(ProdIndex(2usize), 2usize, NonTermIndex(3usize)),
-        ],
+        [Error, Shift(State::TbS1), Shift(State::NumS5)],
+        [Error, Reduce(ProdKind::B1P2, 1usize), Reduce(ProdKind::B1P2, 1usize)],
+        [Reduce(ProdKind::AP1, 2usize), Error, Error],
+        [Error, Reduce(ProdKind::B1P1, 2usize), Reduce(ProdKind::B1P1, 2usize)],
     ],
     gotos: [
-        [
-            None,
-            None,
-            Some(StateIndex(2usize)),
-            Some(StateIndex(3usize)),
-            Some(StateIndex(4usize)),
-        ],
+        [None, None, Some(State::AS2), Some(State::B1S3), Some(State::BS4)],
         [None, None, None, None, None],
         [None, None, None, None, None],
-        [None, None, None, None, Some(StateIndex(6usize))],
+        [None, None, None, None, Some(State::BS6)],
         [None, None, None, None, None],
         [None, None, None, None, None],
         [None, None, None, None, None],
@@ -235,16 +251,17 @@ pub(crate) static PARSER_DEFINITION: OutputDirParserDefinition = OutputDirParser
         ],
     ],
 };
-impl ParserDefinition<TokenRecognizer> for OutputDirParserDefinition {
-    fn action(&self, state_index: StateIndex, term_index: TermIndex) -> Action {
-        PARSER_DEFINITION.actions[state_index.0][term_index.0]
+impl ParserDefinition<TokenRecognizer, State, ProdKind, NonTermKind>
+for OutputDirParserDefinition {
+    fn action(&self, state: State, term_index: TermIndex) -> Action<State, ProdKind> {
+        PARSER_DEFINITION.actions[state as usize][term_index.0]
     }
-    fn goto(&self, state_index: StateIndex, nonterm_index: NonTermIndex) -> StateIndex {
-        PARSER_DEFINITION.gotos[state_index.0][nonterm_index.0].unwrap()
+    fn goto(&self, state: State, nonterm: NonTermKind) -> State {
+        PARSER_DEFINITION.gotos[state as usize][nonterm as usize].unwrap()
     }
-    fn recognizers(&self, state_index: StateIndex) -> Vec<&TokenRecognizer> {
+    fn recognizers(&self, state: State) -> Vec<&TokenRecognizer> {
         PARSER_DEFINITION
-            .token_recognizers[state_index.0]
+            .token_recognizers[state as usize]
             .iter()
             .map_while(|tr| tr.as_ref())
             .collect()
@@ -288,7 +305,7 @@ impl<'i> OutputDirParser {
         let lexer = &local_lexer;
         let mut local_builder = DefaultBuilder::new();
         let builder = &mut local_builder;
-        let mut parser = LRParser::new(&PARSER_DEFINITION, StateIndex(0), false);
+        let mut parser = LRParser::new(&PARSER_DEFINITION, State::AUGS0, false);
         parser.parse(context, lexer, builder)
     }
 }
@@ -387,7 +404,7 @@ impl Builder for DefaultBuilder {
         }
     }
 }
-impl<'i> LRBuilder<'i, Input, TokenKind> for DefaultBuilder {
+impl<'i> LRBuilder<'i, Input, ProdKind, TokenKind> for DefaultBuilder {
     #![allow(unused_variables)]
     fn shift_action(
         &mut self,
@@ -404,10 +421,10 @@ impl<'i> LRBuilder<'i, Input, TokenKind> for DefaultBuilder {
     fn reduce_action(
         &mut self,
         context: &mut Context<'i>,
-        prod_idx: ProdIndex,
+        prod: ProdKind,
         _prod_len: usize,
     ) {
-        let prod = match ProdKind::from(prod_idx) {
+        let prod = match prod {
             ProdKind::AP1 => {
                 let mut i = self
                     .res_stack

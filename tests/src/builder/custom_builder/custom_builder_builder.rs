@@ -1,6 +1,5 @@
 use rustemo::{
     builder::Builder,
-    index::{ProdIndex, StateIndex, TermIndex},
     lexer::{self, Token},
     lr::builder::LRBuilder,
 };
@@ -33,7 +32,7 @@ impl Builder for MyCustomBuilder {
 // ANCHOR_END: custom-builder-base
 
 // ANCHOR: custom-builder-lr
-impl<'i> LRBuilder<'i, str, TokenKind> for MyCustomBuilder {
+impl<'i> LRBuilder<'i, str, ProdKind, TokenKind> for MyCustomBuilder {
     fn shift_action(
         &mut self,
         _context: &mut Context<'i>,
@@ -47,10 +46,10 @@ impl<'i> LRBuilder<'i, str, TokenKind> for MyCustomBuilder {
     fn reduce_action(
         &mut self,
         _context: &mut Context<'i>,
-        prod_idx: ProdIndex,
+        prod: ProdKind,
         _prod_len: usize,
     ) {
-        let res = match ProdKind::from(prod_idx) {
+        let res = match prod {
             ProdKind::EAdd => {
                 self.stack.pop().unwrap() + self.stack.pop().unwrap()
             }

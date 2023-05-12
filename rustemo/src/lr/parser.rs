@@ -1,6 +1,6 @@
 use crate::debug::log;
 use crate::error::Result;
-use crate::index::{NonTermIndex, ProdIndex, StateIndex, TermIndex};
+use crate::index::TermIndex;
 use crate::lexer::{AsStr, Context, Input, Lexer, Token, TokenRecognizer};
 use crate::location::Location;
 use crate::parser::Parser;
@@ -13,42 +13,55 @@ use std::ops::Range;
 use super::builder::LRBuilder;
 
 /// Provides LR actions and GOTOs given the state and term/nonterm.
-pub trait ParserDefinition<TR: TokenRecognizer> {
-    fn action(&self, state: StateIndex, term_index: TermIndex) -> Action;
-    fn goto(
-        &self,
-        state: StateIndex,
-        nonterm_index: NonTermIndex,
-    ) -> StateIndex;
-    fn recognizers(&self, state: StateIndex) -> Vec<&TR>;
+pub trait ParserDefinition<TR: TokenRecognizer, S, P, NT> {
+    fn action(&self, state: S, term_index: TermIndex) -> Action<S, P>;
+    fn goto(&self, state: S, nonterm: NT) -> S;
+    fn recognizers(&self, state: S) -> Vec<&TR>;
 }
 
 #[derive(Debug, Copy, Clone)]
-pub enum Action {
-    Shift(StateIndex),
-    Reduce(ProdIndex, usize, NonTermIndex),
+pub enum Action<S, P> {
+    Shift(S),
+    Reduce(P, usize),
     Accept,
     Error,
 }
 
+impl<S, P> Action<S, P>
+where
+    S: Debug,
+    P: Debug,
+{
+    pub fn generate(&self) -> String {
+        match self {
+            Action::Shift(state) => format!("Shift({:?})", state),
+            Action::Reduce(prod, len) => {
+                format!("Reduce({:?}, {:?})", prod, len)
+            }
+            Action::Accept => String::from("Accept"),
+            Action::Error => String::from("Error"),
+        }
+    }
+}
+
 #[derive(Debug)]
-struct StackItem {
-    state: StateIndex,
+struct StackItem<S> {
+    state: S,
     range: Range<usize>,
 }
 
-impl Display for Action {
+impl<S, P> Display for Action<S, P>
+where
+    S: Display,
+    P: Display,
+{
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Action::Shift(state) => {
-                write!(f, "Shift(StateIndex({state}))")
+                write!(f, "Shift to {}", state)
             }
-            Action::Reduce(prod, len, nonterm) => {
-                write!(
-                    f,
-                    "Reduce(ProdIndex({}), {}, NonTermIndex({}))",
-                    prod, len, nonterm
-                )
+            Action::Reduce(prod, _) => {
+                write!(f, "Reduce by {}", prod)
             }
             Action::Accept => write!(f, "Accept"),
             Action::Error => write!(f, "Error"),
@@ -57,19 +70,28 @@ impl Display for Action {
 }
 
 #[derive(Debug)]
-pub struct LRParser<D: ParserDefinition<TR> + 'static, TR: TokenRecognizer> {
+pub struct LRParser<
+    S,
+    P,
+    NT,
+    D: ParserDefinition<TR, S, P, NT> + 'static,
+    TR: TokenRecognizer,
+> {
     definition: &'static D,
-    parse_stack: Vec<StackItem>,
+    parse_stack: Vec<StackItem<S>>,
     partial_parse: bool,
-    phantom: PhantomData<TR>,
+    phantom: PhantomData<(TR, P, NT)>,
 }
 
-impl<D: ParserDefinition<TR>, TR: TokenRecognizer> LRParser<D, TR> {
-    pub fn new(
-        definition: &'static D,
-        state: StateIndex,
-        partial_parse: bool,
-    ) -> Self {
+impl<
+        S: Copy,
+        P,
+        NT,
+        D: ParserDefinition<TR, S, P, NT>,
+        TR: TokenRecognizer,
+    > LRParser<S, P, NT, D, TR>
+{
+    pub fn new(definition: &'static D, state: S, partial_parse: bool) -> Self {
         Self {
             definition,
             parse_stack: vec![StackItem { state, range: 0..0 }],
@@ -82,7 +104,7 @@ impl<D: ParserDefinition<TR>, TR: TokenRecognizer> LRParser<D, TR> {
     fn push_state<I: Input + ?Sized>(
         &mut self,
         context: &mut Context<I>,
-        state: StateIndex,
+        state: S,
     ) {
         self.parse_stack.push(StackItem {
             state,
@@ -95,7 +117,7 @@ impl<D: ParserDefinition<TR>, TR: TokenRecognizer> LRParser<D, TR> {
         &mut self,
         context: &mut Context<I>,
         states: usize,
-    ) -> (StateIndex, Range<usize>) {
+    ) -> (S, Range<usize>) {
         let states_removed =
             self.parse_stack.split_off(self.parse_stack.len() - states);
         let state = self.parse_stack.last().unwrap().state;
@@ -114,7 +136,7 @@ impl<D: ParserDefinition<TR>, TR: TokenRecognizer> LRParser<D, TR> {
         &self,
         lexer: &L,
         context: &mut Context<'i, I>,
-        state: StateIndex,
+        state: S,
     ) -> Result<Token<'i, I, <TR as TokenRecognizer>::TokenKind>>
     where
         L: Lexer<I, TR>,
@@ -164,13 +186,16 @@ impl<D: ParserDefinition<TR>, TR: TokenRecognizer> LRParser<D, TR> {
     }
 }
 
-impl<'i, I, D, L, B, TR> Parser<'i, I, L, B, TR> for LRParser<D, TR>
+impl<'i, S, P, NT, I, D, L, B, TR> Parser<'i, I, L, B, TR>
+    for LRParser<S, P, NT, D, TR>
 where
+    S: Debug + Copy,
+    P: Debug + Copy + Into<NT>,
     I: Debug + Input + ?Sized,
-    D: ParserDefinition<TR>,
+    D: ParserDefinition<TR, S, P, NT>,
     L: Lexer<I, TR>,
     TR: TokenRecognizer,
-    B: LRBuilder<'i, I, <TR as TokenRecognizer>::TokenKind>,
+    B: LRBuilder<'i, I, P, <TR as TokenRecognizer>::TokenKind>,
 {
     fn parse(
         &mut self,
@@ -220,21 +245,20 @@ where
                     context.location = new_location;
                     next_token = self.next_token(lexer, context, state)?;
                 }
-                Action::Reduce(prod_idx, prod_len, nonterm_id) => {
+                Action::Reduce(prod, prod_len) => {
                     log!(
-                        "{} by production '{}', size {:?}, non-terminal {:?}",
+                        "{} by production '{:?}', size {:?}",
                         "Reduce".bold().green(),
-                        prod_idx,
-                        prod_len,
-                        nonterm_id
+                        prod,
+                        prod_len
                     );
                     let (from_state, range) =
                         self.pop_states(context, prod_len);
                     context.range = range;
-                    state = self.definition.goto(from_state, nonterm_id);
+                    state = self.definition.goto(from_state, prod.into());
                     self.push_state(context, state);
                     log!("GOTO {:?} -> {:?}", from_state, state);
-                    builder.reduce_action(context, prod_idx, prod_len);
+                    builder.reduce_action(context, prod, prod_len);
                 }
                 Action::Accept => break,
                 // This can't happen for context-aware lexing. If there is no
@@ -243,7 +267,7 @@ where
                 // It may happen that a wrong recognition is done in the content
                 // after a layout. Also, in the future, if parser composition
                 // would be done similar problem may arise.
-                Action::Error => err!(format!("Can't continue in state {state} with lookahead {next_token:?}."))?,
+                Action::Error => err!(format!("Can't continue in state {state:?} with lookahead {next_token:?}."))?,
             }
         }
         Ok(builder.get_result())

@@ -1,6 +1,5 @@
 use crate::{
     builder::Builder,
-    index::ProdIndex,
     lexer::{Context, Input, Token},
 };
 
@@ -8,7 +7,7 @@ use crate::{
 ///
 /// Builder should keep its internal stack of subresults, similar to the way LR
 /// parsing operates.
-pub trait LRBuilder<'i, I: Input + ?Sized, TK>: Builder {
+pub trait LRBuilder<'i, I: Input + ?Sized, P, TK>: Builder {
     /// Called when LR shifting is taking place.
     ///
     /// # Arguments
@@ -32,18 +31,18 @@ pub trait LRBuilder<'i, I: Input + ?Sized, TK>: Builder {
     fn reduce_action(
         &mut self,
         context: &mut Context<'i, I>,
-        prod_idx: ProdIndex,
+        prod: P,
         prod_len: usize,
     );
 }
 
 /// TreeBuilder is a builder that builds a generic concrete parse tree.
-pub struct TreeBuilder<'i, I: Input + ?Sized, TK> {
-    res_stack: Vec<TreeNode<'i, I, TK>>,
+pub struct TreeBuilder<'i, I: Input + ?Sized, P, TK> {
+    res_stack: Vec<TreeNode<'i, I, P, TK>>,
 }
 
-impl<'i, I: Input + ?Sized, TK> Builder for TreeBuilder<'i, I, TK> {
-    type Output = TreeNode<'i, I, TK>;
+impl<'i, I: Input + ?Sized, P, TK> Builder for TreeBuilder<'i, I, P, TK> {
+    type Output = TreeNode<'i, I, P, TK>;
 
     fn new() -> Self {
         Self { res_stack: vec![] }
@@ -54,8 +53,8 @@ impl<'i, I: Input + ?Sized, TK> Builder for TreeBuilder<'i, I, TK> {
     }
 }
 
-impl<'i, I: Input + ?Sized, TK> LRBuilder<'i, I, TK>
-    for TreeBuilder<'i, I, TK>
+impl<'i, I: Input + ?Sized, P, TK> LRBuilder<'i, I, P, TK>
+    for TreeBuilder<'i, I, P, TK>
 {
     fn shift_action(
         &mut self,
@@ -72,7 +71,7 @@ impl<'i, I: Input + ?Sized, TK> LRBuilder<'i, I, TK>
     fn reduce_action(
         &mut self,
         context: &mut Context<'i, I>,
-        prod_idx: ProdIndex,
+        prod: P,
         prod_len: usize,
     ) {
         let children;
@@ -90,7 +89,7 @@ impl<'i, I: Input + ?Sized, TK> LRBuilder<'i, I, TK>
         }
         self.res_stack.push(TreeNode::NonTermNode {
             children,
-            prod_idx,
+            prod,
             position: context.range.start,
             layout,
         });
@@ -98,16 +97,16 @@ impl<'i, I: Input + ?Sized, TK> LRBuilder<'i, I, TK>
 }
 
 #[derive(Debug)]
-pub enum TreeNode<'i, I: Input + ?Sized, TK> {
+pub enum TreeNode<'i, I: Input + ?Sized, P, TK> {
     TermNode {
         token: Token<'i, I, TK>,
         position: usize,
         layout: Option<&'i I>,
     },
     NonTermNode {
-        prod_idx: ProdIndex,
+        prod: P,
         position: usize,
-        children: Vec<TreeNode<'i, I, TK>>,
+        children: Vec<TreeNode<'i, I, P, TK>>,
         layout: Option<&'i I>,
     },
 }
@@ -127,7 +126,9 @@ impl<'i, I: Input + ?Sized> Builder for SliceBuilder<'i, I> {
     }
 }
 
-impl<'i, I: Input + ?Sized, TK> LRBuilder<'i, I, TK> for SliceBuilder<'i, I> {
+impl<'i, I: Input + ?Sized, P, TK> LRBuilder<'i, I, P, TK>
+    for SliceBuilder<'i, I>
+{
     fn shift_action(
         &mut self,
         _context: &mut Context<'i, I>,
@@ -139,7 +140,7 @@ impl<'i, I: Input + ?Sized, TK> LRBuilder<'i, I, TK> for SliceBuilder<'i, I> {
     fn reduce_action(
         &mut self,
         context: &mut Context<'i, I>,
-        _prod_idx: ProdIndex,
+        _prod: P,
         _prod_len: usize,
     ) {
         // On reduce, save the slice of the input.

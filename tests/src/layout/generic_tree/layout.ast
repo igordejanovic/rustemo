@@ -1,6 +1,6 @@
 Ok(
     NonTermNode {
-        prod_idx: 2,
+        prod: SP1,
         position: 0,
         children: [
             TermNode {
@@ -28,7 +28,7 @@ Ok(
                 layout: None,
             },
             NonTermNode {
-                prod_idx: 5,
+                prod: TwoDigitsP1,
                 position: 1,
                 children: [
                     TermNode {
@@ -85,11 +85,11 @@ Ok(
                 layout: None,
             },
             NonTermNode {
-                prod_idx: 3,
+                prod: Digit1P1,
                 position: 19,
                 children: [
                     NonTermNode {
-                        prod_idx: 4,
+                        prod: Digit1P2,
                         position: 19,
                         children: [
                             TermNode {

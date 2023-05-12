@@ -8,7 +8,7 @@ use rustemo::builder::Builder;
 use rustemo::lr::builder::LRBuilder;
 use rustemo::lr::parser::{LRParser, ParserDefinition};
 use rustemo::lr::parser::Action::{self, Shift, Reduce, Accept, Error};
-use rustemo::index::{StateIndex, TermIndex, NonTermIndex, ProdIndex};
+use rustemo::index::TermIndex;
 #[allow(unused_imports)]
 use rustemo::debug::{log, logn};
 use colored::*;
@@ -73,7 +73,7 @@ impl From<TokenKind> for TermIndex {
     }
 }
 #[allow(clippy::enum_variant_names)]
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub enum ProdKind {
     EP1,
     EP2,
@@ -105,16 +105,56 @@ impl std::fmt::Display for ProdKind {
         write!(f, "{}", name)
     }
 }
-impl From<ProdIndex> for ProdKind {
-    fn from(prod_index: ProdIndex) -> Self {
-        match prod_index.0 {
-            1usize => ProdKind::EP1,
-            2usize => ProdKind::EP2,
-            3usize => ProdKind::EP3,
-            4usize => ProdKind::EP4,
-            5usize => ProdKind::EP5,
-            _ => unreachable!(),
+#[allow(clippy::upper_case_acronyms)]
+#[allow(dead_code)]
+#[derive(Clone, Copy, Debug)]
+pub enum NonTermKind {
+    EMPTY,
+    AUG,
+    E,
+}
+impl From<ProdKind> for NonTermKind {
+    fn from(prod: ProdKind) -> Self {
+        match prod {
+            ProdKind::EP1 => NonTermKind::E,
+            ProdKind::EP2 => NonTermKind::E,
+            ProdKind::EP3 => NonTermKind::E,
+            ProdKind::EP4 => NonTermKind::E,
+            ProdKind::EP5 => NonTermKind::E,
         }
+    }
+}
+#[allow(clippy::enum_variant_names)]
+#[derive(Clone, Copy, Debug)]
+pub enum State {
+    AUGS0,
+    NumberS1,
+    ES2,
+    PlusS3,
+    MinusS4,
+    MulS5,
+    DivS6,
+    ES7,
+    ES8,
+    ES9,
+    ES10,
+}
+impl std::fmt::Display for State {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let name = match self {
+            State::AUGS0 => "0:AUG",
+            State::NumberS1 => "1:Number",
+            State::ES2 => "2:E",
+            State::PlusS3 => "3:Plus",
+            State::MinusS4 => "4:Minus",
+            State::MulS5 => "5:Mul",
+            State::DivS6 => "6:Div",
+            State::ES7 => "7:E",
+            State::ES8 => "8:E",
+            State::ES9 => "9:E",
+            State::ES10 => "10:E",
+        };
+        write!(f, "{name}")
     }
 }
 #[derive(Debug)]
@@ -136,74 +176,74 @@ pub enum NonTerminal {
     E(calculator_actions::E),
 }
 pub struct CalculatorParserDefinition {
-    actions: [[Action; TERMINAL_COUNT]; STATE_COUNT],
-    gotos: [[Option<StateIndex>; NONTERMINAL_COUNT]; STATE_COUNT],
+    actions: [[Action<State, ProdKind>; TERMINAL_COUNT]; STATE_COUNT],
+    gotos: [[Option<State>; NONTERMINAL_COUNT]; STATE_COUNT],
     token_recognizers: [[Option<TokenRecognizer>; 5usize]; STATE_COUNT],
 }
 pub(crate) static PARSER_DEFINITION: CalculatorParserDefinition = CalculatorParserDefinition {
     actions: [
-        [Error, Shift(StateIndex(1usize)), Error, Error, Error, Error],
+        [Error, Shift(State::NumberS1), Error, Error, Error, Error],
         [
-            Reduce(ProdIndex(5usize), 1usize, NonTermIndex(2usize)),
+            Reduce(ProdKind::EP5, 1usize),
             Error,
-            Reduce(ProdIndex(5usize), 1usize, NonTermIndex(2usize)),
-            Reduce(ProdIndex(5usize), 1usize, NonTermIndex(2usize)),
-            Reduce(ProdIndex(5usize), 1usize, NonTermIndex(2usize)),
-            Reduce(ProdIndex(5usize), 1usize, NonTermIndex(2usize)),
+            Reduce(ProdKind::EP5, 1usize),
+            Reduce(ProdKind::EP5, 1usize),
+            Reduce(ProdKind::EP5, 1usize),
+            Reduce(ProdKind::EP5, 1usize),
         ],
         [
             Accept,
             Error,
-            Shift(StateIndex(3usize)),
-            Shift(StateIndex(4usize)),
-            Shift(StateIndex(5usize)),
-            Shift(StateIndex(6usize)),
+            Shift(State::PlusS3),
+            Shift(State::MinusS4),
+            Shift(State::MulS5),
+            Shift(State::DivS6),
         ],
-        [Error, Shift(StateIndex(1usize)), Error, Error, Error, Error],
-        [Error, Shift(StateIndex(1usize)), Error, Error, Error, Error],
-        [Error, Shift(StateIndex(1usize)), Error, Error, Error, Error],
-        [Error, Shift(StateIndex(1usize)), Error, Error, Error, Error],
+        [Error, Shift(State::NumberS1), Error, Error, Error, Error],
+        [Error, Shift(State::NumberS1), Error, Error, Error, Error],
+        [Error, Shift(State::NumberS1), Error, Error, Error, Error],
+        [Error, Shift(State::NumberS1), Error, Error, Error, Error],
         [
-            Reduce(ProdIndex(1usize), 3usize, NonTermIndex(2usize)),
+            Reduce(ProdKind::EP1, 3usize),
             Error,
-            Reduce(ProdIndex(1usize), 3usize, NonTermIndex(2usize)),
-            Reduce(ProdIndex(1usize), 3usize, NonTermIndex(2usize)),
-            Shift(StateIndex(5usize)),
-            Shift(StateIndex(6usize)),
-        ],
-        [
-            Reduce(ProdIndex(2usize), 3usize, NonTermIndex(2usize)),
-            Error,
-            Reduce(ProdIndex(2usize), 3usize, NonTermIndex(2usize)),
-            Reduce(ProdIndex(2usize), 3usize, NonTermIndex(2usize)),
-            Shift(StateIndex(5usize)),
-            Shift(StateIndex(6usize)),
+            Reduce(ProdKind::EP1, 3usize),
+            Reduce(ProdKind::EP1, 3usize),
+            Shift(State::MulS5),
+            Shift(State::DivS6),
         ],
         [
-            Reduce(ProdIndex(3usize), 3usize, NonTermIndex(2usize)),
+            Reduce(ProdKind::EP2, 3usize),
             Error,
-            Reduce(ProdIndex(3usize), 3usize, NonTermIndex(2usize)),
-            Reduce(ProdIndex(3usize), 3usize, NonTermIndex(2usize)),
-            Reduce(ProdIndex(3usize), 3usize, NonTermIndex(2usize)),
-            Reduce(ProdIndex(3usize), 3usize, NonTermIndex(2usize)),
+            Reduce(ProdKind::EP2, 3usize),
+            Reduce(ProdKind::EP2, 3usize),
+            Shift(State::MulS5),
+            Shift(State::DivS6),
         ],
         [
-            Reduce(ProdIndex(4usize), 3usize, NonTermIndex(2usize)),
+            Reduce(ProdKind::EP3, 3usize),
             Error,
-            Reduce(ProdIndex(4usize), 3usize, NonTermIndex(2usize)),
-            Reduce(ProdIndex(4usize), 3usize, NonTermIndex(2usize)),
-            Reduce(ProdIndex(4usize), 3usize, NonTermIndex(2usize)),
-            Reduce(ProdIndex(4usize), 3usize, NonTermIndex(2usize)),
+            Reduce(ProdKind::EP3, 3usize),
+            Reduce(ProdKind::EP3, 3usize),
+            Reduce(ProdKind::EP3, 3usize),
+            Reduce(ProdKind::EP3, 3usize),
+        ],
+        [
+            Reduce(ProdKind::EP4, 3usize),
+            Error,
+            Reduce(ProdKind::EP4, 3usize),
+            Reduce(ProdKind::EP4, 3usize),
+            Reduce(ProdKind::EP4, 3usize),
+            Reduce(ProdKind::EP4, 3usize),
         ],
     ],
     gotos: [
-        [None, None, Some(StateIndex(2usize))],
+        [None, None, Some(State::ES2)],
         [None, None, None],
         [None, None, None],
-        [None, None, Some(StateIndex(7usize))],
-        [None, None, Some(StateIndex(8usize))],
-        [None, None, Some(StateIndex(9usize))],
-        [None, None, Some(StateIndex(10usize))],
+        [None, None, Some(State::ES7)],
+        [None, None, Some(State::ES8)],
+        [None, None, Some(State::ES9)],
+        [None, None, Some(State::ES10)],
         [None, None, None],
         [None, None, None],
         [None, None, None],
@@ -429,16 +469,17 @@ pub(crate) static PARSER_DEFINITION: CalculatorParserDefinition = CalculatorPars
         ],
     ],
 };
-impl ParserDefinition<TokenRecognizer> for CalculatorParserDefinition {
-    fn action(&self, state_index: StateIndex, term_index: TermIndex) -> Action {
-        PARSER_DEFINITION.actions[state_index.0][term_index.0]
+impl ParserDefinition<TokenRecognizer, State, ProdKind, NonTermKind>
+for CalculatorParserDefinition {
+    fn action(&self, state: State, term_index: TermIndex) -> Action<State, ProdKind> {
+        PARSER_DEFINITION.actions[state as usize][term_index.0]
     }
-    fn goto(&self, state_index: StateIndex, nonterm_index: NonTermIndex) -> StateIndex {
-        PARSER_DEFINITION.gotos[state_index.0][nonterm_index.0].unwrap()
+    fn goto(&self, state: State, nonterm: NonTermKind) -> State {
+        PARSER_DEFINITION.gotos[state as usize][nonterm as usize].unwrap()
     }
-    fn recognizers(&self, state_index: StateIndex) -> Vec<&TokenRecognizer> {
+    fn recognizers(&self, state: State) -> Vec<&TokenRecognizer> {
         PARSER_DEFINITION
-            .token_recognizers[state_index.0]
+            .token_recognizers[state as usize]
             .iter()
             .map_while(|tr| tr.as_ref())
             .collect()
@@ -482,7 +523,7 @@ impl<'i> CalculatorParser {
         let lexer = &local_lexer;
         let mut local_builder = DefaultBuilder::new();
         let builder = &mut local_builder;
-        let mut parser = LRParser::new(&PARSER_DEFINITION, StateIndex(0), false);
+        let mut parser = LRParser::new(&PARSER_DEFINITION, State::AUGS0, false);
         parser.parse(context, lexer, builder)
     }
 }
@@ -584,7 +625,7 @@ impl Builder for DefaultBuilder {
         }
     }
 }
-impl<'i> LRBuilder<'i, Input, TokenKind> for DefaultBuilder {
+impl<'i> LRBuilder<'i, Input, ProdKind, TokenKind> for DefaultBuilder {
     #![allow(unused_variables)]
     fn shift_action(
         &mut self,
@@ -606,10 +647,10 @@ impl<'i> LRBuilder<'i, Input, TokenKind> for DefaultBuilder {
     fn reduce_action(
         &mut self,
         context: &mut Context<'i>,
-        prod_idx: ProdIndex,
+        prod: ProdKind,
         _prod_len: usize,
     ) {
-        let prod = match ProdKind::from(prod_idx) {
+        let prod = match prod {
             ProdKind::EP1 => {
                 let mut i = self
                     .res_stack

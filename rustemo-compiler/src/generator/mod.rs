@@ -2,6 +2,7 @@ pub(crate) mod actions;
 
 use quote::format_ident;
 use quote::quote;
+use rustemo::index::StateIndex;
 use rustemo::index::TermIndex;
 use std::{
     iter::repeat,
@@ -237,7 +238,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             #builder_import
             use rustemo::lr::parser::{LRParser, ParserDefinition};
             use rustemo::lr::parser::Action::{self, Shift, Reduce, Accept, Error};
-            use rustemo::index::{StateIndex, TermIndex, NonTermIndex, ProdIndex};
+            use rustemo::index::TermIndex;
             #[allow(unused_imports)]
             use rustemo::debug::{log, logn};
             use colored::*;
@@ -383,7 +384,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             .collect();
         ast.push(parse_quote! {
             #[allow(clippy::enum_variant_names)]
-            #[derive(Clone, Copy)]
+            #[derive(Clone, Copy, Debug)]
             pub enum ProdKind {
                 #(#prodkind_variants),*
             }
@@ -415,16 +416,35 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                 }
             }
         });
+        #[cfg(debug_assertions)]
         ast.push(parse_quote! {
-        impl std::fmt::Display for ProdKind {
-            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                let name = match self {
-                    #(#display_arms),*
-                };
-                write!(f, "{}", name)
+            impl std::fmt::Display for ProdKind {
+                fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                    let name = match self {
+                        #(#display_arms),*
+                    };
+                    write!(f, "{}", name)
+                }
             }
-        }
-    });
+        });
+
+        let nonterm_kind_variants: Vec<syn::Variant> = self
+            .grammar
+            .nonterminals
+            .iter()
+            .map(|nt| {
+                let nt_kind = format_ident!("{}", nt.name);
+                parse_quote! {#nt_kind}
+            })
+            .collect();
+        ast.push(parse_quote! {
+            #[allow(clippy::upper_case_acronyms)]
+            #[allow(dead_code)]
+            #[derive(Clone, Copy, Debug)]
+            pub enum NonTermKind {
+                #(#nonterm_kind_variants),*
+            }
+        });
 
         let from_arms: Vec<syn::Arm> = self
             .grammar
@@ -432,17 +452,62 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             .iter()
             .map(|&prod| {
                 let prod_kind = self.prod_kind_ident(prod);
-                let idx = prod.idx.0;
-                parse_quote! { #idx => ProdKind::#prod_kind }
+                let nt_kind =
+                    format_ident!("{}", prod.nonterminal(self.grammar).name);
+                parse_quote! { ProdKind::#prod_kind => NonTermKind::#nt_kind }
             })
             .collect();
         ast.push(parse_quote! {
-            impl From<ProdIndex> for ProdKind {
-                fn from(prod_index: ProdIndex) -> Self {
-                    match prod_index.0 {
+            impl From<ProdKind> for NonTermKind {
+                fn from(prod: ProdKind) -> Self {
+                    match prod {
                         #(#from_arms),*,
-                        _ => unreachable!()
                     }
+                }
+            }
+        });
+
+        let state_variants: Vec<syn::Variant> = self
+            .table
+            .states
+            .iter()
+            .map(|state| {
+                let state_kind = self.state_kind_ident(state.idx);
+                parse_quote! {#state_kind}
+            })
+            .collect();
+        ast.push(parse_quote! {
+            #[allow(clippy::enum_variant_names)]
+            #[derive(Clone, Copy, Debug)]
+            pub enum State {
+                #(#state_variants),*
+            }
+        });
+
+        #[cfg(debug_assertions)]
+        let state_display_arms: Vec<syn::Arm> = self
+            .table
+            .states
+            .iter()
+            .map(|state| {
+                let state_kind_ident = self.state_kind_ident(state.idx);
+                let state_index_str = format!(
+                    "{}:{}",
+                    state.idx,
+                    self.grammar.symbol_name(state.symbol)
+                );
+                parse_quote! { State::#state_kind_ident => #state_index_str }
+            })
+            .collect();
+
+        #[cfg(debug_assertions)]
+        ast.push(parse_quote!{
+            impl std::fmt::Display for State {
+                fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                    let name = match self {
+                        #(#state_display_arms),*,
+                    };
+                    write!(f, "{name}")
                 }
             }
         });
@@ -524,8 +589,8 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             .unwrap();
         ast.push(parse_quote! {
             pub struct #parser_definition {
-                actions: [[Action; TERMINAL_COUNT]; STATE_COUNT],
-                gotos: [[Option<StateIndex>; NONTERMINAL_COUNT]; STATE_COUNT],
+                actions: [[Action<State, ProdKind>; TERMINAL_COUNT]; STATE_COUNT],
+                gotos: [[Option<State>; NONTERMINAL_COUNT]; STATE_COUNT],
                 token_recognizers: [[Option<TokenRecognizer>; #max_actions]; STATE_COUNT]
             }
 
@@ -541,7 +606,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                     .iter()
                     .map(|action| match action.len() {
                         0 => parse_quote! { Error },
-                        1 => action_to_syntax(&action[0]),
+                        1 => self.action_to_syntax(&action[0]),
                         _ => panic!("Multiple actions for state {}", state.idx),
                     })
                     .collect();
@@ -561,8 +626,9 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                     .iter()
                     .map(|x| match x {
                         Some(state) => {
-                            let idx = state.0;
-                            parse_quote! { Some(StateIndex(#idx))}
+                            let state_kind_ident =
+                                self.state_kind_ident(*state);
+                            parse_quote! { Some(State::#state_kind_ident) }
                         }
                         None => parse_quote! { None },
                     })
@@ -645,16 +711,16 @@ impl<'g, 's> ParserGenerator<'g, 's> {
 
         ast.push(
         parse_quote! {
-            impl ParserDefinition<TokenRecognizer> for #parser_definition {
-                fn action(&self, state_index: StateIndex, term_index: TermIndex) -> Action {
-                    PARSER_DEFINITION.actions[state_index.0][term_index.0]
+            impl ParserDefinition<TokenRecognizer, State, ProdKind, NonTermKind> for #parser_definition {
+                fn action(&self, state: State, term_index: TermIndex) -> Action<State, ProdKind> {
+                    PARSER_DEFINITION.actions[state as usize][term_index.0]
                 }
-                fn goto(&self, state_index: StateIndex, nonterm_index: NonTermIndex) -> StateIndex {
-                    PARSER_DEFINITION.gotos[state_index.0][nonterm_index.0].unwrap()
+                fn goto(&self, state: State, nonterm: NonTermKind) -> State {
+                    PARSER_DEFINITION.gotos[state as usize][nonterm as usize].unwrap()
                 }
 
-                fn recognizers(&self, state_index: StateIndex) -> Vec<&TokenRecognizer> {
-                    PARSER_DEFINITION.token_recognizers[state_index.0]
+                fn recognizers(&self, state: State) -> Vec<&TokenRecognizer> {
+                    PARSER_DEFINITION.token_recognizers[state as usize]
                         .iter()
                         .map_while(|tr| tr.as_ref())
                         .collect()
@@ -685,7 +751,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                         let pos = context.position;
                         log!("** Parsing layout");
                         let mut builder = SliceBuilder::new();
-                        context.layout_ahead = <LRParser<#parser_definition, TokenRecognizer>
+                        context.layout_ahead = <LRParser<State, ProdKind, NonTermKind, #parser_definition, TokenRecognizer>
                                                 as rustemo::parser::Parser<'_, Input, #lexer_type,
                                                     SliceBuilder<'_, Input>,
                                                     TokenRecognizer>>::parse(&mut #layout_parser::default().0,
@@ -712,7 +778,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                 <DefaultBuilder as Builder>::Output
             },
             BuilderType::Generic => parse_quote! {
-                <TreeBuilder<'i, Input, TokenKind> as Builder>::Output
+                <TreeBuilder<'i, Input, ProdKind, TokenKind> as Builder>::Output
             },
             BuilderType::Custom => parse_quote! {
                 B::Output
@@ -788,9 +854,9 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             parser_fields_values
                 .push(parse_quote! { builder: RefCell::new(builder) });
             parser_generics.params.push(parse_quote! { B });
-            parser_impl_generics
-                .params
-                .push(parse_quote! { B: LRBuilder<'i, Input, TokenKind> });
+            parser_impl_generics.params.push(
+                parse_quote! { B: LRBuilder<'i, Input, ProdKind, TokenKind> },
+            );
         }
 
         ast.push(parse_quote! {
@@ -830,7 +896,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                 fn inner_parse(&self, context: &mut Context<'i>) -> Result<#parse_result> {
                     #(#lexer_instance);*
                     #(#builder_instance);*
-                    let mut parser = LRParser::new(&PARSER_DEFINITION, StateIndex(0), #partial_parse);
+                    let mut parser = LRParser::new(&PARSER_DEFINITION, State::AUGS0, #partial_parse);
                     #(#parse_stmt)*
                 }
             }
@@ -843,12 +909,11 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         create_idents!(self, parser_definition, layout_parser,);
         let layout_state = &self.table.layout_state.expect("No Layout state!");
         let mut ast: Vec<syn::Item> = vec![];
-        let layout_state = layout_state.0;
-        let layout_state: syn::Expr =
-            parse_quote! { StateIndex(#layout_state) };
+        let layout_state = self.state_kind_ident(*layout_state);
+        let layout_state: syn::Expr = parse_quote! { State::#layout_state };
 
         ast.push(parse_quote! {
-            pub struct #layout_parser(LRParser<#parser_definition, TokenRecognizer>);
+            pub struct #layout_parser(LRParser<State, ProdKind, NonTermKind, #parser_definition, TokenRecognizer>);
         });
 
         ast.push(parse_quote! {
@@ -1156,7 +1221,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         let reduce_match_arms = reduce_match_arms;
 
         ast.push(parse_quote! {
-            impl<'i> LRBuilder<'i, Input, TokenKind> for DefaultBuilder
+            impl<'i> LRBuilder<'i, Input, ProdKind, TokenKind> for DefaultBuilder
             {
 
                 #![allow(unused_variables)]
@@ -1174,9 +1239,9 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                 fn reduce_action(
                     &mut self,
                     #context_var: &mut Context<'i>,
-                    prod_idx: ProdIndex,
+                    prod: ProdKind,
                     _prod_len: usize) {
-                    let prod = match ProdKind::from(prod_idx) {
+                    let prod = match prod {
                         #(#reduce_match_arms),*
                     };
                     self.res_stack.push(Symbol::NonTerminal(prod));
@@ -1203,20 +1268,28 @@ impl<'g, 's> ParserGenerator<'g, 's> {
     fn prod_kind_ident(&self, prod: &Production) -> syn::Ident {
         format_ident!("{}", self.prod_kind(prod))
     }
-}
 
-fn action_to_syntax(action: &Action) -> syn::Expr {
-    match action {
-        Action::Shift(state) => {
-            let state = state.0;
-            parse_quote! { Shift(StateIndex(#state)) }
+    fn state_kind_ident(&self, state: StateIndex) -> syn::Ident {
+        format_ident!(
+            "{}S{}",
+            self.grammar.symbol_name(self.table.states[state].symbol),
+            state.0
+        )
+    }
+
+    fn action_to_syntax(&self, action: &Action) -> syn::Expr {
+        match action {
+            Action::Shift(state) => {
+                let state_kind_ident = self.state_kind_ident(*state);
+                parse_quote! { Shift(State::#state_kind_ident) }
+            }
+            Action::Reduce(prod, len) => {
+                let prod_kind =
+                    self.prod_kind_ident(&self.grammar.productions[*prod]);
+                parse_quote! { Reduce(ProdKind::#prod_kind, #len) }
+            }
+            Action::Accept => parse_quote! { Accept },
         }
-        Action::Reduce(prod, len, nonterm) => {
-            let prod = prod.0;
-            let nonterm = nonterm.0;
-            parse_quote! { Reduce(ProdIndex(#prod), #len, NonTermIndex(#nonterm)) }
-        }
-        Action::Accept => parse_quote! { Accept },
     }
 }
 

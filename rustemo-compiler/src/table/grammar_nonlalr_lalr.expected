@@ -263,12 +263,10 @@ StateVec(
                         Reduce(
                             5,
                             1,
-                            3,
                         ),
                         Reduce(
                             6,
                             1,
-                            4,
                         ),
                     ],
                     [],
@@ -276,12 +274,10 @@ StateVec(
                         Reduce(
                             5,
                             1,
-                            3,
                         ),
                         Reduce(
                             6,
                             1,
-                            4,
                         ),
                     ],
                     [],
@@ -551,7 +547,6 @@ StateVec(
                         Reduce(
                             1,
                             2,
-                            2,
                         ),
                     ],
                     [],
@@ -596,7 +591,6 @@ StateVec(
                     [
                         Reduce(
                             3,
-                            2,
                             2,
                         ),
                     ],
@@ -643,7 +637,6 @@ StateVec(
                         Reduce(
                             2,
                             3,
-                            2,
                         ),
                     ],
                     [],
@@ -689,7 +682,6 @@ StateVec(
                         Reduce(
                             4,
                             3,
-                            2,
                         ),
                     ],
                     [],

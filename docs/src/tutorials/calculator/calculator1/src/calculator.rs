@@ -8,7 +8,7 @@ use rustemo::builder::Builder;
 use rustemo::lr::builder::LRBuilder;
 use rustemo::lr::parser::{LRParser, ParserDefinition};
 use rustemo::lr::parser::Action::{self, Shift, Reduce, Accept, Error};
-use rustemo::index::{StateIndex, TermIndex, NonTermIndex, ProdIndex};
+use rustemo::index::TermIndex;
 #[allow(unused_imports)]
 use rustemo::debug::{log, logn};
 use colored::*;
@@ -61,7 +61,7 @@ impl From<TokenKind> for TermIndex {
     }
 }
 #[allow(clippy::enum_variant_names)]
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub enum ProdKind {
     ExpressionP1,
 }
@@ -81,12 +81,40 @@ impl std::fmt::Display for ProdKind {
         write!(f, "{}", name)
     }
 }
-impl From<ProdIndex> for ProdKind {
-    fn from(prod_index: ProdIndex) -> Self {
-        match prod_index.0 {
-            1usize => ProdKind::ExpressionP1,
-            _ => unreachable!(),
+#[allow(clippy::upper_case_acronyms)]
+#[allow(dead_code)]
+#[derive(Clone, Copy, Debug)]
+pub enum NonTermKind {
+    EMPTY,
+    AUG,
+    Expression,
+}
+impl From<ProdKind> for NonTermKind {
+    fn from(prod: ProdKind) -> Self {
+        match prod {
+            ProdKind::ExpressionP1 => NonTermKind::Expression,
         }
+    }
+}
+#[allow(clippy::enum_variant_names)]
+#[derive(Clone, Copy, Debug)]
+pub enum State {
+    AUGS0,
+    OperandS1,
+    ExpressionS2,
+    OperatorS3,
+    OperandS4,
+}
+impl std::fmt::Display for State {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let name = match self {
+            State::AUGS0 => "0:AUG",
+            State::OperandS1 => "1:Operand",
+            State::ExpressionS2 => "2:Expression",
+            State::OperatorS3 => "3:Operator",
+            State::OperandS4 => "4:Operand",
+        };
+        write!(f, "{name}")
     }
 }
 #[derive(Debug)]
@@ -105,20 +133,20 @@ pub enum NonTerminal {
     Expression(calculator_actions::Expression),
 }
 pub struct CalculatorParserDefinition {
-    actions: [[Action; TERMINAL_COUNT]; STATE_COUNT],
-    gotos: [[Option<StateIndex>; NONTERMINAL_COUNT]; STATE_COUNT],
+    actions: [[Action<State, ProdKind>; TERMINAL_COUNT]; STATE_COUNT],
+    gotos: [[Option<State>; NONTERMINAL_COUNT]; STATE_COUNT],
     token_recognizers: [[Option<TokenRecognizer>; 1usize]; STATE_COUNT],
 }
 pub(crate) static PARSER_DEFINITION: CalculatorParserDefinition = CalculatorParserDefinition {
     actions: [
-        [Error, Shift(StateIndex(1usize)), Error],
-        [Error, Error, Shift(StateIndex(3usize))],
+        [Error, Shift(State::OperandS1), Error],
+        [Error, Error, Shift(State::OperatorS3)],
         [Accept, Error, Error],
-        [Error, Shift(StateIndex(4usize)), Error],
-        [Reduce(ProdIndex(1usize), 3usize, NonTermIndex(2usize)), Error, Error],
+        [Error, Shift(State::OperandS4), Error],
+        [Reduce(ProdKind::ExpressionP1, 3usize), Error, Error],
     ],
     gotos: [
-        [None, None, Some(StateIndex(2usize))],
+        [None, None, Some(State::ExpressionS2)],
         [None, None, None],
         [None, None, None],
         [None, None, None],
@@ -162,16 +190,17 @@ pub(crate) static PARSER_DEFINITION: CalculatorParserDefinition = CalculatorPars
         ],
     ],
 };
-impl ParserDefinition<TokenRecognizer> for CalculatorParserDefinition {
-    fn action(&self, state_index: StateIndex, term_index: TermIndex) -> Action {
-        PARSER_DEFINITION.actions[state_index.0][term_index.0]
+impl ParserDefinition<TokenRecognizer, State, ProdKind, NonTermKind>
+for CalculatorParserDefinition {
+    fn action(&self, state: State, term_index: TermIndex) -> Action<State, ProdKind> {
+        PARSER_DEFINITION.actions[state as usize][term_index.0]
     }
-    fn goto(&self, state_index: StateIndex, nonterm_index: NonTermIndex) -> StateIndex {
-        PARSER_DEFINITION.gotos[state_index.0][nonterm_index.0].unwrap()
+    fn goto(&self, state: State, nonterm: NonTermKind) -> State {
+        PARSER_DEFINITION.gotos[state as usize][nonterm as usize].unwrap()
     }
-    fn recognizers(&self, state_index: StateIndex) -> Vec<&TokenRecognizer> {
+    fn recognizers(&self, state: State) -> Vec<&TokenRecognizer> {
         PARSER_DEFINITION
-            .token_recognizers[state_index.0]
+            .token_recognizers[state as usize]
             .iter()
             .map_while(|tr| tr.as_ref())
             .collect()
@@ -215,7 +244,7 @@ impl<'i> CalculatorParser {
         let lexer = &local_lexer;
         let mut local_builder = DefaultBuilder::new();
         let builder = &mut local_builder;
-        let mut parser = LRParser::new(&PARSER_DEFINITION, StateIndex(0), false);
+        let mut parser = LRParser::new(&PARSER_DEFINITION, State::AUGS0, false);
         parser.parse(context, lexer, builder)
     }
 }
@@ -314,7 +343,7 @@ impl Builder for DefaultBuilder {
         }
     }
 }
-impl<'i> LRBuilder<'i, Input, TokenKind> for DefaultBuilder {
+impl<'i> LRBuilder<'i, Input, ProdKind, TokenKind> for DefaultBuilder {
     #![allow(unused_variables)]
     fn shift_action(
         &mut self,
@@ -335,10 +364,10 @@ impl<'i> LRBuilder<'i, Input, TokenKind> for DefaultBuilder {
     fn reduce_action(
         &mut self,
         context: &mut Context<'i>,
-        prod_idx: ProdIndex,
+        prod: ProdKind,
         _prod_len: usize,
     ) {
-        let prod = match ProdKind::from(prod_idx) {
+        let prod = match prod {
             ProdKind::ExpressionP1 => {
                 let mut i = self
                     .res_stack

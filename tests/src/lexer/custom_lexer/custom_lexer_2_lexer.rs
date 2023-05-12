@@ -1,7 +1,6 @@
 use super::custom_lexer_2::{TokenKind, TokenRecognizer};
 use rustemo::{
     error::Result,
-    index::StateIndex,
     lexer::{self, Context, Lexer, Token},
     location::{Location, Position},
 };

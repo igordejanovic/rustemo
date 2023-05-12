@@ -21,7 +21,7 @@ use rustemo::{
 
 use crate::{
     grammar::{Associativity, Priority, Terminal, DEFAULT_PRIORITY},
-    lang::{rustemo::ProdKind, rustemo_actions::Recognizer},
+    lang::rustemo_actions::Recognizer,
     settings::{ParserAlgo, Settings},
 };
 
@@ -30,7 +30,7 @@ use super::grammar::{res_symbol, Grammar};
 #[derive(Debug, Clone)]
 pub enum Action {
     Shift(StateIndex),
-    Reduce(ProdIndex, usize, NonTermIndex),
+    Reduce(ProdIndex, usize),
     Accept,
 }
 
@@ -104,14 +104,14 @@ impl<'g> Display for LRState<'g> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "State {}:{}\n{}",
+            "State {}:{}\n\t{}",
             self.idx,
             self.grammar.symbol_name(self.symbol),
             self.items
                 .iter()
                 .map(|i| i.to_string(self.grammar))
                 .collect::<Vec<_>>()
-                .join("\n")
+                .join("\n\t")
         )
     }
 }
@@ -727,8 +727,7 @@ impl<'g, 's> LRTable<'g, 's> {
                     continue;
                 }
 
-                let new_reduce =
-                    Action::Reduce(item.prod, item.prod_len, prod.nonterminal);
+                let new_reduce = Action::Reduce(item.prod, item.prod_len);
                 for follow_symbol in item.follow.borrow().iter() {
                     let follow_term =
                         self.grammar.symbol_to_term_index(*follow_symbol);
@@ -844,7 +843,7 @@ impl<'g, 's> LRTable<'g, 's> {
                                         self.settings.parser_algo
                                     {
                                         // ... so remove all empty reductions.
-                                        actions.retain(|x| !matches!(x, Action::Reduce(_, len, ..) if *len == 0));
+                                        actions.retain(|x| !matches!(x, Action::Reduce(_, len) if *len == 0));
 
                                         if item.prod_len > 0
                                             || actions.is_empty()
@@ -972,13 +971,13 @@ impl<'g, 's> LRTable<'g, 's> {
                             // First figure out the type of conflict.
                             let kind = match &actions[..] {
                                 // Shift/Reduce
-                                [Action::Shift(_), Action::Reduce(prod, ..)]
-                                    | [Action::Reduce(prod, ..), Action::Shift(_)]=>
+                                [Action::Shift(_), Action::Reduce(prod, _)]
+                                    | [Action::Reduce(prod, _), Action::Shift(_)]=>
                                         ConflictKind::ShiftReduce(*prod),
                                 // Reduce/Reduce, more than two can happen at
                                 // the same time but for now we shall report
                                 // conflict on the first two for simplicity sake
-                                [Action::Reduce(prod1, ..), Action::Reduce(prod2, ..), ..] =>
+                                [Action::Reduce(prod1, _), Action::Reduce(prod2, _), ..] =>
                                     ConflictKind::ReduceReduce(*prod1,  *prod2),
                                 _ => unreachable!()
                             };
@@ -1060,10 +1059,11 @@ impl<'g, 's> Display for LRTable<'g, 's> {
                         self.grammar.terminals[TermIndex(i)].name.clone(),
                         match a {
                             Action::Shift(s) => format!("Shift to {s}"),
-                            Action::Reduce(p, l, ..) => {
+                            Action::Reduce(p, l) => {
                                 format!(
                                     "Reduce for len {l} by:   {}",
-                                    ProdKind::from(*p)
+                                    self.grammar.productions[*p]
+                                        .to_string(self.grammar)
                                 )
                             }
                             Action::Accept => "Accept".into(),
