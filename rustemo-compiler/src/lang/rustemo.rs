@@ -18748,10 +18748,10 @@ pub(crate) static PARSER_DEFINITION: RustemoParserDefinition = RustemoParserDefi
         ],
     ],
 };
-impl ParserDefinition<TokenRecognizer, State, ProdKind, NonTermKind>
+impl ParserDefinition<TokenRecognizer, State, ProdKind, TokenKind, NonTermKind>
 for RustemoParserDefinition {
-    fn action(&self, state: State, term_index: TermIndex) -> Action<State, ProdKind> {
-        PARSER_DEFINITION.actions[state as usize][term_index.0]
+    fn action(&self, state: State, token: TokenKind) -> Action<State, ProdKind> {
+        PARSER_DEFINITION.actions[state as usize][token as usize]
     }
     fn goto(&self, state: State, nonterm: NonTermKind) -> State {
         PARSER_DEFINITION.gotos[state as usize][nonterm as usize].unwrap()
@@ -18814,6 +18814,7 @@ impl<'i> RustemoParser {
                     .layout_ahead = <LRParser<
                     State,
                     ProdKind,
+                    TokenKind,
                     NonTermKind,
                     RustemoParserDefinition,
                     TokenRecognizer,
@@ -18839,7 +18840,7 @@ impl<'i> RustemoParser {
     }
 }
 pub struct RustemoLayoutParser(
-    LRParser<State, ProdKind, NonTermKind, RustemoParserDefinition, TokenRecognizer>,
+    LRParser<State, ProdKind, TokenKind, NonTermKind, RustemoParserDefinition, TokenRecognizer>,
 );
 impl Default for RustemoLayoutParser {
     fn default() -> Self {

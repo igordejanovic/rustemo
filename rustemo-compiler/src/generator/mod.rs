@@ -711,9 +711,9 @@ impl<'g, 's> ParserGenerator<'g, 's> {
 
         ast.push(
         parse_quote! {
-            impl ParserDefinition<TokenRecognizer, State, ProdKind, NonTermKind> for #parser_definition {
-                fn action(&self, state: State, term_index: TermIndex) -> Action<State, ProdKind> {
-                    PARSER_DEFINITION.actions[state as usize][term_index.0]
+            impl ParserDefinition<TokenRecognizer, State, ProdKind, TokenKind, NonTermKind> for #parser_definition {
+                fn action(&self, state: State, token: TokenKind) -> Action<State, ProdKind> {
+                    PARSER_DEFINITION.actions[state as usize][token as usize]
                 }
                 fn goto(&self, state: State, nonterm: NonTermKind) -> State {
                     PARSER_DEFINITION.gotos[state as usize][nonterm as usize].unwrap()
@@ -751,7 +751,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                         let pos = context.position;
                         log!("** Parsing layout");
                         let mut builder = SliceBuilder::new();
-                        context.layout_ahead = <LRParser<State, ProdKind, NonTermKind, #parser_definition, TokenRecognizer>
+                        context.layout_ahead = <LRParser<State, ProdKind, TokenKind, NonTermKind, #parser_definition, TokenRecognizer>
                                                 as rustemo::parser::Parser<'_, Input, #lexer_type,
                                                     SliceBuilder<'_, Input>,
                                                     TokenRecognizer>>::parse(&mut #layout_parser::default().0,
@@ -913,7 +913,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         let layout_state: syn::Expr = parse_quote! { State::#layout_state };
 
         ast.push(parse_quote! {
-            pub struct #layout_parser(LRParser<State, ProdKind, NonTermKind, #parser_definition, TokenRecognizer>);
+            pub struct #layout_parser(LRParser<State, ProdKind, TokenKind, NonTermKind, #parser_definition, TokenRecognizer>);
         });
 
         ast.push(parse_quote! {

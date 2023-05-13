@@ -1,6 +1,5 @@
 use crate::{
     error::Result,
-    index::TermIndex,
     location::{LineBased, Location, Position},
     log,
 };
@@ -37,13 +36,7 @@ pub trait Lexer<I: Input + ?Sized, TR: TokenRecognizer> {
 /// custom lexers it only provides the token kind as the lexers are implementing
 /// a custom recognition logic.
 pub trait TokenRecognizer {
-    type TokenKind: From<TermIndex>
-        + Into<TermIndex>
-        + PartialEq
-        + AsStr
-        + Default
-        + Debug
-        + Copy;
+    type TokenKind: PartialEq + AsStr + Default + Debug + Copy;
     type Input: Input + ?Sized;
 
     fn token_kind(&self) -> Self::TokenKind;

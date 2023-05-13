@@ -1,6 +1,5 @@
 use crate::debug::log;
 use crate::error::Result;
-use crate::index::TermIndex;
 use crate::lexer::{AsStr, Context, Input, Lexer, Token, TokenRecognizer};
 use crate::location::Location;
 use crate::parser::Parser;
@@ -13,8 +12,8 @@ use std::ops::Range;
 use super::builder::LRBuilder;
 
 /// Provides LR actions and GOTOs given the state and term/nonterm.
-pub trait ParserDefinition<TR: TokenRecognizer, S, P, NT> {
-    fn action(&self, state: S, term_index: TermIndex) -> Action<S, P>;
+pub trait ParserDefinition<TR: TokenRecognizer, S, P, T, NT> {
+    fn action(&self, state: S, term_index: T) -> Action<S, P>;
     fn goto(&self, state: S, nonterm: NT) -> S;
     fn recognizers(&self, state: S) -> Vec<&TR>;
 }
@@ -73,23 +72,25 @@ where
 pub struct LRParser<
     S,
     P,
+    T,
     NT,
-    D: ParserDefinition<TR, S, P, NT> + 'static,
+    D: ParserDefinition<TR, S, P, T, NT> + 'static,
     TR: TokenRecognizer,
 > {
     definition: &'static D,
     parse_stack: Vec<StackItem<S>>,
     partial_parse: bool,
-    phantom: PhantomData<(TR, P, NT)>,
+    phantom: PhantomData<(TR, P, T, NT)>,
 }
 
 impl<
         S: Copy,
         P,
+        T,
         NT,
-        D: ParserDefinition<TR, S, P, NT>,
+        D: ParserDefinition<TR, S, P, T, NT>,
         TR: TokenRecognizer,
-    > LRParser<S, P, NT, D, TR>
+    > LRParser<S, P, T, NT, D, TR>
 {
     pub fn new(definition: &'static D, state: S, partial_parse: bool) -> Self {
         Self {
@@ -186,16 +187,17 @@ impl<
     }
 }
 
-impl<'i, S, P, NT, I, D, L, B, TR> Parser<'i, I, L, B, TR>
-    for LRParser<S, P, NT, D, TR>
+impl<'i, S, P, T, NT, I, D, L, B, TR> Parser<'i, I, L, B, TR>
+    for LRParser<S, P, T, NT, D, TR>
 where
     S: Debug + Copy,
+    T: Debug + Copy,
     P: Debug + Copy + Into<NT>,
     I: Debug + Input + ?Sized,
-    D: ParserDefinition<TR, S, P, NT>,
+    D: ParserDefinition<TR, S, P, T, NT>,
     L: Lexer<I, TR>,
-    TR: TokenRecognizer,
-    B: LRBuilder<'i, I, P, <TR as TokenRecognizer>::TokenKind>,
+    TR: TokenRecognizer<TokenKind = T>,
+    B: LRBuilder<'i, I, P, T>,
 {
     fn parse(
         &mut self,
@@ -217,7 +219,7 @@ where
             log!("Current state: {:?}", state);
             log!("Token ahead: {:?}", next_token);
 
-            let action = self.definition.action(state, next_token.kind.into());
+            let action = self.definition.action(state, next_token.kind);
 
             log!("Action: {:?}", action);
 
