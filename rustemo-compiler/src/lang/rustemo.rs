@@ -8,7 +8,6 @@ use rustemo::builder::Builder;
 use rustemo::lr::builder::{LRBuilder, SliceBuilder};
 use rustemo::lr::parser::{LRParser, ParserDefinition};
 use rustemo::lr::parser::Action::{self, Shift, Reduce, Accept, Error};
-use rustemo::index::TermIndex;
 #[allow(unused_imports)]
 use rustemo::debug::{log, logn};
 use colored::*;
@@ -120,107 +119,6 @@ impl AsStr for TokenKind {
             TokenKind::WS => "WS",
             TokenKind::CommentLine => "CommentLine",
             TokenKind::NotComment => "NotComment",
-        }
-    }
-}
-impl From<TermIndex> for TokenKind {
-    fn from(term_index: TermIndex) -> Self {
-        match term_index.0 {
-            0usize => TokenKind::STOP,
-            1usize => TokenKind::Terminals,
-            2usize => TokenKind::Import,
-            3usize => TokenKind::As,
-            4usize => TokenKind::Colon,
-            5usize => TokenKind::SemiColon,
-            6usize => TokenKind::Comma,
-            7usize => TokenKind::OBrace,
-            8usize => TokenKind::CBrace,
-            9usize => TokenKind::OBracket,
-            10usize => TokenKind::CBracket,
-            11usize => TokenKind::OSBracket,
-            12usize => TokenKind::CSBracket,
-            13usize => TokenKind::Choice,
-            14usize => TokenKind::ZeroOrMore,
-            15usize => TokenKind::ZeroOrMoreGreedy,
-            16usize => TokenKind::OneOrMore,
-            17usize => TokenKind::OneOrMoreGreedy,
-            18usize => TokenKind::Optional,
-            19usize => TokenKind::OptionalGreedy,
-            20usize => TokenKind::Equals,
-            21usize => TokenKind::QEquals,
-            22usize => TokenKind::Left,
-            23usize => TokenKind::Right,
-            24usize => TokenKind::Reduce,
-            25usize => TokenKind::Shift,
-            26usize => TokenKind::Dynamic,
-            27usize => TokenKind::NOPS,
-            28usize => TokenKind::NOPSE,
-            29usize => TokenKind::Prefer,
-            30usize => TokenKind::Finish,
-            31usize => TokenKind::NoFinish,
-            32usize => TokenKind::OComment,
-            33usize => TokenKind::CComment,
-            34usize => TokenKind::Name,
-            35usize => TokenKind::RegexTerm,
-            36usize => TokenKind::IntConst,
-            37usize => TokenKind::FloatConst,
-            38usize => TokenKind::BoolConst,
-            39usize => TokenKind::StrConst,
-            40usize => TokenKind::Annotation,
-            41usize => TokenKind::WS,
-            42usize => TokenKind::CommentLine,
-            43usize => TokenKind::NotComment,
-            _ => unreachable!(),
-        }
-    }
-}
-impl From<TokenKind> for TermIndex {
-    fn from(token_kind: TokenKind) -> Self {
-        match token_kind {
-            TokenKind::STOP => TermIndex(0usize),
-            TokenKind::Terminals => TermIndex(1usize),
-            TokenKind::Import => TermIndex(2usize),
-            TokenKind::As => TermIndex(3usize),
-            TokenKind::Colon => TermIndex(4usize),
-            TokenKind::SemiColon => TermIndex(5usize),
-            TokenKind::Comma => TermIndex(6usize),
-            TokenKind::OBrace => TermIndex(7usize),
-            TokenKind::CBrace => TermIndex(8usize),
-            TokenKind::OBracket => TermIndex(9usize),
-            TokenKind::CBracket => TermIndex(10usize),
-            TokenKind::OSBracket => TermIndex(11usize),
-            TokenKind::CSBracket => TermIndex(12usize),
-            TokenKind::Choice => TermIndex(13usize),
-            TokenKind::ZeroOrMore => TermIndex(14usize),
-            TokenKind::ZeroOrMoreGreedy => TermIndex(15usize),
-            TokenKind::OneOrMore => TermIndex(16usize),
-            TokenKind::OneOrMoreGreedy => TermIndex(17usize),
-            TokenKind::Optional => TermIndex(18usize),
-            TokenKind::OptionalGreedy => TermIndex(19usize),
-            TokenKind::Equals => TermIndex(20usize),
-            TokenKind::QEquals => TermIndex(21usize),
-            TokenKind::Left => TermIndex(22usize),
-            TokenKind::Right => TermIndex(23usize),
-            TokenKind::Reduce => TermIndex(24usize),
-            TokenKind::Shift => TermIndex(25usize),
-            TokenKind::Dynamic => TermIndex(26usize),
-            TokenKind::NOPS => TermIndex(27usize),
-            TokenKind::NOPSE => TermIndex(28usize),
-            TokenKind::Prefer => TermIndex(29usize),
-            TokenKind::Finish => TermIndex(30usize),
-            TokenKind::NoFinish => TermIndex(31usize),
-            TokenKind::OComment => TermIndex(32usize),
-            TokenKind::CComment => TermIndex(33usize),
-            TokenKind::Name => TermIndex(34usize),
-            TokenKind::RegexTerm => TermIndex(35usize),
-            TokenKind::IntConst => TermIndex(36usize),
-            TokenKind::FloatConst => TermIndex(37usize),
-            TokenKind::BoolConst => TermIndex(38usize),
-            TokenKind::StrConst => TermIndex(39usize),
-            TokenKind::Annotation => TermIndex(40usize),
-            TokenKind::WS => TermIndex(41usize),
-            TokenKind::CommentLine => TermIndex(42usize),
-            TokenKind::NotComment => TermIndex(43usize),
         }
     }
 }
@@ -18840,7 +18738,14 @@ impl<'i> RustemoParser {
     }
 }
 pub struct RustemoLayoutParser(
-    LRParser<State, ProdKind, TokenKind, NonTermKind, RustemoParserDefinition, TokenRecognizer>,
+    LRParser<
+        State,
+        ProdKind,
+        TokenKind,
+        NonTermKind,
+        RustemoParserDefinition,
+        TokenRecognizer,
+    >,
 );
 impl Default for RustemoLayoutParser {
     fn default() -> Self {

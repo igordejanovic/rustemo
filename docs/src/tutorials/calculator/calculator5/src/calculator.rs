@@ -8,7 +8,6 @@ use rustemo::builder::Builder;
 use rustemo::lr::builder::LRBuilder;
 use rustemo::lr::parser::{LRParser, ParserDefinition};
 use rustemo::lr::parser::Action::{self, Shift, Reduce, Accept, Error};
-use rustemo::index::TermIndex;
 #[allow(unused_imports)]
 use rustemo::debug::{log, logn};
 use colored::*;
@@ -44,31 +43,6 @@ impl AsStr for TokenKind {
             TokenKind::Minus => "Minus",
             TokenKind::Mul => "Mul",
             TokenKind::Div => "Div",
-        }
-    }
-}
-impl From<TermIndex> for TokenKind {
-    fn from(term_index: TermIndex) -> Self {
-        match term_index.0 {
-            0usize => TokenKind::STOP,
-            1usize => TokenKind::Number,
-            2usize => TokenKind::Plus,
-            3usize => TokenKind::Minus,
-            4usize => TokenKind::Mul,
-            5usize => TokenKind::Div,
-            _ => unreachable!(),
-        }
-    }
-}
-impl From<TokenKind> for TermIndex {
-    fn from(token_kind: TokenKind) -> Self {
-        match token_kind {
-            TokenKind::STOP => TermIndex(0usize),
-            TokenKind::Number => TermIndex(1usize),
-            TokenKind::Plus => TermIndex(2usize),
-            TokenKind::Minus => TermIndex(3usize),
-            TokenKind::Mul => TermIndex(4usize),
-            TokenKind::Div => TermIndex(5usize),
         }
     }
 }

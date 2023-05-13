@@ -238,7 +238,6 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             #builder_import
             use rustemo::lr::parser::{LRParser, ParserDefinition};
             use rustemo::lr::parser::Action::{self, Shift, Reduce, Accept, Error};
-            use rustemo::index::TermIndex;
             #[allow(unused_imports)]
             use rustemo::debug::{log, logn};
             use colored::*;
@@ -333,41 +332,6 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                 fn as_str(&self) -> &'static str {
                     match self {
                         #(#as_str_arms),*
-                    }
-                }
-            }
-        });
-
-        let (from_arms, into_arms): (Vec<syn::Arm>, Vec<syn::Arm>) = self
-            .grammar
-            .terminals
-            .iter()
-            .map(|t| {
-                let name = format_ident!("{}", t.name);
-                let idx = t.idx.0;
-                (
-                    parse_quote! { #idx => TokenKind::#name },
-                    parse_quote! { TokenKind::#name => TermIndex(#idx) },
-                )
-            })
-            .collect::<Vec<_>>()
-            .into_iter()
-            .unzip();
-        ast.push(parse_quote! {
-            impl From<TermIndex> for TokenKind {
-                fn from(term_index: TermIndex) -> Self {
-                    match term_index.0 {
-                        #(#from_arms),*,
-                        _ => unreachable!()
-                    }
-                }
-            }
-        });
-        ast.push(parse_quote! {
-            impl From<TokenKind> for TermIndex {
-                fn from(token_kind: TokenKind) -> Self {
-                    match token_kind {
-                        #(#into_arms),*
                     }
                 }
             }
