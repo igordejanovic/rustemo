@@ -18543,11 +18543,11 @@ impl<'i> RustemoParser {
         let builder = &mut local_builder;
         let mut parser = LRParser::new(&PARSER_DEFINITION, State::AUGS0, false);
         loop {
-            log!("** Parsing content");
+            log!("\n{}", "*** Parsing content".red().bold());
             let result = parser.parse(context, lexer, builder);
             if result.is_err() {
                 let pos = context.position;
-                log!("** Parsing layout");
+                log!("\n{}", "*** Parsing layout".red().bold());
                 let mut builder = SliceBuilder::new();
                 context
                     .layout_ahead = <LRParser<

@@ -674,11 +674,11 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         if self.grammar.has_layout() {
             parse_stmt.push(parse_quote! {
                 loop {
-                    log!("** Parsing content");
+                    log!("\n{}", "*** Parsing content".red().bold());
                     let result = parser.parse(context, lexer, builder);
                     if result.is_err() {
                         let pos = context.position;
-                        log!("** Parsing layout");
+                        log!("\n{}", "*** Parsing layout".red().bold());
                         let mut builder = SliceBuilder::new();
                         context.layout_ahead = <LRParser<State, ProdKind, TokenKind, NonTermKind, #parser_definition, TokenRecognizer>
                                                 as rustemo::parser::Parser<'_, Input, #lexer_type,

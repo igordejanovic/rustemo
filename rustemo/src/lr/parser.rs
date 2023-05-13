@@ -214,14 +214,14 @@ where
 
         let mut state = self.parse_stack.last().unwrap().state;
 
+        log!("Stack: {:?}", self.parse_stack);
+        log!("Current state: {:?}", state);
+
         let mut next_token = self.next_token(lexer, context, state)?;
+        log!("Token ahead: {:?}", next_token);
+
         loop {
-            log!("Stack: {:?}", self.parse_stack);
-            log!("Current state: {:?}", state);
-            log!("Token ahead: {:?}", next_token);
-
             let action = self.definition.action(state, next_token.kind);
-
             log!("Action: {:?}", action);
 
             match action {
@@ -247,6 +247,7 @@ where
                     );
                     context.location = new_location;
                     next_token = self.next_token(lexer, context, state)?;
+                    log!("Token ahead: {:?}", next_token);
                 }
                 Action::Reduce(prod, prod_len) => {
                     log!(
@@ -272,6 +273,8 @@ where
                 // would be done similar problem may arise.
                 Action::Error => err!(format!("Can't continue in state {state:?} with lookahead {next_token:?}."))?,
             }
+            log!("Stack: {:?}", self.parse_stack);
+            log!("Current state: {:?}", state);
         }
         Ok(builder.get_result())
     }
