@@ -36,7 +36,7 @@ pub trait Lexer<I: Input + ?Sized, TR: TokenRecognizer> {
 /// custom lexers it only provides the token kind as the lexers are implementing
 /// a custom recognition logic.
 pub trait TokenRecognizer {
-    type TokenKind: PartialEq + AsStr + Default + Debug + Copy;
+    type TokenKind: PartialEq + Default + Debug + Copy;
     type Input: Input + ?Sized;
 
     fn token_kind(&self) -> Self::TokenKind;
@@ -158,10 +158,6 @@ pub trait Input: ToOwned {
             end: Some(self.location_after(location).start),
         }
     }
-}
-
-pub trait AsStr {
-    fn as_str(&self) -> &'static str;
 }
 
 /// `Token` represent a single token from the input stream.

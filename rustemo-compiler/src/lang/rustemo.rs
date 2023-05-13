@@ -2,7 +2,7 @@
 use std::fmt::Debug;
 use std::hash::{Hash, Hasher};
 use rustemo::Result;
-use rustemo::lexer::{self, Token, AsStr};
+use rustemo::lexer::{self, Token};
 use rustemo::parser::Parser;
 use rustemo::builder::Builder;
 use rustemo::lr::builder::{LRBuilder, SliceBuilder};
@@ -70,57 +70,6 @@ pub enum TokenKind {
     WS,
     CommentLine,
     NotComment,
-}
-impl AsStr for TokenKind {
-    #[allow(dead_code)]
-    fn as_str(&self) -> &'static str {
-        match self {
-            TokenKind::STOP => "STOP",
-            TokenKind::Terminals => "Terminals",
-            TokenKind::Import => "Import",
-            TokenKind::As => "As",
-            TokenKind::Colon => "Colon",
-            TokenKind::SemiColon => "SemiColon",
-            TokenKind::Comma => "Comma",
-            TokenKind::OBrace => "OBrace",
-            TokenKind::CBrace => "CBrace",
-            TokenKind::OBracket => "OBracket",
-            TokenKind::CBracket => "CBracket",
-            TokenKind::OSBracket => "OSBracket",
-            TokenKind::CSBracket => "CSBracket",
-            TokenKind::Choice => "Choice",
-            TokenKind::ZeroOrMore => "ZeroOrMore",
-            TokenKind::ZeroOrMoreGreedy => "ZeroOrMoreGreedy",
-            TokenKind::OneOrMore => "OneOrMore",
-            TokenKind::OneOrMoreGreedy => "OneOrMoreGreedy",
-            TokenKind::Optional => "Optional",
-            TokenKind::OptionalGreedy => "OptionalGreedy",
-            TokenKind::Equals => "Equals",
-            TokenKind::QEquals => "QEquals",
-            TokenKind::Left => "Left",
-            TokenKind::Right => "Right",
-            TokenKind::Reduce => "Reduce",
-            TokenKind::Shift => "Shift",
-            TokenKind::Dynamic => "Dynamic",
-            TokenKind::NOPS => "NOPS",
-            TokenKind::NOPSE => "NOPSE",
-            TokenKind::Prefer => "Prefer",
-            TokenKind::Finish => "Finish",
-            TokenKind::NoFinish => "NoFinish",
-            TokenKind::OComment => "OComment",
-            TokenKind::CComment => "CComment",
-            TokenKind::Name => "Name",
-            TokenKind::RegexTerm => "RegexTerm",
-            TokenKind::IntConst => "IntConst",
-            TokenKind::FloatConst => "FloatConst",
-            TokenKind::BoolConst => "BoolConst",
-            TokenKind::StrConst => "StrConst",
-            TokenKind::Annotation => "Annotation",
-            TokenKind::WS => "WS",
-            TokenKind::CommentLine => "CommentLine",
-            TokenKind::NotComment => "NotComment",
-        }
-    }
 }
 #[allow(clippy::enum_variant_names)]
 #[derive(Clone, Copy, Debug)]
@@ -222,116 +171,6 @@ pub enum ProdKind {
     CorncP1,
     CorncP2,
     CorncP3,
-}
-impl AsStr for ProdKind {
-    #[allow(dead_code)]
-    fn as_str(&self) -> &'static str {
-        match self {
-            ProdKind::FileP1 => "FileP1",
-            ProdKind::GrammarRule1P1 => "GrammarRule1P1",
-            ProdKind::GrammarRule1P2 => "GrammarRule1P2",
-            ProdKind::FileP2 => "FileP2",
-            ProdKind::ImportStm1P1 => "ImportStm1P1",
-            ProdKind::ImportStm1P2 => "ImportStm1P2",
-            ProdKind::FileP3 => "FileP3",
-            ProdKind::TerminalRule1P1 => "TerminalRule1P1",
-            ProdKind::TerminalRule1P2 => "TerminalRule1P2",
-            ProdKind::FileP4 => "FileP4",
-            ProdKind::FileP5 => "FileP5",
-            ProdKind::ImportStmP1 => "ImportStmP1",
-            ProdKind::ImportStmP2 => "ImportStmP2",
-            ProdKind::GrammarRuleP1 => "GrammarRuleP1",
-            ProdKind::AnnotationOptP1 => "AnnotationOptP1",
-            ProdKind::AnnotationOptP2 => "AnnotationOptP2",
-            ProdKind::GrammarRuleP2 => "GrammarRuleP2",
-            ProdKind::GrammarRuleRHSP1 => "GrammarRuleRHSP1",
-            ProdKind::GrammarRuleRHSP2 => "GrammarRuleRHSP2",
-            ProdKind::ProductionP1 => "ProductionP1",
-            ProdKind::Assignment1P1 => "Assignment1P1",
-            ProdKind::Assignment1P2 => "Assignment1P2",
-            ProdKind::ProductionP2 => "ProductionP2",
-            ProdKind::TerminalRuleP1 => "TerminalRuleP1",
-            ProdKind::TerminalRuleP2 => "TerminalRuleP2",
-            ProdKind::TerminalRuleP3 => "TerminalRuleP3",
-            ProdKind::TerminalRuleP4 => "TerminalRuleP4",
-            ProdKind::ProdMetaDataLeft => "ProdMetaDataLeft",
-            ProdKind::ProdMetaDataReduce => "ProdMetaDataReduce",
-            ProdKind::ProdMetaDataRight => "ProdMetaDataRight",
-            ProdKind::ProdMetaDataShift => "ProdMetaDataShift",
-            ProdKind::ProdMetaDataDynamic => "ProdMetaDataDynamic",
-            ProdKind::ProdMetaDataNOPS => "ProdMetaDataNOPS",
-            ProdKind::ProdMetaDataNOPSE => "ProdMetaDataNOPSE",
-            ProdKind::ProdMetaDataPriority => "ProdMetaDataPriority",
-            ProdKind::ProdMetaDataP9 => "ProdMetaDataP9",
-            ProdKind::ProdMetaDataP10 => "ProdMetaDataP10",
-            ProdKind::ProdMetaDatasP1 => "ProdMetaDatasP1",
-            ProdKind::ProdMetaDatasP2 => "ProdMetaDatasP2",
-            ProdKind::TermMetaDataPrefer => "TermMetaDataPrefer",
-            ProdKind::TermMetaDataFinish => "TermMetaDataFinish",
-            ProdKind::TermMetaDataNoFinish => "TermMetaDataNoFinish",
-            ProdKind::TermMetaDataDynamic => "TermMetaDataDynamic",
-            ProdKind::TermMetaDataPriority => "TermMetaDataPriority",
-            ProdKind::TermMetaDataP6 => "TermMetaDataP6",
-            ProdKind::TermMetaDatasP1 => "TermMetaDatasP1",
-            ProdKind::TermMetaDatasP2 => "TermMetaDatasP2",
-            ProdKind::UserMetaDataP1 => "UserMetaDataP1",
-            ProdKind::ProdKindP1 => "ProdKindP1",
-            ProdKind::ConstValP1 => "ConstValP1",
-            ProdKind::ConstValP2 => "ConstValP2",
-            ProdKind::ConstValP3 => "ConstValP3",
-            ProdKind::ConstValP4 => "ConstValP4",
-            ProdKind::AssignmentP1 => "AssignmentP1",
-            ProdKind::AssignmentP2 => "AssignmentP2",
-            ProdKind::AssignmentP3 => "AssignmentP3",
-            ProdKind::PlainAssignmentP1 => "PlainAssignmentP1",
-            ProdKind::BoolAssignmentP1 => "BoolAssignmentP1",
-            ProdKind::ProductionGroupP1 => "ProductionGroupP1",
-            ProdKind::GrammarSymbolRefP1 => "GrammarSymbolRefP1",
-            ProdKind::RepetitionOperatorOptP1 => "RepetitionOperatorOptP1",
-            ProdKind::RepetitionOperatorOptP2 => "RepetitionOperatorOptP2",
-            ProdKind::GrammarSymbolRefP2 => "GrammarSymbolRefP2",
-            ProdKind::RepetitionOperatorP1 => "RepetitionOperatorP1",
-            ProdKind::RepetitionModifiersOptP1 => "RepetitionModifiersOptP1",
-            ProdKind::RepetitionModifiersOptP2 => "RepetitionModifiersOptP2",
-            ProdKind::RepetitionOperatorOpZeroOrMore => "RepetitionOperatorOpZeroOrMore",
-            ProdKind::RepetitionOperatorOpZeroOrMoreGreedy => {
-                "RepetitionOperatorOpZeroOrMoreGreedy"
-            }
-            ProdKind::RepetitionOperatorOpOneOrMore => "RepetitionOperatorOpOneOrMore",
-            ProdKind::RepetitionOperatorOpOneOrMoreGreedy => {
-                "RepetitionOperatorOpOneOrMoreGreedy"
-            }
-            ProdKind::RepetitionOperatorOpOptional => "RepetitionOperatorOpOptional",
-            ProdKind::RepetitionOperatorOpOptionalGreedy => {
-                "RepetitionOperatorOpOptionalGreedy"
-            }
-            ProdKind::RepetitionModifiersP1 => "RepetitionModifiersP1",
-            ProdKind::RepetitionModifier1P1 => "RepetitionModifier1P1",
-            ProdKind::RepetitionModifier1P2 => "RepetitionModifier1P2",
-            ProdKind::RepetitionModifierP1 => "RepetitionModifierP1",
-            ProdKind::GrammarSymbolP1 => "GrammarSymbolP1",
-            ProdKind::GrammarSymbolP2 => "GrammarSymbolP2",
-            ProdKind::RecognizerP1 => "RecognizerP1",
-            ProdKind::RecognizerP2 => "RecognizerP2",
-            ProdKind::LayoutP1 => "LayoutP1",
-            ProdKind::LayoutItem1P1 => "LayoutItem1P1",
-            ProdKind::LayoutItem1P2 => "LayoutItem1P2",
-            ProdKind::LayoutItem0P1 => "LayoutItem0P1",
-            ProdKind::LayoutItem0P2 => "LayoutItem0P2",
-            ProdKind::LayoutItemP1 => "LayoutItemP1",
-            ProdKind::LayoutItemP2 => "LayoutItemP2",
-            ProdKind::CommentP1 => "CommentP1",
-            ProdKind::CommentP2 => "CommentP2",
-            ProdKind::CorncsP1 => "CorncsP1",
-            ProdKind::Cornc1P1 => "Cornc1P1",
-            ProdKind::Cornc1P2 => "Cornc1P2",
-            ProdKind::Cornc0P1 => "Cornc0P1",
-            ProdKind::Cornc0P2 => "Cornc0P2",
-            ProdKind::CorncP1 => "CorncP1",
-            ProdKind::CorncP2 => "CorncP2",
-            ProdKind::CorncP3 => "CorncP3",
-        }
-    }
 }
 impl std::fmt::Display for ProdKind {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {

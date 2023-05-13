@@ -1,6 +1,6 @@
 use crate::debug::log;
 use crate::error::Result;
-use crate::lexer::{AsStr, Context, Input, Lexer, Token, TokenRecognizer};
+use crate::lexer::{Context, Input, Lexer, Token, TokenRecognizer};
 use crate::location::Location;
 use crate::parser::Parser;
 use crate::{err, Error};
@@ -86,10 +86,10 @@ pub struct LRParser<
 impl<
         S: Copy,
         P,
-        T,
+        T: Default + Debug + PartialEq,
         NT,
         D: ParserDefinition<TR, S, P, T, NT>,
-        TR: TokenRecognizer,
+        TR: TokenRecognizer<TokenKind = T>,
     > LRParser<S, P, T, NT, D, TR>
 {
     pub fn new(definition: &'static D, state: S, partial_parse: bool) -> Self {
@@ -138,13 +138,13 @@ impl<
         lexer: &L,
         context: &mut Context<'i, I>,
         state: S,
-    ) -> Result<Token<'i, I, <TR as TokenRecognizer>::TokenKind>>
+    ) -> Result<Token<'i, I, T>>
     where
         L: Lexer<I, TR>,
         I: Input + ?Sized,
     {
         let expected_recognizers = self.definition.recognizers(state);
-        let stop_kind = <TR as TokenRecognizer>::TokenKind::default();
+        let stop_kind = <T as Default>::default();
         lexer
             .next_token(context, &expected_recognizers)
             .or_else(|| {
@@ -167,12 +167,12 @@ impl<
             .ok_or_else(|| {
                 let expected = expected_recognizers
                     .iter()
-                    .map(|recognizer| recognizer.token_kind().as_str())
+                    .map(|recognizer| format!("{:?}", recognizer.token_kind()))
                     .collect::<Vec<_>>();
                 let expected = if expected.len() > 1 {
                     format!("one of {}", expected.join(", "))
                 } else {
-                    expected[0].into()
+                    expected[0].to_owned()
                 };
                 Error::Error {
                     message: format!(
@@ -191,7 +191,7 @@ impl<'i, S, P, T, NT, I, D, L, B, TR> Parser<'i, I, L, B, TR>
     for LRParser<S, P, T, NT, D, TR>
 where
     S: Debug + Copy,
-    T: Debug + Copy,
+    T: Default + PartialEq + Debug + Copy,
     P: Debug + Copy + Into<NT>,
     I: Debug + Input + ?Sized,
     D: ParserDefinition<TR, S, P, T, NT>,

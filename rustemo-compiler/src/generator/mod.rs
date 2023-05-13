@@ -232,7 +232,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             use std::hash::{Hash, Hasher};
 
             use rustemo::Result;
-            use rustemo::lexer::{self, Token, AsStr};
+            use rustemo::lexer::{self, Token};
             use rustemo::parser::Parser;
             use rustemo::builder::Builder;
             #builder_import
@@ -316,27 +316,6 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             }
         });
 
-        let as_str_arms: Vec<syn::Arm> = self
-            .grammar
-            .terminals
-            .iter()
-            .map(|t| {
-                let name = format_ident!("{}", t.name);
-                let name_str = &t.name;
-                parse_quote! { TokenKind::#name => #name_str }
-            })
-            .collect();
-        ast.push(parse_quote! {
-            impl AsStr for TokenKind {
-                #[allow(dead_code)]
-                fn as_str(&self) -> &'static str {
-                    match self {
-                        #(#as_str_arms),*
-                    }
-                }
-            }
-        });
-
         let prodkind_variants: Vec<syn::Variant> = self
             .grammar
             .productions()
@@ -354,32 +333,16 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             }
         });
 
-        let (as_str_arms, display_arms): (Vec<syn::Arm>, Vec<syn::Arm>) = self
+        let display_arms: Vec<syn::Arm> = self
             .grammar
             .productions()
             .iter()
             .map(|&prod| {
-                let prod_kind = self.prod_kind(prod);
                 let prod_kind_ident = self.prod_kind_ident(prod);
                 let prod_str = prod.to_string(self.grammar);
-                (
-                    parse_quote! { ProdKind::#prod_kind_ident => #prod_kind },
-                    parse_quote! { ProdKind::#prod_kind_ident => #prod_str },
-                )
+                parse_quote! { ProdKind::#prod_kind_ident => #prod_str }
             })
-            .collect::<Vec<_>>()
-            .into_iter()
-            .unzip();
-        ast.push(parse_quote! {
-            impl AsStr for ProdKind {
-                #[allow(dead_code)]
-                fn as_str(&self) -> &'static str {
-                    match self {
-                        #(#as_str_arms),*
-                    }
-                }
-            }
-        });
+            .collect();
         #[cfg(debug_assertions)]
         ast.push(parse_quote! {
             impl std::fmt::Display for ProdKind {

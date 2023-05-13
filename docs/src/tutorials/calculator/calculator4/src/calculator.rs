@@ -2,7 +2,7 @@
 use std::fmt::Debug;
 use std::hash::{Hash, Hasher};
 use rustemo::Result;
-use rustemo::lexer::{self, Token, AsStr};
+use rustemo::lexer::{self, Token};
 use rustemo::parser::Parser;
 use rustemo::builder::Builder;
 use rustemo::lr::builder::LRBuilder;
@@ -33,19 +33,6 @@ pub enum TokenKind {
     Mul,
     Div,
 }
-impl AsStr for TokenKind {
-    #[allow(dead_code)]
-    fn as_str(&self) -> &'static str {
-        match self {
-            TokenKind::STOP => "STOP",
-            TokenKind::Number => "Number",
-            TokenKind::Plus => "Plus",
-            TokenKind::Minus => "Minus",
-            TokenKind::Mul => "Mul",
-            TokenKind::Div => "Div",
-        }
-    }
-}
 #[allow(clippy::enum_variant_names)]
 #[derive(Clone, Copy, Debug)]
 pub enum ProdKind {
@@ -54,18 +41,6 @@ pub enum ProdKind {
     EMul,
     EDiv,
     EP5,
-}
-impl AsStr for ProdKind {
-    #[allow(dead_code)]
-    fn as_str(&self) -> &'static str {
-        match self {
-            ProdKind::EAdd => "EAdd",
-            ProdKind::ESub => "ESub",
-            ProdKind::EMul => "EMul",
-            ProdKind::EDiv => "EDiv",
-            ProdKind::EP5 => "EP5",
-        }
-    }
 }
 impl std::fmt::Display for ProdKind {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
