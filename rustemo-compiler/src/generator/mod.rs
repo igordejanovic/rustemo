@@ -239,6 +239,8 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             use rustemo::lr::parser::Action::{self, Shift, Reduce, Accept, Error};
             #[allow(unused_imports)]
             use rustemo::debug::{log, logn};
+            #[allow(unused_imports)]
+            #[cfg(debug_assertions)]
             use colored::*;
 
             const TERMINAL_COUNT: usize = #term_count;
@@ -332,6 +334,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             }
         });
 
+        #[cfg(debug_assertions)]
         let display_arms: Vec<syn::Arm> = self
             .grammar
             .productions()

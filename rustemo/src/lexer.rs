@@ -3,6 +3,7 @@ use crate::{
     location::{LineBased, Location, Position},
     log,
 };
+#[cfg(debug_assertions)]
 use colored::*;
 use core::fmt::Debug;
 use std::{cmp::min, iter::once, ops::Range, path::Path};

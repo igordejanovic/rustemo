@@ -4,6 +4,7 @@ use crate::lexer::{Context, Input, Lexer, Token, TokenRecognizer};
 use crate::location::Location;
 use crate::parser::Parser;
 use crate::{err, Error};
+#[cfg(debug_assertions)]
 use colored::*;
 use std::fmt::{Debug, Display};
 use std::marker::PhantomData;

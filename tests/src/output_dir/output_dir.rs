@@ -10,6 +10,8 @@ use rustemo::lr::parser::{LRParser, ParserDefinition};
 use rustemo::lr::parser::Action::{self, Shift, Reduce, Accept, Error};
 #[allow(unused_imports)]
 use rustemo::debug::{log, logn};
+#[allow(unused_imports)]
+#[cfg(debug_assertions)]
 use colored::*;
 const TERMINAL_COUNT: usize = 3usize;
 const NONTERMINAL_COUNT: usize = 5usize;
