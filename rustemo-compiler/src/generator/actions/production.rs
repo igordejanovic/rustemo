@@ -149,7 +149,7 @@ impl<'t> ActionsGenerator for ProductionActionsGenerator<'t> {
     fn nonterminal_types(&self, nonterminal: &NonTerminal) -> Vec<syn::Item> {
         let ty = self
             .types
-            .get_type(nonterminal.idx.to_symbol_index(self.term_len));
+            .get_type(nonterminal.idx.symbol_index(self.term_len));
         let type_ident = Ident::new(&ty.name, Span::call_site());
 
         fn get_choice_type(
@@ -315,7 +315,7 @@ impl<'t> ActionsGenerator for ProductionActionsGenerator<'t> {
     ) -> Vec<(String, syn::Item)> {
         let ty = self
             .types
-            .get_type(nonterminal.idx.to_symbol_index(self.term_len));
+            .get_type(nonterminal.idx.symbol_index(self.term_len));
         let ret_type = Ident::new(&nonterminal.name, Span::call_site());
 
         match &ty.kind {

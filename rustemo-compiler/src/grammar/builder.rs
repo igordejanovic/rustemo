@@ -1,17 +1,14 @@
 //! Grammar builder. Used to construct the grammar from the parsed AST.
 use std::collections::{BTreeMap, BTreeSet};
 
-use rustemo::{
+use rustemo::{location::ValLoc, Error, Result};
+
+use crate::{
+    grammar::{Grammar, DEFAULT_PRIORITY},
     index::{
         NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, TermIndex,
         TermVec,
     },
-    location::ValLoc,
-    Error, Result,
-};
-
-use crate::{
-    grammar::{Grammar, DEFAULT_PRIORITY},
     lang::rustemo_actions::{
         self, ConstVal, File, GrammarRule, GrammarSymbol, GrammarSymbolRef,
         Name, Recognizer, RepetitionOperatorOp, TermMetaDatas,
@@ -140,7 +137,7 @@ impl GrammarBuilder {
             term_by_name: self
                 .terminals
                 .values()
-                .map(|t| (t.name.clone(), t.idx.to_symbol_index()))
+                .map(|t| (t.name.clone(), t.idx.symbol_index()))
                 .collect(),
             terminals: {
                 let mut terms: TermVec<_> =
@@ -151,7 +148,7 @@ impl GrammarBuilder {
             nonterm_by_name: self
                 .nonterminals
                 .values()
-                .map(|nt| (nt.name.clone(), nt.idx.to_symbol_index(term_len)))
+                .map(|nt| (nt.name.clone(), nt.idx.symbol_index(term_len)))
                 .collect(),
             nonterminals: {
                 let mut nonterms: NonTermVec<_> =
@@ -539,7 +536,7 @@ impl GrammarBuilder {
                                 .get(mtch.as_ref())
                                 .unwrap()
                                 .1
-                                .to_symbol_index(),
+                                .symbol_index(),
                         );
                     } else {
                         err!(
@@ -574,7 +571,7 @@ impl GrammarBuilder {
                                 if let Some(terminal) =
                                     self.terminals.get(name.as_ref())
                                 {
-                                    terminal.idx.to_symbol_index()
+                                    terminal.idx.symbol_index()
                                 } else {
                                     let nt_idx = self
                                         .nonterminals
@@ -592,7 +589,7 @@ impl GrammarBuilder {
                                             name, production_str),
                                              Some(self.file.clone()), name.location)?;
                                     }
-                                    nt_idx.to_symbol_index(self.terminals.len())
+                                    nt_idx.symbol_index(self.terminals.len())
                                 },
                             );
                         }
@@ -607,7 +604,7 @@ impl GrammarBuilder {
                                         )
                                     })
                                     .idx
-                                    .to_symbol_index(),
+                                    .symbol_index(),
                             );
                         }
                     }

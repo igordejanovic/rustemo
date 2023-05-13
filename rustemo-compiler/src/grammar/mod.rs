@@ -6,15 +6,15 @@ use std::{
     str::FromStr,
 };
 
-use rustemo::{
+use rustemo::{Error, Result};
+
+use crate::{
     index::{
         NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, SymbolVec,
         TermIndex, TermVec,
     },
-    Error, Result,
+    lang::{rustemo::RustemoParser, rustemo_actions::Name},
 };
-
-use crate::lang::{rustemo::RustemoParser, rustemo_actions::Name};
 
 use super::lang::rustemo_actions::{
     GrammarSymbol, Imports, ProdMetaDatas, Recognizer, TermMetaDatas,

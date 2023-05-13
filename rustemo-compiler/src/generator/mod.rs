@@ -2,8 +2,6 @@ pub(crate) mod actions;
 
 use quote::format_ident;
 use quote::quote;
-use rustemo::index::StateIndex;
-use rustemo::index::TermIndex;
 use std::{
     iter::repeat,
     path::{Path, PathBuf},
@@ -16,6 +14,7 @@ use crate::{
         types::{to_pascal_case, to_snake_case, Choice, SymbolTypes},
         Grammar, NonTerminal, Production, Terminal,
     },
+    index::{StateIndex, TermIndex},
     lang::{rustemo::RustemoParser, rustemo_actions::Recognizer},
     settings::{BuilderType, LexerType, Settings},
     table::{Action, LRTable},
@@ -1066,7 +1065,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                 }
                 let rhs_len = production.rhs.len();
                 let choice = &types.get_type(
-                        nonterminal.idx.to_symbol_index(self.grammar.terminals.len()))
+                        nonterminal.idx.symbol_index(self.grammar.terminals.len()))
                                        .choices[production.ntidx];
                 let action = format_ident!("{}", action_name(nonterminal, choice));
 

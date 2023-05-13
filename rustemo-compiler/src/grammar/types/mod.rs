@@ -6,8 +6,8 @@ use std::{
     collections::{HashMap, HashSet},
 };
 
+use crate::index::{SymbolIndex, SymbolVec};
 use convert_case::{Boundary, Case, Casing};
-use rustemo::index::{SymbolIndex, SymbolVec};
 
 use crate::lang::rustemo_actions::Name;
 

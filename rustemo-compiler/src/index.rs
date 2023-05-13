@@ -185,13 +185,13 @@ create_index!(NonTermIndex, NonTermVec);
 create_index!(SymbolIndex, SymbolVec);
 
 impl TermIndex {
-    pub fn to_symbol_index(&self) -> SymbolIndex {
+    pub fn symbol_index(&self) -> SymbolIndex {
         SymbolIndex(self.0)
     }
 }
 
 impl NonTermIndex {
-    pub fn to_symbol_index(&self, term_len: usize) -> SymbolIndex {
+    pub fn symbol_index(&self, term_len: usize) -> SymbolIndex {
         SymbolIndex(self.0 + term_len)
     }
 }

@@ -50,6 +50,7 @@ pub use crate::utils::string_difference;
 
 mod error;
 mod generator;
+mod index;
 mod lang;
 mod settings;
 mod table;

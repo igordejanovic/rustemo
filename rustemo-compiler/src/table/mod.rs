@@ -10,17 +10,15 @@ use std::{
 };
 
 use clap::ValueEnum;
-use rustemo::{
+use rustemo::log;
+
+use crate::{
     create_index,
+    grammar::{Associativity, Priority, Terminal, DEFAULT_PRIORITY},
     index::{
         NonTermIndex, NonTermVec, ProdIndex, StateIndex, StateVec, SymbolIndex,
         SymbolVec, TermIndex, TermVec,
     },
-    log,
-};
-
-use crate::{
-    grammar::{Associativity, Priority, Terminal, DEFAULT_PRIORITY},
     lang::rustemo_actions::Recognizer,
     settings::{ParserAlgo, Settings},
 };
@@ -1121,7 +1119,7 @@ fn first_sets(grammar: &Grammar) -> FirstSets {
     // First set for each terminal contains only the terminal itself.
     for terminal in &grammar.terminals {
         let mut new_set = Firsts::new();
-        new_set.insert(terminal.idx.to_symbol_index());
+        new_set.insert(terminal.idx.symbol_index());
         first_sets.push(new_set);
     }
 
@@ -1267,6 +1265,7 @@ mod tests {
     use std::cell::RefCell;
     use std::collections::BTreeSet;
 
+    use crate::index::{ProdIndex, StateIndex, SymbolIndex};
     use crate::table::{
         first_sets, follow_sets, ItemIndex, LRTable, TableType,
     };
@@ -1275,10 +1274,6 @@ mod tests {
         output_cmp,
         settings::Settings,
         table::{Follow, LRItem},
-    };
-    use rustemo::{
-        index::{ProdIndex, StateIndex, SymbolIndex},
-        log,
     };
 
     use super::LRState;

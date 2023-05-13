@@ -8,7 +8,6 @@ pub mod common;
 pub mod builder;
 pub mod error;
 pub mod grammar;
-pub mod index;
 pub mod lexer;
 pub mod location;
 pub mod lr;

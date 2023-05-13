@@ -1,10 +1,10 @@
 use crate::{
     grammar::{Associativity, Grammar},
+    index::ProdIndex,
     lang::rustemo_actions::Recognizer,
     output_cmp,
     utils::type_of,
 };
-use rustemo::index::ProdIndex;
 
 #[test]
 fn grammar_from_string() {
