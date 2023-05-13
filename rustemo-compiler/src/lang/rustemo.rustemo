@@ -9,22 +9,22 @@ ImportStm: 'import' path=StrConst
 
 GrammarRule: Annotation? Name ':' rhs=GrammarRuleRHS ';'
            | Annotation? Name '{' meta=ProdMetaDatas '}' ':' rhs=GrammarRuleRHS ';';
-GrammarRuleRHS {left, 5}: rhs=GrammarRuleRHS '|' Production
-                        | Production;
+GrammarRuleRHS: rhs=GrammarRuleRHS '|' Production
+              | Production;
 Production: Assignment+
           | Assignment+ '{' meta=ProdMetaDatas '}';
 
-TerminalRule {left, 15}: Annotation? Name ':' Recognizer ';'
-                       | Annotation? Name ':' ';'
-                       | Annotation? Name ':' Recognizer '{' meta=TermMetaDatas '}' ';'
-                       | Annotation? Name ':' '{' meta=TermMetaDatas '}' ';';
+TerminalRule: Annotation? Name ':' Recognizer ';'
+            | Annotation? Name ':' ';'
+            | Annotation? Name ':' Recognizer '{' meta=TermMetaDatas '}' ';'
+            | Annotation? Name ':' '{' meta=TermMetaDatas '}' ';';
 
 ProdMetaData: 'left' {Left} | 'reduce' {Reduce} | 'right' {Right} | 'shift' {Shift}
             | 'dynamic' {Dynamic} | 'nops' {NOPS} | 'nopse' {NOPSE}
             | IntConst {Priority}
             | UserMetaData
             | ProdKind;
-ProdMetaDatas {left}: metas=ProdMetaDatas ',' meta=ProdMetaData | meta=ProdMetaData;
+ProdMetaDatas: metas=ProdMetaDatas ',' meta=ProdMetaData | meta=ProdMetaData;
 
 TermMetaData: 'prefer' {Prefer} | 'finish' {Finish} | 'nofinish' {NoFinish}
             | 'dynamic' {Dynamic}
