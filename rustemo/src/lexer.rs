@@ -66,13 +66,14 @@ impl StringLexer {
     }
 
     fn skip(context: &mut Context<str>) {
-        let skipped_len = context.input[context.position..]
+        let skipped_len: usize = context.input[context.position..]
             .chars()
             .take_while(|x| x.is_whitespace())
-            .count();
+            .map(|c| c.len_utf8())
+            .sum();
         let skipped =
             &context.input[context.position..context.position + skipped_len];
-        log!("{} {}", "Skipped ws:".bold().green(), skipped.len());
+        log!("{} {}", "Skipped ws:".bold().green(), skipped_len);
         if skipped_len > 0 {
             context.layout_ahead = Some(skipped);
             context.position += skipped_len;
