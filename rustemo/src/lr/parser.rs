@@ -1,7 +1,7 @@
 use crate::debug::log;
 use crate::error::Result;
 use crate::lexer::{Context, Input, Lexer, Token, TokenRecognizer};
-use crate::location::Location;
+use crate::location::{Location, Position};
 use crate::parser::Parser;
 use crate::{err, Error};
 #[cfg(debug_assertions)]
@@ -48,6 +48,7 @@ where
 struct StackItem<S> {
     state: S,
     range: Range<usize>,
+    location: Location,
 }
 
 impl<S, P> Display for Action<S, P>
@@ -96,7 +97,14 @@ impl<
     pub fn new(definition: &'static D, state: S, partial_parse: bool) -> Self {
         Self {
             definition,
-            parse_stack: vec![StackItem { state, range: 0..0 }],
+            parse_stack: vec![StackItem {
+                state,
+                range: 0..0,
+                location: Location {
+                    start: Position::Position(0),
+                    end: None,
+                },
+            }],
             partial_parse,
             phantom: PhantomData,
         }
@@ -111,6 +119,7 @@ impl<
         self.parse_stack.push(StackItem {
             state,
             range: context.range.start..context.range.end,
+            location: context.location,
         });
     }
 
@@ -119,19 +128,31 @@ impl<
         &mut self,
         context: &mut Context<I>,
         states: usize,
-    ) -> (S, Range<usize>) {
+    ) -> (S, Range<usize>, Location) {
         let states_removed =
             self.parse_stack.split_off(self.parse_stack.len() - states);
         let state = self.parse_stack.last().unwrap().state;
 
-        let range = if states == 0 {
+        let (range, location) = if states == 0 {
             // EMPTY reduction
-            context.position..context.position
+            (
+                context.position..context.position,
+                Location {
+                    start: context.location.start,
+                    end: Some(context.location.start),
+                },
+            )
         } else {
-            states_removed[0].range.start
-                ..states_removed.last().unwrap().range.end
+            (
+                states_removed[0].range.start
+                    ..states_removed.last().unwrap().range.end,
+                Location {
+                    start: states_removed[0].location.start,
+                    end: states_removed.last().unwrap().location.end,
+                },
+            )
         };
-        (state, range)
+        (state, range, location)
     }
 
     fn next_token<'i, I, L>(
@@ -260,13 +281,16 @@ where
                         prod,
                         prod_len
                     );
-                    let (from_state, range) =
+                    let (from_state, range, location) =
                         self.pop_states(context, prod_len);
                     context.range = range;
                     state = self.definition.goto(from_state, prod.into());
+                    let context_location = context.location;
+                    context.location = location;
                     self.push_state(context, state);
                     log!("GOTO {:?} -> {:?}", from_state, state);
                     builder.reduce_action(context, prod, prod_len);
+                    context.location = context_location;
                 }
                 Action::Accept => break,
                 // This can't happen for context-aware lexing. If there is no

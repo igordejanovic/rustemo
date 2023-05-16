@@ -5,10 +5,17 @@ Ok(
             start: LineBased(
                 LineBased {
                     line: 1,
-                    column: 10,
+                    column: 0,
                 },
             ),
-            end: None,
+            end: Some(
+                LineBased(
+                    LineBased {
+                        line: 1,
+                        column: 10,
+                    },
+                ),
+            ),
         },
         children: [
             NonTermNode {
@@ -17,10 +24,17 @@ Ok(
                     start: LineBased(
                         LineBased {
                             line: 1,
-                            column: 9,
+                            column: 0,
                         },
                     ),
-                    end: None,
+                    end: Some(
+                        LineBased(
+                            LineBased {
+                                line: 1,
+                                column: 8,
+                            },
+                        ),
+                    ),
                 },
                 children: [
                     NonTermNode {
@@ -29,10 +43,17 @@ Ok(
                             start: LineBased(
                                 LineBased {
                                     line: 1,
-                                    column: 5,
+                                    column: 0,
                                 },
                             ),
-                            end: None,
+                            end: Some(
+                                LineBased(
+                                    LineBased {
+                                        line: 1,
+                                        column: 4,
+                                    },
+                                ),
+                            ),
                         },
                         children: [
                             NonTermNode {
@@ -41,10 +62,17 @@ Ok(
                                     start: LineBased(
                                         LineBased {
                                             line: 1,
-                                            column: 5,
+                                            column: 0,
                                         },
                                     ),
-                                    end: None,
+                                    end: Some(
+                                        LineBased(
+                                            LineBased {
+                                                line: 1,
+                                                column: 4,
+                                            },
+                                        ),
+                                    ),
                                 },
                                 children: [
                                     TermNode {
@@ -107,10 +135,17 @@ Ok(
                             start: LineBased(
                                 LineBased {
                                     line: 1,
-                                    column: 9,
+                                    column: 5,
                                 },
                             ),
-                            end: None,
+                            end: Some(
+                                LineBased(
+                                    LineBased {
+                                        line: 1,
+                                        column: 8,
+                                    },
+                                ),
+                            ),
                         },
                         children: [
                             TermNode {

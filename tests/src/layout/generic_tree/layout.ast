@@ -5,10 +5,17 @@ Ok(
             start: LineBased(
                 LineBased {
                     line: 1,
-                    column: 31,
+                    column: 0,
                 },
             ),
-            end: None,
+            end: Some(
+                LineBased(
+                    LineBased {
+                        line: 1,
+                        column: 30,
+                    },
+                ),
+            ),
         },
         children: [
             TermNode {
@@ -40,10 +47,17 @@ Ok(
                     start: LineBased(
                         LineBased {
                             line: 1,
-                            column: 19,
+                            column: 1,
                         },
                     ),
-                    end: None,
+                    end: Some(
+                        LineBased(
+                            LineBased {
+                                line: 1,
+                                column: 8,
+                            },
+                        ),
+                    ),
                 },
                 children: [
                     TermNode {
@@ -103,10 +117,17 @@ Ok(
                     start: LineBased(
                         LineBased {
                             line: 1,
-                            column: 31,
+                            column: 19,
                         },
                     ),
-                    end: None,
+                    end: Some(
+                        LineBased(
+                            LineBased {
+                                line: 1,
+                                column: 30,
+                            },
+                        ),
+                    ),
                 },
                 children: [
                     NonTermNode {
@@ -115,10 +136,17 @@ Ok(
                             start: LineBased(
                                 LineBased {
                                     line: 1,
-                                    column: 29,
+                                    column: 19,
                                 },
                             ),
-                            end: None,
+                            end: Some(
+                                LineBased(
+                                    LineBased {
+                                        line: 1,
+                                        column: 20,
+                                    },
+                                ),
+                            ),
                         },
                         children: [
                             TermNode {
