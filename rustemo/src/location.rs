@@ -50,7 +50,7 @@ impl Display for Position {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Position::Position(pos) => write!(f, "{pos}"),
-            Position::LineBased(lb) => write!(f, "{}:{}", lb.line, lb.column),
+            Position::LineBased(lb) => write!(f, "{},{}", lb.line, lb.column),
         }
     }
 }
@@ -166,7 +166,7 @@ mod tests {
 
         assert_eq!(p.line(), 2);
         assert_eq!(p.column(), 4);
-        assert_eq!(format!("{}", p), "2:4");
+        assert_eq!(format!("{}", p), "2,4");
     }
 
     #[test]
@@ -184,10 +184,10 @@ mod tests {
         let r =
             Location::new(Position::from_lc(5, 15), Position::from_lc(13, 27));
 
-        assert_eq!(format!("{}", r), "5:15-13:27");
+        assert_eq!(format!("{}", r), "5,15-13,27");
 
         let r = Location::new(Position::from_lc(5, 15), Position::from_pos(49));
 
-        assert_eq!(format!("{}", r), "5:15-49");
+        assert_eq!(format!("{}", r), "5,15-49");
     }
 }

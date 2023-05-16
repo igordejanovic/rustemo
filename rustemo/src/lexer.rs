@@ -6,7 +6,7 @@ use crate::{
 #[cfg(debug_assertions)]
 use colored::*;
 use core::fmt::Debug;
-use std::{cmp::min, iter::once, ops::Range, path::Path};
+use std::{cmp::min, iter::once, ops::Range, path::Path, fmt::Display};
 
 /// The `Lexer` trait allows input tokenization
 ///
@@ -174,6 +174,12 @@ pub struct Token<'i, I: Input + ?Sized, TK> {
     pub location: Location,
 }
 
+impl<'i, I: Input + Debug + ?Sized, TK: Debug> Display for Token<'i, I, TK> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}({:?})", self.kind, self.value)
+    }
+}
+
 /// Lexer context is used to keep the lexing state. It provides necessary
 /// information to parsers and actions.
 #[derive(Debug)]
@@ -192,12 +198,10 @@ pub struct Context<'i, I: Input + ?Sized> {
     /// The range of token/non-terminal during shift/reduce operation.
     pub range: Range<usize>,
 
-    /// Location in the input if the input is line/column based.
+    /// Similar to position but has line/column format for text based inputs.
     ///
-    /// The location should be tracked by lexer but the lexers are stateless so
-    /// the current location is always kept in the context. As location tracking
-    /// incurs an overhead it should be configurable. In case of an error, lexer
-    /// can calculate location information based on the absolute position.
+    /// If this prove to be pricey overhead we might make tracking of this info
+    /// configurable.
     pub location: Location,
 
     /// Layout before the current token (e.g. whitespaces, comments...)

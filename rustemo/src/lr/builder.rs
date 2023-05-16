@@ -1,6 +1,6 @@
 use crate::{
     builder::Builder,
-    lexer::{Context, Input, Token},
+    lexer::{Context, Input, Token}, location::Location,
 };
 
 /// A builder variant for LR parsing.
@@ -63,7 +63,6 @@ impl<'i, I: Input + ?Sized, P, TK> LRBuilder<'i, I, P, TK>
     ) {
         self.res_stack.push(TreeNode::TermNode {
             token,
-            position: context.range.start,
             layout: context.layout,
         })
     }
@@ -90,7 +89,7 @@ impl<'i, I: Input + ?Sized, P, TK> LRBuilder<'i, I, P, TK>
         self.res_stack.push(TreeNode::NonTermNode {
             children,
             prod,
-            position: context.range.start,
+            location: context.location,
             layout,
         });
     }
@@ -100,12 +99,11 @@ impl<'i, I: Input + ?Sized, P, TK> LRBuilder<'i, I, P, TK>
 pub enum TreeNode<'i, I: Input + ?Sized, P, TK> {
     TermNode {
         token: Token<'i, I, TK>,
-        position: usize,
         layout: Option<&'i I>,
     },
     NonTermNode {
         prod: P,
-        position: usize,
+        location: Location,
         children: Vec<TreeNode<'i, I, P, TK>>,
         layout: Option<&'i I>,
     },

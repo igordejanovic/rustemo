@@ -226,26 +226,30 @@ where
 
             match action {
                 Action::Shift(state_id) => {
-                    log!("{} to state {:?} with token {:?}",
-                        "Shifting".bold().green(),
-                        state_id,
-                        next_token
-                    );
                     state = state_id;
                     context.range = context.position..(context.position + next_token.value.len());
-                    self.push_state(context, state);
-
                     let new_location = next_token.value.location_after(context.location);
+                    context.location.end = Some(new_location.start);
                     context.layout = context.layout_ahead;
+
+                    log!("{} to state {:?} at location [{}] with token {}",
+                        "Shifting".bold().green(),
+                        state_id,
+                        context.location,
+                        next_token
+                    );
+                    self.push_state(context, state);
                     builder.shift_action(context, next_token);
 
                     context.position = context.range.end;
+                    context.location = new_location;
                     log!(
-                        "Position={}: {}",
+                        "{}: position={}, location={}:\n{}\n",
+                        "Context".bold().green(),
                         context.position,
+                        context.location,
                         context.input.context_str(context.position)
                     );
-                    context.location = new_location;
                     next_token = self.next_token(lexer, context, state)?;
                     log!("Token ahead: {:?}", next_token);
                 }
