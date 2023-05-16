@@ -12,7 +12,14 @@ Err(
                         column: 13,
                     },
                 ),
-                end: None,
+                end: Some(
+                    LineBased(
+                        LineBased {
+                            line: 2,
+                            column: 17,
+                        },
+                    ),
+                ),
             },
         ),
     },

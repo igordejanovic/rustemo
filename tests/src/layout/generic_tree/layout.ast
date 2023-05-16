@@ -1,7 +1,15 @@
 Ok(
     NonTermNode {
         prod: SP1,
-        position: 0,
+        location: Location {
+            start: LineBased(
+                LineBased {
+                    line: 1,
+                    column: 31,
+                },
+            ),
+            end: None,
+        },
         children: [
             TermNode {
                 token: Token {
@@ -24,12 +32,19 @@ Ok(
                         ),
                     },
                 },
-                position: 0,
                 layout: None,
             },
             NonTermNode {
                 prod: TwoDigitsP1,
-                position: 1,
+                location: Location {
+                    start: LineBased(
+                        LineBased {
+                            line: 1,
+                            column: 19,
+                        },
+                    ),
+                    end: None,
+                },
                 children: [
                     TermNode {
                         token: Token {
@@ -52,7 +67,6 @@ Ok(
                                 ),
                             },
                         },
-                        position: 1,
                         layout: None,
                     },
                     TermNode {
@@ -76,7 +90,6 @@ Ok(
                                 ),
                             },
                         },
-                        position: 7,
                         layout: Some(
                             " This",
                         ),
@@ -86,11 +99,27 @@ Ok(
             },
             NonTermNode {
                 prod: Digit1P1,
-                position: 19,
+                location: Location {
+                    start: LineBased(
+                        LineBased {
+                            line: 1,
+                            column: 31,
+                        },
+                    ),
+                    end: None,
+                },
                 children: [
                     NonTermNode {
                         prod: Digit1P2,
-                        position: 19,
+                        location: Location {
+                            start: LineBased(
+                                LineBased {
+                                    line: 1,
+                                    column: 29,
+                                },
+                            ),
+                            end: None,
+                        },
                         children: [
                             TermNode {
                                 token: Token {
@@ -113,7 +142,6 @@ Ok(
                                         ),
                                     },
                                 },
-                                position: 19,
                                 layout: Some(
                                     " should be ",
                                 ),
@@ -144,7 +172,6 @@ Ok(
                                 ),
                             },
                         },
-                        position: 29,
                         layout: Some(
                             " ignored ",
                         ),

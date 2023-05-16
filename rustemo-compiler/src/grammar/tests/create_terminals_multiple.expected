@@ -139,7 +139,14 @@ Grammar {
                                             column: 20,
                                         },
                                     ),
-                                    end: None,
+                                    end: Some(
+                                        LineBased(
+                                            LineBased {
+                                                line: 5,
+                                                column: 32,
+                                            },
+                                        ),
+                                    ),
                                 },
                             ),
                         },
@@ -168,7 +175,14 @@ Grammar {
                                             column: 21,
                                         },
                                     ),
-                                    end: None,
+                                    end: Some(
+                                        LineBased(
+                                            LineBased {
+                                                line: 6,
+                                                column: 34,
+                                            },
+                                        ),
+                                    ),
                                 },
                             ),
                         },
@@ -197,7 +211,14 @@ Grammar {
                                             column: 20,
                                         },
                                     ),
-                                    end: None,
+                                    end: Some(
+                                        LineBased(
+                                            LineBased {
+                                                line: 7,
+                                                column: 32,
+                                            },
+                                        ),
+                                    ),
                                 },
                             ),
                         },

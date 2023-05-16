@@ -362,7 +362,14 @@ Grammar {
                                             column: 14,
                                         },
                                     ),
-                                    end: None,
+                                    end: Some(
+                                        LineBased(
+                                            LineBased {
+                                                line: 7,
+                                                column: 20,
+                                            },
+                                        ),
+                                    ),
                                 },
                             ),
                         },

@@ -1,19 +1,51 @@
 Ok(
     NonTermNode {
         prod: SP1,
-        position: 0,
+        location: Location {
+            start: LineBased(
+                LineBased {
+                    line: 1,
+                    column: 10,
+                },
+            ),
+            end: None,
+        },
         children: [
             NonTermNode {
                 prod: A1P1,
-                position: 0,
+                location: Location {
+                    start: LineBased(
+                        LineBased {
+                            line: 1,
+                            column: 9,
+                        },
+                    ),
+                    end: None,
+                },
                 children: [
                     NonTermNode {
                         prod: A1P2,
-                        position: 0,
+                        location: Location {
+                            start: LineBased(
+                                LineBased {
+                                    line: 1,
+                                    column: 5,
+                                },
+                            ),
+                            end: None,
+                        },
                         children: [
                             NonTermNode {
                                 prod: AP1,
-                                position: 0,
+                                location: Location {
+                                    start: LineBased(
+                                        LineBased {
+                                            line: 1,
+                                            column: 5,
+                                        },
+                                    ),
+                                    end: None,
+                                },
                                 children: [
                                     TermNode {
                                         token: Token {
@@ -36,7 +68,6 @@ Ok(
                                                 ),
                                             },
                                         },
-                                        position: 0,
                                         layout: None,
                                     },
                                     TermNode {
@@ -60,7 +91,6 @@ Ok(
                                                 ),
                                             },
                                         },
-                                        position: 2,
                                         layout: Some(
                                             " ",
                                         ),
@@ -73,7 +103,15 @@ Ok(
                     },
                     NonTermNode {
                         prod: AP1,
-                        position: 5,
+                        location: Location {
+                            start: LineBased(
+                                LineBased {
+                                    line: 1,
+                                    column: 9,
+                                },
+                            ),
+                            end: None,
+                        },
                         children: [
                             TermNode {
                                 token: Token {
@@ -96,7 +134,6 @@ Ok(
                                         ),
                                     },
                                 },
-                                position: 5,
                                 layout: Some(
                                     " ",
                                 ),
@@ -122,7 +159,6 @@ Ok(
                                         ),
                                     },
                                 },
-                                position: 7,
                                 layout: Some(
                                     " ",
                                 ),
@@ -156,7 +192,6 @@ Ok(
                         ),
                     },
                 },
-                position: 9,
                 layout: Some(
                     " ",
                 ),

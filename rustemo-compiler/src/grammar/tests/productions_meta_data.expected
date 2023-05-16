@@ -110,7 +110,14 @@ Grammar {
                                             column: 26,
                                         },
                                     ),
-                                    end: None,
+                                    end: Some(
+                                        LineBased(
+                                            LineBased {
+                                                line: 3,
+                                                column: 27,
+                                            },
+                                        ),
+                                    ),
                                 },
                             ),
                         },
@@ -170,7 +177,14 @@ Grammar {
                                             column: 19,
                                         },
                                     ),
-                                    end: None,
+                                    end: Some(
+                                        LineBased(
+                                            LineBased {
+                                                line: 6,
+                                                column: 30,
+                                            },
+                                        ),
+                                    ),
                                 },
                             ),
                         },
