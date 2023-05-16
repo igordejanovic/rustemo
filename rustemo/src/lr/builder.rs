@@ -1,6 +1,7 @@
 use crate::{
     builder::Builder,
-    lexer::{Context, Input, Token}, location::Location,
+    lexer::{Context, Input, Token},
+    location::Location,
 };
 
 /// A builder variant for LR parsing.

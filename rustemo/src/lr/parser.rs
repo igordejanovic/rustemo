@@ -44,13 +44,6 @@ where
     }
 }
 
-#[derive(Debug)]
-struct StackItem<S> {
-    state: S,
-    range: Range<usize>,
-    location: Location,
-}
-
 impl<S, P> Display for Action<S, P>
 where
     S: Display,
@@ -67,6 +60,22 @@ where
             Action::Accept => write!(f, "Accept"),
             Action::Error => write!(f, "Error"),
         }
+    }
+}
+
+struct StackItem<S> {
+    state: S,
+    range: Range<usize>,
+    location: Location,
+}
+
+impl<S: Debug> Debug for StackItem<S> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "State({:?}, {:?} [{}])",
+            self.state, self.range, self.location
+        )
     }
 }
 
@@ -214,7 +223,7 @@ impl<'i, S, P, T, NT, I, D, L, B, TR> Parser<'i, I, L, B, TR>
 where
     S: Debug + Copy,
     T: Default + PartialEq + Debug + Copy,
-    P: Debug + Copy + Into<NT>,
+    P: Debug + Display + Copy + Into<NT>,
     I: Debug + Input + ?Sized,
     D: ParserDefinition<TR, S, P, T, NT>,
     L: Lexer<I, TR>,
@@ -228,22 +237,24 @@ where
         builder: &mut B,
     ) -> Result<B::Output> {
         log!(
-            "Position={}: {}",
+            "{} at {}[{}]: '{}'",
+            "Context".green(),
             context.position,
+            context.location,
             context.input.context_str(context.position)
         );
 
         let mut state = self.parse_stack.last().unwrap().state;
 
-        log!("Stack: {:?}", self.parse_stack);
-        log!("Current state: {:?}", state);
+        log!("{}: {:#?}", "Stack".green(), self.parse_stack);
+        log!("{}: {:?}", "Current state".green(), state);
 
         let mut next_token = self.next_token(lexer, context, state)?;
-        log!("Token ahead: {:?}", next_token);
+        log!("{}: {}", "Token ahead".green(), next_token);
 
         loop {
             let action = self.definition.action(state, next_token.kind);
-            log!("Action: {:?}", action);
+            log!("{}: {:?}", "Action".green(), action);
 
             match action {
                 Action::Shift(state_id) => {
@@ -265,18 +276,18 @@ where
                     context.position = context.range.end;
                     context.location = new_location;
                     log!(
-                        "{}: position={}, location={}:\n{}\n",
-                        "Context".bold().green(),
+                        "{} at {}[{}]:\n{}\n",
+                        "Context".green(),
                         context.position,
                         context.location,
                         context.input.context_str(context.position)
                     );
                     next_token = self.next_token(lexer, context, state)?;
-                    log!("Token ahead: {:?}", next_token);
+                    log!("{}: {}", "Token ahead".green(), next_token);
                 }
                 Action::Reduce(prod, prod_len) => {
                     log!(
-                        "{} by production '{:?}', size {:?}",
+                        "{} by production '{}', size {:?}",
                         "Reduce".bold().green(),
                         prod,
                         prod_len
@@ -288,7 +299,7 @@ where
                     let context_location = context.location;
                     context.location = location;
                     self.push_state(context, state);
-                    log!("GOTO {:?} -> {:?}", from_state, state);
+                    log!("{} {:?} -> {:?}", "GOTO".green(), from_state, state);
                     builder.reduce_action(context, prod, prod_len);
                     context.location = context_location;
                 }
@@ -301,8 +312,8 @@ where
                 // would be done similar problem may arise.
                 Action::Error => err!(format!("Can't continue in state {state:?} with lookahead {next_token:?}."))?,
             }
-            log!("Stack: {:?}", self.parse_stack);
-            log!("Current state: {:?}", state);
+            log!("{}: {:#?}", "Stack".green(), self.parse_stack);
+            log!("{}: {:?}", "Current state".green(), state);
         }
         Ok(builder.get_result())
     }

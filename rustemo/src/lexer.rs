@@ -6,7 +6,7 @@ use crate::{
 #[cfg(debug_assertions)]
 use colored::*;
 use core::fmt::Debug;
-use std::{cmp::min, iter::once, ops::Range, path::Path, fmt::Display};
+use std::{cmp::min, fmt::Display, iter::once, ops::Range, path::Path};
 
 /// The `Lexer` trait allows input tokenization
 ///
@@ -176,7 +176,7 @@ pub struct Token<'i, I: Input + ?Sized, TK> {
 
 impl<'i, I: Input + Debug + ?Sized, TK: Debug> Display for Token<'i, I, TK> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:?}({:?})", self.kind, self.value)
+        write!(f, "{:?}({:?} [{}])", self.kind, self.value, self.location)
     }
 }
 

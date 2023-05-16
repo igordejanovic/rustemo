@@ -505,7 +505,7 @@ impl lexer::TokenRecognizer for TokenRecognizer {
     fn recognize<'i>(&self, input: &'i str) -> Option<&'i str> {
         match &self.recognizer {
             Recognizer::StrMatch(s) => {
-                logn!("{} <{:?}> --", "\tRecognizing".green(), self.token_kind());
+                logn!("{} {:?} -- ", "\tRecognizing".green(), self.token_kind());
                 if input.starts_with(s) {
                     log!("{}", "recognized".bold().green());
                     Some(s)
@@ -515,12 +515,12 @@ impl lexer::TokenRecognizer for TokenRecognizer {
                 }
             }
             Recognizer::RegexMatch(r) => {
-                logn!("{} <{:?}> --", "\tRecognizing".green(), self.token_kind());
+                logn!("{} {:?} -- ", "\tRecognizing".green(), self.token_kind());
                 let match_str = RECOGNIZERS[*r].as_ref().unwrap().find(input);
                 match match_str {
                     Some(x) => {
                         let x_str = x.as_str();
-                        log!("{} <{}>", "recognized".bold().green(), x_str);
+                        log!("{} '{}'", "recognized".bold().green(), x_str);
                         Some(x_str)
                     }
                     None => {
@@ -530,7 +530,7 @@ impl lexer::TokenRecognizer for TokenRecognizer {
                 }
             }
             Recognizer::Stop => {
-                logn!("{}  <STOP> -- ", "\tRecognizing".green());
+                logn!("{} STOP -- ", "\tRecognizing".green());
                 if input.is_empty() {
                     log!("{}", "recognized".bold().green());
                     Some("")
