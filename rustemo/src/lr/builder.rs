@@ -125,7 +125,7 @@ impl<'i, I: Input + ?Sized> Builder for SliceBuilder<'i, I> {
     }
 }
 
-impl<'i, I: Input + ?Sized, P, TK> LRBuilder<'i, I, P, TK>
+impl<'i, I: Input<Output = I> + ?Sized, P, TK> LRBuilder<'i, I, P, TK>
     for SliceBuilder<'i, I>
 {
     fn shift_action(
@@ -143,7 +143,7 @@ impl<'i, I: Input + ?Sized, P, TK> LRBuilder<'i, I, P, TK>
         _prod_len: usize,
     ) {
         // On reduce, save the slice of the input.
-        self.0 = Some(context.input.slice(&context.range));
+        self.0 = Some(&context.input[context.range.clone()]);
     }
 }
 

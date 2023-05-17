@@ -133,11 +133,14 @@ impl<
     }
 
     #[inline]
-    fn pop_states<I: Input + ?Sized>(
+    fn pop_states<I>(
         &mut self,
         context: &mut Context<I>,
         states: usize,
-    ) -> (S, Range<usize>, Location) {
+    ) -> (S, Range<usize>, Location)
+    where
+        I: Input<Output = I> + ?Sized,
+    {
         let states_removed =
             self.parse_stack.split_off(self.parse_stack.len() - states);
         let state = self.parse_stack.last().unwrap().state;
@@ -172,7 +175,7 @@ impl<
     ) -> Result<Token<'i, I, T>>
     where
         L: Lexer<I, TR>,
-        I: Input + ?Sized,
+        I: Input<Output = I> + ?Sized,
     {
         let expected_recognizers = self.definition.recognizers(state);
         let stop_kind = <T as Default>::default();
@@ -186,9 +189,8 @@ impl<
                 {
                     Some(Token {
                         kind: stop_kind,
-                        value: context
-                            .input
-                            .slice(&(context.position..context.position)),
+                        value: &context.input
+                            [context.position..context.position],
                         location: context.location,
                     })
                 } else {
@@ -224,7 +226,7 @@ where
     S: Debug + Copy,
     T: Default + PartialEq + Debug + Copy,
     P: Debug + Display + Copy + Into<NT>,
-    I: Debug + Input + ?Sized,
+    I: Debug + Input<Output = I> + ?Sized,
     D: ParserDefinition<TR, S, P, T, NT>,
     L: Lexer<I, TR>,
     TR: TokenRecognizer<TokenKind = T>,

@@ -6,7 +6,13 @@ use crate::{
 #[cfg(debug_assertions)]
 use colored::*;
 use core::fmt::Debug;
-use std::{cmp::min, fmt::Display, iter::once, ops::Range, path::Path};
+use std::{
+    cmp::min,
+    fmt::Display,
+    iter::once,
+    ops::{Index, Range},
+    path::Path,
+};
 
 /// The `Lexer` trait allows input tokenization
 ///
@@ -125,7 +131,7 @@ impl<TR: TokenRecognizer<Input = str>> Lexer<str, TR> for StringLexer {
 
 /// This trait must be implemented by all types that should be parsed by
 /// Rustemo. Input is a sliceable sequence-like type with a concept of length.
-pub trait Input: ToOwned {
+pub trait Input: ToOwned + Debug + Index<Range<usize>> {
     /// Returns a string context for the given position. Used in debugging outputs.
     fn context_str(&self, position: usize) -> String;
 
@@ -135,8 +141,6 @@ pub trait Input: ToOwned {
     fn is_empty(&self) -> bool {
         self.len() == 0
     }
-
-    fn slice(&self, range: &Range<usize>) -> &Self;
 
     fn read_file<P: AsRef<Path>>(path: P) -> Result<Self::Owned>;
 
@@ -248,10 +252,6 @@ impl Input for str {
         str::len(self)
     }
 
-    fn slice(&self, range: &Range<usize>) -> &Self {
-        &self[range.start..range.end]
-    }
-
     fn start_location() -> Location {
         Location {
             start: Position::LineBased(LineBased { line: 1, column: 0 }),
@@ -302,10 +302,6 @@ impl Input for [u8] {
 
     fn len(&self) -> usize {
         self.len()
-    }
-
-    fn slice(&self, range: &Range<usize>) -> &Self {
-        &self[range.start..range.end]
     }
 
     fn location_after(&self, location: Location) -> Location {
