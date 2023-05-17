@@ -156,8 +156,7 @@ pub trait Input: ToOwned + Debug + Index<Range<usize>> {
     fn location_after(&self, location: Location) -> Location;
 
     /// Given the current location returns a span starting from the current
-    /// location and extending over self. The `self.start` should not be changed,
-    /// only `self.end` where `self.end` should be `self.start`
+    /// location and extending over self.
     fn location_span(&self, location: Location) -> Location {
         Location {
             start: location.start,
@@ -178,9 +177,29 @@ pub struct Token<'i, I: Input + ?Sized, TK> {
     pub location: Location,
 }
 
-impl<'i, I: Input + Debug + ?Sized, TK: Debug> Display for Token<'i, I, TK> {
+impl<'i, I, TK> Display for Token<'i, I, TK>
+where
+    I: Input + ?Sized,
+    I::Output: Debug,
+    TK: Debug,
+{
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:?}({:?} [{}])", self.kind, self.value, self.location)
+        write!(
+            f,
+            "{:?}({:?} [{}])",
+            self.kind,
+            if self.value.len() > 50 {
+                format!(
+                    "{:?}{}{:?}",
+                    &self.value[0..20],
+                    "..<snip>..",
+                    &self.value[self.value.len() - 20..self.value.len()]
+                )
+            } else {
+                format!("{:?}", self.value)
+            },
+            self.location
+        )
     }
 }
 
