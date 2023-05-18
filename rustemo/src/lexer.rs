@@ -8,7 +8,6 @@ use colored::*;
 use core::fmt::Debug;
 use std::{
     cmp::min,
-    fmt::Display,
     iter::once,
     ops::{Index, Range},
     path::Path,
@@ -166,7 +165,6 @@ pub trait Input: ToOwned + Debug + Index<Range<usize>> {
 }
 
 /// `Token` represent a single token from the input stream.
-#[derive(Debug)]
 pub struct Token<'i, I: Input + ?Sized, TK> {
     pub kind: TK,
 
@@ -177,7 +175,7 @@ pub struct Token<'i, I: Input + ?Sized, TK> {
     pub location: Location,
 }
 
-impl<'i, I, TK> Display for Token<'i, I, TK>
+impl<'i, I, TK> Debug for Token<'i, I, TK>
 where
     I: Input + ?Sized,
     I::Output: Debug,
@@ -186,7 +184,7 @@ where
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "{:?}({:?} [{}])",
+            "{:?}({:?} {:?})",
             self.kind,
             if self.value.len() > 50 {
                 format!(
@@ -254,7 +252,7 @@ impl<'i, I: Input + ?Sized> Context<'i, I> {
 
     #[inline]
     pub fn location_str(&self) -> String {
-        format!("{}:{}", self.file(), self.location)
+        format!("{}:{:?}", self.file(), self.location)
     }
 }
 

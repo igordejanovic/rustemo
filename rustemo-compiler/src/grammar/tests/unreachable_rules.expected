@@ -249,22 +249,7 @@ Grammar {
                         ValLoc {
                             value: "a",
                             location: Some(
-                                Location {
-                                    start: LineBased(
-                                        LineBased {
-                                            line: 10,
-                                            column: 12,
-                                        },
-                                    ),
-                                    end: Some(
-                                        LineBased(
-                                            LineBased {
-                                                line: 10,
-                                                column: 15,
-                                            },
-                                        ),
-                                    ),
-                                },
+                                [10,12-10,15],
                             ),
                         },
                     ),
@@ -285,22 +270,7 @@ Grammar {
                         ValLoc {
                             value: "b",
                             location: Some(
-                                Location {
-                                    start: LineBased(
-                                        LineBased {
-                                            line: 11,
-                                            column: 12,
-                                        },
-                                    ),
-                                    end: Some(
-                                        LineBased(
-                                            LineBased {
-                                                line: 11,
-                                                column: 15,
-                                            },
-                                        ),
-                                    ),
-                                },
+                                [11,12-11,15],
                             ),
                         },
                     ),
@@ -321,22 +291,7 @@ Grammar {
                         ValLoc {
                             value: "c",
                             location: Some(
-                                Location {
-                                    start: LineBased(
-                                        LineBased {
-                                            line: 12,
-                                            column: 12,
-                                        },
-                                    ),
-                                    end: Some(
-                                        LineBased(
-                                            LineBased {
-                                                line: 12,
-                                                column: 15,
-                                            },
-                                        ),
-                                    ),
-                                },
+                                [12,12-12,15],
                             ),
                         },
                     ),

@@ -5,22 +5,7 @@ Err(
             "<str>",
         ),
         location: Some(
-            Location {
-                start: LineBased(
-                    LineBased {
-                        line: 3,
-                        column: 8,
-                    },
-                ),
-                end: Some(
-                    LineBased(
-                        LineBased {
-                            line: 3,
-                            column: 11,
-                        },
-                    ),
-                ),
-            },
+            [3,8-3,11],
         ),
     },
 )

@@ -33,14 +33,14 @@ pub enum TokenKind {
     Num,
 }
 #[allow(clippy::enum_variant_names)]
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy)]
 pub enum ProdKind {
     AP1,
     B1P1,
     B1P2,
     BP1,
 }
-impl std::fmt::Display for ProdKind {
+impl std::fmt::Debug for ProdKind {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let name = match self {
             ProdKind::AP1 => "A: B1 Num",
@@ -72,7 +72,7 @@ impl From<ProdKind> for NonTermKind {
     }
 }
 #[allow(clippy::enum_variant_names)]
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy)]
 pub enum State {
     AUGS0,
     TbS1,
@@ -82,7 +82,7 @@ pub enum State {
     NumS5,
     BS6,
 }
-impl std::fmt::Display for State {
+impl std::fmt::Debug for State {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let name = match self {
             State::AUGS0 => "0:AUG",

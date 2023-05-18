@@ -32,7 +32,7 @@ impl Display for Error {
                     }
                 }
                 if let Some(location) = location {
-                    loc_str.push_str(&location.to_string())
+                    loc_str.push_str(&format!("{location:?}"));
                 }
                 write!(f, "{}:\n\t{}", loc_str, message.replace('\n', "\n\t"))
             }

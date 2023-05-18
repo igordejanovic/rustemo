@@ -328,13 +328,12 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             .collect();
         ast.push(parse_quote! {
             #[allow(clippy::enum_variant_names)]
-            #[derive(Clone, Copy, Debug)]
+            #[derive(Clone, Copy)]
             pub enum ProdKind {
                 #(#prodkind_variants),*
             }
         });
 
-        #[cfg(debug_assertions)]
         let display_arms: Vec<syn::Arm> = self
             .grammar
             .productions()
@@ -345,9 +344,8 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                 parse_quote! { ProdKind::#prod_kind_ident => #prod_str }
             })
             .collect();
-        #[cfg(debug_assertions)]
         ast.push(parse_quote! {
-            impl std::fmt::Display for ProdKind {
+            impl std::fmt::Debug for ProdKind {
                 fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                     let name = match self {
                         #(#display_arms),*
@@ -407,13 +405,12 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             .collect();
         ast.push(parse_quote! {
             #[allow(clippy::enum_variant_names)]
-            #[derive(Clone, Copy, Debug)]
+            #[derive(Clone, Copy)]
             pub enum State {
                 #(#state_variants),*
             }
         });
 
-        #[cfg(debug_assertions)]
         let state_display_arms: Vec<syn::Arm> = self
             .table
             .states
@@ -429,9 +426,8 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             })
             .collect();
 
-        #[cfg(debug_assertions)]
         ast.push(parse_quote!{
-            impl std::fmt::Display for State {
+            impl std::fmt::Debug for State {
                 fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                     let name = match self {
                         #(#state_display_arms),*,

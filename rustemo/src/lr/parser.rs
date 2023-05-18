@@ -6,7 +6,7 @@ use crate::parser::Parser;
 use crate::{err, Error};
 #[cfg(debug_assertions)]
 use colored::*;
-use std::fmt::{Debug, Display};
+use std::fmt::Debug;
 use std::marker::PhantomData;
 use std::ops::Range;
 
@@ -27,42 +27,6 @@ pub enum Action<S, P> {
     Error,
 }
 
-impl<S, P> Action<S, P>
-where
-    S: Debug,
-    P: Debug,
-{
-    pub fn generate(&self) -> String {
-        match self {
-            Action::Shift(state) => format!("Shift({:?})", state),
-            Action::Reduce(prod, len) => {
-                format!("Reduce({:?}, {:?})", prod, len)
-            }
-            Action::Accept => String::from("Accept"),
-            Action::Error => String::from("Error"),
-        }
-    }
-}
-
-impl<S, P> Display for Action<S, P>
-where
-    S: Display,
-    P: Display,
-{
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Action::Shift(state) => {
-                write!(f, "Shift to {}", state)
-            }
-            Action::Reduce(prod, _) => {
-                write!(f, "Reduce by {}", prod)
-            }
-            Action::Accept => write!(f, "Accept"),
-            Action::Error => write!(f, "Error"),
-        }
-    }
-}
-
 struct StackItem<S> {
     state: S,
     range: Range<usize>,
@@ -73,7 +37,7 @@ impl<S: Debug> Debug for StackItem<S> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "State({:?}, {:?} [{}])",
+            "State({:?}, {:?} {:?})",
             self.state, self.range, self.location
         )
     }
@@ -94,14 +58,12 @@ pub struct LRParser<
     phantom: PhantomData<(TR, P, T, NT)>,
 }
 
-impl<
-        S: Copy,
-        P,
-        T: Default + Debug + PartialEq,
-        NT,
-        D: ParserDefinition<TR, S, P, T, NT>,
-        TR: TokenRecognizer<TokenKind = T>,
-    > LRParser<S, P, T, NT, D, TR>
+impl<S, P, T, NT, D, TR> LRParser<S, P, T, NT, D, TR>
+where
+    S: Copy,
+    T: Default + Debug + PartialEq,
+    D: ParserDefinition<TR, S, P, T, NT>,
+    TR: TokenRecognizer<TokenKind = T>,
 {
     pub fn new(definition: &'static D, state: S, partial_parse: bool) -> Self {
         Self {
@@ -225,7 +187,7 @@ impl<'i, S, P, T, NT, I, D, L, B, TR> Parser<'i, I, L, B, TR>
 where
     S: Debug + Copy,
     T: Default + PartialEq + Debug + Copy,
-    P: Debug + Display + Copy + Into<NT>,
+    P: Debug + Copy + Into<NT>,
     I: Debug + Input<Output = I> + ?Sized,
     D: ParserDefinition<TR, S, P, T, NT>,
     L: Lexer<I, TR>,
@@ -239,7 +201,7 @@ where
         builder: &mut B,
     ) -> Result<B::Output> {
         log!(
-            "{} at {}[{}]: '{}'",
+            "{} at {}{:?}: '{}'",
             "Context".green(),
             context.position,
             context.location,
@@ -252,11 +214,10 @@ where
         log!("{}: {:?}", "Current state".green(), state);
 
         let mut next_token = self.next_token(lexer, context, state)?;
-        log!("{}: {}", "Token ahead".green(), next_token);
+        log!("{}: {:?}", "Token ahead".green(), next_token);
 
         loop {
             let action = self.definition.action(state, next_token.kind);
-            log!("{}: {:?}", "Action".green(), action);
 
             match action {
                 Action::Shift(state_id) => {
@@ -266,7 +227,7 @@ where
                     context.location.end = Some(new_location.start);
                     context.layout = context.layout_ahead;
 
-                    log!("{} to state {:?} at location [{}] with token {}",
+                    log!("{} to state {:?} at location {:?} with token {:?}",
                         "Shifting".bold().green(),
                         state_id,
                         context.location,
@@ -278,18 +239,18 @@ where
                     context.position = context.range.end;
                     context.location = new_location;
                     log!(
-                        "{} at {}[{}]:\n{}\n",
+                        "{} at {}{:?}:\n{}\n",
                         "Context".green(),
                         context.position,
                         context.location,
                         context.input.context_str(context.position)
                     );
                     next_token = self.next_token(lexer, context, state)?;
-                    log!("{}: {}", "Token ahead".green(), next_token);
+                    log!("{}: {:?}", "Token ahead".green(), next_token);
                 }
                 Action::Reduce(prod, prod_len) => {
                     log!(
-                        "{} by production '{}', size {:?}",
+                        "{} by production '{:?}', size {:?}",
                         "Reduce".bold().green(),
                         prod,
                         prod_len

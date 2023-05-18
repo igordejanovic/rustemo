@@ -36,7 +36,7 @@ pub enum TokenKind {
     Div,
 }
 #[allow(clippy::enum_variant_names)]
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy)]
 pub enum ProdKind {
     EAdd,
     ESub,
@@ -44,7 +44,7 @@ pub enum ProdKind {
     EDiv,
     EP5,
 }
-impl std::fmt::Display for ProdKind {
+impl std::fmt::Debug for ProdKind {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let name = match self {
             ProdKind::EAdd => "E: E Plus E",
@@ -76,7 +76,7 @@ impl From<ProdKind> for NonTermKind {
     }
 }
 #[allow(clippy::enum_variant_names)]
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy)]
 pub enum State {
     AUGS0,
     NumberS1,
@@ -90,7 +90,7 @@ pub enum State {
     ES9,
     ES10,
 }
-impl std::fmt::Display for State {
+impl std::fmt::Debug for State {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let name = match self {
             State::AUGS0 => "0:AUG",

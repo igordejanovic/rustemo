@@ -132,22 +132,7 @@ Grammar {
                         ValLoc {
                             value: "first_term",
                             location: Some(
-                                Location {
-                                    start: LineBased(
-                                        LineBased {
-                                            line: 5,
-                                            column: 20,
-                                        },
-                                    ),
-                                    end: Some(
-                                        LineBased(
-                                            LineBased {
-                                                line: 5,
-                                                column: 32,
-                                            },
-                                        ),
-                                    ),
-                                },
+                                [5,20-5,32],
                             ),
                         },
                     ),
@@ -168,22 +153,7 @@ Grammar {
                         ValLoc {
                             value: "second_term",
                             location: Some(
-                                Location {
-                                    start: LineBased(
-                                        LineBased {
-                                            line: 6,
-                                            column: 21,
-                                        },
-                                    ),
-                                    end: Some(
-                                        LineBased(
-                                            LineBased {
-                                                line: 6,
-                                                column: 34,
-                                            },
-                                        ),
-                                    ),
-                                },
+                                [6,21-6,34],
                             ),
                         },
                     ),
@@ -204,22 +174,7 @@ Grammar {
                         ValLoc {
                             value: "third_term",
                             location: Some(
-                                Location {
-                                    start: LineBased(
-                                        LineBased {
-                                            line: 7,
-                                            column: 20,
-                                        },
-                                    ),
-                                    end: Some(
-                                        LineBased(
-                                            LineBased {
-                                                line: 7,
-                                                column: 32,
-                                            },
-                                        ),
-                                    ),
-                                },
+                                [7,20-7,32],
                             ),
                         },
                     ),

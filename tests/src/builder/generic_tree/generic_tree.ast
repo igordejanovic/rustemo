@@ -1,124 +1,26 @@
 Ok(
     NonTermNode {
-        prod: SP1,
-        location: Location {
-            start: LineBased(
-                LineBased {
-                    line: 1,
-                    column: 0,
-                },
-            ),
-            end: Some(
-                LineBased(
-                    LineBased {
-                        line: 1,
-                        column: 10,
-                    },
-                ),
-            ),
-        },
+        prod: S: A1 B,
+        location: [1,0-1,10],
         children: [
             NonTermNode {
-                prod: A1P1,
-                location: Location {
-                    start: LineBased(
-                        LineBased {
-                            line: 1,
-                            column: 0,
-                        },
-                    ),
-                    end: Some(
-                        LineBased(
-                            LineBased {
-                                line: 1,
-                                column: 8,
-                            },
-                        ),
-                    ),
-                },
+                prod: A1: A1 A,
+                location: [1,0-1,8],
                 children: [
                     NonTermNode {
-                        prod: A1P2,
-                        location: Location {
-                            start: LineBased(
-                                LineBased {
-                                    line: 1,
-                                    column: 0,
-                                },
-                            ),
-                            end: Some(
-                                LineBased(
-                                    LineBased {
-                                        line: 1,
-                                        column: 4,
-                                    },
-                                ),
-                            ),
-                        },
+                        prod: A1: A,
+                        location: [1,0-1,4],
                         children: [
                             NonTermNode {
-                                prod: AP1,
-                                location: Location {
-                                    start: LineBased(
-                                        LineBased {
-                                            line: 1,
-                                            column: 0,
-                                        },
-                                    ),
-                                    end: Some(
-                                        LineBased(
-                                            LineBased {
-                                                line: 1,
-                                                column: 4,
-                                            },
-                                        ),
-                                    ),
-                                },
+                                prod: A: Ta Num,
+                                location: [1,0-1,4],
                                 children: [
                                     TermNode {
-                                        token: Token {
-                                            kind: Ta,
-                                            value: "a",
-                                            location: Location {
-                                                start: LineBased(
-                                                    LineBased {
-                                                        line: 1,
-                                                        column: 0,
-                                                    },
-                                                ),
-                                                end: Some(
-                                                    LineBased(
-                                                        LineBased {
-                                                            line: 1,
-                                                            column: 1,
-                                                        },
-                                                    ),
-                                                ),
-                                            },
-                                        },
+                                        token: Ta("\"a\"" [1,0-1,1]),
                                         layout: None,
                                     },
                                     TermNode {
-                                        token: Token {
-                                            kind: Num,
-                                            value: "42",
-                                            location: Location {
-                                                start: LineBased(
-                                                    LineBased {
-                                                        line: 1,
-                                                        column: 2,
-                                                    },
-                                                ),
-                                                end: Some(
-                                                    LineBased(
-                                                        LineBased {
-                                                            line: 1,
-                                                            column: 4,
-                                                        },
-                                                    ),
-                                                ),
-                                            },
-                                        },
+                                        token: Num("\"42\"" [1,2-1,4]),
                                         layout: Some(
                                             " ",
                                         ),
@@ -130,70 +32,17 @@ Ok(
                         layout: None,
                     },
                     NonTermNode {
-                        prod: AP1,
-                        location: Location {
-                            start: LineBased(
-                                LineBased {
-                                    line: 1,
-                                    column: 5,
-                                },
-                            ),
-                            end: Some(
-                                LineBased(
-                                    LineBased {
-                                        line: 1,
-                                        column: 8,
-                                    },
-                                ),
-                            ),
-                        },
+                        prod: A: Ta Num,
+                        location: [1,5-1,8],
                         children: [
                             TermNode {
-                                token: Token {
-                                    kind: Ta,
-                                    value: "a",
-                                    location: Location {
-                                        start: LineBased(
-                                            LineBased {
-                                                line: 1,
-                                                column: 5,
-                                            },
-                                        ),
-                                        end: Some(
-                                            LineBased(
-                                                LineBased {
-                                                    line: 1,
-                                                    column: 6,
-                                                },
-                                            ),
-                                        ),
-                                    },
-                                },
+                                token: Ta("\"a\"" [1,5-1,6]),
                                 layout: Some(
                                     " ",
                                 ),
                             },
                             TermNode {
-                                token: Token {
-                                    kind: Num,
-                                    value: "3",
-                                    location: Location {
-                                        start: LineBased(
-                                            LineBased {
-                                                line: 1,
-                                                column: 7,
-                                            },
-                                        ),
-                                        end: Some(
-                                            LineBased(
-                                                LineBased {
-                                                    line: 1,
-                                                    column: 8,
-                                                },
-                                            ),
-                                        ),
-                                    },
-                                },
+                                token: Num("\"3\"" [1,7-1,8]),
                                 layout: Some(
                                     " ",
                                 ),
@@ -207,26 +56,7 @@ Ok(
                 layout: None,
             },
             TermNode {
-                token: Token {
-                    kind: B,
-                    value: "b",
-                    location: Location {
-                        start: LineBased(
-                            LineBased {
-                                line: 1,
-                                column: 9,
-                            },
-                        ),
-                        end: Some(
-                            LineBased(
-                                LineBased {
-                                    line: 1,
-                                    column: 10,
-                                },
-                            ),
-                        ),
-                    },
-                },
+                token: B("\"b\"" [1,9-1,10]),
                 layout: Some(
                     " ",
                 ),

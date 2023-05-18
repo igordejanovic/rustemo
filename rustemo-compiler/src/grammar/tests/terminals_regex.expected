@@ -111,22 +111,7 @@ Grammar {
                         ValLoc {
                             value: "foo",
                             location: Some(
-                                Location {
-                                    start: LineBased(
-                                        LineBased {
-                                            line: 5,
-                                            column: 13,
-                                        },
-                                    ),
-                                    end: Some(
-                                        LineBased(
-                                            LineBased {
-                                                line: 5,
-                                                column: 18,
-                                            },
-                                        ),
-                                    ),
-                                },
+                                [5,13-5,18],
                             ),
                         },
                     ),
@@ -147,22 +132,7 @@ Grammar {
                         ValLoc {
                             value: "some",
                             location: Some(
-                                Location {
-                                    start: LineBased(
-                                        LineBased {
-                                            line: 6,
-                                            column: 14,
-                                        },
-                                    ),
-                                    end: Some(
-                                        LineBased(
-                                            LineBased {
-                                                line: 6,
-                                                column: 20,
-                                            },
-                                        ),
-                                    ),
-                                },
+                                [6,14-6,20],
                             ),
                         },
                     ),
@@ -183,22 +153,7 @@ Grammar {
                         ValLoc {
                             value: "\"[^\"]+\"",
                             location: Some(
-                                Location {
-                                    start: LineBased(
-                                        LineBased {
-                                            line: 7,
-                                            column: 21,
-                                        },
-                                    ),
-                                    end: Some(
-                                        LineBased(
-                                            LineBased {
-                                                line: 7,
-                                                column: 30,
-                                            },
-                                        ),
-                                    ),
-                                },
+                                [7,21-7,30],
                             ),
                         },
                     ),
@@ -219,22 +174,7 @@ Grammar {
                         ValLoc {
                             value: "\\d{2,5}",
                             location: Some(
-                                Location {
-                                    start: LineBased(
-                                        LineBased {
-                                            line: 8,
-                                            column: 20,
-                                        },
-                                    ),
-                                    end: Some(
-                                        LineBased(
-                                            LineBased {
-                                                line: 8,
-                                                column: 29,
-                                            },
-                                        ),
-                                    ),
-                                },
+                                [8,20-8,29],
                             ),
                         },
                     ),

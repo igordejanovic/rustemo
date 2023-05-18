@@ -33,11 +33,11 @@ pub enum TokenKind {
     Operator,
 }
 #[allow(clippy::enum_variant_names)]
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy)]
 pub enum ProdKind {
     ExpressionP1,
 }
-impl std::fmt::Display for ProdKind {
+impl std::fmt::Debug for ProdKind {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let name = match self {
             ProdKind::ExpressionP1 => "Expression: Operand Operator Operand",
@@ -61,7 +61,7 @@ impl From<ProdKind> for NonTermKind {
     }
 }
 #[allow(clippy::enum_variant_names)]
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy)]
 pub enum State {
     AUGS0,
     OperandS1,
@@ -69,7 +69,7 @@ pub enum State {
     OperatorS3,
     OperandS4,
 }
-impl std::fmt::Display for State {
+impl std::fmt::Debug for State {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let name = match self {
             State::AUGS0 => "0:AUG",

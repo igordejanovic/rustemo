@@ -3,6 +3,7 @@ use crate::{
     lexer::{Context, Input, Token},
     location::Location,
 };
+use core::fmt::Debug;
 
 /// A builder variant for LR parsing.
 ///
@@ -38,11 +39,13 @@ pub trait LRBuilder<'i, I: Input + ?Sized, P, TK>: Builder {
 }
 
 /// TreeBuilder is a builder that builds a generic concrete parse tree.
-pub struct TreeBuilder<'i, I: Input + ?Sized, P, TK> {
+pub struct TreeBuilder<'i, I: Input<Output = I> + ?Sized, P, TK> {
     res_stack: Vec<TreeNode<'i, I, P, TK>>,
 }
 
-impl<'i, I: Input + ?Sized, P, TK> Builder for TreeBuilder<'i, I, P, TK> {
+impl<'i, I: Input<Output = I> + ?Sized, P, TK> Builder
+    for TreeBuilder<'i, I, P, TK>
+{
     type Output = TreeNode<'i, I, P, TK>;
 
     fn new() -> Self {
@@ -54,7 +57,7 @@ impl<'i, I: Input + ?Sized, P, TK> Builder for TreeBuilder<'i, I, P, TK> {
     }
 }
 
-impl<'i, I: Input + ?Sized, P, TK> LRBuilder<'i, I, P, TK>
+impl<'i, I: Input<Output = I> + ?Sized, P, TK> LRBuilder<'i, I, P, TK>
     for TreeBuilder<'i, I, P, TK>
 {
     fn shift_action(
@@ -97,7 +100,7 @@ impl<'i, I: Input + ?Sized, P, TK> LRBuilder<'i, I, P, TK>
 }
 
 #[derive(Debug)]
-pub enum TreeNode<'i, I: Input + ?Sized, P, TK> {
+pub enum TreeNode<'i, I: Input<Output = I> + ?Sized, P, TK> {
     TermNode {
         token: Token<'i, I, TK>,
         layout: Option<&'i I>,

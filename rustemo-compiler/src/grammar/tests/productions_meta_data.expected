@@ -103,22 +103,7 @@ Grammar {
                         ValLoc {
                             value: 5,
                             location: Some(
-                                Location {
-                                    start: LineBased(
-                                        LineBased {
-                                            line: 3,
-                                            column: 26,
-                                        },
-                                    ),
-                                    end: Some(
-                                        LineBased(
-                                            LineBased {
-                                                line: 3,
-                                                column: 27,
-                                            },
-                                        ),
-                                    ),
-                                },
+                                [3,26-3,27],
                             ),
                         },
                     ),
@@ -170,22 +155,7 @@ Grammar {
                         ValLoc {
                             value: "some_term",
                             location: Some(
-                                Location {
-                                    start: LineBased(
-                                        LineBased {
-                                            line: 6,
-                                            column: 19,
-                                        },
-                                    ),
-                                    end: Some(
-                                        LineBased(
-                                            LineBased {
-                                                line: 6,
-                                                column: 30,
-                                            },
-                                        ),
-                                    ),
-                                },
+                                [6,19-6,30],
                             ),
                         },
                     ),

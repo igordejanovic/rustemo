@@ -1,4 +1,4 @@
-use std::fmt::Display;
+use std::fmt::{Debug, Display};
 
 #[derive(PartialEq, Eq, Debug, Copy, Clone)]
 pub struct LineBased {
@@ -66,7 +66,7 @@ impl Display for Position {
 ///
 /// The path is kept on the parsing context and there is the method on the
 /// context to produce the display of the location with the full file path.
-#[derive(PartialEq, Eq, Debug, Clone, Copy)]
+#[derive(PartialEq, Eq, Clone, Copy)]
 pub struct Location {
     /// The start position of the range.
     pub start: Position,
@@ -86,11 +86,11 @@ impl Location {
     }
 }
 
-impl Display for Location {
+impl Debug for Location {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self.end {
-            Some(ref end) => write!(f, "{}-{}", self.start, end),
-            None => write!(f, "{}", self.start),
+            Some(ref end) => write!(f, "[{}-{}]", self.start, end),
+            None => write!(f, "[{}]", self.start),
         }
     }
 }
@@ -184,10 +184,10 @@ mod tests {
         let r =
             Location::new(Position::from_lc(5, 15), Position::from_lc(13, 27));
 
-        assert_eq!(format!("{}", r), "5,15-13,27");
+        assert_eq!(format!("{r:?}"), "[5,15-13,27]");
 
         let r = Location::new(Position::from_lc(5, 15), Position::from_pos(49));
 
-        assert_eq!(format!("{}", r), "5,15-49");
+        assert_eq!(format!("{r:?}"), "[5,15-49]");
     }
 }
