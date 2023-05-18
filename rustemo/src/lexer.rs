@@ -77,16 +77,16 @@ impl StringLexer {
             .take_while(|x| x.is_whitespace())
             .map(|c| c.len_utf8())
             .sum();
-        let skipped =
-            &context.input[context.position..context.position + skipped_len];
-        log!("{} {}", "Skipped ws:".bold().green(), skipped_len);
         if skipped_len > 0 {
+            let skipped = &context.input
+                [context.position..context.position + skipped_len];
+            log!("{} {}", "Skipped ws:".bold().green(), skipped_len);
             context.layout_ahead = Some(skipped);
             context.position += skipped_len;
+            context.location = skipped.location_after(context.location);
         } else {
             context.layout_ahead = None;
         }
-        context.location = skipped.location_after(context.location);
     }
 }
 
