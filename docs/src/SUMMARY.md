@@ -11,7 +11,7 @@
   - [Disambiguation](disambiguation.md)
 - [Tutorials](./tutorials/index.md)
   - [Calculator](./tutorials/calculator/calculator.md)
-- [Contributing](../../CONTRIBUTING.md)
+- [Contributing](contributing.md)
 - [Bootstrapping](bootstrapping.md)
 - [Architecture](architecture.md)
 - [Docs setup](docs_setup.md)
