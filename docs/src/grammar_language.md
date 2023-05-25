@@ -1,5 +1,4 @@
 # Grammar language
-
 This section describe the grammar language, its syntax and semantics rules.
 
 The Rustemo grammar specification language is based on [BNF](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form) with [syntactic
@@ -10,7 +9,6 @@ in e.g. [PEGs](https://en.wikipedia.org/wiki/Parsing_expression_grammar). Ambigu
 conflicts](#resolving-lr-conflicts)).
 
 ## The structure of the grammar
-
 Each grammar file consists of two parts:
 
 - derivation/production rules,
@@ -43,7 +41,6 @@ This terminal definition uses [regular expression recognizer](#regular-expressio
 
 
 ## Terminals
-
 Terminal symbols of the grammar define the fundamental or atomic elements of
 your language, tokens or lexemes (e.g. keywords, numbers).
 
@@ -53,7 +50,8 @@ following the keyword `terminals`.
 Tokens are recognized from the input by a `lexer` component. Rustemo provides a
 string lexer out-of-the-box which enable lexing based on recognizers provided in
 the grammar. If more control is needed, or if non-textual context has been
-parsed a custom lexer must be provided. See the [lexers section](./lexers.md) for more.
+parsed a custom lexer must be provided. See the [lexers section](./lexers.md)
+for more.
 
 Each terminal definition is in the form:
 
@@ -69,9 +67,8 @@ recognizers:
 
 
 ### String recognizer
-
-String recognizer is defined as a plain string inside single or double quotes. For
-example, in a grammar rule:
+String recognizer is defined as a plain string inside single or double quotes.
+For example, in a grammar rule:
 
 ```
 MyRule: "start" OtherRule "end";
@@ -107,7 +104,6 @@ of the generated parser.
 
 
 ### Regular expression recognizer
-
 Or regex recognizer for short is a regex pattern written inside slashes
 (`/.../`).
 
@@ -130,7 +126,6 @@ regex terminal by name in grammar rules.
 
 
 ## Usual patterns
-
 This section explains how some common grammar patterns can be written using just
 a plain Rustemo BNF-like notation. Afterwards we'll see some syntax sugar
 extensions which can be used to write these patterns in a more compact and
@@ -195,12 +190,13 @@ In this example `OptHeader` is either a `Header` or nothing.
 
 
 ## Syntactic sugar - BNF extensions
-
 Previous section gives the overview of the basic BNF syntax. If you got to use
-various BNF extensions (like [Kleene star](https://en.wikipedia.org/wiki/Kleene_star)) you might find writing patterns
-in the previous section awkward. Since some of the patterns are used frequently
-in the grammars (zero-or-more, one-or-more etc.) Rustemo provides syntactic
-sugar for this common idioms using a well known regular expression syntax.
+various BNF extensions (like [Kleene
+star](https://en.wikipedia.org/wiki/Kleene_star)) you might find writing
+patterns in the previous section awkward. Since some of the patterns are used
+frequently in the grammars (zero-or-more, one-or-more etc.) Rustemo provides
+syntactic sugar for this common idioms using a well known regular expression
+syntax.
 
 
 ### Optional
@@ -553,14 +549,12 @@ part of the rule:
 
 
 ## `EMPTY` built-in rule
-
-There is a special `EMPTY` rule you can reference in your grammars.
-`EMPTY` rule will reduce without consuming any input and will always
-succeed, i.e. it is empty recognition.
+There is a special `EMPTY` rule you can reference in your grammars. `EMPTY` rule
+will reduce without consuming any input and will always succeed, i.e. it is
+empty recognition.
 
 
 ## Named matches (*assignments*)
-
 In the section on [builders](./builders.md) you can see that struct fields
 deduced from rules, as well as generated semantic actions parameters, are named
 based on the `<name>=<rule reference>` part of the grammar. We call these `named
@@ -642,7 +636,6 @@ This test shows various meta-data applied at both rule and production level.
 ```
 
 ## Rule annotations
-
 Rule annotation are written before grammar rule name using `@action_name`
 syntax. Annotations are special built-in meta-data used to change the generated
 AST types and/or actions.
@@ -781,7 +774,6 @@ For example:
 
 
 ## Grammar comments
-
 In Rustemo grammar, comments are available as both line comments and block
 comments:
 
@@ -861,7 +853,6 @@ separated from the surrounding tokens.
 ```
 
 ## Handling whitespaces and comments (a.k.a Layout) in your language
-
 The default string lexer skips whitespaces. You can take control over this
 process by defining a special grammar rule `Layout`. If this rule is found in
 the grammar the parser will use it to parse layout before each token. This is
