@@ -1,0 +1,9 @@
+File: Testing Colon Word+ Comma Word+ Dot;
+
+terminals
+
+Testing: 'Тестирање';
+Word: /\w+/;
+Colon: ':';
+Comma: ',';
+Dot: '.';

@@ -141,6 +141,16 @@ pub trait Input: ToOwned + Debug + Index<Range<usize>> {
         self.len() == 0
     }
 
+    /// Implement for types which may cause panic on slicing with full `Range`
+    /// (e.g. `str`).
+    #[inline]
+    fn slice(
+        &self,
+        range: Range<usize>,
+    ) -> &<Self as Index<Range<usize>>>::Output {
+        &self[range]
+    }
+
     fn read_file<P: AsRef<Path>>(path: P) -> Result<Self::Owned>;
 
     fn start_location() -> Location {
@@ -189,9 +199,9 @@ where
             if self.value.len() > 50 {
                 format!(
                     "{:?}{}{:?}",
-                    &self.value[0..20],
+                    &self.value.slice(0..20),
                     "..<snip>..",
-                    &self.value[self.value.len() - 20..self.value.len()]
+                    &self.value.slice(self.value.len() - 20..self.value.len())
                 )
             } else {
                 format!("{:?}", self.value)
@@ -258,15 +268,38 @@ impl<'i, I: Input + ?Sized> Context<'i, I> {
 
 impl Input for str {
     fn context_str(&self, position: usize) -> String {
-        self[position - min(15, position)..position]
+        self[..position]
             .chars()
+            .rev()
+            .take(15)
+            .collect::<String>()
+            .chars()
+            .rev()
             .chain("-->".chars())
             .chain(self[position..].chars().take(15))
             .collect::<String>()
     }
 
+    #[inline]
     fn len(&self) -> usize {
         str::len(self)
+    }
+
+    /// Slicing for string works by taking a byte position of range.start and
+    /// slicing by a range.end-range.start chars.
+    #[inline]
+    fn slice(
+        &self,
+        range: Range<usize>,
+    ) -> &<Self as Index<Range<usize>>>::Output {
+        &self[range.start
+            ..range.start
+                + self[range.start..]
+                    .char_indices()
+                    .take(range.end - range.start + 1)
+                    .map(|(idx, _)| idx)
+                    .last()
+                    .unwrap_or(range.start)]
     }
 
     fn start_location() -> Location {

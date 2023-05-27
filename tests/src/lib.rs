@@ -10,3 +10,4 @@ mod output_dir;
 mod partial;
 mod rule_patterns;
 mod sugar;
+mod unicode;
