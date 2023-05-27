@@ -682,7 +682,10 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                                                     TokenRecognizer>>::parse(&mut #layout_parser::default().0,
                                                                        context, lexer,
                                                                        &mut builder).unwrap_or_default();
-                        if context.position > pos {
+
+                        if context.layout_ahead.is_none() {
+                            context.position = pos;
+                        } else {
                             continue;
                         }
                     }
