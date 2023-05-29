@@ -6,6 +6,8 @@ members = [
         "examples/calculator",
         "examples/json",
 
+        # docs
+        "docs/src/parsing/expressions",
         # Tutorials
         "docs/src/tutorials/calculator/calculator1",
         "docs/src/tutorials/calculator/calculator2",

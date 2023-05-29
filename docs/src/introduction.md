@@ -66,27 +66,3 @@ script. The result of the test is persisted to a `.ast` (or `.err` if error is
 expected) file, if it doesn't exist, or compared with the expected file if the
 file exists. Be sure to check these tests as they give a good overview of the
 Rustemo possibilities.
-
-
-# The parsing process
-
-This section describes the overall parsing process and interplay of parser,
-lexer and builder.
-
-```plantuml
-@startuml
-participant Parser
-participant Lexer
-participant Builder
-loop until no more tokens
-    loop until reduction not possible
-        Parser -> Parser: Reduce
-        Parser -> Builder: Execute Reduce action
-    end
-    Parser -> Lexer: Shift/get next token
-    Parser -> Builder: Execute Shift action
-end
-Parser -> Builder: Get build product
-@enduml
-```
-

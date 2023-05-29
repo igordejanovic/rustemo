@@ -1,0 +1,5 @@
+Expression: Add | Num;
+Add: Expression '+' Expression {left};
+terminals
+Num: /\d+/;
+Plus: '+';

@@ -2,6 +2,7 @@
 
 - [Introduction](introduction.md)
 - [Grammar language](grammar_language.md)
+- [Parsing](parsing/parsing.md)
 - [Configuration](configuration.md)
 - [Components](components.md)
   - [Lexers](lexers.md)
