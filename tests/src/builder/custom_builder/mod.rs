@@ -11,7 +11,9 @@ rustemo_mod!(custom_builder, "/src/builder/custom_builder");
 
 #[test]
 fn custom_builder() {
+    // ANCHOR: custom-builder
     let result = CustomBuilderParser::new(MyCustomBuilder::new())
         .parse("2 + 4 * 5 + 20");
+    // ANCHOR_END: custom-builder
     assert!(matches!(result, Ok(42)));
 }

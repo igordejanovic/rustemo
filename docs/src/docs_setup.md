@@ -53,3 +53,10 @@ Uses [mdbook-bib](https://github.com/francisco-perez-sorrosal/mdbook-bib) to ref
 
 For UML diagrams we use [PlantUML](https://plantuml.com/), while for general graphs and trees
 [GraphViz](https://graphviz.org/) is used.
+
+# Trees diagrams
+
+For tree diagrams LaTeX (pdflatex) with qtree package is used to produce PDF and
+afterwards the PDF file is converted to PNG using `pdftoppm`. See
+`docs/build-latex-images.sh` script. This script must be called whenever `.tex`
+files with trees description are changed.

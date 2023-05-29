@@ -7,9 +7,9 @@ Currently Rustemo can be configured with three builder types:
 
 - **The default builder**
 
-  When default builder is used, Rustemo will perform type inference for AST node
-  types based on the grammar. The builder, AST types and actions for creating
-  instances of AST nodes will be generated.
+  When default builder is used, Rustemo will perform type inference for
+  Abstract-Syntax Tree (AST) node types based on the grammar. The builder, AST
+  types and actions for creating instances of AST nodes will be generated.
 
 - **Generic tree builder**
 
@@ -33,6 +33,22 @@ of the grammar. The actions will be generated into `<lang>_actions.rs` file.
 ```admonish note
 There are two approaches where generated files are stored. See [the configuration section](./configuration.md).
 ```
+
+```admonish note
+_Abstract-Syntax Tree_ (AST) representation of the input is different from a
+_Concrete-Syntax Tree_ (CST, aka _the Parse Tree_). AST represents the essence
+of the parsed input without the concrete syntax information.
+
+For example, `3 + 2 * 5` represents an algebric expression where we multiply `2`
+and `5` and then add product to `3`. AST should be the same no matter what is
+the concrete syntax used to write down this information. 
+
+![](images/ast.png)
+
+We could write the same expression in the post-fix ([Reverse Polish](https://en.wikipedia.org/wiki/Reverse_Polish_notation)) notation
+like `3 2 5 * +`. CST would be different but the AST would be the same.
+```
+
 
 ### AST type inference
 
@@ -104,7 +120,7 @@ actions need access to the input string and start/end positions.
 ## Generic tree builder
 
 This is a built-in builder that will produce a generic parse tree (a.k.a
-/Concrete-Syntax-Tree (CST)/).
+_Concrete-Syntax-Tree (CST)_).
 
 For example, given the grammar:
 
@@ -133,7 +149,7 @@ test](https://github.com/igordejanovic/rustemo/tree/main/tests/src/builder/gener
 
 ```admonish note
 Generic builder can be configured by `Settings::new().builder_type(BuilderType::Generic)`
-settings API, exposed through `--builder-type generic` in the `rustemo` CLI.
+settings API, exposed through `--builder-type generic` in the [`rcomp` CLI](cli.md).
 ```
 
 
@@ -153,11 +169,10 @@ base `Builder` trait implementation as each builder needs initialization and
 should be able to return the final result.
 
 ```admonish note
-To be able to find custom builder Rustemo uses the following conventions:
-- File name where builder is implemented is constructed by taking the filename
-  of the grammar (moduo extension) and adding sufix `_builder`.
-- Builder type name is constructed similarly by taking the name of the builder
-  file and converting to CamelCase.
+To use a custom builder you should generate the parser with `--builder-type
+custom` if using [rcomp CLI](cli.md), or calling
+`rustemo_compiler::Settings::new().builder_type(BuilderType::Custom)` if
+generating parser from the `build.rs` script.
 ```
 
 For example, given the grammar:
@@ -180,6 +195,12 @@ done for `shift/reduce` operations:
 
 ```rust
 {{#include ../../tests/src/builder/custom_builder/custom_builder_builder.rs:custom-builder-lr}}
+```
+
+And finally, you call the parser with the instance of custom builder as:
+
+```rust
+{{#include ../../tests/src/builder/custom_builder/mod.rs:custom-builder}}
 ```
 
 ```admonish tip

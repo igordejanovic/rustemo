@@ -13,10 +13,16 @@ imported from the root of the `rustemo_compiler` crate:
 - `Settings::new()` - returns a default `Settings` which can be further
   configured using chained calls.
 
-These are meant to be called from the `build.rs` scripts. The most basic usage would be:
+These are meant to be called from the `build.rs` script. The most basic usage
+would be:
 
 ```rust
 {{#include ../../examples/calculator/build.rs }}
+```
+
+```admonish note
+Don't forget to add `rustmo-compiler` to the `build-dependencies` section of the
+`Cargo.toml` file.
 ```
 
 In this example we are using the default settings and run the recursive
@@ -64,12 +70,14 @@ them in the module tree as they are generated in the output dir.
 To be able to include modules from the output dirs you use `rustemo_mod!` macro:
 
 ```rust
+use rustemo::rustemo_mod;
 rustemo_mod! {pub(crate) rustemo, "/src/lang"}
 ```
 
 or
 
 ```rust
+use rustemo::rustemo_mod;
 rustemo_mod!(generic_tree, "/src/builder/generic_tree");
 ```
 
