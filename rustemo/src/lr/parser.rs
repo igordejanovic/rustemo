@@ -266,7 +266,10 @@ where
                     builder.reduce_action(context, prod, prod_len);
                     context.location = context_location;
                 }
-                Action::Accept => break,
+                Action::Accept => {
+                    log!("{}", "Accept".green().bold());
+                    break
+                },
                 // This can't happen for context-aware lexing. If there is no
                 // action for a lookahead then the lookahead would not be found.
                 // The only place where this can trigger is when parsing layout.
