@@ -28,3 +28,4 @@ Cargo.lock
 /docs/index.html
 /CONTRIBUTING.html
 /docs/CONTRIBUTING.html
+/docs/**/.auctex-auto/
