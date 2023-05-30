@@ -273,3 +273,13 @@ end
 Parser -> Builder: Get build product
 @enduml
 ```
+
+# GLR parsing
+GLR is a generalized version of LR which accepts a full set of CFG. If multiple
+actions can be executed the parser will split and investigate each possibility.
+If some of the path prove wrong it would be discarded (we call these local
+splits - local ambiguities) but if multiple paths lead to the successful parse
+then all interpretations are valid and instead of the parse tree we get the
+parse forest. In that case we say that our language is ambiguous.
+
+GLR will be implemented in the future versions of Rustemo.
