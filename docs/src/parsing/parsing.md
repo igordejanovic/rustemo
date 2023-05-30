@@ -282,4 +282,9 @@ splits - local ambiguities) but if multiple paths lead to the successful parse
 then all interpretations are valid and instead of the parse tree we get the
 parse forest. In that case we say that our language is ambiguous.
 
+Due to the fact that automata handled by GLR can be non-deterministic we say
+that GLR is a form of non-deterministic parsing. See more in the [section on
+resolving LR
+conflicts](../handling_errors/handling_errors.md#resolving-lr-conflicts).
+
 GLR will be implemented in the future versions of Rustemo.

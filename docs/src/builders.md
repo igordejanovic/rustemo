@@ -35,9 +35,10 @@ There are two approaches where generated files are stored. See [the configuratio
 ```
 
 ```admonish note
-_Abstract-Syntax Tree_ (AST) representation of the input is different from a
-_Concrete-Syntax Tree_ (CST, aka _the Parse Tree_). AST represents the essence
-of the parsed input without the concrete syntax information.
+[_Abstract-Syntax Tree_](https://en.wikipedia.org/wiki/Abstract_syntax_tree)
+(AST) representation of the input is different from a _Concrete-Syntax Tree_
+(CST, aka _the Parse Tree_). AST represents the essence of the parsed input
+without the concrete syntax information.
 
 For example, `3 + 2 * 5` represents an algebric expression where we multiply `2`
 and `5` and then add product to `3`. AST should be the same no matter what is
