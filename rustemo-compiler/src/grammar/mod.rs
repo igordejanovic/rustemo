@@ -88,7 +88,12 @@ pub struct Terminal {
     /// Used to determine layout-only rules.
     pub reachable: Cell<bool>,
 
+    /// Priority used to decide conflict resolutions
     pub prio: Priority,
+
+    /// Associativity used to decide shift/reduce conflict resolutions
+    pub assoc: Associativity,
+
     pub meta: TermMetaDatas,
 }
 grammar_elem!(Terminal);

@@ -169,7 +169,7 @@ impl GrammarBuilder {
         &mut self,
         grammar_terminals: Vec<rustemo_actions::TerminalRule>,
     ) -> Result<()> {
-        for terminal in grammar_terminals {
+        for mut terminal in grammar_terminals {
             let term_idx = self.get_term_idx();
             self.check_identifier(&terminal.name)?;
             self.terminals.insert(
@@ -189,11 +189,18 @@ impl GrammarBuilder {
                     recognizer: terminal.recognizer,
                     // Extract priority from meta-data
                     prio: if let Some(ConstVal::Int(prio)) =
-                        terminal.meta.get("priority")
+                        terminal.meta.remove("priority")
                     {
                         prio.into()
                     } else {
                         DEFAULT_PRIORITY
+                    },
+                    assoc: if terminal.meta.remove("left").is_some() {
+                        Associativity::Left
+                    } else if terminal.meta.remove("right").is_some() {
+                        Associativity::Right
+                    } else {
+                        Associativity::None
                     },
                     meta: terminal.meta,
                     reachable: false.into(),

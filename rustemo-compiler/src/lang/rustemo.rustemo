@@ -27,6 +27,7 @@ ProdMetaData: 'left' {Left} | 'reduce' {Reduce} | 'right' {Right} | 'shift' {Shi
 ProdMetaDatas: metas=ProdMetaDatas ',' meta=ProdMetaData | meta=ProdMetaData;
 
 TermMetaData: 'prefer' {Prefer} | 'finish' {Finish} | 'nofinish' {NoFinish}
+            | 'left' {Left} | 'reduce' {Reduce} | 'right' {Right} | 'shift' {Shift}
             | 'dynamic' {Dynamic}
             | IntConst {Priority}
             | UserMetaData;

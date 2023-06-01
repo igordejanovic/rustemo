@@ -121,6 +121,7 @@ Grammar {
                     value: false,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -142,6 +143,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -163,6 +165,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -184,6 +187,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
         ],

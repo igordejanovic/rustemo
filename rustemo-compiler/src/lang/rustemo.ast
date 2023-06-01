@@ -1400,6 +1400,98 @@ Grammar {
                 nonterminal: 16,
                 ntidx: 3,
                 kind: Some(
+                    "Left",
+                ),
+                rhs: [
+                    ResolvingAssignment {
+                        name: None,
+                        symbol: Resolved(
+                            22,
+                        ),
+                        is_bool: false,
+                    },
+                ],
+                assoc: None,
+                prio: 10,
+                dynamic: false,
+                nops: false,
+                nopse: false,
+                meta: {},
+            },
+            Production {
+                idx: 45,
+                nonterminal: 16,
+                ntidx: 4,
+                kind: Some(
+                    "Reduce",
+                ),
+                rhs: [
+                    ResolvingAssignment {
+                        name: None,
+                        symbol: Resolved(
+                            24,
+                        ),
+                        is_bool: false,
+                    },
+                ],
+                assoc: None,
+                prio: 10,
+                dynamic: false,
+                nops: false,
+                nopse: false,
+                meta: {},
+            },
+            Production {
+                idx: 46,
+                nonterminal: 16,
+                ntidx: 5,
+                kind: Some(
+                    "Right",
+                ),
+                rhs: [
+                    ResolvingAssignment {
+                        name: None,
+                        symbol: Resolved(
+                            23,
+                        ),
+                        is_bool: false,
+                    },
+                ],
+                assoc: None,
+                prio: 10,
+                dynamic: false,
+                nops: false,
+                nopse: false,
+                meta: {},
+            },
+            Production {
+                idx: 47,
+                nonterminal: 16,
+                ntidx: 6,
+                kind: Some(
+                    "Shift",
+                ),
+                rhs: [
+                    ResolvingAssignment {
+                        name: None,
+                        symbol: Resolved(
+                            25,
+                        ),
+                        is_bool: false,
+                    },
+                ],
+                assoc: None,
+                prio: 10,
+                dynamic: false,
+                nops: false,
+                nopse: false,
+                meta: {},
+            },
+            Production {
+                idx: 48,
+                nonterminal: 16,
+                ntidx: 7,
+                kind: Some(
                     "Dynamic",
                 ),
                 rhs: [
@@ -1419,9 +1511,9 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 45,
+                idx: 49,
                 nonterminal: 16,
-                ntidx: 4,
+                ntidx: 8,
                 kind: Some(
                     "Priority",
                 ),
@@ -1442,9 +1534,9 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 46,
+                idx: 50,
                 nonterminal: 16,
-                ntidx: 5,
+                ntidx: 9,
                 kind: None,
                 rhs: [
                     ResolvingAssignment {
@@ -1463,7 +1555,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 47,
+                idx: 51,
                 nonterminal: 17,
                 ntidx: 0,
                 kind: None,
@@ -1473,7 +1565,7 @@ Grammar {
                             ValLoc {
                                 value: "metas",
                                 location: Some(
-                                    [33,15-33,20],
+                                    [34,15-34,20],
                                 ),
                             },
                         ),
@@ -1494,7 +1586,7 @@ Grammar {
                             ValLoc {
                                 value: "meta",
                                 location: Some(
-                                    [33,39-33,43],
+                                    [34,39-34,43],
                                 ),
                             },
                         ),
@@ -1512,7 +1604,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 48,
+                idx: 52,
                 nonterminal: 17,
                 ntidx: 1,
                 kind: None,
@@ -1522,7 +1614,7 @@ Grammar {
                             ValLoc {
                                 value: "meta",
                                 location: Some(
-                                    [33,59-33,63],
+                                    [34,59-34,63],
                                 ),
                             },
                         ),
@@ -1540,7 +1632,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 49,
+                idx: 53,
                 nonterminal: 18,
                 ntidx: 0,
                 kind: None,
@@ -1564,7 +1656,7 @@ Grammar {
                             ValLoc {
                                 value: "value",
                                 location: Some(
-                                    [35,23-35,28],
+                                    [36,23-36,28],
                                 ),
                             },
                         ),
@@ -1582,7 +1674,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 50,
+                idx: 54,
                 nonterminal: 19,
                 ntidx: 0,
                 kind: None,
@@ -1603,7 +1695,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 51,
+                idx: 55,
                 nonterminal: 20,
                 ntidx: 0,
                 kind: None,
@@ -1624,7 +1716,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 52,
+                idx: 56,
                 nonterminal: 20,
                 ntidx: 1,
                 kind: None,
@@ -1645,7 +1737,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 53,
+                idx: 57,
                 nonterminal: 20,
                 ntidx: 2,
                 kind: None,
@@ -1666,7 +1758,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 54,
+                idx: 58,
                 nonterminal: 20,
                 ntidx: 3,
                 kind: None,
@@ -1687,7 +1779,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 55,
+                idx: 59,
                 nonterminal: 21,
                 ntidx: 0,
                 kind: None,
@@ -1708,7 +1800,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 56,
+                idx: 60,
                 nonterminal: 21,
                 ntidx: 1,
                 kind: None,
@@ -1729,7 +1821,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 57,
+                idx: 61,
                 nonterminal: 21,
                 ntidx: 2,
                 kind: None,
@@ -1750,7 +1842,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 58,
+                idx: 62,
                 nonterminal: 22,
                 ntidx: 0,
                 kind: None,
@@ -1766,48 +1858,6 @@ Grammar {
                         name: None,
                         symbol: Resolved(
                             20,
-                        ),
-                        is_bool: false,
-                    },
-                    ResolvingAssignment {
-                        name: Some(
-                            ValLoc {
-                                value: "gsymref",
-                                location: Some(
-                                    [42,26-42,33],
-                                ),
-                            },
-                        ),
-                        symbol: Resolved(
-                            69,
-                        ),
-                        is_bool: false,
-                    },
-                ],
-                assoc: None,
-                prio: 10,
-                dynamic: false,
-                nops: false,
-                nopse: false,
-                meta: {},
-            },
-            Production {
-                idx: 59,
-                nonterminal: 23,
-                ntidx: 0,
-                kind: None,
-                rhs: [
-                    ResolvingAssignment {
-                        name: None,
-                        symbol: Resolved(
-                            34,
-                        ),
-                        is_bool: false,
-                    },
-                    ResolvingAssignment {
-                        name: None,
-                        symbol: Resolved(
-                            21,
                         ),
                         is_bool: false,
                     },
@@ -1834,7 +1884,49 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 60,
+                idx: 63,
+                nonterminal: 23,
+                ntidx: 0,
+                kind: None,
+                rhs: [
+                    ResolvingAssignment {
+                        name: None,
+                        symbol: Resolved(
+                            34,
+                        ),
+                        is_bool: false,
+                    },
+                    ResolvingAssignment {
+                        name: None,
+                        symbol: Resolved(
+                            21,
+                        ),
+                        is_bool: false,
+                    },
+                    ResolvingAssignment {
+                        name: Some(
+                            ValLoc {
+                                value: "gsymref",
+                                location: Some(
+                                    [44,26-44,33],
+                                ),
+                            },
+                        ),
+                        symbol: Resolved(
+                            69,
+                        ),
+                        is_bool: false,
+                    },
+                ],
+                assoc: None,
+                prio: 10,
+                dynamic: false,
+                nops: false,
+                nopse: false,
+                meta: {},
+            },
+            Production {
+                idx: 64,
                 nonterminal: 24,
                 ntidx: 0,
                 kind: None,
@@ -1851,7 +1943,7 @@ Grammar {
                             ValLoc {
                                 value: "prod_rule_rhs",
                                 location: Some(
-                                    [45,21-45,34],
+                                    [46,21-46,34],
                                 ),
                             },
                         ),
@@ -1876,7 +1968,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 61,
+                idx: 65,
                 nonterminal: 25,
                 ntidx: 0,
                 kind: None,
@@ -1886,7 +1978,7 @@ Grammar {
                             ValLoc {
                                 value: "gsymbol",
                                 location: Some(
-                                    [47,18-47,25],
+                                    [48,18-48,25],
                                 ),
                             },
                         ),
@@ -1911,7 +2003,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 62,
+                idx: 66,
                 nonterminal: 26,
                 ntidx: 0,
                 kind: None,
@@ -1932,7 +2024,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 63,
+                idx: 67,
                 nonterminal: 26,
                 ntidx: 1,
                 kind: None,
@@ -1945,7 +2037,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 64,
+                idx: 68,
                 nonterminal: 25,
                 ntidx: 1,
                 kind: None,
@@ -1973,7 +2065,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 65,
+                idx: 69,
                 nonterminal: 27,
                 ntidx: 0,
                 kind: None,
@@ -2001,7 +2093,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 66,
+                idx: 70,
                 nonterminal: 28,
                 ntidx: 0,
                 kind: None,
@@ -2022,7 +2114,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 67,
+                idx: 71,
                 nonterminal: 28,
                 ntidx: 1,
                 kind: None,
@@ -2035,7 +2127,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 68,
+                idx: 72,
                 nonterminal: 29,
                 ntidx: 0,
                 kind: Some(
@@ -2058,7 +2150,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 69,
+                idx: 73,
                 nonterminal: 29,
                 ntidx: 1,
                 kind: Some(
@@ -2081,7 +2173,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 70,
+                idx: 74,
                 nonterminal: 29,
                 ntidx: 2,
                 kind: Some(
@@ -2104,7 +2196,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 71,
+                idx: 75,
                 nonterminal: 29,
                 ntidx: 3,
                 kind: Some(
@@ -2127,7 +2219,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 72,
+                idx: 76,
                 nonterminal: 29,
                 ntidx: 4,
                 kind: Some(
@@ -2150,7 +2242,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 73,
+                idx: 77,
                 nonterminal: 29,
                 ntidx: 5,
                 kind: Some(
@@ -2173,7 +2265,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 74,
+                idx: 78,
                 nonterminal: 30,
                 ntidx: 0,
                 kind: None,
@@ -2208,7 +2300,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 75,
+                idx: 79,
                 nonterminal: 31,
                 ntidx: 0,
                 kind: None,
@@ -2243,7 +2335,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 76,
+                idx: 80,
                 nonterminal: 31,
                 ntidx: 1,
                 kind: None,
@@ -2264,7 +2356,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 77,
+                idx: 81,
                 nonterminal: 32,
                 ntidx: 0,
                 kind: None,
@@ -2285,7 +2377,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 78,
+                idx: 82,
                 nonterminal: 33,
                 ntidx: 0,
                 kind: None,
@@ -2306,7 +2398,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 79,
+                idx: 83,
                 nonterminal: 33,
                 ntidx: 1,
                 kind: None,
@@ -2327,7 +2419,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 80,
+                idx: 84,
                 nonterminal: 34,
                 ntidx: 0,
                 kind: None,
@@ -2348,7 +2440,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 81,
+                idx: 85,
                 nonterminal: 34,
                 ntidx: 1,
                 kind: None,
@@ -2369,7 +2461,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 82,
+                idx: 86,
                 nonterminal: 35,
                 ntidx: 0,
                 kind: None,
@@ -2390,7 +2482,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 83,
+                idx: 87,
                 nonterminal: 36,
                 ntidx: 0,
                 kind: None,
@@ -2418,7 +2510,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 84,
+                idx: 88,
                 nonterminal: 36,
                 ntidx: 1,
                 kind: None,
@@ -2439,7 +2531,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 85,
+                idx: 89,
                 nonterminal: 37,
                 ntidx: 0,
                 kind: None,
@@ -2460,7 +2552,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 86,
+                idx: 90,
                 nonterminal: 37,
                 ntidx: 1,
                 kind: None,
@@ -2473,7 +2565,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 87,
+                idx: 91,
                 nonterminal: 38,
                 ntidx: 0,
                 kind: None,
@@ -2494,7 +2586,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 88,
+                idx: 92,
                 nonterminal: 38,
                 ntidx: 1,
                 kind: None,
@@ -2515,7 +2607,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 89,
+                idx: 93,
                 nonterminal: 39,
                 ntidx: 0,
                 kind: None,
@@ -2550,7 +2642,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 90,
+                idx: 94,
                 nonterminal: 39,
                 ntidx: 1,
                 kind: None,
@@ -2571,7 +2663,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 91,
+                idx: 95,
                 nonterminal: 40,
                 ntidx: 0,
                 kind: None,
@@ -2592,7 +2684,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 92,
+                idx: 96,
                 nonterminal: 41,
                 ntidx: 0,
                 kind: None,
@@ -2620,7 +2712,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 93,
+                idx: 97,
                 nonterminal: 41,
                 ntidx: 1,
                 kind: None,
@@ -2641,7 +2733,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 94,
+                idx: 98,
                 nonterminal: 42,
                 ntidx: 0,
                 kind: None,
@@ -2662,7 +2754,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 95,
+                idx: 99,
                 nonterminal: 42,
                 ntidx: 1,
                 kind: None,
@@ -2675,7 +2767,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 96,
+                idx: 100,
                 nonterminal: 43,
                 ntidx: 0,
                 kind: None,
@@ -2696,7 +2788,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 97,
+                idx: 101,
                 nonterminal: 43,
                 ntidx: 1,
                 kind: None,
@@ -2717,7 +2809,7 @@ Grammar {
                 meta: {},
             },
             Production {
-                idx: 98,
+                idx: 102,
                 nonterminal: 43,
                 ntidx: 2,
                 kind: None,
@@ -2751,6 +2843,7 @@ Grammar {
                     value: false,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -2762,7 +2855,7 @@ Grammar {
                         ValLoc {
                             value: "terminals",
                             location: Some(
-                                [72,11-72,22],
+                                [73,11-73,22],
                             ),
                         },
                     ),
@@ -2772,6 +2865,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -2783,7 +2877,7 @@ Grammar {
                         ValLoc {
                             value: "import",
                             location: Some(
-                                [73,8-73,16],
+                                [74,8-74,16],
                             ),
                         },
                     ),
@@ -2793,6 +2887,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -2804,7 +2899,7 @@ Grammar {
                         ValLoc {
                             value: "as",
                             location: Some(
-                                [74,4-74,8],
+                                [75,4-75,8],
                             ),
                         },
                     ),
@@ -2814,6 +2909,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -2825,7 +2921,7 @@ Grammar {
                         ValLoc {
                             value: ":",
                             location: Some(
-                                [75,7-75,10],
+                                [76,7-76,10],
                             ),
                         },
                     ),
@@ -2835,6 +2931,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -2846,7 +2943,7 @@ Grammar {
                         ValLoc {
                             value: ";",
                             location: Some(
-                                [76,11-76,14],
+                                [77,11-77,14],
                             ),
                         },
                     ),
@@ -2856,6 +2953,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -2867,7 +2965,7 @@ Grammar {
                         ValLoc {
                             value: ",",
                             location: Some(
-                                [77,7-77,10],
+                                [78,7-78,10],
                             ),
                         },
                     ),
@@ -2877,6 +2975,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -2888,7 +2987,7 @@ Grammar {
                         ValLoc {
                             value: "{",
                             location: Some(
-                                [78,8-78,11],
+                                [79,8-79,11],
                             ),
                         },
                     ),
@@ -2898,6 +2997,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -2909,7 +3009,7 @@ Grammar {
                         ValLoc {
                             value: "}",
                             location: Some(
-                                [79,8-79,11],
+                                [80,8-80,11],
                             ),
                         },
                     ),
@@ -2919,6 +3019,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -2930,7 +3031,7 @@ Grammar {
                         ValLoc {
                             value: "(",
                             location: Some(
-                                [80,10-80,13],
+                                [81,10-81,13],
                             ),
                         },
                     ),
@@ -2940,6 +3041,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -2951,7 +3053,7 @@ Grammar {
                         ValLoc {
                             value: ")",
                             location: Some(
-                                [81,10-81,13],
+                                [82,10-82,13],
                             ),
                         },
                     ),
@@ -2961,6 +3063,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -2972,7 +3075,7 @@ Grammar {
                         ValLoc {
                             value: "[",
                             location: Some(
-                                [82,11-82,14],
+                                [83,11-83,14],
                             ),
                         },
                     ),
@@ -2982,6 +3085,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -2993,7 +3097,7 @@ Grammar {
                         ValLoc {
                             value: "]",
                             location: Some(
-                                [83,11-83,14],
+                                [84,11-84,14],
                             ),
                         },
                     ),
@@ -3003,6 +3107,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3014,7 +3119,7 @@ Grammar {
                         ValLoc {
                             value: "|",
                             location: Some(
-                                [84,8-84,11],
+                                [85,8-85,11],
                             ),
                         },
                     ),
@@ -3024,6 +3129,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3035,7 +3141,7 @@ Grammar {
                         ValLoc {
                             value: "*",
                             location: Some(
-                                [85,12-85,15],
+                                [86,12-86,15],
                             ),
                         },
                     ),
@@ -3045,6 +3151,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3056,7 +3163,7 @@ Grammar {
                         ValLoc {
                             value: "*!",
                             location: Some(
-                                [86,18-86,22],
+                                [87,18-87,22],
                             ),
                         },
                     ),
@@ -3066,6 +3173,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3077,7 +3185,7 @@ Grammar {
                         ValLoc {
                             value: "+",
                             location: Some(
-                                [87,11-87,14],
+                                [88,11-88,14],
                             ),
                         },
                     ),
@@ -3087,6 +3195,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3098,7 +3207,7 @@ Grammar {
                         ValLoc {
                             value: "+!",
                             location: Some(
-                                [88,17-88,21],
+                                [89,17-89,21],
                             ),
                         },
                     ),
@@ -3108,6 +3217,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3119,7 +3229,7 @@ Grammar {
                         ValLoc {
                             value: "?",
                             location: Some(
-                                [89,10-89,13],
+                                [90,10-90,13],
                             ),
                         },
                     ),
@@ -3129,6 +3239,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3140,7 +3251,7 @@ Grammar {
                         ValLoc {
                             value: "?!",
                             location: Some(
-                                [90,16-90,20],
+                                [91,16-91,20],
                             ),
                         },
                     ),
@@ -3150,6 +3261,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3161,7 +3273,7 @@ Grammar {
                         ValLoc {
                             value: "=",
                             location: Some(
-                                [91,8-91,11],
+                                [92,8-92,11],
                             ),
                         },
                     ),
@@ -3171,6 +3283,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3182,7 +3295,7 @@ Grammar {
                         ValLoc {
                             value: "?=",
                             location: Some(
-                                [92,9-92,13],
+                                [93,9-93,13],
                             ),
                         },
                     ),
@@ -3192,6 +3305,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3203,7 +3317,7 @@ Grammar {
                         ValLoc {
                             value: "left",
                             location: Some(
-                                [93,6-93,12],
+                                [94,6-94,12],
                             ),
                         },
                     ),
@@ -3213,6 +3327,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3224,7 +3339,7 @@ Grammar {
                         ValLoc {
                             value: "right",
                             location: Some(
-                                [94,7-94,14],
+                                [95,7-95,14],
                             ),
                         },
                     ),
@@ -3234,6 +3349,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3245,7 +3361,7 @@ Grammar {
                         ValLoc {
                             value: "reduce",
                             location: Some(
-                                [95,8-95,16],
+                                [96,8-96,16],
                             ),
                         },
                     ),
@@ -3255,6 +3371,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3266,7 +3383,7 @@ Grammar {
                         ValLoc {
                             value: "shift",
                             location: Some(
-                                [96,7-96,14],
+                                [97,7-97,14],
                             ),
                         },
                     ),
@@ -3276,6 +3393,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3287,7 +3405,7 @@ Grammar {
                         ValLoc {
                             value: "dynamic",
                             location: Some(
-                                [97,9-97,18],
+                                [98,9-98,18],
                             ),
                         },
                     ),
@@ -3297,6 +3415,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3308,7 +3427,7 @@ Grammar {
                         ValLoc {
                             value: "nops",
                             location: Some(
-                                [98,6-98,12],
+                                [99,6-99,12],
                             ),
                         },
                     ),
@@ -3318,6 +3437,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3329,7 +3449,7 @@ Grammar {
                         ValLoc {
                             value: "nopse",
                             location: Some(
-                                [99,7-99,14],
+                                [100,7-100,14],
                             ),
                         },
                     ),
@@ -3339,6 +3459,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3350,7 +3471,7 @@ Grammar {
                         ValLoc {
                             value: "prefer",
                             location: Some(
-                                [100,8-100,16],
+                                [101,8-101,16],
                             ),
                         },
                     ),
@@ -3360,6 +3481,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3371,7 +3493,7 @@ Grammar {
                         ValLoc {
                             value: "finish",
                             location: Some(
-                                [101,8-101,16],
+                                [102,8-102,16],
                             ),
                         },
                     ),
@@ -3381,6 +3503,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3392,7 +3515,7 @@ Grammar {
                         ValLoc {
                             value: "nofinish",
                             location: Some(
-                                [102,10-102,20],
+                                [103,10-103,20],
                             ),
                         },
                     ),
@@ -3402,6 +3525,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3413,7 +3537,7 @@ Grammar {
                         ValLoc {
                             value: "/*",
                             location: Some(
-                                [103,10-103,14],
+                                [104,10-104,14],
                             ),
                         },
                     ),
@@ -3423,6 +3547,7 @@ Grammar {
                     value: false,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3434,7 +3559,7 @@ Grammar {
                         ValLoc {
                             value: "*/",
                             location: Some(
-                                [104,10-104,14],
+                                [105,10-105,14],
                             ),
                         },
                     ),
@@ -3444,6 +3569,7 @@ Grammar {
                     value: false,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3455,7 +3581,7 @@ Grammar {
                         ValLoc {
                             value: "[a-zA-Z_][a-zA-Z0-9_\\.]*",
                             location: Some(
-                                [105,6-105,32],
+                                [106,6-106,32],
                             ),
                         },
                     ),
@@ -3465,6 +3591,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3476,7 +3603,7 @@ Grammar {
                         ValLoc {
                             value: "/(\\\\.|[^/\\\\])*/",
                             location: Some(
-                                [106,11-106,31],
+                                [107,11-107,31],
                             ),
                         },
                     ),
@@ -3486,6 +3613,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3497,7 +3625,7 @@ Grammar {
                         ValLoc {
                             value: "\\d+",
                             location: Some(
-                                [107,10-107,15],
+                                [108,10-108,15],
                             ),
                         },
                     ),
@@ -3507,6 +3635,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3518,7 +3647,7 @@ Grammar {
                         ValLoc {
                             value: "[+-]?[0-9]+[.][0-9]*([e][+-]?[0-9]+)?",
                             location: Some(
-                                [108,12-108,51],
+                                [109,12-109,51],
                             ),
                         },
                     ),
@@ -3528,6 +3657,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3539,7 +3669,7 @@ Grammar {
                         ValLoc {
                             value: "true|false",
                             location: Some(
-                                [109,11-109,23],
+                                [110,11-110,23],
                             ),
                         },
                     ),
@@ -3549,6 +3679,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3560,7 +3691,7 @@ Grammar {
                         ValLoc {
                             value: "(?s)(^'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')|(^\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\")",
                             location: Some(
-                                [110,10-110,71],
+                                [111,10-111,71],
                             ),
                         },
                     ),
@@ -3570,6 +3701,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3581,7 +3713,7 @@ Grammar {
                         ValLoc {
                             value: "@[a-zA-Z0-9_]+",
                             location: Some(
-                                [111,12-111,28],
+                                [112,12-112,28],
                             ),
                         },
                     ),
@@ -3591,6 +3723,7 @@ Grammar {
                     value: true,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3602,7 +3735,7 @@ Grammar {
                         ValLoc {
                             value: "\\s+",
                             location: Some(
-                                [112,4-112,9],
+                                [113,4-113,9],
                             ),
                         },
                     ),
@@ -3612,6 +3745,7 @@ Grammar {
                     value: false,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3623,7 +3757,7 @@ Grammar {
                         ValLoc {
                             value: "//.*",
                             location: Some(
-                                [113,13-113,21],
+                                [114,13-114,21],
                             ),
                         },
                     ),
@@ -3633,6 +3767,7 @@ Grammar {
                     value: false,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
             Terminal {
@@ -3644,7 +3779,7 @@ Grammar {
                         ValLoc {
                             value: "((\\*[^/])|[^\\s*/]|/[^\\*])+",
                             location: Some(
-                                [114,12-114,43],
+                                [115,12-115,43],
                             ),
                         },
                     ),
@@ -3654,6 +3789,7 @@ Grammar {
                     value: false,
                 },
                 prio: 10,
+                assoc: None,
                 meta: {},
             },
         ],
@@ -3879,6 +4015,10 @@ Grammar {
                     44,
                     45,
                     46,
+                    47,
+                    48,
+                    49,
+                    50,
                 ],
                 reachable: Cell {
                     value: true,
@@ -3889,8 +4029,8 @@ Grammar {
                 name: "TermMetaDatas",
                 annotation: None,
                 productions: [
-                    47,
-                    48,
+                    51,
+                    52,
                 ],
                 reachable: Cell {
                     value: true,
@@ -3901,7 +4041,7 @@ Grammar {
                 name: "UserMetaData",
                 annotation: None,
                 productions: [
-                    49,
+                    53,
                 ],
                 reachable: Cell {
                     value: true,
@@ -3912,7 +4052,7 @@ Grammar {
                 name: "ProdKind",
                 annotation: None,
                 productions: [
-                    50,
+                    54,
                 ],
                 reachable: Cell {
                     value: true,
@@ -3923,10 +4063,10 @@ Grammar {
                 name: "ConstVal",
                 annotation: None,
                 productions: [
-                    51,
-                    52,
-                    53,
-                    54,
+                    55,
+                    56,
+                    57,
+                    58,
                 ],
                 reachable: Cell {
                     value: true,
@@ -3937,9 +4077,9 @@ Grammar {
                 name: "Assignment",
                 annotation: None,
                 productions: [
-                    55,
-                    56,
-                    57,
+                    59,
+                    60,
+                    61,
                 ],
                 reachable: Cell {
                     value: true,
@@ -3950,7 +4090,7 @@ Grammar {
                 name: "PlainAssignment",
                 annotation: None,
                 productions: [
-                    58,
+                    62,
                 ],
                 reachable: Cell {
                     value: true,
@@ -3961,7 +4101,7 @@ Grammar {
                 name: "BoolAssignment",
                 annotation: None,
                 productions: [
-                    59,
+                    63,
                 ],
                 reachable: Cell {
                     value: true,
@@ -3972,7 +4112,7 @@ Grammar {
                 name: "ProductionGroup",
                 annotation: None,
                 productions: [
-                    60,
+                    64,
                 ],
                 reachable: Cell {
                     value: true,
@@ -3983,8 +4123,8 @@ Grammar {
                 name: "GrammarSymbolRef",
                 annotation: None,
                 productions: [
-                    61,
-                    64,
+                    65,
+                    68,
                 ],
                 reachable: Cell {
                     value: true,
@@ -3995,8 +4135,8 @@ Grammar {
                 name: "RepetitionOperatorOpt",
                 annotation: None,
                 productions: [
-                    62,
-                    63,
+                    66,
+                    67,
                 ],
                 reachable: Cell {
                     value: true,
@@ -4007,7 +4147,7 @@ Grammar {
                 name: "RepetitionOperator",
                 annotation: None,
                 productions: [
-                    65,
+                    69,
                 ],
                 reachable: Cell {
                     value: true,
@@ -4018,8 +4158,8 @@ Grammar {
                 name: "RepetitionModifiersOpt",
                 annotation: None,
                 productions: [
-                    66,
-                    67,
+                    70,
+                    71,
                 ],
                 reachable: Cell {
                     value: true,
@@ -4030,12 +4170,12 @@ Grammar {
                 name: "RepetitionOperatorOp",
                 annotation: None,
                 productions: [
-                    68,
-                    69,
-                    70,
-                    71,
                     72,
                     73,
+                    74,
+                    75,
+                    76,
+                    77,
                 ],
                 reachable: Cell {
                     value: true,
@@ -4046,7 +4186,7 @@ Grammar {
                 name: "RepetitionModifiers",
                 annotation: None,
                 productions: [
-                    74,
+                    78,
                 ],
                 reachable: Cell {
                     value: true,
@@ -4059,8 +4199,8 @@ Grammar {
                     "vec",
                 ),
                 productions: [
-                    75,
-                    76,
+                    79,
+                    80,
                 ],
                 reachable: Cell {
                     value: true,
@@ -4071,7 +4211,7 @@ Grammar {
                 name: "RepetitionModifier",
                 annotation: None,
                 productions: [
-                    77,
+                    81,
                 ],
                 reachable: Cell {
                     value: true,
@@ -4082,8 +4222,8 @@ Grammar {
                 name: "GrammarSymbol",
                 annotation: None,
                 productions: [
-                    78,
-                    79,
+                    82,
+                    83,
                 ],
                 reachable: Cell {
                     value: true,
@@ -4094,8 +4234,8 @@ Grammar {
                 name: "Recognizer",
                 annotation: None,
                 productions: [
-                    80,
-                    81,
+                    84,
+                    85,
                 ],
                 reachable: Cell {
                     value: true,
@@ -4106,7 +4246,7 @@ Grammar {
                 name: "Layout",
                 annotation: None,
                 productions: [
-                    82,
+                    86,
                 ],
                 reachable: Cell {
                     value: false,
@@ -4119,8 +4259,8 @@ Grammar {
                     "vec",
                 ),
                 productions: [
-                    83,
-                    84,
+                    87,
+                    88,
                 ],
                 reachable: Cell {
                     value: false,
@@ -4133,8 +4273,8 @@ Grammar {
                     "vec",
                 ),
                 productions: [
-                    85,
-                    86,
+                    89,
+                    90,
                 ],
                 reachable: Cell {
                     value: false,
@@ -4145,8 +4285,8 @@ Grammar {
                 name: "LayoutItem",
                 annotation: None,
                 productions: [
-                    87,
-                    88,
+                    91,
+                    92,
                 ],
                 reachable: Cell {
                     value: false,
@@ -4157,8 +4297,8 @@ Grammar {
                 name: "Comment",
                 annotation: None,
                 productions: [
-                    89,
-                    90,
+                    93,
+                    94,
                 ],
                 reachable: Cell {
                     value: false,
@@ -4169,7 +4309,7 @@ Grammar {
                 name: "Corncs",
                 annotation: None,
                 productions: [
-                    91,
+                    95,
                 ],
                 reachable: Cell {
                     value: false,
@@ -4182,8 +4322,8 @@ Grammar {
                     "vec",
                 ),
                 productions: [
-                    92,
-                    93,
+                    96,
+                    97,
                 ],
                 reachable: Cell {
                     value: false,
@@ -4196,8 +4336,8 @@ Grammar {
                     "vec",
                 ),
                 productions: [
-                    94,
-                    95,
+                    98,
+                    99,
                 ],
                 reachable: Cell {
                     value: false,
@@ -4208,9 +4348,9 @@ Grammar {
                 name: "Cornc",
                 annotation: None,
                 productions: [
-                    96,
-                    97,
-                    98,
+                    100,
+                    101,
+                    102,
                 ],
                 reachable: Cell {
                     value: false,

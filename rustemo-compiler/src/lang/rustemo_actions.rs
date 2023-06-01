@@ -343,6 +343,18 @@ pub fn term_meta_data_finish(_ctx: &Context) -> TermMetaData {
 pub fn term_meta_data_no_finish(_ctx: &Context) -> TermMetaData {
     TermMetaData::from([("finish".into(), ConstVal::Bool(false.into()))])
 }
+pub fn term_meta_data_left(_ctx: &Context) -> TermMetaData {
+    TermMetaData::from([("left".into(), ConstVal::Bool(true.into()))])
+}
+pub fn term_meta_data_reduce(_ctx: &Context) -> TermMetaData {
+    TermMetaData::from([("left".into(), ConstVal::Bool(true.into()))])
+}
+pub fn term_meta_data_right(_ctx: &Context) -> TermMetaData {
+    TermMetaData::from([("right".into(), ConstVal::Bool(true.into()))])
+}
+pub fn term_meta_data_shift(_ctx: &Context) -> TermMetaData {
+    TermMetaData::from([("right".into(), ConstVal::Bool(true.into()))])
+}
 pub fn term_meta_data_dynamic(_ctx: &Context) -> TermMetaData {
     TermMetaData::from([("dynamic".into(), ConstVal::Bool(true.into()))])
 }

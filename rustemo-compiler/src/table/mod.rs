@@ -735,8 +735,8 @@ impl<'g, 's> LRTable<'g, 's> {
                 let new_reduce = Action::Reduce(item.prod, item.prod_len);
                 for follow_symbol in item.follow.borrow().iter() {
                     let follow_term =
-                        self.grammar.symbol_to_term_index(*follow_symbol);
-                    let actions = &mut state.actions[follow_term];
+                        self.grammar.symbol_to_term(*follow_symbol);
+                    let actions = &mut state.actions[follow_term.idx];
                     if actions.is_empty() {
                         // No other action are possible for this follow terminal.
                         // Just register this reduction.
@@ -758,7 +758,7 @@ impl<'g, 's> LRTable<'g, 's> {
                             // same as SHIFT.
                             let shift_prio = match shift {
                                 Action::Accept => DEFAULT_PRIORITY,
-                                _ => state.max_prior_for_term[&follow_term],
+                                _ => state.max_prior_for_term[&follow_term.idx],
                             };
                             match prod.prio.cmp(&shift_prio) {
                                 Ordering::Less => {
@@ -768,13 +768,23 @@ impl<'g, 's> LRTable<'g, 's> {
                                 }
                                 Ordering::Equal => {
                                     // If priorities are the same use associativity
-                                    match prod.assoc {
-                                        Associativity::Left => {
+                                    // Terminals associativity has priority over
+                                    // production associativity
+                                    match (&prod.assoc, &follow_term.assoc) {
+                                        (
+                                            Associativity::Left,
+                                            Associativity::None,
+                                        )
+                                        | (_, Associativity::Right) => {
                                             // Override SHIFT with this REDUCE
                                             assert!(actions.len() == 1);
                                             actions.pop();
                                         }
-                                        Associativity::Right => {
+                                        (
+                                            Associativity::Right,
+                                            Associativity::None,
+                                        )
+                                        | (_, Associativity::Left) => {
                                             // If associativity is right leave SHIFT
                                             // action as "stronger" and don't consider
                                             // this reduction any more. Right
@@ -782,7 +792,10 @@ impl<'g, 's> LRTable<'g, 's> {
                                             // same set of actions together with SHIFTs.
                                             should_reduce = false;
                                         }
-                                        Associativity::None => {
+                                        (
+                                            Associativity::None,
+                                            Associativity::None,
+                                        ) => {
                                             // If priorities are the same and no
                                             // associativity defined use preferred
                                             // strategy.
