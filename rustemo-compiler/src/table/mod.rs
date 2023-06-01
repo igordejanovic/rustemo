@@ -10,6 +10,7 @@ use std::{
 };
 
 use clap::ValueEnum;
+use colored::Colorize;
 use rustemo::log;
 
 use crate::{
@@ -102,9 +103,14 @@ impl<'g> Display for LRState<'g> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "State {}:{}\n\t{}",
-            self.idx,
-            self.grammar.symbol_name(self.symbol),
+            "{}\n\t{}",
+            format!(
+                "State {}:{}",
+                self.idx,
+                self.grammar.symbol_name(self.symbol)
+            )
+            .green()
+            .bold(),
             self.items
                 .iter()
                 .map(|i| i.to_string(self.grammar))
@@ -996,26 +1002,30 @@ impl<'g, 's> LRTable<'g, 's> {
 
     pub fn print_conflicts_report(&self, conflicts: &Vec<Conflict<'g, 's>>) {
         for conflict in conflicts {
-            println!("In {}", conflict.state);
+            println!("{} {}", "In".green().bold(), conflict.state);
             print!(
                 "When I saw {} and see token {} ahead I can't decide",
-                self.grammar.symbol_name(conflict.state.symbol),
-                self.grammar.symbol_name(
-                    self.grammar.term_to_symbol_index(conflict.follow)
-                )
+                self.grammar.symbol_name(conflict.state.symbol).green(),
+                self.grammar
+                    .symbol_name(
+                        self.grammar.term_to_symbol_index(conflict.follow)
+                    )
+                    .green()
             );
             match conflict.kind {
                 ConflictKind::ShiftReduce(prod) => {
                     println!(
-                        " should I shift or reduce by production:\n{}",
-                        self.grammar.productions[prod].to_string(self.grammar)
+                        " should I shift or reduce by production:\n{}\n",
+                        self.grammar.productions[prod]
+                            .to_string(self.grammar)
+                            .green()
                     );
                 }
                 ConflictKind::ReduceReduce(prod1, prod2) => {
                     println!(
                         " should I reduce by production:\n{}\nor production:\n{}\n",
-                        self.grammar.productions[prod1].to_string(self.grammar),
-                        self.grammar.productions[prod2].to_string(self.grammar)
+                        self.grammar.productions[prod1].to_string(self.grammar).green(),
+                        self.grammar.productions[prod2].to_string(self.grammar).green()
                     );
                 }
             }
