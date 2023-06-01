@@ -216,7 +216,9 @@ impl Settings {
     pub fn process_dir(&self) -> Result<()> {
         if let Some(root_dir) = &self.root_dir {
             if !root_dir.exists() {
-                return Err(Error::Error("Folder doesn't exist.".to_string()));
+                return Err(Error::Error(format!(
+                    "Folder/File {root_dir:?} doesn't exist."
+                )));
             }
 
             let visitor = |grammar: &Path| -> Result<()> {
