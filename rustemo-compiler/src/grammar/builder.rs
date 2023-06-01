@@ -24,7 +24,10 @@ macro_rules! resolving {
     ($name:expr) => {
         ResolvingAssignment {
             name: None,
-            symbol: ResolvingSymbolIndex::Resolving(GrammarSymbol::Name($name)),
+            symbol: ResolvingSymbolIndex {
+                index: None,
+                symbol: GrammarSymbol::Name($name),
+            },
             is_bool: false,
         }
     };
@@ -302,9 +305,13 @@ impl GrammarBuilder {
                                     )?;
                                     Ok(ResolvingAssignment {
                                         name: Some(assign.name),
-                                        symbol: ResolvingSymbolIndex::Resolving(
-                                            assign.gsymref.gsymbol.unwrap(),
-                                        ),
+                                        symbol: ResolvingSymbolIndex {
+                                            index: None,
+                                            symbol: assign
+                                                .gsymref
+                                                .gsymbol
+                                                .unwrap(),
+                                        },
                                         is_bool,
                                     })
                                 }
@@ -315,9 +322,10 @@ impl GrammarBuilder {
                                     )?;
                                     Ok(ResolvingAssignment {
                                         name: None,
-                                        symbol: ResolvingSymbolIndex::Resolving(
-                                            reference.gsymbol.unwrap(),
-                                        ),
+                                        symbol: ResolvingSymbolIndex {
+                                            index: None,
+                                            symbol: reference.gsymbol.unwrap(),
+                                        },
                                         is_bool: false,
                                     })
                                 }
@@ -406,9 +414,12 @@ impl GrammarBuilder {
             nonterminal: nt_idx,
             rhs: vec![ResolvingAssignment {
                 name: None,
-                symbol: ResolvingSymbolIndex::Resolving(GrammarSymbol::Name(
-                    rhs_rule_name.to_string().into(),
-                )),
+                symbol: ResolvingSymbolIndex {
+                    index: None,
+                    symbol: GrammarSymbol::Name(
+                        rhs_rule_name.to_string().into(),
+                    ),
+                },
                 is_bool: false,
             }],
             ..Production::default()
@@ -533,12 +544,13 @@ impl GrammarBuilder {
         for production in &mut self.productions {
             let production_str = format!("{}", production);
             for assign in &mut production.rhs {
-                if let ResolvingSymbolIndex::Resolving(
-                    GrammarSymbol::StrConst(mtch),
-                ) = &assign.symbol
+                if let ResolvingSymbolIndex {
+                    symbol: GrammarSymbol::StrConst(mtch),
+                    ..
+                } = &assign.symbol
                 {
                     if self.terminals_matches.contains_key(mtch.as_ref()) {
-                        assign.symbol = ResolvingSymbolIndex::Resolved(
+                        assign.symbol.index = Some(
                             self.terminals_matches
                                 .get(mtch.as_ref())
                                 .unwrap()
@@ -570,17 +582,19 @@ impl GrammarBuilder {
             let rhs_len = production.rhs.len();
             let production_str = format!("{}", production);
             for assign in &mut production.rhs {
-                if let ResolvingSymbolIndex::Resolving(symbol) = &assign.symbol
+                if let ResolvingSymbolIndex {
+                    symbol,
+                    index: None,
+                } = &assign.symbol
                 {
-                    match symbol {
-                        GrammarSymbol::Name(name) => {
-                            assign.symbol = ResolvingSymbolIndex::Resolved(
-                                if let Some(terminal) =
-                                    self.terminals.get(name.as_ref())
-                                {
-                                    terminal.idx.symbol_index()
-                                } else {
-                                    let nt_idx = self
+                    assign.symbol.index = Some(match symbol {
+                    GrammarSymbol::Name(name) =>
+                            if let Some(terminal) =
+                                self.terminals.get(name.as_ref())
+                            {
+                                terminal.idx.symbol_index()
+                            } else {
+                                let nt_idx = self
                                         .nonterminals
                                         .get(name.as_ref())
                                         .ok_or_else(|| {
@@ -589,32 +603,28 @@ impl GrammarBuilder {
                                                  Some(self.file.clone()), name.location);
                                             r.unwrap_err()
                                         })?.idx;
-                                    if rhs_len == 1
-                                        && nt_idx == production.nonterminal
-                                    {
-                                        err!(format!("Infinite recursion on symbol '{}' in production '{}'.",
+                                if rhs_len == 1
+                                    && nt_idx == production.nonterminal
+                                {
+                                    err!(format!("Infinite recursion on symbol '{}' in production '{}'.",
                                             name, production_str),
                                              Some(self.file.clone()), name.location)?;
-                                    }
-                                    nt_idx.symbol_index(self.terminals.len())
-                                },
-                            );
-                        }
-                        GrammarSymbol::StrConst(name) => {
-                            assign.symbol = ResolvingSymbolIndex::Resolved(
+                                }
+                                nt_idx.symbol_index(self.terminals.len())
+                            },
+                    GrammarSymbol::StrConst(name) =>
                                 self.terminals
                                     .get(name.as_ref())
                                     .unwrap_or_else(|| {
+                                        // This should never happen.
                                         panic!(
-                                            "terminal {:?} not created in production '{}'!.",
+                                            "terminal {:?} not created in production '{}'.",
                                             name, production_str
                                         )
                                     })
                                     .idx
-                                    .symbol_index(),
-                            );
-                        }
-                    }
+                                    .symbol_index()
+                    });
                 }
             }
         }

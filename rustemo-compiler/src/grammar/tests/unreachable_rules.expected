@@ -10,9 +10,17 @@ Grammar {
                 rhs: [
                     ResolvingAssignment {
                         name: None,
-                        symbol: Resolved(
-                            6,
-                        ),
+                        symbol: ResolvingSymbolIndex {
+                            index: Some(
+                                6,
+                            ),
+                            symbol: Name(
+                                ValLoc {
+                                    value: "S",
+                                    location: None,
+                                },
+                            ),
+                        },
                         is_bool: false,
                     },
                 ],
@@ -31,16 +39,36 @@ Grammar {
                 rhs: [
                     ResolvingAssignment {
                         name: None,
-                        symbol: Resolved(
-                            8,
-                        ),
+                        symbol: ResolvingSymbolIndex {
+                            index: Some(
+                                8,
+                            ),
+                            symbol: Name(
+                                ValLoc {
+                                    value: "A",
+                                    location: Some(
+                                        [2,11-2,12],
+                                    ),
+                                },
+                            ),
+                        },
                         is_bool: false,
                     },
                     ResolvingAssignment {
                         name: None,
-                        symbol: Resolved(
-                            9,
-                        ),
+                        symbol: ResolvingSymbolIndex {
+                            index: Some(
+                                9,
+                            ),
+                            symbol: Name(
+                                ValLoc {
+                                    value: "B",
+                                    location: Some(
+                                        [2,13-2,14],
+                                    ),
+                                },
+                            ),
+                        },
                         is_bool: false,
                     },
                 ],
@@ -59,9 +87,19 @@ Grammar {
                 rhs: [
                     ResolvingAssignment {
                         name: None,
-                        symbol: Resolved(
-                            7,
-                        ),
+                        symbol: ResolvingSymbolIndex {
+                            index: Some(
+                                7,
+                            ),
+                            symbol: Name(
+                                ValLoc {
+                                    value: "COpt",
+                                    location: Some(
+                                        [2,17-2,18],
+                                    ),
+                                },
+                            ),
+                        },
                         is_bool: false,
                     },
                 ],
@@ -80,9 +118,19 @@ Grammar {
                 rhs: [
                     ResolvingAssignment {
                         name: None,
-                        symbol: Resolved(
-                            11,
-                        ),
+                        symbol: ResolvingSymbolIndex {
+                            index: Some(
+                                11,
+                            ),
+                            symbol: Name(
+                                ValLoc {
+                                    value: "C",
+                                    location: Some(
+                                        [2,17-2,18],
+                                    ),
+                                },
+                            ),
+                        },
                         is_bool: false,
                     },
                 ],
@@ -114,9 +162,19 @@ Grammar {
                 rhs: [
                     ResolvingAssignment {
                         name: None,
-                        symbol: Resolved(
-                            2,
-                        ),
+                        symbol: ResolvingSymbolIndex {
+                            index: Some(
+                                2,
+                            ),
+                            symbol: Name(
+                                ValLoc {
+                                    value: "Tb",
+                                    location: Some(
+                                        [2,22-2,24],
+                                    ),
+                                },
+                            ),
+                        },
                         is_bool: false,
                     },
                 ],
@@ -135,9 +193,19 @@ Grammar {
                 rhs: [
                     ResolvingAssignment {
                         name: None,
-                        symbol: Resolved(
-                            9,
-                        ),
+                        symbol: ResolvingSymbolIndex {
+                            index: Some(
+                                9,
+                            ),
+                            symbol: Name(
+                                ValLoc {
+                                    value: "B",
+                                    location: Some(
+                                        [3,11-3,12],
+                                    ),
+                                },
+                            ),
+                        },
                         is_bool: false,
                     },
                 ],
@@ -156,9 +224,19 @@ Grammar {
                 rhs: [
                     ResolvingAssignment {
                         name: None,
-                        symbol: Resolved(
-                            2,
-                        ),
+                        symbol: ResolvingSymbolIndex {
+                            index: Some(
+                                2,
+                            ),
+                            symbol: Name(
+                                ValLoc {
+                                    value: "Tb",
+                                    location: Some(
+                                        [4,11-4,13],
+                                    ),
+                                },
+                            ),
+                        },
                         is_bool: false,
                     },
                 ],
@@ -177,9 +255,19 @@ Grammar {
                 rhs: [
                     ResolvingAssignment {
                         name: None,
-                        symbol: Resolved(
-                            11,
-                        ),
+                        symbol: ResolvingSymbolIndex {
+                            index: Some(
+                                11,
+                            ),
+                            symbol: Name(
+                                ValLoc {
+                                    value: "C",
+                                    location: Some(
+                                        [6,11-6,12],
+                                    ),
+                                },
+                            ),
+                        },
                         is_bool: false,
                     },
                 ],
@@ -198,9 +286,19 @@ Grammar {
                 rhs: [
                     ResolvingAssignment {
                         name: None,
-                        symbol: Resolved(
-                            9,
-                        ),
+                        symbol: ResolvingSymbolIndex {
+                            index: Some(
+                                9,
+                            ),
+                            symbol: Name(
+                                ValLoc {
+                                    value: "B",
+                                    location: Some(
+                                        [7,11-7,12],
+                                    ),
+                                },
+                            ),
+                        },
                         is_bool: false,
                     },
                 ],

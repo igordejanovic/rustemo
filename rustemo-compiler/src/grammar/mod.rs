@@ -253,33 +253,31 @@ impl Production {
 
 impl Display for Production {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}: ", self.idx)?;
+        write!(f, "{}:", self.idx)?;
         for assign in &self.rhs {
+            write!(f, " ")?;
             if assign.name.is_some() {
-                write!(f, " {} ", assign.name.as_ref().unwrap())?;
-            } else {
-                let s = match &assign.symbol {
-                    ResolvingSymbolIndex::Resolved(symbol) => {
-                        format!("{}", symbol)
-                    }
-                    ResolvingSymbolIndex::Resolving(symbol) => match symbol {
-                        GrammarSymbol::Name(name) => name.as_ref().into(),
-                        GrammarSymbol::StrConst(mtch) => {
-                            format!("\"{}\"", mtch.as_ref())
-                        }
-                    },
-                };
-                write!(f, " {} ", s)?;
+                write!(f, "{}=", assign.name.as_ref().unwrap())?;
             }
+            write!(
+                f,
+                "{}",
+                match &assign.symbol.symbol {
+                    GrammarSymbol::Name(name) => name.as_ref().into(),
+                    GrammarSymbol::StrConst(mtch) => {
+                        format!("\"{}\"", mtch.as_ref())
+                    }
+                }
+            )?;
         }
-        write!(f, "")
+        Ok(())
     }
 }
 
 #[derive(Debug)]
-pub enum ResolvingSymbolIndex {
-    Resolved(SymbolIndex),
-    Resolving(GrammarSymbol),
+pub struct ResolvingSymbolIndex {
+    index: Option<SymbolIndex>,
+    symbol: GrammarSymbol,
 }
 
 #[derive(Debug)]
@@ -302,13 +300,9 @@ pub struct Assignment {
 /// Called for Assignment to extract resolved SymbolIndex.
 #[inline]
 pub(crate) fn res_symbol(assign: &ResolvingAssignment) -> SymbolIndex {
-    match assign.symbol {
-        ResolvingSymbolIndex::Resolved(index) => index,
-        ResolvingSymbolIndex::Resolving(_) => {
-            // This shouldn't happen
-            panic!("reference {:?} not resolved", assign.symbol);
-        }
-    }
+    assign.symbol.index.unwrap_or_else(|| {
+        panic!("Unresolved symbol {:?}", &assign.symbol.symbol)
+    })
 }
 
 // This can be used at the moment due to conflict with a blankt impl in the core.

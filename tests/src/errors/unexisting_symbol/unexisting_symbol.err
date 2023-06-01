@@ -1,2 +1,2 @@
 Error at /home/igor/repos/rust/rustemo/tests/src/errors/unexisting_symbol/unexisting.rustemo:[2,3-2,4]:
-	Unexisting symbol 'C' in production '2:  C  Tc '.
+	Unexisting symbol 'C' in production '2: C Tc'.

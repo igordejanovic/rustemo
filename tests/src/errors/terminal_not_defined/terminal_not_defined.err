@@ -1,2 +1,2 @@
 Error at /home/igor/repos/rust/rustemo/tests/src/errors/terminal_not_defined/terminal_not_defined.rustemo:[1,6-1,9]:
-	Terminal "c" used in production "1:  B1  "c" " is not defined in the 'terminals' section.
+	Terminal "c" used in production "1: B1 "c"" is not defined in the 'terminals' section.
