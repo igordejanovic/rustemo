@@ -1,0 +1,5 @@
+Err(
+    Error(
+        "Grammar is not deterministic. There are conflicts.",
+    ),
+)

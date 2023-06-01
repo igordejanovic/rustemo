@@ -1,0 +1,9 @@
+// Testing non-deterministic grammar
+E: E '+' E
+ | E '*' E
+ | Num;
+
+terminals
+Plus: '+';
+Mul: '*';
+Num: /\d+/;

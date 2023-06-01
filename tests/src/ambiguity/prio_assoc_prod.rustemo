@@ -1,0 +1,9 @@
+// Testing priorities and associativities on productions
+E: E '+' E {1, left}
+ | E '*' E {2, reduce}
+ | Num;
+
+terminals
+Plus: '+';
+Mul: '*';
+Num: /\d+/;
