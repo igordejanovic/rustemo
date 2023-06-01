@@ -1,0 +1,6 @@
+E: E '+' E {1}
+ | E '*' E {2};
+
+terminals
+Plus: '+';
+Mul: '*';

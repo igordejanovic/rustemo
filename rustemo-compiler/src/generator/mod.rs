@@ -65,7 +65,7 @@ pub fn generate_parser(
         }
     }
 
-    let table = LRTable::new(&grammar, settings);
+    let table = LRTable::new(&grammar, settings)?;
 
     let conflicts = table.get_conflicts();
     if !conflicts.is_empty() {

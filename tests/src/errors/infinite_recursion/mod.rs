@@ -11,3 +11,15 @@ fn infinite_recursion() {
         result.unwrap_err().to_string()
     );
 }
+
+#[test]
+fn infinite_recursion_2() {
+    let result = rustemo_compiler::process_grammar(local_file!(
+        file!(),
+        "infinite_recursion_2.rustemo"
+    ));
+    output_cmp!(
+        "src/errors/infinite_recursion/infinite_recursion_2.err",
+        result.unwrap_err().to_string()
+    );
+}

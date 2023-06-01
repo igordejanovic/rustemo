@@ -15,6 +15,7 @@ use rustemo::log;
 
 use crate::{
     create_index,
+    error::{Error, Result},
     grammar::{Associativity, Priority, Terminal, DEFAULT_PRIORITY},
     index::{
         NonTermIndex, NonTermVec, ProdIndex, StateIndex, StateVec, SymbolIndex,
@@ -454,7 +455,7 @@ pub struct LRTable<'g, 's> {
 }
 
 impl<'g, 's> LRTable<'g, 's> {
-    pub fn new(grammar: &'g Grammar, settings: &'s Settings) -> Self {
+    pub fn new(grammar: &'g Grammar, settings: &'s Settings) -> Result<Self> {
         let mut table = Self {
             grammar,
             settings,
@@ -463,7 +464,7 @@ impl<'g, 's> LRTable<'g, 's> {
             first_sets: first_sets(grammar),
         };
 
-        table.check_empty_sets();
+        table.check_empty_sets()?;
 
         table.calc_states(grammar.augmented_index);
         if let Some(augmented_layout_index) = grammar.augmented_layout_index {
@@ -488,7 +489,7 @@ impl<'g, 's> LRTable<'g, 's> {
             println!("{}", table);
         }
 
-        table
+        Ok(table)
     }
 
     /// Calculate LR states with GOTOs and ACTIONs for the given Grammar.
@@ -948,18 +949,20 @@ impl<'g, 's> LRTable<'g, 's> {
     /// Check for states with GOTO links but without SHIFT links.
     ///
     /// This is invalid as GOTO links will never be traversed.
-    fn check_empty_sets(&self) {
-        self.first_sets
+    fn check_empty_sets(&self) -> Result<()> {
+        if let Some((idx, _)) = self
+            .first_sets
             .iter()
             .enumerate()
-            .filter(|(_, s)| s.is_empty())
-            .for_each(|(idx, _)| {
-                panic!(
-                    "First set empty for grammar symbol {:?}.\n\
-                    An infinite recursion on the grammar symbol.",
-                    &self.grammar.symbol_name(SymbolIndex(idx))
-                )
-            });
+            .find(|(_, s)| s.is_empty())
+        {
+            return Err(Error::Error(format!(
+                "First set empty for grammar symbol {:?}.\n\
+                 An infinite recursion on the grammar symbol.",
+                &self.grammar.symbol_name(SymbolIndex(idx))
+            )));
+        }
+        Ok(())
     }
 
     pub fn get_conflicts(&'s self) -> Vec<Conflict<'g, 's>> {
@@ -1687,7 +1690,7 @@ mod tests {
             ..Settings::default()
         };
 
-        let table = LRTable::new(&grammar, &settings);
+        let table = LRTable::new(&grammar, &settings).unwrap();
         output_cmp!(
             "src/table/grammar_2.expected",
             format!("{:#?}", table.states)
@@ -1710,7 +1713,7 @@ mod tests {
             ..Settings::default()
         };
 
-        let table = LRTable::new(&grammar, &settings);
+        let table = LRTable::new(&grammar, &settings).unwrap();
 
         output_cmp!(
             "src/table/grammar_nonlalr_lalr.expected",
@@ -1730,7 +1733,7 @@ mod tests {
             ..Settings::default()
         };
 
-        let table = LRTable::new(&grammar, &settings);
+        let table = LRTable::new(&grammar, &settings).unwrap();
 
         output_cmp!(
             "src/table/grammar_nonlalr_lalr_pagerw.expected",
@@ -1755,7 +1758,7 @@ mod tests {
             ..Settings::default()
         };
 
-        let table = LRTable::new(&grammar, &settings);
+        let table = LRTable::new(&grammar, &settings).unwrap();
         assert_eq!(
             &table.states[StateIndex(0)]
                 .sorted_terminals
