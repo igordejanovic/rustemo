@@ -3,6 +3,8 @@ use std::fmt::Display;
 
 pub type Result<R> = std::result::Result<R, Error>;
 
+/// Error type returned in `Err` variant of `Result` type from the parser.
+/// ANCHOR: parser-error
 #[derive(Debug)]
 pub enum Error {
     Error {
@@ -12,6 +14,7 @@ pub enum Error {
     },
     IOError(std::io::Error),
 }
+/// ANCHOR_END: parser-error
 
 impl Display for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {

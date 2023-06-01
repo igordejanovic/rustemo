@@ -1,0 +1,10 @@
+IfStatement: 'if' Condition 'then' Statements
+           | 'if' Condition 'then' Statements 'else' Statements;
+Statements: Statements Statement | Statement | EMPTY;
+Statement: IfStatement;
+
+terminals
+If: 'if' {shift};
+Then: 'then';
+Else: 'else' {shift};
+Condition: 'cond';
