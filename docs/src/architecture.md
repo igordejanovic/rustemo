@@ -10,6 +10,11 @@ The following diagram describes the process of transforming of Rustemo grammar
 to a working parser. The input file is given as `lang.rustemo`. Where `lang` is
 the name of the language describe by the grammar.
 
+```admonish todo
+The diagram is sligtly out-of-date. Needs update.
+```
+
+
 ```plantuml
 @startuml
 

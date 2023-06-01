@@ -55,16 +55,16 @@ DFSA are called deterministic [context-free languages - CFG](). NFSA can
 recognize a full set of CFG. GLR parsing is based on NFSA.
 
 Depending on the algorithm used to produce the FSA table we have different LR
-variants (SLR, LALR etc.). They only differ by the tables they use, the parsing
+variants (SLR, LALR etc.). They only differ by the table they use, the parsing
 algorithm is the same.
 
 Each state of the parser FSA is related to the grammar symbol and when a parser
 reaches a particular state we can tell that the last symbol it saw is the symbol
 related to the current state.
 
-The parser also keeps a history of what is saw so far on the parse stack. We can
-think of a content of the stack as a sequence of symbols the parser saw before
-reaching the current state.
+The parser also keeps a history of what it has seen so far on the parse stack.
+We can think of a content of the stack as a sequence of symbols the parser saw
+before reaching the current state.
 
 At each step, based on the current state and the token ahead the parser can
 perform one of the following operations:
