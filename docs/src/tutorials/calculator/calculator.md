@@ -150,20 +150,15 @@ have a working parser with default AST output which can be later tuned as needed
 ## Adding dependencies
 
 Our generated parser code calls Rustemo code so we must add `rustemo` crate as a
-dependency. Since we are using regular expressions in our grammar we also need
-`regex` and `once_cell`.
-
-Let's add `rustemo`.
+dependency:
 
 ```sh
-cargo add rustemo --path ~/repos/rust/rustemo/rustemo/
+cargo add rustemo
 ```
 
-```admonish todo
-Change previous line to install from cargo.io when published.
-```
+Since we are using regular expressions in our grammar we also need `regex` and
+`once_cell`:
 
-Let's add other dependencies:
 ```sh
 cargo add regex --no-default-features --features std,unicode-perl
 cargo add once_cell
@@ -434,25 +429,19 @@ is ambiguous as, if we forget about priorities, input expressions can yield many
 possible trees[^catalan]. LR parsers must always produce only one tree as LR
 parsing is deterministic.
 
-```admonish todo
-GLR parsing is non-deterministic so it can be used with ambiguous grammars. If
-there are multiple interpretation GLR parser will return the parse forest which
-contains all possible trees.
-
-GLR parser is planned but Rustemo currently supports only LR.
+```admonish note
+[GLR parsing](../../parsing/parsing.md#glr-parsing) is non-deterministic so it can be used with ambiguous grammars.
 ```
 
-This _could_ be resolved by [transforming our grammar to encode priorities](https://stackoverflow.com/questions/39469383/how-to-do-priority-of-operations-in-my-grammars)
+This _could_ be resolved by [transforming our grammar to encode
+priorities](https://stackoverflow.com/questions/39469383/how-to-do-priority-of-operations-in-my-grammars)
 but the process is tedious, the resulting grammar becomes less readable and the
 resulting trees are far from intuitive to navigate and process.
 
-Luckily, Rustemo has declarative disambiguation mechanisms which makes these
+Luckily, Rustemo has [declarative disambiguation
+mechanisms](../../grammar_language.md#disambiguation-rules) which makes these
 issues easy to solve. These disambiguation information are specified inside of
 curly braces per production or per grammar rule.
-
-```admonish todo
-Add link to meta-data/priority/associativity specification.
-```
 
 The priority is specified by an integer number. The default priority is 10.
 Productions with higher priority will be the first to be reduced. Think of the
