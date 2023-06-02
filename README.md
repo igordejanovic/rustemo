@@ -5,9 +5,8 @@ Status](https://img.shields.io/badge/docs-latest-green.svg)](https://igordejanov
 
 LR/GLR parser generator for Rust (currently only LR).
 
-**Status:** In beta. Fairly complete feature set for the initial release. Some
-parts of docs are WIP. Release is due as soon as the docs are completed. Not yet
-optimized for speed so don't expect blazing performance. 
+**Status:** In early phase. Fairly complete feature set for the initial release.
+Not yet optimized for speed so don't expect blazing performance.
 
 Feedback is welcome!
 
@@ -98,9 +97,8 @@ Be sure to check [the docs](https://igordejanovic.github.io/rustemo/)!
       generic tree builder keeps layout on the following tree leaf. See [the
       tests](./tests/src/layout).
 - [x] Detailed error reporting during grammar analysis and state machine building.
-- [ ] Docs. Fairly complete but still WIP, mostly based on parglare docs for
-      the grammar language.
-- [ ] First release to crates.io!
+- [x] Docs completed.
+- [x] First release to crates.io!
 
 ### v0.2.0
 - [ ] GLR parsing based on Right-Nulled GLR algorithm (RNGLR).
