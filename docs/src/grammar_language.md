@@ -600,21 +600,22 @@ inside the production.
 
 ## Rule/production meta-data
 Rules and productions may specify additional meta-data that can be used to guide
-parsing decisions. Meta-data is specified inside curly braces right after the
-name of the rule, if it is a rule-level meta-data, or after the production body,
-if it is a production-level meta-data. If a meta-data is applied to the grammar
-rule it is in effect for all production of the rule, but if the same meta-data
-is defined for the production it takes precedence.
+parser construction decisions. Meta-data is specified inside curly braces right
+after the name of the rule, if it is a rule-level meta-data, or after the
+production body, if it is a production-level meta-data. If a meta-data is
+applied to the grammar rule it is in effect for all production of the rule, but
+if the same meta-data is defined for the production it takes precedence.
 
 ```admonish note
 See the example bellow.
 ```
 
-Currently, there are two kinds of meta-data used during parser construction:
+Currently, kinds of meta-data used during parser construction are as follows:
 - disambiguation rules
+- production kinds
 - user meta-data
 
-### Disambiguation meta-data
+### Disambiguation rules
 
 These are special meta-data that are used during by Rustemo during grammar
 compilation to influence decision on LR automata states' actions.
@@ -655,6 +656,26 @@ Disambiguation rules are the following:
   disable this preference for the given production if enabled globally. `nopse`
   (_no prefer shift over empty_) is used to disable preferring shift over empty
   reductions only.
+  
+### Production kinds
+
+These meta-data are introduced to enable better deduction of function/parameter
+names in the generated code. The way to write the production kind is to write an
+identifier in camel-case.
+
+For example:
+
+```
+{{#include ./tutorials/calculator/calculator3/src/calculator.rustemo}}
+```
+
+`Add`, `Sub`, `Mul` and `Div` are production kinds. These will influence the
+name of the parameters, fields etc. in the generated code.
+
+See the [section of improving
+AST](./tutorials/calculator/calculator.md#improving-ast) in the calculator
+tutorial for more info.
+
 
 ### User meta-data
 Arbitrary meta-data can be attached to rules or productions. The form of each is

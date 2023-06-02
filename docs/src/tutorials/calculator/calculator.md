@@ -598,12 +598,9 @@ should be.
 Ok, that is nice but look at those struct names and fields. They don't give us
 clue about operations, operands etc. It would be pretty hard to use these types.
 
-Let's improve it a bit. First we can specify [production kinds]() which is just
-a nice name for each production which can be used in the code.
-
-```admonish todo
-Add a link to section on production kinds.
-```
+Let's improve it a bit. First we can specify [production
+kinds](../../grammar_language.md#production-kinds) which is just a nice name for
+each production which can be used in the code.
 
 We _could_ workaround the issue by making a separate grammar rule for each
 operation like suggested above:

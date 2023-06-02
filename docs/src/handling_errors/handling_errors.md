@@ -229,7 +229,7 @@ preference of shift over empty reductions.
 
 ```admonish tip
 See the section on [disambiguation meta-data in the
-grammar](../grammar_language.md#disambiguation-meta-data)
+grammar](../grammar_language.md#disambiguation-rules)
 ```
 
 
