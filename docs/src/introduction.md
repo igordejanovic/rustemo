@@ -1,10 +1,3 @@
-```admonish note
-This docs is work in progress and there are some parts that need to be writen or
-reworked. However, the major parts are mostly finished and up-to-date with the
-implementation. The parts that are not finished yet are marked with appropriate
-notes.
-```
-
 # Introduction
 
 Rustemo is a LR/GLR parser generator for Rust (a.k.a.
@@ -29,13 +22,27 @@ builder](builders.md#default-builder).
 Rustemo tries to provide sensible defaults but is made with a flexibility in
 mind. Thus, you can plug-in your own builder or/and lexer.
 
-See [the project README](https://github.com/igordejanovic/rustemo/) for
+See [the project
+README](https://github.com/igordejanovic/rustemo/blob/main/README.md) for
 features, aspirations and the road-map.
 
 There are multiple alternatives to this project. Some of them are listed in the
 [Similar projects](https://github.com/igordejanovic/rustemo/#similar-projects)
 section in the README. I advise you to check them also to be able to make an
 informed decision of what approach would suit you the best.
+
+# Installation and setup
+
+Rustemo uses `cargo` for the project management. There are two crates of
+interest:
+- `rustemo-compiler` - is a crate you will use during the development. This
+  crate provides the compiler [CLI `rcomp`](./cli.md). You will also used this
+  crate as a build dependency if the compiler is called from the `build.rs`
+  script. See the [configuration chapter](./configuration.md) for more
+  information.
+- `rustemo` - is Rustemo runtime. This crate will be used by the generated
+  parser. If you use the default string lexer you will need additional
+  dependencies. See the [calculator tutorial](./tutorials/calculator/calculator.md).
 
 # A usual workflow
 
@@ -62,9 +69,10 @@ The best place to start at the moment is [the calculator
 tutorial](./tutorials/calculator/calculator.md) with a reference to the [grammar
 language](grammar_language.md) section and other sections as needed.
 
-Besides tutorial and this docs, another source of information are [integration
-tests](https://github.com/igordejanovic/rustemo/tree/main/tests). Tests are
-usually implemented by a grammar where Rustemo compiler is called from the
+Besides the tutorial and this docs, another source of information are
+[integration tests](https://github.com/igordejanovic/rustemo/tree/main/tests).
+Tests are usually implemented by a grammar where Rustemo compiler is called from
+the
 [build.rs](https://github.com/igordejanovic/rustemo/blob/main/tests/build.rs)
 script. The result of each test is persisted to a `.ast` (or `.err` if error is
 expected) file if it doesn't exist, or compared with the expected file if the

@@ -60,7 +60,7 @@ operand and an infix operator:
 <left operand> <operator> <right operand>
 ```
 
-So, let's write that down in parglare grammar notation. First, we may say that
+So, let's write that down in Rustemo grammar notation. First, we may say that
 our base expression is a single operation:
 
 ```

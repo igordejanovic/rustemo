@@ -3,10 +3,8 @@
 Crate `rustemo-compiler` installs a binary `rcomp` which is a CLI to the Rustemo
 compiler.
 
-```admonish note
-Instead of calling CLI manually you can setup your project to call the Rustemo
-compiler from `build.rs` script. You can read more in the [configuration
-section](configuration.md).
+```
+cargo install rustemo-compiler
 ```
 
 To get all the option of the `rcomp` you can run `rcomp --help`.
@@ -23,3 +21,9 @@ recognizers](grammar_language.md#terminals) from the grammar.
 
 The default builder will call auto-generated actions and [create automatically
 deduced AST](builders.md#default-builder).
+
+```admonish note
+Instead of calling CLI manually you can setup your project to call the Rustemo
+compiler from `build.rs` script. You can read more in the [configuration
+section](configuration.md).
+```

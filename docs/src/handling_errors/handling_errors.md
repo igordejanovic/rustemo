@@ -218,6 +218,21 @@ keyword `end` at the end. Let's do the latter:
 Now, our language is more flexible as the user can define the nesting by placing
 `end` keyword at appropriate places.
 
+## Global preference for resolving shift-reduce conflicts
+
+One of the standard techniques to resolve shift/reduce conflicts is to prefer
+shift always which yields a greedy behavior.
+
+This settings is available through `rcomp` CLI or `Settings` type API. By
+default shift is not preferred. Furthermore, there is a separate control on the
+preference of shift over empty reductions.
+
+```admonish tip
+See the section on [disambiguation meta-data in the
+grammar](../grammar_language.md#disambiguation-meta-data)
+```
+
+
 # Syntax errors in the parsed input
 These are errors which you have to handle in your code as the user supplied an
 invalid input according to your grammar specification.
