@@ -600,24 +600,62 @@ inside the production.
 
 ## Rule/production meta-data
 Rules and productions may specify additional meta-data that can be used to guide
-the parsing decisions. Meta-data is specified inside curly braces right after
-the name of the rule, if it is a rule-level meta-data, or after the production
-body, if it is a production-level meta-data. If a meta-data is applied to the
-grammar rule it is in effect for all production of the rule, but if the same
-meta-data is defined for the production it takes precedence.
+parsing decisions. Meta-data is specified inside curly braces right after the
+name of the rule, if it is a rule-level meta-data, or after the production body,
+if it is a production-level meta-data. If a meta-data is applied to the grammar
+rule it is in effect for all production of the rule, but if the same meta-data
+is defined for the production it takes precedence.
+
+```admonish note
+See the example bellow.
+```
 
 Currently, there are two kinds of meta-data used during parser construction:
-priorities and associativities.
+- disambiguation rules
+- user meta-data
 
+### Disambiguation meta-data
 
-### Priorities
+These are special meta-data that are used during by Rustemo during grammar
+compilation to influence decision on LR automata states' actions.
 
-Priorities are used to decide
+```admonish note
+See sections on [parsing](./parsing/parsing.md) and [resolving LR
+conflicts](./handling_errors/handling_errors.md#resolving-lr-conflicts).
+```
 
+There are some difference on which rules can be specified on the production and
+terminal level.
 
+Disambiguation rules are the following:
+- _priority_ - written as an integer number. Default priority is 10. Priority
+  defined on productions have influence on both reductions on that production
+  and shifts of tokens from that production. Priority defined on terminals
+  influence the priority during tokenization. When multiple tokens can be
+  recognized on the current location, those that have higher priority will be
+  favored.
+- _associativity_ - `right`/`left` or `shift`/`reduce`. When there is a state
+  where competing shift/reduce operations could be executed this meta-data will
+  be used to disambiguate. These meta-data can be specified on both productions
+  and terminals level. If during grammar analysis there is a state where
+  associativity is defined on both production and terminal the terminal
+  associativity takes precedence.
 
+    ```admonish note
+    See the [calculator tutorial](./tutorials/calculator/calculator.md) for an
+    example of priority/associativity usage. There is also an example in the
+    [section on resolving LR
+    conflicts](./handling_errors/handling_errors.md#resolving-lr-conflicts).
+    ```
 
-### Associativities
+- _global shift preference control_ - `nops` and `nopse`. One of the standard
+  techniques to resolve shift/reduce conflicts is to prefer shift always which
+  yields a greedy behavior. This global settings can be altered during grammar
+  compilation. `nops` (_no prefer shift_) can be used on a production level to
+  disable this preference for the given production if enabled globally. `nopse`
+  (_no prefer shift over empty_) is used to disable preferring shift over empty
+  reductions only.
+
 ### User meta-data
 Arbitrary meta-data can be attached to rules or productions. The form of each is
 `<name>: <value>` where `<name>` should be any valid Rust identifier while
@@ -627,6 +665,10 @@ Arbitrary meta-data can be attached to rules or productions. The form of each is
 - float number
 - string in double or single quotes
 - keywords `true` or `false` for boolean values
+
+These meta-data are supported syntactically but are not used at the moment. In
+the future semantic actions will have access to these values which could be used
+do alter building process in a user defined way.
 
 ### Example
 This test shows various meta-data applied at both rule and production level.
