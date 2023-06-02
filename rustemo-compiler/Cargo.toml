@@ -13,6 +13,16 @@ license.workspace = true
 version.workspace = true
 rust-version.workspace = true
 
+exclude = [
+    # Do not package test resources
+    "**/*.rustemo",
+    "**/*.expected",
+    "**/*.ast",
+    "**/*.err",
+    "**/tests*",
+]
+
+
 [lib]
 doctest = false
 
