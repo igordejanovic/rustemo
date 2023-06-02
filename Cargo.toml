@@ -15,3 +15,13 @@ members = [
         "docs/src/tutorials/calculator/calculator4",
         "docs/src/tutorials/calculator/calculator5",
 ]
+
+[workspace.package]
+repository = "https://github.com/igordejanovic/rustemo"
+authors = ["Igor Dejanović <igor.dejanovic@gmail.com>"]
+keywords = ["parser", "generator", "LR", "grammar"]
+categories = ["parsing"]
+license = "Apache-2.0 OR MIT"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.69"

@@ -1,14 +1,17 @@
 [package]
 name = "rustemo-compiler"
-version = "0.1.0"
-edition = "2021"
 description = "Rustemo compiler and development tools"
-keywords = ["parser", "generator", "LR", "grammar"]
-repository = "https://github.com/igordejanovic/rustemo"
-categories = ["parsing"]
-license = "MIT OR Apache-2.0"
-authors = ["Igor Dejanović <igor.dejanovic@gmail.com>"]
 readme = "../README.md"
+
+workspace = ".."
+repository.workspace = true
+keywords.workspace = true
+categories.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+version.workspace = true
+rust-version.workspace = true
 
 [lib]
 doctest = false

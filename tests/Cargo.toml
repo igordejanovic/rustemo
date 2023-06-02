@@ -1,14 +1,20 @@
 [package]
 name = "rustemo-tests"
 description = "Integration tests for Rustemo"
-version = "0.1.0"
-edition = "2021"
+build = "build.rs"
+
+workspace = ".."
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+version.workspace = true
+rust-version.workspace = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 # Needed by rustemo generated parsers.
-rustemo = { path = "../rustemo", version = "0.1" }
+rustemo = { path = "../rustemo" }
 
 # Default string lexer uses regexes and once_cell to init regexes only once.
 regex = { version = "1", default_features = false, features = ["std", "unicode-perl"] }
@@ -17,7 +23,7 @@ colored = "2"
 
 [dev-dependencies]
 # For output_cmp for testing
-rustemo-compiler = { path = "../rustemo-compiler", version = "0.1"}
+rustemo-compiler = { path = "../rustemo-compiler" }
 
 [build-dependencies]
-rustemo-compiler = { path = "../rustemo-compiler", version = "0.1"}
+rustemo-compiler = { path = "../rustemo-compiler" }
