@@ -44,8 +44,11 @@ Here is an example of a semantic error:
 
 ```
 Error at json.rustemo:[3,8-3,17]:
-	Unexisting symbol 'JsonStrin' in production '13:  JsonStrin  11  Value '.
+	Unexisting symbol 'JsonStrin' in production '13: JsonStrin ":" Value'.
 ```
+
+The location info contains the span where the symbol is specified in the
+grammar: from line 3 column 8 to line 3 column 17.
 
 # Resolving LR conflicts
 
@@ -63,10 +66,10 @@ are called [deterministic context-free
 grammars](https://en.wikipedia.org/wiki/Deterministic_context-free_grammar)
 (DCFL) and they are a proper subset of context-free grammars (CFG).
 
-LR parser generators can produce a parser only for DCFL. 
+LR parser generators can produce parsers only for DCFLs. 
 
 ```admonish note
-See [this section](./parsing/parsing.md#glr-parsing) for a generalized version of LR.
+See [this section](../parsing/parsing.md#glr-parsing) for a generalized version of LR.
 ```
 
 When there is a state in which multiple actions occur we have a conflict.
@@ -84,11 +87,12 @@ When a conflict arise we have a local ambiguity, i.e. Rustemo can't build a
 state in which the parser will know what to do by just looking at one token
 ahead. If the parser would know by looking at more tokens ahead than we have a
 local ambiguity, but if there are situations in which the parser couldn't decide
-with unlimited lookahead then our language is ambiguous.
+with unlimited lookahead then our language is ambiguous which means that some
+inputs may have more than one interpretation.
 
 Let's investigate a conflict on a famous _if-then-else_ ambiguity problem. For
-example, if we have this little grammar which describes language of nested `if`
-statement:
+example, if we have this little grammar which describes a language of nested
+`if` statements:
 
 ```
 {{#include if_then_else.rustemo}}
@@ -110,11 +114,11 @@ IfStatement: If Condition Then Statements
 
 ```
 
-This state is reached when the parser saw `Statements`. The state is described
-by so called _LR items_. These items are productions with a dot marking the
-position inside the production where the parser may be. At the same time, since
-the items are LR(1) (thus one lookahead), we have possible lookahead tokens in
-curly braces for that production position.
+This state is reached when the parser has seen `Statements`. The state is
+described by so called _LR items_. These items are productions with a dot
+marking the position inside the production where the parser may be. At the same
+time, since the items are LR(1) (thus one lookahead), we have possible lookahead
+tokens in curly braces for that production position.
 
 The end of the report (starting with `When I saw...`) gives the explanation. In
 this state, when there is `If` token as a lookahead, the parser can't determine
@@ -123,7 +127,8 @@ whether it should shift that token or reduce previously seen `IfStatement`.
 To put it differently, the question is if the next `If` statement should be
 nested inside the body of the previous `If` statement, in which case we should
 shift, or in the body of some outer `If` statement, in which case we should
-reduce and treat the next `If` as the statement on the same nesting level.
+reduce previous statement and treat the next `If` as the statement on the same
+nesting level.
 
 The rest two conflicts are similar:
 
@@ -151,10 +156,34 @@ IfStatement: If Condition Then Statements Else Statements
 Second is for the same state but different token ahead, `else` in this case. The
 third is similar to the first.
 
-All three conflicts are due to the parser not knowing how to nest statements.
+All three conflicts are due to the parser not knowing how to nest statements. An
+if we think about it, with our language defined as it is currently, there is no
+way to decide how we should nest statements. For example:
+
+```
+if cond then if cond then else
+```
+
+```admonish note
+Since the body of `then` and `else` branch may contain EMPTY the above example has empty body in the last `then` and `else` blocks.
+```
+
+The previous example could be interpreted as:
+
+![](./images/if-else-1.png)
+
+or
+
+![](./images/if-else-2.png)
+
+Thus, the `else` part can belong to the inner `If` statement as depicted in the
+first tree, or to the outer statement as shown in the second tree.
+
+In this case, our language is trully ambiguous and larger lookahead won't help.
 
 There are two approaches to handle these conflicts:
-- Use additional disambiguation specification ([priorities and associativities meta-data](../grammar_language.md#ruleproduction-meta-data))
+- Add additional rules and use disambiguation techniques ([priorities and
+  associativities meta-data](../grammar_language.md#ruleproduction-meta-data))
 - Change the grammar/language to eliminate ambiguities
 
 When deciding whether to create a shift or reduce operation for a state Rustemo
@@ -162,7 +191,7 @@ will look into priorities of terminals and productions and choose the one with
 higher priority. If the priorities are the same Rustemo will look at
 associativities, and favor the one set on terminal if not default (`None`).
 
-So, in our case we could specify a greedy behavior in all tree conflicts. This
+So, in our case we could specify a greedy behavior for all three conflicts. This
 behavior means that we will favor shift operation thus always choosing to nest
 under the innermost statement.
 
@@ -170,7 +199,8 @@ under the innermost statement.
 {{#include if_then_else_shift.rustemo}}
 ```
 
-Now, the grammar will compile.
+Now, the grammar will compile, as the only possible interpretation of the above
+example will be the first tree.
 
 Sometimes it is better and more readable to specify associativity on the
 production level. See [the calculator
@@ -178,8 +208,8 @@ tutorial](../tutorials/calculator/calculator.md) for example.
 
 The other way to solve the issue is by changing our language. The confusion is
 due to not knowing when the body of the `If` statement ends. We could add curly
-braces to delineate the body of `If`, or simply add keyword `end` at the end.
-Let's do that:
+braces to delineate the body of `If` like all C-like languages do, or simply add
+keyword `end` at the end. Let's do the latter:
 
 ```
 {{#include if_then_else_end.rustemo}}
@@ -193,8 +223,8 @@ These are errors which you have to handle in your code as the user supplied an
 invalid input according to your grammar specification.
 
 When you call `parse/parse_file` method with the input, you get a `Result` value
-which where `Ok` variant will hold the result produced by the configured
-builder, while `Err` variant will hold information about the error.
+where `Ok` variant will hold the result produced by the configured builder,
+while `Err` variant will hold information about the error.
 
 For example, this can be a result of erroneous input where the result value is
 converted to a string:
@@ -222,7 +252,7 @@ Error type contained in `Err` variant is defined as follows:
 As we can see, it either wraps `IOError` or, for Rustemo generated errors,
 provide `message`, `file` and `location` inside the file.
 
-
+    
 # Handling ambiguities
 
 ```admonish todo

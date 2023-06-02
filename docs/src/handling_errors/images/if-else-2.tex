@@ -1,0 +1,10 @@
+\documentclass[preview]{standalone}
+\usepackage{qtree}
+\begin{document}
+
+\Tree[.if (cond)
+        [.then
+            [.if (cond)
+                [.then EMPTY ]]]
+        [.else EMPTY ]]
+\end{document}
