@@ -9,10 +9,10 @@ use rustemo_compiler::{
 
 #[derive(Parser)]
 #[cfg_attr(feature="bootstrap",
-           clap(version = concat!(concat!(env!("CARGO_PKG_VERSION"), "-",
+           clap(version = concat!(concat!(env!("CARGO_PKG_VERSION"),
                                           env!("GIT_HASH")), "-bootstrap")))]
 #[cfg_attr(not(feature="bootstrap"),
-           clap(version = concat!(env!("CARGO_PKG_VERSION"), "-", env!("GIT_HASH"))))]
+           clap(version = concat!(env!("CARGO_PKG_VERSION"), env!("GIT_HASH"))))]
 #[clap(author, about, long_about = None)]
 struct Cli {
     /// Regenerate output actions file even if exists
