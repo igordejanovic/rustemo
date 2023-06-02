@@ -399,11 +399,15 @@ With this grammar it is not possible.
 The report also gives detailed information about problematic spots. The report
 talks about states, those are LR automaton states as the LR parsing is based on
 constructing a deterministic push-down automaton (PDA) which is used during
-parsing. To learn more see ...
+parsing. 
 
-```admonish todo
-Add links to appropriate locations where LR parsing is described.
+
+```admonish tip
+To learn more see the [section on parsing](../../parsing/parsing.md) and
+[conflicts
+resolution](../../handling_errors/handling_errors.md#resolving-lr-conflicts).
 ```
+
 
 In the report we see segments like this:
 
