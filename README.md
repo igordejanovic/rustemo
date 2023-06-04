@@ -1,16 +1,22 @@
-# Rustemo
+# Rustemo &emsp; [![build Status]][actions] [![documentation status]][book] [![latest Version]][crates.io]
 
-[![Documentation
-Status](https://img.shields.io/badge/docs-latest-green.svg)](https://igordejanovic.github.io/rustemo/)
+[build Status]: https://img.shields.io/github/actions/workflow/status/igordejanovic/rustemo/ci.yml?branch=main
+[actions]: https://github.com/igordejanovic/rustemo/actions?query=branch%3Amain
+[documentation status]: https://img.shields.io/badge/docs-latest-green.svg
+[book]: https://igordejanovic.github.io/rustemo/
+[latest version]: https://img.shields.io/crates/v/rustemo.svg
+[crates.io]: https://crates.io/crates/rustemo
 
-LR/GLR parser generator for Rust (currently only LR).
+Rustemo is a LR/GLR parser generator for Rust (currently only LR).
+
+---
 
 **Status:** In early phase. Fairly complete feature set for the initial release.
 Not yet optimized for speed so don't expect blazing performance.
 
 Feedback is welcome!
 
-Be sure to check [the docs](https://igordejanovic.github.io/rustemo/)!
+Be sure to check [Rustemo book](https://igordejanovic.github.io/rustemo/)!
 
 ## Aspirations
 
@@ -141,7 +147,8 @@ dual licensed as above, without any additional terms or conditions.
 ## Credits
 
 Bootstrapping approach and the idea of macro for loading the generated code are
-based on the approach taken in the [LALRPOP project](https://github.com/lalrpop/lalrpop).
+based on the approach taken in the [LALRPOP
+project](https://github.com/lalrpop/lalrpop).
 
 
 ## Similar projects
