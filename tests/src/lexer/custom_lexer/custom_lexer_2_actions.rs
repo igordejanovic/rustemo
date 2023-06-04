@@ -1,7 +1,7 @@
-use super::custom_lexer_2::{TokenKind, Context};
+/// This file is maintained by rustemo but can be modified manually.
+/// All manual changes will be preserved except non-doc comments.
+use super::custom_lexer_2::{Context, TokenKind};
 use super::custom_lexer_2_lexer::Input;
-///! This file is maintained by rustemo but can be modified manually.
-///! All manual changes will be preserved except non-doc comments.
 use rustemo::lexer;
 #[allow(dead_code)]
 pub type Token<'i> = lexer::Token<'i, Input, TokenKind>;
@@ -18,11 +18,7 @@ pub fn var_ints_var_int1(_ctx: &Context, var_int1: VarInt1) -> VarInts {
     var_int1
 }
 pub type VarInt1 = Vec<VarInt>;
-pub fn var_int1_c1<'i>(
-    _ctx: &Context<'i>,
-    mut var_int1: VarInt1,
-    var_int: VarInt,
-) -> VarInt1 {
+pub fn var_int1_c1(_ctx: &Context, mut var_int1: VarInt1, var_int: VarInt) -> VarInt1 {
     var_int1.push(var_int);
     var_int1
 }
@@ -34,8 +30,8 @@ pub fn var_int1_var_int(_ctx: &Context, var_int: VarInt) -> VarInt1 {
 /// msbbyte0 is an option containing first bytes of the VarInt non_msbbyte
 /// contains the last byte
 pub type VarInt = i128;
-pub fn var_int_c1<'i>(
-    _ctx: &Context<'i>,
+pub fn var_int_c1(
+    _ctx: &Context,
     msbbyte0: MSBByte0,
     non_msbbyte: NonMSBByte,
 ) -> VarInt {
@@ -53,8 +49,8 @@ pub fn var_int_c1<'i>(
 }
 /// ANCHOR_END: lexer-doc
 pub type MSBByte1 = Vec<MSBByte>;
-pub fn msbbyte1_c1<'i>(
-    _ctx: &Context<'i>,
+pub fn msbbyte1_c1(
+    _ctx: &Context,
     mut msbbyte1: MSBByte1,
     msbbyte: MSBByte,
 ) -> MSBByte1 {
@@ -68,6 +64,6 @@ pub type MSBByte0 = Option<MSBByte1>;
 pub fn msbbyte0_msbbyte1(_ctx: &Context, msbbyte1: MSBByte1) -> MSBByte0 {
     Some(msbbyte1)
 }
-pub fn msbbyte0_empty<'i>(_ctx: &Context<'i>) -> MSBByte0 {
+pub fn msbbyte0_empty(_ctx: &Context) -> MSBByte0 {
     None
 }

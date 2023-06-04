@@ -1,7 +1,7 @@
+/// This file is maintained by rustemo but can be modified manually.
+/// All manual changes will be preserved except non-doc comments.
 use super::json::Context;
 use super::json::TokenKind;
-///! This file is maintained by rustemo but can be modified manually.
-///! All manual changes will be preserved except non-doc comments.
 use rustemo::lexer;
 pub type Input = str;
 #[allow(dead_code)]

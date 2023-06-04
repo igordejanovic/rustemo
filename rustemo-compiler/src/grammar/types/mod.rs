@@ -31,6 +31,10 @@ pub(crate) fn to_pascal_case<S: AsRef<str>>(s: S) -> String {
     s.as_ref().to_case(Case::Pascal)
 }
 
+pub(crate) fn has_empty_type_name<S: AsRef<str>>(type_name: S) -> String {
+    to_pascal_case(format!("{}NoO", type_name.as_ref()))
+}
+
 pub(crate) fn choice_name(
     prod: &Production,
     ref_type: Option<&String>,
@@ -287,7 +291,7 @@ impl SymbolTypes {
                         }
                         ChoiceKind::Struct { .. } => SymbolTypeKind::Struct {
                             type_name: if empty {
-                                format!("{}NO", type_name)
+                                has_empty_type_name(type_name)
                             } else {
                                 type_name.clone()
                             },
@@ -297,7 +301,7 @@ impl SymbolTypes {
                 } else {
                     SymbolTypeKind::Enum {
                         type_name: if empty {
-                            format!("{}NO", type_name)
+                            has_empty_type_name(type_name)
                         } else {
                             type_name.clone()
                         },

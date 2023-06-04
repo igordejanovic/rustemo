@@ -1,5 +1,5 @@
-///! This file is maintained by rustemo but can be modified manually.
-///! All manual changes will be preserved except non-doc comments.
+/// This file is maintained by rustemo but can be modified manually.
+/// All manual changes will be preserved except non-doc comments.
 use rustemo::lexer;
 use super::output_dir::Context;
 use super::output_dir::TokenKind;

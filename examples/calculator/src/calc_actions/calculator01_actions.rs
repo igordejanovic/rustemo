@@ -1,5 +1,5 @@
-///! This file is maintained by rustemo but can be modified manually.
-///! All manual changes will be preserved except non-doc comments.
+/// This file is maintained by rustemo but can be modified manually.
+/// All manual changes will be preserved except non-doc comments.
 use super::calculator01::{Context, TokenKind};
 use rustemo::lexer;
 pub type Token<'i> = lexer::Token<'i, str, TokenKind>;

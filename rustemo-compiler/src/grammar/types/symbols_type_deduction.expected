@@ -201,7 +201,7 @@ SymbolTypes {
             SymbolType {
                 name: "D",
                 kind: Enum {
-                    type_name: "DNO",
+                    type_name: "DNoO",
                 },
                 choices: [
                     Choice {
@@ -436,7 +436,7 @@ SymbolTypes {
             SymbolType {
                 name: "OptionalStruct1",
                 kind: Struct {
-                    type_name: "OptionalStruct1NO",
+                    type_name: "OptionalStruct1NoO",
                 },
                 choices: [
                     Choice {
@@ -471,7 +471,7 @@ SymbolTypes {
             SymbolType {
                 name: "OptionalStruct2",
                 kind: Struct {
-                    type_name: "OptionalStruct2NO",
+                    type_name: "OptionalStruct2NoO",
                 },
                 choices: [
                     Choice {
@@ -537,7 +537,7 @@ SymbolTypes {
             SymbolType {
                 name: "OptionalEnum1",
                 kind: Enum {
-                    type_name: "OptionalEnum1NO",
+                    type_name: "OptionalEnum1NoO",
                 },
                 choices: [
                     Choice {
@@ -581,7 +581,7 @@ SymbolTypes {
             SymbolType {
                 name: "OptionalEnum2",
                 kind: Enum {
-                    type_name: "OptionalEnum2NO",
+                    type_name: "OptionalEnum2NoO",
                 },
                 choices: [
                     Choice {
@@ -748,7 +748,7 @@ SymbolTypes {
             SymbolType {
                 name: "MultiNonContentOptional",
                 kind: Enum {
-                    type_name: "MultiNonContentOptionalNO",
+                    type_name: "MultiNonContentOptionalNoO",
                 },
                 choices: [
                     Choice {
@@ -873,7 +873,7 @@ SymbolTypes {
             SymbolType {
                 name: "ZeroOrMore3",
                 kind: Enum {
-                    type_name: "ZeroOrMore3NO",
+                    type_name: "ZeroOrMore3NoO",
                 },
                 choices: [
                     Choice {
@@ -1531,7 +1531,7 @@ SymbolTypes {
             SymbolType {
                 name: "TcOpt",
                 kind: Enum {
-                    type_name: "TcOptNO",
+                    type_name: "TcOptNoO",
                 },
                 choices: [
                     Choice {
