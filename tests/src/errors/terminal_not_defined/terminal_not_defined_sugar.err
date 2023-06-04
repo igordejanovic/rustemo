@@ -1,2 +1,2 @@
-Error at /home/igor/repos/rust/rustemo/tests/src/errors/terminal_not_defined/terminal_not_defined_sugar.rustemo:[1,6-1,9]:
+Error at terminal_not_defined_sugar.rustemo:[1,6-1,9]:
 	Terminal "c" is not defined in the terminals section.

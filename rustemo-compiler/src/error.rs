@@ -10,6 +10,19 @@ pub enum Error {
     Error(String),
 }
 
+impl Error {
+    /// A string representation of the error without the full file path.
+    /// Used in tests to yield the same results at different location.
+    pub fn to_locfile_str(&self) -> String {
+        match self {
+            Error::RustemoError(e) => e.to_locfile_str(),
+            Error::SynError(e) => format!("Syn error: {e}"),
+            Error::IOError(e) => format!("IOError: {e}"),
+            Error::Error(e) => format!("Error: {e}"),
+        }
+    }
+}
+
 impl Display for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {

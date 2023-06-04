@@ -8,7 +8,7 @@ fn infinite_recursion() {
     ));
     output_cmp!(
         "src/errors/infinite_recursion/infinite_recursion.err",
-        result.unwrap_err().to_string()
+        result.unwrap_err().to_locfile_str()
     );
 }
 

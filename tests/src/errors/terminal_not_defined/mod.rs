@@ -8,7 +8,7 @@ fn terminal_not_defined() {
     ));
     output_cmp!(
         "src/errors/terminal_not_defined/terminal_not_defined.err",
-        result.unwrap_err().to_string()
+        result.unwrap_err().to_locfile_str()
     );
 }
 
@@ -20,6 +20,6 @@ fn terminal_not_defined_sugar() {
     ));
     output_cmp!(
         "src/errors/terminal_not_defined/terminal_not_defined_sugar.err",
-        result.unwrap_err().to_string()
+        result.unwrap_err().to_locfile_str()
     )
 }

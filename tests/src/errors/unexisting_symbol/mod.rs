@@ -8,6 +8,6 @@ fn unexisting() {
     ));
     output_cmp!(
         "src/errors/unexisting_symbol/unexisting_symbol.err",
-        result.unwrap_err().to_string()
+        result.unwrap_err().to_locfile_str()
     )
 }
