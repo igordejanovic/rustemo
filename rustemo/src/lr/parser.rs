@@ -140,10 +140,10 @@ where
         I: Input<Output = I> + ?Sized,
     {
         let expected_recognizers = self.definition.recognizers(state);
-        let stop_kind = <T as Default>::default();
         lexer
             .next_token(context, &expected_recognizers)
             .or_else(|| {
+                let stop_kind = <T as Default>::default();
                 if self.partial_parse
                     && expected_recognizers
                         .iter()
