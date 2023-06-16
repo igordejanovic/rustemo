@@ -13,9 +13,9 @@ use std::ops::Range;
 use super::builder::LRBuilder;
 
 /// Provides LR actions and GOTOs given the state and term/nonterm.
-pub trait ParserDefinition<TR: TokenRecognizer, S, P, T, NT> {
-    fn action(&self, state: S, term_index: T) -> Action<S, P>;
-    fn goto(&self, state: S, nonterm: NT) -> S;
+pub trait ParserDefinition<TR: TokenRecognizer, S, P, TK, NTK> {
+    fn action(&self, state: S, token: TK) -> Action<S, P>;
+    fn goto(&self, state: S, nonterm: NTK) -> S;
     fn recognizers(&self, state: S) -> Vec<&TR>;
 }
 
@@ -47,23 +47,23 @@ impl<S: Debug> Debug for StackItem<S> {
 pub struct LRParser<
     S,
     P,
-    T,
-    NT,
-    D: ParserDefinition<TR, S, P, T, NT> + 'static,
+    TK,
+    NTK,
+    D: ParserDefinition<TR, S, P, TK, NTK> + 'static,
     TR: TokenRecognizer,
 > {
     definition: &'static D,
     parse_stack: Vec<StackItem<S>>,
     partial_parse: bool,
-    phantom: PhantomData<(TR, P, T, NT)>,
+    phantom: PhantomData<(TR, P, TK, NTK)>,
 }
 
-impl<S, P, T, NT, D, TR> LRParser<S, P, T, NT, D, TR>
+impl<S, P, TK, NTK, D, TR> LRParser<S, P, TK, NTK, D, TR>
 where
     S: Copy,
-    T: Default + Debug + PartialEq,
-    D: ParserDefinition<TR, S, P, T, NT>,
-    TR: TokenRecognizer<TokenKind = T>,
+    TK: Default + Debug + PartialEq,
+    D: ParserDefinition<TR, S, P, TK, NTK>,
+    TR: TokenRecognizer<TokenKind = TK>,
 {
     pub fn new(definition: &'static D, state: S, partial_parse: bool) -> Self {
         Self {
@@ -134,7 +134,7 @@ where
         lexer: &L,
         context: &mut Context<'i, I>,
         state: S,
-    ) -> Result<Token<'i, I, T>>
+    ) -> Result<Token<'i, I, TK>>
     where
         L: Lexer<I, TR>,
         I: Input<Output = I> + ?Sized,
@@ -143,7 +143,7 @@ where
         lexer
             .next_token(context, &expected_recognizers)
             .or_else(|| {
-                let stop_kind = <T as Default>::default();
+                let stop_kind = <TK as Default>::default();
                 if self.partial_parse
                     && expected_recognizers
                         .iter()
@@ -182,17 +182,17 @@ where
     }
 }
 
-impl<'i, S, P, T, NT, I, D, L, B, TR> Parser<'i, I, L, B, TR>
-    for LRParser<S, P, T, NT, D, TR>
+impl<'i, S, P, TK, NTK, I, D, L, B, TR> Parser<'i, I, L, B, TR>
+    for LRParser<S, P, TK, NTK, D, TR>
 where
     S: Debug + Copy,
-    T: Default + PartialEq + Debug + Copy,
-    P: Debug + Copy + Into<NT>,
+    TK: Default + PartialEq + Debug + Copy,
+    P: Debug + Copy + Into<NTK>,
     I: Debug + Input<Output = I> + ?Sized,
-    D: ParserDefinition<TR, S, P, T, NT>,
+    D: ParserDefinition<TR, S, P, TK, NTK>,
     L: Lexer<I, TR>,
-    TR: TokenRecognizer<TokenKind = T>,
-    B: LRBuilder<'i, I, P, T>,
+    TR: TokenRecognizer<TokenKind = TK>,
+    B: LRBuilder<'i, I, P, TK>,
 {
     fn parse(
         &mut self,
