@@ -1,12 +1,11 @@
 pub(crate) mod actions;
 
 use quote::format_ident;
-use quote::quote;
 use std::{
     iter::repeat,
     path::{Path, PathBuf},
 };
-use syn::{parse::Parser, parse_quote, Ident};
+use syn::{parse_quote, Ident};
 
 use crate::{
     error::{Error, Result},
@@ -19,6 +18,7 @@ use crate::{
     settings::{BuilderType, LexerType, Settings},
     table::{Action, LRTable},
 };
+use crate::{grammar::builder::GrammarBuilder, ParserAlgo};
 
 use self::actions::generate_parser_actions;
 
@@ -49,7 +49,8 @@ pub fn generate_parser(
 
     let mut parser = RustemoParser::new();
     let file = parser.parse_file(grammar_path)?;
-    let grammar: Grammar = file.try_into()?;
+    let grammar: Grammar =
+        GrammarBuilder::new().try_from_file(file, Some(grammar_path))?;
 
     // Check recognizers definition. If default string lexer is used all
     // recognizers must be defined. If custom lexer is used no recognizer should
@@ -67,12 +68,15 @@ pub fn generate_parser(
 
     let table = LRTable::new(&grammar, settings)?;
 
-    let conflicts = table.get_conflicts();
-    if !conflicts.is_empty() {
-        table.print_conflicts_report(&conflicts);
-        return Err(Error::Error(
-            "Grammar is not deterministic. There are conflicts.".to_string(),
-        ));
+    if let ParserAlgo::LR = settings.parser_algo {
+        let conflicts = table.get_conflicts();
+        if !conflicts.is_empty() {
+            table.print_conflicts_report(&conflicts);
+            return Err(Error::Error(
+                "Grammar is not deterministic. There are conflicts."
+                    .to_string(),
+            ));
+        }
     }
 
     let generator =
@@ -151,24 +155,22 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         out_dir_actions: &Path,
         grammar: &Grammar,
     ) -> Result<()> {
-        let mut ast: syn::File = self.generate_parser_header()?;
-        ast.items.extend(self.generate_parser_types()?);
+        let mut ast: Vec<syn::Stmt> = vec![];
+        ast.extend(self.generate_parser_types()?);
 
         if let BuilderType::Default = self.settings.builder_type {
-            ast.items.extend(self.generate_parser_symbols()?);
+            ast.extend(self.generate_parser_symbols()?);
         }
 
-        ast.items.extend(self.generate_parser_definition()?);
+        ast.extend(self.generate_parser_definition()?);
 
-        if self.grammar.has_layout() {
-            ast.items.extend(self.generate_layout_parser()?);
+        if let LexerType::Default = self.settings.lexer_type {
+            ast.extend(self.generate_lexer_definition()?);
         }
-
-        ast.items.extend(self.generate_lexer_definition()?);
 
         if let BuilderType::Default = self.settings.builder_type {
             let types = SymbolTypes::new(grammar);
-            ast.items.extend(self.generate_builder(&types)?);
+            ast.extend(self.generate_builder(&types)?);
 
             // Generate actions
             if self.settings.actions {
@@ -188,8 +190,14 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             ))
         })?;
 
+        let mut file: syn::File = self.generate_parser_header()?;
+        file.items.extend(ast.into_iter().map(|s| match s {
+            syn::Stmt::Item(i) => i,
+            _ => panic!("Invalid item."),
+        }));
+
         let out_file = out_dir.join(&self.file_name).with_extension("rs");
-        std::fs::write(&out_file, prettyplease::unparse(&ast)).map_err(
+        std::fs::write(&out_file, prettyplease::unparse(&file)).map_err(
             |e| {
                 Error::Error(format!(
                     "Cannot write parser file '{out_file:?}': {e:?}."
@@ -201,41 +209,63 @@ impl<'g, 's> ParserGenerator<'g, 's> {
     }
 
     fn generate_parser_header(&self) -> Result<syn::File> {
-        create_idents!(self, lexer_file, actions_file,);
+        create_idents!(self, actions_file,);
 
-        let max_actions = self
-            .table
-            .states
-            .iter()
-            .map(|x| x.actions.iter().filter(|x| !x.is_empty()).count())
-            .max()
-            .unwrap();
-
+        let input_type: syn::Type = syn::parse_str(&self.settings.input_type)?;
+        let max_actions = self.table.max_actions();
+        let max_recognizers = self.table.max_recognizers();
         let term_count = self.grammar.terminals.len();
         let nonterm_count = self.grammar.nonterminals.len();
         let states_count = self.table.states.len();
 
-        let builder_import: syn::Stmt = if self.grammar.has_layout() {
-            parse_quote! {
-                use rustemo::lr::builder::{LRBuilder, SliceBuilder};
-            }
-        } else {
-            parse_quote! {
-                use rustemo::lr::builder::LRBuilder;
-            }
-        };
+        let mut imports: Vec<syn::Stmt> = vec![];
 
-        let mut header: syn::File = parse_quote! {
+        if let LexerType::Default = self.settings.lexer_type {
+            imports.extend::<Vec<syn::Stmt>>(parse_quote! {
+                use regex::Regex;
+                use once_cell::sync::Lazy;
+                use rustemo::lexer::StringLexer;
+            });
+        }
+
+        imports.push(parse_quote! {
+            use rustemo::lr::builder::LRBuilder;
+        });
+        imports.extend::<Vec<syn::Stmt>>(match self.settings.builder_type {
+            BuilderType::Default => parse_quote! {
+                use super::#actions_file;
+            },
+            BuilderType::Generic => parse_quote! {
+                use rustemo::lr::builder::{TreeNode, TreeBuilder};
+            },
+            BuilderType::Custom => parse_quote! {
+                use std::cell::RefCell;
+            },
+            BuilderType::None => vec![],
+        });
+
+        imports.extend::<Vec<syn::Stmt>>(match self.settings.parser_algo {
+            ParserAlgo::LR => parse_quote! {
+                use rustemo::lr::{parser::{ParserDefinition, LRParser}, context::LRContext};
+            },
+            ParserAlgo::GLR => parse_quote! {
+                use rustemo::glr::parser::{ParserDefinition, GlrParser};
+                use rustemo::glr::gss::{Forest, GssHead};
+            },
+        });
+
+        let header: syn::File = parse_quote! {
             /// Generated by rustemo. Do not edit manually!
             use std::fmt::Debug;
-            use std::hash::{Hash, Hasher};
+            use std::hash::Hash;
+            use std::rc::Rc;
 
             use rustemo::Result;
-            use rustemo::lexer::{self, Token};
-            use rustemo::parser::Parser;
+            use rustemo::input;
+            use rustemo::lexer::{self, Lexer, Token};
+            use rustemo::parser::{self, Parser};
             use rustemo::builder::Builder;
-            #builder_import
-            use rustemo::lr::parser::{LRParser, ParserDefinition};
+            #(#imports)*
             use rustemo::lr::parser::Action::{self, Shift, Reduce, Accept, Error};
             #[allow(unused_imports)]
             use rustemo::debug::{log, logn};
@@ -243,60 +273,20 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             #[cfg(debug_assertions)]
             use colored::*;
 
+            pub type Input = #input_type;
             const TERMINAL_COUNT: usize = #term_count;
             const NONTERMINAL_COUNT: usize = #nonterm_count;
             const STATE_COUNT: usize = #states_count;
             #[allow(dead_code)]
             const MAX_ACTIONS: usize = #max_actions;
-
+            const MAX_RECOGNIZERS: usize = #max_recognizers;
         };
-
-        if let LexerType::Default = self.settings.lexer_type {
-            header.items.push(parse_quote! {
-                use regex::Regex;
-            });
-            header.items.push(parse_quote! {
-                use once_cell::sync::Lazy;
-            });
-            header.items.push(parse_quote! {
-                use rustemo::lexer::StringLexer;
-            });
-        } else {
-            header.items.push(parse_quote! {
-                use rustemo::lexer::Lexer;
-            });
-        }
-
-        match self.settings.builder_type {
-            BuilderType::Default => header.items.push(parse_quote! {
-                use super::#actions_file;
-            }),
-            BuilderType::Generic => header.items.push(parse_quote! {
-                use rustemo::lr::builder::{TreeNode, TreeBuilder};
-            }),
-            BuilderType::Custom => header.items.push(parse_quote! {
-                use std::cell::RefCell;
-            }),
-        }
-
-        header.items.push(match self.settings.lexer_type {
-            LexerType::Default => parse_quote! {
-                pub type Input = str;
-            },
-            LexerType::Custom => parse_quote! {
-                use super::#lexer_file::Input;
-            },
-        });
-
-        header.items.push(parse_quote! {
-            pub type Context<'i> = lexer::Context<'i, Input>;
-        });
 
         Ok(header)
     }
 
-    fn generate_parser_types(&self) -> Result<Vec<syn::Item>> {
-        let mut ast: Vec<syn::Item> = vec![];
+    fn generate_parser_types(&self) -> Result<Vec<syn::Stmt>> {
+        let mut ast: Vec<syn::Stmt> = vec![];
 
         let token_kind_variants: Vec<syn::Variant> = self
             .grammar
@@ -310,10 +300,18 @@ impl<'g, 's> ParserGenerator<'g, 's> {
 
         ast.push(parse_quote! {
             #[allow(clippy::upper_case_acronyms)]
-            #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
+            #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
             pub enum TokenKind {
                 #[default]
                 #(#token_kind_variants),*
+            }
+        });
+
+        ast.push(parse_quote! {
+            impl From<TokenKind> for usize {
+                fn from(t: TokenKind) -> Self {
+                    t as usize
+                }
             }
         });
 
@@ -405,9 +403,32 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             .collect();
         ast.push(parse_quote! {
             #[allow(clippy::enum_variant_names)]
-            #[derive(Clone, Copy)]
+            #[derive(Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
             pub enum State {
+                #[default]
                 #(#state_variants),*
+            }
+        });
+
+        let layout_state =
+            self.table.layout_state.map(|s| self.state_kind_ident(s));
+        let layout_state: syn::Expr = match layout_state {
+            Some(state) => parse_quote! { Some(State::#state) },
+            None => parse_quote! { None },
+        };
+        ast.push(parse_quote! {
+            impl parser::State for State {
+                fn default_layout() -> Option<Self> {
+                    #layout_state
+                }
+            }
+        });
+
+        ast.push(parse_quote! {
+            impl From<State> for usize {
+                fn from(s: State) -> Self {
+                    s as usize
+                }
             }
         });
 
@@ -440,10 +461,10 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         Ok(ast)
     }
 
-    fn generate_parser_symbols(&self) -> Result<Vec<syn::Item>> {
+    fn generate_parser_symbols(&self) -> Result<Vec<syn::Stmt>> {
         create_idents!(self, actions_file);
 
-        let mut ast: Vec<syn::Item> = vec![];
+        let mut ast: Vec<syn::Stmt> = vec![];
 
         ast.push(parse_quote! {
             #[derive(Debug)]
@@ -501,45 +522,78 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         Ok(ast)
     }
 
-    fn generate_parser_definition(&self) -> Result<Vec<syn::Item>> {
-        create_idents!(self, parser, parser_definition, layout_parser,);
-        let mut ast: Vec<syn::Item> = vec![];
+    fn generate_parser_definition(&self) -> Result<Vec<syn::Stmt>> {
+        create_idents!(self, parser, parser_definition,);
+        let mut ast: Vec<syn::Stmt> = vec![];
 
-        let max_actions = self
-            .table
-            .states
-            .iter()
-            .map(|x| x.actions.iter().filter(|x| !x.is_empty()).count())
-            .max()
-            .unwrap();
-        ast.push(parse_quote! {
-            pub struct #parser_definition {
-                actions: [[Action<State, ProdKind>; TERMINAL_COUNT]; STATE_COUNT],
-                gotos: [[Option<State>; NONTERMINAL_COUNT]; STATE_COUNT],
-                token_recognizers: [[Option<TokenRecognizer>; #max_actions]; STATE_COUNT]
-            }
-
-        });
-
-        let actions: Vec<syn::Expr> = self
-            .table
-            .states
-            .iter()
-            .map(|state| {
-                let actions_for_state: Vec<syn::Expr> = state
-                    .actions
-                    .iter()
-                    .map(|action| match action.len() {
-                        0 => parse_quote! { Error },
-                        1 => self.action_to_syntax(&action[0]),
-                        _ => panic!("Multiple actions for state {}", state.idx),
-                    })
-                    .collect();
-                parse_quote! {
-                    [#(#actions_for_state),*]
+        if let ParserAlgo::GLR = self.settings.parser_algo {
+            // For GLR we may have multiple action per state/token.
+            ast.push(parse_quote! {
+                pub struct #parser_definition {
+                    actions: [[[Action<State, ProdKind>; MAX_ACTIONS]; TERMINAL_COUNT]; STATE_COUNT],
+                    gotos: [[Option<State>; NONTERMINAL_COUNT]; STATE_COUNT],
+                    token_kinds: [[Option<TokenKind>; MAX_RECOGNIZERS]; STATE_COUNT],
                 }
-            })
-            .collect();
+            });
+        } else {
+            ast.push(parse_quote! {
+                pub struct #parser_definition {
+                    actions: [[Action<State, ProdKind>; TERMINAL_COUNT]; STATE_COUNT],
+                    gotos: [[Option<State>; NONTERMINAL_COUNT]; STATE_COUNT],
+                    token_kinds: [[Option<TokenKind>; MAX_RECOGNIZERS]; STATE_COUNT],
+                }
+            });
+        }
+
+        let max_actions = self.table.max_actions();
+        let actions: Vec<syn::Expr> =
+            self.table
+                .states
+                .iter()
+                .map(|state| {
+                    if let ParserAlgo::GLR = self.settings.parser_algo {
+                        let actions_for_state: Vec<syn::Expr> = state
+                            .actions
+                            .iter()
+                            .map(|action| {
+                                // Create a vector of actions and add `Empty` up to the max_actions
+                                // as the actions are generated in static arrays of the fixed length
+                                let l = action.len();
+                                let actions: Vec<syn::Expr> = action
+                                    .iter()
+                                    .cloned()
+                                    .map(Some)
+                                    .chain(repeat(None).take(max_actions - l))
+                                    .map(|a| self.action_to_syntax(&a))
+                                    .collect();
+                                parse_quote! {
+                                    [#(#actions),*]
+                                }
+                            })
+                            .collect();
+                        parse_quote! {
+                            [#(#actions_for_state),*]
+                        }
+                    } else {
+                        let actions_for_state: Vec<syn::Expr> = state
+                            .actions
+                            .iter()
+                            .map(|action| match action.len() {
+                                0 => parse_quote! { Error },
+                                1 => self
+                                    .action_to_syntax(&Some(action[0].clone())),
+                                _ => panic!(
+                                    "Multiple actions for state {}",
+                                    state.idx
+                                ),
+                            })
+                            .collect();
+                        parse_quote! {
+                            [#(#actions_for_state),*]
+                        }
+                    }
+                })
+                .collect();
 
         let gotos: Vec<syn::Expr> = self
             .table
@@ -564,7 +618,8 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             })
             .collect();
 
-        let terminals_for_state: Vec<syn::Expr> = self
+        let max_recognizers = self.table.max_recognizers();
+        let token_kinds: Vec<syn::Expr> = self
             .table
             .states
             .iter()
@@ -575,47 +630,15 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                     .map(|x| {
                         let term: &Terminal = &self.grammar.terminals[*x];
                         let token_kind = format_ident!("{}", &term.name);
-                        if let LexerType::Default = self.settings.lexer_type {
-                            let recognizer: syn::Expr = match term.recognizer {
-                                Some(ref rec) => {
-                                    match rec {
-                                        Recognizer::StrConst(ref s) =>
-                                            {
-                                                let s: &String = s.as_ref();
-                                                parse_quote! { Recognizer::StrMatch(#s) }
-                                            }
-                                        Recognizer::RegexTerm(_) =>
-                                            {
-                                                let idx: usize = (*x).into();
-                                                parse_quote! { Recognizer::RegexMatch(#idx) }
-                                            }
-                                    }
-                                },
-                                None => if term.idx == TermIndex(0) {
-                                    parse_quote! { Recognizer::Stop }
-                                } else {
-                                    panic!("This shouldn't happen. Recognizer must be defined!");
-                                }
-                            };
-                            parse_quote! {
-                                Some(TokenRecognizer{
-                                    token_kind: TokenKind::#token_kind,
-                                    recognizer: #recognizer,
-                                    finish: true
-                                })
-                            }
-                        } else {
-                            parse_quote! {
-                                Some(TokenRecognizer{
-                                    token_kind: TokenKind::#token_kind,
-                                })
-                            }
+                        parse_quote! {
+                            Some(TokenKind::#token_kind)
                         }
                     })
                     .chain(
                         // Fill the rest with "None"
-                        repeat(parse_quote! {None})
-                            .take(max_actions - state.sorted_terminals.len()),
+                        repeat(parse_quote! {None}).take(
+                            max_recognizers - state.sorted_terminals.len(),
+                        ),
                     )
                     .collect();
 
@@ -625,32 +648,50 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             })
             .collect();
 
-        ast.push(
-        parse_quote! {
+        ast.push(parse_quote! {
             pub(in crate) static PARSER_DEFINITION: #parser_definition = #parser_definition {
                 actions: [#(#actions),*],
                 gotos: [#(#gotos),*],
-                token_recognizers: [#(#terminals_for_state),*],
+                token_kinds: [#(#token_kinds),*],
             };
         });
 
+        let action_meth: syn::Stmt = if let ParserAlgo::GLR =
+            self.settings.parser_algo
+        {
+            parse_quote! {
+                 fn actions(&self, state: State, token: TokenKind) -> &[Action<State, ProdKind>] {
+                     &PARSER_DEFINITION.actions[state as usize][token as usize]
+                 }
+            }
+        } else {
+            parse_quote! {
+                 fn action(&self, state: State, token: TokenKind) -> Action<State, ProdKind> {
+                     PARSER_DEFINITION.actions[state as usize][token as usize]
+                 }
+            }
+        };
         ast.push(
         parse_quote! {
-            impl ParserDefinition<TokenRecognizer, State, ProdKind, TokenKind, NonTermKind> for #parser_definition {
-                fn action(&self, state: State, token: TokenKind) -> Action<State, ProdKind> {
-                    PARSER_DEFINITION.actions[state as usize][token as usize]
-                }
+            impl ParserDefinition<State, ProdKind, TokenKind, NonTermKind> for #parser_definition {
+                #action_meth
                 fn goto(&self, state: State, nonterm: NonTermKind) -> State {
                     PARSER_DEFINITION.gotos[state as usize][nonterm as usize].unwrap()
                 }
-
-                fn recognizers(&self, state: State) -> Vec<&TokenRecognizer> {
-                    PARSER_DEFINITION.token_recognizers[state as usize]
-                        .iter()
-                        .map_while(|tr| tr.as_ref())
-                        .collect()
+                fn expected_token_kinds(&self, state: State) -> &'static [Option<TokenKind>] {
+                    &PARSER_DEFINITION.token_kinds[state as usize]
                 }
             }
+        });
+
+        // Context type
+        ast.push(match self.settings.parser_algo {
+            ParserAlgo::LR => parse_quote!{
+                pub(crate) type Context<'i, I> = LRContext<'i, I, State, TokenKind>;
+            },
+            ParserAlgo::GLR => parse_quote!{
+                pub(crate) type Context<'i, I> = GssHead<'i, I, State, TokenKind>;
+            },
         });
 
         let partial_parse: syn::Expr = if self.settings.partial_parse {
@@ -659,173 +700,161 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             parse_quote! { false }
         };
 
-        let lexer_type: syn::Type =
-            if let LexerType::Default = self.settings.lexer_type {
-                parse_quote! { StringLexer }
-            } else {
-                parse_quote! { L }
-            };
-
-        let mut parse_stmt: Vec<syn::Stmt> = vec![];
-        if self.grammar.has_layout() {
-            parse_stmt.push(parse_quote! {
-                loop {
-                    log!("\n{}", "*** Parsing content".red().bold());
-                    let result = parser.parse(context, lexer, builder);
-                    if result.is_err() {
-                        let pos = context.position;
-                        log!("\n{}", "*** Parsing layout".red().bold());
-                        let mut builder = SliceBuilder::new();
-                        context.layout_ahead = <LRParser<State, ProdKind, TokenKind, NonTermKind, #parser_definition, TokenRecognizer>
-                                                as rustemo::parser::Parser<'_, Input, #lexer_type,
-                                                    SliceBuilder<'_, Input>,
-                                                    TokenRecognizer>>::parse(&mut #layout_parser::default().0,
-                                                                       context, lexer,
-                                                                       &mut builder).unwrap_or_default();
-
-                        if context.layout_ahead.is_none() {
-                            context.position = pos;
-                        } else {
-                            continue;
-                        }
-                    }
-                    return result;
-                }
-            });
-        } else {
-            let ret_expr: syn::Expr = parse_quote! {
-                parser.parse(context, lexer, builder)
-            };
-            parse_stmt.push(syn::Stmt::Expr(ret_expr));
-        }
-
         let skip_ws = self.settings.skip_ws && !self.grammar.has_layout();
 
-        let parse_result: syn::Type = match self.settings.builder_type {
+        // let parse_result: syn::Type = match self.settings.parser_algo {
+        //     ParserAlgo::LR => match self.settings.builder_type {
+        //         BuilderType::Default => parse_quote! {
+        //             <DefaultBuilder as Builder<'i, Input>>::Output
+        //         },
+        //         BuilderType::Generic => parse_quote! {
+        //             <TreeBuilder<'i, Input, ProdKind, TokenKind> as Builder<'i, Input>>::Output
+        //         },
+        //         BuilderType::Custom => parse_quote! {
+        //             B::Output
+        //         },
+        //         BuilderType::None => parse_quote! {()},
+        //     },
+        //     ParserAlgo::GLR => parse_quote! {
+        //         Forest<'i, Input, ProdKind, TokenKind>
+        //     },
+        // };
+
+        let lexer_instance: syn::Expr = match self.settings.lexer_type {
+            LexerType::Default => parse_quote! {
+                StringLexer::new(#skip_ws, &RECOGNIZERS)
+            },
+            LexerType::Custom => parse_quote! {
+                lexer
+            },
+        };
+
+        let builder_instance: syn::Expr = match self.settings.builder_type {
             BuilderType::Default => parse_quote! {
-                <DefaultBuilder as Builder>::Output
+                DefaultBuilder::new()
             },
             BuilderType::Generic => parse_quote! {
-                <TreeBuilder<'i, Input, ProdKind, TokenKind> as Builder>::Output
+                TreeBuilder::new()
             },
-            BuilderType::Custom => parse_quote! {
-                B::Output
-            },
-        };
-
-        let mut lexer_instance: Vec<syn::Stmt> = vec![];
-        match self.settings.lexer_type {
-            LexerType::Default => {
-                lexer_instance.push(parse_quote! {
-                    let local_lexer = StringLexer::new(#skip_ws);
-                });
-                lexer_instance.push(parse_quote! {
-                    let lexer = &local_lexer;
-                })
+            BuilderType::Custom => {
+                parse_quote! { builder }
             }
-            LexerType::Custom => lexer_instance.push(parse_quote! {
-                let lexer = &self.lexer;
-            }),
+            BuilderType::None => parse_quote! {},
         };
 
-        let mut builder_instance: Vec<syn::Stmt> = vec![];
-        match self.settings.builder_type {
-            BuilderType::Default => {
-                builder_instance.push(
-                    parse_quote!{let mut local_builder = DefaultBuilder::new();}
-                );
-                builder_instance.push(
-                    parse_quote!{let builder = &mut local_builder;}
-                )
+        let has_layout = self.grammar.has_layout();
+        let parser_instance: syn::Expr = match self.settings.parser_algo {
+            ParserAlgo::LR => parse_quote! {
+                LRParser::new(&PARSER_DEFINITION, State::default(), #partial_parse, #has_layout,
+                              Rc::new(#lexer_instance), #builder_instance)
             },
-            BuilderType::Generic => {
-                builder_instance.push(
-                    parse_quote!{let mut local_builder = TreeBuilder::new();}
-                );
-                builder_instance.push(
-                    parse_quote!{let builder = &mut local_builder;}
-                )
+            ParserAlgo::GLR => parse_quote! {
+                GlrParser::new(&PARSER_DEFINITION, #partial_parse)
             },
-            BuilderType::Custom =>
-                // In case of the custom builder we use "interior mutability"
-                // pattern thorough RefCell type as we need parser to use shared
-                // reference while the inner builder needs to be mutable as it
-                // keeps the output of the build process. But, we know for sure
-                // that there will be only one mutable reference to the builder.
-                builder_instance.push(parse_quote!{let builder = &mut *self.builder.borrow_mut();})
         };
 
         let mut new_parameters: Vec<syn::FnArg> = vec![];
-        let mut parser_fields: Vec<syn::Field> = vec![];
-        let mut parser_fields_values: Vec<syn::FieldValue> = vec![];
-        let mut parser_generics: syn::Generics = parse_quote! {};
         let mut parser_impl_generics: syn::Generics = parse_quote! {};
+        let mut parser_type_params: Vec<syn::TypeParamBound> = vec![];
+        let mut where_clause: Vec<syn::WherePredicate> = vec![];
         parser_impl_generics.params.push(parse_quote! { 'i });
-        if let LexerType::Custom = self.settings.lexer_type {
-            new_parameters.push(parse_quote! { lexer: L });
-            parser_fields.push(
-                syn::Field::parse_named.parse2(quote! { lexer: L }).unwrap(),
-            );
-            parser_fields_values.push(parse_quote! { lexer });
-            parser_generics.params.push(parse_quote! { L });
-            parser_impl_generics
-                .params
-                .push(parse_quote! { L: Lexer<Input, TokenRecognizer> });
+        parser_type_params.push(parse_quote! { 'i });
+        parser_type_params.push(parse_quote! { Input });
+        match self.settings.lexer_type {
+            LexerType::Default => {
+                parser_type_params.push(parse_quote! {
+                    StringLexer<Context<'i, Input>, State, TokenKind, TokenRecognizer,
+                                TERMINAL_COUNT>
+                });
+            }
+            LexerType::Custom => {
+                parser_impl_generics.params.push(parse_quote! { L });
+                parser_type_params.push(parse_quote! { L });
+                where_clause.push(parse_quote!{L: Lexer<'i, Context<'i, Input>, State, TokenKind, Input = Input> });
+                new_parameters.push(parse_quote! { lexer: L });
+            }
         }
-        if let BuilderType::Custom = self.settings.builder_type {
-            new_parameters.push(parse_quote! { builder: B });
-            parser_fields.push(
-                syn::Field::parse_named
-                    .parse2(quote! { builder: RefCell<B> })
-                    .unwrap(),
-            );
-            parser_fields_values
-                .push(parse_quote! { builder: RefCell::new(builder) });
-            parser_generics.params.push(parse_quote! { B });
-            parser_impl_generics.params.push(
-                parse_quote! { B: LRBuilder<'i, Input, ProdKind, TokenKind> },
-            );
+        match self.settings.builder_type {
+            BuilderType::Default => {
+                parser_type_params.push(parse_quote! { DefaultBuilder });
+            }
+            BuilderType::Generic => {
+                parser_type_params.push(
+                    parse_quote! { TreeBuilder<'i, Input, ProdKind, TokenKind> },
+                );
+            }
+            BuilderType::Custom => {
+                parser_impl_generics.params.push(parse_quote! { B });
+                parser_type_params.push(parse_quote! { B });
+                where_clause.push(
+                    parse_quote! { B: LRBuilder<'i, Input, Context<'i, Input>,
+                    State, ProdKind, TokenKind> },
+                );
+                new_parameters.push(parse_quote! { builder: B });
+            }
+            BuilderType::None => (),
         }
 
         ast.push(parse_quote! {
-            #[derive(Default)]
-            pub struct #parser #parser_generics{
-                content: Option<<Input as ToOwned>::Owned>,
-                #(#parser_fields),*
+            pub struct #parser <'i, I: input::Input + ?Sized, L: Lexer<'i, Context<'i, I>,
+                                State, TokenKind, Input = I>, B>(
+                LRParser<'i, Context<'i, I>, State, ProdKind,
+                         TokenKind, NonTermKind, #parser_definition, L, B, I>);
+        });
+
+        ast.push(if where_clause.is_empty() {
+            parse_quote! {
+                #[allow(dead_code)]
+                impl #parser_impl_generics #parser <#(#parser_type_params),*>
+                {
+                    pub fn new(#(#new_parameters),*) -> Self {
+                        Self(#parser_instance)
+                    }
+                }
+            }
+        } else {
+            parse_quote! {
+                #[allow(dead_code)]
+                impl #parser_impl_generics #parser <#(#parser_type_params),*>
+                where
+                    #(#where_clause),*
+                {
+                    pub fn new(#(#new_parameters),*) -> Self {
+                        Self(#parser_instance)
+                    }
+                }
             }
         });
 
         ast.push(parse_quote! {
             #[allow(dead_code)]
-            impl #parser_impl_generics #parser #parser_generics
+            impl<'i, I, L, B> Parser<'i, I, Context<'i, I>, L, State, TokenKind> for #parser <'i, I, L, B>
+            where
+                I: input::Input + ?Sized + Debug,
+                L: Lexer<'i, Context<'i, I>, State, TokenKind, Input = I>,
+                B: LRBuilder<'i, I, Context<'i, I>, State, ProdKind, TokenKind>
             {
-                pub fn new(#(#new_parameters),*) -> Self {
-                    Self {
-                        content: None,
-                        #(#parser_fields_values),*
-                    }
+                type Output = B::Output;
+
+                fn parse(&self, input: &'i I) -> Result<Self::Output> {
+                    self.0.parse(input)
                 }
 
-                #[allow(clippy::needless_lifetimes)]
-                pub fn parse_file<P: AsRef<std::path::Path>>(&'i mut self, file: P)
-                                                             -> Result<#parse_result> {
-                    self.content = Some(<Input as rustemo::lexer::Input>::read_file(&file)?);
-                    let mut context = Context::new(
-                        file.as_ref().to_string_lossy().to_string(),
-                        self.content.as_ref().unwrap());
-                    self.inner_parse(&mut context)
+                fn parse_with_context(
+                    &self,
+                    context: &mut Context<'i, I>,
+                    input: &'i I,
+                ) -> Result<Self::Output> {
+                    self.0.parse_with_context(context, input)
                 }
-                #[allow(clippy::needless_lifetimes)]
-                pub fn parse(&self, input: &'i Input) -> Result<#parse_result> {
-                    let mut context = Context::new("<str>".to_string(), input);
-                    self.inner_parse(&mut context)
-                }
-                #[allow(clippy::needless_lifetimes)]
-                fn inner_parse(&self, context: &mut Context<'i>) -> Result<#parse_result> {
-                    #(#lexer_instance);*
-                    #(#builder_instance);*
-                    let mut parser = LRParser::new(&PARSER_DEFINITION, State::AUGS0, #partial_parse);
-                    #(#parse_stmt)*
+
+                fn parse_file<'a, F: AsRef<std::path::Path>>(
+                    &'a mut self,
+                    file: F,
+                ) -> Result<Self::Output>
+                where
+                    'a: 'i {
+                    self.0.parse_file(file)
                 }
             }
         });
@@ -833,193 +862,152 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         Ok(ast)
     }
 
-    fn generate_layout_parser(&self) -> Result<Vec<syn::Item>> {
-        create_idents!(self, parser_definition, layout_parser,);
-        let layout_state = &self.table.layout_state.expect("No Layout state!");
-        let mut ast: Vec<syn::Item> = vec![];
-        let layout_state = self.state_kind_ident(*layout_state);
-        let layout_state: syn::Expr = parse_quote! { State::#layout_state };
+    // fn generate_layout_parser(&self) -> Result<Vec<syn::Stmt>> {
+    //     create_idents!(self, parser_definition, layout_parser,);
+    //     let layout_state = &self.table.layout_state.expect("No Layout state!");
+    //     let mut ast: Vec<syn::Stmt> = vec![];
+    //     let layout_state = self.state_kind_ident(*layout_state);
+    //     let layout_state: syn::Expr = parse_quote! { State::#layout_state };
+
+    //     // TODO: If GLR is used LRParser can still be used to parse layout.
+    //     ast.push(parse_quote! {
+    //         pub struct #layout_parser(LRParser<State, ProdKind, TokenKind, NonTermKind, #parser_definition, TokenRecognizer>);
+    //     });
+
+    //     ast.push(parse_quote! {
+    //         impl Default for #layout_parser {
+    //             fn default() -> Self {
+    //                 Self(LRParser::new(&PARSER_DEFINITION, #layout_state, true))
+    //             }
+    //         }
+    //     });
+    //     Ok(ast)
+    // }
+
+    fn generate_lexer_definition(&self) -> Result<Vec<syn::Stmt>> {
+        let mut ast: Vec<syn::Stmt> = vec![];
 
         ast.push(parse_quote! {
-            pub struct #layout_parser(LRParser<State, ProdKind, TokenKind, NonTermKind, #parser_definition, TokenRecognizer>);
-        });
-
-        ast.push(parse_quote! {
-            impl Default for #layout_parser {
-                fn default() -> Self {
-                    Self(LRParser::new(&PARSER_DEFINITION, #layout_state, true))
-                }
+            #[allow(dead_code)]
+            #[derive(Debug)]
+            pub enum Recognizer {
+                Stop,
+                StrMatch(&'static str),
+                RegexMatch(Lazy<Regex>)
             }
         });
-        Ok(ast)
-    }
-
-    fn generate_lexer_definition(&self) -> Result<Vec<syn::Item>> {
-        let mut ast: Vec<syn::Item> = vec![];
-
-        if let LexerType::Default = self.settings.lexer_type {
-            let regex_recognizers: Vec<syn::Expr> = self
-                .grammar
-                .terminals
-                .iter()
-                .map(|term| {
-                    if let Some(Recognizer::RegexTerm(r)) = &term.recognizer {
-                        let r = r.as_ref();
-                        parse_quote! {
-                            Some(Lazy::new(|| {
-                                Regex::new(concat!("^", #r)).unwrap()
-                            }))
-                        }
-                    } else {
-                        parse_quote! { None }
-                    }
-                })
-                .collect();
-
-            ast.push(parse_quote!{
-                pub(crate) static RECOGNIZERS: [Option<Lazy<Regex>>; TERMINAL_COUNT]  = [
-                    #(#regex_recognizers,)*
-                ];
-            });
-
-            ast.push(parse_quote! {
-                #[allow(dead_code)]
-                #[derive(Debug)]
-                pub enum Recognizer {
-                    Stop,
-                    StrMatch(&'static str),
-                    RegexMatch(usize)
-                }
-            });
-            ast.push(parse_quote! {
-                #[derive(Debug)]
-                pub struct TokenRecognizer {
-                    token_kind: TokenKind,
-                    recognizer: Recognizer,
-                    finish: bool
-                }
-            });
-            ast.push(parse_quote!{
-                impl lexer::TokenRecognizer for TokenRecognizer {
-                    type TokenKind = TokenKind;
-                    type Input = str;
-
-                    fn recognize<'i>(&self, input: &'i str) -> Option<&'i str> {
-                        match &self.recognizer {
-                            Recognizer::StrMatch(s) => {
-                                logn!("{} {:?} -- ", "\tRecognizing".green(), self.token_kind());
-                                if input.starts_with(s){
-                                    log!("{}", "recognized".bold().green());
-                                    Some(s)
-                                } else {
+        ast.push(parse_quote! {
+            #[allow(dead_code)]
+            #[derive(Debug)]
+            pub struct TokenRecognizer(TokenKind, Recognizer);
+        });
+        ast.push(parse_quote!{
+            impl<'i> lexer::TokenRecognizer<'i> for TokenRecognizer {
+                fn recognize(&self, input: &'i str) -> Option<&'i str> {
+                    match &self {
+                        TokenRecognizer(token_kind, Recognizer::StrMatch(s)) => {
+                            logn!("{} {:?} -- ", "\tRecognizing".green(), token_kind);
+                            if input.starts_with(s){
+                                log!("{}", "recognized".bold().green());
+                                Some(s)
+                            } else {
+                                log!("{}", "not recognized".red());
+                                None
+                            }
+                        },
+                        TokenRecognizer(token_kind, Recognizer::RegexMatch(r)) => {
+                            logn!("{} {:?} -- ", "\tRecognizing".green(), token_kind);
+                            let match_str = r.find(input);
+                            match match_str {
+                                Some(x) => {
+                                    let x_str = x.as_str();
+                                    log!("{} '{}'", "recognized".bold().green(), x_str);
+                                    Some(x_str)
+                                },
+                                None => {
                                     log!("{}", "not recognized".red());
                                     None
                                 }
-                            },
-                            Recognizer::RegexMatch(r) => {
-                                logn!("{} {:?} -- ", "\tRecognizing".green(), self.token_kind());
-                                let match_str = RECOGNIZERS[*r].as_ref().unwrap().find(input);
-                                match match_str {
-                                    Some(x) => {
-                                        let x_str = x.as_str();
-                                        log!("{} '{}'", "recognized".bold().green(), x_str);
-                                        Some(x_str)
-                                    },
-                                    None => {
-                                        log!("{}", "not recognized".red());
-                                        None
-                                    }
-                                }
-                            },
-                            Recognizer::Stop=> {
-                                logn!("{} STOP -- ","\tRecognizing".green());
-                                if input.is_empty() {
-                                    log!("{}", "recognized".bold().green());
-                                    Some("")
-                                } else {
-                                    log!("{}", "not recognized".red());
-                                    None
-                                }
-                            },
-                        }
+                            }
+                        },
+                        TokenRecognizer(_, Recognizer::Stop) => {
+                            logn!("{} STOP -- ","\tRecognizing".green());
+                            if input.is_empty() {
+                                log!("{}", "recognized".bold().green());
+                                Some("")
+                            } else {
+                                log!("{}", "not recognized".red());
+                                None
+                            }
+                        },
                     }
-
-                    #[inline]
-                    fn token_kind(&self) -> TokenKind {
-                        self.token_kind
-                    }
-
-                    #[inline]
-                    fn finish(&self) -> bool {
-                        self.finish
-                    }
-                }
-            })
-        } else {
-            ast.push(parse_quote! {
-                #[allow(dead_code)]
-                #[derive(Debug)]
-                pub struct TokenRecognizer {
-                    pub token_kind: TokenKind,
-                }
-            });
-
-            ast.push(parse_quote! {
-                impl lexer::TokenRecognizer for TokenRecognizer {
-                    type TokenKind = TokenKind;
-                    type Input = Input;
-
-                    fn token_kind(&self) -> Self::TokenKind {
-                        self.token_kind
-                    }
-                }
-            })
-        }
-
-        ast.push(parse_quote! {
-            impl PartialEq for TokenRecognizer {
-                fn eq(&self, other: &Self) -> bool {
-                    self.token_kind == other.token_kind
                 }
             }
         });
-
-        ast.push(parse_quote! {
-            impl Eq for TokenRecognizer {}
-        });
-
-        ast.push(parse_quote! {
-            impl Hash for TokenRecognizer {
-                fn hash<H: Hasher>(&self, state: &mut H) {
-                        self.token_kind.hash(state);
+        let regex_recognizers: Vec<syn::Expr> = self
+            .grammar
+            .terminals
+            .iter()
+            .map(|term| {
+                let token_kind = format_ident!("{}", &term.name);
+                if term.name == "STOP" {
+                   parse_quote! { TokenRecognizer(TokenKind::STOP, Recognizer::Stop) }
+                } else {
+                    match &term.recognizer {
+                        Some(r) => match r {
+                            Recognizer::StrConst(s) => {
+                                let s = s.as_ref();
+                                parse_quote! {
+                                    TokenRecognizer(TokenKind::#token_kind, Recognizer::StrMatch(#s))
+                                }
+                            },
+                            Recognizer::RegexTerm(r) => {
+                                let r = r.as_ref();
+                                parse_quote! {
+                                    TokenRecognizer(TokenKind::#token_kind, Recognizer::RegexMatch(Lazy::new(|| {
+                                        Regex::new(concat!("^", #r)).unwrap()
+                                    })))
+                                }
+                            },
+                        },
+                        // This should never happen as we check that all
+                        // recognizers are defined when default lexer is used
+                        None => panic!("Undefined recognizer for terminal {}", term.name)
+                    }
                 }
-            }
+            })
+            .collect();
+
+        ast.push(parse_quote!{
+            pub(crate) static RECOGNIZERS: [TokenRecognizer; TERMINAL_COUNT]  = [
+                #(#regex_recognizers,)*
+            ];
         });
 
         Ok(ast)
     }
 
-    fn generate_builder(&self, types: &SymbolTypes) -> Result<Vec<syn::Item>> {
+    fn generate_builder(&self, types: &SymbolTypes) -> Result<Vec<syn::Stmt>> {
         create_idents!(self, actions_file, root_symbol,);
-        let mut ast: Vec<syn::Item> = vec![];
+        let mut ast: Vec<syn::Stmt> = vec![];
         let context_var = format_ident!("context");
 
-        ast.push(parse_quote! {
+        ast.extend::<Vec<syn::Stmt>>(parse_quote! {
             pub struct DefaultBuilder {
                 res_stack: Vec<Symbol>,
             }
-        });
 
-        ast.push(parse_quote! {
+            impl DefaultBuilder {
+                fn new() -> Self {
+                    Self {
+                        res_stack: vec![]
+                    }
+                }
+            }
+
             impl Builder for DefaultBuilder
             {
                 type Output = #actions_file::#root_symbol;
-
-                fn new() -> Self {
-                    Self {
-                        res_stack: vec![],
-                    }
-                }
 
                 fn get_result(&mut self) -> Self::Output {
                     match self.res_stack.pop().unwrap() {
@@ -1041,7 +1029,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                 }
             } else {
                 parse_quote!{
-                    TokenKind::#term => Terminal::#term(#actions_file::#action(context, token))
+                    TokenKind::#term => Terminal::#term(#actions_file::#action(&*context, token))
                 }
             }
         }).collect();
@@ -1131,7 +1119,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                             ProdKind::#prod_kind => {
                                 let mut i = self.res_stack.split_off(self.res_stack.len()-#rhs_len).into_iter();
                                 match #match_expr {
-                                    #match_lhs => NonTerminal::#nonterminal(#actions_file::#action(context, #(#params),*)),
+                                    #match_lhs => NonTerminal::#nonterminal(#actions_file::#action(&*context, #(#params),*)),
                                     _ => panic!("Invalid symbol parse stack data.")
                                 }
 
@@ -1149,13 +1137,14 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         let reduce_match_arms = reduce_match_arms;
 
         ast.push(parse_quote! {
-            impl<'i> LRBuilder<'i, Input, ProdKind, TokenKind> for DefaultBuilder
+            impl<'i> LRBuilder<'i, Input,
+                 Context<'i, Input>, State, ProdKind, TokenKind> for DefaultBuilder
             {
 
                 #![allow(unused_variables)]
                 fn shift_action(
                     &mut self,
-                    #context_var: &mut Context<'i>,
+                    #context_var: &mut Context<'i, Input>,
                     token: Token<'i, Input, TokenKind>) {
                     let val = match token.kind {
                         TokenKind::STOP => panic!("Cannot shift STOP token!"),
@@ -1166,7 +1155,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
 
                 fn reduce_action(
                     &mut self,
-                    #context_var: &mut Context<'i>,
+                    #context_var: &mut Context<'i, Input>,
                     prod: ProdKind,
                     _prod_len: usize) {
                     let prod = match prod {
@@ -1205,18 +1194,21 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         )
     }
 
-    fn action_to_syntax(&self, action: &Action) -> syn::Expr {
+    fn action_to_syntax(&self, action: &Option<Action>) -> syn::Expr {
         match action {
-            Action::Shift(state) => {
-                let state_kind_ident = self.state_kind_ident(*state);
-                parse_quote! { Shift(State::#state_kind_ident) }
-            }
-            Action::Reduce(prod, len) => {
-                let prod_kind =
-                    self.prod_kind_ident(&self.grammar.productions[*prod]);
-                parse_quote! { Reduce(ProdKind::#prod_kind, #len) }
-            }
-            Action::Accept => parse_quote! { Accept },
+            Some(action) => match action {
+                Action::Shift(state) => {
+                    let state_kind_ident = self.state_kind_ident(*state);
+                    parse_quote! { Shift(State::#state_kind_ident) }
+                }
+                Action::Reduce(prod, len) => {
+                    let prod_kind =
+                        self.prod_kind_ident(&self.grammar.productions[*prod]);
+                    parse_quote! { Reduce(ProdKind::#prod_kind, #len) }
+                }
+                Action::Accept => parse_quote! { Accept },
+            },
+            None => parse_quote! { Error },
         }
     }
 }

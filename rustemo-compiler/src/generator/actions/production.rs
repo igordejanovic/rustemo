@@ -340,7 +340,7 @@ impl<'t> ActionsGenerator for ProductionActionsGenerator<'t> {
                     (
                         action_name,
                         parse_quote! {
-                            pub fn #action(_ctx: &Context, #(#args),*) -> #ret_type {
+                            pub fn #action(_ctx: &Ctx, #(#args),*) -> #ret_type {
                                 #body
                             }
                         }
@@ -414,7 +414,7 @@ impl<'t> ActionsGenerator for ProductionActionsGenerator<'t> {
                     (
                         action_name,
                         parse_quote! {
-                            pub fn #action(_ctx: &Context, #(#args),*) -> #ret_type {
+                            pub fn #action(_ctx: &Ctx, #(#args),*) -> #ret_type {
                                 #(#body);*
                             }
                         }

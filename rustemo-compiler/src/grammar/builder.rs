@@ -1,5 +1,5 @@
 //! Grammar builder. Used to construct the grammar from the parsed AST.
-use std::collections::{BTreeMap, BTreeSet};
+use std::{collections::{BTreeMap, BTreeSet}, path::Path};
 
 use rustemo::{location::ValLoc, Error, Result};
 
@@ -34,7 +34,7 @@ macro_rules! resolving {
 }
 
 #[derive(Debug)]
-struct GrammarBuilder {
+pub(crate) struct GrammarBuilder {
     file: String,
     terminals: BTreeMap<String, Terminal>,
     terminals_matches: BTreeMap<String, (String, TermIndex)>,
@@ -46,16 +46,8 @@ struct GrammarBuilder {
     start_rule_name: String,
 }
 
-impl TryFrom<File> for Grammar {
-    type Error = Error;
-
-    fn try_from(value: File) -> Result<Self> {
-        GrammarBuilder::new().from_file(value)
-    }
-}
-
 impl GrammarBuilder {
-    fn new() -> Self {
+    pub fn new() -> Self {
         Self {
             file: "".into(),
             terminals: BTreeMap::new(),
@@ -87,10 +79,10 @@ impl GrammarBuilder {
         ret
     }
 
-    // TODO: Think of a better API which is aligned with conventions
-    #[allow(clippy::wrong_self_convention)]
-    fn from_file(mut self, file: File) -> Result<Grammar> {
-        self.file = file.file;
+    pub fn try_from_file(mut self, file: File, path: Option<&Path>) -> Result<Grammar> {
+        if let Some(path) = path {
+            self.file = path.to_string_lossy().into();
+        }
         // Create implicit STOP terminal used to signify the end of the input.
         let term_idx = self.get_term_idx();
         self.terminals.insert(

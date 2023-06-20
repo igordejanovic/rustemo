@@ -55,6 +55,10 @@ struct Cli {
     #[clap(short, long, arg_enum, default_value_t)]
     lexer_type: LexerType,
 
+    /// The type of the input if non-default lexer is used
+    #[clap(short, long, default_value = "str")]
+    input_type: String,
+
     /// Generated builder type.
     #[clap(short, long, arg_enum, default_value_t)]
     builder_type: BuilderType,
@@ -95,7 +99,8 @@ fn main() {
         .print_table(cli.print_table)
         .parser_algo(cli.parser_algo)
         .lexer_type(cli.lexer_type)
-        .builder_type(cli.builder_type);
+        .builder_type(cli.builder_type)
+        .input_type(cli.input_type);
 
     if let Some(outdir_root) = cli.outdir_root {
         settings = settings.out_dir_root(outdir_root);

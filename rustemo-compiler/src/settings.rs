@@ -27,6 +27,7 @@ pub enum BuilderType {
     Default,
     Generic,
     Custom,
+    None,
 }
 
 #[derive(Debug, Clone)]
@@ -45,6 +46,7 @@ pub struct Settings {
 
     pub(crate) lexer_type: LexerType,
     pub(crate) builder_type: BuilderType,
+    pub(crate) input_type: String,
 
     pub(crate) partial_parse: bool,
     pub(crate) skip_ws: bool,
@@ -75,6 +77,7 @@ impl Default for Settings {
             actions: true,
             lexer_type: Default::default(),
             builder_type: Default::default(),
+            input_type: "str".into(),
             partial_parse: false,
             skip_ws: true,
             force: false,
@@ -175,6 +178,12 @@ impl Settings {
     /// Sets builder type. The default builder will deduce AST types and actions.
     pub fn builder_type(mut self, builder_type: BuilderType) -> Self {
         self.builder_type = builder_type;
+        self
+    }
+
+    /// Sets the input type. Default is `str`
+    pub fn input_type(mut self, input_type: String) -> Self {
+        self.input_type = input_type;
         self
     }
 

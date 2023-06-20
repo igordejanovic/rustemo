@@ -40,7 +40,7 @@ pub(crate) trait ActionsGenerator {
         let action_name = to_snake_case(&terminal.name);
         let action_name_ident = Ident::new(&action_name, Span::call_site());
         parse_quote! {
-            pub fn #action_name_ident<'i>(_ctx: &Context<'i>, token: Token<'i>) -> #type_name_ident {
+            pub fn #action_name_ident(_ctx: &Ctx, token: Token) -> #type_name_ident {
                 token.value.into()
             }
         }
@@ -96,9 +96,9 @@ where
             /// This file is maintained by rustemo but can be modified manually.
             /// All manual changes will be preserved except non-doc comments.
             use rustemo::lexer;
-            use super::#parser_mod::Context;
-            use super::#parser_mod::TokenKind;
+            use super::#parser_mod::{TokenKind, Context};
             #input_type
+            pub type Ctx<'i> = Context<'i, Input>;
             #[allow(dead_code)]
             pub type Token<'i> = lexer::Token<'i, Input, TokenKind>;
         }

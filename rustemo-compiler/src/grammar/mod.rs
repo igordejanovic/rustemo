@@ -16,6 +16,8 @@ use crate::{
     lang::{rustemo::RustemoParser, rustemo_actions::Name},
 };
 
+use self::builder::GrammarBuilder;
+
 use super::lang::rustemo_actions::{
     GrammarSymbol, Imports, ProdMetaDatas, Recognizer, TermMetaDatas,
 };
@@ -326,7 +328,10 @@ impl FromStr for Grammar {
 impl Grammar {
     /// Parses given string and constructs a Grammar instance
     fn from_string<G: AsRef<str>>(grammar_str: G) -> Result<Self> {
-        RustemoParser::new().parse(grammar_str.as_ref())?.try_into()
+        Ok(GrammarBuilder::new().try_from_file(
+            RustemoParser::new().parse(grammar_str.as_ref())?,
+            None,
+        )?)
     }
 
     /// Parses given file and constructs a Grammar instance
