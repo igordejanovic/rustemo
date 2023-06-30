@@ -6,7 +6,12 @@ use rustemo::lexer::{self, Token};
 use rustemo::parser::Parser;
 use rustemo::builder::Builder;
 use rustemo::lr::builder::LRBuilder;
-use rustemo::lr::parser::{LRParser, ParserDefinition};
+use regex::Regex;
+use once_cell::sync::Lazy;
+use rustemo::lexer::StringLexer;
+pub type Input = str;
+use super::output_dir_actions;
+use rustemo::lr::parser::{ParserDefinition, LRParser};
 use rustemo::lr::parser::Action::{self, Shift, Reduce, Accept, Error};
 #[allow(unused_imports)]
 use rustemo::debug::{log, logn};
@@ -18,14 +23,10 @@ const NONTERMINAL_COUNT: usize = 5usize;
 const STATE_COUNT: usize = 7usize;
 #[allow(dead_code)]
 const MAX_ACTIONS: usize = 2usize;
-use regex::Regex;
-use once_cell::sync::Lazy;
-use rustemo::lexer::StringLexer;
-use super::output_dir_actions;
-pub type Input = str;
+const MAX_RECOGNIZERS: usize = 2usize;
 pub type Context<'i> = lexer::Context<'i, Input>;
 #[allow(clippy::upper_case_acronyms)]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum TokenKind {
     #[default]
     STOP,
@@ -72,8 +73,9 @@ impl From<ProdKind> for NonTermKind {
     }
 }
 #[allow(clippy::enum_variant_names)]
-#[derive(Clone, Copy)]
+#[derive(Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum State {
+    #[default]
     AUGS0,
     TbS1,
     AS2,
@@ -116,7 +118,6 @@ pub enum NonTerminal {
 pub struct OutputDirParserDefinition {
     actions: [[Action<State, ProdKind>; TERMINAL_COUNT]; STATE_COUNT],
     gotos: [[Option<State>; NONTERMINAL_COUNT]; STATE_COUNT],
-    token_recognizers: [[Option<TokenRecognizer>; 2usize]; STATE_COUNT],
 }
 pub(crate) static PARSER_DEFINITION: OutputDirParserDefinition = OutputDirParserDefinition {
     actions: [
@@ -137,80 +138,6 @@ pub(crate) static PARSER_DEFINITION: OutputDirParserDefinition = OutputDirParser
         [None, None, None, None, None],
         [None, None, None, None, None],
     ],
-    token_recognizers: [
-        [
-            Some(TokenRecognizer {
-                token_kind: TokenKind::Tb,
-                recognizer: Recognizer::StrMatch("b"),
-                finish: true,
-            }),
-            None,
-        ],
-        [
-            Some(TokenRecognizer {
-                token_kind: TokenKind::Tb,
-                recognizer: Recognizer::StrMatch("b"),
-                finish: true,
-            }),
-            Some(TokenRecognizer {
-                token_kind: TokenKind::Num,
-                recognizer: Recognizer::RegexMatch(2usize),
-                finish: true,
-            }),
-        ],
-        [
-            Some(TokenRecognizer {
-                token_kind: TokenKind::STOP,
-                recognizer: Recognizer::Stop,
-                finish: true,
-            }),
-            None,
-        ],
-        [
-            Some(TokenRecognizer {
-                token_kind: TokenKind::Tb,
-                recognizer: Recognizer::StrMatch("b"),
-                finish: true,
-            }),
-            Some(TokenRecognizer {
-                token_kind: TokenKind::Num,
-                recognizer: Recognizer::RegexMatch(2usize),
-                finish: true,
-            }),
-        ],
-        [
-            Some(TokenRecognizer {
-                token_kind: TokenKind::Tb,
-                recognizer: Recognizer::StrMatch("b"),
-                finish: true,
-            }),
-            Some(TokenRecognizer {
-                token_kind: TokenKind::Num,
-                recognizer: Recognizer::RegexMatch(2usize),
-                finish: true,
-            }),
-        ],
-        [
-            Some(TokenRecognizer {
-                token_kind: TokenKind::STOP,
-                recognizer: Recognizer::Stop,
-                finish: true,
-            }),
-            None,
-        ],
-        [
-            Some(TokenRecognizer {
-                token_kind: TokenKind::Tb,
-                recognizer: Recognizer::StrMatch("b"),
-                finish: true,
-            }),
-            Some(TokenRecognizer {
-                token_kind: TokenKind::Num,
-                recognizer: Recognizer::RegexMatch(2usize),
-                finish: true,
-            }),
-        ],
-    ],
 };
 impl ParserDefinition<TokenRecognizer, State, ProdKind, TokenKind, NonTermKind>
 for OutputDirParserDefinition {
@@ -220,54 +147,69 @@ for OutputDirParserDefinition {
     fn goto(&self, state: State, nonterm: NonTermKind) -> State {
         PARSER_DEFINITION.gotos[state as usize][nonterm as usize].unwrap()
     }
-    fn recognizers(&self, state: State) -> Vec<&TokenRecognizer> {
-        PARSER_DEFINITION
-            .token_recognizers[state as usize]
-            .iter()
-            .map_while(|tr| tr.as_ref())
-            .collect()
-    }
 }
+type MyContext<'i, I> = LRContext<'i, I, State, TokenKind>;
 #[derive(Default)]
-pub struct OutputDirParser {
-    content: Option<<Input as ToOwned>::Owned>,
+pub struct OutputDirParser<'i, I, L: Lexer<Input = I>>(
+    LRParser<
+        'i,
+        MyContext<'i, I>,
+        State,
+        ProdKind,
+        NonTermKind,
+        RustemoParserDefinition,
+        L,
+        B,
+        I,
+    >,
+);
+#[allow(dead_code)]
+impl<'i, I, L, B> OutputDirParser<'i, I, L, B>
+where
+    I: Input + ?Sized,
+    L: Lexer<'i, MyContext<'i, I>, State, TokenKind, Input = I>,
+    B: Builder,
+{
+    pub fn new() -> Self {
+        Self(
+            LRParser::new(
+                &PARSER_DEFINITION,
+                State::default(),
+                false,
+                false,
+                StringLexer::new(true, false, &TOKEN_RECOGNIZERS),
+                Some(DefaultBuilder::new(file, input)),
+            ),
+        );
+    }
 }
 #[allow(dead_code)]
-impl<'i> OutputDirParser {
-    pub fn new() -> Self {
-        Self { content: None }
+impl<'i, I, L, B> Parser<'i, I, MyContext<'i, I>, L, State, TokenRecognizer>
+for OutputDirParser<'i, I, L, B>
+where
+    I: Input + ?Sized,
+    L: Lexer<'i, MyContext<'i, I>, State, TokenKind, Input = I>,
+    B: Builder,
+{
+    type Output = B::Output;
+    fn parse(&self, input: &'i I) -> Result<Self::Output> {
+        self.0.parse(input)
     }
-    #[allow(clippy::needless_lifetimes)]
-    pub fn parse_file<P: AsRef<std::path::Path>>(
-        &'i mut self,
-        file: P,
-    ) -> Result<<DefaultBuilder as Builder>::Output> {
-        self.content = Some(<Input as rustemo::lexer::Input>::read_file(&file)?);
-        let mut context = Context::new(
-            file.as_ref().to_string_lossy().to_string(),
-            self.content.as_ref().unwrap(),
-        );
-        self.inner_parse(&mut context)
-    }
-    #[allow(clippy::needless_lifetimes)]
-    pub fn parse(
+    fn parse_with_context(
         &self,
-        input: &'i Input,
-    ) -> Result<<DefaultBuilder as Builder>::Output> {
-        let mut context = Context::new("<str>".to_string(), input);
-        self.inner_parse(&mut context)
+        context: &mut MyContext<'i>,
+        input: &'i I,
+    ) -> Result<Self::Output> {
+        self.0.parse_with_context(context, input)
     }
-    #[allow(clippy::needless_lifetimes)]
-    fn inner_parse(
-        &self,
-        context: &mut Context<'i>,
-    ) -> Result<<DefaultBuilder as Builder>::Output> {
-        let local_lexer = StringLexer::new(true);
-        let lexer = &local_lexer;
-        let mut local_builder = DefaultBuilder::new();
-        let builder = &mut local_builder;
-        let mut parser = LRParser::new(&PARSER_DEFINITION, State::AUGS0, false);
-        parser.parse(context, lexer, builder)
+    fn parse_file<'a, F: AsRef<std::path::Path>>(
+        &'a mut self,
+        file: F,
+    ) -> Result<Self::Output>
+    where
+        'a: 'i,
+    {
+        self.0.parse_file(file)
     }
 }
 pub(crate) static RECOGNIZERS: [Option<Lazy<Regex>>; TERMINAL_COUNT] = [
@@ -350,14 +292,94 @@ impl Hash for TokenRecognizer {
         self.token_kind.hash(state);
     }
 }
+pub(crate) static TOKEN_RECOGNIZERS: [[Option<
+    TokenRecognizer,
+>; MAX_RECOGNIZERS]; STATE_COUNT] = [
+    [
+        [
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Tb,
+                recognizer: Recognizer::StrMatch("b"),
+                finish: true,
+            }),
+            None,
+        ],
+        [
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Tb,
+                recognizer: Recognizer::StrMatch("b"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Num,
+                recognizer: Recognizer::RegexMatch(2usize),
+                finish: true,
+            }),
+        ],
+        [
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            None,
+        ],
+        [
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Tb,
+                recognizer: Recognizer::StrMatch("b"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Num,
+                recognizer: Recognizer::RegexMatch(2usize),
+                finish: true,
+            }),
+        ],
+        [
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Tb,
+                recognizer: Recognizer::StrMatch("b"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Num,
+                recognizer: Recognizer::RegexMatch(2usize),
+                finish: true,
+            }),
+        ],
+        [
+            Some(TokenRecognizer {
+                token_kind: TokenKind::STOP,
+                recognizer: Recognizer::Stop,
+                finish: true,
+            }),
+            None,
+        ],
+        [
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Tb,
+                recognizer: Recognizer::StrMatch("b"),
+                finish: true,
+            }),
+            Some(TokenRecognizer {
+                token_kind: TokenKind::Num,
+                recognizer: Recognizer::RegexMatch(2usize),
+                finish: true,
+            }),
+        ],
+    ],
+];
 pub struct DefaultBuilder {
     res_stack: Vec<Symbol>,
 }
-impl Builder for DefaultBuilder {
-    type Output = output_dir_actions::A;
+impl DefaultBuilder {
     fn new() -> Self {
         Self { res_stack: vec![] }
     }
+}
+impl Builder for DefaultBuilder {
+    type Output = output_dir_actions::A;
     fn get_result(&mut self) -> Self::Output {
         match self.res_stack.pop().unwrap() {
             Symbol::NonTerminal(NonTerminal::A(r)) => r,
@@ -365,12 +387,12 @@ impl Builder for DefaultBuilder {
         }
     }
 }
-impl<'i> LRBuilder<'i, Input, ProdKind, TokenKind> for DefaultBuilder {
+impl<'i, I: Input + ?Sized> LRBuilder<'i, I, ProdKind, TokenKind> for DefaultBuilder {
     #![allow(unused_variables)]
     fn shift_action(
         &mut self,
-        context: &mut Context<'i>,
-        token: Token<'i, Input, TokenKind>,
+        context: &mut MyContext<'i, I>,
+        token: Token<'i, I, TokenKind>,
     ) {
         let val = match token.kind {
             TokenKind::STOP => panic!("Cannot shift STOP token!"),
@@ -381,7 +403,7 @@ impl<'i> LRBuilder<'i, Input, ProdKind, TokenKind> for DefaultBuilder {
     }
     fn reduce_action(
         &mut self,
-        context: &mut Context<'i>,
+        context: &mut MyContext<'i, I>,
         prod: ProdKind,
         _prod_len: usize,
     ) {
