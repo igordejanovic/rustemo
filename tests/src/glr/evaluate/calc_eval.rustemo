@@ -1,0 +1,9 @@
+E: left=E '+' right=E {Add}
+ | left=E '*' right=E {Mul}
+ | Num
+;
+
+terminals
+Plus: '+';
+Mul: '*';
+Num: /\d+/;

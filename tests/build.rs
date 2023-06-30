@@ -1,6 +1,6 @@
 use std::{env, path::PathBuf, process::exit};
 
-use rustemo_compiler::{BuilderType, LexerType, Settings};
+use rustemo_compiler::{BuilderType, LexerType, ParserAlgo, Settings};
 
 fn main() {
     let root_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
@@ -54,14 +54,16 @@ fn main() {
             }),
         ),
         // GLR
-        // (
-        //     "glr",
-        //     Box::new(|s| {
-        //         s.parser_algo(ParserAlgo::GLR)
-        //             .builder_type(BuilderType::Custom)
-        //             .in_source_tree()
-        //     }),
-        // ),
+        ("glr/forest", Box::new(|s| s.parser_algo(ParserAlgo::GLR))),
+        ("glr/build", Box::new(|s| s.parser_algo(ParserAlgo::GLR))),
+        (
+            "glr/evaluate",
+            Box::new(|s| {
+                s.force(false)
+                    .parser_algo(ParserAlgo::GLR)
+                    .actions_in_source_tree()
+            }),
+        ),
     ];
 
     for (test, config) in tests {

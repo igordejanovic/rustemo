@@ -89,7 +89,7 @@ impl<
         if skipped_len > 0 {
             let skipped =
                 &input[context.position()..context.position() + skipped_len];
-            log!("{} {}", "Skipped ws:".bold().green(), skipped_len);
+            log!("\t{} {}", "Skipped ws:".bold().green(), skipped_len);
             context.set_layout_ahead(Some(skipped));
             context.set_position(context.position() + skipped_len);
             context.set_location(skipped.location_after(context.location()));
@@ -176,7 +176,7 @@ where
             Self::skip(input, context);
         }
         log!(
-            "{} {:?}",
+            "\t{} {:?}",
             "Trying recognizers:".green(),
             token_kinds.iter().flatten().collect::<Vec<_>>()
         );
