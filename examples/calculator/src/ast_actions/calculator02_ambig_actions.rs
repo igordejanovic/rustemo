@@ -1,13 +1,13 @@
+use super::calculator02_ambig::{Context, TokenKind};
 /// This file is maintained by rustemo but can be modified manually.
 /// All manual changes will be preserved except non-doc comments.
-use super::calculator02_ambig::Context;
-use super::calculator02_ambig::TokenKind;
 use rustemo::lexer;
 pub type Input = str;
+pub type Ctx<'i> = Context<'i, Input>;
 #[allow(dead_code)]
 pub type Token<'i> = lexer::Token<'i, Input, TokenKind>;
 pub type Num = String;
-pub fn num(_ctx: &Context, token: Token) -> Num {
+pub fn num(_ctx: &Ctx, token: Token) -> Num {
     token.value.into()
 }
 #[derive(Debug, Clone)]
@@ -45,39 +45,39 @@ pub enum E {
     E(Box<E>),
     Num(Num),
 }
-pub fn e_c1(_ctx: &Context, e_1: E, e_3: E) -> E {
+pub fn e_c1(_ctx: &Ctx, e_1: E, e_3: E) -> E {
     E::C1(EC1 {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
-pub fn e_c2(_ctx: &Context, e_1: E, e_3: E) -> E {
+pub fn e_c2(_ctx: &Ctx, e_1: E, e_3: E) -> E {
     E::C2(EC2 {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
-pub fn e_c3(_ctx: &Context, e_1: E, e_3: E) -> E {
+pub fn e_c3(_ctx: &Ctx, e_1: E, e_3: E) -> E {
     E::C3(EC3 {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
-pub fn e_c4(_ctx: &Context, e_1: E, e_3: E) -> E {
+pub fn e_c4(_ctx: &Ctx, e_1: E, e_3: E) -> E {
     E::C4(EC4 {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
-pub fn e_c5(_ctx: &Context, e_1: E, e_3: E) -> E {
+pub fn e_c5(_ctx: &Ctx, e_1: E, e_3: E) -> E {
     E::C5(EC5 {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
-pub fn e_e(_ctx: &Context, e: E) -> E {
+pub fn e_e(_ctx: &Ctx, e: E) -> E {
     E::E(Box::new(e))
 }
-pub fn e_num(_ctx: &Context, num: Num) -> E {
+pub fn e_num(_ctx: &Ctx, num: Num) -> E {
     E::Num(num)
 }

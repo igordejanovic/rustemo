@@ -1,4 +1,5 @@
 mod calculator01_calc_tests {
+    use rustemo::parser::Parser;
     use rustemo_compiler::output_cmp;
 
     use crate::calc_actions::calculator01::Calculator01Parser;
@@ -29,6 +30,7 @@ mod calculator01_calc_tests {
 
 mod calculator02_tests {
     use crate::calc_actions::calculator02_ambig::Calculator02AmbigParser;
+    use rustemo::parser::Parser;
 
     #[test]
     fn test_calculator2_1() {
@@ -40,6 +42,7 @@ mod calculator02_tests {
 
 mod calculator03_tests {
     use crate::calc_actions::calculator03_ambig_prodkind::Calculator03AmbigProdkindParser;
+    use rustemo::parser::Parser;
 
     #[test]
     fn test_calculator2_1() {
@@ -51,6 +54,7 @@ mod calculator03_tests {
 
 mod calculator04_tests {
     use crate::calc_actions::calculator04_ambig_lhs::Calculator04AmbigLhsParser;
+    use rustemo::parser::Parser;
 
     #[test]
     fn test_calculator2_1() {

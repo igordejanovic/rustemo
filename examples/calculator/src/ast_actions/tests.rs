@@ -1,5 +1,5 @@
 mod calculator01_ast_tests {
-
+    use rustemo::parser::Parser;
     use rustemo_compiler::output_cmp;
 
     use crate::ast_actions::{

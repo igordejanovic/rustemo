@@ -1,13 +1,14 @@
 /// This file is maintained by rustemo but can be modified manually.
 /// All manual changes will be preserved except non-doc comments.
-use super::calculator::Context;
-use super::calculator::TokenKind;
+use ::rustemo::context::Context;
 use rustemo::lexer;
+use super::calculator::{self, TokenKind};
 pub type Input = str;
+pub type Ctx<'i> = super::calculator::Context<'i, Input>;
 #[allow(dead_code)]
 pub type Token<'i> = lexer::Token<'i, Input, TokenKind>;
 pub type Number = String;
-pub fn number<'i>(_ctx: &Context<'i>, token: Token<'i>) -> Number {
+pub fn number(_ctx: &Ctx, token: Token) -> Number {
     token.value.into()
 }
 /// ANCHOR: structs
@@ -42,30 +43,30 @@ pub enum E {
     Number(Number),
 }
 /// ANCHOR_END: enum
-pub fn e_c1(_ctx: &Context, e_1: E, e_3: E) -> E {
+pub fn e_c1(_ctx: &Ctx, e_1: E, e_3: E) -> E {
     E::C1(EC1 {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
-pub fn e_c2(_ctx: &Context, e_1: E, e_3: E) -> E {
+pub fn e_c2(_ctx: &Ctx, e_1: E, e_3: E) -> E {
     E::C2(EC2 {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
-pub fn e_c3(_ctx: &Context, e_1: E, e_3: E) -> E {
+pub fn e_c3(_ctx: &Ctx, e_1: E, e_3: E) -> E {
     E::C3(EC3 {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
-pub fn e_c4(_ctx: &Context, e_1: E, e_3: E) -> E {
+pub fn e_c4(_ctx: &Ctx, e_1: E, e_3: E) -> E {
     E::C4(EC4 {
         e_1: Box::new(e_1),
         e_3: Box::new(e_3),
     })
 }
-pub fn e_number(_ctx: &Context, number: Number) -> E {
+pub fn e_number(_ctx: &Ctx, number: Number) -> E {
     E::Number(number)
 }

@@ -1,3 +1,4 @@
+use rustemo::parser::Parser;
 use std::io;
 // Use the generated parser
 use crate::calculator::CalculatorParser;

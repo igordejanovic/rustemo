@@ -1,16 +1,17 @@
 /// This file is maintained by rustemo but can be modified manually.
 /// All manual changes will be preserved except non-doc comments.
-use super::calculator::Context;
-use super::calculator::TokenKind;
+use ::rustemo::context::Context;
 use rustemo::lexer;
+use super::calculator::{self, TokenKind};
 pub type Input = str;
+pub type Ctx<'i> = super::calculator::Context<'i, Input>;
 #[allow(dead_code)]
 pub type Token<'i> = lexer::Token<'i, Input, TokenKind>;
 /// ANCHOR: number
 pub type Number = String;
 /// ANCHOR_END: number
 /// ANCHOR: number_action
-pub fn number<'i>(_ctx: &Context<'i>, token: Token<'i>) -> Number {
+pub fn number(_ctx: &Ctx, token: Token) -> Number {
     token.value.into()
 }
 /// ANCHOR_END: number_action
@@ -47,31 +48,31 @@ pub enum E {
 }
 /// ANCHOR_END: expression
 /// ANCHOR: add_action
-pub fn e_add(_ctx: &Context, left: E, right: E) -> E {
+pub fn e_add(_ctx: &Ctx, left: E, right: E) -> E {
     E::Add(Add {
         left: Box::new(left),
         right: Box::new(right),
     })
 }
 /// ANCHOR_END: add_action
-pub fn e_sub(_ctx: &Context, left: E, right: E) -> E {
+pub fn e_sub(_ctx: &Ctx, left: E, right: E) -> E {
     E::Sub(Sub {
         left: Box::new(left),
         right: Box::new(right),
     })
 }
-pub fn e_mul(_ctx: &Context, left: E, right: E) -> E {
+pub fn e_mul(_ctx: &Ctx, left: E, right: E) -> E {
     E::Mul(Mul {
         left: Box::new(left),
         right: Box::new(right),
     })
 }
-pub fn e_div(_ctx: &Context, left: E, right: E) -> E {
+pub fn e_div(_ctx: &Ctx, left: E, right: E) -> E {
     E::Div(Div {
         left: Box::new(left),
         right: Box::new(right),
     })
 }
-pub fn e_number(_ctx: &Context, number: Number) -> E {
+pub fn e_number(_ctx: &Ctx, number: Number) -> E {
     E::Number(number)
 }

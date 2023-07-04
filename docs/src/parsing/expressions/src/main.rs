@@ -1,4 +1,5 @@
 use expressions::ExpressionsParser;
+use rustemo::parser::Parser;
 use rustemo::rustemo_mod;
 
 rustemo_mod! {#[allow(unused_imports)]

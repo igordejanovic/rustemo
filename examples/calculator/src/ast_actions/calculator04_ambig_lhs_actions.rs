@@ -1,13 +1,13 @@
+use super::calculator04_ambig_lhs::{Context, TokenKind};
 /// This file is maintained by rustemo but can be modified manually.
 /// All manual changes will be preserved except non-doc comments.
-use super::calculator04_ambig_lhs::Context;
-use super::calculator04_ambig_lhs::TokenKind;
 use rustemo::lexer;
 pub type Input = str;
+pub type Ctx<'i> = Context<'i, Input>;
 #[allow(dead_code)]
 pub type Token<'i> = lexer::Token<'i, Input, TokenKind>;
 pub type Num = String;
-pub fn num(_ctx: &Context, token: Token) -> Num {
+pub fn num(_ctx: &Ctx, token: Token) -> Num {
     token.value.into()
 }
 #[derive(Debug, Clone)]
@@ -46,40 +46,40 @@ pub enum E {
     Paren(Box<E>),
     Num(Num),
 }
-pub fn e_add(_ctx: &Context, left: E, right: E) -> E {
+pub fn e_add(_ctx: &Ctx, left: E, right: E) -> E {
     E::Add(Add {
         left: Box::new(left),
         right: Box::new(right),
     })
 }
 /// ANCHOR_END: named-matches
-pub fn e_sub(_ctx: &Context, left: E, right: E) -> E {
+pub fn e_sub(_ctx: &Ctx, left: E, right: E) -> E {
     E::Sub(Sub {
         left: Box::new(left),
         right: Box::new(right),
     })
 }
-pub fn e_mul(_ctx: &Context, left: E, right: E) -> E {
+pub fn e_mul(_ctx: &Ctx, left: E, right: E) -> E {
     E::Mul(Mul {
         left: Box::new(left),
         right: Box::new(right),
     })
 }
-pub fn e_div(_ctx: &Context, left: E, right: E) -> E {
+pub fn e_div(_ctx: &Ctx, left: E, right: E) -> E {
     E::Div(Div {
         left: Box::new(left),
         right: Box::new(right),
     })
 }
-pub fn e_pow(_ctx: &Context, base: E, exp: E) -> E {
+pub fn e_pow(_ctx: &Ctx, base: E, exp: E) -> E {
     E::Pow(Pow {
         base: Box::new(base),
         exp: Box::new(exp),
     })
 }
-pub fn e_paren(_ctx: &Context, e: E) -> E {
+pub fn e_paren(_ctx: &Ctx, e: E) -> E {
     E::Paren(Box::new(e))
 }
-pub fn e_num(_ctx: &Context, num: Num) -> E {
+pub fn e_num(_ctx: &Ctx, num: Num) -> E {
     E::Num(num)
 }

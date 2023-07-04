@@ -1,3 +1,4 @@
+use rustemo::parser::Parser;
 // Use the generated parser
 use crate::calculator::CalculatorParser;
 use rustemo_compiler::output_cmp;
