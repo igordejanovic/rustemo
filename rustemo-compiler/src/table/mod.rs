@@ -1065,8 +1065,7 @@ impl<'g, 's> LRTable<'g, 's> {
     /// Maximal number of actions per state/token. For LR can't be >1.
     #[inline]
     pub fn max_actions(&self) -> usize {
-        self
-            .states
+        self.states
             .iter()
             .map(|state| state.actions.iter().filter(|a| !a.is_empty()).count())
             .max()
@@ -1075,8 +1074,7 @@ impl<'g, 's> LRTable<'g, 's> {
 
     #[inline]
     pub fn max_recognizers(&self) -> usize {
-        self
-            .states
+        self.states
             .iter()
             .map(|state| state.actions.iter().filter(|a| !a.is_empty()).count())
             .max()

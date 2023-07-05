@@ -1,8 +1,9 @@
 /// This file is maintained by rustemo but can be modified manually.
 /// All manual changes will be preserved except non-doc comments.
-use super::custom_lexer_2::{Context, TokenKind};
+use super::custom_lexer_2::{self, TokenKind};
 use super::custom_lexer_2_lexer::Input;
 use rustemo::lexer;
+pub type Context<'i> = custom_lexer_2::Context<'i, Input>;
 #[allow(dead_code)]
 pub type Token<'i> = lexer::Token<'i, Input, TokenKind>;
 pub type MSBByte = u8;

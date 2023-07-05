@@ -6,8 +6,6 @@ pub trait Builder {
     /// A type produced by this builder. See `get_result`.
     type Output;
 
-    fn new() -> Self;
-
     /// Returns the product of parsing. Usually the one and only element left on
     /// the result stack.
     fn get_result(&mut self) -> Self::Output;

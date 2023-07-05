@@ -46,6 +46,12 @@ impl Position {
     }
 }
 
+impl Default for Position {
+    fn default() -> Self {
+        Position::Position(0)
+    }
+}
+
 impl Display for Position {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -66,7 +72,7 @@ impl Display for Position {
 ///
 /// The path is kept on the parsing context and there is the method on the
 /// context to produce the display of the location with the full file path.
-#[derive(PartialEq, Eq, Clone, Copy)]
+#[derive(PartialEq, Eq, Clone, Copy, Default)]
 pub struct Location {
     /// The start position of the range.
     pub start: Position,
@@ -94,6 +100,16 @@ impl Debug for Location {
         }
     }
 }
+
+// impl<'i, I, S, TK, C> From<C> for Location
+// where
+//     I: Input + ?Sized,
+//     C: Context<'i, I, S, TK>
+// {
+//     fn from(context: &mut C) -> Self {
+//         context.location()
+//     }
+// }
 
 /// Value with location. Used in place of parsed values which need locations to
 /// report errors during semantic analysis.

@@ -1,22 +1,29 @@
+use crate::context::Context;
 use crate::debug::log;
 use crate::error::Result;
-use crate::lexer::{Context, Input, Lexer, Token, TokenRecognizer};
-use crate::location::{Location, Position};
-use crate::parser::Parser;
+use crate::input::Input;
+use crate::lexer::{Lexer, Token};
+use crate::location::Location;
+use crate::lr::builder::SliceBuilder;
+use crate::parser::{Parser, State};
 use crate::{err, Error};
 #[cfg(debug_assertions)]
 use colored::*;
+use std::borrow::Borrow;
+use std::cell::RefCell;
 use std::fmt::Debug;
 use std::marker::PhantomData;
 use std::ops::Range;
+use std::path::Path;
+use std::rc::Rc;
 
 use super::builder::LRBuilder;
 
 /// Provides LR actions and GOTOs given the state and term/nonterm.
-pub trait ParserDefinition<TR: TokenRecognizer, S, P, TK, NTK> {
+pub trait ParserDefinition<S, P, TK, NTK> {
     fn action(&self, state: S, token: TK) -> Action<S, P>;
     fn goto(&self, state: S, nonterm: NTK) -> S;
-    fn recognizers(&self, state: S) -> Vec<&TR>;
+    fn expected_token_kinds(&self, state: S) -> &[Option<TK>];
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -43,77 +50,66 @@ impl<S: Debug> Debug for StackItem<S> {
     }
 }
 
-#[derive(Debug)]
-pub struct LRParser<
-    S,
-    P,
-    TK,
-    NTK,
-    D: ParserDefinition<TR, S, P, TK, NTK> + 'static,
-    TR: TokenRecognizer,
-> {
-    definition: &'static D,
-    parse_stack: Vec<StackItem<S>>,
-    partial_parse: bool,
-    phantom: PhantomData<(TR, P, TK, NTK)>,
+struct ParseStack<S, I: ?Sized, C, TK> {
+    stack: Vec<StackItem<S>>,
+    phantom: PhantomData<(C, TK, I)>,
 }
 
-impl<S, P, TK, NTK, D, TR> LRParser<S, P, TK, NTK, D, TR>
+impl<S: Debug, I: ?Sized, C, TK> Debug for ParseStack<S, I, C, TK> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("ParseStack")
+            .field("stack", &self.stack)
+            .finish()
+    }
+}
+
+impl<'i, I, C, S, TK> ParseStack<S, I, C, TK>
 where
-    S: Copy,
-    TK: Default + Debug + PartialEq,
-    D: ParserDefinition<TR, S, P, TK, NTK>,
-    TR: TokenRecognizer<TokenKind = TK>,
+    I: Input + ?Sized,
+    C: Context<'i, I, S, TK>,
+    S: State,
 {
-    pub fn new(definition: &'static D, state: S, partial_parse: bool) -> Self {
+    fn new(context: &mut C, start_state: S) -> ParseStack<S, I, C, TK> {
         Self {
-            definition,
-            parse_stack: vec![StackItem {
-                state,
-                range: 0..0,
-                location: Location {
-                    start: Position::Position(0),
-                    end: None,
-                },
+            stack: vec![StackItem {
+                state: start_state,
+                range: context.range(),
+                location: context.location(),
             }],
-            partial_parse,
             phantom: PhantomData,
         }
     }
 
     #[inline]
-    fn push_state<I: Input + ?Sized>(
-        &mut self,
-        context: &mut Context<I>,
-        state: S,
-    ) {
-        self.parse_stack.push(StackItem {
-            state,
-            range: context.range.start..context.range.end,
-            location: context.location,
-        });
+    fn state(&self) -> S {
+        self.stack.last().unwrap().state
     }
 
     #[inline]
-    fn pop_states<I>(
+    fn push_state(&mut self, context: &mut C, state: S) {
+        self.stack.push(StackItem {
+            state,
+            range: context.range(),
+            location: context.location(),
+        });
+        context.set_state(state);
+    }
+
+    fn pop_states(
         &mut self,
-        context: &mut Context<I>,
+        context: &mut C,
         states: usize,
-    ) -> (S, Range<usize>, Location)
-    where
-        I: Input<Output = I> + ?Sized,
-    {
-        let states_removed =
-            self.parse_stack.split_off(self.parse_stack.len() - states);
-        let state = self.parse_stack.last().unwrap().state;
+    ) -> (S, Range<usize>, Location) {
+        let states_removed = self.stack.split_off(self.stack.len() - states);
+        let state = self.stack.last().unwrap().state;
 
         let (range, location) = if states == 0 {
             // EMPTY reduction
             (
-                context.position..context.position,
+                context.position()..context.position(),
                 Location {
-                    start: context.location.start,
-                    end: Some(context.location.start),
+                    start: context.location().start,
+                    end: Some(context.location().start),
                 },
             )
         } else {
@@ -128,93 +124,229 @@ where
         };
         (state, range, location)
     }
+}
 
-    fn next_token<'i, I, L>(
-        &self,
-        lexer: &L,
-        context: &mut Context<'i, I>,
+pub struct LRParser<
+    'i,
+    C: Context<'i, I, S, TK>,
+    S: State,
+    P,
+    TK: Default,
+    NTK,
+    D: ParserDefinition<S, P, TK, NTK>,
+    L: Lexer<'i, C, S, TK, Input = I>,
+    B,
+    I: Input + ?Sized,
+> {
+    definition: &'i D,
+    file_name: String,
+    content: Option<<<L as Lexer<'i, C, S, TK>>::Input as ToOwned>::Owned>,
+    partial_parse: bool,
+    start_position: usize,
+    start_state: S,
+    has_layout: bool,
+    lexer: Rc<L>,
+    builder: RefCell<B>,
+    phantom: PhantomData<(P, NTK, I)>,
+}
+
+type LayoutParser<'i, C, S, P, TK, NTK, D, L, I> =
+    Option<LRParser<'i, C, S, P, TK, NTK, D, L, SliceBuilder<'i, I>, I>>;
+
+impl<'i, C, S, P, I, TK, NTK, D, L, B>
+    LRParser<'i, C, S, P, TK, NTK, D, L, B, I>
+where
+    C: Context<'i, I, S, TK>,
+    S: State,
+    I: Input + ?Sized,
+    TK: Default,
+    D: ParserDefinition<S, P, TK, NTK>,
+    L: Lexer<'i, C, S, TK, Input = I>,
+    B: LRBuilder<'i, L::Input, C, S, P, TK>,
+{
+    pub fn new(
+        definition: &'i D,
         state: S,
-    ) -> Result<Token<'i, I, TK>>
+        partial_parse: bool,
+        has_layout: bool,
+        lexer: Rc<L>,
+        builder: B,
+    ) -> Self {
+        Self {
+            definition,
+            partial_parse,
+            file_name: "<str>".into(),
+            content: None,
+            start_position: 0,
+            start_state: state,
+            has_layout,
+            lexer,
+            builder: RefCell::new(builder),
+            phantom: PhantomData,
+        }
+    }
+
+    #[inline]
+    pub fn location_str(&self, file: &str, location: Location) -> String {
+        format!("{}:{:?}", file.to_owned(), location)
+    }
+
+    fn next_token(
+        &self,
+        input: &'i L::Input,
+        context: &mut C,
+        layout_parser: &LayoutParser<'i, C, S, P, TK, NTK, D, L, I>,
+    ) -> Result<Token<'i, L::Input, TK>>
     where
-        L: Lexer<I, TR>,
-        I: Input<Output = I> + ?Sized,
+        // Needed for calling parse_with_context
+        P: Debug + Into<NTK> + Copy,
+        S: Debug,
+        L::Input: Debug,
+        TK: Debug + Copy + PartialEq + 'i,
+        C: Default,
     {
-        let expected_recognizers = self.definition.recognizers(state);
-        lexer
-            .next_token(context, &expected_recognizers)
-            .or_else(|| {
+        // Get next tokens (lexer should skip ws if configured to do so).
+        // If error run layout_parser. If there is layout try next tokens again.
+        // If no next token can be returned report error returned from the lexer.
+        // TODO: Handle lexical ambiguity
+        loop {
+            if let Some(next_token) = self
+                .lexer
+                .next_tokens(
+                    context,
+                    input,
+                    self.definition.expected_token_kinds(context.state()),
+                )
+                .next()
+            {
+                return Ok(next_token);
+            } else {
+                // No token found at current position. Try layout if configured.
+                if let Some(layout_parser) = layout_parser {
+                    log!("\n{}", "*** Parsing layout".red().bold());
+                    let current_state = context.state();
+                    context.set_state(S::default_layout().unwrap());
+                    let p = layout_parser.parse_with_context(context, input);
+                    log!("Layout is {p:?}");
+                    context.set_state(current_state);
+                    if let Ok(Some(layout)) = p {
+                        if layout.len() > 0 {
+                            log!("Skipping layout: {layout:?}");
+                            context.set_layout_ahead(Some(layout));
+                            log!("\n{}", "*** Parsing content".red().bold());
+                            continue;
+                        }
+                    }
+                }
+                // At this point we can't recognize any new token at the current position.
+                // This can be Ok if partial parse is configured and STOP is expected.
+                // Otherwise we should report error with expected tokens at this position.
                 let stop_kind = <TK as Default>::default();
-                if self.partial_parse
-                    && expected_recognizers
-                        .iter()
-                        .any(|tr| tr.token_kind() == stop_kind)
-                {
-                    Some(Token {
-                        kind: stop_kind,
-                        value: &context.input
-                            [context.position..context.position],
-                        location: context.location,
-                    })
-                } else {
-                    None
-                }
-            })
-            .ok_or_else(|| {
-                let expected = expected_recognizers
+                let expected = self
+                    .definition
+                    .expected_token_kinds(context.state())
                     .iter()
-                    .map(|recognizer| format!("{:?}", recognizer.token_kind()))
+                    .copied()
+                    .flatten()
                     .collect::<Vec<_>>();
-                let expected = if expected.len() > 1 {
-                    format!("one of {}", expected.join(", "))
+                if self.partial_parse
+                    && expected.iter().any(|&t| t == stop_kind)
+                {
+                    return Ok(Token {
+                        kind: stop_kind,
+                        value: &input[context.position()..context.position()],
+                        location: context.location(),
+                    });
                 } else {
-                    expected[0].to_owned()
-                };
-                Error::Error {
-                    message: format!(
-                        "...{}...\nExpected {}.",
-                        context.input.context_str(context.position),
-                        expected
-                    ),
-                    file: Some(context.file.clone()),
-                    location: Some(Location::from(context)),
+                    let expected = if expected.len() > 1 {
+                        format!(
+                            "one of {}",
+                            expected
+                                .iter()
+                                .map(|t| format!("{t:?}"))
+                                .collect::<Vec<_>>()
+                                .join(", ")
+                        )
+                    } else {
+                        format!("{:?}", expected[0])
+                    };
+                    return err!(
+                        format!(
+                            "...{}...\nExpected {}.",
+                            input.context_str(context.position()),
+                            expected
+                        ),
+                        Some(self.file_name.clone()),
+                        Some(context.location())
+                    );
                 }
-            })
+            }
+        }
     }
 }
 
-impl<'i, S, P, TK, NTK, I, D, L, B, TR> Parser<'i, I, L, B, TR>
-    for LRParser<S, P, TK, NTK, D, TR>
+impl<'i, C, S, P, I, TK, NTK, D, L, B> Parser<'i, I, C, L, S, TK>
+    for LRParser<'i, C, S, P, TK, NTK, D, L, B, I>
 where
-    S: Debug + Copy,
-    TK: Default + PartialEq + Debug + Copy,
+    C: Context<'i, I, S, TK> + Default,
+    S: State + Debug,
     P: Debug + Copy + Into<NTK>,
-    I: Debug + Input<Output = I> + ?Sized,
-    D: ParserDefinition<TR, S, P, TK, NTK>,
-    L: Lexer<I, TR>,
-    TR: TokenRecognizer<TokenKind = TK>,
-    B: LRBuilder<'i, I, P, TK>,
+    I: Input + ?Sized + 'i,
+    TK: Debug + Copy + Default + PartialEq + 'i,
+    D: ParserDefinition<S, P, TK, NTK>,
+    L: Lexer<'i, C, S, TK, Input = I>,
+    L::Input: Debug,
+    B: LRBuilder<'i, L::Input, C, S, P, TK>,
 {
-    fn parse(
-        &mut self,
-        context: &mut Context<'i, I>,
-        lexer: &L,
-        builder: &mut B,
-    ) -> Result<B::Output> {
+    type Output = B::Output;
+
+    fn parse(&self, input: &'i L::Input) -> Result<Self::Output> {
+        log!("\n{}", "*** Parsing started".red().bold());
+        log!("\nfile: {}", self.file_name);
+        let mut context = C::default();
+        context.set_position(self.start_position);
+        self.parse_with_context(&mut context, input)
+    }
+
+    fn parse_with_context(
+        &self,
+        context: &mut C,
+        input: &'i L::Input,
+    ) -> Result<Self::Output> {
+        let mut parse_stack: ParseStack<S, I, C, TK> =
+            ParseStack::new(context, self.start_state);
+
+        let mut builder = self.builder.borrow_mut();
+
+        // Layout parser is the sajme as Self except it uses SliceBulder to
+        // produce the output and it never uses partial parse.
+        let layout_parser: LayoutParser<'i, C, S, P, TK, NTK, D, L, I> =
+            self.has_layout.then(|| {
+                LRParser::new(
+                    self.definition,
+                    S::default_layout().expect("Layout state not defined."),
+                    true,
+                    false,
+                    Rc::clone(&self.lexer),
+                    SliceBuilder::new(input),
+                )
+            });
+
         log!(
             "{} at {}{:?}: '{}'",
             "Context".green(),
-            context.position,
-            context.location,
-            context.input.context_str(context.position)
+            context.position(),
+            context.location(),
+            input.context_str(context.position())
         );
 
-        let mut state = self.parse_stack.last().unwrap().state;
+        let mut state = parse_stack.state();
 
-        log!("{}: {:#?}", "Stack".green(), self.parse_stack);
+        log!("{}: {:#?}", "Stack".green(), parse_stack);
         log!("{}: {:?}", "Current state".green(), state);
 
-        let mut next_token = self.next_token(lexer, context, state)?;
-        log!("{}: {:?}", "Token ahead".green(), next_token);
+        let mut next_token = self.next_token(input, context, &layout_parser)?;
+        log!("{}: {:?}", "Token ahead".green(), &next_token);
 
         loop {
             let action = self.definition.action(state, next_token.kind);
@@ -222,30 +354,32 @@ where
             match action {
                 Action::Shift(state_id) => {
                     state = state_id;
-                    context.range = context.position..(context.position + next_token.value.len());
-                    let new_location = next_token.value.location_after(context.location);
-                    context.location.end = Some(new_location.start);
-                    context.layout = context.layout_ahead;
+                    context.set_range(context.position()..(context.position() + next_token.value.len()));
+                    let new_location = next_token.value.location_after(context.location());
+                    context.set_location(Location{
+                        start: context.location().start,
+                        end: Some(new_location.start),
+                    });
 
                     log!("{} to state {:?} at location {:?} with token {:?}",
                         "Shifting".bold().green(),
                         state_id,
-                        context.location,
-                        next_token
+                        context.location(),
+                        &next_token
                     );
-                    self.push_state(context, state);
+                    parse_stack.push_state(context, state);
                     builder.shift_action(context, next_token);
 
-                    context.position = context.range.end;
-                    context.location = new_location;
+                    context.set_position(context.range().end);
+                    context.set_location(new_location);
                     log!(
                         "{} at {}{:?}:\n{}\n",
                         "Context".green(),
-                        context.position,
-                        context.location,
-                        context.input.context_str(context.position)
+                        context.position(),
+                        context.location(),
+                        input.context_str(context.position())
                     );
-                    next_token = self.next_token(lexer, context, state)?;
+                    next_token = self.next_token(input, context, &layout_parser)?;
                     log!("{}: {:?}", "Token ahead".green(), next_token);
                 }
                 Action::Reduce(prod, prod_len) => {
@@ -256,15 +390,15 @@ where
                         prod_len
                     );
                     let (from_state, range, location) =
-                        self.pop_states(context, prod_len);
-                    context.range = range;
+                        parse_stack.pop_states(context, prod_len);
+                    context.set_range(range);
                     state = self.definition.goto(from_state, prod.into());
-                    let context_location = context.location;
-                    context.location = location;
-                    self.push_state(context, state);
+                    let context_location = context.location();
+                    context.set_location(location);
+                    parse_stack.push_state(context, state);
                     log!("{} {:?} -> {:?}", "GOTO".green(), from_state, state);
                     builder.reduce_action(context, prod, prod_len);
-                    context.location = context_location;
+                    context.set_location(context_location);
                 }
                 Action::Accept => {
                     log!("{}", "Accept".green().bold());
@@ -274,15 +408,26 @@ where
                 // action for a lookahead then the lookahead would not be found.
                 // The only place where this can trigger is when parsing layout.
                 // It may happen that a wrong recognition is done in the content
-                // after a layout. Also, in the future, if parser composition
+                // after the layout. Also, in the future, if parser composition
                 // would be done similar problem may arise.
                 Action::Error => err!(format!("Can't continue in state {state:?} with lookahead {next_token:?}."))?,
             }
-            log!("{}: {:#?}", "Stack".green(), self.parse_stack);
+            log!("{}: {:#?}", "Stack".green(), parse_stack);
             log!("{}: {:?}", "Current state".green(), state);
         }
         Ok(builder.get_result())
     }
-}
 
-mod tests {}
+    fn parse_file<'a, F: AsRef<Path>>(
+        &'a mut self,
+        file: F,
+    ) -> Result<Self::Output>
+    where
+        'a: 'i,
+    {
+        self.content = Some(L::Input::read_file(file.as_ref())?);
+        self.file_name = file.as_ref().to_string_lossy().into();
+        let parsed = self.parse(self.content.as_ref().unwrap().borrow());
+        parsed
+    }
+}

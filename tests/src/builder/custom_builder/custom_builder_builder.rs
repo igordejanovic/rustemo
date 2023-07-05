@@ -1,14 +1,12 @@
 use rustemo::{
-    builder::Builder,
-    lexer::{self, Token},
-    lr::builder::LRBuilder,
+    builder::Builder, lexer::Token, lr::builder::LRBuilder, lr::context,
 };
 
-use super::custom_builder::{ProdKind, TokenKind};
+use super::custom_builder::{ProdKind, State, TokenKind};
 
 // ANCHOR: custom-builder-base
 pub type E = i32;
-pub type Context<'i> = lexer::Context<'i, str>;
+pub type Context<'i> = context::LRContext<'i, str, State, TokenKind>;
 
 /// Custom builder that perform arithmetic operations.
 pub struct MyCustomBuilder {
@@ -16,13 +14,15 @@ pub struct MyCustomBuilder {
     stack: Vec<E>,
 }
 
+impl MyCustomBuilder {
+    pub fn new() -> Self {
+        Self { stack: vec![] }
+    }
+}
+
 impl Builder for MyCustomBuilder {
     // Result of the build process will be a number
     type Output = E;
-
-    fn new() -> Self {
-        Self { stack: vec![] }
-    }
 
     fn get_result(&mut self) -> Self::Output {
         assert!(self.stack.len() == 1);
@@ -32,7 +32,9 @@ impl Builder for MyCustomBuilder {
 // ANCHOR_END: custom-builder-base
 
 // ANCHOR: custom-builder-lr
-impl<'i> LRBuilder<'i, str, ProdKind, TokenKind> for MyCustomBuilder {
+impl<'i> LRBuilder<'i, str, Context<'i>, State, ProdKind, TokenKind>
+    for MyCustomBuilder
+{
     fn shift_action(
         &mut self,
         _context: &mut Context<'i>,

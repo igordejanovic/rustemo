@@ -1,10 +1,11 @@
 /// This file is maintained by rustemo but can be modified manually.
 /// All manual changes will be preserved except non-doc comments.
-use super::custom_lexer_1::{Context, TokenKind};
+use super::custom_lexer_1::{self, TokenKind};
 use super::custom_lexer_1_lexer::Input;
 use rustemo::lexer;
 #[allow(dead_code)]
 pub type Token<'i> = lexer::Token<'i, Input, TokenKind>;
+pub type Context<'i> = custom_lexer_1::Context<'i, Input>;
 pub type VarInt = i128;
 /// Here we convert varint slice of u8 to i128
 pub fn var_int<'i>(_ctx: &Context<'i>, token: Token<'i>) -> VarInt {

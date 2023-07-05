@@ -48,10 +48,20 @@ fn main() {
             "lexer/custom_lexer",
             Box::new(|s| {
                 s.lexer_type(LexerType::Custom)
+                    .input_type("[u8]".into())
                     .force(false)
                     .actions_in_source_tree()
             }),
         ),
+        // GLR
+        // (
+        //     "glr",
+        //     Box::new(|s| {
+        //         s.parser_algo(ParserAlgo::GLR)
+        //             .builder_type(BuilderType::Custom)
+        //             .in_source_tree()
+        //     }),
+        // ),
     ];
 
     for (test, config) in tests {

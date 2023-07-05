@@ -1,3 +1,4 @@
+use rustemo::parser::Parser;
 use rustemo::rustemo_mod;
 use rustemo_compiler::output_cmp;
 use std::fs;

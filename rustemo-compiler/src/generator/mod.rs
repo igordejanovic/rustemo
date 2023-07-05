@@ -1,6 +1,7 @@
 pub(crate) mod actions;
 
 use quote::format_ident;
+use rustemo::parser::Parser;
 use std::{
     iter::repeat,
     path::{Path, PathBuf},

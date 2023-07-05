@@ -1,3 +1,4 @@
+use rustemo::parser::Parser;
 use rustemo::rustemo_mod;
 use rustemo_compiler::{local_file, output_cmp};
 

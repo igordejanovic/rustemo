@@ -6,7 +6,7 @@ use std::{
     str::FromStr,
 };
 
-use rustemo::{Error, Result};
+use rustemo::{parser::Parser, Error, Result};
 
 use crate::{
     index::{
@@ -328,10 +328,10 @@ impl FromStr for Grammar {
 impl Grammar {
     /// Parses given string and constructs a Grammar instance
     fn from_string<G: AsRef<str>>(grammar_str: G) -> Result<Self> {
-        Ok(GrammarBuilder::new().try_from_file(
+        GrammarBuilder::new().try_from_file(
             RustemoParser::new().parse(grammar_str.as_ref())?,
             None,
-        )?)
+        )
     }
 
     /// Parses given file and constructs a Grammar instance

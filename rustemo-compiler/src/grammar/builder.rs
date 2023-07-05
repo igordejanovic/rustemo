@@ -1,5 +1,8 @@
 //! Grammar builder. Used to construct the grammar from the parsed AST.
-use std::{collections::{BTreeMap, BTreeSet}, path::Path};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    path::Path,
+};
 
 use rustemo::{location::ValLoc, Error, Result};
 
@@ -49,7 +52,7 @@ pub(crate) struct GrammarBuilder {
 impl GrammarBuilder {
     pub fn new() -> Self {
         Self {
-            file: "".into(),
+            file: "<str>".into(),
             terminals: BTreeMap::new(),
             terminals_matches: BTreeMap::new(),
             nonterminals: BTreeMap::new(),
@@ -79,7 +82,11 @@ impl GrammarBuilder {
         ret
     }
 
-    pub fn try_from_file(mut self, file: File, path: Option<&Path>) -> Result<Grammar> {
+    pub fn try_from_file(
+        mut self,
+        file: File,
+        path: Option<&Path>,
+    ) -> Result<Grammar> {
         if let Some(path) = path {
             self.file = path.to_string_lossy().into();
         }
