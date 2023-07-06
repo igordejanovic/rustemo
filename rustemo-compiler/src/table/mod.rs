@@ -1067,7 +1067,9 @@ impl<'g, 's> LRTable<'g, 's> {
     pub fn max_actions(&self) -> usize {
         self.states
             .iter()
-            .map(|state| state.actions.iter().filter(|a| !a.is_empty()).count())
+            .map(|state| {
+                state.actions.iter().map(|a| a.len()).max().unwrap_or(0)
+            })
             .max()
             .unwrap()
     }
