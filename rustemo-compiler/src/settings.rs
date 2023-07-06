@@ -27,7 +27,6 @@ pub enum BuilderType {
     Default,
     Generic,
     Custom,
-    None,
 }
 
 #[derive(Debug, Clone)]

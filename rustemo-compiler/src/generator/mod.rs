@@ -242,15 +242,14 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             BuilderType::Custom => parse_quote! {
                 use std::cell::RefCell;
             },
-            BuilderType::None => vec![],
         });
 
         imports.extend::<Vec<syn::Stmt>>(match self.settings.parser_algo {
             ParserAlgo::LR => parse_quote! {
-                use rustemo::lr::{parser::{ParserDefinition, LRParser}, context::LRContext};
+                use rustemo::lr::{parser::LRParser, context::LRContext};
             },
             ParserAlgo::GLR => parse_quote! {
-                use rustemo::glr::parser::{ParserDefinition, GlrParser};
+                use rustemo::glr::parser::GlrParser;
                 use rustemo::glr::gss::{Forest, GssHead};
             },
         });
@@ -266,6 +265,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             use rustemo::lexer::{self, Lexer, Token};
             use rustemo::parser::{self, Parser};
             use rustemo::builder::Builder;
+            use rustemo::lr::parser::ParserDefinition;
             #(#imports)*
             use rustemo::lr::parser::Action::{self, Shift, Reduce, Accept, Error};
             #[allow(unused_imports)]
@@ -527,74 +527,44 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         create_idents!(self, parser, parser_definition,);
         let mut ast: Vec<syn::Stmt> = vec![];
 
-        if let ParserAlgo::GLR = self.settings.parser_algo {
-            // For GLR we may have multiple action per state/token.
-            ast.push(parse_quote! {
-                pub struct #parser_definition {
-                    actions: [[[Action<State, ProdKind>; MAX_ACTIONS]; TERMINAL_COUNT]; STATE_COUNT],
-                    gotos: [[Option<State>; NONTERMINAL_COUNT]; STATE_COUNT],
-                    token_kinds: [[Option<TokenKind>; MAX_RECOGNIZERS]; STATE_COUNT],
-                }
-            });
-        } else {
-            ast.push(parse_quote! {
-                pub struct #parser_definition {
-                    actions: [[Action<State, ProdKind>; TERMINAL_COUNT]; STATE_COUNT],
-                    gotos: [[Option<State>; NONTERMINAL_COUNT]; STATE_COUNT],
-                    token_kinds: [[Option<TokenKind>; MAX_RECOGNIZERS]; STATE_COUNT],
-                }
-            });
-        }
+        ast.push(parse_quote! {
+            pub struct #parser_definition {
+                actions: [[[Action<State, ProdKind>; MAX_ACTIONS]; TERMINAL_COUNT]; STATE_COUNT],
+                gotos: [[Option<State>; NONTERMINAL_COUNT]; STATE_COUNT],
+                token_kinds: [[Option<TokenKind>; MAX_RECOGNIZERS]; STATE_COUNT],
+            }
+        });
 
         let max_actions = self.table.max_actions();
-        let actions: Vec<syn::Expr> =
-            self.table
-                .states
-                .iter()
-                .map(|state| {
-                    if let ParserAlgo::GLR = self.settings.parser_algo {
-                        let actions_for_state: Vec<syn::Expr> = state
-                            .actions
+        let actions: Vec<syn::Expr> = self
+            .table
+            .states
+            .iter()
+            .map(|state| {
+                let actions_for_state: Vec<syn::Expr> = state
+                    .actions
+                    .iter()
+                    .map(|action| {
+                        // Create a vector of actions and add `Empty` up to the max_actions
+                        // as the actions are generated in static arrays of the fixed length
+                        let l = action.len();
+                        let actions: Vec<syn::Expr> = action
                             .iter()
-                            .map(|action| {
-                                // Create a vector of actions and add `Empty` up to the max_actions
-                                // as the actions are generated in static arrays of the fixed length
-                                let l = action.len();
-                                let actions: Vec<syn::Expr> = action
-                                    .iter()
-                                    .cloned()
-                                    .map(Some)
-                                    .chain(repeat(None).take(max_actions - l))
-                                    .map(|a| self.action_to_syntax(&a))
-                                    .collect();
-                                parse_quote! {
-                                    [#(#actions),*]
-                                }
-                            })
+                            .cloned()
+                            .map(Some)
+                            .chain(repeat(None).take(max_actions - l))
+                            .map(|a| self.action_to_syntax(&a))
                             .collect();
                         parse_quote! {
-                            [#(#actions_for_state),*]
+                            [#(#actions),*]
                         }
-                    } else {
-                        let actions_for_state: Vec<syn::Expr> = state
-                            .actions
-                            .iter()
-                            .map(|action| match action.len() {
-                                0 => parse_quote! { Error },
-                                1 => self
-                                    .action_to_syntax(&Some(action[0].clone())),
-                                _ => panic!(
-                                    "Multiple actions for state {}",
-                                    state.idx
-                                ),
-                            })
-                            .collect();
-                        parse_quote! {
-                            [#(#actions_for_state),*]
-                        }
-                    }
-                })
-                .collect();
+                    })
+                    .collect();
+                parse_quote! {
+                    [#(#actions_for_state),*]
+                }
+            })
+            .collect();
 
         let gotos: Vec<syn::Expr> = self
             .table
@@ -657,25 +627,11 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             };
         });
 
-        let action_meth: syn::Stmt = if let ParserAlgo::GLR =
-            self.settings.parser_algo
-        {
-            parse_quote! {
-                 fn actions(&self, state: State, token: TokenKind) -> &[Action<State, ProdKind>] {
-                     &PARSER_DEFINITION.actions[state as usize][token as usize]
-                 }
-            }
-        } else {
-            parse_quote! {
-                 fn action(&self, state: State, token: TokenKind) -> Action<State, ProdKind> {
-                     PARSER_DEFINITION.actions[state as usize][token as usize]
-                 }
-            }
-        };
-        ast.push(
-        parse_quote! {
+        ast.push(parse_quote! {
             impl ParserDefinition<State, ProdKind, TokenKind, NonTermKind> for #parser_definition {
-                #action_meth
+                fn actions(&self, state: State, token: TokenKind) -> &'static [Action<State, ProdKind>] {
+                    &PARSER_DEFINITION.actions[state as usize][token as usize]
+                }
                 fn goto(&self, state: State, nonterm: NonTermKind) -> State {
                     PARSER_DEFINITION.gotos[state as usize][nonterm as usize].unwrap()
                 }
@@ -714,7 +670,6 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         //         BuilderType::Custom => parse_quote! {
         //             B::Output
         //         },
-        //         BuilderType::None => parse_quote! {()},
         //     },
         //     ParserAlgo::GLR => parse_quote! {
         //         Forest<'i, Input, ProdKind, TokenKind>
@@ -740,7 +695,6 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             BuilderType::Custom => {
                 parse_quote! { builder }
             }
-            BuilderType::None => parse_quote! {},
         };
 
         let has_layout = self.grammar.has_layout();
@@ -750,7 +704,8 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                               Rc::new(#lexer_instance), #builder_instance)
             },
             ParserAlgo::GLR => parse_quote! {
-                GlrParser::new(&PARSER_DEFINITION, #partial_parse)
+                GlrParser::new(&PARSER_DEFINITION, #partial_parse,
+                               #has_layout, #lexer_instance)
             },
         };
 
@@ -793,14 +748,23 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                 );
                 new_parameters.push(parse_quote! { builder: B });
             }
-            BuilderType::None => (),
         }
 
+        let parser_type: syn::Type =
+            if let ParserAlgo::LR = self.settings.parser_algo {
+                parse_quote! {
+                    LRParser<'i, Context<'i, I>, State, ProdKind,
+                        TokenKind, NonTermKind, #parser_definition, L, B, I>
+                }
+            } else {
+                parse_quote! {
+                    GlrParser<'i, State, L, ProdKind, TokenKind, NonTermKind,
+                              #parser_definition, I, B>
+                }
+            };
         ast.push(parse_quote! {
             pub struct #parser <'i, I: input::Input + ?Sized, L: Lexer<'i, Context<'i, I>,
-                                State, TokenKind, Input = I>, B>(
-                LRParser<'i, Context<'i, I>, State, ProdKind,
-                         TokenKind, NonTermKind, #parser_definition, L, B, I>);
+                                State, TokenKind, Input = I>, B>(#parser_type);
         });
 
         ast.push(if where_clause.is_empty() {
@@ -827,6 +791,17 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             }
         });
 
+        let output_type: syn::Type =
+            if let ParserAlgo::GLR = self.settings.parser_algo {
+                parse_quote! {
+                    Forest<'i, I, ProdKind, TokenKind>
+                }
+            } else {
+                parse_quote! {
+                    B::Output
+                }
+            };
+
         ast.push(parse_quote! {
             #[allow(dead_code)]
             impl<'i, I, L, B> Parser<'i, I, Context<'i, I>, L, State, TokenKind> for #parser <'i, I, L, B>
@@ -835,7 +810,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                 L: Lexer<'i, Context<'i, I>, State, TokenKind, Input = I>,
                 B: LRBuilder<'i, I, Context<'i, I>, State, ProdKind, TokenKind>
             {
-                type Output = B::Output;
+                type Output = #output_type;
 
                 fn parse(&self, input: &'i I) -> Result<Self::Output> {
                     self.0.parse(input)
@@ -906,6 +881,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             impl<'i> lexer::TokenRecognizer<'i> for TokenRecognizer {
                 fn recognize(&self, input: &'i str) -> Option<&'i str> {
                     match &self {
+                        #[allow(unused_variables)]
                         TokenRecognizer(token_kind, Recognizer::StrMatch(s)) => {
                             logn!("{} {:?} -- ", "\tRecognizing".green(), token_kind);
                             if input.starts_with(s){
@@ -916,6 +892,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                                 None
                             }
                         },
+                        #[allow(unused_variables)]
                         TokenRecognizer(token_kind, Recognizer::RegexMatch(r)) => {
                             logn!("{} {:?} -- ", "\tRecognizing".green(), token_kind);
                             let match_str = r.find(input);
@@ -999,7 +976,8 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             }
 
             impl DefaultBuilder {
-                fn new() -> Self {
+                #[allow(dead_code)]
+                pub fn new() -> Self {
                     Self {
                         res_stack: vec![]
                     }
