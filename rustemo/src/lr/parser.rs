@@ -21,7 +21,7 @@ use super::builder::LRBuilder;
 
 /// Provides LR actions and GOTOs given the state and term/nonterm.
 pub trait ParserDefinition<S, P, TK, NTK> {
-    fn action(&self, state: S, token: TK) -> Action<S, P>;
+    fn actions(&self, state: S, token: TK) -> &[Action<S, P>];
     fn goto(&self, state: S, nonterm: NTK) -> S;
     fn expected_token_kinds(&self, state: S) -> &[Option<TK>];
 }
@@ -349,7 +349,7 @@ where
         log!("{}: {:?}", "Token ahead".green(), &next_token);
 
         loop {
-            let action = self.definition.action(state, next_token.kind);
+            let action = self.definition.actions(state, next_token.kind)[0];
 
             match action {
                 Action::Shift(state_id) => {

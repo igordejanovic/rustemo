@@ -136,6 +136,7 @@ where
             if self.index < self.token_recognizers.len() {
                 let (recognizer, token_kind) =
                     &self.token_recognizers[self.index];
+                self.index += 1;
                 if let Some(recognized) =
                     recognizer.recognize(&self.input[self.position..])
                 {
@@ -145,7 +146,6 @@ where
                         location: recognized.location_span(self.location),
                     });
                 }
-                self.index += 1;
             } else {
                 return None;
             }
@@ -175,7 +175,11 @@ where
         if self.skip_ws {
             Self::skip(input, context);
         }
-        log!("{} {:?}", "Trying recognizers:".green(), token_kinds);
+        log!(
+            "{} {:?}",
+            "Trying recognizers:".green(),
+            token_kinds.iter().flatten().collect::<Vec<_>>()
+        );
 
         Box::new(TokenIterator::new(
             input,
@@ -194,7 +198,6 @@ where
 }
 
 /// `Token` represent a single token from the input stream.
-#[derive(Clone)]
 pub struct Token<'i, I: Input + ?Sized, TK> {
     pub kind: TK,
 
@@ -203,6 +206,16 @@ pub struct Token<'i, I: Input + ?Sized, TK> {
 
     /// Location (with span) in the input file where this token is found.
     pub location: Location,
+}
+
+impl<'i, I: Input + ?Sized, TK: Copy> Clone for Token<'i, I, TK> {
+    fn clone(&self) -> Self {
+        Self {
+            kind: self.kind,
+            value: self.value,
+            location: self.location,
+        }
+    }
 }
 
 impl<'i, I, TK> Debug for Token<'i, I, TK>
