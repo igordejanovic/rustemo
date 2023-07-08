@@ -7,15 +7,13 @@ use rustemo::input;
 use rustemo::lexer::{self, Lexer, Token};
 use rustemo::parser::{self, Parser};
 use rustemo::builder::Builder;
+use rustemo::lr::parser::ParserDefinition;
 use regex::Regex;
 use once_cell::sync::Lazy;
 use rustemo::lexer::StringLexer;
 use rustemo::lr::builder::LRBuilder;
 use super::calculator_actions;
-use rustemo::lr::{
-    parser::{ParserDefinition, LRParser},
-    context::LRContext,
-};
+use rustemo::lr::{parser::LRParser, context::LRContext};
 use rustemo::lr::parser::Action::{self, Shift, Reduce, Accept, Error};
 #[allow(unused_imports)]
 use rustemo::debug::{log, logn};
@@ -118,17 +116,17 @@ pub enum NonTerminal {
     Expression(calculator_actions::Expression),
 }
 pub struct CalculatorParserDefinition {
-    actions: [[Action<State, ProdKind>; TERMINAL_COUNT]; STATE_COUNT],
+    actions: [[[Action<State, ProdKind>; MAX_ACTIONS]; TERMINAL_COUNT]; STATE_COUNT],
     gotos: [[Option<State>; NONTERMINAL_COUNT]; STATE_COUNT],
     token_kinds: [[Option<TokenKind>; MAX_RECOGNIZERS]; STATE_COUNT],
 }
 pub(crate) static PARSER_DEFINITION: CalculatorParserDefinition = CalculatorParserDefinition {
     actions: [
-        [Error, Shift(State::OperandS1), Error],
-        [Error, Error, Shift(State::OperatorS3)],
-        [Accept, Error, Error],
-        [Error, Shift(State::OperandS4), Error],
-        [Reduce(ProdKind::ExpressionP1, 3usize), Error, Error],
+        [[Error], [Shift(State::OperandS1)], [Error]],
+        [[Error], [Error], [Shift(State::OperatorS3)]],
+        [[Accept], [Error], [Error]],
+        [[Error], [Shift(State::OperandS4)], [Error]],
+        [[Reduce(ProdKind::ExpressionP1, 3usize)], [Error], [Error]],
     ],
     gotos: [
         [None, None, Some(State::ExpressionS2)],
@@ -147,8 +145,12 @@ pub(crate) static PARSER_DEFINITION: CalculatorParserDefinition = CalculatorPars
 };
 impl ParserDefinition<State, ProdKind, TokenKind, NonTermKind>
 for CalculatorParserDefinition {
-    fn action(&self, state: State, token: TokenKind) -> Action<State, ProdKind> {
-        PARSER_DEFINITION.actions[state as usize][token as usize]
+    fn actions(
+        &self,
+        state: State,
+        token: TokenKind,
+    ) -> &'static [Action<State, ProdKind>] {
+        &PARSER_DEFINITION.actions[state as usize][token as usize]
     }
     fn goto(&self, state: State, nonterm: NonTermKind) -> State {
         PARSER_DEFINITION.gotos[state as usize][nonterm as usize].unwrap()
@@ -241,6 +243,7 @@ pub struct TokenRecognizer(TokenKind, Recognizer);
 impl<'i> lexer::TokenRecognizer<'i> for TokenRecognizer {
     fn recognize(&self, input: &'i str) -> Option<&'i str> {
         match &self {
+            #[allow(unused_variables)]
             TokenRecognizer(token_kind, Recognizer::StrMatch(s)) => {
                 logn!("{} {:?} -- ", "\tRecognizing".green(), token_kind);
                 if input.starts_with(s) {
@@ -251,6 +254,7 @@ impl<'i> lexer::TokenRecognizer<'i> for TokenRecognizer {
                     None
                 }
             }
+            #[allow(unused_variables)]
             TokenRecognizer(token_kind, Recognizer::RegexMatch(r)) => {
                 logn!("{} {:?} -- ", "\tRecognizing".green(), token_kind);
                 let match_str = r.find(input);
@@ -298,7 +302,8 @@ pub struct DefaultBuilder {
     res_stack: Vec<Symbol>,
 }
 impl DefaultBuilder {
-    fn new() -> Self {
+    #[allow(dead_code)]
+    pub fn new() -> Self {
         Self { res_stack: vec![] }
     }
 }

@@ -7,15 +7,13 @@ use rustemo::input;
 use rustemo::lexer::{self, Lexer, Token};
 use rustemo::parser::{self, Parser};
 use rustemo::builder::Builder;
+use rustemo::lr::parser::ParserDefinition;
 use regex::Regex;
 use once_cell::sync::Lazy;
 use rustemo::lexer::StringLexer;
 use rustemo::lr::builder::LRBuilder;
 use super::output_dir_actions;
-use rustemo::lr::{
-    parser::{ParserDefinition, LRParser},
-    context::LRContext,
-};
+use rustemo::lr::{parser::LRParser, context::LRContext};
 use rustemo::lr::parser::Action::{self, Shift, Reduce, Accept, Error};
 #[allow(unused_imports)]
 use rustemo::debug::{log, logn};
@@ -27,7 +25,7 @@ const TERMINAL_COUNT: usize = 3usize;
 const NONTERMINAL_COUNT: usize = 5usize;
 const STATE_COUNT: usize = 7usize;
 #[allow(dead_code)]
-const MAX_ACTIONS: usize = 2usize;
+const MAX_ACTIONS: usize = 1usize;
 const MAX_RECOGNIZERS: usize = 2usize;
 #[allow(clippy::upper_case_acronyms)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -135,19 +133,19 @@ pub enum NonTerminal {
     B(output_dir_actions::B),
 }
 pub struct OutputDirParserDefinition {
-    actions: [[Action<State, ProdKind>; TERMINAL_COUNT]; STATE_COUNT],
+    actions: [[[Action<State, ProdKind>; MAX_ACTIONS]; TERMINAL_COUNT]; STATE_COUNT],
     gotos: [[Option<State>; NONTERMINAL_COUNT]; STATE_COUNT],
     token_kinds: [[Option<TokenKind>; MAX_RECOGNIZERS]; STATE_COUNT],
 }
 pub(crate) static PARSER_DEFINITION: OutputDirParserDefinition = OutputDirParserDefinition {
     actions: [
-        [Error, Shift(State::TbS1), Error],
-        [Error, Reduce(ProdKind::BP1, 1usize), Reduce(ProdKind::BP1, 1usize)],
-        [Accept, Error, Error],
-        [Error, Shift(State::TbS1), Shift(State::NumS5)],
-        [Error, Reduce(ProdKind::B1P2, 1usize), Reduce(ProdKind::B1P2, 1usize)],
-        [Reduce(ProdKind::AP1, 2usize), Error, Error],
-        [Error, Reduce(ProdKind::B1P1, 2usize), Reduce(ProdKind::B1P1, 2usize)],
+        [[Error], [Shift(State::TbS1)], [Error]],
+        [[Error], [Reduce(ProdKind::BP1, 1usize)], [Reduce(ProdKind::BP1, 1usize)]],
+        [[Accept], [Error], [Error]],
+        [[Error], [Shift(State::TbS1)], [Shift(State::NumS5)]],
+        [[Error], [Reduce(ProdKind::B1P2, 1usize)], [Reduce(ProdKind::B1P2, 1usize)]],
+        [[Reduce(ProdKind::AP1, 2usize)], [Error], [Error]],
+        [[Error], [Reduce(ProdKind::B1P1, 2usize)], [Reduce(ProdKind::B1P1, 2usize)]],
     ],
     gotos: [
         [None, None, Some(State::AS2), Some(State::B1S3), Some(State::BS4)],
@@ -170,8 +168,12 @@ pub(crate) static PARSER_DEFINITION: OutputDirParserDefinition = OutputDirParser
 };
 impl ParserDefinition<State, ProdKind, TokenKind, NonTermKind>
 for OutputDirParserDefinition {
-    fn action(&self, state: State, token: TokenKind) -> Action<State, ProdKind> {
-        PARSER_DEFINITION.actions[state as usize][token as usize]
+    fn actions(
+        &self,
+        state: State,
+        token: TokenKind,
+    ) -> &'static [Action<State, ProdKind>] {
+        &PARSER_DEFINITION.actions[state as usize][token as usize]
     }
     fn goto(&self, state: State, nonterm: NonTermKind) -> State {
         PARSER_DEFINITION.gotos[state as usize][nonterm as usize].unwrap()
@@ -264,6 +266,7 @@ pub struct TokenRecognizer(TokenKind, Recognizer);
 impl<'i> lexer::TokenRecognizer<'i> for TokenRecognizer {
     fn recognize(&self, input: &'i str) -> Option<&'i str> {
         match &self {
+            #[allow(unused_variables)]
             TokenRecognizer(token_kind, Recognizer::StrMatch(s)) => {
                 logn!("{} {:?} -- ", "\tRecognizing".green(), token_kind);
                 if input.starts_with(s) {
@@ -274,6 +277,7 @@ impl<'i> lexer::TokenRecognizer<'i> for TokenRecognizer {
                     None
                 }
             }
+            #[allow(unused_variables)]
             TokenRecognizer(token_kind, Recognizer::RegexMatch(r)) => {
                 logn!("{} {:?} -- ", "\tRecognizing".green(), token_kind);
                 let match_str = r.find(input);
@@ -316,7 +320,8 @@ pub struct DefaultBuilder {
     res_stack: Vec<Symbol>,
 }
 impl DefaultBuilder {
-    fn new() -> Self {
+    #[allow(dead_code)]
+    pub fn new() -> Self {
         Self { res_stack: vec![] }
     }
 }

@@ -7,15 +7,13 @@ use rustemo::input;
 use rustemo::lexer::{self, Lexer, Token};
 use rustemo::parser::{self, Parser};
 use rustemo::builder::Builder;
+use rustemo::lr::parser::ParserDefinition;
 use regex::Regex;
 use once_cell::sync::Lazy;
 use rustemo::lexer::StringLexer;
 use rustemo::lr::builder::LRBuilder;
 use super::calculator_actions;
-use rustemo::lr::{
-    parser::{ParserDefinition, LRParser},
-    context::LRContext,
-};
+use rustemo::lr::{parser::LRParser, context::LRContext};
 use rustemo::lr::parser::Action::{self, Shift, Reduce, Accept, Error};
 #[allow(unused_imports)]
 use rustemo::debug::{log, logn};
@@ -27,7 +25,7 @@ const TERMINAL_COUNT: usize = 6usize;
 const NONTERMINAL_COUNT: usize = 3usize;
 const STATE_COUNT: usize = 11usize;
 #[allow(dead_code)]
-const MAX_ACTIONS: usize = 5usize;
+const MAX_ACTIONS: usize = 1usize;
 const MAX_RECOGNIZERS: usize = 5usize;
 #[allow(clippy::upper_case_acronyms)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -148,64 +146,64 @@ pub enum NonTerminal {
     E(calculator_actions::E),
 }
 pub struct CalculatorParserDefinition {
-    actions: [[Action<State, ProdKind>; TERMINAL_COUNT]; STATE_COUNT],
+    actions: [[[Action<State, ProdKind>; MAX_ACTIONS]; TERMINAL_COUNT]; STATE_COUNT],
     gotos: [[Option<State>; NONTERMINAL_COUNT]; STATE_COUNT],
     token_kinds: [[Option<TokenKind>; MAX_RECOGNIZERS]; STATE_COUNT],
 }
 pub(crate) static PARSER_DEFINITION: CalculatorParserDefinition = CalculatorParserDefinition {
     actions: [
-        [Error, Shift(State::NumberS1), Error, Error, Error, Error],
+        [[Error], [Shift(State::NumberS1)], [Error], [Error], [Error], [Error]],
         [
-            Reduce(ProdKind::EP5, 1usize),
-            Error,
-            Reduce(ProdKind::EP5, 1usize),
-            Reduce(ProdKind::EP5, 1usize),
-            Reduce(ProdKind::EP5, 1usize),
-            Reduce(ProdKind::EP5, 1usize),
+            [Reduce(ProdKind::EP5, 1usize)],
+            [Error],
+            [Reduce(ProdKind::EP5, 1usize)],
+            [Reduce(ProdKind::EP5, 1usize)],
+            [Reduce(ProdKind::EP5, 1usize)],
+            [Reduce(ProdKind::EP5, 1usize)],
         ],
         [
-            Accept,
-            Error,
-            Shift(State::PlusS3),
-            Shift(State::MinusS4),
-            Shift(State::MulS5),
-            Shift(State::DivS6),
+            [Accept],
+            [Error],
+            [Shift(State::PlusS3)],
+            [Shift(State::MinusS4)],
+            [Shift(State::MulS5)],
+            [Shift(State::DivS6)],
         ],
-        [Error, Shift(State::NumberS1), Error, Error, Error, Error],
-        [Error, Shift(State::NumberS1), Error, Error, Error, Error],
-        [Error, Shift(State::NumberS1), Error, Error, Error, Error],
-        [Error, Shift(State::NumberS1), Error, Error, Error, Error],
+        [[Error], [Shift(State::NumberS1)], [Error], [Error], [Error], [Error]],
+        [[Error], [Shift(State::NumberS1)], [Error], [Error], [Error], [Error]],
+        [[Error], [Shift(State::NumberS1)], [Error], [Error], [Error], [Error]],
+        [[Error], [Shift(State::NumberS1)], [Error], [Error], [Error], [Error]],
         [
-            Reduce(ProdKind::EP1, 3usize),
-            Error,
-            Reduce(ProdKind::EP1, 3usize),
-            Reduce(ProdKind::EP1, 3usize),
-            Shift(State::MulS5),
-            Shift(State::DivS6),
-        ],
-        [
-            Reduce(ProdKind::EP2, 3usize),
-            Error,
-            Reduce(ProdKind::EP2, 3usize),
-            Reduce(ProdKind::EP2, 3usize),
-            Shift(State::MulS5),
-            Shift(State::DivS6),
+            [Reduce(ProdKind::EP1, 3usize)],
+            [Error],
+            [Reduce(ProdKind::EP1, 3usize)],
+            [Reduce(ProdKind::EP1, 3usize)],
+            [Shift(State::MulS5)],
+            [Shift(State::DivS6)],
         ],
         [
-            Reduce(ProdKind::EP3, 3usize),
-            Error,
-            Reduce(ProdKind::EP3, 3usize),
-            Reduce(ProdKind::EP3, 3usize),
-            Reduce(ProdKind::EP3, 3usize),
-            Reduce(ProdKind::EP3, 3usize),
+            [Reduce(ProdKind::EP2, 3usize)],
+            [Error],
+            [Reduce(ProdKind::EP2, 3usize)],
+            [Reduce(ProdKind::EP2, 3usize)],
+            [Shift(State::MulS5)],
+            [Shift(State::DivS6)],
         ],
         [
-            Reduce(ProdKind::EP4, 3usize),
-            Error,
-            Reduce(ProdKind::EP4, 3usize),
-            Reduce(ProdKind::EP4, 3usize),
-            Reduce(ProdKind::EP4, 3usize),
-            Reduce(ProdKind::EP4, 3usize),
+            [Reduce(ProdKind::EP3, 3usize)],
+            [Error],
+            [Reduce(ProdKind::EP3, 3usize)],
+            [Reduce(ProdKind::EP3, 3usize)],
+            [Reduce(ProdKind::EP3, 3usize)],
+            [Reduce(ProdKind::EP3, 3usize)],
+        ],
+        [
+            [Reduce(ProdKind::EP4, 3usize)],
+            [Error],
+            [Reduce(ProdKind::EP4, 3usize)],
+            [Reduce(ProdKind::EP4, 3usize)],
+            [Reduce(ProdKind::EP4, 3usize)],
+            [Reduce(ProdKind::EP4, 3usize)],
         ],
     ],
     gotos: [
@@ -273,8 +271,12 @@ pub(crate) static PARSER_DEFINITION: CalculatorParserDefinition = CalculatorPars
 };
 impl ParserDefinition<State, ProdKind, TokenKind, NonTermKind>
 for CalculatorParserDefinition {
-    fn action(&self, state: State, token: TokenKind) -> Action<State, ProdKind> {
-        PARSER_DEFINITION.actions[state as usize][token as usize]
+    fn actions(
+        &self,
+        state: State,
+        token: TokenKind,
+    ) -> &'static [Action<State, ProdKind>] {
+        &PARSER_DEFINITION.actions[state as usize][token as usize]
     }
     fn goto(&self, state: State, nonterm: NonTermKind) -> State {
         PARSER_DEFINITION.gotos[state as usize][nonterm as usize].unwrap()
@@ -367,6 +369,7 @@ pub struct TokenRecognizer(TokenKind, Recognizer);
 impl<'i> lexer::TokenRecognizer<'i> for TokenRecognizer {
     fn recognize(&self, input: &'i str) -> Option<&'i str> {
         match &self {
+            #[allow(unused_variables)]
             TokenRecognizer(token_kind, Recognizer::StrMatch(s)) => {
                 logn!("{} {:?} -- ", "\tRecognizing".green(), token_kind);
                 if input.starts_with(s) {
@@ -377,6 +380,7 @@ impl<'i> lexer::TokenRecognizer<'i> for TokenRecognizer {
                     None
                 }
             }
+            #[allow(unused_variables)]
             TokenRecognizer(token_kind, Recognizer::RegexMatch(r)) => {
                 logn!("{} {:?} -- ", "\tRecognizing".green(), token_kind);
                 let match_str = r.find(input);
@@ -422,7 +426,8 @@ pub struct DefaultBuilder {
     res_stack: Vec<Symbol>,
 }
 impl DefaultBuilder {
-    fn new() -> Self {
+    #[allow(dead_code)]
+    pub fn new() -> Self {
         Self { res_stack: vec![] }
     }
 }
