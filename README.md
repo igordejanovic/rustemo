@@ -108,6 +108,10 @@ Be sure to check [Rustemo book](https://igordejanovic.github.io/rustemo/)!
 
 ### v0.2.0
 - [ ] GLR parsing based on Right-Nulled GLR algorithm (RNGLR).
+  - [x] Base Tomita's algorithm. Shared packed parse forest.
+  - [x] Lazy tree extraction from forest.
+  - [x] Calling arbitrary builder over extracted tree.
+  - [ ] Support for EMPTY productions through RN table entries.
 - [ ] Greedy repetitions.
 - [ ] Zero copy for built-in builders.
 - [ ] Parenthesized groups. Still not sure if this is a good thing to have.
