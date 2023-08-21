@@ -22,6 +22,7 @@ use crate::{
 /// Nodes keep information about state while edges keep all alternative
 /// sub-trees constructed by reduction across the edge.
 pub struct GssGraph<'i, I: Input + ?Sized, S, P, TK: Copy>(
+    #[allow(clippy::type_complexity)]
     Graph<GssHead<'i, I, S, TK>, Rc<Parent<'i, I, P, TK>>>,
 );
 
@@ -215,6 +216,7 @@ where
     S: State,
     TK: Copy,
 {
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         state: S,
         frontier: usize,
@@ -357,6 +359,7 @@ impl<'i, I: Input + ?Sized, P, TK: Copy> SPPFTree<'i, I, P, TK> {
         }
     }
 
+    #[allow(clippy::mutable_key_type)]
     fn ambiguities(
         &self,
         visited: &mut HashSet<Rc<Parent<'i, I, P, TK>>>,
@@ -474,6 +477,7 @@ impl<'i, I: Input + ?Sized, P, TK: Copy> Parent<'i, I, P, TK> {
 
     /// Number of ambiguous nodes in the span covered by this parent link.
     /// If there is more than one possibility this parent link is ambiguous.
+    #[allow(clippy::mutable_key_type)]
     pub fn ambiguities(
         &self,
         visited: &mut HashSet<Rc<Parent<'i, I, P, TK>>>,
@@ -587,6 +591,7 @@ impl<'i, I: Input + ?Sized, P, TK: Copy> Tree<'i, I, P, TK> {
 
     /// For the given tree index finds the right tree root in the given slice of
     /// trees based on the number of solutions for each tree.
+    #[allow(clippy::type_complexity)]
     fn find_tree_root(
         roots: &[Rc<SPPFTree<'i, I, P, TK>>],
         tree_idx: usize,
@@ -660,6 +665,7 @@ impl<'i, I: Input + ?Sized, P, TK: Copy> Forest<'i, I, P, TK> {
     /// If there is >1 tree in the forest there is an ambiguity.
     #[inline]
     pub fn ambiguities(&self) -> usize {
+        #[allow(clippy::mutable_key_type)]
         let mut visited: HashSet<Rc<Parent<'i, I, P, TK>>> = HashSet::new();
         self.results
             .iter()
