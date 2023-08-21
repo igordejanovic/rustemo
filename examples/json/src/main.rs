@@ -3,6 +3,8 @@ use rustemo::rustemo_mod;
 rustemo_mod!(json, "/src");
 mod json_actions;
 
+fn main() {}
+
 #[cfg(test)]
 mod tests {
     use crate::json::JsonParser;
@@ -44,5 +46,3 @@ mod tests {
         output_cmp!("src/example5.ast", format!("{:#?}", result));
     }
 }
-
-fn main() {}
