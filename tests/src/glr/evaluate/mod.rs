@@ -29,5 +29,5 @@ fn glr_tree_calc_eval() {
         ));
     }
 
-    output_cmp!("src/glr/forest_eval.ast", format!("{:#?}", res));
+    output_cmp!("src/glr/evaluate/forest_eval.ast", format!("{:#?}", res));
 }

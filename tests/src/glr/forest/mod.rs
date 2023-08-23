@@ -12,7 +12,7 @@ use rustemo::parser::Parser;
 #[test]
 fn glr_calc_parse_ast() {
     let result = CalcParser::new().parse("1 + 4 * 9 + 3 * 2").unwrap();
-    output_cmp!("src/glr/calc.ast", format!("{:#?}", result));
+    output_cmp!("src/glr/forest/calc.ast", format!("{:#?}", result));
 
     // Catalan number for 5 operands
     assert_eq!(result.solutions(), 14);
@@ -77,15 +77,15 @@ fn glr_calc_parse_ambiguities() {
 fn glr_extract_tree_from_forest() {
     let forest = CalcParser::new().parse("1 + 4 * 9 + 3 * 2 + 7").unwrap();
     output_cmp!(
-        "src/glr/forest_tree_first.ast",
+        "src/glr/forest/forest_tree_first.ast",
         format!("{:#?}", forest.get_first_tree().unwrap())
     );
     output_cmp!(
-        "src/glr/forest_tree_17.ast",
+        "src/glr/forest/forest_tree_17.ast",
         format!("{:#?}", forest.get_tree(17).unwrap())
     );
     output_cmp!(
-        "src/glr/forest_tree_last.ast",
+        "src/glr/forest/forest_tree_last.ast",
         format!("{:#?}", forest.get_tree(41).unwrap())
     );
 
@@ -94,7 +94,7 @@ fn glr_extract_tree_from_forest() {
 
     let tree = forest.get_tree(41).unwrap();
     output_cmp!(
-        "src/glr/forest_tree_children.ast",
+        "src/glr/forest/forest_tree_children.ast",
         format!("{:#?}", tree.children()[0].children())
     );
 }

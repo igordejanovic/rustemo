@@ -16,14 +16,14 @@ fn glr_tree_build() {
 
     let mut builder = calc::DefaultBuilder::new();
     output_cmp!(
-        "src/glr/tree_build_1.ast",
+        "src/glr/build/tree_build_1.ast",
         format!(
             "{:#?}",
             forest.get_first_tree().unwrap().build(&mut builder)
         )
     );
     output_cmp!(
-        "src/glr/tree_build_2.ast",
+        "src/glr/build/tree_build_2.ast",
         format!("{:#?}", forest.get_tree(1).unwrap().build(&mut builder))
     );
 }
