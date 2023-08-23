@@ -1,0 +1,11 @@
+// From the Knuth's 1965 paper: On the Translation of Languages from Left to Right
+
+S: 'a' A 'd' | 'b' A 'd';
+A: 'c' A | 'c';
+
+terminals
+
+Ta: 'a';
+Tb: 'b';
+Tc: 'c';
+Td: 'd';
