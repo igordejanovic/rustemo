@@ -181,6 +181,8 @@ impl SymbolTypes {
                 });
             }
 
+            Choice::make_choices_name_unique(&mut choices);
+
             types.push(SymbolType {
                 name: nonterminal.name.clone(),
                 kind: Self::get_type_kind(nonterminal, &choices),
@@ -463,6 +465,34 @@ pub(crate) enum SymbolTypeKind {
 pub(crate) struct Choice {
     pub name: String,
     pub kind: ChoiceKind,
+}
+
+impl Choice {
+    /// Ensure that Choice names are unique
+    fn make_choices_name_unique(choices: &mut [Choice]) {
+        // Choices of a production must have unique names.
+        // We need to update same names to include ord indexes.
+        let mut name_counts: HashMap<String, usize> = HashMap::new();
+        for c in choices.iter() {
+            name_counts
+                .entry(c.name.clone())
+                .and_modify(|e| *e += 1)
+                .or_insert(1);
+        }
+        // Update names to make them unique
+        name_counts
+            .iter()
+            .filter(|&(_, count)| *count > 1)
+            .for_each(|(name, _)| {
+                choices
+                    .iter_mut()
+                    .filter(|c| c.name == *name)
+                    .enumerate()
+                    .for_each(|(idx, c)| {
+                        c.name.push_str(&(idx + 1).to_string());
+                    });
+            });
+    }
 }
 
 #[derive(Debug)]
