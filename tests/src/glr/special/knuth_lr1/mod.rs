@@ -9,7 +9,6 @@ use rustemo::parser::Parser;
 
 #[test]
 fn glr_special_knuth_lr1() {
-
     let forest = LangParser::new().parse("acccccccccd").unwrap();
     assert_eq!(forest.solutions(), 1);
 

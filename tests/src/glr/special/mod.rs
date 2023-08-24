@@ -2,3 +2,4 @@
 //! trip GLR parsers.
 
 mod knuth_lr1;
+mod nondeterministic_palindromes;

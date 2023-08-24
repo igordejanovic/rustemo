@@ -68,7 +68,14 @@ fn main() {
             }),
         ),
         // GLR special
-        ("glr/special/knuth_lr1", Box::new(|s| s.parser_algo(ParserAlgo::GLR))),
+        (
+            "glr/special/knuth_lr1",
+            Box::new(|s| s.parser_algo(ParserAlgo::GLR)),
+        ),
+        (
+            "glr/special/nondeterministic_palindromes",
+            Box::new(|s| s.parser_algo(ParserAlgo::GLR)),
+        ),
     ];
 
     for (test, config) in tests {

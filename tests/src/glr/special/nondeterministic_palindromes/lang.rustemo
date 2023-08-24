@@ -1,0 +1,25 @@
+// Language of even length palindromes.
+//
+// This is a non-deterministic grammar and the language is non-ambiguous.
+//
+// If the string is a even length palindrome parser should reduce EMPTY at he
+// middle of the string and start to reduce by A and B.
+//
+// LR parsing is deterministic so this grammar can't parse the input as the
+// EMPTY reduction will be tried only after consuming all the input by implicit
+// disambiguation strategy of favouring shifts over empty reductions.
+//
+// OTOH, GLR parser can handle this by forking parser at each step and trying
+// both empty reductions and shifts. Only the parser that has reduced empty at
+// the middle of the input will succeed.
+//
+// Check the same test in glr/special folder.
+
+S: A | B | EMPTY;
+A: '1' S '1';
+B: '0' S '0';
+
+terminals
+
+One: '1';
+Zero: '0';

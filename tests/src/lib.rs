@@ -10,5 +10,6 @@ mod lexer;
 mod output_dir;
 mod partial;
 mod rule_patterns;
+mod special;
 mod sugar;
 mod unicode;
