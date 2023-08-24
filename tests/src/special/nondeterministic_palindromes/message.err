@@ -1,0 +1,11 @@
+Err(
+    Error {
+        message: "...01100100100110-->...\nExpected one of One, Zero.",
+        file: Some(
+            "<str>",
+        ),
+        location: Some(
+            [1,14],
+        ),
+    },
+)

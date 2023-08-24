@@ -53,6 +53,9 @@ fn main() {
                     .actions_in_source_tree()
             }),
         ),
+        // Special
+        ("special/lalr_reduce_reduce_conflict", Box::new(|s| s)),
+        ("special/nondeterministic_palindromes", Box::new(|s| s)),
         // GLR
         ("glr/forest", Box::new(|s| s.parser_algo(ParserAlgo::GLR))),
         ("glr/build", Box::new(|s| s.parser_algo(ParserAlgo::GLR))),
