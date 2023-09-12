@@ -18,8 +18,8 @@ use crate::{
     error::{Error, Result},
     grammar::{Associativity, Priority, Terminal, DEFAULT_PRIORITY},
     index::{
-        NonTermIndex, NonTermVec, ProdIndex, StateIndex, StateVec, SymbolIndex,
-        SymbolVec, TermIndex, TermVec,
+        NonTermIndex, NonTermVec, ProdIndex, ProdVec, StateIndex, StateVec,
+        SymbolIndex, SymbolVec, TermIndex, TermVec,
     },
     lang::rustemo_actions::Recognizer,
     settings::{ParserAlgo, Settings},
@@ -186,7 +186,11 @@ impl<'g> LRState<'g> {
     /// item, if right of the dot is a non-terminal, adds all items where LHS is
     /// a given non-terminal and the dot is at the beginning. In other words,
     /// adds all missing non-kernel items.
-    fn closure(&mut self, first_sets: &FirstSets) {
+    fn closure(
+        &mut self,
+        first_sets: &FirstSets,
+        prod_rn_lengths: &Option<ProdVec<usize>>,
+    ) {
         loop {
             // This is OK as Hash uses only non-interior-mutable part of the
             // LRItem type.
@@ -231,6 +235,7 @@ impl<'g> LRState<'g> {
                             new_items.insert(LRItem::with_follow(
                                 self.grammar,
                                 *prod,
+                                prod_rn_lengths.as_ref().map(|p| p[*prod]),
                                 new_follow.clone(),
                             ));
                         }
@@ -298,8 +303,18 @@ impl<'g> LRState<'g> {
 #[derive(Debug, Eq, Clone, PartialOrd, Ord)]
 struct LRItem {
     prod: ProdIndex,
+
+    /// The length of the production
     prod_len: usize,
+
+    /// Right-null production length - the last symbol in the production where
+    /// all the following symbols can reduce EMPTY.
+    /// Used in RN-GLR to decide when the item can reduce. `None` for LR.
+    rn_len: Option<usize>,
+
+    /// The position of "the dot" in the RHS of the production
     position: usize,
+
     follow: RefCell<Follow>,
 }
 
@@ -343,19 +358,26 @@ impl PartialEq for LRItem {
 /// ```
 impl LRItem {
     #[cfg(test)]
-    fn new(grammar: &Grammar, prod: ProdIndex) -> Self {
+    fn new(grammar: &Grammar, prod: ProdIndex, rn_len: Option<usize>) -> Self {
         LRItem {
             prod,
             prod_len: grammar.production_len(prod),
+            rn_len,
             position: 0,
             follow: RefCell::new(Follow::new()),
         }
     }
 
-    fn with_follow(grammar: &Grammar, prod: ProdIndex, follow: Follow) -> Self {
+    fn with_follow(
+        grammar: &Grammar,
+        prod: ProdIndex,
+        rn_len: Option<usize>,
+        follow: Follow,
+    ) -> Self {
         LRItem {
             prod,
             prod_len: grammar.production_len(prod),
+            rn_len,
             position: 0,
             follow: RefCell::new(follow),
         }
@@ -365,22 +387,6 @@ impl LRItem {
         Some(res_symbol(
             grammar.productions.get(self.prod)?.rhs.get(self.position)?,
         ))
-    }
-
-    /// Return new item with position incremented.
-    /// Currently unused.
-    #[allow(dead_code)]
-    fn next_item(&self, grammar: &Grammar) -> Option<Self> {
-        if self.position < grammar.production_len(self.prod) {
-            Some(Self {
-                prod: self.prod,
-                prod_len: grammar.production_len(self.prod),
-                position: self.position + 1,
-                follow: self.follow.clone(),
-            })
-        } else {
-            None
-        }
     }
 
     /// Moves position to the right.
@@ -403,6 +409,10 @@ impl LRItem {
     #[inline]
     fn is_reducing(&self) -> bool {
         self.position == self.prod_len
+            || match self.rn_len {
+                Some(rn_len) => self.position >= rn_len,
+                None => false,
+            }
     }
 
     fn to_string(&self, grammar: &Grammar) -> String {
@@ -452,16 +462,29 @@ pub struct LRTable<'g, 's> {
     grammar: &'g Grammar,
     settings: &'s Settings,
     first_sets: FirstSets,
+
+    /// Right-nulled length of productions. Used in RNGLR. RN length is a
+    /// position in a production after which all the remaining symbols can
+    /// derive EMPTY.
+    pub production_rn_lengths: Option<ProdVec<usize>>,
 }
 
 impl<'g, 's> LRTable<'g, 's> {
     pub fn new(grammar: &'g Grammar, settings: &'s Settings) -> Result<Self> {
+        let first_sets = first_sets(grammar);
+        let production_rn_lengths = if settings.table_type == TableType::LALR_RN
+        {
+            Some(production_rn_lengths(&first_sets, grammar))
+        } else {
+            None
+        };
         let mut table = Self {
             grammar,
             settings,
             states: StateVec::new(),
             layout_state: None,
-            first_sets: first_sets(grammar),
+            first_sets,
+            production_rn_lengths,
         };
 
         table.check_empty_sets()?;
@@ -510,6 +533,7 @@ impl<'g, 's> LRTable<'g, 's> {
         .add_item(LRItem::with_follow(
             self.grammar,
             prods[0],
+            self.production_rn_lengths.as_ref().map(|p| p[prods[0]]),
             Follow::from([self.grammar.stop_index]),
         ));
         current_state_idx += 1;
@@ -523,7 +547,7 @@ impl<'g, 's> LRTable<'g, 's> {
             // called "kernel items" expand collection with non-kernel items. We
             // will also calculate GOTO and ACTIONS dicts for each state. These
             // dicts will be keyed by a grammar symbol.
-            state.closure(&self.first_sets);
+            state.closure(&self.first_sets, &self.production_rn_lengths);
 
             // To find out other states we examine following grammar symbols in the
             // current state (symbols following current position/"dot") and group
@@ -662,7 +686,7 @@ impl<'g, 's> LRTable<'g, 's> {
                 // Refresh closure to propagate follows from kernel items to
                 // non-kernel of the same state as the merge is done only for kernel
                 // items.
-                state.closure(&self.first_sets);
+                state.closure(&self.first_sets, &self.production_rn_lengths);
             }
 
             for state in self.states.iter() {
@@ -1084,6 +1108,25 @@ impl<'g, 's> LRTable<'g, 's> {
     }
 }
 
+fn production_rn_lengths(
+    first_sets: &SymbolVec<BTreeSet<SymbolIndex>>,
+    grammar: &Grammar,
+) -> ProdVec<usize> {
+    let mut prod_rn_lens = ProdVec::new();
+    for production in &grammar.productions {
+        let mut rn_len = production.rhs.len();
+        for symbol in production.rhs_symbols().iter().rev() {
+            if first_sets[*symbol].contains(&grammar.empty_index) {
+                rn_len -= 1;
+            } else {
+                break;
+            }
+        }
+        prod_rn_lens.push(rn_len)
+    }
+    prod_rn_lens
+}
+
 impl<'g, 's> Display for LRTable<'g, 's> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         for state in &self.states {
@@ -1323,7 +1366,7 @@ mod tests {
         table::{Follow, LRItem},
     };
 
-    use super::LRState;
+    use super::{production_rn_lengths, LRState};
 
     fn follow<T, I>(indexes: T) -> BTreeSet<SymbolIndex>
     where
@@ -1468,11 +1511,26 @@ mod tests {
     }
 
     #[test]
+    fn test_prooduction_rn_lengths() {
+        let grammar = test_grammar();
+        let first_sets = first_sets(&grammar);
+
+        let production_rn_lengths =
+            production_rn_lengths(&first_sets, &grammar);
+
+        // RN length of "E: T Ep" is 1 as "Ep" can derive EMPTY but "T" can't.
+        assert_eq!(production_rn_lengths[ProdIndex(1)], 1);
+
+        // RN length of "Ep: "+" T Ep" is 2.
+        assert_eq!(production_rn_lengths[ProdIndex(2)], 2);
+    }
+
+    #[test]
     fn test_symbol_at_position() {
         let grammar = test_grammar();
 
         let prod = ProdIndex(1);
-        let mut item = LRItem::new(&grammar, prod);
+        let mut item = LRItem::new(&grammar, prod, None);
         assert_eq!(
             &grammar.symbol_names(grammar.productions[prod].rhs_symbols()),
             &["T", "Ep"]
@@ -1502,24 +1560,28 @@ mod tests {
                 .add_item(LRItem {
                     prod: 1.into(),
                     prod_len: grammar.production_len(1.into()),
+                    rn_len: None,
                     position: 1,
                     follow: RefCell::new(Follow::new()),
                 })
                 .add_item(LRItem {
                     prod: 2.into(),
                     prod_len: grammar.production_len(2.into()),
+                    rn_len: None,
                     position: 1,
                     follow: RefCell::new(Follow::new()),
                 })
                 .add_item(LRItem {
                     prod: 3.into(),
                     prod_len: grammar.production_len(2.into()),
+                    rn_len: None,
                     position: 1,
                     follow: RefCell::new(Follow::new()),
                 })
                 .add_item(LRItem {
                     prod: 4.into(),
                     prod_len: grammar.production_len(3.into()),
+                    rn_len: None,
                     position: 2,
                     follow: RefCell::new(Follow::new()),
                 });
@@ -1574,12 +1636,14 @@ mod tests {
         let lr_item_1 = LRItem {
             prod: ProdIndex(1),
             prod_len: 2,
+            rn_len: None,
             position: 2,
             follow: RefCell::new(Follow::new()),
         };
         let lr_item_2 = LRItem {
             prod: ProdIndex(2),
             prod_len: 3,
+            rn_len: None,
             position: 3,
             follow: RefCell::new(Follow::new()),
         };
@@ -1690,10 +1754,11 @@ mod tests {
                 .add_item(LRItem::with_follow(
                     &grammar,
                     ProdIndex(1),
+                    None,
                     follow([grammar.stop_index]),
                 ));
 
-        lr_state.closure(&firsts);
+        lr_state.closure(&firsts, &None);
 
         let prods = [1, 4, 7, 8];
         let follow_sets = [

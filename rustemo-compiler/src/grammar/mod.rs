@@ -31,6 +31,7 @@ pub(crate) mod types;
 pub struct Grammar {
     pub imports: Imports,
     pub productions: ProdVec<Production>,
+
     pub terminals: TermVec<Terminal>,
     pub nonterminals: NonTermVec<NonTerminal>,
     pub nonterm_by_name: BTreeMap<String, SymbolIndex>,

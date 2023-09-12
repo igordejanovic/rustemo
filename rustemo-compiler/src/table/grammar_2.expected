@@ -8,6 +8,7 @@ StateVec(
                     LRItem {
                         prod: 0,
                         prod_len: 1,
+                        rn_len: None,
                         position: 0,
                         follow: RefCell {
                             value: {
@@ -18,6 +19,7 @@ StateVec(
                     LRItem {
                         prod: 1,
                         prod_len: 3,
+                        rn_len: None,
                         position: 0,
                         follow: RefCell {
                             value: {
@@ -29,6 +31,7 @@ StateVec(
                     LRItem {
                         prod: 2,
                         prod_len: 1,
+                        rn_len: None,
                         position: 0,
                         follow: RefCell {
                             value: {
@@ -40,6 +43,7 @@ StateVec(
                     LRItem {
                         prod: 3,
                         prod_len: 3,
+                        rn_len: None,
                         position: 0,
                         follow: RefCell {
                             value: {
@@ -52,6 +56,7 @@ StateVec(
                     LRItem {
                         prod: 4,
                         prod_len: 1,
+                        rn_len: None,
                         position: 0,
                         follow: RefCell {
                             value: {
@@ -64,6 +69,7 @@ StateVec(
                     LRItem {
                         prod: 5,
                         prod_len: 3,
+                        rn_len: None,
                         position: 0,
                         follow: RefCell {
                             value: {
@@ -76,6 +82,7 @@ StateVec(
                     LRItem {
                         prod: 6,
                         prod_len: 1,
+                        rn_len: None,
                         position: 0,
                         follow: RefCell {
                             value: {
@@ -137,6 +144,7 @@ StateVec(
                     LRItem {
                         prod: 5,
                         prod_len: 3,
+                        rn_len: None,
                         position: 1,
                         follow: RefCell {
                             value: {
@@ -150,6 +158,7 @@ StateVec(
                     LRItem {
                         prod: 1,
                         prod_len: 3,
+                        rn_len: None,
                         position: 0,
                         follow: RefCell {
                             value: {
@@ -161,6 +170,7 @@ StateVec(
                     LRItem {
                         prod: 2,
                         prod_len: 1,
+                        rn_len: None,
                         position: 0,
                         follow: RefCell {
                             value: {
@@ -172,6 +182,7 @@ StateVec(
                     LRItem {
                         prod: 3,
                         prod_len: 3,
+                        rn_len: None,
                         position: 0,
                         follow: RefCell {
                             value: {
@@ -184,6 +195,7 @@ StateVec(
                     LRItem {
                         prod: 4,
                         prod_len: 1,
+                        rn_len: None,
                         position: 0,
                         follow: RefCell {
                             value: {
@@ -196,6 +208,7 @@ StateVec(
                     LRItem {
                         prod: 5,
                         prod_len: 3,
+                        rn_len: None,
                         position: 0,
                         follow: RefCell {
                             value: {
@@ -208,6 +221,7 @@ StateVec(
                     LRItem {
                         prod: 6,
                         prod_len: 1,
+                        rn_len: None,
                         position: 0,
                         follow: RefCell {
                             value: {
@@ -269,6 +283,7 @@ StateVec(
                     LRItem {
                         prod: 6,
                         prod_len: 1,
+                        rn_len: None,
                         position: 1,
                         follow: RefCell {
                             value: {
@@ -336,6 +351,7 @@ StateVec(
                     LRItem {
                         prod: 0,
                         prod_len: 1,
+                        rn_len: None,
                         position: 1,
                         follow: RefCell {
                             value: {
@@ -346,6 +362,7 @@ StateVec(
                     LRItem {
                         prod: 1,
                         prod_len: 3,
+                        rn_len: None,
                         position: 1,
                         follow: RefCell {
                             value: {
@@ -397,6 +414,7 @@ StateVec(
                     LRItem {
                         prod: 2,
                         prod_len: 1,
+                        rn_len: None,
                         position: 1,
                         follow: RefCell {
                             value: {
@@ -409,6 +427,7 @@ StateVec(
                     LRItem {
                         prod: 3,
                         prod_len: 3,
+                        rn_len: None,
                         position: 1,
                         follow: RefCell {
                             value: {
@@ -477,6 +496,7 @@ StateVec(
                     LRItem {
                         prod: 4,
                         prod_len: 1,
+                        rn_len: None,
                         position: 1,
                         follow: RefCell {
                             value: {
@@ -544,6 +564,7 @@ StateVec(
                     LRItem {
                         prod: 5,
                         prod_len: 3,
+                        rn_len: None,
                         position: 2,
                         follow: RefCell {
                             value: {
@@ -557,6 +578,7 @@ StateVec(
                     LRItem {
                         prod: 1,
                         prod_len: 3,
+                        rn_len: None,
                         position: 1,
                         follow: RefCell {
                             value: {
@@ -611,6 +633,7 @@ StateVec(
                     LRItem {
                         prod: 1,
                         prod_len: 3,
+                        rn_len: None,
                         position: 2,
                         follow: RefCell {
                             value: {
@@ -623,6 +646,7 @@ StateVec(
                     LRItem {
                         prod: 3,
                         prod_len: 3,
+                        rn_len: None,
                         position: 0,
                         follow: RefCell {
                             value: {
@@ -636,6 +660,7 @@ StateVec(
                     LRItem {
                         prod: 4,
                         prod_len: 1,
+                        rn_len: None,
                         position: 0,
                         follow: RefCell {
                             value: {
@@ -649,6 +674,7 @@ StateVec(
                     LRItem {
                         prod: 5,
                         prod_len: 3,
+                        rn_len: None,
                         position: 0,
                         follow: RefCell {
                             value: {
@@ -662,6 +688,7 @@ StateVec(
                     LRItem {
                         prod: 6,
                         prod_len: 1,
+                        rn_len: None,
                         position: 0,
                         follow: RefCell {
                             value: {
@@ -722,6 +749,7 @@ StateVec(
                     LRItem {
                         prod: 3,
                         prod_len: 3,
+                        rn_len: None,
                         position: 2,
                         follow: RefCell {
                             value: {
@@ -735,6 +763,7 @@ StateVec(
                     LRItem {
                         prod: 5,
                         prod_len: 3,
+                        rn_len: None,
                         position: 0,
                         follow: RefCell {
                             value: {
@@ -748,6 +777,7 @@ StateVec(
                     LRItem {
                         prod: 6,
                         prod_len: 1,
+                        rn_len: None,
                         position: 0,
                         follow: RefCell {
                             value: {
@@ -806,6 +836,7 @@ StateVec(
                     LRItem {
                         prod: 5,
                         prod_len: 3,
+                        rn_len: None,
                         position: 3,
                         follow: RefCell {
                             value: {
@@ -873,6 +904,7 @@ StateVec(
                     LRItem {
                         prod: 1,
                         prod_len: 3,
+                        rn_len: None,
                         position: 3,
                         follow: RefCell {
                             value: {
@@ -885,6 +917,7 @@ StateVec(
                     LRItem {
                         prod: 3,
                         prod_len: 3,
+                        rn_len: None,
                         position: 1,
                         follow: RefCell {
                             value: {
@@ -953,6 +986,7 @@ StateVec(
                     LRItem {
                         prod: 3,
                         prod_len: 3,
+                        rn_len: None,
                         position: 3,
                         follow: RefCell {
                             value: {

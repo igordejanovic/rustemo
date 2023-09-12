@@ -161,8 +161,15 @@ impl Settings {
         self
     }
 
-    /// LR algorithm to use, currently only LR is implemented.
+    /// LR algorithm to use
     pub fn parser_algo(mut self, parser_algo: ParserAlgo) -> Self {
+        if let ParserAlgo::GLR = parser_algo {
+            // For GLR we are using RN tables
+            self.table_type = TableType::LALR_RN;
+            // For GLR we should not favour shifts at all
+            self.prefer_shifts = false;
+            self.prefer_shifts_over_empty = false;
+        }
         self.parser_algo = parser_algo;
         self
     }
