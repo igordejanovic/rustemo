@@ -5,7 +5,7 @@ use crate::{
 
 #[test]
 fn symbols_type_deduction() {
-    let grammar: Grammar = r#"
+    let grammar: Grammar = r"
             A: myb=B c=C {MyKind}| B c=C | D {MyD}
              | Num | Recursive | OneOrMoreRecursive;
             B: C | EMPTY;
@@ -71,7 +71,7 @@ fn symbols_type_deduction() {
             Ta: 'a';
             Tb: 'b';
             Tc: 'c';
-        "#
+        "
     .parse()
     .unwrap();
 

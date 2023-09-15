@@ -1597,7 +1597,7 @@ mod tests {
         assert_eq!(per_next_symbol.len(), 4);
         assert_eq!(
             per_next_symbol.keys().cloned().collect::<Vec<_>>(),
-            vec![1, 2, 3, 5]
+            [1, 2, 3, 5]
                 .iter()
                 .map(|v| SymbolIndex(*v))
                 .collect::<Vec<_>>()
