@@ -76,6 +76,14 @@ fn main() {
             "glr/special/nondeterministic_palindromes",
             Box::new(|s| s.parser_algo(ParserAlgo::GLR)),
         ),
+        (
+            "glr/special/cyclic_1",
+            Box::new(|s| s.parser_algo(ParserAlgo::GLR).print_table(true)),
+        ),
+        (
+            "glr/special/cyclic_2",
+            Box::new(|s| s.parser_algo(ParserAlgo::GLR).print_table(true)),
+        ),
     ];
 
     for (test, config) in tests {

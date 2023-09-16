@@ -1,0 +1,6 @@
+// Grammar G2 from the paper: "GLR Parsing for e-Grammers" by Rahman Nozohoor-Farshi
+// Classic Tomita's GLR algorithm doesn't terminate with this grammar.
+S: S S | Ts | EMPTY;
+
+terminals
+Ts: 'x';

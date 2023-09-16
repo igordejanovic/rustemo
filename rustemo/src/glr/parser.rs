@@ -666,6 +666,7 @@ where
                 return paths;
             }
             ReductionStart::Edge(start_edge) => {
+                debug_assert!(reduction.length != 0);
                 log!(
                     "{}",
                     format!(

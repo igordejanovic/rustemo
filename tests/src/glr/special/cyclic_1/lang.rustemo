@@ -1,0 +1,6 @@
+// Cyclic grammar G1 from the paper: "GLR Parsing for e-Grammers" by Rahman Nozohoor-Farshi
+S: A;
+A: S | Ta;
+
+terminals
+Ta: 'x';
