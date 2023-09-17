@@ -4,7 +4,7 @@ use quote::format_ident;
 use rustemo::parser::Parser;
 use std::{
     iter::repeat,
-    path::{Path, PathBuf},
+    path::{Path, PathBuf}, fs,
 };
 use syn::{parse_quote, Ident};
 
@@ -68,6 +68,9 @@ pub fn generate_parser(
     }
 
     let table = LRTable::new(&grammar, settings)?;
+    if settings.dot {
+        fs::write(grammar_path.with_extension("dot"), table.to_dot())?;
+    }
 
     if let ParserAlgo::LR = settings.parser_algo {
         let conflicts = table.get_conflicts();

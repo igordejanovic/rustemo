@@ -51,6 +51,7 @@ pub struct Settings {
     pub(crate) skip_ws: bool,
 
     pub(crate) force: bool,
+    pub(crate) dot: bool,
 }
 
 impl Default for Settings {
@@ -81,6 +82,7 @@ impl Default for Settings {
             skip_ws: true,
             force: false,
             exclude: vec![],
+            dot: false,
         }
     }
 }
@@ -223,6 +225,13 @@ impl Settings {
     /// Should actions file be recreated if exist. Use with care.
     pub fn force(mut self, force: bool) -> Self {
         self.force = force;
+        self
+    }
+
+    /// If this is set a .dot file with automata visualization will be produced during
+    /// compiling.
+    pub fn dot(mut self, dot: bool) -> Self {
+        self.dot = dot;
         self
     }
 

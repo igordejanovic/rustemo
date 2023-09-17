@@ -180,6 +180,10 @@ impl<'g> LRState<'g> {
         self.items.iter().filter(|i| i.is_kernel()).collect()
     }
 
+    fn nonkernel_items(&self) -> Vec<&LRItem> {
+        self.items.iter().filter(|i| !i.is_kernel()).collect()
+    }
+
     /// Closes over LR items of the LRState.
     ///
     /// Starting from the given items (usually just kernel items), for each
@@ -1105,6 +1109,121 @@ impl<'g, 's> LRTable<'g, 's> {
             .map(|state| state.actions.iter().filter(|a| !a.is_empty()).count())
             .max()
             .unwrap()
+    }
+
+    pub fn to_dot(&self) -> String {
+        let mut dot = String::from(
+            r#"
+            digraph grammar {
+            rankdir=LR
+            fontname = "Bitstream Vera Sans"
+            fontsize = 8
+            node[
+                shape=record,
+                style=filled,
+                fillcolor=aliceblue
+            ]
+            nodesep = 0.3
+            edge[dir=black,arrowtail=empty]
+
+        "#,
+        );
+
+        let dot_escape = |s: &String| {
+            s.replace('\n', r"\n")
+                .replace('\\', "\\\\")
+                .replace('"', r#"\""#)
+                .replace('|', r"\|")
+                .replace('{', r"\{")
+                .replace('}', r"\}")
+                .replace('>', r"\>")
+                .replace('<', r"\<")
+                .replace('?', r"\?")
+        };
+
+        for state in &self.states {
+            let mut kernel_items_str = String::new();
+            for item in state.kernel_items() {
+                kernel_items_str += &format!(
+                    "{}\\l",
+                    dot_escape(&item.to_string(self.grammar))
+                );
+            }
+
+            let nonkernel_items = state.nonkernel_items();
+            let mut nonkernel_items_str = if !nonkernel_items.is_empty() {
+                String::from("|")
+            } else {
+                String::new()
+            };
+
+            for item in nonkernel_items {
+                nonkernel_items_str += &format!(
+                    "{}\\l",
+                    dot_escape(&item.to_string(self.grammar))
+                );
+            }
+
+            let mut reductions: Vec<String> = vec![];
+            let mut term_reduction_prods: Vec<String> = vec![];
+            for term in &self.grammar.terminals {
+                for action in &state.actions[term.idx] {
+                    match action {
+                        Action::Shift(target_state_idx) => {
+                            dot += &format!(
+                                "{} -> {} [label=\"SHIFT:{}\"]\n",
+                                state.idx, target_state_idx, term.name
+                            )
+                        }
+                        Action::Reduce(prod_idx, _) => {
+                            term_reduction_prods.push(prod_idx.to_string())
+                        }
+                        Action::Accept => {
+                            dot += &format!(
+                                "{} -> ACCEPT [label=\"{}\"]\n",
+                                state.idx, term.name
+                            )
+                        }
+                    }
+                }
+                if !term_reduction_prods.is_empty() {
+                    let r = term_reduction_prods
+                        .iter()
+                        .fold(String::new(), |a, b| a + "," + b);
+                    reductions.push(if term_reduction_prods.len() > 1 {
+                        format!("{}:[{}]", dot_escape(&term.name), r)
+                    } else {
+                        format!("{}:{}", dot_escape(&term.name), r)
+                    });
+                }
+            }
+            let reductions = if !reductions.is_empty() {
+                format!("|Reductions:\\l{}", reductions.join(", "))
+            } else {
+                String::new()
+            };
+
+            dot += &format!(
+                "{} [label=\"{}|{}{}{}\"]\n",
+                state.idx,
+                dot_escape(&format!("{}:{}", state.idx, state.symbol)),
+                kernel_items_str,
+                nonkernel_items_str,
+                reductions
+            );
+
+            // GOTOs
+            for nonterm in &self.grammar.nonterminals {
+                if let Some(target_state_idx) = state.gotos[nonterm.idx] {
+                    dot += &format!(
+                        "{} -> {} [label=\"GOTO:{}\"]\n",
+                        state.idx, target_state_idx, nonterm.name
+                    )
+                }
+            }
+        }
+        dot += "\n}\n";
+        dot
     }
 }
 

@@ -19,6 +19,10 @@ struct Cli {
     #[clap(short, long, action)]
     force: bool,
 
+    /// Create DOT automata visualization
+    #[clap(long, action)]
+    dot: bool,
+
     /// Do not generate actions
     #[clap(short, long, action)]
     noactions: bool,
@@ -89,6 +93,7 @@ fn main() {
 
     let mut settings = Settings::new()
         .force(cli.force)
+        .dot(cli.dot)
         .actions(!cli.noactions)
         .exclude(cli.exclude)
         .prefer_shifts(cli.prefer_shifts)
