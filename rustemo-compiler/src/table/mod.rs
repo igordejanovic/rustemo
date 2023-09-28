@@ -428,7 +428,8 @@ impl LRItem {
             .collect::<Vec<_>>();
         rhs.insert(self.position, ".".into());
         format!(
-            "{}: {}    {{{}}}",
+            "{}: {} = {}    {{{}}}",
+            prod.idx,
             grammar
                 .symbol_name(grammar.nonterm_to_symbol_index(prod.nonterminal)),
             rhs.join(" "),
@@ -760,7 +761,7 @@ impl<'g, 's> LRTable<'g, 's> {
                     continue;
                 }
 
-                let new_reduce = Action::Reduce(item.prod, item.prod_len);
+                let new_reduce = Action::Reduce(item.prod, item.position);
                 for follow_symbol in item.follow.borrow().iter() {
                     let follow_term =
                         self.grammar.symbol_to_term(*follow_symbol);
@@ -1165,8 +1166,8 @@ impl<'g, 's> LRTable<'g, 's> {
             }
 
             let mut reductions: Vec<String> = vec![];
-            let mut term_reduction_prods: Vec<String> = vec![];
             for term in &self.grammar.terminals {
+                let mut term_reduction_prods: Vec<String> = vec![];
                 for action in &state.actions[term.idx] {
                     match action {
                         Action::Shift(target_state_idx) => {
@@ -1175,8 +1176,9 @@ impl<'g, 's> LRTable<'g, 's> {
                                 state.idx, target_state_idx, term.name
                             )
                         }
-                        Action::Reduce(prod_idx, _) => {
-                            term_reduction_prods.push(prod_idx.to_string())
+                        Action::Reduce(prod_idx, len) => {
+                            term_reduction_prods
+                                .push(format!("({},{})", prod_idx, len));
                         }
                         Action::Accept => {
                             dot += &format!(
@@ -1187,9 +1189,8 @@ impl<'g, 's> LRTable<'g, 's> {
                     }
                 }
                 if !term_reduction_prods.is_empty() {
-                    let r = term_reduction_prods
-                        .iter()
-                        .fold(String::new(), |a, b| a + "," + b);
+                    dbg!(&term_reduction_prods);
+                    let r = term_reduction_prods.join(", ");
                     reductions.push(if term_reduction_prods.len() > 1 {
                         format!("{}:[{}]", dot_escape(&term.name), r)
                     } else {
@@ -1206,7 +1207,11 @@ impl<'g, 's> LRTable<'g, 's> {
             dot += &format!(
                 "{} [label=\"{}|{}{}{}\"]\n",
                 state.idx,
-                dot_escape(&format!("{}:{}", state.idx, state.symbol)),
+                dot_escape(&format!(
+                    "{}:{}",
+                    state.idx,
+                    self.grammar.symbol_name(state.symbol)
+                )),
                 kernel_items_str,
                 nonkernel_items_str,
                 reductions
