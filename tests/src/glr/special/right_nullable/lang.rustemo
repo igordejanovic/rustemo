@@ -1,0 +1,8 @@
+// Grammar Г2 from paper: Scott, E., & Johnstone, A. (2006). Right nulled GLR parsers.
+// ACM Transactions on Programming Languages and Systems (TOPLAS), 28(4), 577-618.
+S: Ta S A | EMPTY;
+A: EMPTY;
+
+terminals
+
+Ta: 'a';

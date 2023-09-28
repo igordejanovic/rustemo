@@ -5,3 +5,5 @@ mod knuth_lr1;
 mod nondeterministic_palindromes;
 mod cyclic_1;
 mod cyclic_2;
+
+mod right_nullable;

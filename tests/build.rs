@@ -84,6 +84,10 @@ fn main() {
             "glr/special/cyclic_2",
             Box::new(|s| s.parser_algo(ParserAlgo::GLR).print_table(true)),
         ),
+        (
+            "glr/special/right_nullable",
+            Box::new(|s| s.parser_algo(ParserAlgo::GLR).print_table(true)),
+        ),
     ];
 
     for (test, config) in tests {
