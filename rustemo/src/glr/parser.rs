@@ -186,10 +186,11 @@ where
                     match *action {
                         Action::Reduce(prod, length) => {
                             log!(
-                                "\t{}: length = {}, production = {:?}",
+                                "\t{}: {:?}, head {}, len {}",
                                 "Register new reduction".green(),
-                                length,
-                                prod
+                                prod,
+                                head.index(),
+                                length
                             );
                             if length == 0 {
                                 pending_reductions.push_back(Reduction {
@@ -259,7 +260,7 @@ where
             } else {
                 // Find lookaheads
                 log!(
-                    "{}.",
+                    "\t{}.",
                     format!("Finding lookaheads for head {}", head_idx.index())
                         .green()
                 );
@@ -402,9 +403,14 @@ where
         );
         while let Some(reduction) = pending_reductions.pop_front() {
             let production = reduction.production;
+            log!(
+                "\n{}: {:?}, len = {}",
+                "Reducing by production".green(),
+                production,
+                reduction.length
+            );
             for path in self.find_reduction_paths(gss, &reduction) {
-                log!("{}: {:?}", "Reducing by production".green(), production);
-                log!("\tPath: {path}");
+                log!("\t{} {path}", "Reducing over path:".green());
                 let root_head = gss.head(path.root_head);
                 let start_head = gss.head(match reduction.start {
                     ReductionStart::Edge(e) => gss.start(e),
@@ -459,7 +465,14 @@ where
                         {
                             match action {
                                 Action::Reduce(prod, length) if length > 0 => {
-                                    log!("\tRegister EMPTY reduction for production {:?}", prod);
+                                    log!(
+                                        "\t{}: {:?}, head {}, len {}",
+                                        "Register new reduction".green(),
+                                        prod,
+                                        head.index(),
+                                        length
+                                    );
+                                    //log!("\t{} {:?}, len = {}", "Register reduction for production:".green(), prod, length);
                                     pending_reductions.push_back(Reduction {
                                         start: ReductionStart::Edge(edge),
                                         production: prod,
@@ -503,14 +516,20 @@ where
                             solution,
                         );
 
+                        log!(
+                            "\t{} {}.",
+                            "Preparing shifts/reduces for head".green(),
+                            new_head_idx.index()
+                        );
+
                         for &action in actions {
                             match action {
                                 Action::Reduce(production, length) => {
                                     log!(
-                                        "\t{}: length = {}, production = {:?}",
+                                        "\t\t{}: {:?}, len {}",
                                         "Register new reduction".green(),
-                                        length,
-                                        production
+                                        production,
+                                        length
                                     );
                                     pending_reductions.push_back(Reduction {
                                         start: ReductionStart::Edge(
@@ -524,7 +543,7 @@ where
                                 }
                                 Action::Shift(s) => {
                                     log!(
-                                        "\t{}",
+                                        "\t\t{}",
                                         format!(
                                             "Adding head {} to pending shifts.",
                                             new_head_idx.index()
@@ -535,7 +554,7 @@ where
                                 }
                                 Action::Accept => {
                                     log!(
-                                        "\t{}",
+                                        "\t\t{}",
                                         format!(
                                             "Accepting head {}.",
                                             new_head_idx.index()
@@ -654,11 +673,33 @@ where
         gss: &mut GssGraph<'i, I, S, P, TK>,
         reduction: &Reduction<P>,
     ) -> Vec<ReductionPath<'i, I, P, TK>> {
+        log!(
+            "\t{}",
+            format!(
+                "Finding reduction paths for length {} from head {}.",
+                reduction.length,
+                match reduction.start {
+                    ReductionStart::Node(head) => head.index(),
+                    ReductionStart::Edge(start_edge) => gss.start(start_edge).index()
+                }
+            )
+            .green()
+        );
         let mut paths = vec![];
         match reduction.start {
             ReductionStart::Node(head) => {
-                debug_assert!(reduction.length == 0);
-                log!("\n{}", "Reducing EMPTY for head {head:?}".green());
+                debug_assert!(
+                    reduction.length == 0,
+                    "Node based reductions must be EMPTY"
+                );
+                log!(
+                    "\t{}",
+                    format!(
+                        "Found EMPTY reduction path for head {}",
+                        head.index()
+                    )
+                    .green()
+                );
                 paths.push(ReductionPath {
                     parents: VecDeque::new(),
                     root_head: head,
@@ -666,15 +707,9 @@ where
                 return paths;
             }
             ReductionStart::Edge(start_edge) => {
-                debug_assert!(reduction.length != 0);
-                log!(
-                    "{}",
-                    format!(
-                        "Finding reduction paths for length {} from head {}.",
-                        reduction.length,
-                        gss.start(start_edge).index()
-                    )
-                    .green()
+                debug_assert!(
+                    reduction.length != 0,
+                    "Edge based reduction must not be EMPTY"
                 );
                 #[derive(Debug)]
                 struct PendingPath<'i, I: Input + ?Sized, P, TK: Copy> {
