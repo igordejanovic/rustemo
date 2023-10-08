@@ -1,0 +1,55 @@
+NonTermNode {
+    prod: E: E Mul E,
+    location: [1,0],
+    children: [
+        NonTermNode {
+            prod: E: E Plus E,
+            location: [1,0],
+            children: [
+                NonTermNode {
+                    prod: E: Num,
+                    location: [1,0],
+                    children: [
+                        TermNode {
+                            token: Num("\"1\"" [1,0-1,1]),
+                            layout: None,
+                        },
+                    ],
+                    layout: None,
+                },
+                TermNode {
+                    token: Plus("\"+\"" [1,2-1,3]),
+                    layout: None,
+                },
+                NonTermNode {
+                    prod: E: Num,
+                    location: [1,0],
+                    children: [
+                        TermNode {
+                            token: Num("\"4\"" [1,4-1,5]),
+                            layout: None,
+                        },
+                    ],
+                    layout: None,
+                },
+            ],
+            layout: None,
+        },
+        TermNode {
+            token: Mul("\"*\"" [1,6-1,7]),
+            layout: None,
+        },
+        NonTermNode {
+            prod: E: Num,
+            location: [1,0],
+            children: [
+                TermNode {
+                    token: Num("\"9\"" [1,8-1,9]),
+                    layout: None,
+                },
+            ],
+            layout: None,
+        },
+    ],
+    layout: None,
+}
