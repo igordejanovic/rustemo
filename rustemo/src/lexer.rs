@@ -176,7 +176,7 @@ where
             Self::skip(input, context);
         }
         log!(
-            "\t{} {:?}",
+            "  {} {:?}",
             "Trying recognizers:".green(),
             token_kinds.iter().flatten().collect::<Vec<_>>()
         );

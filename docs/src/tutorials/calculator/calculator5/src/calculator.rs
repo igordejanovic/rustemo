@@ -371,7 +371,7 @@ impl<'i> lexer::TokenRecognizer<'i> for TokenRecognizer {
         match &self {
             #[allow(unused_variables)]
             TokenRecognizer(token_kind, Recognizer::StrMatch(s)) => {
-                logn!("{} {:?} -- ", "\tRecognizing".green(), token_kind);
+                logn!("{} {:?} -- ", "    Recognizing".green(), token_kind);
                 if input.starts_with(s) {
                     log!("{}", "recognized".bold().green());
                     Some(s)
@@ -382,7 +382,7 @@ impl<'i> lexer::TokenRecognizer<'i> for TokenRecognizer {
             }
             #[allow(unused_variables)]
             TokenRecognizer(token_kind, Recognizer::RegexMatch(r)) => {
-                logn!("{} {:?} -- ", "\tRecognizing".green(), token_kind);
+                logn!("{} {:?} -- ", "    Recognizing".green(), token_kind);
                 let match_str = r.find(input);
                 match match_str {
                     Some(x) => {
@@ -397,7 +397,7 @@ impl<'i> lexer::TokenRecognizer<'i> for TokenRecognizer {
                 }
             }
             TokenRecognizer(_, Recognizer::Stop) => {
-                logn!("{} STOP -- ", "\tRecognizing".green());
+                logn!("{} STOP -- ", "    Recognizing".green());
                 if input.is_empty() {
                     log!("{}", "recognized".bold().green());
                     Some("")

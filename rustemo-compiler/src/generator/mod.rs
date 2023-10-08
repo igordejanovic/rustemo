@@ -3,8 +3,9 @@ pub(crate) mod actions;
 use quote::format_ident;
 use rustemo::parser::Parser;
 use std::{
+    fs,
     iter::repeat,
-    path::{Path, PathBuf}, fs,
+    path::{Path, PathBuf},
 };
 use syn::{parse_quote, Ident};
 
@@ -886,7 +887,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                     match &self {
                         #[allow(unused_variables)]
                         TokenRecognizer(token_kind, Recognizer::StrMatch(s)) => {
-                            logn!("{} {:?} -- ", "\tRecognizing".green(), token_kind);
+                            logn!("{} {:?} -- ", "    Recognizing".green(), token_kind);
                             if input.starts_with(s){
                                 log!("{}", "recognized".bold().green());
                                 Some(s)
@@ -897,7 +898,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                         },
                         #[allow(unused_variables)]
                         TokenRecognizer(token_kind, Recognizer::RegexMatch(r)) => {
-                            logn!("{} {:?} -- ", "\tRecognizing".green(), token_kind);
+                            logn!("{} {:?} -- ", "    Recognizing".green(), token_kind);
                             let match_str = r.find(input);
                             match match_str {
                                 Some(x) => {
@@ -912,7 +913,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                             }
                         },
                         TokenRecognizer(_, Recognizer::Stop) => {
-                            logn!("{} STOP -- ","\tRecognizing".green());
+                            logn!("{} STOP -- ","    Recognizing".green());
                             if input.is_empty() {
                                 log!("{}", "recognized".bold().green());
                                 Some("")

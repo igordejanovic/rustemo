@@ -176,7 +176,7 @@ where
         for subfrontier in frontier.values() {
             for (&state, head) in subfrontier {
                 log!(
-                    "\t{}",
+                    "  {}",
                     format!("Processing head {}", head.index()).green()
                 );
                 for action in self.definition.actions(
@@ -186,10 +186,9 @@ where
                     match *action {
                         Action::Reduce(prod, length) => {
                             log!(
-                                "\t{}: {:?}, head {}, len {}",
+                                "    {}: {:?}, len {}",
                                 "Register new reduction".green(),
                                 prod,
-                                head.index(),
                                 length
                             );
                             if length == 0 {
@@ -210,7 +209,7 @@ where
                         }
                         Action::Shift(state) => {
                             log!(
-                                "\t{}",
+                                "    {}",
                                 format!(
                                     "Adding head {} to pending shifts.",
                                     head.index()
@@ -221,7 +220,7 @@ where
                         }
                         Action::Accept => {
                             log!(
-                                "\t{}",
+                                "    {}",
                                 format!("Accepting head {}.", head.index())
                                     .red()
                             );
@@ -260,7 +259,7 @@ where
             } else {
                 // Find lookaheads
                 log!(
-                    "\t{}.",
+                    "  {}.",
                     format!("Finding lookaheads for head {}", head_idx.index())
                         .green()
                 );
@@ -410,7 +409,7 @@ where
                 reduction.length
             );
             for path in self.find_reduction_paths(gss, &reduction) {
-                log!("\t{} {path}", "Reducing over path:".green());
+                log!("  {} {path}", "Reducing over path:".green());
                 let root_head = gss.head(path.root_head);
                 let start_head = gss.head(match reduction.start {
                     ReductionStart::Edge(e) => gss.start(e),
@@ -442,20 +441,30 @@ where
 
                 if let Some(head) = subfrontier.get(&next_state) {
                     log!(
-                        "\t{}",
+                        "    {}",
                         format!(
-                            "Head {} with the same state already exists. \
-                                  Ambiguity. \
-                                  Just register new solution.",
+                            "Head {} with the same state already exists.",
                             head.index()
                         )
                         .green()
                     );
+                    log!("    {}",
+                         format!(
+                             "Register new solution for {} -> {}.",
+                             head.index(),
+                             path.root_head.index()
+                         ).green()
+                    );
                     if let Some(edge) =
                         gss.add_solution(*head, path.root_head, solution)
                     {
-                        log!("\t{}", "Parent link created.".green());
-                        // Parent link was created it -> register all non-empty
+                        log!(
+                            "      {} {} -> {}.",
+                            "Created edge".green(),
+                            head.index(),
+                            path.root_head.index()
+                        );
+                        // Parent link was created -> register all non-empty
                         // reductions
                         for &action in self
                             .definition
@@ -466,13 +475,14 @@ where
                             match action {
                                 Action::Reduce(prod, length) if length > 0 => {
                                     log!(
-                                        "\t{}: {:?}, head {}, len {}",
+                                        "      {} {} -> {}: {:?}, len {}",
                                         "Register new reduction".green(),
-                                        prod,
                                         head.index(),
+                                        path.root_head.index(),
+                                        prod,
                                         length
                                     );
-                                    //log!("\t{} {:?}, len = {}", "Register reduction for production:".green(), prod, length);
+                                    //log!("  {} {:?}, len = {}", "Register reduction for production:".green(), prod, length);
                                     pending_reductions.push_back(Reduction {
                                         start: ReductionStart::Edge(edge),
                                         production: prod,
@@ -482,6 +492,13 @@ where
                                 _ => (),
                             }
                         }
+                    } else {
+                        log!("      {}",
+                             format!(
+                                 "Edge {} -> {} already exists. Not created.",
+                                 head.index(),
+                                 path.root_head.index()).green()
+                        );
                     }
                 } else {
                     // No head with this state. We shall create one only if
@@ -505,7 +522,7 @@ where
                         let new_head_idx = gss.add_head(new_head);
                         subfrontier.insert(next_state, new_head_idx);
                         log!(
-                            "\t{} {}: {}",
+                            "    {} {}: {}",
                             "Created head".green(),
                             new_head_idx.index(),
                             new_head_str
@@ -515,9 +532,15 @@ where
                             path.root_head,
                             solution,
                         );
+                        log!(
+                            "    {} {} -> {}.",
+                            "Created edge".green(),
+                            new_head_idx.index(),
+                            path.root_head.index()
+                        );
 
                         log!(
-                            "\t{} {}.",
+                            "    {} {}.",
                             "Preparing shifts/reduces for head".green(),
                             new_head_idx.index()
                         );
@@ -526,7 +549,7 @@ where
                             match action {
                                 Action::Reduce(production, length) => {
                                     log!(
-                                        "\t\t{}: {:?}, len {}",
+                                        "      {}: {:?}, len {}",
                                         "Register new reduction".green(),
                                         production,
                                         length
@@ -545,7 +568,7 @@ where
                                 }
                                 Action::Shift(s) => {
                                     log!(
-                                        "\t\t{}",
+                                        "      {}",
                                         format!(
                                             "Adding head {} to pending shifts.",
                                             new_head_idx.index()
@@ -556,7 +579,7 @@ where
                                 }
                                 Action::Accept => {
                                     log!(
-                                        "\t\t{}",
+                                        "      {}",
                                         format!(
                                             "Accepting head {}.",
                                             new_head_idx.index()
@@ -569,7 +592,7 @@ where
                             }
                         }
                     } else {
-                        log!("\tNo actions for reduced head. Not creating.");
+                        log!("    No actions for reduced head. Not creating.");
                     }
                 }
             }
@@ -613,7 +636,7 @@ where
             let shifted_head_idx = match frontier_base.get(&state) {
                 Some(&shifted_head) => {
                     log!(
-                        "\t{}",
+                        "  {}",
                         "Head already exists. Adding new edge.".green()
                     );
                     shifted_head
@@ -637,7 +660,7 @@ where
                     let new_head_str = format!("{new_head:?}");
                     let new_head_idx = gss.add_head(new_head);
                     log!(
-                        "\t{}: {new_head_str}",
+                        "  {}: {new_head_str}",
                         format!(
                             "Creating new shifted head {}",
                             new_head_idx.index()
@@ -676,7 +699,7 @@ where
         reduction: &Reduction<P>,
     ) -> Vec<ReductionPath<'i, I, P, TK>> {
         log!(
-            "\t{}",
+            "  {}",
             format!(
                 "Finding reduction paths for length {} from head {}.",
                 reduction.length,
@@ -696,7 +719,7 @@ where
                     "Node based reductions must be EMPTY"
                 );
                 log!(
-                    "\t{}",
+                    "  {}",
                     format!(
                         "Found EMPTY reduction path for head {}",
                         head.index()
@@ -746,14 +769,14 @@ where
                             parents: path.parents,
                             root_head: path.current_root,
                         };
-                        log!("\t{}: {path}", "Found reduction path".green());
+                        log!("  {}: {path}", "Found reduction path".green());
                         paths.push(path);
                     }
                 }
             }
         }
         log!(
-            "\t{}",
+            "  {}",
             format!("Reduction paths found: {}", paths.len()).green()
         );
         paths
