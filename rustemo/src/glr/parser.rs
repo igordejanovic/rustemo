@@ -532,14 +532,16 @@ where
                                         length
                                     );
                                     pending_reductions.push_back(Reduction {
-                                        start: ReductionStart::Edge(
-                                            edge.expect(
-                                                "Edge must be created in add_solution!",
-                                            ),
-                                        ),
+                                        start: if length > 0 {
+                                                    ReductionStart::Edge(
+                                                    edge.expect(
+                                                        "Edge must be created in add_solution!"))
+                                                } else {
+                                                    ReductionStart::Node(new_head_idx)
+                                                },
                                         production,
                                         length,
-                                    })
+                                        });
                                 }
                                 Action::Shift(s) => {
                                     log!(
@@ -680,7 +682,8 @@ where
                 reduction.length,
                 match reduction.start {
                     ReductionStart::Node(head) => head.index(),
-                    ReductionStart::Edge(start_edge) => gss.start(start_edge).index()
+                    ReductionStart::Edge(start_edge) =>
+                        gss.start(start_edge).index(),
                 }
             )
             .green()
