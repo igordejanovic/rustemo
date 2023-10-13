@@ -331,7 +331,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             .collect();
         ast.push(parse_quote! {
             #[allow(clippy::enum_variant_names)]
-            #[derive(Clone, Copy)]
+            #[derive(Clone, Copy, PartialEq)]
             pub enum ProdKind {
                 #(#prodkind_variants),*
             }

@@ -142,7 +142,7 @@ where
     S: State + Ord + Debug,
     D: ParserDefinition<S, P, TK, NTK>,
     TK: Copy + Default + PartialEq + Ord + Debug + 'i,
-    P: Copy + Debug + Into<NTK>,
+    P: Copy + Debug + Into<NTK> + PartialEq,
 {
     pub fn new(
         definition: &'static D,
@@ -185,13 +185,14 @@ where
                 ) {
                     match *action {
                         Action::Reduce(prod, length) => {
-                            log!(
-                                "    {}: {:?}, len {}",
-                                "Register new reduction".green(),
-                                prod,
-                                length
-                            );
                             if length == 0 {
+                                log!(
+                                    "    {} '{:?}' over head {} by len {}",
+                                    "Register new reduction".green(),
+                                    prod,
+                                    head.index(),
+                                    length
+                                );
                                 pending_reductions.push_back(Reduction {
                                     start: ReductionStart::Node(*head),
                                     production: prod,
@@ -199,6 +200,13 @@ where
                                 })
                             } else {
                                 for edge in gss.backedges(*head) {
+                                    log!(
+                                        "    {} '{:?}' over edge {} -> {} by len {}",
+                                        "Register new reduction".green(),
+                                        prod,
+                                        edge.source().index(), edge.target().index(),
+                                        length
+                                    );
                                     pending_reductions.push_back(Reduction {
                                         start: ReductionStart::Edge(edge.id()),
                                         production: prod,
@@ -402,119 +410,62 @@ where
         );
         while let Some(reduction) = pending_reductions.pop_front() {
             let production = reduction.production;
+            let start_head = match reduction.start {
+                ReductionStart::Edge(e) => gss.start(e),
+                ReductionStart::Node(n) => n,
+            };
             log!(
-                "\n{}: {:?}, len = {}",
+                "\n{} '{:?}' over {} by len {}",
                 "Reducing by production".green(),
                 production,
+                match reduction.start {
+                    ReductionStart::Edge(e) => format!(
+                        "edge {} -> {}",
+                        gss.start(e).index(),
+                        gss.end(e).index()
+                    ),
+                    ReductionStart::Node(n) => format!("head {}", n.index()),
+                },
                 reduction.length
             );
             for path in self.find_reduction_paths(gss, &reduction) {
                 log!("  {} {path}", "Reducing over path:".green());
-                let root_head = gss.head(path.root_head);
-                let start_head = gss.head(match reduction.start {
-                    ReductionStart::Edge(e) => gss.start(e),
-                    ReductionStart::Node(n) => n,
-                });
-                let start_position_before = start_head.position_before;
-                let start_location_pos_before = start_head.location_pos_before;
                 let token_kind_ahead =
-                    start_head.token_ahead().as_ref().unwrap().kind;
-                let root_state = root_head.state();
+                    gss.head(start_head).token_ahead().as_ref().unwrap().kind;
+                let root_state = gss.head(path.root_head).state();
                 let next_state =
                     self.definition.goto(root_state, production.into());
 
-                let solution = Rc::new(SPPFTree::NonTerm {
-                    prod: production,
-                    data: TreeData {
-                        range: Range {
-                            start: root_head.position_ahead,
-                            end: start_position_before,
-                        },
-                        location: Location {
-                            start: root_head.location_pos_ahead,
-                            end: Some(start_location_pos_before),
-                        },
-                        layout: root_head.layout_ahead(),
-                    },
-                    children: path.parents,
-                });
+                // Get all non-error actions
+                let actions = self
+                    .definition
+                    .actions(next_state, token_kind_ahead)
+                    .iter()
+                    .take_while(|a| !matches!(a, Action::Error))
+                    .collect::<Vec<_>>();
 
-                if let Some(head) = subfrontier.get(&next_state) {
-                    log!(
-                        "    {}",
-                        format!(
-                            "Head {} with the same state already exists.",
-                            head.index()
-                        )
-                        .green()
-                    );
-                    log!("    {}",
-                         format!(
-                             "Register new solution for {} -> {}.",
-                             head.index(),
-                             path.root_head.index()
-                         ).green()
-                    );
-                    if let Some(edge) =
-                        gss.add_solution(*head, path.root_head, solution)
+                if actions.is_empty() {
+                    log!("    No actions for new state {:?} and lookahead {:?}. Skipping.",
+                         next_state, token_kind_ahead);
+                } else {
+                    // Find a head with the same state or create new if it doesn't exist
+                    let mut head_created = false;
+                    let head = if let Some(head) = subfrontier.get(&next_state)
                     {
                         log!(
-                            "      {} {} -> {}.",
-                            "Created edge".green(),
-                            head.index(),
-                            path.root_head.index()
+                            "    {}",
+                            format!(
+                                "Head {} with the same state already exists.",
+                                head.index()
+                            )
+                            .green()
                         );
-                        // Parent link was created -> register all non-empty
-                        // reductions
-                        for &action in self
-                            .definition
-                            .actions(next_state, token_kind_ahead)
-                            .iter()
-                            .take_while(|a| !matches!(a, Action::Error))
-                        {
-                            match action {
-                                Action::Reduce(prod, length) if length > 0 => {
-                                    log!(
-                                        "      {} {} -> {}: {:?}, len {}",
-                                        "Register new reduction".green(),
-                                        head.index(),
-                                        path.root_head.index(),
-                                        prod,
-                                        length
-                                    );
-                                    //log!("  {} {:?}, len = {}", "Register reduction for production:".green(), prod, length);
-                                    pending_reductions.push_back(Reduction {
-                                        start: ReductionStart::Edge(edge),
-                                        production: prod,
-                                        length,
-                                    })
-                                }
-                                _ => (),
-                            }
-                        }
+                        *head
                     } else {
-                        log!("      {}",
-                             format!(
-                                 "Edge {} -> {} already exists. Not created.",
-                                 head.index(),
-                                 path.root_head.index()).green()
-                        );
-                    }
-                } else {
-                    // No head with this state. We shall create one only if
-                    // there is at least one action for the head. If not, we
-                    // shall just report that.
-                    let actions = self
-                        .definition
-                        .actions(next_state, token_kind_ahead)
-                        .iter()
-                        .take_while(|a| !matches!(a, Action::Error))
-                        .collect::<Vec<_>>();
-                    // No head with this state. Create one, create edge and
-                    // register shifts and reductions.
-                    if !actions.is_empty() {
-                        let new_head = start_head.with_tok_state(
-                            start_head.token_ahead().cloned().unwrap(),
+                        // Create new head
+                        let shead = gss.head(start_head);
+                        let new_head = shead.with_tok_state(
+                            shead.token_ahead().cloned().unwrap(),
                             next_state,
                         );
                         #[cfg(debug_assertions)]
@@ -527,72 +478,185 @@ where
                             new_head_idx.index(),
                             new_head_str
                         );
-                        let edge = gss.add_solution(
-                            new_head_idx,
-                            path.root_head,
-                            solution,
-                        );
+                        head_created = true;
+                        new_head_idx
+                    };
+
+                    // Find an edge between the head and the root_head or create new
+                    // if it doesn't exist
+                    let mut edge_created = false;
+                    let edge = if let Some(edge) =
+                        gss.edge_between(head, path.root_head)
+                    {
                         log!(
-                            "    {} {} -> {}.",
+                            "      {}",
+                            format!(
+                                "Edge {} -> {} already exists. Not created.",
+                                head.index(),
+                                path.root_head.index()
+                            )
+                            .green()
+                        );
+                        edge
+                    } else {
+                        // Create new edge
+                        log!(
+                            "      {} {} -> {}.",
                             "Created edge".green(),
-                            new_head_idx.index(),
+                            head.index(),
                             path.root_head.index()
                         );
+                        edge_created = true;
+                        gss.add_parent(
+                            head,
+                            path.root_head,
+                            Rc::new(Parent::new(path.root_head, head, vec![])),
+                        )
+                    };
 
-                        log!(
-                            "    {} {}.",
-                            "Preparing shifts/reduces for head".green(),
-                            new_head_idx.index()
+                    let is_new_solution = head_created || edge_created
+                        // It is not new solution if we already have a solution
+                        // based on the same production
+                        || gss.parent(edge).possibilities.borrow().iter().all(
+                            |t| match **t {
+                                SPPFTree::Term { .. } => false,
+                                SPPFTree::NonTerm { prod, ref children, ..} => {
+                                    prod != production || (path.parents.len() == children.borrow().len())
+                                }
+                            },
                         );
 
+                    if !is_new_solution {
+                        log!(
+                            "    {}",
+                            format!(
+                                "Solution {} -> {} based on production '{:?}' exists. Extending right-nulled children",
+                                head.index(),
+                                path.root_head.index(),
+                                production
+                            )
+                            .green()
+                        );
+                        // Replace children for this solution
+                        for possibility in gss
+                            .parent(edge)
+                            .possibilities
+                            .borrow_mut()
+                            .iter_mut()
+                        {
+                            if let SPPFTree::NonTerm {
+                                prod, children, ..
+                            } = &**possibility
+                            {
+                                if *prod == production
+                                    && (path.parents.len()
+                                        > children.borrow().len())
+                                {
+                                    *children.borrow_mut() = path.parents;
+                                    break;
+                                }
+                            }
+                        }
+                    } else {
+                        log!(
+                            "    {}",
+                            format!(
+                                "Register new solution for {} -> {}.",
+                                head.index(),
+                                path.root_head.index()
+                            )
+                            .green()
+                        );
+
+                        let root_head = gss.head(path.root_head);
+                        let start_head = gss.head(start_head);
+                        let solution = Rc::new(SPPFTree::NonTerm {
+                            prod: production,
+                            data: TreeData {
+                                range: Range {
+                                    start: root_head.position_ahead,
+                                    end: start_head.position_before,
+                                },
+                                location: Location {
+                                    start: root_head.location_pos_ahead,
+                                    end: Some(start_head.location_pos_before),
+                                },
+                                layout: root_head.layout_ahead(),
+                            },
+                            children: RefCell::new(path.parents),
+                        });
+                        gss.parent(edge)
+                            .possibilities
+                            .borrow_mut()
+                            .push(solution);
+
+                        // Register actions
                         for &action in actions {
                             match action {
                                 Action::Reduce(production, length) => {
-                                    log!(
-                                        "      {}: {:?}, len {}",
-                                        "Register new reduction".green(),
-                                        production,
-                                        length
-                                    );
-                                    pending_reductions.push_back(Reduction {
-                                        start: if length > 0 {
-                                                    ReductionStart::Edge(
-                                                    edge.expect(
-                                                        "Edge must be created in add_solution!"))
-                                                } else {
-                                                    ReductionStart::Node(new_head_idx)
-                                                },
-                                        production,
-                                        length,
-                                        });
+                                    if (edge_created && length > 0) || head_created {
+                                        let start = if length > 0 {
+                                            ReductionStart::Edge(edge)
+                                        } else {
+                                            ReductionStart::Node(head)
+                                        };
+                                        log!(
+                                            "      {} '{:?}' {} by len {}",
+                                            "Register new reduction".green(),
+                                            production,
+                                            match start {
+                                                ReductionStart::Edge(e) =>
+                                                    format!(
+                                                        "over edge {} -> {}",
+                                                        gss.start(e).index(),
+                                                        gss.end(e).index()
+                                                    ),
+                                                ReductionStart::Node(n) =>
+                                                    format!(
+                                                        "over head {}",
+                                                        n.index()
+                                                    ),
+                                            },
+                                            length
+                                        );
+                                        pending_reductions.push_back(
+                                            Reduction {
+                                                start,
+                                                production,
+                                                length,
+                                            },
+                                        );
+                                    }
                                 }
                                 Action::Shift(s) => {
-                                    log!(
-                                        "      {}",
-                                        format!(
-                                            "Adding head {} to pending shifts.",
-                                            new_head_idx.index()
-                                        )
-                                        .green()
-                                    );
-                                    pending_shifts.push((new_head_idx, s))
+                                    if head_created {
+                                        log!(
+                                            "      {}",
+                                            format!(
+                                                "Adding head {} to pending shifts.",
+                                                head.index()
+                                            )
+                                            .green()
+                                        );
+                                        pending_shifts.push((head, s));
+                                    }
                                 }
                                 Action::Accept => {
-                                    log!(
-                                        "      {}",
-                                        format!(
-                                            "Accepting head {}.",
-                                            new_head_idx.index()
-                                        )
-                                        .red()
-                                    );
-                                    accepted_heads.push(new_head_idx)
+                                    if head_created {
+                                        log!(
+                                            "      {}",
+                                            format!(
+                                                "Accepting head {}.",
+                                                head.index()
+                                            )
+                                            .red()
+                                        );
+                                        accepted_heads.push(head)
+                                    }
                                 }
                                 Action::Error => panic!("Cannot happen!"),
                             }
                         }
-                    } else {
-                        log!("    No actions for reduced head. Not creating.");
                     }
                 }
             }
@@ -815,7 +879,7 @@ where
     I: Input + ?Sized + Debug,
     L: Lexer<'i, GssHead<'i, I, S, TK>, S, TK, Input = I>,
     S: State + Debug + Ord,
-    P: Copy + Debug + Into<NTK>,
+    P: Copy + Debug + Into<NTK> + PartialEq,
     TK: Copy + Debug + Ord + Default + 'i,
     D: ParserDefinition<S, P, TK, NTK>,
 {
@@ -900,6 +964,11 @@ where
         }
 
         let forest = self.create_forest(gss, accepted_heads);
+        log!(
+            "\n{}. {}",
+            "Finished".red(),
+            format!("{} solutions found.", forest.solutions()).green()
+        );
         Ok(forest)
     }
 

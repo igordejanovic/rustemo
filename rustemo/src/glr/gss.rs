@@ -345,7 +345,7 @@ pub enum SPPFTree<'i, I: Input + ?Sized, P, TK: Copy> {
         /// Child nodes determined by the production.
         /// References to Parent backlinks to support ambiguity as
         /// the parent links keeps all solutions along that back-path.
-        children: VecDeque<Rc<Parent<'i, I, P, TK>>>,
+        children: RefCell<VecDeque<Rc<Parent<'i, I, P, TK>>>>,
     },
 }
 
@@ -354,7 +354,7 @@ impl<'i, I: Input + ?Sized, P, TK: Copy> SPPFTree<'i, I, P, TK> {
         match self {
             SPPFTree::Term { .. } => 1,
             SPPFTree::NonTerm { children, .. } => {
-                children.iter().map(|p| p.solutions()).product()
+                children.borrow().iter().map(|p| p.solutions()).product()
             }
         }
     }
@@ -367,6 +367,7 @@ impl<'i, I: Input + ?Sized, P, TK: Copy> SPPFTree<'i, I, P, TK> {
         match self {
             SPPFTree::Term { .. } => 0,
             SPPFTree::NonTerm { children, .. } => children
+                .borrow()
                 .iter()
                 .map(|p| {
                     if visited.contains(p) {
@@ -530,8 +531,9 @@ impl<'i, I: Input + ?Sized, P, TK: Copy> Tree<'i, I, P, TK> {
                 // system. Basically, enumerating variations of children
                 // solutions.
                 let weights =
-                    children.iter().map(|c| c.solutions()).collect::<Vec<_>>();
+                    children.borrow().iter().map(|c| c.solutions()).collect::<Vec<_>>();
                 children
+                    .borrow()
                     .iter()
                     .enumerate()
                     .map(|(idx, child)| {

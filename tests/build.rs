@@ -86,7 +86,7 @@ fn main() {
         ),
         (
             "glr/special/right_nullable",
-            Box::new(|s| s.parser_algo(ParserAlgo::GLR).print_table(true)),
+            Box::new(|s| s.parser_algo(ParserAlgo::GLR)),
         ),
     ];
 
