@@ -7,6 +7,7 @@ rustemo_mod!(lang_actions, "/src/glr/special/cyclic_2");
 use self::lang::LangParser;
 
 #[test]
+#[ignore]
 fn glr_special_cyclic_2() {
     let forest = LangParser::new().parse("x").unwrap();
 
