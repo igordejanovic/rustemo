@@ -41,7 +41,7 @@ impl From<TokenKind> for usize {
     }
 }
 #[allow(clippy::enum_variant_names)]
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 pub enum ProdKind {
     ExpressionP1,
 }
