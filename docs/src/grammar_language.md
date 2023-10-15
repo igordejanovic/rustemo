@@ -370,16 +370,10 @@ is equivalent to:
 
 So using of `*` creates both `A0` and `A1` rules. Action attached to `A0`
 returns a list of matched `a` and empty list if no match is found. Please note
-the [usage of `nops`](./disambiguation.md#nops-and-nopse). In case if
-`prefer_shift` strategy is used using `nops` will perform both `REDUCE` and
-`SHIFT` during GLR parsing in case what follows zero or more might be another
+the [usage of `nops`](./disambiguation.md#nops-and-nopse). In case
+`prefer_shift` strategy is used, using `nops` will perform both `REDUCE` and
+`SHIFT` during GLR parsing if what follows zero or more might be another
 element in the sequence. This is most of the time what you need.
-```
-
-
-```admonish warning
-Previous statements will be valid when GLR parsing is implemented.
-`{nops}` needs to be implemented.
 ```
 
 

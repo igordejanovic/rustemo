@@ -9,6 +9,7 @@ rustemo_mod!(calc_actions, "/src/glr/build");
 use self::calc::CalcParser;
 use rustemo::parser::Parser;
 
+// ANCHOR: build
 #[test]
 fn glr_tree_build_default() {
     let forest = CalcParser::new().parse("1 + 4 * 9").unwrap();
@@ -27,6 +28,7 @@ fn glr_tree_build_default() {
         format!("{:#?}", forest.get_tree(1).unwrap().build(&mut builder))
     );
 }
+// ANCHOR_END: build
 
 #[test]
 fn glr_tree_build_generic() {

@@ -73,6 +73,7 @@ fn glr_calc_parse_ambiguities() {
     );
 }
 
+// ANCHOR: forest
 #[test]
 fn glr_extract_tree_from_forest() {
     let forest = CalcParser::new().parse("1 + 4 * 9 + 3 * 2 + 7").unwrap();
@@ -98,3 +99,4 @@ fn glr_extract_tree_from_forest() {
         format!("{:#?}", tree.children()[0].children())
     );
 }
+// ANCHOR_END: forest

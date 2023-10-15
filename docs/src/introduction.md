@@ -3,10 +3,6 @@
 Rustemo is a LR/GLR parser generator for Rust (a.k.a.
 [compiler-compiler](https://en.wikipedia.org/wiki/Compiler-compiler)).
 
-```admonish note
-Only LR is implemented at the moment. See the roadmap in the [README](https://github.com/igordejanovic/rustemo/#roadmap-tentative).
-```
-
 Basically, this kind of tools, given a formal grammar of the language, produce a
 program that can transform unstructured text (a sequence of characters, or more
 generally a sequence of tokens) to a structured (tree-like or graph-like) form

@@ -6,6 +6,7 @@
 - [Configuration](configuration.md)
 - [Components](components.md)
   - [Lexers](lexers.md)
+  - [Parsers](parsers.md)
   - [Builders](builders.md)
 - [CLI](cli.md)
 - [Handling errors](handling_errors/handling_errors.md)

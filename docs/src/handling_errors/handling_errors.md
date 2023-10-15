@@ -273,7 +273,7 @@ provide `message`, `file` and `location` inside the file.
 ```admonish todo
 1. Lexical ambiguities - when there can be recognized multiple tokens at the
    current position.
-2. Syntactic ambiguities - aplicable only to GLR - when multiple
+2. Syntactic ambiguities - applicable only to GLR - when multiple
    interpretation/trees of the input can be constructed.
    
 These are not errors per se so should be moved to some other chapter.

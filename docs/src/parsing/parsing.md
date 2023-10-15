@@ -51,8 +51,9 @@ by a table used during parsing to decide the action and transition to perform.
 Given a sequence of tokens, if machine starts in a start state and end-up in an
 accepting state, we say that the sequence of tokens (a sentence) belongs to the
 language recognized by the DFSA. A set of languages which can be recognized by
-DFSA are called deterministic [context-free languages - CFG](). NFSA can
-recognize a full set of CFG. GLR parsing is based on NFSA.
+DFSA are called deterministic [context-free languages -
+CFG](https://en.wikipedia.org/wiki/Context-free_language). NFSA can recognize a
+full set of CFG. GLR parsing is based on NFSA.
 
 Depending on the algorithm used to produce the FSA table we have different LR
 variants (SLR, LALR etc.). They only differ by the table they use, the parsing
@@ -276,15 +277,18 @@ Parser -> Builder: Get build product
 
 # GLR parsing
 GLR is a generalized version of LR which accepts a full set of CFG. If multiple
-actions can be executed the parser will split and investigate each possibility.
-If some of the path prove wrong it would be discarded (we call these local
-splits - local ambiguities) but if multiple paths lead to the successful parse
-then all interpretations are valid and instead of the parse tree we get the
-parse forest. In that case we say that our language is ambiguous.
+parse actions can be executed at the current parser state the parser will split
+and investigate each possibility. If some of the path prove wrong it would be
+discarded (we call these splits - local ambiguities) but if multiple paths lead
+to the successful parse then all interpretations are valid and instead of the
+parse tree we get the parse forest. In that case we say that our language is
+ambiguous.
 
 Due to the fact that automata handled by GLR can be non-deterministic we say
 that GLR is a form of non-deterministic parsing. See more in the [section on
 resolving LR
 conflicts](../handling_errors/handling_errors.md#resolving-lr-conflicts).
 
-GLR will be implemented in the future versions of Rustemo.
+Rustemo uses a particular implementation of the GLR called [Right-Nulled GLR](https://www.doi.org/10.1145/1146809.1146810)
+which is a correct and more efficient version of the [original GLR](https://dl.acm.org/doi/abs/10.5555/1623611.1623625).
+

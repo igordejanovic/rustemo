@@ -21,7 +21,7 @@ would be:
 ```
 
 ```admonish note
-Don't forget to add `rustmo-compiler` to the `build-dependencies` section of the
+Don't forget to add `rustеmo-compiler` to the `build-dependencies` section of the
 `Cargo.toml` file.
 ```
 
