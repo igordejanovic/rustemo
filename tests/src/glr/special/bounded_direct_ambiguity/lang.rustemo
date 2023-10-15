@@ -1,0 +1,16 @@
+// This grammar has bounded direct ambiguity of degree 2, in spite of being
+// unboundedly ambiguous as for every k we can find a string that will give at
+// least k solutions.
+//
+// The language is t^{m}xb^{n}, n>=m>=0
+//
+// Grammar G5 from: Nozohoor-Farshi, Rahman: "GLR Parsing for ε-Grammers"
+
+S: A S Tb | Tx;
+A: Tt | EMPTY;
+
+terminals
+
+Tb: "b";
+Tx: "x";
+Tt: "t";

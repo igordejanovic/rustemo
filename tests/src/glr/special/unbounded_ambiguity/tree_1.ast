@@ -1,0 +1,97 @@
+NonTermNode {
+    prod: S: M N,
+    location: [1,0],
+    children: [
+        NonTermNode {
+            prod: M: A M Tb,
+            location: [1,0],
+            children: [
+                NonTermNode {
+                    prod: A: ,
+                    location: [1,0],
+                    children: [],
+                    layout: None,
+                },
+                NonTermNode {
+                    prod: M: A M Tb,
+                    location: [1,0],
+                    children: [
+                        NonTermNode {
+                            prod: A: ,
+                            location: [1,0],
+                            children: [],
+                            layout: None,
+                        },
+                        NonTermNode {
+                            prod: M: A M Tb,
+                            location: [1,0],
+                            children: [
+                                NonTermNode {
+                                    prod: A: ,
+                                    location: [1,0],
+                                    children: [],
+                                    layout: None,
+                                },
+                                NonTermNode {
+                                    prod: M: A M Tb,
+                                    location: [1,0],
+                                    children: [
+                                        NonTermNode {
+                                            prod: A: ,
+                                            location: [1,0],
+                                            children: [],
+                                            layout: None,
+                                        },
+                                        NonTermNode {
+                                            prod: M: Tx,
+                                            location: [1,0],
+                                            children: [
+                                                TermNode {
+                                                    token: Tx("\"x\"" [1,0-1,1]),
+                                                    layout: None,
+                                                },
+                                            ],
+                                            layout: None,
+                                        },
+                                        TermNode {
+                                            token: Tb("\"b\"" [1,1-1,2]),
+                                            layout: None,
+                                        },
+                                    ],
+                                    layout: None,
+                                },
+                                TermNode {
+                                    token: Tb("\"b\"" [1,2-1,3]),
+                                    layout: None,
+                                },
+                            ],
+                            layout: None,
+                        },
+                        TermNode {
+                            token: Tb("\"b\"" [1,3-1,4]),
+                            layout: None,
+                        },
+                    ],
+                    layout: None,
+                },
+                TermNode {
+                    token: Tb("\"b\"" [1,4-1,5]),
+                    layout: None,
+                },
+            ],
+            layout: None,
+        },
+        NonTermNode {
+            prod: N: Tx,
+            location: [1,0],
+            children: [
+                TermNode {
+                    token: Tx("\"x\"" [1,5-1,6]),
+                    layout: None,
+                },
+            ],
+            layout: None,
+        },
+    ],
+    layout: None,
+}

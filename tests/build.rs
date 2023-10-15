@@ -88,6 +88,38 @@ fn main() {
             "glr/special/right_nullable",
             Box::new(|s| s.parser_algo(ParserAlgo::GLR)),
         ),
+        (
+            "glr/special/highly_ambiguous",
+            Box::new(|s| s.parser_algo(ParserAlgo::GLR)),
+        ),
+        (
+            "glr/special/reduce_enough_empty",
+            Box::new(|s| s.parser_algo(ParserAlgo::GLR)),
+        ),
+        (
+            "glr/special/reduce_enough_many_empty",
+            Box::new(|s| s.parser_algo(ParserAlgo::GLR)),
+        ),
+        (
+            "glr/special/bounded_ambiguity",
+            Box::new(|s| s.parser_algo(ParserAlgo::GLR)),
+        ),
+        (
+            "glr/special/bounded_direct_ambiguity",
+            Box::new(|s| s.parser_algo(ParserAlgo::GLR)),
+        ),
+        (
+            "glr/special/unbounded_ambiguity",
+            Box::new(|s| s.parser_algo(ParserAlgo::GLR)),
+        ),
+        (
+            "glr/special/farshi_g7",
+            Box::new(|s| s.parser_algo(ParserAlgo::GLR)),
+        ),
+        (
+            "glr/special/farshi_g8",
+            Box::new(|s| s.parser_algo(ParserAlgo::GLR)),
+        ),
     ];
 
     for (test, config) in tests {

@@ -1,0 +1,12 @@
+// This is another interesting ambiguous grammar.
+//
+// Grammar G8 from: Nozohoor-Farshi, Rahman: "GLR Parsing for ε-Grammers"
+
+S: Tx | B S Tb | A S Tb;
+B: A A;
+A: EMPTY;
+
+terminals
+
+Tx: "x";
+Tb: "b";

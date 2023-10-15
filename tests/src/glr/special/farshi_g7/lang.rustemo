@@ -1,0 +1,12 @@
+// Grammar G7 from: Nozohoor-Farshi, Rahman: "GLR Parsing for ε-Grammers"
+
+S: Ta S Ta | B S Tb | C S Tc | Tx;
+B: Ta;
+C: Ta;
+
+terminals
+
+Ta: "a";
+Tb: "b";
+Tc: "c";
+Tx: "x";

@@ -1,0 +1,9 @@
+// This grammar has both Shift/Reduce and Reduce/Reduce conflicts and
+// thus can't be parsed by a deterministic LR parsing.
+// Shift/Reduce can be resolved by prefer_shifts strategy.
+
+S: Tb | S S | S S S;
+
+terminals
+
+Tb: "b";

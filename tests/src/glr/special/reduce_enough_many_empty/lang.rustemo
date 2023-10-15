@@ -1,0 +1,12 @@
+// This is an extension of the grammar "reduce_enough_empty" where parser must reduce
+// enough A B pairs to succeed.
+//
+// The language is the same: xb^n, n>=0
+
+S: A B S Tb | Tx;
+A: EMPTY;
+B: EMPTY;
+
+terminals
+Tb: "b";
+Tx: "x";

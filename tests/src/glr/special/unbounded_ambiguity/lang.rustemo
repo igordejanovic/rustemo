@@ -1,0 +1,13 @@
+// This grammar has unbounded ambiguity.
+//
+// Grammar G6 from: Nozohoor-Farshi, Rahman: "GLR Parsing for ε-Grammers"
+
+S: M N;
+M: A M Tb | Tx;
+N: Tb N A | Tx;
+A: EMPTY;
+
+terminals
+
+Tb: "b";
+Tx: "x";

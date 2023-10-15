@@ -1,0 +1,15 @@
+// This grammar has bounded ambiguity.
+//
+// The language is: xb^n, n>=0 but each valid sentence will
+// always have two derivations.
+//
+// Grammar G4 from: Nozohoor-Farshi, Rahman: "GLR Parsing for ε-Grammers"
+
+S: M | N;
+M: A M Tb | Tx;
+N: A N Tb | Tx;
+A: EMPTY;
+
+terminals
+Tb: "b";
+Tx: "x";
