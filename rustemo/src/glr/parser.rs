@@ -594,7 +594,9 @@ where
                         for &action in actions {
                             match action {
                                 Action::Reduce(production, length) => {
-                                    if (edge_created && length > 0) || head_created {
+                                    if (edge_created && length > 0)
+                                        || head_created
+                                    {
                                         let start = if length > 0 {
                                             ReductionStart::Edge(edge)
                                         } else {

@@ -530,8 +530,11 @@ impl<'i, I: Input + ?Sized, P, TK: Copy> Tree<'i, I, P, TK> {
                 // Calculate counter division based on weighted numbering
                 // system. Basically, enumerating variations of children
                 // solutions.
-                let weights =
-                    children.borrow().iter().map(|c| c.solutions()).collect::<Vec<_>>();
+                let weights = children
+                    .borrow()
+                    .iter()
+                    .map(|c| c.solutions())
+                    .collect::<Vec<_>>();
                 children
                     .borrow()
                     .iter()

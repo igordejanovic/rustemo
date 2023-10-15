@@ -1,6 +1,6 @@
 use std::borrow::BorrowMut;
 
-use rustemo::{lr::builder::TreeBuilder, rustemo_mod, glr::gss::GssHead};
+use rustemo::{glr::gss::GssHead, lr::builder::TreeBuilder, rustemo_mod};
 use rustemo_compiler::output_cmp;
 
 rustemo_mod!(calc, "/src/glr/build");
@@ -67,9 +67,7 @@ fn glr_tree_build_generic() {
                 str,
                 calc::State,
                 calc::TokenKind,
-            >, calc::State>(
-                &mut builder
-            )
+            >, calc::State>(&mut builder)
         )
     );
 }

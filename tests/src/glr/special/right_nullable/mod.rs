@@ -1,5 +1,5 @@
-use rustemo::{lr::builder::TreeBuilder, rustemo_mod, glr::gss::GssHead};
 use rustemo::parser::Parser;
+use rustemo::{glr::gss::GssHead, lr::builder::TreeBuilder, rustemo_mod};
 use rustemo_compiler::output_cmp;
 
 rustemo_mod!(lang, "/src/glr/special/right_nullable");
@@ -15,17 +15,17 @@ fn glr_special_right_nullable_g2() {
         let mut builder = TreeBuilder::new();
         output_cmp!(
             &format!("src/glr/special/right_nullable/tree_{}.ast", i),
-            format!("{:#?}", tree.unwrap().build::<TreeBuilder<
-                '_,
-                str,
-                lang::ProdKind,
-                lang::TokenKind,
-            >, GssHead<
-                '_,
-                str,
-                lang::State,
-                lang::TokenKind,
-            >, lang::State>(&mut builder))
+            format!(
+                "{:#?}",
+                tree.unwrap().build::<TreeBuilder<
+                    '_,
+                    str,
+                    lang::ProdKind,
+                    lang::TokenKind,
+                >, GssHead<'_, str, lang::State, lang::TokenKind>, lang::State>(
+                    &mut builder
+                )
+            )
         );
     })
 }
