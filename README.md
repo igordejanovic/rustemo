@@ -7,11 +7,11 @@
 [latest version]: https://img.shields.io/crates/v/rustemo.svg
 [crates.io]: https://crates.io/crates/rustemo
 
-Rustemo is a LR/GLR parser generator for Rust (currently only LR).
+Rustemo is a LR/GLR parser generator for Rust.
 
 ---
 
-**Status:** In early phase. Fairly complete feature set for the initial release.
+**Status:** Fairly complete feature set for the initial release.
 Not yet optimized for speed so don't expect blazing performance.
 
 Feedback is welcome!
@@ -107,11 +107,15 @@ Be sure to check [Rustemo book](https://igordejanovic.github.io/rustemo/)!
 - [x] First release to crates.io!
 
 ### v0.2.0
-- [ ] GLR parsing based on Right-Nulled GLR algorithm (RNGLR).
+- [x] GLR parsing based on Right-Nulled GLR algorithm (RNGLR).
   - [x] Base Tomita's algorithm. Shared packed parse forest.
   - [x] Lazy tree extraction from forest.
   - [x] Calling arbitrary builder over extracted tree.
-  - [ ] Support for EMPTY productions through RN table entries.
+  - [x] Support for EMPTY productions through RN table entries (RNGLR algorithm).
+- [ ] GLR docs
+- [ ] Release to crates.io
+  
+### v0.3.0
 - [ ] Greedy repetitions.
 - [ ] Zero copy for built-in builders.
 - [ ] Parenthesized groups. Still not sure if this is a good thing to have.
