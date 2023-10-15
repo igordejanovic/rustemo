@@ -64,7 +64,7 @@ macro_rules! grammar_elem {
 
         impl PartialOrd for $name {
             fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-                self.idx.partial_cmp(&other.idx)
+                Some(self.cmp(other))
             }
         }
 
