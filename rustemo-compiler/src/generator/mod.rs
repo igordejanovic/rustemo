@@ -229,19 +229,19 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             imports.extend::<Vec<syn::Stmt>>(parse_quote! {
                 use regex::Regex;
                 use once_cell::sync::Lazy;
-                use rustemo::lexer::StringLexer;
+                use rustemo::StringLexer;
             });
         }
 
         imports.push(parse_quote! {
-            use rustemo::lr::builder::LRBuilder;
+            use rustemo::LRBuilder;
         });
         imports.extend::<Vec<syn::Stmt>>(match self.settings.builder_type {
             BuilderType::Default => parse_quote! {
                 use super::#actions_file;
             },
             BuilderType::Generic => parse_quote! {
-                use rustemo::lr::builder::{TreeNode, TreeBuilder};
+                use rustemo::{TreeNode, TreeBuilder};
             },
             BuilderType::Custom => parse_quote! {
                 use std::cell::RefCell;
@@ -250,11 +250,10 @@ impl<'g, 's> ParserGenerator<'g, 's> {
 
         imports.extend::<Vec<syn::Stmt>>(match self.settings.parser_algo {
             ParserAlgo::LR => parse_quote! {
-                use rustemo::lr::{parser::LRParser, context::LRContext};
+                use rustemo::{LRParser, LRContext};
             },
             ParserAlgo::GLR => parse_quote! {
-                use rustemo::glr::parser::GlrParser;
-                use rustemo::glr::gss::{Forest, GssHead};
+                use rustemo::{GlrParser, Forest, GssHead};
             },
         });
 
@@ -264,14 +263,11 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             use std::hash::Hash;
             use std::rc::Rc;
 
-            use rustemo::Result;
-            use rustemo::input;
-            use rustemo::lexer::{self, Lexer, Token};
-            use rustemo::parser::{self, Parser};
-            use rustemo::builder::Builder;
-            use rustemo::lr::parser::ParserDefinition;
+            use rustemo::{Result, Input as InputT, Lexer, Token,
+                          TokenRecognizer as TokenRecognizerT,
+                          Parser, ParserDefinition, State as StateT, Builder};
             #(#imports)*
-            use rustemo::lr::parser::Action::{self, Shift, Reduce, Accept, Error};
+            use rustemo::Action::{self, Shift, Reduce, Accept, Error};
             #[allow(unused_imports)]
             use rustemo::debug::{log, logn};
             #[allow(unused_imports)]
@@ -422,7 +418,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             None => parse_quote! { None },
         };
         ast.push(parse_quote! {
-            impl parser::State for State {
+            impl StateT for State {
                 fn default_layout() -> Option<Self> {
                     #layout_state
                 }
@@ -767,7 +763,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                 }
             };
         ast.push(parse_quote! {
-            pub struct #parser <'i, I: input::Input + ?Sized, L: Lexer<'i, Context<'i, I>,
+            pub struct #parser <'i, I: InputT + ?Sized, L: Lexer<'i, Context<'i, I>,
                                 State, TokenKind, Input = I>, B>(#parser_type);
         });
 
@@ -810,7 +806,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             #[allow(dead_code)]
             impl<'i, I, L, B> Parser<'i, I, Context<'i, I>, L, State, TokenKind> for #parser <'i, I, L, B>
             where
-                I: input::Input + ?Sized + Debug,
+                I: InputT + ?Sized + Debug,
                 L: Lexer<'i, Context<'i, I>, State, TokenKind, Input = I>,
                 B: LRBuilder<'i, I, Context<'i, I>, State, ProdKind, TokenKind>
             {
@@ -882,7 +878,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             pub struct TokenRecognizer(TokenKind, Recognizer);
         });
         ast.push(parse_quote!{
-            impl<'i> lexer::TokenRecognizer<'i> for TokenRecognizer {
+            impl<'i> TokenRecognizerT<'i> for TokenRecognizer {
                 fn recognize(&self, input: &'i str) -> Option<&'i str> {
                     match &self {
                         #[allow(unused_variables)]

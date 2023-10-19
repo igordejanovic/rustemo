@@ -95,12 +95,12 @@ where
         parse_quote! {
             /// This file is maintained by rustemo but can be modified manually.
             /// All manual changes will be preserved except non-doc comments.
-            use rustemo::lexer;
+            use rustemo::Token as RustemoToken;
             use super::#parser_mod::{TokenKind, Context};
             #input_type
             pub type Ctx<'i> = Context<'i, Input>;
             #[allow(dead_code)]
-            pub type Token<'i> = lexer::Token<'i, Input, TokenKind>;
+            pub type Token<'i> = RustemoToken<'i, Input, TokenKind>;
         }
     };
 
