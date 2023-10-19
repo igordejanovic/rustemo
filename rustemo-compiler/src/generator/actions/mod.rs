@@ -190,7 +190,7 @@ where
     log!("Writing action file {:?}", action_file);
     std::fs::create_dir_all(&out_dir_actions).map_err(|e| {
         Error::Error(format!(
-            "Cannot create folders for path '{out_dir_actions:?}': {e:?}."
+            "Cannot create directories for path '{out_dir_actions:?}': {e:?}."
         ))
     })?;
     std::fs::write(action_file, prettyplease::unparse(&ast))?;

@@ -27,7 +27,7 @@ Optional:
    pip install --user mdbook-pdf-outline
    ```
 
-In the root of the `docs` folder run `mdbook serve`. The book will be available
+In the root of the `docs` directory run `mdbook serve`. The book will be available
 at [http://localhost:3000/]()
   
 # Admonitions

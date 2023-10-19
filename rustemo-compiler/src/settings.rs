@@ -56,7 +56,7 @@ pub struct Settings {
 
 impl Default for Settings {
     fn default() -> Self {
-        // If called from cargo build use OUT_DIR as a default out_dir folder
+        // If called from cargo build use OUT_DIR as a default out_dir directory
         // for both parser and actions.
         let out_dir_root =
             std::env::var("OUT_DIR").map_or(None, |d| Some(PathBuf::from(d)));
@@ -241,7 +241,7 @@ impl Settings {
         if let Some(root_dir) = &self.root_dir {
             if !root_dir.exists() {
                 return Err(Error::Error(format!(
-                    "Folder/File {root_dir:?} doesn't exist."
+                    "Directory/File {root_dir:?} doesn't exist."
                 )));
             }
 
@@ -349,7 +349,7 @@ pub fn process_dir<P: AsRef<Path>>(dir: P) -> Result<()> {
 }
 
 /// A shortcut function which creates default [Settings] and use it to process
-/// the crate project folder.
+/// the crate project directory.
 pub fn process_crate_dir() -> Result<()> {
     Settings::new().process_dir()?;
     Ok(())

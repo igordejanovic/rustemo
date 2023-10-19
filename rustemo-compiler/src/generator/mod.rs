@@ -191,7 +191,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
 
         std::fs::create_dir_all(out_dir).map_err(|e| {
             Error::Error(format!(
-                "Cannot create folders for path '{out_dir:?}': {e:?}."
+                "Cannot create directories for path '{out_dir:?}': {e:?}."
             ))
         })?;
 

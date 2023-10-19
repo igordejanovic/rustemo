@@ -43,7 +43,7 @@ source tree and then process the current project directory.
 It is usually discouraged to modify the source tree from the `build.rs` script
 but in the case of actions it is usually necessary as the actions are generated
 and manually maintained. To generate just the actions in the source tree while
-keeping the parser in the output folder you can do the following:
+keeping the parser in the output directory you can do the following:
 
 ```rust
 rustemo_compiler::Settings::new().actions_in_source_tree().process_dir()
@@ -85,5 +85,5 @@ This macro accepts two parameters. The first is a usual syntax used with `mod`
 (attributes, visibility and the name of the module) while the second parameter
 is the path to the module/grammar directory from the project root. This second
 parameter is needed for the macro to be able to calculate the full path in the
-output folder.
+output directory.
 

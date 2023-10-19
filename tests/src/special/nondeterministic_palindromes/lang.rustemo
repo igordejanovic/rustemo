@@ -13,7 +13,7 @@
 // both empty reductions and shifts. Only the parser that has reduced empty at
 // the middle of the input will succeed.
 //
-// Check the same test in glr/special folder.
+// Check the same test in glr/special directory.
 
 S: A | B | EMPTY;
 A: '1' S '1';
