@@ -3,6 +3,7 @@ pub fn type_of<T>(_: &T) -> &'static str {
     std::any::type_name::<T>()
 }
 
+/// Returns a first difference between two strings. Used by `output_cmp!` macro.
 pub fn string_difference(a: &str, b: &str) -> Option<(usize, (char, char))> {
     a.chars()
         .zip(b.chars())
@@ -57,7 +58,7 @@ macro_rules! output_cmp {
 pub use output_cmp;
 
 /// Used in tests to calculate local file path relative to the source file.
-/// Requires call to file!() as a first parameter.
+/// Requires call to `file!()` as a first parameter.
 ///
 /// # Example
 /// ```rust

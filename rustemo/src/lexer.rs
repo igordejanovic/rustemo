@@ -6,10 +6,10 @@ use colored::*;
 use core::fmt::Debug;
 use std::marker::PhantomData;
 
-/// The `Lexer` trait allows input tokenization
+/// The trait implemented by all Rustemo lexers
 ///
-/// Lexer is stateless and its job is to produce next token given the current
-/// context.
+/// Lexer is stateless and its job is to produce the next token given the
+/// current context.
 ///
 /// # Generic types
 ///
@@ -46,6 +46,8 @@ where
         'a: 'i;
 }
 
+/// The trait implemented by types used to recognize tokens in string inputs.
+/// Used by [`StringLexer`].
 pub trait TokenRecognizer<'i> {
     fn recognize(&self, _input: &'i str) -> Option<&'i str> {
         panic!("Recognize is not defined.")
@@ -197,7 +199,7 @@ where
     }
 }
 
-/// `Token` represent a single token from the input stream.
+/// Represents a single token from the input stream.
 pub struct Token<'i, I: Input + ?Sized, TK> {
     pub kind: TK,
 

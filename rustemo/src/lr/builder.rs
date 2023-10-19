@@ -107,6 +107,7 @@ where
     }
 }
 
+/// A node in the generic tree produced by [`TreeBuilder`]
 #[derive(Debug)]
 pub enum TreeNode<'i, I, P, TK>
 where
@@ -124,8 +125,8 @@ where
     },
 }
 
-/// This builder returns a slice of the matched input. If no match is possible
-/// `None` is returned.
+/// Returns a slice of the matched input. If no match is possible `None` is
+/// returned.
 ///
 /// This is used by default for layout parsing where we don't need to keep the
 /// structure of the parsed layout but we need just the content as a slice of

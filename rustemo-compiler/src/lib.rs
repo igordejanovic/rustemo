@@ -1,7 +1,7 @@
 //! This crate provides a Rustemo grammars compiler as a CLI command, and an API
 //! for usage from `build.rs` scripts.
 //!
-//! When this crate is installed `rustemo` command is available that can be run
+//! When this crate is installed `rcomp` command is available that can be run
 //! over Rustemo grammars to produce parsers.
 //!
 //! The entry point into API is [Settings::new] which provide a default settings
@@ -17,7 +17,7 @@
 //!
 //! # Processing grammars
 //!
-//! For a default settings there are [process_crate_dir], [process_dir] and
+//! For default settings there are [process_crate_dir], [process_dir] and
 //! [process_grammar] shortcut functions.
 //!
 //! ## Example

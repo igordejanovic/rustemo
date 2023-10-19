@@ -63,7 +63,7 @@ impl Display for Position {
     }
 }
 
-/// `Location` describes a span from start till end in the parsed input.
+/// Describes a span from start till end in the parsed input.
 ///
 /// Start is mandatory while the end is not.
 ///

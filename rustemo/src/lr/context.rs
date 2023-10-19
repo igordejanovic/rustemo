@@ -5,6 +5,7 @@ use crate::{
     parser::State,
 };
 
+/// [`Context`] implementation for LR parsing
 #[derive(Debug)]
 pub struct LRContext<'i, I: Input + ?Sized, S, TK> {
     position: usize,

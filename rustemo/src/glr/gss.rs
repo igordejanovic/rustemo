@@ -129,7 +129,8 @@ impl<'i, I: Input + ?Sized, S, P, TK: Copy> GssGraph<'i, I, S, P, TK> {
     }
 }
 
-/// A node/head in the Graph Structured Stack (GSS).
+/// A node/head in the Graph Structured Stack (GSS). Implements [`Context`] for
+/// GLR parsing.
 ///
 /// Each head is related to a LR parser state and a single token ahead. Lexical
 /// ambiguity, where a head may be followed by multiple different tokens, is
@@ -430,7 +431,7 @@ pub struct Parent<'i, I: Input + ?Sized, P, TK: Copy> {
     pub root_node: NodeIndex,
     pub head_node: NodeIndex,
 
-    /// This models ambiguity. RefCell is needed as we need an Interior
+    /// This models ambiguity. `RefCell` is needed as we need an Interior
     /// Mutability pattern to add new possibilities as they are discovered while
     /// keeping the rest of the structure immutable.
     pub possibilities: RefCell<Vec<Rc<SPPFTree<'i, I, P, TK>>>>,
@@ -467,7 +468,7 @@ impl<'i, I: Input + ?Sized, P, TK: Copy> Parent<'i, I, P, TK> {
 
     /// Number of possible solutions in this parent link.
     ///
-    /// If there >1 solutions we have ambiguity on the span of input covered by
+    /// If there >1 solutions we have ambiguity along the input span covered by
     /// this parent link.
     pub fn solutions(&self) -> usize {
         self.possibilities
@@ -623,15 +624,14 @@ impl<'i, I: Input + ?Sized, P, TK: Copy> Tree<'i, I, P, TK> {
     // TODO: Implement iteration
 }
 
-/// Shared packed forest returned by the GLR parser.
+/// Shared Packed Parse Forest (SPPF) returned by the GLR parser.
 ///
-/// A forest is an ordered collection of trees.
-/// Basically, a wrapper around GSS structure to provide information about
-/// number of trees/solutions, ambiguities and to provide tree
-/// extraction/navigation.
+/// A forest is an ordered collection of trees. Basically, a wrapper around GSS
+/// structure to provide information about number of trees/solutions,
+/// ambiguities and to provide tree extraction/navigation.
 ///
-/// Trees of the forest are ordered and each tree can be extracted as either
-/// an eager or a lazy tree given its index.
+/// Trees of the forest are ordered and each tree can be extracted as either an
+/// eager or a lazy tree given its index.
 #[derive(Debug)]
 pub struct Forest<'i, I: Input + ?Sized, P, TK: Copy> {
     /// Root nodes of trees which are possible solutions.

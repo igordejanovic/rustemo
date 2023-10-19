@@ -2,6 +2,7 @@ use std::path::Path;
 
 use crate::{context::Context, error::Result, input::Input, lexer::Lexer};
 
+/// The trait implemented by all Rustemo parsers.
 pub trait Parser<'i, I, C, L, S, TK>
 where
     I: Input + ?Sized,
@@ -28,8 +29,8 @@ where
 
     /// A convenience method for loading the content from the given file and
     /// calling `parse`. The parser will own the content being parsed and thus
-    /// has to outlive the output if the output is borrowed from the content
-    /// loaded from the file.
+    /// has to outlive `Self::Output` if it borrows from the content loaded from
+    /// the file.
     fn parse_file<'a, F: AsRef<Path>>(
         &'a mut self,
         file: F,

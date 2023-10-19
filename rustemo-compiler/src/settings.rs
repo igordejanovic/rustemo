@@ -15,6 +15,7 @@ pub enum ParserAlgo {
     GLR,
 }
 
+/// The lexer type used during parsing to break the input into tokens
 #[derive(Debug, Default, Clone, ArgEnum)]
 pub enum LexerType {
     /// Default lexer if the input is `str` is based on string/regex recognizers
@@ -24,6 +25,7 @@ pub enum LexerType {
     Custom,
 }
 
+/// The builder type used during parsing to construct the output
 #[derive(Debug, Default, Clone, ArgEnum)]
 pub enum BuilderType {
     /// Default builder type constructs AST using inferred node types
