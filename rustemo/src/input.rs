@@ -1,6 +1,6 @@
 use crate::{
     error::Result,
-    location::{LineBased, Location, Position},
+    location::{LineColumn, Location, Position},
 };
 use std::{
     borrow::ToOwned,
@@ -97,7 +97,7 @@ impl Input for str {
 
     fn start_location() -> Location {
         Location {
-            start: Position::LineBased(LineBased { line: 1, column: 0 }),
+            start: Position::LineBased(LineColumn { line: 1, column: 0 }),
             end: None,
         }
     }
@@ -120,7 +120,7 @@ impl Input for str {
         }
 
         Location {
-            start: Position::LineBased(LineBased { line, column }),
+            start: Position::LineBased(LineColumn { line, column }),
             end: None,
         }
     }

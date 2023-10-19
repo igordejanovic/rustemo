@@ -2,7 +2,7 @@ use std::fmt::{Debug, Display};
 
 /// A line-column based location for use where applicable (e.g. plain text).
 #[derive(PartialEq, Eq, Debug, Copy, Clone)]
-pub struct LineBased {
+pub struct LineColumn {
     pub line: usize,
     pub column: usize,
 }
@@ -11,12 +11,12 @@ pub struct LineBased {
 #[derive(PartialEq, Eq, Debug, Copy, Clone)]
 pub enum Position {
     Position(usize),
-    LineBased(LineBased),
+    LineBased(LineColumn),
 }
 
 impl Position {
     pub fn from_lc(line: usize, column: usize) -> Self {
-        Self::LineBased(LineBased { line, column })
+        Self::LineBased(LineColumn { line, column })
     }
 
     pub fn from_pos(pos: usize) -> Self {
