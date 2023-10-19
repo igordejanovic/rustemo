@@ -1,12 +1,10 @@
-use rustemo::{
-    builder::Builder, lexer::Token, lr::builder::LRBuilder, lr::context,
-};
+use rustemo::{Builder, LRBuilder, LRContext, Token};
 
 use super::custom_builder::{ProdKind, State, TokenKind};
 
 // ANCHOR: custom-builder-base
 pub type E = i32;
-pub type Context<'i> = context::LRContext<'i, str, State, TokenKind>;
+pub type Context<'i> = LRContext<'i, str, State, TokenKind>;
 
 /// Custom builder that perform arithmetic operations.
 pub struct MyCustomBuilder {

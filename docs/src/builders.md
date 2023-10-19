@@ -160,9 +160,9 @@ If you have a specific requirement for the build process you can implement a
 builder from scratch.
 
 To provide a custom builder you start with a type that implements a
-`rustemo::builder::Builder` trait and after that implements a concrete parsing
-algorithm trait. Currently, Rustemo is a LR parser thus you can use
-`rustemo::builder::lr::Builder` trait.
+`rustemo::Builder` trait and after that implements a concrete parsing algorithm
+trait. Currently, Rustemo is a LR parser thus you can use `rustemo::LRBuilder`
+trait.
 
 Let's see how can we do all of this by implementing a builder that does
 on-the-fly calculation of the arithmetic expression. Start with a type and a

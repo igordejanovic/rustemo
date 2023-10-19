@@ -1,11 +1,10 @@
 /// This file is maintained by rustemo but can be modified manually.
 /// All manual changes will be preserved except non-doc comments.
 use super::use_context::{self, TokenKind};
-use rustemo::context::Context;
-use rustemo::lexer;
+use rustemo::{Context, Token as BaseToken};
 pub type Input = str;
 pub type Ctx<'i> = use_context::Context<'i, Input>;
-pub type Token<'i> = lexer::Token<'i, Input, TokenKind>;
+pub type Token<'i> = BaseToken<'i, Input, TokenKind>;
 pub type Num = u32;
 pub fn num(context: &Ctx, token: Token) -> Num {
     token.value.parse::<u32>().unwrap() + context.position() as u32

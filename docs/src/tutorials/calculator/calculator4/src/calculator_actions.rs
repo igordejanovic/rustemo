@@ -1,12 +1,11 @@
 /// This file is maintained by rustemo but can be modified manually.
 /// All manual changes will be preserved except non-doc comments.
-use ::rustemo::context::Context;
-use rustemo::lexer;
+use ::rustemo::{Context, Token as BaseToken};
 use super::calculator::{self, TokenKind};
 pub type Input = str;
 pub type Ctx<'i> = super::calculator::Context<'i, Input>;
 #[allow(dead_code)]
-pub type Token<'i> = lexer::Token<'i, Input, TokenKind>;
+pub type Token<'i> = BaseToken<'i, Input, TokenKind>;
 /// ANCHOR: number
 pub type Number = String;
 /// ANCHOR_END: number

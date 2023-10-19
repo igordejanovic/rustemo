@@ -1,9 +1,9 @@
 use super::calculator01::{Context, TokenKind};
 /// This file is maintained by rustemo but can be modified manually.
 /// All manual changes will be preserved except non-doc comments.
-use rustemo::lexer;
+use rustemo::Token as BaseToken;
 pub type Input = str;
-pub type Token<'i> = lexer::Token<'i, Input, TokenKind>;
+pub type Token<'i> = BaseToken<'i, Input, TokenKind>;
 pub type Ctx<'i> = Context<'i, Input>;
 pub type Num = f32;
 pub fn num(_ctx: &Ctx, token: Token) -> Num {

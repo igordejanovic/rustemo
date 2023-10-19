@@ -2,10 +2,10 @@
 /// All manual changes will be preserved except non-doc comments.
 use super::custom_lexer_2::{self, TokenKind};
 use super::custom_lexer_2_lexer::Input;
-use rustemo::lexer;
+use rustemo::Token as BaseToken;
 pub type Context<'i> = custom_lexer_2::Context<'i, Input>;
 #[allow(dead_code)]
-pub type Token<'i> = lexer::Token<'i, Input, TokenKind>;
+pub type Token<'i> = BaseToken<'i, Input, TokenKind>;
 pub type MSBByte = u8;
 pub fn msbbyte<'i>(_ctx: &Context<'i>, token: Token<'i>) -> MSBByte {
     token.value[0]

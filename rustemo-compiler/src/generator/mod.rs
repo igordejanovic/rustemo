@@ -1,7 +1,7 @@
 pub(crate) mod actions;
 
 use quote::format_ident;
-use rustemo::parser::Parser;
+use rustemo::Parser;
 use std::{
     fs,
     iter::repeat,

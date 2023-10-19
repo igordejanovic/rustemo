@@ -1,16 +1,10 @@
 use super::custom_lexer_1::{State, TokenKind};
-use rustemo::{
-    context::Context,
-    error::Result,
-    lexer::{self, Lexer, Token},
-    location::{Location, Position},
-    lr::context,
-};
+use rustemo::{Context, LRContext, Lexer, Location, Position, Result, Token};
 use std::iter;
 
 /// We are parsing a slice of bytes.
 pub type Input = [u8];
-pub type Ctx<'i> = context::LRContext<'i, Input, State, TokenKind>;
+pub type Ctx<'i> = LRContext<'i, Input, State, TokenKind>;
 
 pub struct MyCustomLexer1();
 

@@ -1,5 +1,4 @@
-use rustemo::parser::Parser;
-use rustemo::rustemo_mod;
+use rustemo::{rustemo_mod, Parser};
 use rustemo_compiler::{local_file, output_cmp};
 
 use self::output_dir::OutputDirParser;

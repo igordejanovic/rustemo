@@ -1,6 +1,6 @@
 use std::borrow::BorrowMut;
 
-use rustemo::rustemo_mod;
+use rustemo::{rustemo_mod, Parser};
 use rustemo_compiler::output_cmp;
 
 rustemo_mod!(calc, "/src/glr/evaluate");
@@ -10,7 +10,6 @@ mod calc_eval_actions;
 
 use self::calc::CalcParser;
 use self::calc_eval::CalcEvalParser;
-use rustemo::parser::Parser;
 
 #[test]
 fn glr_tree_calc_eval() {

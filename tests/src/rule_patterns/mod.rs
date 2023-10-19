@@ -1,5 +1,4 @@
-use rustemo::parser::Parser;
-use rustemo::rustemo_mod;
+use rustemo::{rustemo_mod, Parser};
 use rustemo_compiler::output_cmp;
 
 rustemo_mod!(zero_or_more_1, "/src/rule_patterns");

@@ -2,19 +2,17 @@
 use std::fmt::Debug;
 use std::hash::Hash;
 use std::rc::Rc;
-use rustemo::Result;
-use rustemo::input;
-use rustemo::lexer::{self, Lexer, Token};
-use rustemo::parser::{self, Parser};
-use rustemo::builder::Builder;
-use rustemo::lr::parser::ParserDefinition;
+use rustemo::{
+    Result, Input as InputT, Lexer, Token, TokenRecognizer as TokenRecognizerT, Parser,
+    ParserDefinition, State as StateT, Builder,
+};
 use regex::Regex;
 use once_cell::sync::Lazy;
-use rustemo::lexer::StringLexer;
-use rustemo::lr::builder::LRBuilder;
+use rustemo::StringLexer;
+use rustemo::LRBuilder;
 use super::calculator_actions;
-use rustemo::lr::{parser::LRParser, context::LRContext};
-use rustemo::lr::parser::Action::{self, Shift, Reduce, Accept, Error};
+use rustemo::{LRParser, LRContext};
+use rustemo::Action::{self, Shift, Reduce, Accept, Error};
 #[allow(unused_imports)]
 use rustemo::debug::{log, logn};
 #[allow(unused_imports)]
@@ -99,7 +97,7 @@ pub enum State {
     ES9,
     ES10,
 }
-impl parser::State for State {
+impl StateT for State {
     fn default_layout() -> Option<Self> {
         None
     }
@@ -288,7 +286,7 @@ for CalculatorParserDefinition {
 pub(crate) type Context<'i, I> = LRContext<'i, I, State, TokenKind>;
 pub struct CalculatorParser<
     'i,
-    I: input::Input + ?Sized,
+    I: InputT + ?Sized,
     L: Lexer<'i, Context<'i, I>, State, TokenKind, Input = I>,
     B,
 >(
@@ -331,7 +329,7 @@ impl<
 impl<'i, I, L, B> Parser<'i, I, Context<'i, I>, L, State, TokenKind>
 for CalculatorParser<'i, I, L, B>
 where
-    I: input::Input + ?Sized + Debug,
+    I: InputT + ?Sized + Debug,
     L: Lexer<'i, Context<'i, I>, State, TokenKind, Input = I>,
     B: LRBuilder<'i, I, Context<'i, I>, State, ProdKind, TokenKind>,
 {
@@ -366,7 +364,7 @@ pub enum Recognizer {
 #[allow(dead_code)]
 #[derive(Debug)]
 pub struct TokenRecognizer(TokenKind, Recognizer);
-impl<'i> lexer::TokenRecognizer<'i> for TokenRecognizer {
+impl<'i> TokenRecognizerT<'i> for TokenRecognizer {
     fn recognize(&self, input: &'i str) -> Option<&'i str> {
         match &self {
             #[allow(unused_variables)]

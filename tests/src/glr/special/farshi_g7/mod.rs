@@ -1,6 +1,4 @@
-use rustemo::{
-    glr::gss::GssHead, lr::builder::TreeBuilder, parser::Parser, rustemo_mod,
-};
+use rustemo::{rustemo_mod, GssHead, Parser, TreeBuilder};
 use rustemo_compiler::output_cmp;
 
 rustemo_mod!(lang, "/src/glr/special/farshi_g7");

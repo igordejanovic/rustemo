@@ -1,5 +1,4 @@
-use rustemo::parser::Parser;
-use rustemo::{glr::gss::GssHead, lr::builder::TreeBuilder, rustemo_mod};
+use rustemo::{rustemo_mod, GssHead, Parser, TreeBuilder};
 use rustemo_compiler::output_cmp;
 
 rustemo_mod!(lang, "/src/glr/special/right_nullable");

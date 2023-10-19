@@ -6,7 +6,7 @@ use std::{
     str::FromStr,
 };
 
-use rustemo::{parser::Parser, Error, Result};
+use rustemo::{Error, Parser, Result};
 
 use crate::{
     index::{

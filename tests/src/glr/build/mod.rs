@@ -1,13 +1,12 @@
 use std::borrow::BorrowMut;
 
-use rustemo::{glr::gss::GssHead, lr::builder::TreeBuilder, rustemo_mod};
+use rustemo::{rustemo_mod, GssHead, Parser, TreeBuilder};
 use rustemo_compiler::output_cmp;
 
 rustemo_mod!(calc, "/src/glr/build");
 rustemo_mod!(calc_actions, "/src/glr/build");
 
 use self::calc::CalcParser;
-use rustemo::parser::Parser;
 
 // ANCHOR: build
 #[test]

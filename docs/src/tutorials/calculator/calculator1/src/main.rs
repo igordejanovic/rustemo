@@ -1,5 +1,5 @@
 // ANCHOR: header
-use rustemo::parser::Parser;
+use rustemo::Parser;
 use std::io;
 // Use the generated parser
 use crate::calculator::CalculatorParser;

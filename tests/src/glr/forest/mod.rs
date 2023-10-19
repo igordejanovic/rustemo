@@ -1,13 +1,12 @@
 use std::borrow::BorrowMut;
 
-use rustemo::rustemo_mod;
+use rustemo::{rustemo_mod, Parser};
 use rustemo_compiler::output_cmp;
 
 rustemo_mod!(calc, "/src/glr/forest");
 rustemo_mod!(calc_actions, "/src/glr/forest");
 
 use self::calc::CalcParser;
-use rustemo::parser::Parser;
 
 #[test]
 fn glr_calc_parse_ast() {

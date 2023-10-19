@@ -1,11 +1,11 @@
 use super::json::{self, TokenKind};
 /// This file is maintained by rustemo but can be modified manually.
 /// All manual changes will be preserved except non-doc comments.
-use rustemo::lexer;
+use rustemo::Token as BaseToken;
 pub type Input = str;
 pub type Ctx<'i> = json::Context<'i, Input>;
 #[allow(dead_code)]
-pub type Token<'i> = lexer::Token<'i, Input, TokenKind>;
+pub type Token<'i> = BaseToken<'i, Input, TokenKind>;
 pub type JsonNumber = f32;
 pub fn json_number(_ctx: &Ctx, token: Token) -> JsonNumber {
     token.value.parse().unwrap()
