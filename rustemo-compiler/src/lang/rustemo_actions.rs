@@ -1,12 +1,12 @@
-use ::rustemo::context::Context;
+use ::rustemo::Context;
 /// This file is maintained by rustemo but can be modified manually.
 /// All manual changes will be preserved except non-doc comments.
 use super::rustemo::{self, TokenKind};
-use crate::rustemo::{lexer, location::ValLoc};
+use crate::rustemo::{Token as BaseToken, ValLoc};
 use std::collections::BTreeMap;
 pub type Name = ValLoc<String>;
 pub type Ctx<'i> = rustemo::Context<'i, str>;
-pub type Token<'i> = lexer::Token<'i, str, TokenKind>;
+pub type Token<'i> = BaseToken<'i, str, TokenKind>;
 pub fn name(ctx: &Ctx, token: Token) -> Name {
     Name::new(token.value.into(), Some(ctx.location()))
 }

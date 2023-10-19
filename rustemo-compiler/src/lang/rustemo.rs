@@ -2,19 +2,17 @@
 use std::fmt::Debug;
 use std::hash::Hash;
 use std::rc::Rc;
-use rustemo::Result;
-use rustemo::input;
-use rustemo::lexer::{self, Lexer, Token};
-use rustemo::parser::{self, Parser};
-use rustemo::builder::Builder;
-use rustemo::lr::parser::ParserDefinition;
+use rustemo::{
+    Result, Input as InputT, Lexer, Token, TokenRecognizer as TokenRecognizerT, Parser,
+    ParserDefinition, State as StateT, Builder,
+};
 use regex::Regex;
 use once_cell::sync::Lazy;
-use rustemo::lexer::StringLexer;
-use rustemo::lr::builder::LRBuilder;
+use rustemo::StringLexer;
+use rustemo::LRBuilder;
 use super::rustemo_actions;
-use rustemo::lr::{parser::LRParser, context::LRContext};
-use rustemo::lr::parser::Action::{self, Shift, Reduce, Accept, Error};
+use rustemo::{LRParser, LRContext};
+use rustemo::Action::{self, Shift, Reduce, Accept, Error};
 #[allow(unused_imports)]
 use rustemo::debug::{log, logn};
 #[allow(unused_imports)]
@@ -82,7 +80,7 @@ impl From<TokenKind> for usize {
     }
 }
 #[allow(clippy::enum_variant_names)]
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 pub enum ProdKind {
     FileP1,
     GrammarRule1P1,
@@ -652,7 +650,7 @@ pub enum State {
     CCommentS143,
     CorncS144,
 }
-impl parser::State for State {
+impl StateT for State {
     fn default_layout() -> Option<Self> {
         Some(State::AUGLS126)
     }
@@ -16733,7 +16731,7 @@ for RustemoParserDefinition {
 pub(crate) type Context<'i, I> = LRContext<'i, I, State, TokenKind>;
 pub struct RustemoParser<
     'i,
-    I: input::Input + ?Sized,
+    I: InputT + ?Sized,
     L: Lexer<'i, Context<'i, I>, State, TokenKind, Input = I>,
     B,
 >(
@@ -16776,7 +16774,7 @@ impl<
 impl<'i, I, L, B> Parser<'i, I, Context<'i, I>, L, State, TokenKind>
 for RustemoParser<'i, I, L, B>
 where
-    I: input::Input + ?Sized + Debug,
+    I: InputT + ?Sized + Debug,
     L: Lexer<'i, Context<'i, I>, State, TokenKind, Input = I>,
     B: LRBuilder<'i, I, Context<'i, I>, State, ProdKind, TokenKind>,
 {
@@ -16811,12 +16809,12 @@ pub enum Recognizer {
 #[allow(dead_code)]
 #[derive(Debug)]
 pub struct TokenRecognizer(TokenKind, Recognizer);
-impl<'i> lexer::TokenRecognizer<'i> for TokenRecognizer {
+impl<'i> TokenRecognizerT<'i> for TokenRecognizer {
     fn recognize(&self, input: &'i str) -> Option<&'i str> {
         match &self {
             #[allow(unused_variables)]
             TokenRecognizer(token_kind, Recognizer::StrMatch(s)) => {
-                logn!("{} {:?} -- ", "\tRecognizing".green(), token_kind);
+                logn!("{} {:?} -- ", "    Recognizing".green(), token_kind);
                 if input.starts_with(s) {
                     log!("{}", "recognized".bold().green());
                     Some(s)
@@ -16827,7 +16825,7 @@ impl<'i> lexer::TokenRecognizer<'i> for TokenRecognizer {
             }
             #[allow(unused_variables)]
             TokenRecognizer(token_kind, Recognizer::RegexMatch(r)) => {
-                logn!("{} {:?} -- ", "\tRecognizing".green(), token_kind);
+                logn!("{} {:?} -- ", "    Recognizing".green(), token_kind);
                 let match_str = r.find(input);
                 match match_str {
                     Some(x) => {
@@ -16842,7 +16840,7 @@ impl<'i> lexer::TokenRecognizer<'i> for TokenRecognizer {
                 }
             }
             TokenRecognizer(_, Recognizer::Stop) => {
-                logn!("{} STOP -- ", "\tRecognizing".green());
+                logn!("{} STOP -- ", "    Recognizing".green());
                 if input.is_empty() {
                     log!("{}", "recognized".bold().green());
                     Some("")
@@ -16969,6 +16967,7 @@ pub struct DefaultBuilder {
     res_stack: Vec<Symbol>,
 }
 impl DefaultBuilder {
+    #[allow(dead_code)]
     pub fn new() -> Self {
         Self { res_stack: vec![] }
     }
