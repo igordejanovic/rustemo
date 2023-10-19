@@ -9,8 +9,10 @@ use std::{
     ops::{Deref, Index, Range},
     path::Path,
 };
+/// Input is a sliceable sequence-like type with a concept of length.
+///
 /// This trait must be implemented by all types that should be parsed by
-/// Rustemo. Input is a sliceable sequence-like type with a concept of length.
+/// Rustemo.
 pub trait Input: ToOwned + Index<Range<usize>, Output = Self> {
     /// Returns a string context for the given position. Used in debugging outputs.
     fn context_str(&self, position: usize) -> String;

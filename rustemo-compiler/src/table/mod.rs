@@ -34,13 +34,21 @@ pub enum Action {
     Accept,
 }
 
+/// Specifies the type of the parsing table used during parsing to decide about
+/// shift/reduce/goto operations.
 #[allow(non_camel_case_types)]
 #[derive(Debug, Default, Clone, PartialEq, Eq, ValueEnum)]
 pub enum TableType {
-    LALR, // http://publications.csail.mit.edu/lcs/pubs/pdf/MIT-LCS-TR-065.pdf
+    /// Lookahead LR tables. See
+    /// <http://publications.csail.mit.edu/lcs/pubs/pdf/MIT-LCS-TR-065.pdf>
+    LALR,
+    /// A slight modification of LALR tables to prevent some reduce/reduce
+    /// conflicts. Inspired by <https://doi.org/10.1007/BF00290336>
     #[default]
-    LALR_PAGERW, // https://doi.org/10.1007/BF00290336
-    LALR_RN, // https://doi.org/10.1145/1146809.1146810
+    LALR_PAGERW,
+    /// LALR tables extended with right-nulled entries. Used for GLR parsing
+    /// (RNGLR). See <https://doi.org/10.1145/1146809.1146810>
+    LALR_RN,
 }
 
 type Firsts = BTreeSet<SymbolIndex>;

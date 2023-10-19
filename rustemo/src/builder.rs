@@ -1,4 +1,4 @@
-/// Building output during semantic actions.
+/// Builds output during parsing by using semantic actions.
 ///
 /// This trait is implemented by types that are in charge of building output of
 /// the parsing process (e.g. a parse tree).

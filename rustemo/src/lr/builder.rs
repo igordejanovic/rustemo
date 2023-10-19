@@ -126,6 +126,10 @@ where
 
 /// This builder returns a slice of the matched input. If no match is possible
 /// `None` is returned.
+///
+/// This is used by default for layout parsing where we don't need to keep the
+/// structure of the parsed layout but we need just the content as a slice of
+/// the input.
 pub struct SliceBuilder<'i, I: ?Sized> {
     input: &'i I,
     slice: Option<&'i I>,

@@ -129,11 +129,12 @@ impl<'i, I: Input + ?Sized, S, P, TK: Copy> GssGraph<'i, I, S, P, TK> {
     }
 }
 
-/// A node/head in the Graph Structured Stack (GSS). Each head is related to a
-/// LR parser state and a single token ahead. Lexical ambiguity, where a head
-/// may be followed by multiple different tokens, is handled by splitting the
-/// head and using the same GLR mechanics for syntax ambiguity handling.
-/// Effectively, we have per-token sub-frontiers.
+/// A node/head in the Graph Structured Stack (GSS).
+///
+/// Each head is related to a LR parser state and a single token ahead. Lexical
+/// ambiguity, where a head may be followed by multiple different tokens, is
+/// handled by splitting the head and using the same GLR mechanics for syntax
+/// ambiguity handling. Effectively, we have per-token sub-frontiers.
 #[derive(Debug)]
 pub struct GssHead<'i, I: Input + ?Sized, S, TK> {
     /// LR state reached when this node is created. Since LR state is related to
@@ -629,11 +630,14 @@ impl<'i, I: Input + ?Sized, P, TK: Copy> Tree<'i, I, P, TK> {
 /// number of trees/solutions, ambiguities and to provide tree
 /// extraction/navigation.
 ///
-/// Trees of the forest are ordered and each tree can be extracted as either as
+/// Trees of the forest are ordered and each tree can be extracted as either
 /// an eager or a lazy tree given its index.
 #[derive(Debug)]
 pub struct Forest<'i, I: Input + ?Sized, P, TK: Copy> {
-    /// Root nodes of trees which makes possible solutions
+    /// Root nodes of trees which are possible solutions.
+    ///
+    /// Each `SPPFTree` contains one or more trees lazily extracted using the
+    /// `Tree` type.
     results: Vec<Rc<SPPFTree<'i, I, P, TK>>>,
 }
 

@@ -4,7 +4,7 @@ use std::fmt::Display;
 pub type Result<R> = std::result::Result<R, Error>;
 
 /// Error type returned in `Err` variant of `Result` type from the parser.
-/// ANCHOR: parser-error
+// ANCHOR: parser-error
 #[derive(Debug)]
 pub enum Error {
     Error {
@@ -14,7 +14,7 @@ pub enum Error {
     },
     IOError(std::io::Error),
 }
-/// ANCHOR_END: parser-error
+// ANCHOR_END: parser-error
 
 impl Error {
     /// A string representation of the error without the full file path.
@@ -90,6 +90,7 @@ impl<R> From<Error> for Result<R> {
     }
 }
 
+/// Creates error Result from message, file and location
 #[macro_export]
 macro_rules! err {
     ($message:expr) => {

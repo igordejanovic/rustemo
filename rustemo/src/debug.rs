@@ -1,11 +1,15 @@
 #[allow(unused_macros)]
-#[macro_export]
+
+/// Prints without newline to stdout in debug profile
+///
 /// See <https://stackoverflow.com/questions/38141056/does-rust-have-a-debug-macro>
+#[macro_export]
 #[cfg(debug_assertions)]
 macro_rules! logn {
     ($( $args:expr ),*) => { print!( $( $args ),* ); }
 }
 
+/// Prints with newline to stdout in debug profile
 #[macro_export]
 #[cfg(debug_assertions)]
 macro_rules! log {

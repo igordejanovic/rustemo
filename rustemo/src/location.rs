@@ -1,11 +1,13 @@
 use std::fmt::{Debug, Display};
 
+/// A line-column based location for use where applicable (e.g. plain text).
 #[derive(PartialEq, Eq, Debug, Copy, Clone)]
 pub struct LineBased {
     pub line: usize,
     pub column: usize,
 }
 
+/// A position in the input file.
 #[derive(PartialEq, Eq, Debug, Copy, Clone)]
 pub enum Position {
     Position(usize),

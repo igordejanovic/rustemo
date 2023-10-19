@@ -99,6 +99,7 @@ type LayoutParser<'i, I, S, P, TK, NTK, D, L> = Option<
     >,
 >;
 
+/// An implementation of Right-Nulled GLR parsing (RNGLR)
 pub struct GlrParser<
     'i,
     S: State,

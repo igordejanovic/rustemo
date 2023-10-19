@@ -1,3 +1,4 @@
+//! This crate is the runtime for the generated Rustemo parsers.
 // See: https://github.com/rust-lang/rfcs/issues/2324
 // For local std docs browsing
 #[doc(inline)]

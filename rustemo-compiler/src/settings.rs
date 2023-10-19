@@ -7,6 +7,7 @@ use std::path::{Path, PathBuf};
 
 use crate::generator::generate_parser;
 
+/// The parsing algorithm used
 #[derive(Debug, Default, Clone, ArgEnum)]
 pub enum ParserAlgo {
     #[default]
@@ -16,19 +17,46 @@ pub enum ParserAlgo {
 
 #[derive(Debug, Default, Clone, ArgEnum)]
 pub enum LexerType {
+    /// Default lexer if the input is `str` is based on string/regex recognizers
     #[default]
     Default,
+    /// The lexer will be supplied by the user
     Custom,
 }
 
 #[derive(Debug, Default, Clone, ArgEnum)]
 pub enum BuilderType {
+    /// Default builder type constructs AST using inferred node types
     #[default]
     Default,
+    /// Generic builder generates CST where each node is `TreeNode`
     Generic,
+    /// The builder is user provided
     Custom,
 }
 
+/// Provides parser settings information. It is the main entry point in the
+/// parser generation process. It is meant to be used from the project
+/// `build.rs` script. See [tests crate `build.rs`
+/// script](https://github.com/igordejanovic/rustemo/blob/main/tests/build.rs)
+/// for examples of various configurations.
+///
+/// The first step is to create default `Settings` instance, do necessary
+/// configuration by calling methods in a builder (chain) style and, at the end,
+/// call the method to process the grammar, either by directly specifying the
+/// file or recursivelly processing the directory.
+///
+/// Most of these settings are also exposed through `rcomp` CLI tool so you can
+/// process grammar and generate parsers from the command line (or shell script)
+/// if you prefer.
+///
+/// You can read more in the [Rustemo book](https://www.igordejanovic.net/rustemo/)
+///
+/// ## Example
+///
+/// ```rust
+/// rustemo_compiler::Settings::new().parser_algo(ParserAlgo::GLR).process_crate_dir()
+/// ```
 #[derive(Debug, Clone)]
 pub struct Settings {
     pub(crate) out_dir_root: Option<PathBuf>,

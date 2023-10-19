@@ -26,6 +26,7 @@ pub trait ParserDefinition<S, P, TK, NTK> {
     fn expected_token_kinds(&self, state: S) -> &[Option<TK>];
 }
 
+/// An action executed by the (G)LR Parser during parsing
 #[derive(Debug, Copy, Clone)]
 pub enum Action<S, P> {
     Shift(S),
@@ -126,6 +127,7 @@ where
     }
 }
 
+/// An implementation of LR parsing
 pub struct LRParser<
     'i,
     C: Context<'i, I, S, TK>,
