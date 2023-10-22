@@ -13,7 +13,7 @@ rust-version.workspace = true
 
 [dependencies]
 # Needed by rustemo generated parsers.
-rustemo = { path = "../../rustemo", version = "0.1" }
+rustemo = { path = "../../rustemo" }
 
 # Default string lexer uses regexes and once_cell to init regexes only once.
 regex = { version = "1", default_features = false, features = ["std", "unicode-perl"] }
@@ -22,7 +22,7 @@ colored = "2"
 
 [dev-dependencies]
 # For output_cmp for testing
-rustemo-compiler = { path = "../../rustemo-compiler", version = "0.1"}
+rustemo-compiler = { path = "../../rustemo-compiler" }
 
 [build-dependencies]
-rustemo-compiler = { path = "../../rustemo-compiler", version = "0.1"}
+rustemo-compiler = { path = "../../rustemo-compiler" }
