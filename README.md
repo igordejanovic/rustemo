@@ -112,8 +112,8 @@ Be sure to check [Rustemo book](https://igordejanovic.github.io/rustemo/)!
   - [x] Lazy tree extraction from forest.
   - [x] Calling arbitrary builder over extracted tree.
   - [x] Support for EMPTY productions through RN table entries (RNGLR algorithm).
-- [ ] GLR docs
-- [ ] Release to crates.io
+- [x] GLR docs
+- [x] Release to crates.io
   
 ### v0.3.0
 - [ ] Greedy repetitions.
