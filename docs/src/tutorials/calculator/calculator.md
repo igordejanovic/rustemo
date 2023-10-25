@@ -2,7 +2,7 @@
 
 ```admonish note
 This tutorial assumes that you have Rustemo CLI properly installed. Refer to
-section Installation if you have trouble running `rcomp` command.
+the [CLI section](../../cli.md) if you have trouble running `rcomp` command.
 ```
 
 

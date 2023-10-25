@@ -9,7 +9,7 @@ Currently Rustemo can be configured with three builder types:
 
   When default builder is used, Rustemo will perform type inference for
   Abstract-Syntax Tree (AST) node types based on the grammar. The builder, AST
-  types and actions for creating instances of AST nodes will be generated.
+  types, and actions for creating instances of AST nodes will be generated.
 
 - **Generic tree builder**
 
@@ -27,8 +27,9 @@ following a certain set of rules explained in this section. The generated
 builder will then call into actions to produce instances of the AST types. The
 final output of this builder is AST tailored for the given grammar.
 
-The builder will be generated inside `<lang>.rs` file where `<lang>` is the name
-of the grammar. The actions will be generated into `<lang>_actions.rs` file.
+The builder will be generated, together with the parser, inside `<lang>.rs` file
+where `<lang>` is the name of the grammar. The actions will be generated into
+`<lang>_actions.rs` file.
 
 ```admonish note
 There are two approaches where generated files are stored. See [the configuration section](./configuration.md).
@@ -68,7 +69,7 @@ be:
 3. Multiple content matches and/or assignments -> a `struct` type where fields
    types are of the referred symbols.
 
-In addtion, production kinds and assignments LHS names are used for
+In addition, production kinds and assignments LHS names are used for
 fields/function/type naming. Also, cycle refs are broken using `Box`.
 
 Probably the best way to explain is by using an example. For example, if we have
@@ -161,8 +162,8 @@ builder from scratch.
 
 To provide a custom builder you start with a type that implements a
 `rustemo::Builder` trait and after that implements a concrete parsing algorithm
-trait. Currently, Rustemo is a LR parser thus you can use `rustemo::LRBuilder`
-trait.
+trait. Currently, Rustemo is a (G)LR parser thus you can use
+`rustemo::LRBuilder` trait.
 
 Let's see how can we do all of this by implementing a builder that does
 on-the-fly calculation of the arithmetic expression. Start with a type and a
@@ -183,7 +184,7 @@ For example, given the grammar:
 
 ```
 
-in file `custom_builder.rustemo` the following builder from file
+in the file `custom_builder.rustemo`, the following builder from file
 `custom_builder_builder.rs` will perform arithmetic operation on-the-fly (during
 parsing):
 

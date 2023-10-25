@@ -791,7 +791,7 @@ This will be parsed correctly:
 
     for a=10 to 20
 
-As `=` is not matched by the `KEYWORD` rule and thus doesn&rsquo;t require to be
+As `=` is not matched by the `KEYWORD` rule and thus doesn't require to be
 separated from the surrounding tokens.
 
 ```admonish note

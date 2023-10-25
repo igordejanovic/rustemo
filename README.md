@@ -93,10 +93,10 @@ Be sure to check [Rustemo book](https://igordejanovic.github.io/rustemo/)!
 - [x] Disambiguation filters: priorities, associativities.
 - [x] Rule/production meta-data. E.g. production kinds.
 - [x] CLI and API. A `rcomp` compiler CLI is available that can be called on
-      Rustemo grammars. Also an API enables integrating parser compiling into
-      Rust `build.rs` scripts. See [the calculator
+      Rustemo grammars. Also, API enables integrating parser code generation
+      into Rust `build.rs` scripts. See [the calculator
       example](./examples/calculator/) or [integration tests](./tests/).
-- [x] Tracking of position and reporting error with line/column works.
+- [x] Tracking of position and reporting error with line/column.
 - [x] Support for a layout (comments, whitespaces given as CFG). It is
       implemented as a special grammar rule and parsed by the LR parser. Result
       is passed by context to actions which can do whatever they please. E.g. a
