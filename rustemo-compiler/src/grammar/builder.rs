@@ -463,7 +463,11 @@ impl GrammarBuilder {
             };
             // TODO: This unwrap may fail in case of production groups use
             // which is still unimplemented but allowed by the grammar.
-            let ref_type = match gsymref.gsymbol.as_ref().unwrap() {
+            let ref_type = match gsymref
+                .gsymbol
+                .as_ref()
+                .expect("Parenthesized groups are not implemented!")
+            {
                 GrammarSymbol::Name(ref name) => name.clone(),
                 GrammarSymbol::StrConst(ref mtch) => {
                     if let Some(term) =
