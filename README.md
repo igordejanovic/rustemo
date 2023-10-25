@@ -11,12 +11,21 @@ Rustemo is a LR/GLR parser generator for Rust.
 
 ---
 
-**Status:** Fairly complete feature set for the initial release.
-Not yet optimized for speed so don't expect blazing performance.
+**Status:** Fairly complete feature set for the initial release. Very good
+test/docs coverage. Not yet optimized for speed so don't expect blazing
+performance.
 
 Feedback is welcome!
 
-Be sure to check [Rustemo book](https://igordejanovic.github.io/rustemo/)!
+Be sure to check [Rustemo book](https://igordejanovic.github.io/rustemo/). There
+you can find a detailed description and a comprehensive tutorial.
+
+All features are covered with [integration
+tests](https://github.com/igordejanovic/rustemo/tree/main/tests/src). So these
+can serve as a very good source of information.
+
+There are also a [few
+examples](https://github.com/igordejanovic/rustemo/tree/main/examples).
 
 ## Aspirations
 
