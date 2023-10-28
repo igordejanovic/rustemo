@@ -69,8 +69,8 @@ examples](https://github.com/igordejanovic/rustemo/tree/main/examples).
 
 - **Inference of AST node types from the grammar**
 
-  For the default built-in builder, AST node types and semantics actions should
-  be inferred from the grammar and auto-generated, but the user can introduce
+  For the default built-in builder, AST node types and semantics actions are
+  inferred from the grammar and auto-generated, but the user can introduce
   manual changes.
 
 - **Zero-copy by default**
@@ -81,8 +81,8 @@ examples](https://github.com/igordejanovic/rustemo/tree/main/examples).
 - **High test coverage**
 
   There are a reasonable number of tests. I usually write tests before
-  implementing each new feature (TDD). Tests are a good source of info until the
-  docs are improved.
+  implementing each new feature (TDD). Since each feature is covered by tests
+  these can searve as a good source of how-to information.
 
 
 ## Roadmap (tentative)
