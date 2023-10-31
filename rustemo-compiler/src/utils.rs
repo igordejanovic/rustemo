@@ -67,9 +67,11 @@ pub use output_cmp;
 #[macro_export]
 macro_rules! local_file {
     ($this:expr, $local_path:expr) => {
-        &std::path::PathBuf::from(env!("CARGO_WORKSPACE_DIR"))
-            .join($this)
-            .with_file_name($local_path)
+        &std::path::PathBuf::from(
+            std::env::var("CARGO_WORKSPACE_DIR").unwrap_or(".".to_string()),
+        )
+        .join($this)
+        .with_file_name($local_path)
     };
 }
 pub use local_file;
