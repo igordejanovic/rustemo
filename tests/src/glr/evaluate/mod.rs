@@ -21,7 +21,7 @@ fn glr_tree_calc_eval() {
 
     let mut res = vec![];
     let mut builder = calc_eval::DefaultBuilder::new();
-    for i in 0..41 {
+    for i in 0..42 {
         res.push((
             forest.get_tree(i).unwrap(),
             forest_eval.get_tree(i).unwrap().build(&mut builder),
