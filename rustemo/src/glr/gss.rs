@@ -641,7 +641,11 @@ pub struct Forest<'i, I: Input + ?Sized, P, TK: Copy> {
     results: Vec<Rc<SPPFTree<'i, I, P, TK>>>,
 }
 
-impl<'i, I: Input + ?Sized, P, TK: Copy> Forest<'i, I, P, TK> {
+impl<'i, I, P, TK> Forest<'i, I, P, TK>
+where
+    I: Input + ?Sized,
+    TK: Copy,
+{
     pub fn new(results: Vec<Rc<SPPFTree<'i, I, P, TK>>>) -> Self {
         Forest { results }
     }
@@ -686,31 +690,34 @@ impl<'i, I: Input + ?Sized, P, TK: Copy> Forest<'i, I, P, TK> {
 
 /// Support for into_iter, i.e. iteration in for loops
 pub struct ForestIntoIter<'i, I, P, TK>
-    where
-        I: Input + ?Sized,
-        TK: Copy
+where
+    I: Input + ?Sized,
+    TK: Copy,
 {
     forest: Forest<'i, I, P, TK>,
     tree_idx: usize,
 }
 
 impl<'i, I, P, TK> IntoIterator for Forest<'i, I, P, TK>
-    where
-        I: Input + ?Sized,
-        TK: Copy
+where
+    I: Input + ?Sized,
+    TK: Copy,
 {
     type Item = Tree<'i, I, P, TK>;
     type IntoIter = ForestIntoIter<'i, I, P, TK>;
 
     fn into_iter(self) -> Self::IntoIter {
-        ForestIntoIter{ forest: self, tree_idx: 0 }
+        ForestIntoIter {
+            forest: self,
+            tree_idx: 0,
+        }
     }
 }
 
 impl<'i, I, P, TK> Iterator for ForestIntoIter<'i, I, P, TK>
-    where
-        I: Input + ?Sized,
-        TK: Copy
+where
+    I: Input + ?Sized,
+    TK: Copy,
 {
     type Item = Tree<'i, I, P, TK>;
 
@@ -720,5 +727,58 @@ impl<'i, I, P, TK> Iterator for ForestIntoIter<'i, I, P, TK>
             self.tree_idx += 1;
         }
         tree
+    }
+}
+
+/// Support for iter()
+impl<'i, I, P, TK> Forest<'i, I, P, TK>
+where
+    I: Input + ?Sized,
+    TK: Copy,
+{
+    pub fn iter<'f>(&'f self) -> ForestIterator<'i, 'f, I, P, TK> {
+        ForestIterator {
+            forest: self,
+            tree_idx: 0,
+        }
+    }
+}
+
+pub struct ForestIterator<'i, 'f, I, P, TK>
+where
+    I: Input + ?Sized,
+    TK: Copy,
+{
+    forest: &'f Forest<'i, I, P, TK>,
+    tree_idx: usize,
+}
+
+impl<'i, 'f, I, P, TK> Iterator for ForestIterator<'i, 'f, I, P, TK>
+where
+    I: Input + ?Sized,
+    TK: Copy,
+{
+    type Item = Tree<'i, I, P, TK>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let tree = self.forest.get_tree(self.tree_idx);
+        if tree.is_some() {
+            self.tree_idx += 1;
+        }
+        tree
+    }
+}
+
+/// For loop iteration over borrowed Forest
+impl<'i, 'f, I, P, TK> IntoIterator for &'f Forest<'i, I, P, TK>
+where
+    I: Input + ?Sized,
+    TK: Copy,
+{
+    type Item = Tree<'i, I, P, TK>;
+    type IntoIter = ForestIterator<'i, 'f, I, P, TK>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.iter()
     }
 }

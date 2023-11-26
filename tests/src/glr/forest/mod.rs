@@ -101,13 +101,14 @@ fn glr_extract_tree_from_forest() {
 // ANCHOR_END: forest
 
 #[test]
-fn glr_forest_into_iterator() {
+fn glr_forest_into_iter() {
     let forest = CalcParser::new().parse("1 + 4 * 9 + 3 * 2 + 7").unwrap();
     let mut forest_get_tree_string = String::new();
     let mut forest_iter_string = String::new();
 
     for tree_idx in 0..forest.solutions() {
-        forest_get_tree_string.push_str(&format!("{:#?}", forest.get_tree(tree_idx).unwrap()))
+        forest_get_tree_string
+            .push_str(&format!("{:#?}", forest.get_tree(tree_idx).unwrap()))
     }
 
     for tree in forest {
@@ -115,4 +116,28 @@ fn glr_forest_into_iterator() {
     }
     assert_eq!(forest_get_tree_string, forest_iter_string);
     output_cmp!("src/glr/forest/forest_into_iter.ast", forest_iter_string);
+}
+
+#[test]
+fn glr_forest_iter() {
+    let forest = CalcParser::new().parse("1 + 4 * 9 + 3 * 2 + 7").unwrap();
+    let mut forest_get_tree_string = String::new();
+    let mut forest_iter_string = String::new();
+    let mut forest_iter_ref_string = String::new();
+
+    for tree_idx in 0..forest.solutions() {
+        forest_get_tree_string
+            .push_str(&format!("{:#?}", forest.get_tree(tree_idx).unwrap()))
+    }
+
+    for tree in forest.iter() {
+        forest_iter_string.push_str(&format!("{tree:#?}"));
+    }
+
+    for tree in &forest {
+        forest_iter_ref_string.push_str(&format!("{tree:#?}"));
+    }
+    assert_eq!(forest_get_tree_string, forest_iter_string);
+    assert_eq!(forest_get_tree_string, forest_iter_ref_string);
+    output_cmp!("src/glr/forest/forest_iter.ast", forest_iter_string);
 }
