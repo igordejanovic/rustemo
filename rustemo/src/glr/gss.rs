@@ -683,3 +683,42 @@ impl<'i, I: Input + ?Sized, P, TK: Copy> Forest<'i, I, P, TK> {
             + if self.results.len() > 1 { 1 } else { 0 }
     }
 }
+
+/// Support for into_iter, i.e. iteration in for loops
+pub struct ForestIntoIter<'i, I, P, TK>
+    where
+        I: Input + ?Sized,
+        TK: Copy
+{
+    forest: Forest<'i, I, P, TK>,
+    tree_idx: usize,
+}
+
+impl<'i, I, P, TK> IntoIterator for Forest<'i, I, P, TK>
+    where
+        I: Input + ?Sized,
+        TK: Copy
+{
+    type Item = Tree<'i, I, P, TK>;
+    type IntoIter = ForestIntoIter<'i, I, P, TK>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        ForestIntoIter{ forest: self, tree_idx: 0 }
+    }
+}
+
+impl<'i, I, P, TK> Iterator for ForestIntoIter<'i, I, P, TK>
+    where
+        I: Input + ?Sized,
+        TK: Copy
+{
+    type Item = Tree<'i, I, P, TK>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let tree = self.forest.get_tree(self.tree_idx);
+        if tree.is_some() {
+            self.tree_idx += 1;
+        }
+        tree
+    }
+}
