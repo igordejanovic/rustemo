@@ -100,6 +100,7 @@ fn glr_extract_tree_from_forest() {
 }
 // ANCHOR_END: forest
 
+// ANCHOR: forest-iter
 #[test]
 fn glr_forest_into_iter() {
     let forest = CalcParser::new().parse("1 + 4 * 9 + 3 * 2 + 7").unwrap();
@@ -141,3 +142,4 @@ fn glr_forest_iter() {
     assert_eq!(forest_get_tree_string, forest_iter_ref_string);
     output_cmp!("src/glr/forest/forest_iter.ast", forest_iter_string);
 }
+// ANCHOR_END: forest-iter

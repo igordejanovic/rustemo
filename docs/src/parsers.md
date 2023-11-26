@@ -60,6 +60,13 @@ For example of calling GLR parser see this test:
 The most useful API calls for `Forest` are `get_tree` and `get_first_tree`.
 There is also `solutions` which gives your the number of trees in the forest.
 
+`Forest` supports `into_iter()` and `iter()` so it can be used in the context of
+a for loop.
+
+```rust
+{{#include ../../tests/src/glr/forest/mod.rs:forest-iter}}
+```
+
 A tree can accept a builder using the `build` method. For an example of calling
 the default builder over the forest tree see this test:
 
