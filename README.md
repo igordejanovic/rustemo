@@ -115,7 +115,7 @@ examples](https://github.com/igordejanovic/rustemo/tree/main/examples).
 - [x] Docs completed.
 - [x] First release to crates.io!
 
-### v0.2.0
+### v0.2.0 - current
 - [x] GLR parsing based on Right-Nulled GLR algorithm (RNGLR).
   - [x] Base Tomita's algorithm. Shared packed parse forest.
   - [x] Lazy tree extraction from forest.
@@ -124,7 +124,8 @@ examples](https://github.com/igordejanovic/rustemo/tree/main/examples).
 - [x] GLR docs
 - [x] Release to crates.io
   
-### v0.3.0
+### Next
+- [x] Forest iteration.
 - [ ] Greedy repetitions.
 - [ ] Zero copy for built-in builders.
 - [ ] Parenthesized groups. Still not sure if this is a good thing to have.
