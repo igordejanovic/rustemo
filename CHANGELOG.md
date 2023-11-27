@@ -15,6 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Getting `CARGO_WORKSPACE_DIR` in `local_file!`.
 
+# Changed
+
+- Removed lexer type parameter from the `Parser` trait.
+
+
 ## [0.2.0] - 2023-10-22
 
 # Added
