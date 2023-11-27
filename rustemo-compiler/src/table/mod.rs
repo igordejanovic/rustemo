@@ -1036,7 +1036,10 @@ impl<'g, 's> LRTable<'g, 's> {
                                 // conflict on the first two for simplicity sake
                                 [Action::Reduce(prod1, _), Action::Reduce(prod2, _), ..] =>
                                     ConflictKind::ReduceReduce(*prod1,  *prod2),
-                                _ => unreachable!()
+                                e => {
+                                    print!("{e:?}");
+                                    unreachable!()
+                                }
                             };
 
                             Some(Conflict {
