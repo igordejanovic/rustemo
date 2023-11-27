@@ -1,13 +1,12 @@
 use std::path::Path;
 
-use crate::{context::Context, error::Result, input::Input, lexer::Lexer};
+use crate::{context::Context, error::Result, input::Input};
 
 /// The trait implemented by all Rustemo parsers.
-pub trait Parser<'i, I, C, L, S, TK>
+pub trait Parser<'i, I, C, S, TK>
 where
     I: Input + ?Sized,
     C: Context<'i, I, S, TK>,
-    L: Lexer<'i, C, S, TK, Input = I>,
     S: State,
 {
     type Output;
@@ -15,7 +14,7 @@ where
     /// Parse the given input and produce the result. The output type is set by
     /// the parser implementers and it is usually defined by the builder if the
     /// building is done during the parse process.
-    fn parse(&self, input: &'i L::Input) -> Result<Self::Output>;
+    fn parse(&self, input: &'i I) -> Result<Self::Output>;
 
     /// Parse with the given context which has information about the current
     /// parsing state (e.g. position, location). Used in situation when we need
@@ -24,7 +23,7 @@ where
     fn parse_with_context(
         &self,
         context: &mut C,
-        input: &'i L::Input,
+        input: &'i I,
     ) -> Result<Self::Output>;
 
     /// A convenience method for loading the content from the given file and

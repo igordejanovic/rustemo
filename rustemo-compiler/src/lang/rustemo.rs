@@ -16771,7 +16771,7 @@ impl<
     }
 }
 #[allow(dead_code)]
-impl<'i, I, L, B> Parser<'i, I, Context<'i, I>, L, State, TokenKind>
+impl<'i, I, L, B> Parser<'i, I, Context<'i, I>, State, TokenKind>
 for RustemoParser<'i, I, L, B>
 where
     I: InputT + ?Sized + Debug,

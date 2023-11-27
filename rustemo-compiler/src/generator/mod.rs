@@ -804,7 +804,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
 
         ast.push(parse_quote! {
             #[allow(dead_code)]
-            impl<'i, I, L, B> Parser<'i, I, Context<'i, I>, L, State, TokenKind> for #parser <'i, I, L, B>
+            impl<'i, I, L, B> Parser<'i, I, Context<'i, I>, State, TokenKind> for #parser <'i, I, L, B>
             where
                 I: InputT + ?Sized + Debug,
                 L: Lexer<'i, Context<'i, I>, State, TokenKind, Input = I>,

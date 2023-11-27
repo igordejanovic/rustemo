@@ -287,7 +287,7 @@ where
     }
 }
 
-impl<'i, C, S, P, I, TK, NTK, D, L, B> Parser<'i, I, C, L, S, TK>
+impl<'i, C, S, P, I, TK, NTK, D, L, B> Parser<'i, I, C, S, TK>
     for LRParser<'i, C, S, P, TK, NTK, D, L, B, I>
 where
     C: Context<'i, I, S, TK> + Default,
@@ -302,7 +302,7 @@ where
 {
     type Output = B::Output;
 
-    fn parse(&self, input: &'i L::Input) -> Result<Self::Output> {
+    fn parse(&self, input: &'i I) -> Result<Self::Output> {
         log!("\n{}", "*** Parsing started".red().bold());
         log!("\nfile: {}", self.file_name);
         let mut context = C::default();
@@ -313,7 +313,7 @@ where
     fn parse_with_context(
         &self,
         context: &mut C,
-        input: &'i L::Input,
+        input: &'i I,
     ) -> Result<Self::Output> {
         let mut parse_stack: ParseStack<S, I, C, TK> =
             ParseStack::new(context, self.start_state);

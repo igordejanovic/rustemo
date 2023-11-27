@@ -875,8 +875,7 @@ where
     }
 }
 
-impl<'i, I, L, S, TK, NTK, P, D, B>
-    Parser<'i, I, GssHead<'i, I, S, TK>, L, S, TK>
+impl<'i, I, S, TK, NTK, L, P, D, B> Parser<'i, I, GssHead<'i, I, S, TK>, S, TK>
     for GlrParser<'i, S, L, P, TK, NTK, D, I, B>
 where
     I: Input + ?Sized + Debug,
@@ -888,7 +887,7 @@ where
 {
     type Output = Forest<'i, I, P, TK>;
 
-    fn parse(&self, input: &'i L::Input) -> Result<Self::Output> {
+    fn parse(&self, input: &'i I) -> Result<Self::Output> {
         let mut context = GssHead::default();
         context.set_position(self.start_position);
         self.parse_with_context(&mut context, input)
@@ -897,7 +896,7 @@ where
     fn parse_with_context(
         &self,
         context: &mut GssHead<'i, I, S, TK>,
-        input: &'i L::Input,
+        input: &'i I,
     ) -> Result<Self::Output> {
         let mut gss: GssGraph<'i, I, S, P, TK> = GssGraph::new();
         let start_head = gss.add_head(context.clone());
