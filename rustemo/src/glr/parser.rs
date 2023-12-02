@@ -56,7 +56,11 @@ struct Reduction<P> {
 /// Reduction path is determined by the root node of the reduction together with
 /// the path parent links containing sub-results (sub-trees).
 #[derive(Debug)]
-struct ReductionPath<'i, I: Input + ?Sized, P, TK: Copy> {
+struct ReductionPath<'i, I, P, TK>
+where
+    I: Input + ?Sized,
+    TK: Copy,
+{
     /// Parents along the path
     parents: VecDeque<Rc<Parent<'i, I, P, TK>>>,
 
@@ -64,8 +68,10 @@ struct ReductionPath<'i, I: Input + ?Sized, P, TK: Copy> {
     root_head: NodeIndex,
 }
 
-impl<'i, I: Input + ?Sized, P, TK: Copy> Display
-    for ReductionPath<'i, I, P, TK>
+impl<'i, I, P, TK> Display for ReductionPath<'i, I, P, TK>
+where
+    I: Input + ?Sized,
+    TK: Copy,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut pariter = self.parents.iter().rev();
@@ -252,7 +258,7 @@ where
         &self,
         gss: &mut GssGraph<'i, I, S, P, TK>,
         frontier_base: &BTreeMap<S, NodeIndex>,
-        input: &'i L::Input,
+        input: &'i I,
     ) -> BTreeMap<TK, BTreeMap<S, NodeIndex>> {
         let mut frontier: BTreeMap<TK, BTreeMap<S, NodeIndex>> =
             BTreeMap::new();
@@ -981,7 +987,7 @@ where
     where
         'a: 'i,
     {
-        self.content = Some(L::Input::read_file(file.as_ref())?);
+        self.content = Some(I::read_file(file.as_ref())?);
         self.file_name = file.as_ref().to_string_lossy().into();
         let parsed = self.parse(self.content.as_ref().unwrap().borrow());
         parsed
