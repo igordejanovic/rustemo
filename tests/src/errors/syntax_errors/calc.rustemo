@@ -1,0 +1,6 @@
+E: E '+' E {left}
+ | Number;
+
+terminals
+Plus: '+';
+Number: /\d+/;

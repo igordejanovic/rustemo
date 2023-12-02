@@ -15,6 +15,7 @@ fn main() {
         ("rule_patterns", Box::new(|s| s)),
         ("sugar", Box::new(|s| s)),
         ("unicode", Box::new(|s| s)),
+        ("errors/syntax_errors", Box::new(|s| s)),
         ("ambiguity", Box::new(|s| s.prefer_shifts(true))),
         ("from_file", Box::new(|s| s)),
         (
