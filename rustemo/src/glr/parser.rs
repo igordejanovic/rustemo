@@ -1,4 +1,9 @@
-//! GLR parser implementation
+//! Right Nulled GLR parser implementation
+//!
+//! The implementation is based on this paper:
+//! Elizabeth Scott and Adrian Johnstone. 2006. Right nulled GLR parsers. ACM
+//! Trans. Program. Lang. Syst. 28, 4 (July 2006), 577–618.
+//! https://doi.org/10.1145/1146809.1146810
 
 use crate::{
     context::Context,
