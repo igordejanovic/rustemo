@@ -26,15 +26,21 @@ pub struct GssGraph<'i, I: Input + ?Sized, S, P, TK: Copy>(
     Graph<GssHead<'i, I, S, TK>, Rc<Parent<'i, I, P, TK>>>,
 );
 
-impl<'i, I: Input + ?Sized, S, P, TK: Copy> Default
-    for GssGraph<'i, I, S, P, TK>
+impl<'i, I, S, P, TK> Default for GssGraph<'i, I, S, P, TK>
+where
+    I: Input + ?Sized,
+    TK: Copy,
 {
     fn default() -> Self {
         Self(Default::default())
     }
 }
 
-impl<'i, I: Input + ?Sized, S, P, TK: Copy> GssGraph<'i, I, S, P, TK> {
+impl<'i, I, S, P, TK> GssGraph<'i, I, S, P, TK>
+where
+    I: Input + ?Sized,
+    TK: Copy,
+{
     pub fn new() -> Self {
         Self::default()
     }
@@ -137,7 +143,10 @@ impl<'i, I: Input + ?Sized, S, P, TK: Copy> GssGraph<'i, I, S, P, TK> {
 /// handled by splitting the head and using the same GLR mechanics for syntax
 /// ambiguity handling. Effectively, we have per-token sub-frontiers.
 #[derive(Debug)]
-pub struct GssHead<'i, I: Input + ?Sized, S, TK> {
+pub struct GssHead<'i, I, S, TK>
+where
+    I: Input + ?Sized,
+{
     /// LR state reached when this node is created. Since LR state is related to
     /// grammar symbol this carries also an information is what is the last
     /// grammar symbol the parser has seen when reaching the current position.
@@ -174,8 +183,11 @@ pub struct GssHead<'i, I: Input + ?Sized, S, TK> {
     token_ahead: Option<Token<'i, I, TK>>,
 }
 
-impl<'i, I: Input + ?Sized, S: State, TK: Copy> Clone
-    for GssHead<'i, I, S, TK>
+impl<'i, I, S, TK> Clone for GssHead<'i, I, S, TK>
+where
+    I: Input + ?Sized,
+    S: State,
+    TK: Copy,
 {
     fn clone(&self) -> Self {
         Self {
@@ -335,7 +347,11 @@ where
 
 /// A node of the Shared Packed Parse Forest (SPPF) (sub)tree
 #[derive(Debug)]
-pub enum SPPFTree<'i, I: Input + ?Sized, P, TK: Copy> {
+pub enum SPPFTree<'i, I, P, TK>
+where
+    I: Input + ?Sized,
+    TK: Copy,
+{
     Term {
         token: Token<'i, I, TK>,
         data: TreeData<'i, I>,
@@ -351,7 +367,11 @@ pub enum SPPFTree<'i, I: Input + ?Sized, P, TK: Copy> {
     },
 }
 
-impl<'i, I: Input + ?Sized, P, TK: Copy> SPPFTree<'i, I, P, TK> {
+impl<'i, I, P, TK> SPPFTree<'i, I, P, TK>
+where
+    I: Input + ?Sized,
+    TK: Copy,
+{
     fn solutions(&self) -> usize {
         match self {
             SPPFTree::Term { .. } => 1,
@@ -384,8 +404,11 @@ impl<'i, I: Input + ?Sized, P, TK: Copy> SPPFTree<'i, I, P, TK> {
     }
 }
 
-impl<'i, I: Input + ?Sized, P: Clone, TK: Copy> Clone
-    for SPPFTree<'i, I, P, TK>
+impl<'i, I, P, TK> Clone for SPPFTree<'i, I, P, TK>
+where
+    I: Input + ?Sized,
+    P: Clone,
+    TK: Copy,
 {
     fn clone(&self) -> Self {
         match self {
@@ -408,13 +431,19 @@ impl<'i, I: Input + ?Sized, P: Clone, TK: Copy> Clone
 
 /// Additional data shared by both term/non-term tree nodes.
 #[derive(Debug)]
-pub struct TreeData<'i, I: Input + ?Sized> {
+pub struct TreeData<'i, I>
+where
+    I: Input + ?Sized,
+{
     pub range: Range<usize>,
     pub location: Location,
     pub layout: Option<&'i I>,
 }
 
-impl<'i, I: Input + ?Sized> Clone for TreeData<'i, I> {
+impl<'i, I> Clone for TreeData<'i, I>
+where
+    I: Input + ?Sized,
+{
     fn clone(&self) -> Self {
         Self {
             range: self.range.clone(),
@@ -427,7 +456,11 @@ impl<'i, I: Input + ?Sized> Clone for TreeData<'i, I> {
 /// Parent backlink in the GSS structure. Keeps all possibilities/ambiguities
 /// between the root_node and the head_node.
 #[derive(Debug)]
-pub struct Parent<'i, I: Input + ?Sized, P, TK: Copy> {
+pub struct Parent<'i, I, P, TK>
+where
+    I: Input + ?Sized,
+    TK: Copy,
+{
     pub root_node: NodeIndex,
     pub head_node: NodeIndex,
 
@@ -437,15 +470,26 @@ pub struct Parent<'i, I: Input + ?Sized, P, TK: Copy> {
     pub possibilities: RefCell<Vec<Rc<SPPFTree<'i, I, P, TK>>>>,
 }
 
-impl<'i, I: Input + ?Sized, P, TK: Copy> PartialEq for Parent<'i, I, P, TK> {
+impl<'i, I, P, TK> PartialEq for Parent<'i, I, P, TK>
+where
+    I: Input + ?Sized,
+    TK: Copy,
+{
     fn eq(&self, other: &Self) -> bool {
         self.root_node == other.root_node && self.head_node == other.head_node
     }
 }
-impl<'i, I: Input + ?Sized, P, TK: Copy> Eq for Parent<'i, I, P, TK> {}
+impl<'i, I, P, TK> Eq for Parent<'i, I, P, TK>
+where
+    I: Input + ?Sized,
+    TK: Copy,
+{
+}
 
-impl<'i, I: Input + ?Sized, P, TK: Copy> std::hash::Hash
-    for Parent<'i, I, P, TK>
+impl<'i, I, P, TK> std::hash::Hash for Parent<'i, I, P, TK>
+where
+    I: Input + ?Sized,
+    TK: Copy,
 {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
         self.root_node.hash(state);
@@ -453,7 +497,11 @@ impl<'i, I: Input + ?Sized, P, TK: Copy> std::hash::Hash
     }
 }
 
-impl<'i, I: Input + ?Sized, P, TK: Copy> Parent<'i, I, P, TK> {
+impl<'i, I, P, TK> Parent<'i, I, P, TK>
+where
+    I: Input + ?Sized,
+    TK: Copy,
+{
     pub fn new(
         root_node: NodeIndex,
         head_node: NodeIndex,
@@ -503,12 +551,20 @@ impl<'i, I: Input + ?Sized, P, TK: Copy> Parent<'i, I, P, TK> {
 
 /// A wrapper type around `SPPFTree` structure to provide a view of a
 /// specific tree which index is given in idx.
-pub struct Tree<'i, I: Input + ?Sized, P, TK: Copy> {
+pub struct Tree<'i, I, P, TK>
+where
+    I: Input + ?Sized,
+    TK: Copy,
+{
     idx: usize,
     root: Rc<SPPFTree<'i, I, P, TK>>,
 }
 
-impl<'i, I: Input + ?Sized + Debug, P, TK: Copy> Debug for Tree<'i, I, P, TK> {
+impl<'i, I, P, TK> Debug for Tree<'i, I, P, TK>
+where
+    I: Input + ?Sized + Debug,
+    TK: Copy,
+{
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self.root {
             SPPFTree::Term { token, .. } => write!(f, "{:#?}", token.value),
@@ -517,7 +573,11 @@ impl<'i, I: Input + ?Sized + Debug, P, TK: Copy> Debug for Tree<'i, I, P, TK> {
     }
 }
 
-impl<'i, I: Input + ?Sized, P, TK: Copy> Tree<'i, I, P, TK> {
+impl<'i, I, P, TK> Tree<'i, I, P, TK>
+where
+    I: Input + ?Sized,
+    TK: Copy,
+{
     pub fn new(root: Rc<SPPFTree<'i, I, P, TK>>, idx: usize) -> Self {
         Self { root, idx }
     }
@@ -633,7 +693,11 @@ impl<'i, I: Input + ?Sized, P, TK: Copy> Tree<'i, I, P, TK> {
 /// Trees of the forest are ordered and each tree can be extracted as either an
 /// eager or a lazy tree given its index.
 #[derive(Debug)]
-pub struct Forest<'i, I: Input + ?Sized, P, TK: Copy> {
+pub struct Forest<'i, I, P, TK>
+where
+    I: Input + ?Sized,
+    TK: Copy,
+{
     /// Root nodes of trees which are possible solutions.
     ///
     /// Each `SPPFTree` contains one or more trees lazily extracted using the
@@ -674,8 +738,8 @@ where
 
     /// Total number of ambiguous places/nodes in this forest.
     ///
-    /// Extracted trees are ambiguous but forests may have ambiguities.
-    /// If there is >1 tree in the forest there is an ambiguity.
+    /// Extracted trees are unambiguous but forests may have ambiguities.
+    /// If there is >1 trees in the forest there are ambiguities.
     #[inline]
     pub fn ambiguities(&self) -> usize {
         #[allow(clippy::mutable_key_type)]
