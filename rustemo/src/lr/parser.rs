@@ -164,7 +164,7 @@ where
     TK: Default,
     D: ParserDefinition<S, P, TK, NTK>,
     L: Lexer<'i, C, S, TK, Input = I>,
-    B: LRBuilder<'i, L::Input, C, S, P, TK>,
+    B: LRBuilder<'i, I, C, S, P, TK>,
 {
     pub fn new(
         definition: &'i D,
@@ -195,15 +195,15 @@ where
 
     fn next_token(
         &self,
-        input: &'i L::Input,
+        input: &'i I,
         context: &mut C,
         layout_parser: &LayoutParser<'i, C, S, P, TK, NTK, D, L, I>,
-    ) -> Result<Token<'i, L::Input, TK>>
+    ) -> Result<Token<'i, I, TK>>
     where
         // Needed for calling parse_with_context
         P: Debug + Into<NTK> + Copy,
         S: Debug,
-        L::Input: Debug,
+        I: Debug,
         TK: Debug + Copy + PartialEq + 'i,
         C: Default,
     {
@@ -293,12 +293,11 @@ where
     C: Context<'i, I, S, TK> + Default,
     S: State + Debug,
     P: Debug + Copy + Into<NTK>,
-    I: Input + ?Sized + 'i,
+    I: Input + ?Sized + Debug + 'i,
     TK: Debug + Copy + Default + PartialEq + 'i,
     D: ParserDefinition<S, P, TK, NTK>,
     L: Lexer<'i, C, S, TK, Input = I>,
-    L::Input: Debug,
-    B: LRBuilder<'i, L::Input, C, S, P, TK>,
+    B: LRBuilder<'i, I, C, S, P, TK>,
 {
     type Output = B::Output;
 
@@ -427,7 +426,7 @@ where
     where
         'a: 'i,
     {
-        self.content = Some(L::Input::read_file(file.as_ref())?);
+        self.content = Some(I::read_file(file.as_ref())?);
         self.file_name = file.as_ref().to_string_lossy().into();
         let parsed = self.parse(self.content.as_ref().unwrap().borrow());
         parsed
