@@ -1,6 +1,6 @@
 use crate::context::Context;
 use crate::debug::log;
-use crate::error::Result;
+use crate::error::{error_expected, Result};
 use crate::input::Input;
 use crate::lexer::{Lexer, Token};
 use crate::location::Location;
@@ -260,27 +260,12 @@ where
                         location: context.location(),
                     });
                 } else {
-                    let expected = if expected.len() > 1 {
-                        format!(
-                            "one of {}",
-                            expected
-                                .iter()
-                                .map(|t| format!("{t:?}"))
-                                .collect::<Vec<_>>()
-                                .join(", ")
-                        )
-                    } else {
-                        format!("{:?}", expected[0])
-                    };
-                    return err!(
-                        format!(
-                            "...{}...\nExpected {}.",
-                            input.context_str(context.position()),
-                            expected
-                        ),
-                        Some(self.file_name.clone()),
-                        Some(context.location())
-                    );
+                    return Err(error_expected(
+                        input,
+                        &self.file_name,
+                        context,
+                        &expected,
+                    ));
                 }
             }
         }

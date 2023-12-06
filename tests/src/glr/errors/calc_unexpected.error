@@ -1,3 +1,9 @@
-Forest {
-    results: [],
+Error {
+    message: "...1 + 4 * 9 -->! 3 * 2 + 7...\nExpected one of STOP, Plus, Mul.",
+    file: Some(
+        "<str>",
+    ),
+    location: Some(
+        [1,10],
+    ),
 }

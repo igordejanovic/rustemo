@@ -1,5 +1,5 @@
-use crate::location::Location;
-use std::fmt::Display;
+use crate::{location::Location, Context, Input, State};
+use std::fmt::{Debug, Display};
 
 pub type Result<R> = std::result::Result<R, Error>;
 
@@ -87,6 +87,41 @@ impl From<std::io::Error> for Error {
 impl<R> From<Error> for Result<R> {
     fn from(value: Error) -> Self {
         Self::Err(value)
+    }
+}
+
+pub(crate) fn error_expected<'i, I, S, TK, C>(
+    input: &'i I,
+    file_name: &str,
+    context: &C,
+    expected: &[TK],
+) -> Error
+where
+    C: Context<'i, I, S, TK>,
+    I: Input + ?Sized,
+    S: State,
+    TK: Debug,
+{
+    let expected = if expected.len() > 1 {
+        format!(
+            "one of {}",
+            expected
+                .iter()
+                .map(|t| format!("{t:?}"))
+                .collect::<Vec<_>>()
+                .join(", ")
+        )
+    } else {
+        format!("{:?}", expected[0])
+    };
+    Error::Error {
+        message: format!(
+            "...{}...\nExpected {}.",
+            input.context_str(context.position()),
+            expected
+        ),
+        file: Some(file_name.to_string()),
+        location: Some(context.location()),
     }
 }
 

@@ -16,6 +16,7 @@ mod input;
 mod lexer;
 mod location;
 mod parser;
+mod utils;
 
 mod lr;
 //#[cfg(feature = "glr")]

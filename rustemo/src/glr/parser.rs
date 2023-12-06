@@ -7,6 +7,7 @@
 
 use crate::{
     context::Context,
+    error::error_expected,
     glr::gss::Parent,
     input::Input,
     lexer::{Lexer, Token},
@@ -17,7 +18,8 @@ use crate::{
         parser::{Action, LRParser, ParserDefinition},
     },
     parser::{Parser, State},
-    Result,
+    utils::Dedup,
+    Error, Result,
 };
 #[cfg(debug_assertions)]
 use colored::*;
@@ -405,7 +407,7 @@ where
         pending_reductions: &mut VecDeque<Reduction<P>>,
         pending_shifts: &mut Vec<(NodeIndex, S)>,
         accepted_heads: &mut Vec<NodeIndex>,
-        mut subfrontier: BTreeMap<S, NodeIndex>,
+        subfrontier: &mut BTreeMap<S, NodeIndex>,
     ) {
         log!(
             "\n{}{}",
@@ -884,6 +886,49 @@ where
                 .collect::<Vec<_>>(),
         )
     }
+
+    /// Create error based on the last frontier when no progress can be made and
+    /// there are no heads accepted.
+    fn make_error(
+        &self,
+        gss: GssGraph<'i, I, S, P, TK>,
+        input: &I,
+        last_frontier_base: BTreeMap<S, NodeIndex>,
+    ) -> Error {
+        // TODO: It would be possible that different heads have progressed
+        // differently due to context-aware lexing. Thus, error report
+        // should take into account that it is reporting for multiple
+        // possible parses.
+        let expected = {
+            let mut expected = last_frontier_base
+                .keys()
+                .flat_map(|state| {
+                    self.definition
+                        .expected_token_kinds(*state)
+                        .iter()
+                        .map_while(|x| *x)
+                })
+                .collect::<Vec<_>>();
+            expected.clear_duplicates();
+            expected
+        };
+
+        let context = gss.head(
+            *last_frontier_base
+                .values()
+                .next()
+                .expect("There must be a head in the last frontier!"),
+        );
+
+        let error = error_expected(input, &self.file_name, context, &expected);
+
+        log!(
+            "\n{}. {}",
+            "Syntax error".red(),
+            format!("{:?}", error).green()
+        );
+        error
+    }
 }
 
 impl<'i, I, S, TK, NTK, L, P, D, B> Parser<'i, I, GssHead<'i, I, S, TK>, S, TK>
@@ -938,6 +983,9 @@ where
         let mut frontier_base: BTreeMap<S, NodeIndex> =
             BTreeMap::from([(context.state(), start_head)]);
 
+        // We keep track of the last base frontier for error reporting.
+        let mut last_frontier_base: BTreeMap<S, NodeIndex> = Default::default();
+
         // Shifts that will be the basis of the next frontier base.
         let mut pending_shifts: Vec<(NodeIndex, S)> = vec![];
 
@@ -947,10 +995,7 @@ where
         let mut accepted_heads: Vec<NodeIndex> = vec![];
 
         while !frontier_base.is_empty() {
-            // Create full frontier as a map where the key is a token ahead and
-            // the value is sub-frontier for the given token. This is done to
-            // support lexical ambiguity.
-            let frontier =
+            let mut frontier =
                 self.create_frontier(&mut gss, &frontier_base, input);
             // Create initial shifts/reductions for this frontier
             self.initial_process_frontier(
@@ -960,7 +1005,7 @@ where
                 &mut pending_shifts,
                 &mut accepted_heads,
             );
-            for subfrontier in frontier.into_values() {
+            for subfrontier in frontier.values_mut() {
                 // Reduce everything that is possible for this subfrontier
                 self.reducer(
                     &mut gss,
@@ -972,17 +1017,25 @@ where
             }
             frontier_idx += 1;
             // Do shifts and create the next base frontier
-            frontier_base =
-                self.shifter(&mut gss, &mut pending_shifts, frontier_idx);
+            let fb = self.shifter(&mut gss, &mut pending_shifts, frontier_idx);
+            if fb.is_empty() {
+                last_frontier_base = frontier_base;
+            }
+            frontier_base = fb;
         }
 
-        let forest = self.create_forest(gss, accepted_heads);
-        log!(
-            "\n{}. {}",
-            "Finished".red(),
-            format!("{} solutions found.", forest.solutions()).green()
-        );
-        Ok(forest)
+        if !accepted_heads.is_empty() {
+            // self.success(gss, accepted_heads)
+            let forest = self.create_forest(gss, accepted_heads);
+            log!(
+                "\n{}. {}",
+                "Finished".red(),
+                format!("{} solutions found.", forest.solutions()).green()
+            );
+            Ok(forest)
+        } else {
+            Err(self.make_error(gss, input, last_frontier_base))
+        }
     }
 
     fn parse_file<'a, F: AsRef<std::path::Path>>(
