@@ -11,6 +11,7 @@ use std::{
 
 use clap::ValueEnum;
 use colored::Colorize;
+use itertools::Itertools;
 use rustemo::log;
 
 use crate::{
@@ -1016,44 +1017,35 @@ impl<'g, 's> LRTable<'g, 's> {
     }
 
     pub fn get_conflicts(&'s self) -> Vec<Conflict<'g, 's>> {
-        let mut conflicts = vec![];
-        for state in &self.states {
-            conflicts.extend(
-                state
-                    .actions
-                    .iter()
-                    .enumerate()
-                    .filter_map(|(term_index, actions)| -> Option<Conflict> {
-                        if actions.len() > 1 {
-                            // First figure out the type of conflict.
-                            let kind = match &actions[..] {
-                                // Shift/Reduce
-                                [Action::Shift(_), Action::Reduce(prod, _)]
-                                    | [Action::Reduce(prod, _), Action::Shift(_)]=>
-                                        ConflictKind::ShiftReduce(*prod),
-                                // Reduce/Reduce, more than two can happen at
-                                // the same time but for now we shall report
-                                // conflict on the first two for simplicity sake
-                                [Action::Reduce(prod1, _), Action::Reduce(prod2, _), ..] =>
-                                    ConflictKind::ReduceReduce(*prod1,  *prod2),
-                                e => {
-                                    print!("{e:?}");
-                                    unreachable!()
-                                }
-                            };
-
-                            Some(Conflict {
-                                state,
-                                follow: TermIndex(term_index),
-                                kind
-                            })
-                        } else {
-                            None
+        self.states.iter().flat_map(|state| {
+            state
+                .actions
+                .iter()
+                .enumerate()
+                .filter(|(_, actions)| actions.len() > 1)
+                .flat_map(|(idx, actions)| {
+                    actions.iter().combinations(2).map(move |conflict| (idx, conflict))
+                })
+                .map(|(term_index, conflict)| {
+                    let kind = match &conflict[..] {
+                        [Action::Shift(_), Action::Reduce(prod, _)]
+                            | [Action::Reduce(prod, _), Action::Shift(_)]=>
+                                ConflictKind::ShiftReduce(*prod),
+                        [Action::Reduce(prod1, _), Action::Reduce(prod2, _)] =>
+                            ConflictKind::ReduceReduce(*prod1,  *prod2),
+                        e => {
+                            // This cannot happen as we have combinations of size 2.
+                            print!("{e:?}");
+                            unreachable!()
                         }
-                    }),
-            );
-        }
-        conflicts
+                    };
+                    Conflict {
+                        state,
+                        follow: TermIndex(term_index),
+                        kind
+                    }
+                })
+        }).collect()
     }
 
     pub fn print_conflicts_report(&self, conflicts: &Vec<Conflict<'g, 's>>) {
