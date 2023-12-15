@@ -171,8 +171,26 @@ where
         state: S,
         partial_parse: bool,
         has_layout: bool,
-        lexer: Rc<L>,
+        lexer: L,
         builder: B,
+    ) -> Self {
+        Self::new_default(
+            definition,
+            state,
+            partial_parse,
+            has_layout,
+            Rc::new(lexer),
+            RefCell::new(builder),
+        )
+    }
+
+    pub(crate) fn new_default(
+        definition: &'i D,
+        state: S,
+        partial_parse: bool,
+        has_layout: bool,
+        lexer: Rc<L>,
+        builder: RefCell<B>,
     ) -> Self {
         Self {
             definition,
@@ -183,7 +201,7 @@ where
             start_state: state,
             has_layout,
             lexer,
-            builder: RefCell::new(builder),
+            builder,
             phantom: PhantomData,
         }
     }
@@ -308,13 +326,13 @@ where
         // produce the output and it never uses partial parse.
         let layout_parser: LayoutParser<'i, C, S, P, TK, NTK, D, L, I> =
             self.has_layout.then(|| {
-                LRParser::new(
+                LRParser::new_default(
                     self.definition,
                     S::default_layout().expect("Layout state not defined."),
                     true,
                     false,
                     Rc::clone(&self.lexer),
-                    SliceBuilder::new(input),
+                    RefCell::new(SliceBuilder::new(input)),
                 )
             });
 

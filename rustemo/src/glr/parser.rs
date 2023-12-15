@@ -957,13 +957,13 @@ where
         let mut gss: GssGraph<'i, I, S, P, TK> = GssGraph::new();
         let start_head = gss.add_head(context.clone());
         if self.has_layout {
-            *self.layout_parser.borrow_mut() = Some(LRParser::new(
+            *self.layout_parser.borrow_mut() = Some(LRParser::new_default(
                 self.definition,
                 S::default_layout().expect("Layout state not defined."),
                 true,
                 false,
                 Rc::clone(&self.lexer),
-                SliceBuilder::new(input),
+                RefCell::new(SliceBuilder::new(input)),
             ))
         }
 
