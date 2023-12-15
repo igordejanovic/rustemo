@@ -9,7 +9,7 @@ const PROJECT: &str = "rustemo-compiler";
 
 fn main() {
     // Rebuild if head changed to include the new git hash.
-    println!("cargo:rerun-if-changed=.git/HEAD");
+    println!("cargo:rerun-if-changed=../.git/HEAD");
     println!("cargo:rerun-if-changed=src");
 
     if env::var("CARGO_FEATURE_BOOTSTRAP").is_ok() {
