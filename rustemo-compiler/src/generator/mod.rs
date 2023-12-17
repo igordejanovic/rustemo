@@ -40,11 +40,13 @@ pub fn generate_parser(
         return Err(Error::Error("Grammar file doesn't exist.".to_string()));
     }
 
-    let grammar_dir = PathBuf::from(
-        grammar_path
-            .parent()
-            .expect("Cannot deduce parent directory of the grammar file."),
-    );
+    let grammar_dir =
+        PathBuf::from(grammar_path.parent().ok_or_else(|| {
+            Error::Error(
+                "Cannot deduce parent directory of the grammar file."
+                    .to_string(),
+            )
+        })?);
 
     let out_dir = out_dir.unwrap_or(&grammar_dir);
     let out_dir_actions = out_dir_actions.unwrap_or(&grammar_dir);
