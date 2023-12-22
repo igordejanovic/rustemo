@@ -3,24 +3,20 @@
 //! Provides default semantics actions implementation but allow for manual
 //! changes.
 
-use std::{
-    collections::BTreeSet,
-    path::{Path, PathBuf},
-};
+use std::{collections::BTreeSet, path::PathBuf};
 
 use proc_macro2::{Ident, Span};
 use quote::format_ident;
 use syn::{self, parse_quote};
 
-use crate::{error::Result, grammar::Terminal};
 use crate::{
-    grammar::{
-        types::{to_snake_case, SymbolTypes},
-        Grammar, NonTerminal,
-    },
+    error::Result,
+    grammar::{types::to_snake_case, NonTerminal, Terminal},
     settings::{LexerType, Settings},
     Error,
 };
+
+use super::ParserGenerator;
 
 mod production;
 
@@ -57,26 +53,19 @@ pub(crate) trait ActionsGenerator {
     ) -> Vec<(String, syn::Item)>;
 }
 
-pub(crate) fn generate_parser_actions<F>(
-    grammar: &Grammar,
-    types: &SymbolTypes,
-    file_name: &str,
-    out_dir_actions: F,
-    settings: &Settings,
-) -> Result<()>
-where
-    F: AsRef<Path> + core::fmt::Debug,
-{
-    let parser_mod = PathBuf::from(file_name)
+pub(super) fn generate_parser_actions(
+    generator: &ParserGenerator,
+) -> Result<()> {
+    let parser_mod = PathBuf::from(&generator.file_name)
         .file_stem()
         .unwrap()
         .to_string_lossy()
         .to_string();
-    let mut file_name = String::from(file_name);
+    let mut file_name = String::from(&generator.file_name);
     file_name.push_str("_actions.rs");
-    let action_file = PathBuf::from(out_dir_actions.as_ref()).join(file_name);
+    let action_file = generator.out_dir_actions.join(file_name);
 
-    let mut ast = if action_file.exists() && !settings.force {
+    let mut ast = if action_file.exists() && !generator.settings.force {
         log!("Parsing action file with Syn: {:?}", action_file);
         syn::parse_file(&std::fs::read_to_string(&action_file)?)?
     } else {
@@ -84,7 +73,7 @@ where
         log!("Creating: {:?}", action_file);
         let lexer_mod = format_ident!("{parser_mod}_lexer");
         let parser_mod = format_ident!("{}", parser_mod);
-        let input_type: syn::Stmt = match settings.lexer_type {
+        let input_type: syn::Stmt = match generator.settings.lexer_type {
             LexerType::Default => parse_quote! {
                 pub type Input = str;
             },
@@ -138,11 +127,15 @@ where
         };
     }
 
-    let generator: Box<dyn ActionsGenerator> =
-        production::ProductionActionsGenerator::new(grammar, types);
+    let actions_generator: Box<dyn ActionsGenerator> =
+        production::ProductionActionsGenerator::new(
+            generator.grammar,
+            generator.types.as_ref().unwrap(),
+        );
 
     // Generate types and actions for terminals
-    grammar
+    generator
+        .grammar
         .terminals
         .iter()
         .filter(|t| t.has_content && t.reachable.get())
@@ -151,19 +144,22 @@ where
             let type_name = &terminal.name;
             if !type_names.contains(type_name) {
                 log!("Create type for terminal '{type_name}'.");
-                ast.items.push(generator.terminal_type(terminal));
+                ast.items.push(actions_generator.terminal_type(terminal));
             }
             // Add terminal actions
             let action_name = to_snake_case(&terminal.name);
             if !action_names.contains(&action_name) {
                 log!("Create action function for terminal '{type_name}'.");
-                ast.items
-                    .push(generator.terminal_action(terminal, settings))
+                ast.items.push(
+                    actions_generator
+                        .terminal_action(terminal, generator.settings),
+                )
             }
         });
 
     // Generate types and actions for non-terminals
-    grammar
+    generator
+        .grammar
         .nonterminals()
         .iter()
         .filter(|nt| nt.reachable.get())
@@ -171,14 +167,14 @@ where
             // Add non-terminal type
             if !type_names.contains(&nonterminal.name) {
                 log!("Creating types for non-terminal '{}'.", nonterminal.name);
-                for ty in generator.nonterminal_types(nonterminal) {
+                for ty in actions_generator.nonterminal_types(nonterminal) {
                     ast.items.push(ty);
                 }
             }
 
             // Add non-terminal actions
-            for (action_name, action) in
-                generator.nonterminal_actions(nonterminal, settings)
+            for (action_name, action) in actions_generator
+                .nonterminal_actions(nonterminal, generator.settings)
             {
                 if !action_names.contains(&action_name) {
                     log!("Creating action '{action_name}'.");
@@ -188,9 +184,10 @@ where
         });
 
     log!("Writing action file {:?}", action_file);
-    std::fs::create_dir_all(&out_dir_actions).map_err(|e| {
+    std::fs::create_dir_all(&generator.out_dir_actions).map_err(|e| {
         Error::Error(format!(
-            "Cannot create directories for path '{out_dir_actions:?}': {e:?}."
+            "Cannot create directories for path '{:?}': {e:?}.",
+            generator.out_dir_actions
         ))
     })?;
     std::fs::write(action_file, prettyplease::unparse(&ast))?;
