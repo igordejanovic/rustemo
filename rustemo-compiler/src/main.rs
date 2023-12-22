@@ -4,7 +4,7 @@ use std::path::PathBuf;
 
 use clap::Parser;
 use rustemo_compiler::{
-    BuilderType, LexerType, ParserAlgo, Settings, TableType,
+    BuilderType, LexerType, ParserAlgo, Settings, TableType, GeneratorTableType
 };
 
 #[derive(Parser)]
@@ -55,6 +55,10 @@ struct Cli {
     #[clap(short, long, arg_enum, default_value_t)]
     parser_algo: ParserAlgo,
 
+    /// Parser generator table type
+    #[clap(short, long, arg_enum, default_value_t)]
+    generator_table_type: GeneratorTableType,
+
     /// What kind of lexer should be used.
     #[clap(short, long, arg_enum, default_value_t)]
     lexer_type: LexerType,
@@ -103,6 +107,7 @@ fn main() {
         .table_type(cli.table_type)
         .print_table(cli.print_table)
         .parser_algo(cli.parser_algo)
+        .generator_table_type(cli.generator_table_type)
         .lexer_type(cli.lexer_type)
         .builder_type(cli.builder_type)
         .input_type(cli.input_type);

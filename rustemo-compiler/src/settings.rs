@@ -37,6 +37,20 @@ pub enum BuilderType {
     Custom,
 }
 
+/// Different generated parser table variants with different trade-offs
+#[derive(Debug, Default, Clone, ArgEnum)]
+pub enum GeneratorTableType {
+    /// Table is generated as nested static arrays
+    /// Access time should be relatively good but it produces
+    /// larger executables.
+    #[default]
+    Arrays,
+    /// Table is an array of function pointers where functions contain match
+    /// expression for further disambiguation. Uses less statically allocated
+    /// storage but requires function call and pattern matching.
+    Functions,
+}
+
 /// Provides parser settings information. It is the main entry point in the
 /// parser generation process. It is meant to be used from the project
 /// `build.rs` script. See [tests crate `build.rs`
@@ -75,6 +89,7 @@ pub struct Settings {
 
     pub(crate) lexer_type: LexerType,
     pub(crate) builder_type: BuilderType,
+    pub(crate) generator_table_type: GeneratorTableType,
     pub(crate) input_type: String,
 
     pub(crate) partial_parse: bool,
@@ -107,6 +122,7 @@ impl Default for Settings {
             actions: true,
             lexer_type: Default::default(),
             builder_type: Default::default(),
+            generator_table_type: Default::default(),
             input_type: "str".into(),
             partial_parse: false,
             skip_ws: true,
@@ -216,6 +232,15 @@ impl Settings {
     /// Sets builder type. The default builder will deduce AST types and actions.
     pub fn builder_type(mut self, builder_type: BuilderType) -> Self {
         self.builder_type = builder_type;
+        self
+    }
+
+    /// Sets generator table type. The default is nested static arrays.
+    pub fn generator_table_type(
+        mut self,
+        generator_table_type: GeneratorTableType,
+    ) -> Self {
+        self.generator_table_type = generator_table_type;
         self
     }
 
