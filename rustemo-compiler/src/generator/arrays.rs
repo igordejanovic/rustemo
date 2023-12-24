@@ -26,11 +26,9 @@ impl<'g, 's> PartGenerator<'g, 's> for ArrayPartGenerator {
     ) -> Result<Vec<syn::Stmt>> {
         let max_actions = generator.table.max_actions();
         let max_recognizers = generator.table.max_recognizers();
-        let term_count = generator.grammar.terminals.len();
         let nonterm_count = generator.grammar.nonterminals.len();
         let states_count = generator.table.states.len();
         Ok(parse_quote! {
-            const TERMINAL_COUNT: usize = #term_count;
             const NONTERMINAL_COUNT: usize = #nonterm_count;
             const STATE_COUNT: usize = #states_count;
             #[allow(dead_code)]
@@ -117,8 +115,9 @@ impl<'g, 's> PartGenerator<'g, 's> for ArrayPartGenerator {
                 let terminals: Vec<syn::Expr> = state
                     .sorted_terminals
                     .iter()
-                    .map(|x| {
-                        let term: &Terminal = &generator.grammar.terminals[*x];
+                    .map(|term_index| {
+                        let term: &Terminal =
+                            generator.grammar.term_by_index(*term_index);
                         let token_kind = format_ident!("{}", &term.name);
                         parse_quote! {
                             Some(TokenKind::#token_kind)

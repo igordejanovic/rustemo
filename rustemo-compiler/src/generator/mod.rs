@@ -11,10 +11,6 @@ use std::{
 };
 use syn::{parse_quote, Ident};
 
-use crate::grammar::{
-    types::{to_pascal_case, to_snake_case, Choice, SymbolTypes},
-    Grammar, NonTerminal, Production,
-};
 use crate::{
     error::{Error, Result},
     index::{StateIndex, TermIndex},
@@ -23,6 +19,13 @@ use crate::{
     table::{Action, LRTable},
 };
 use crate::{grammar::builder::GrammarBuilder, ParserAlgo};
+use crate::{
+    grammar::{
+        types::{to_pascal_case, to_snake_case, Choice, SymbolTypes},
+        Grammar, NonTerminal, Production,
+    },
+    index::NonTermIndex,
+};
 
 /// Generator for parser implementation parts. Different types can implement
 /// different parser implementation strategies.
@@ -294,6 +297,14 @@ impl<'g, 's> ParserGenerator<'g, 's> {
 
     fn prod_kind_ident(&self, prod: &Production) -> syn::Ident {
         format_ident!("{}", self.prod_kind(prod))
+    }
+
+    fn term_kind_ident(&self, term: TermIndex) -> syn::Ident {
+        format_ident!("{}", self.grammar.term_by_index(term).name)
+    }
+
+    fn nonterm_kind_ident(&self, nonterm: NonTermIndex) -> syn::Ident {
+        format_ident!("{}", self.grammar.nonterm_by_index(nonterm).name)
     }
 
     fn state_kind_ident(&self, state: StateIndex) -> syn::Ident {

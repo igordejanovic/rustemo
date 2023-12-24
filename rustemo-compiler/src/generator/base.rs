@@ -28,6 +28,7 @@ impl<'g, 's> PartGenerator<'g, 's> for BasePartGenerator {
     ) -> Result<Vec<syn::Stmt>> {
         let actions_file = &generator.actions_file;
         let input_type = &generator.input_type;
+        let term_count = generator.grammar.terminals.len();
 
         let mut imports: Vec<syn::Stmt> = vec![];
 
@@ -84,6 +85,7 @@ impl<'g, 's> PartGenerator<'g, 's> for BasePartGenerator {
             use colored::*;
 
             pub type Input = #input_type;
+            const TERMINAL_COUNT: usize = #term_count;
         };
 
         Ok(header)
