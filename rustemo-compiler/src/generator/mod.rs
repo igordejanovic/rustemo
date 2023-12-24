@@ -27,38 +27,55 @@ use crate::{grammar::builder::GrammarBuilder, ParserAlgo};
 /// Generator for parser implementation parts. Different types can implement
 /// different parser implementation strategies.
 trait PartGenerator<'g, 's> {
+    fn delegate(&self) -> &dyn PartGenerator<'g, 's>;
     fn header(
         &self,
         generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>>;
+    ) -> Result<Vec<syn::Stmt>> {
+        self.delegate().header(generator)
+    }
     fn parser_header(
         &self,
         generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>>;
+    ) -> Result<Vec<syn::Stmt>> {
+        self.delegate().parser_header(generator)
+    }
     fn symbols(
         &self,
         generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>>;
+    ) -> Result<Vec<syn::Stmt>> {
+        self.delegate().symbols(generator)
+    }
     fn types(
         &self,
         generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>>;
+    ) -> Result<Vec<syn::Stmt>> {
+        self.delegate().types(generator)
+    }
     fn parser(
         &self,
         generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>>;
+    ) -> Result<Vec<syn::Stmt>> {
+        self.delegate().parser(generator)
+    }
     fn lexer_definition(
         &self,
         generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>>;
+    ) -> Result<Vec<syn::Stmt>> {
+        self.delegate().lexer_definition(generator)
+    }
     fn parser_definition(
         &self,
         generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>>;
+    ) -> Result<Vec<syn::Stmt>> {
+        self.delegate().parser_definition(generator)
+    }
     fn builder(
         &self,
         generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>>;
+    ) -> Result<Vec<syn::Stmt>> {
+        self.delegate().builder(generator)
+    }
 }
 
 /// Main entry point for the parser generator.

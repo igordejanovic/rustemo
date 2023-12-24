@@ -1,6 +1,7 @@
 use super::{arrays::ArrayPartGenerator, ParserGenerator, PartGenerator};
 
 use crate::error::Result;
+use syn::parse_quote;
 
 pub(crate) struct FunctionPartGenerator {
     delegate: ArrayPartGenerator,
@@ -15,46 +16,14 @@ impl FunctionPartGenerator {
 }
 
 impl<'g, 's> PartGenerator<'g, 's> for FunctionPartGenerator {
-    fn header(
-        &self,
-        generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>> {
-        self.delegate.header(generator)
-    }
-
     fn parser_header(
         &self,
         generator: &ParserGenerator<'g, 's>,
     ) -> Result<Vec<syn::Stmt>> {
-        self.delegate.parser_definition(generator)
-    }
-
-    fn symbols(
-        &self,
-        generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>> {
-        self.delegate.symbols(generator)
-    }
-
-    fn types(
-        &self,
-        generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>> {
-        self.delegate.types(generator)
-    }
-
-    fn parser(
-        &self,
-        generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>> {
-        self.delegate.parser(generator)
-    }
-
-    fn lexer_definition(
-        &self,
-        generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>> {
-        self.delegate.lexer_definition(generator)
+        let states_count = generator.table.states.len();
+        Ok(parse_quote! {
+            const STATE_COUNT: usize = #states_count;
+        })
     }
 
     fn parser_definition(
@@ -64,10 +33,7 @@ impl<'g, 's> PartGenerator<'g, 's> for FunctionPartGenerator {
         self.delegate.parser_definition(generator)
     }
 
-    fn builder(
-        &self,
-        generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>> {
-        self.delegate.builder(generator)
+    fn delegate(&self) -> &dyn PartGenerator<'g, 's> {
+        &self.delegate
     }
 }

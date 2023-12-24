@@ -20,13 +20,6 @@ impl ArrayPartGenerator {
 }
 
 impl<'g, 's> PartGenerator<'g, 's> for ArrayPartGenerator {
-    fn header(
-        &self,
-        generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>> {
-        self.delegate.header(generator)
-    }
-
     fn parser_header(
         &self,
         generator: &ParserGenerator<'g, 's>,
@@ -44,34 +37,6 @@ impl<'g, 's> PartGenerator<'g, 's> for ArrayPartGenerator {
             const MAX_ACTIONS: usize = #max_actions;
             const MAX_RECOGNIZERS: usize = #max_recognizers;
         })
-    }
-
-    fn symbols(
-        &self,
-        generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>> {
-        self.delegate.symbols(generator)
-    }
-
-    fn types(
-        &self,
-        generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>> {
-        self.delegate.types(generator)
-    }
-
-    fn parser(
-        &self,
-        generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>> {
-        self.delegate.parser(generator)
-    }
-
-    fn lexer_definition(
-        &self,
-        generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>> {
-        self.delegate.lexer_definition(generator)
     }
 
     fn parser_definition(
@@ -198,10 +163,7 @@ impl<'g, 's> PartGenerator<'g, 's> for ArrayPartGenerator {
         Ok(ast)
     }
 
-    fn builder(
-        &self,
-        generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>> {
-        self.delegate.builder(generator)
+    fn delegate(&self) -> &dyn PartGenerator<'g, 's> {
+        &self.delegate
     }
 }

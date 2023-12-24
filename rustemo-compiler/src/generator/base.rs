@@ -89,13 +89,6 @@ impl<'g, 's> PartGenerator<'g, 's> for BasePartGenerator {
         Ok(header)
     }
 
-    fn parser_header(
-        &self,
-        _generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>> {
-        unimplemented!("Must be implemented by concrete part generators!")
-    }
-
     fn symbols(
         &self,
         generator: &ParserGenerator<'g, 's>,
@@ -645,13 +638,6 @@ impl<'g, 's> PartGenerator<'g, 's> for BasePartGenerator {
         Ok(ast)
     }
 
-    fn parser_definition(
-        &self,
-        _generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>> {
-        unimplemented!("Must be implemented by concrete part generators!")
-    }
-
     fn builder(
         &self,
         generator: &ParserGenerator<'g, 's>,
@@ -853,5 +839,9 @@ impl<'g, 's> PartGenerator<'g, 's> for BasePartGenerator {
         });
 
         Ok(ast)
+    }
+
+    fn delegate(&self) -> &dyn PartGenerator<'g, 's> {
+        unimplemented!("Delegate not defined!")
     }
 }
