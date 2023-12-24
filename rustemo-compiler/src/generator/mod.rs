@@ -1,5 +1,6 @@
 pub(crate) mod actions;
 mod arrays;
+mod base;
 mod functions;
 
 use quote::format_ident;
@@ -27,6 +28,10 @@ use crate::{grammar::builder::GrammarBuilder, ParserAlgo};
 /// different parser implementation strategies.
 trait PartGenerator<'g, 's> {
     fn header(
+        &self,
+        generator: &ParserGenerator<'g, 's>,
+    ) -> Result<Vec<syn::Stmt>>;
+    fn parser_header(
         &self,
         generator: &ParserGenerator<'g, 's>,
     ) -> Result<Vec<syn::Stmt>>;
@@ -221,6 +226,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
     fn generate(&self, out_dir: &Path) -> Result<()> {
         let mut ast: Vec<syn::Stmt> = vec![];
         ast.extend(self.part_generator.header(self)?);
+        ast.extend(self.part_generator.parser_header(self)?);
         ast.extend(self.part_generator.types(self)?);
         ast.extend(self.part_generator.symbols(self)?);
         ast.extend(self.part_generator.parser_definition(self)?);

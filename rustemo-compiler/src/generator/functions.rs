@@ -1,55 +1,66 @@
-use super::{ParserGenerator, PartGenerator};
+use super::{arrays::ArrayPartGenerator, ParserGenerator, PartGenerator};
 
 use crate::error::Result;
 
-pub(crate) struct FunctionPartGenerator {}
+pub(crate) struct FunctionPartGenerator {
+    delegate: ArrayPartGenerator,
+}
 
 impl FunctionPartGenerator {
     pub fn new() -> Self {
-        FunctionPartGenerator {}
+        FunctionPartGenerator {
+            delegate: ArrayPartGenerator::new(),
+        }
     }
 }
 
 impl<'g, 's> PartGenerator<'g, 's> for FunctionPartGenerator {
     fn header(
         &self,
-        _generator: &ParserGenerator<'g, 's>,
+        generator: &ParserGenerator<'g, 's>,
     ) -> Result<Vec<syn::Stmt>> {
-        todo!()
+        self.delegate.header(generator)
+    }
+
+    fn parser_header(
+        &self,
+        generator: &ParserGenerator<'g, 's>,
+    ) -> Result<Vec<syn::Stmt>> {
+        self.delegate.parser_definition(generator)
     }
 
     fn symbols(
         &self,
-        _generator: &ParserGenerator<'g, 's>,
+        generator: &ParserGenerator<'g, 's>,
     ) -> Result<Vec<syn::Stmt>> {
-        todo!()
+        self.delegate.symbols(generator)
     }
 
     fn types(
         &self,
-        _generator: &ParserGenerator<'g, 's>,
+        generator: &ParserGenerator<'g, 's>,
     ) -> Result<Vec<syn::Stmt>> {
-        todo!()
+        self.delegate.types(generator)
     }
 
     fn lexer_definition(
         &self,
-        _generator: &ParserGenerator<'g, 's>,
+        generator: &ParserGenerator<'g, 's>,
     ) -> Result<Vec<syn::Stmt>> {
-        todo!()
+        self.delegate.lexer_definition(generator)
     }
 
     fn parser_definition(
         &self,
-        _generator: &ParserGenerator<'g, 's>,
+        generator: &ParserGenerator<'g, 's>,
     ) -> Result<Vec<syn::Stmt>> {
-        todo!()
+        self.delegate.parser_definition(generator)
     }
 
     fn builder(
         &self,
-        _generator: &ParserGenerator<'g, 's>,
+        generator: &ParserGenerator<'g, 's>,
     ) -> Result<Vec<syn::Stmt>> {
-        todo!()
+        self.delegate.builder(generator)
     }
 }
