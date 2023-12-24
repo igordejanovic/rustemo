@@ -43,6 +43,13 @@ impl<'g, 's> PartGenerator<'g, 's> for FunctionPartGenerator {
         self.delegate.types(generator)
     }
 
+    fn parser(
+        &self,
+        generator: &ParserGenerator<'g, 's>,
+    ) -> Result<Vec<syn::Stmt>> {
+        self.delegate.parser(generator)
+    }
+
     fn lexer_definition(
         &self,
         generator: &ParserGenerator<'g, 's>,

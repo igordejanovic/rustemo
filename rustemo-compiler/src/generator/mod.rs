@@ -43,6 +43,10 @@ trait PartGenerator<'g, 's> {
         &self,
         generator: &ParserGenerator<'g, 's>,
     ) -> Result<Vec<syn::Stmt>>;
+    fn parser(
+        &self,
+        generator: &ParserGenerator<'g, 's>,
+    ) -> Result<Vec<syn::Stmt>>;
     fn lexer_definition(
         &self,
         generator: &ParserGenerator<'g, 's>,
@@ -230,6 +234,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         ast.extend(self.part_generator.types(self)?);
         ast.extend(self.part_generator.symbols(self)?);
         ast.extend(self.part_generator.parser_definition(self)?);
+        ast.extend(self.part_generator.parser(self)?);
         ast.extend(self.part_generator.lexer_definition(self)?);
         ast.extend(self.part_generator.builder(self)?);
 
