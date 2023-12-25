@@ -20,15 +20,12 @@ impl MyCustomLexer1 {
 impl<'i> Lexer<'i, Ctx<'i>, State, TokenKind> for MyCustomLexer1 {
     type Input = Input;
 
-    fn next_tokens<'a>(
+    fn next_tokens(
         &self,
         context: &mut Ctx<'i>,
         input: &'i Self::Input,
-        _token_kinds: &'a [Option<TokenKind>],
-    ) -> Box<dyn Iterator<Item = Token<'i, Self::Input, TokenKind>> + 'i>
-    where
-        'a: 'i,
-    {
+        _token_kinds: Vec<TokenKind>,
+    ) -> Box<dyn Iterator<Item = Token<'i, Self::Input, TokenKind>> + 'i> {
         let value;
         let kind: TokenKind;
         let mut pos = context.position();

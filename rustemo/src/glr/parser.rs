@@ -197,7 +197,7 @@ where
                     state,
                     gss.head(*head).token_ahead().as_ref().unwrap().kind,
                 ) {
-                    match *action {
+                    match action {
                         Action::Reduce(prod, length) => {
                             if length == 0 {
                                 log!(
@@ -325,12 +325,11 @@ where
         let head = gss.head_mut(head);
         let expected_tokens =
             self.definition.expected_token_kinds(head.state());
-
         let mut layout_parsing = true;
         loop {
             let tokens: Vec<_> = self
                 .lexer
-                .next_tokens(head, input, expected_tokens)
+                .next_tokens(head, input, expected_tokens.clone())
                 .collect();
 
             if !tokens.is_empty() {
@@ -363,7 +362,7 @@ where
         // even if we are not at the end of the input
         let stop_kind = <TK as Default>::default();
         if self.partial_parse
-            && expected_tokens.iter().flatten().any(|&tk| tk == stop_kind)
+            && expected_tokens.iter().any(|tk| *tk == stop_kind)
         {
             vec![Token {
                 kind: stop_kind,
@@ -451,12 +450,8 @@ where
                     self.definition.goto(root_state, production.into());
 
                 // Get all non-error actions
-                let actions = self
-                    .definition
-                    .actions(next_state, token_kind_ahead)
-                    .iter()
-                    .take_while(|a| !matches!(a, Action::Error))
-                    .collect::<Vec<_>>();
+                let actions =
+                    self.definition.actions(next_state, token_kind_ahead);
 
                 if actions.is_empty() {
                     log!("    No actions for new state {:?} and lookahead {:?}. Skipping.",
@@ -605,7 +600,7 @@ where
                             .push(solution);
 
                         // Register actions
-                        for &action in actions {
+                        for action in actions {
                             match action {
                                 Action::Reduce(production, length) => {
                                     if (edge_created && length > 0)
@@ -902,12 +897,7 @@ where
         let expected = {
             let mut expected = last_frontier_base
                 .keys()
-                .flat_map(|state| {
-                    self.definition
-                        .expected_token_kinds(*state)
-                        .iter()
-                        .map_while(|x| *x)
-                })
+                .flat_map(|state| self.definition.expected_token_kinds(*state))
                 .collect::<Vec<_>>();
             expected.clear_duplicates();
             expected

@@ -47,15 +47,19 @@ impl<'g, 's> PartGenerator<'g, 's> for FunctionPartGenerator {
         });
 
         let action_state_fn_name = |state: &LRState| -> syn::Ident {
-            format_ident!("action_{}s{}",
-                          generator.grammar.symbol_name(state.symbol).to_lowercase(),
-                          state.idx.to_string())
+            format_ident!(
+                "action_{}s{}",
+                generator.grammar.symbol_name(state.symbol).to_lowercase(),
+                state.idx.to_string()
+            )
         };
 
         let goto_state_fn_name = |state: &LRState| -> syn::Ident {
-            format_ident!("goto_{}s{}",
-                          generator.grammar.symbol_name(state.symbol).to_lowercase(),
-                          state.idx.to_string())
+            format_ident!(
+                "goto_{}s{}",
+                generator.grammar.symbol_name(state.symbol).to_lowercase(),
+                state.idx.to_string()
+            )
         };
 
         ast.extend(generator

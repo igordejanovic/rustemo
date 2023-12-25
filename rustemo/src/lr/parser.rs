@@ -21,9 +21,9 @@ use super::builder::LRBuilder;
 
 /// Provides LR actions and GOTOs given the state and term/nonterm.
 pub trait ParserDefinition<S, P, TK, NTK> {
-    fn actions(&self, state: S, token: TK) -> &[Action<S, P>];
+    fn actions(&self, state: S, token: TK) -> Vec<Action<S, P>>;
     fn goto(&self, state: S, nonterm: NTK) -> S;
-    fn expected_token_kinds(&self, state: S) -> &[Option<TK>];
+    fn expected_token_kinds(&self, state: S) -> Vec<TK>;
 }
 
 /// An action executed by the (G)LR Parser during parsing
@@ -230,13 +230,11 @@ where
         // If no next token can be returned report error returned from the lexer.
         // TODO: Handle lexical ambiguity
         loop {
+            let expected_tokens =
+                self.definition.expected_token_kinds(context.state());
             if let Some(next_token) = self
                 .lexer
-                .next_tokens(
-                    context,
-                    input,
-                    self.definition.expected_token_kinds(context.state()),
-                )
+                .next_tokens(context, input, expected_tokens)
                 .next()
             {
                 return Ok(next_token);
@@ -262,13 +260,8 @@ where
                 // This can be Ok if partial parse is configured and STOP is expected.
                 // Otherwise we should report error with expected tokens at this position.
                 let stop_kind = <TK as Default>::default();
-                let expected = self
-                    .definition
-                    .expected_token_kinds(context.state())
-                    .iter()
-                    .copied()
-                    .flatten()
-                    .collect::<Vec<_>>();
+                let expected =
+                    self.definition.expected_token_kinds(context.state());
                 if self.partial_parse
                     && expected.iter().any(|&t| t == stop_kind)
                 {

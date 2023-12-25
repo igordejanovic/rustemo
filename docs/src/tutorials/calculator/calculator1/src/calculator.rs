@@ -142,18 +142,19 @@ pub(crate) static PARSER_DEFINITION: CalculatorParserDefinition = CalculatorPars
 };
 impl ParserDefinition<State, ProdKind, TokenKind, NonTermKind>
 for CalculatorParserDefinition {
-    fn actions(
-        &self,
-        state: State,
-        token: TokenKind,
-    ) -> &'static [Action<State, ProdKind>] {
-        &PARSER_DEFINITION.actions[state as usize][token as usize]
+    fn actions(&self, state: State, token: TokenKind) -> Vec<Action<State, ProdKind>> {
+        PARSER_DEFINITION
+            .actions[state as usize][token as usize]
+            .iter()
+            .copied()
+            .take_while(|a| !matches!(a, Action::Error))
+            .collect()
     }
     fn goto(&self, state: State, nonterm: NonTermKind) -> State {
         PARSER_DEFINITION.gotos[state as usize][nonterm as usize].unwrap()
     }
-    fn expected_token_kinds(&self, state: State) -> &'static [Option<TokenKind>] {
-        &PARSER_DEFINITION.token_kinds[state as usize]
+    fn expected_token_kinds(&self, state: State) -> Vec<TokenKind> {
+        PARSER_DEFINITION.token_kinds[state as usize].iter().map_while(|t| *t).collect()
     }
 }
 pub(crate) type Context<'i, I> = LRContext<'i, I, State, TokenKind>;

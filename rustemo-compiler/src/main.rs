@@ -4,7 +4,7 @@ use std::path::PathBuf;
 
 use clap::Parser;
 use rustemo_compiler::{
-    BuilderType, LexerType, ParserAlgo, Settings, TableType, GeneratorTableType
+    BuilderType, GeneratorTableType, LexerType, ParserAlgo, Settings, TableType,
 };
 
 #[derive(Parser)]

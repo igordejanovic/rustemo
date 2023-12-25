@@ -36,14 +36,12 @@ where
     ///
     /// Context is mutable to support lexers that implement skipping of
     /// whitespaces.
-    fn next_tokens<'a>(
+    fn next_tokens(
         &self,
         context: &mut C,
         input: &'i Self::Input,
-        token_kinds: &'a [Option<TK>],
-    ) -> Box<dyn Iterator<Item = Token<'i, Self::Input, TK>> + 'i>
-    where
-        'a: 'i;
+        expected_tokens: Vec<TK>,
+    ) -> Box<dyn Iterator<Item = Token<'i, Self::Input, TK>> + 'i>;
 }
 
 /// The trait implemented by types used to recognize tokens in string inputs.
@@ -160,40 +158,29 @@ impl<'i, C, S, TK, TR, const TERMINAL_COUNT: usize> Lexer<'i, C, S, TK>
 where
     C: Context<'i, str, S, TK>,
     S: State + Into<usize>,
-    TK: Debug + Into<usize> + Copy,
+    TK: Debug + Into<usize> + Copy + 'i,
     TR: TokenRecognizer<'i>,
 {
     type Input = str;
 
-    fn next_tokens<'a>(
+    fn next_tokens(
         &self,
         context: &mut C,
         input: &'i Self::Input,
-        token_kinds: &'a [Option<TK>],
-    ) -> Box<dyn Iterator<Item = Token<'i, Self::Input, TK>> + 'i>
-    where
-        'a: 'i,
-    {
+        expected_tokens: Vec<TK>,
+    ) -> Box<dyn Iterator<Item = Token<'i, Self::Input, TK>> + 'i> {
         if self.skip_ws {
             Self::skip(input, context);
         }
-        log!(
-            "  {} {:?}",
-            "Trying recognizers:".green(),
-            token_kinds.iter().flatten().collect::<Vec<_>>()
-        );
+        log!("  {} {:?}", "Trying recognizers:".green(), expected_tokens);
 
         Box::new(TokenIterator::new(
             input,
             context.position(),
             context.location(),
-            token_kinds
+            expected_tokens
                 .iter()
-                .take_while(|t| t.is_some())
-                .map(|tok| {
-                    let tok = tok.unwrap();
-                    (&self.token_recognizers[tok.into()], tok)
-                })
+                .map(|&tok| (&self.token_recognizers[tok.into()], tok))
                 .collect::<Vec<_>>(),
         ))
     }
