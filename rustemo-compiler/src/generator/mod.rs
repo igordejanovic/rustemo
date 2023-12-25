@@ -325,7 +325,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                 Action::Reduce(prod, len) => {
                     let prod_kind =
                         self.prod_kind_ident(&self.grammar.productions[*prod]);
-                    parse_quote! { Reduce(ProdKind::#prod_kind, #len) }
+                    parse_quote! { Reduce(PK::#prod_kind, #len) }
                 }
                 Action::Accept => parse_quote! { Accept },
             },

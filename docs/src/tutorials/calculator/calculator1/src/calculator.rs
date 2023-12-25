@@ -11,13 +11,14 @@ use rustemo::StringLexer;
 use rustemo::LRBuilder;
 use super::calculator_actions;
 use rustemo::{LRParser, LRContext};
-use rustemo::Action::{self, Shift, Reduce, Accept, Error};
+use rustemo::Action::{self, Shift, Reduce, Accept};
 #[allow(unused_imports)]
 use rustemo::debug::{log, logn};
 #[allow(unused_imports)]
 #[cfg(debug_assertions)]
 use colored::*;
 pub type Input = str;
+use rustemo::Action::Error;
 const TERMINAL_COUNT: usize = 3usize;
 const NONTERMINAL_COUNT: usize = 3usize;
 const STATE_COUNT: usize = 5usize;
@@ -32,6 +33,7 @@ pub enum TokenKind {
     Operand,
     Operator,
 }
+use TokenKind as TK;
 impl From<TokenKind> for usize {
     fn from(t: TokenKind) -> Self {
         t as usize
@@ -42,6 +44,7 @@ impl From<TokenKind> for usize {
 pub enum ProdKind {
     ExpressionP1,
 }
+use ProdKind as PK;
 impl std::fmt::Debug for ProdKind {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let name = match self {
@@ -123,7 +126,7 @@ pub(crate) static PARSER_DEFINITION: CalculatorParserDefinition = CalculatorPars
         [[Error], [Error], [Shift(State::OperatorS3)]],
         [[Accept], [Error], [Error]],
         [[Error], [Shift(State::OperandS4)], [Error]],
-        [[Reduce(ProdKind::ExpressionP1, 3usize)], [Error], [Error]],
+        [[Reduce(PK::ExpressionP1, 3usize)], [Error], [Error]],
     ],
     gotos: [
         [None, None, Some(State::ExpressionS2)],
@@ -133,11 +136,11 @@ pub(crate) static PARSER_DEFINITION: CalculatorParserDefinition = CalculatorPars
         [None, None, None],
     ],
     token_kinds: [
-        [Some(TokenKind::Operand)],
-        [Some(TokenKind::Operator)],
-        [Some(TokenKind::STOP)],
-        [Some(TokenKind::Operand)],
-        [Some(TokenKind::STOP)],
+        [Some(TK::Operand)],
+        [Some(TK::Operator)],
+        [Some(TK::STOP)],
+        [Some(TK::Operand)],
+        [Some(TK::STOP)],
     ],
 };
 impl ParserDefinition<State, ProdKind, TokenKind, NonTermKind>

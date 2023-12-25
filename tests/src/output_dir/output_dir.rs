@@ -11,13 +11,14 @@ use rustemo::StringLexer;
 use rustemo::LRBuilder;
 use super::output_dir_actions;
 use rustemo::{LRParser, LRContext};
-use rustemo::Action::{self, Shift, Reduce, Accept, Error};
+use rustemo::Action::{self, Shift, Reduce, Accept};
 #[allow(unused_imports)]
 use rustemo::debug::{log, logn};
 #[allow(unused_imports)]
 #[cfg(debug_assertions)]
 use colored::*;
 pub type Input = str;
+use rustemo::Action::Error;
 const TERMINAL_COUNT: usize = 3usize;
 const NONTERMINAL_COUNT: usize = 5usize;
 const STATE_COUNT: usize = 7usize;
@@ -32,6 +33,7 @@ pub enum TokenKind {
     Tb,
     Num,
 }
+use TokenKind as TK;
 impl From<TokenKind> for usize {
     fn from(t: TokenKind) -> Self {
         t as usize
@@ -45,6 +47,7 @@ pub enum ProdKind {
     B1P2,
     BP1,
 }
+use ProdKind as PK;
 impl std::fmt::Debug for ProdKind {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let name = match self {
@@ -137,12 +140,12 @@ pub struct OutputDirParserDefinition {
 pub(crate) static PARSER_DEFINITION: OutputDirParserDefinition = OutputDirParserDefinition {
     actions: [
         [[Error], [Shift(State::TbS1)], [Error]],
-        [[Error], [Reduce(ProdKind::BP1, 1usize)], [Reduce(ProdKind::BP1, 1usize)]],
+        [[Error], [Reduce(PK::BP1, 1usize)], [Reduce(PK::BP1, 1usize)]],
         [[Accept], [Error], [Error]],
         [[Error], [Shift(State::TbS1)], [Shift(State::NumS5)]],
-        [[Error], [Reduce(ProdKind::B1P2, 1usize)], [Reduce(ProdKind::B1P2, 1usize)]],
-        [[Reduce(ProdKind::AP1, 2usize)], [Error], [Error]],
-        [[Error], [Reduce(ProdKind::B1P1, 2usize)], [Reduce(ProdKind::B1P1, 2usize)]],
+        [[Error], [Reduce(PK::B1P2, 1usize)], [Reduce(PK::B1P2, 1usize)]],
+        [[Reduce(PK::AP1, 2usize)], [Error], [Error]],
+        [[Error], [Reduce(PK::B1P1, 2usize)], [Reduce(PK::B1P1, 2usize)]],
     ],
     gotos: [
         [None, None, Some(State::AS2), Some(State::B1S3), Some(State::BS4)],
@@ -154,13 +157,13 @@ pub(crate) static PARSER_DEFINITION: OutputDirParserDefinition = OutputDirParser
         [None, None, None, None, None],
     ],
     token_kinds: [
-        [Some(TokenKind::Tb), None],
-        [Some(TokenKind::Tb), Some(TokenKind::Num)],
-        [Some(TokenKind::STOP), None],
-        [Some(TokenKind::Tb), Some(TokenKind::Num)],
-        [Some(TokenKind::Tb), Some(TokenKind::Num)],
-        [Some(TokenKind::STOP), None],
-        [Some(TokenKind::Tb), Some(TokenKind::Num)],
+        [Some(TK::Tb), None],
+        [Some(TK::Tb), Some(TK::Num)],
+        [Some(TK::STOP), None],
+        [Some(TK::Tb), Some(TK::Num)],
+        [Some(TK::Tb), Some(TK::Num)],
+        [Some(TK::STOP), None],
+        [Some(TK::Tb), Some(TK::Num)],
     ],
 };
 impl ParserDefinition<State, ProdKind, TokenKind, NonTermKind>

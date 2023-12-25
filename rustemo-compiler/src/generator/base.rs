@@ -28,7 +28,6 @@ impl<'g, 's> PartGenerator<'g, 's> for BasePartGenerator {
     ) -> Result<Vec<syn::Stmt>> {
         let actions_file = &generator.actions_file;
         let input_type = &generator.input_type;
-        let term_count = generator.grammar.terminals.len();
 
         let mut imports: Vec<syn::Stmt> = vec![];
 
@@ -77,7 +76,7 @@ impl<'g, 's> PartGenerator<'g, 's> for BasePartGenerator {
                           TokenRecognizer as TokenRecognizerT,
                           Parser, ParserDefinition, State as StateT, Builder};
             #(#imports)*
-            use rustemo::Action::{self, Shift, Reduce, Accept, Error};
+            use rustemo::Action::{self, Shift, Reduce, Accept};
             #[allow(unused_imports)]
             use rustemo::debug::{log, logn};
             #[allow(unused_imports)]
@@ -85,7 +84,6 @@ impl<'g, 's> PartGenerator<'g, 's> for BasePartGenerator {
             use colored::*;
 
             pub type Input = #input_type;
-            const TERMINAL_COUNT: usize = #term_count;
         };
 
         Ok(header)
@@ -173,13 +171,14 @@ impl<'g, 's> PartGenerator<'g, 's> for BasePartGenerator {
             })
             .collect();
 
-        ast.push(parse_quote! {
+        ast.extend::<Vec<_>>(parse_quote! {
             #[allow(clippy::upper_case_acronyms)]
             #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
             pub enum TokenKind {
                 #[default]
                 #(#token_kind_variants),*
             }
+            use TokenKind as TK;
         });
 
         ast.push(parse_quote! {
@@ -199,12 +198,13 @@ impl<'g, 's> PartGenerator<'g, 's> for BasePartGenerator {
                 parse_quote! {#prod_kind}
             })
             .collect();
-        ast.push(parse_quote! {
+        ast.extend::<Vec<_>>(parse_quote! {
             #[allow(clippy::enum_variant_names)]
             #[derive(Clone, Copy, PartialEq)]
             pub enum ProdKind {
                 #(#prodkind_variants),*
             }
+            use ProdKind as PK;
         });
 
         let display_arms: Vec<syn::Arm> = generator

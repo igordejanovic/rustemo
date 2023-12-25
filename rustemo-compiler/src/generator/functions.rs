@@ -24,8 +24,13 @@ impl<'g, 's> PartGenerator<'g, 's> for FunctionPartGenerator {
         generator: &ParserGenerator<'g, 's>,
     ) -> Result<Vec<syn::Stmt>> {
         let states_count = generator.table.states.len();
+        let max_recognizers = generator.table.max_recognizers();
+        let term_count = generator.grammar.terminals.len();
         Ok(parse_quote! {
             const STATE_COUNT: usize = #states_count;
+            const MAX_RECOGNIZERS: usize = #max_recognizers;
+            #[allow(dead_code)]
+            const TERMINAL_COUNT: usize = #term_count;
         })
     }
 
@@ -36,11 +41,10 @@ impl<'g, 's> PartGenerator<'g, 's> for FunctionPartGenerator {
         let parser_definition = &generator.parser_definition;
         let mut ast: Vec<syn::Stmt> = vec![];
 
-        ast.push(parse_quote! {
+        ast.extend::<Vec<_>>(parse_quote! {
+            type ActionFn = fn(token: TokenKind) -> Vec<Action<State, ProdKind>>;
             pub struct #parser_definition {
-                //actions: [[[Action<State, ProdKind>; MAX_ACTIONS]; TERMINAL_COUNT]; STATE_COUNT],
-                actions: [fn(token: TokenKind) -> impl Iterator<Item=Action<State, ProdKind>>; STATE_COUNT],
-                //gotos: [[Option<State>; NONTERMINAL_COUNT]; STATE_COUNT],
+                actions: [ActionFn; STATE_COUNT],
                 gotos: [fn(nonterm: NonTermKind) -> State; STATE_COUNT],
                 token_kinds: [[Option<TokenKind>; MAX_RECOGNIZERS]; STATE_COUNT],
             }
@@ -48,7 +52,7 @@ impl<'g, 's> PartGenerator<'g, 's> for FunctionPartGenerator {
 
         let action_state_fn_name = |state: &LRState| -> syn::Ident {
             format_ident!(
-                "action_{}s{}",
+                "action_{}_s{}",
                 generator.grammar.symbol_name(state.symbol).to_lowercase(),
                 state.idx.to_string()
             )
@@ -56,7 +60,7 @@ impl<'g, 's> PartGenerator<'g, 's> for FunctionPartGenerator {
 
         let goto_state_fn_name = |state: &LRState| -> syn::Ident {
             format_ident!(
-                "goto_{}s{}",
+                "goto_{}_s{}",
                 generator.grammar.symbol_name(state.symbol).to_lowercase(),
                 state.idx.to_string()
             )
@@ -67,67 +71,69 @@ impl<'g, 's> PartGenerator<'g, 's> for FunctionPartGenerator {
             .states
             .iter()
             .map(|state| {
-                let match_arms: Vec<syn::Arm> = state
+                let mut match_arms: Vec<syn::Arm> = state
                     .actions
                     .iter()
                     .enumerate()
                     .filter(|(_, actions)| !actions.is_empty())
                     .map(|(term_idx, actions)| {
                         let token_kind = generator.term_kind_ident(term_idx.into());
-                        let actions: Vec<syn::Expr> = actions.iter()
-                                                             .map(|action|
-                                                                         generator.action_to_syntax(&Some(action.clone()))).collect();
+                        let actions: Vec<syn::Expr> =
+                            actions.iter()
+                                   .map(|action|
+                                        generator.action_to_syntax(&Some(action.clone()))).collect();
                         parse_quote! {
-                            TokenKind::#token_kind => [#(#actions),*].iter()
+                            TK::#token_kind => Vec::from(&[#(#actions),*])
                         }
                     })
                     .collect();
+                if match_arms.len() < generator.grammar.terminals.len() {
+                    match_arms.push(parse_quote!{
+                        _ => vec![]
+                    });
+                }
                 let action_state_fn = action_state_fn_name(state);
                 parse_quote! {
-                    fn #action_state_fn(token_kind: TokenKind)
-                                        -> impl Iterator<Item=Action<State, ProdKind>> {
+                    fn #action_state_fn(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
                         match token_kind {
-                            #(#match_arms),*,
-                            _ => Action::Error
+                            #(#match_arms),*
                         }
                     }
                 }
             })
             .collect::<Vec<syn::Stmt>>());
 
-        ast.extend(generator
-            .table
-            .states
-            .iter()
-            .map(|state| {
-                let match_arms: Vec<syn::Arm> = state
-                    .gotos
-                    .iter()
-                    .enumerate()
-                    .filter(|(_, &state_idx)|{state_idx.is_some()})
-                    .map(|(nonterm_idx, &state_index)| {
-                        let nonterm_kind = generator.nonterm_kind_ident(nonterm_idx.into());
-                        let state_kind = generator.state_kind_ident(state_index.unwrap());
-                        parse_quote!{
-                            NonTermKind::#nonterm_kind => State::#state_kind
-                        }
-                    }).chain(once({
-                        let state_kind = generator.state_kind_ident(state.idx);
-                        parse_quote!{
-                        _ => panic!("Invalid terminal kind ({nonterm_kind}) for GOTO state ({}).", State::#state_kind)
-                        }
-                    }))
-                    .collect();
+        for state in &generator.table.states {
+            let match_arms: Vec<syn::Arm> = state
+                .gotos
+                .iter()
+                .enumerate()
+                .filter(|(_, &state_idx)|{state_idx.is_some()})
+                .map(|(nonterm_idx, &state_index)| {
+                    let nonterm_kind = generator.nonterm_kind_ident(nonterm_idx.into());
+                    let state_kind = generator.state_kind_ident(state_index.unwrap());
+                    parse_quote!{
+                        NonTermKind::#nonterm_kind => State::#state_kind
+                    }
+                }).chain(once({
+                    let state_kind = generator.state_kind_ident(state.idx);
+                    parse_quote!{
+                    _ => panic!("Invalid terminal kind ({nonterm_kind:?}) for GOTO state ({:?}).", State::#state_kind)
+                    }
+                }))
+                .collect();
+
+            if match_arms.len() > 1 {
                 let goto_state_fn = goto_state_fn_name(state);
-                parse_quote! {
+                ast.push(parse_quote! {
                     fn #goto_state_fn(nonterm_kind: NonTermKind) -> State {
                         match nonterm_kind {
                             #(#match_arms),*
                         }
                     }
-                }
-            })
-            .collect::<Vec<_>>());
+                });
+            }
+        }
 
         let max_recognizers = generator.table.max_recognizers();
         let token_kinds: Vec<syn::Expr> = generator
@@ -169,8 +175,21 @@ impl<'g, 's> PartGenerator<'g, 's> for FunctionPartGenerator {
             .table
             .states
             .iter()
-            .map(|state| goto_state_fn_name(state))
+            .map(|state| {
+                if state.gotos.iter().any(|&state_idx| state_idx.is_some()) {
+                    // We have goto transitions for this state
+                    goto_state_fn_name(state)
+                } else {
+                    format_ident!("goto_invalid")
+                }
+            })
             .collect();
+
+        ast.push(parse_quote! {
+            fn goto_invalid(_nonterm_kind: NonTermKind) -> State {
+                panic!("Invalid GOTO entry!");
+            }
+        });
 
         ast.push(parse_quote! {
             pub(in crate) static PARSER_DEFINITION: #parser_definition = #parser_definition {
@@ -182,14 +201,14 @@ impl<'g, 's> PartGenerator<'g, 's> for FunctionPartGenerator {
 
         ast.push(parse_quote! {
             impl ParserDefinition<State, ProdKind, TokenKind, NonTermKind> for #parser_definition {
-                fn actions(&self, state: State, token: TokenKind) -> &'static [Action<State, ProdKind>] {
-                    &PARSER_DEFINITION.actions[state as usize](token)
+                fn actions(&self, state: State, token: TokenKind) -> Vec<Action<State, ProdKind>> {
+                    PARSER_DEFINITION.actions[state as usize](token)
                 }
                 fn goto(&self, state: State, nonterm: NonTermKind) -> State {
                     PARSER_DEFINITION.gotos[state as usize](nonterm)
                 }
-                fn expected_token_kinds(&self, state: State) -> &'static [Option<TokenKind>] {
-                    &PARSER_DEFINITION.token_kinds[state as usize]
+                fn expected_token_kinds(&self, state: State) -> Vec<TokenKind> {
+                    PARSER_DEFINITION.token_kinds[state as usize].iter().map_while(|t| *t).collect()
                 }
             }
         });

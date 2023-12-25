@@ -11,13 +11,14 @@ use rustemo::StringLexer;
 use rustemo::LRBuilder;
 use super::calculator_actions;
 use rustemo::{LRParser, LRContext};
-use rustemo::Action::{self, Shift, Reduce, Accept, Error};
+use rustemo::Action::{self, Shift, Reduce, Accept};
 #[allow(unused_imports)]
 use rustemo::debug::{log, logn};
 #[allow(unused_imports)]
 #[cfg(debug_assertions)]
 use colored::*;
 pub type Input = str;
+use rustemo::Action::Error;
 const TERMINAL_COUNT: usize = 6usize;
 const NONTERMINAL_COUNT: usize = 3usize;
 const STATE_COUNT: usize = 11usize;
@@ -35,6 +36,7 @@ pub enum TokenKind {
     Mul,
     Div,
 }
+use TokenKind as TK;
 impl From<TokenKind> for usize {
     fn from(t: TokenKind) -> Self {
         t as usize
@@ -49,6 +51,7 @@ pub enum ProdKind {
     EP4,
     EP5,
 }
+use ProdKind as PK;
 impl std::fmt::Debug for ProdKind {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let name = match self {
@@ -151,12 +154,12 @@ pub(crate) static PARSER_DEFINITION: CalculatorParserDefinition = CalculatorPars
     actions: [
         [[Error], [Shift(State::NumberS1)], [Error], [Error], [Error], [Error]],
         [
-            [Reduce(ProdKind::EP5, 1usize)],
+            [Reduce(PK::EP5, 1usize)],
             [Error],
-            [Reduce(ProdKind::EP5, 1usize)],
-            [Reduce(ProdKind::EP5, 1usize)],
-            [Reduce(ProdKind::EP5, 1usize)],
-            [Reduce(ProdKind::EP5, 1usize)],
+            [Reduce(PK::EP5, 1usize)],
+            [Reduce(PK::EP5, 1usize)],
+            [Reduce(PK::EP5, 1usize)],
+            [Reduce(PK::EP5, 1usize)],
         ],
         [
             [Accept],
@@ -171,36 +174,36 @@ pub(crate) static PARSER_DEFINITION: CalculatorParserDefinition = CalculatorPars
         [[Error], [Shift(State::NumberS1)], [Error], [Error], [Error], [Error]],
         [[Error], [Shift(State::NumberS1)], [Error], [Error], [Error], [Error]],
         [
-            [Reduce(ProdKind::EP1, 3usize)],
+            [Reduce(PK::EP1, 3usize)],
             [Error],
-            [Reduce(ProdKind::EP1, 3usize)],
-            [Reduce(ProdKind::EP1, 3usize)],
+            [Reduce(PK::EP1, 3usize)],
+            [Reduce(PK::EP1, 3usize)],
             [Shift(State::MulS5)],
             [Shift(State::DivS6)],
         ],
         [
-            [Reduce(ProdKind::EP2, 3usize)],
+            [Reduce(PK::EP2, 3usize)],
             [Error],
-            [Reduce(ProdKind::EP2, 3usize)],
-            [Reduce(ProdKind::EP2, 3usize)],
+            [Reduce(PK::EP2, 3usize)],
+            [Reduce(PK::EP2, 3usize)],
             [Shift(State::MulS5)],
             [Shift(State::DivS6)],
         ],
         [
-            [Reduce(ProdKind::EP3, 3usize)],
+            [Reduce(PK::EP3, 3usize)],
             [Error],
-            [Reduce(ProdKind::EP3, 3usize)],
-            [Reduce(ProdKind::EP3, 3usize)],
-            [Reduce(ProdKind::EP3, 3usize)],
-            [Reduce(ProdKind::EP3, 3usize)],
+            [Reduce(PK::EP3, 3usize)],
+            [Reduce(PK::EP3, 3usize)],
+            [Reduce(PK::EP3, 3usize)],
+            [Reduce(PK::EP3, 3usize)],
         ],
         [
-            [Reduce(ProdKind::EP4, 3usize)],
+            [Reduce(PK::EP4, 3usize)],
             [Error],
-            [Reduce(ProdKind::EP4, 3usize)],
-            [Reduce(ProdKind::EP4, 3usize)],
-            [Reduce(ProdKind::EP4, 3usize)],
-            [Reduce(ProdKind::EP4, 3usize)],
+            [Reduce(PK::EP4, 3usize)],
+            [Reduce(PK::EP4, 3usize)],
+            [Reduce(PK::EP4, 3usize)],
+            [Reduce(PK::EP4, 3usize)],
         ],
     ],
     gotos: [
@@ -217,53 +220,17 @@ pub(crate) static PARSER_DEFINITION: CalculatorParserDefinition = CalculatorPars
         [None, None, None],
     ],
     token_kinds: [
-        [Some(TokenKind::Number), None, None, None, None],
-        [
-            Some(TokenKind::STOP),
-            Some(TokenKind::Plus),
-            Some(TokenKind::Minus),
-            Some(TokenKind::Mul),
-            Some(TokenKind::Div),
-        ],
-        [
-            Some(TokenKind::STOP),
-            Some(TokenKind::Plus),
-            Some(TokenKind::Minus),
-            Some(TokenKind::Mul),
-            Some(TokenKind::Div),
-        ],
-        [Some(TokenKind::Number), None, None, None, None],
-        [Some(TokenKind::Number), None, None, None, None],
-        [Some(TokenKind::Number), None, None, None, None],
-        [Some(TokenKind::Number), None, None, None, None],
-        [
-            Some(TokenKind::STOP),
-            Some(TokenKind::Plus),
-            Some(TokenKind::Minus),
-            Some(TokenKind::Mul),
-            Some(TokenKind::Div),
-        ],
-        [
-            Some(TokenKind::STOP),
-            Some(TokenKind::Plus),
-            Some(TokenKind::Minus),
-            Some(TokenKind::Mul),
-            Some(TokenKind::Div),
-        ],
-        [
-            Some(TokenKind::STOP),
-            Some(TokenKind::Plus),
-            Some(TokenKind::Minus),
-            Some(TokenKind::Mul),
-            Some(TokenKind::Div),
-        ],
-        [
-            Some(TokenKind::STOP),
-            Some(TokenKind::Plus),
-            Some(TokenKind::Minus),
-            Some(TokenKind::Mul),
-            Some(TokenKind::Div),
-        ],
+        [Some(TK::Number), None, None, None, None],
+        [Some(TK::STOP), Some(TK::Plus), Some(TK::Minus), Some(TK::Mul), Some(TK::Div)],
+        [Some(TK::STOP), Some(TK::Plus), Some(TK::Minus), Some(TK::Mul), Some(TK::Div)],
+        [Some(TK::Number), None, None, None, None],
+        [Some(TK::Number), None, None, None, None],
+        [Some(TK::Number), None, None, None, None],
+        [Some(TK::Number), None, None, None, None],
+        [Some(TK::STOP), Some(TK::Plus), Some(TK::Minus), Some(TK::Mul), Some(TK::Div)],
+        [Some(TK::STOP), Some(TK::Plus), Some(TK::Minus), Some(TK::Mul), Some(TK::Div)],
+        [Some(TK::STOP), Some(TK::Plus), Some(TK::Minus), Some(TK::Mul), Some(TK::Div)],
+        [Some(TK::STOP), Some(TK::Plus), Some(TK::Minus), Some(TK::Mul), Some(TK::Div)],
     ],
 };
 impl ParserDefinition<State, ProdKind, TokenKind, NonTermKind>
