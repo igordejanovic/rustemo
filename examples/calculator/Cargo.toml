@@ -26,3 +26,8 @@ rustemo-compiler = { path = "../../rustemo-compiler" }
 
 [build-dependencies]
 rustemo-compiler = { path = "../../rustemo-compiler" }
+
+[features]
+
+# Used for testing different table generator approaches
+functions = []

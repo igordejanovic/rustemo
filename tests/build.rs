@@ -3,12 +3,19 @@ use std::{env, path::PathBuf, process::exit};
 use rustemo_compiler::{BuilderType, LexerType, ParserAlgo, Settings};
 
 fn main() {
+    fn default_settings() -> Settings {
+        let mut settings = rustemo_compiler::Settings::new().force(true);
+        if std::env::var("CARGO_FEATURE_FUNCTIONS").is_ok() {
+            settings = settings.generator_table_type(
+                rustemo_compiler::GeneratorTableType::Functions,
+            );
+        }
+        settings
+    }
     let root_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
 
     let out_dir =
         PathBuf::from(env::var("OUT_DIR").expect("Cargo didn't set OUT_DIR"));
-
-    let settings = rustemo_compiler::Settings::new().force(true);
 
     #[allow(clippy::type_complexity)]
     let tests: &[(&str, Box<dyn Fn(Settings) -> Settings>)] = &[
@@ -128,8 +135,7 @@ fn main() {
         let p = format!("src/{test}");
         let dir = out_dir.join(&p);
         if let Err(e) = config(
-            settings
-                .clone()
+            default_settings()
                 .out_dir_root(dir.clone())
                 .out_dir_actions_root(dir),
         )
@@ -142,16 +148,14 @@ fn main() {
     }
 
     // Testing code generation in the source tree
-    let settings = rustemo_compiler::Settings::new().force(true);
-    if let Err(e) = settings
+    if let Err(e) = default_settings()
         .in_source_tree()
         .process_grammar(&root_dir.join("src/output_dir/output_dir.rustemo"))
     {
         eprintln!("{}", e);
         exit(1);
     }
-    let settings = rustemo_compiler::Settings::new().force(true);
-    if let Err(e) = settings.actions_in_source_tree().process_grammar(
+    if let Err(e) = default_settings().actions_in_source_tree().process_grammar(
         &root_dir.join("src/output_dir/output_dir_act.rustemo"),
     ) {
         eprintln!("{}", e);

@@ -15,6 +15,9 @@ for i in {1..5}; do
 done
 
 cd -
+# Deafult test
 cargo test
+# Test with function based table generator
+cargo test --features functions
 cargo clippy --all --all-targets -- -D warnings
 cargo fmt --all
