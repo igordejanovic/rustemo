@@ -5,24 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+# [Unreleased]
 
-# Added
+## Added
 
 - Support for `Forest` iteration (`into_iter()`, and `iter()`).
+- Multiple parser table styles generation: array-based, function-based.
+  Different tradeoffs. Can be configured using settings API or `rcomp`
+  parameter.
 
-# Fixed
+## Fixed
 
 - Getting `CARGO_WORKSPACE_DIR` in `local_file!`.
+- Correctly report error in GLR parsing.
+- Handle >2 conflicts per state.
+- `build.rs` to prevent unnecessary rebuilds.
 
-# Changed
+## Changed
 
 - Removed lexer type parameter from the `Parser` trait.
+- Removed `Rc` from lexer API.
+- `ParserDefinition` trait change.
 
 
-## [0.2.0] - 2023-10-22
+# [0.2.0] - 2023-10-22
 
-# Added
+## Added
 
 - GLR parsing based on Right-Nulled GLR algorithm (RNGLR).
   - Base Tomita's algorithm. Shared packed parse forest.
@@ -31,7 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Support for EMPTY productions through RN table entries (RNGLR algorithm).
 
 
-## [0.1.0] - 2023-06-02
+# [0.1.0] - 2023-06-02
 
 - Initial release. See the README for the features available in this release.
 
