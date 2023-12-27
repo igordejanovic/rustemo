@@ -124,7 +124,7 @@ examples](https://github.com/igordejanovic/rustemo/tree/main/examples).
 - [x] GLR docs
 - [x] Release to crates.io
   
-### Next releases until v1.0 (see CHANGELOG.md for the details)
+### Next releases until v1.0 (see [CHANGELOG.md](./CHANGELOG.md) for the details)
 - [x] Forest iteration.
 - [x] Support for different parser table generators.
 - [ ] Benchmark tests + performance optimizations.
