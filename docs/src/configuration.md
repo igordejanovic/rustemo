@@ -57,8 +57,8 @@ manually regenerate the parser and commit changes to your version control system
 when you change the grammar.
 ```
 
-```admonish todo
-For the full docs on the settings provided see the [crate docs](). Provide the link...
+```admonish note
+For the full docs for settings provided by Rustemo see the [crate docs](https://docs.rs/rustemo-compiler/latest/rustemo_compiler/struct.Settings.html).
 ```
 
 ## Using generated modules
