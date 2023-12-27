@@ -58,6 +58,6 @@ criterion = "0.3.5"
 # Used for bootstrapping process.
 bootstrap = []
 
-[package.metadata.docs.rs]
-rustdoc-args = [ "--html-in-header", "docs-header.html" ]
-
+# KaTeX is not used at the moment. This setting breaks docs build at docs.rs
+# [package.metadata.docs.rs]
+# rustdoc-args = [ "--html-in-header", "docs-header.html" ]
