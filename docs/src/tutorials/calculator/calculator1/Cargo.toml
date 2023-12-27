@@ -12,7 +12,7 @@ regex = { version = "1.7.1", default-features = false, features = ["std", "unico
 colored = "2"
 # A relative path to rustemo crate is used here for usage in the rustemo project tree.
 # In your projects you should just specify the version.
-rustemo = { version = "0.2.0", path = "../../../../../rustemo" }
+rustemo = { version = "0.3.0", path = "../../../../../rustemo" }
 # ANCHOR_END: tutorial
 
 [dev-dependencies]
