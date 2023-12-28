@@ -286,14 +286,22 @@ where
                         .green()
                 );
                 let mut lookahead_tokens =
-                    self.find_lookaheads(gss, head_idx, input);
+                    self.find_lookaheads(gss, head_idx, input).into_iter();
                 let head = gss.head_mut(head_idx);
-                if let Some(token) = lookahead_tokens.pop() {
+                if let Some(token) = lookahead_tokens.next() {
                     frontier
                         .entry(token.kind)
                         .or_default()
                         .insert(head.state(), head_idx);
+
                     head.set_token_ahead(token);
+                    log!(
+                        "    {} {}: {:?}",
+                        "Added lookahead for head".to_string().green(),
+                        head_idx.index(),
+                        head
+                    );
+
                     let state = head.state();
                     // If more tokens are found we have lexical ambiguity. Make
                     // a new head for each token.
@@ -483,7 +491,7 @@ where
                         subfrontier.insert(next_state, new_head_idx);
                         log!(
                             "    {} {}: {}",
-                            "Created head".green(),
+                            "Created reduced head".green(),
                             new_head_idx.index(),
                             new_head_str
                         );
