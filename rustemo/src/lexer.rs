@@ -32,7 +32,7 @@ where
 
     /// Given the current context, this method yield an iterator over possible
     /// tokens found at the current location where the order and kinds of token
-    /// to look for is given by the `token_kinds`.
+    /// to look for is given by the `expected_tokens` parameter.
     ///
     /// Context is mutable to support lexers that implement skipping of
     /// whitespaces.
