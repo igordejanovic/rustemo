@@ -84,17 +84,20 @@ pub struct LRState<'g> {
     /// to another state after successful reduction of a non-terminal.
     pub gotos: NonTermVec<Option<StateIndex>>,
 
-    /// Terminals sorted by the priority for lexical disambiguation.
-    pub sorted_terminals: Vec<TermIndex>,
+    /// Terminals and finish flags sorted by the priority and most specific
+    /// match (if enabled) for lexical disambiguation. The finish flag, if true,
+    /// indicates that if we already have terminals that matched at this
+    /// location no further termininals should be tried.
+    pub sorted_terminals: Vec<(TermIndex, bool)>,
 
-    // Each production has a priority. We use this priority to resolve S/R and
-    // R/R conflicts. Since the Shift operation is executed over terminal symbol
-    // to resolve S/R we need terminal priority. But, the priority given for a
-    // terminal directly is used in lexical disambiguation. Instead, we need
-    // terminal priority inherited from productions. We, say that the priority
-    // of terminals in S/R resolution will be the priority of the production
-    // terminal is used in. But, since the same terminal can be used in many
-    // production we will take the maximum for S/R resolution.
+    /// Each production has a priority. We use this priority to resolve S/R and
+    /// R/R conflicts. Since the Shift operation is executed over terminal symbol
+    /// to resolve S/R we need terminal priority. But, the priority given for a
+    /// terminal directly is used in lexical disambiguation. Instead, we need
+    /// terminal priority inherited from productions. We, say that the priority
+    /// of terminals in S/R resolution will be the priority of the production
+    /// terminal is used in. But, since the same terminal can be used in many
+    /// production we will take the maximum for S/R resolution.
     max_prior_for_term: BTreeMap<TermIndex, Priority>,
 }
 
@@ -923,9 +926,10 @@ impl<'g, 's> LRTable<'g, 's> {
         }
     }
 
-    /// Sort terminals for each state according to explicit priority and terminal
-    /// recognizer type. String recognizers have precedence over regex recognizers.
-    /// Longer string recognizers have precedence over shorter.
+    /// Sort terminals for each state according to explicit priority and
+    /// terminal recognizer type. String recognizers have precedence over regex
+    /// recognizers if most specific match strategy is enabled. For most
+    /// specific match, longer string recognizers have precedence over shorter.
     fn sort_terminals(&mut self) {
         for state in &mut self.states {
             let mut terminals = state
@@ -933,38 +937,57 @@ impl<'g, 's> LRTable<'g, 's> {
                 .iter()
                 .enumerate()
                 .filter(|(_, actions)| !actions.is_empty())
-                .map(|(idx, _)| TermIndex(idx))
+                .map(|(idx, _)| self.grammar.term_by_index(TermIndex(idx)))
                 .collect::<Vec<_>>();
 
             let term_prio = |term: &Terminal| -> u32 {
                 term.prio * 1000
-                    + match &term.recognizer {
-                        Some(recognizer) => {
-                            (match recognizer {
-                                Recognizer::StrConst(str_rec) => {
-                                    str_rec.as_ref().len()
-                                }
-                                Recognizer::RegexTerm(_) => 0,
-                            }) as u32
+                    + if self.settings.lexical_disamb_most_specific {
+                        match &term.recognizer {
+                            Some(recognizer) => {
+                                (match recognizer {
+                                    Recognizer::StrConst(str_rec) => {
+                                        str_rec.as_ref().len()
+                                    }
+                                    Recognizer::RegexTerm(_) => 0,
+                                }) as u32
+                            }
+                            None => 0,
                         }
-                        None => 0,
+                    } else {
+                        0
                     }
             };
             terminals.sort_by(|&l, &r| {
-                let l_term_prio = term_prio(&self.grammar.terminals[l]);
-                let r_term_prio = term_prio(&self.grammar.terminals[r]);
+                let l_term_prio = term_prio(l);
+                let r_term_prio = term_prio(r);
                 r_term_prio.cmp(&l_term_prio)
             });
+
             log!(
                 "SORTED: {:?}",
-                &self.grammar.symbol_names(
-                    terminals
-                        .iter()
-                        .map(|i| self.grammar.term_to_symbol_index(*i))
-                        .collect::<Vec<_>>()
-                )
+                terminals.iter().map(|t| &t.name).collect::<Vec<_>>()
             );
-            state.sorted_terminals = terminals;
+
+            // Calculate "finish" flags
+            let mut sorted_terminals: Vec<(TermIndex, bool)> = vec![];
+            let mut last_prio = None;
+            for terminal in terminals {
+                let finish = self.settings.lexical_disamb_most_specific
+                    && matches!(
+                        terminal.recognizer,
+                        Some(Recognizer::StrConst(_))
+                    );
+                let last_finish =
+                    last_prio.is_some_and(|prio| terminal.prio != prio);
+                last_prio = Some(terminal.prio);
+                if let Some(t) = sorted_terminals.last_mut() {
+                    t.1 |= last_finish
+                }
+                sorted_terminals.push((terminal.idx, finish));
+            }
+
+            state.sorted_terminals = sorted_terminals;
         }
     }
 
@@ -1982,7 +2005,7 @@ mod tests {
             &table.states[StateIndex(0)]
                 .sorted_terminals
                 .iter()
-                .map(|i| i.0)
+                .map(|i| i.0 .0)
                 .collect::<Vec<_>>(),
             &vec![2, 3, 1]
         );

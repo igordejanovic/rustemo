@@ -1,0 +1,11 @@
+S: 's' A;
+// These two alternative overlaps at the lexical level and since most specific
+// strategy is turned off both alternatives will be found.
+A: 'a' Float | Complex;
+
+
+terminals
+Ta: 'a';
+Ts: 's';
+Float: /\d+\.\d+/;
+Complex: /a \d+\.\d+/;

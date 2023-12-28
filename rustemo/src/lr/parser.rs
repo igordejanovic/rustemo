@@ -23,7 +23,9 @@ use super::builder::LRBuilder;
 pub trait ParserDefinition<S, P, TK, NTK> {
     fn actions(&self, state: S, token: TK) -> Vec<Action<S, P>>;
     fn goto(&self, state: S, nonterm: NTK) -> S;
-    fn expected_token_kinds(&self, state: S) -> Vec<TK>;
+    fn expected_token_kinds(&self, state: S) -> Vec<(TK, bool)>;
+    fn longest_match() -> bool;
+    fn grammar_order() -> bool;
 }
 
 /// An action executed by the (G)LR Parser during parsing
@@ -228,15 +230,36 @@ where
         // Get next tokens (lexer should skip ws if configured to do so).
         // If error run layout_parser. If there is layout try next tokens again.
         // If no next token can be returned report error returned from the lexer.
-        // TODO: Handle lexical ambiguity
         loop {
             let expected_tokens =
                 self.definition.expected_token_kinds(context.state());
-            if let Some(next_token) = self
-                .lexer
-                .next_tokens(context, input, expected_tokens)
-                .next()
-            {
+            let mut next_tokens =
+                self.lexer.next_tokens(context, input, expected_tokens);
+            let next_token = if D::longest_match() {
+                let mut tokens = next_tokens.collect::<Vec<_>>();
+                if tokens.len() > 1 {
+                    log!(
+                        "{} Trying configured disambiguation strategies.",
+                        "Lexical ambiguity.".red()
+                    );
+                    log!(
+                        "{}",
+                        "Applying longest match disambiguation strategy"
+                            .green()
+                    );
+                    let longest_len = tokens
+                        .iter()
+                        .max_by_key(|token| token.value.len())
+                        .unwrap()
+                        .value
+                        .len();
+                    tokens.retain(|token| token.value.len() == longest_len);
+                }
+                tokens.into_iter().next()
+            } else {
+                next_tokens.next()
+            };
+            if let Some(next_token) = next_token {
                 return Ok(next_token);
             } else {
                 // No token found at current position. Try layout if configured.
@@ -260,8 +283,12 @@ where
                 // This can be Ok if partial parse is configured and STOP is expected.
                 // Otherwise we should report error with expected tokens at this position.
                 let stop_kind = <TK as Default>::default();
-                let expected =
-                    self.definition.expected_token_kinds(context.state());
+                let expected = self
+                    .definition
+                    .expected_token_kinds(context.state())
+                    .into_iter()
+                    .map(|t| t.0)
+                    .collect::<Vec<_>>();
                 if self.partial_parse
                     && expected.iter().any(|&t| t == stop_kind)
                 {

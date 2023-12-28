@@ -1,0 +1,1 @@
+S { a: Tregex2("a 42.42"), rest_opt: None }

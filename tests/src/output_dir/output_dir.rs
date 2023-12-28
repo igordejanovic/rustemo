@@ -135,7 +135,7 @@ pub enum NonTerminal {
 pub struct OutputDirParserDefinition {
     actions: [[[Action<State, ProdKind>; MAX_ACTIONS]; TERMINAL_COUNT]; STATE_COUNT],
     gotos: [[Option<State>; NONTERMINAL_COUNT]; STATE_COUNT],
-    token_kinds: [[Option<TokenKind>; MAX_RECOGNIZERS]; STATE_COUNT],
+    token_kinds: [[Option<(TokenKind, bool)>; MAX_RECOGNIZERS]; STATE_COUNT],
 }
 pub(crate) static PARSER_DEFINITION: OutputDirParserDefinition = OutputDirParserDefinition {
     actions: [
@@ -157,13 +157,13 @@ pub(crate) static PARSER_DEFINITION: OutputDirParserDefinition = OutputDirParser
         [None, None, None, None, None],
     ],
     token_kinds: [
-        [Some(TK::Tb), None],
-        [Some(TK::Tb), Some(TK::Num)],
-        [Some(TK::STOP), None],
-        [Some(TK::Tb), Some(TK::Num)],
-        [Some(TK::Tb), Some(TK::Num)],
-        [Some(TK::STOP), None],
-        [Some(TK::Tb), Some(TK::Num)],
+        [Some((TK::Tb, true)), None],
+        [Some((TK::Tb, true)), Some((TK::Num, false))],
+        [Some((TK::STOP, false)), None],
+        [Some((TK::Tb, true)), Some((TK::Num, false))],
+        [Some((TK::Tb, true)), Some((TK::Num, false))],
+        [Some((TK::STOP, false)), None],
+        [Some((TK::Tb, true)), Some((TK::Num, false))],
     ],
 };
 impl ParserDefinition<State, ProdKind, TokenKind, NonTermKind>
@@ -179,8 +179,14 @@ for OutputDirParserDefinition {
     fn goto(&self, state: State, nonterm: NonTermKind) -> State {
         PARSER_DEFINITION.gotos[state as usize][nonterm as usize].unwrap()
     }
-    fn expected_token_kinds(&self, state: State) -> Vec<TokenKind> {
+    fn expected_token_kinds(&self, state: State) -> Vec<(TokenKind, bool)> {
         PARSER_DEFINITION.token_kinds[state as usize].iter().map_while(|t| *t).collect()
+    }
+    fn longest_match() -> bool {
+        true
+    }
+    fn grammar_order() -> bool {
+        true
     }
 }
 pub(crate) type Context<'i, I> = LRContext<'i, I, State, TokenKind>;

@@ -24,6 +24,24 @@ fn main() {
         ("unicode", Box::new(|s| s)),
         ("errors/syntax_errors", Box::new(|s| s)),
         ("ambiguity", Box::new(|s| s.prefer_shifts(true))),
+        // LR lexical ambiguities
+        ("lexical_ambiguity/priorities", Box::new(|s| s)),
+        ("lexical_ambiguity/most_specific", Box::new(|s| s)),
+        (
+            "lexical_ambiguity/most_specific_off",
+            Box::new(|s| s.lexical_disamb_most_specific(false)),
+        ),
+        (
+            "lexical_ambiguity/longest_match",
+            Box::new(|s| s.lexical_disamb_most_specific(false)),
+        ),
+        (
+            "lexical_ambiguity/grammar_order",
+            Box::new(|s| {
+                s.lexical_disamb_most_specific(false)
+                    .lexical_disamb_longest_match(false)
+            }),
+        ),
         ("from_file", Box::new(|s| s)),
         (
             "partial",
@@ -68,6 +86,56 @@ fn main() {
         ("glr/errors", Box::new(|s| s.parser_algo(ParserAlgo::GLR))),
         ("glr/forest", Box::new(|s| s.parser_algo(ParserAlgo::GLR))),
         ("glr/build", Box::new(|s| s.parser_algo(ParserAlgo::GLR))),
+        // GLR lexical ambiguities
+        (
+            "glr/lexical_ambiguity/priorities",
+            Box::new(|s| s.parser_algo(ParserAlgo::GLR)),
+        ),
+        (
+            "glr/lexical_ambiguity/most_specific",
+            Box::new(|s| s.parser_algo(ParserAlgo::GLR)),
+        ),
+        (
+            "glr/lexical_ambiguity/most_specific_off",
+            Box::new(|s| {
+                s.parser_algo(ParserAlgo::GLR)
+                    .lexical_disamb_most_specific(false)
+                    .lexical_disamb_longest_match(false)
+            }),
+        ),
+        (
+            "glr/lexical_ambiguity/longest_match",
+            Box::new(|s| {
+                s.parser_algo(ParserAlgo::GLR)
+                    .lexical_disamb_most_specific(false)
+            }),
+        ),
+        (
+            "glr/lexical_ambiguity/longest_match_off",
+            Box::new(|s| {
+                s.parser_algo(ParserAlgo::GLR)
+                    .lexical_disamb_most_specific(false)
+                    .lexical_disamb_longest_match(false)
+            }),
+        ),
+        (
+            "glr/lexical_ambiguity/grammar_order",
+            Box::new(|s| {
+                s.parser_algo(ParserAlgo::GLR)
+                    .lexical_disamb_most_specific(false)
+                    .lexical_disamb_longest_match(false)
+                    .lexical_disamb_grammar_order(true)
+            }),
+        ),
+        (
+            "glr/lexical_ambiguity/grammar_order_off",
+            Box::new(|s| {
+                s.parser_algo(ParserAlgo::GLR)
+                    .lexical_disamb_most_specific(false)
+                    .lexical_disamb_longest_match(false)
+                    .lexical_disamb_grammar_order(false)
+            }),
+        ),
         (
             "glr/evaluate",
             Box::new(|s| {

@@ -1,0 +1,14 @@
+// This is a slight modification of priorities.rustemo to remove the explicit
+// priority on F terminal. Since priorities are the same the disambiguation will
+// be done by the most specific match which will favour 'firstone' as longer
+// string.
+S: 'a' A 'one'?;
+A: 'firstone' | 'first';
+
+
+terminals
+TA: 'a';
+One: 'one';
+FO: 'firstone';
+
+F: 'first';

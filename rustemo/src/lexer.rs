@@ -32,7 +32,8 @@ where
 
     /// Given the current context, this method yield an iterator over possible
     /// tokens found at the current location where the order and kinds of token
-    /// to look for is given by the `expected_tokens` parameter.
+    /// to look for, and its finish flags, are given by the `expected_tokens`
+    /// parameter.
     ///
     /// Context is mutable to support lexers that implement skipping of
     /// whitespaces.
@@ -40,7 +41,7 @@ where
         &self,
         context: &mut C,
         input: &'i Self::Input,
-        expected_tokens: Vec<TK>,
+        expected_tokens: Vec<(TK, bool)>,
     ) -> Box<dyn Iterator<Item = Token<'i, Self::Input, TK>> + 'i>;
 }
 
@@ -103,8 +104,9 @@ struct TokenIterator<'i, TR: 'static, TK> {
     input: &'i str,
     position: usize,
     location: Location,
-    token_recognizers: Vec<(&'static TR, TK)>,
+    token_recognizers: Vec<(&'static TR, TK, bool)>,
     index: usize,
+    finish: bool,
 }
 
 impl<'i, TR, TK> TokenIterator<'i, TR, TK> {
@@ -112,7 +114,7 @@ impl<'i, TR, TK> TokenIterator<'i, TR, TK> {
         input: &'i str,
         position: usize,
         location: Location,
-        token_recognizers: Vec<(&'static TR, TK)>,
+        token_recognizers: Vec<(&'static TR, TK, bool)>,
     ) -> Self {
         Self {
             input,
@@ -120,6 +122,7 @@ impl<'i, TR, TK> TokenIterator<'i, TR, TK> {
             location,
             token_recognizers,
             index: 0,
+            finish: false,
         }
     }
 }
@@ -133,13 +136,14 @@ where
 
     fn next(&mut self) -> Option<Self::Item> {
         loop {
-            if self.index < self.token_recognizers.len() {
-                let (recognizer, token_kind) =
+            if !self.finish && self.index < self.token_recognizers.len() {
+                let (recognizer, token_kind, finish) =
                     &self.token_recognizers[self.index];
                 self.index += 1;
                 if let Some(recognized) =
                     recognizer.recognize(&self.input[self.position..])
                 {
+                    self.finish = *finish;
                     return Some(Token {
                         kind: *token_kind,
                         value: recognized,
@@ -167,7 +171,7 @@ where
         &self,
         context: &mut C,
         input: &'i Self::Input,
-        expected_tokens: Vec<TK>,
+        expected_tokens: Vec<(TK, bool)>,
     ) -> Box<dyn Iterator<Item = Token<'i, Self::Input, TK>> + 'i> {
         if self.skip_ws {
             Self::skip(input, context);
@@ -180,7 +184,9 @@ where
             context.location(),
             expected_tokens
                 .iter()
-                .map(|&tok| (&self.token_recognizers[tok.into()], tok))
+                .map(|&tok| {
+                    (&self.token_recognizers[tok.0.into()], tok.0, tok.1)
+                })
                 .collect::<Vec<_>>(),
         ))
     }

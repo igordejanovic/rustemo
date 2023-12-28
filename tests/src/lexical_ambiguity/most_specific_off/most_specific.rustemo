@@ -1,0 +1,12 @@
+S: 's' A;
+// These two alternative overlaps at the lexical level and since most specific
+// strategy is turned off other strategies will take over (first longest match
+// and finally grammar order). Thus, "Complex" terminal will take over.
+A: 'a' Float | Complex;
+
+
+terminals
+Complex: /a \d+\.\d+/;
+Ta: 'a';
+Ts: 's';
+Float: /\d+\.\d+/;

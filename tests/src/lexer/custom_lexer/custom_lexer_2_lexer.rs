@@ -26,7 +26,7 @@ impl<'i> Lexer<'i, Ctx<'i>, State, TokenKind> for MyCustomLexer2 {
         &self,
         context: &mut Ctx<'i>,
         input: &'i Self::Input,
-        _token_kinds: Vec<TokenKind>,
+        _token_kinds: Vec<(TokenKind, bool)>,
     ) -> Box<dyn Iterator<Item = Token<'i, Self::Input, TokenKind>> + 'i> {
         let value;
         let kind: TokenKind;

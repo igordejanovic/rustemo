@@ -71,6 +71,18 @@ struct Cli {
     #[clap(short, long, arg_enum, default_value_t)]
     builder_type: BuilderType,
 
+    /// Lexical disambiguation using most specific match strategy.
+    #[clap(long, default_missing_value = "true", require_equals = true)]
+    lexical_disamb_most_specific: Option<bool>,
+
+    /// Lexical disambiguation using longest match strategy.
+    #[clap(long, default_missing_value = "true", require_equals = true)]
+    lexical_disamb_longest_match: Option<bool>,
+
+    /// Lexical disambiguation using grammar order.
+    #[clap(long, default_missing_value = "true", require_equals = true)]
+    lexical_disamb_grammar_order: Option<bool>,
+
     /// Parser can succeed without consuming the whole input.
     #[clap(long)]
     partial_parse: bool,
@@ -111,6 +123,16 @@ fn main() {
         .lexer_type(cli.lexer_type)
         .builder_type(cli.builder_type)
         .input_type(cli.input_type);
+
+    if let Some(most_specific) = cli.lexical_disamb_most_specific {
+        settings = settings.lexical_disamb_most_specific(most_specific)
+    }
+    if let Some(longest_match) = cli.lexical_disamb_longest_match {
+        settings = settings.lexical_disamb_longest_match(longest_match)
+    }
+    if let Some(grammar_order) = cli.lexical_disamb_grammar_order {
+        settings = settings.lexical_disamb_grammar_order(grammar_order)
+    }
 
     if let Some(outdir_root) = cli.outdir_root {
         settings = settings.out_dir_root(outdir_root);

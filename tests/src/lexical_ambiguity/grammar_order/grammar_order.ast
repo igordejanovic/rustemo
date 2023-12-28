@@ -1,0 +1,1 @@
+S { a: Tregex1("a 42"), rest_opt: Some(".42") }

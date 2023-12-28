@@ -128,8 +128,14 @@ StateVec(
                 ],
             ),
             sorted_terminals: [
-                5,
-                3,
+                (
+                    5,
+                    true,
+                ),
+                (
+                    3,
+                    true,
+                ),
             ],
             max_prior_for_term: {
                 3: 10,
@@ -267,8 +273,14 @@ StateVec(
                 ],
             ),
             sorted_terminals: [
-                5,
-                3,
+                (
+                    5,
+                    true,
+                ),
+                (
+                    3,
+                    true,
+                ),
             ],
             max_prior_for_term: {
                 3: 10,
@@ -336,10 +348,22 @@ StateVec(
                 ],
             ),
             sorted_terminals: [
-                0,
-                1,
-                2,
-                4,
+                (
+                    0,
+                    true,
+                ),
+                (
+                    1,
+                    true,
+                ),
+                (
+                    2,
+                    true,
+                ),
+                (
+                    4,
+                    true,
+                ),
             ],
             max_prior_for_term: {},
         },
@@ -399,8 +423,14 @@ StateVec(
                 ],
             ),
             sorted_terminals: [
-                0,
-                1,
+                (
+                    0,
+                    true,
+                ),
+                (
+                    1,
+                    true,
+                ),
             ],
             max_prior_for_term: {
                 1: 10,
@@ -479,10 +509,22 @@ StateVec(
                 ],
             ),
             sorted_terminals: [
-                0,
-                1,
-                2,
-                4,
+                (
+                    0,
+                    true,
+                ),
+                (
+                    1,
+                    true,
+                ),
+                (
+                    2,
+                    true,
+                ),
+                (
+                    4,
+                    true,
+                ),
             ],
             max_prior_for_term: {
                 2: 10,
@@ -549,10 +591,22 @@ StateVec(
                 ],
             ),
             sorted_terminals: [
-                0,
-                1,
-                2,
-                4,
+                (
+                    0,
+                    true,
+                ),
+                (
+                    1,
+                    true,
+                ),
+                (
+                    2,
+                    true,
+                ),
+                (
+                    4,
+                    true,
+                ),
             ],
             max_prior_for_term: {},
         },
@@ -617,8 +671,14 @@ StateVec(
                 ],
             ),
             sorted_terminals: [
-                1,
-                4,
+                (
+                    1,
+                    true,
+                ),
+                (
+                    4,
+                    true,
+                ),
             ],
             max_prior_for_term: {
                 1: 10,
@@ -733,8 +793,14 @@ StateVec(
                 ],
             ),
             sorted_terminals: [
-                5,
-                3,
+                (
+                    5,
+                    true,
+                ),
+                (
+                    3,
+                    true,
+                ),
             ],
             max_prior_for_term: {
                 3: 10,
@@ -820,8 +886,14 @@ StateVec(
                 ],
             ),
             sorted_terminals: [
-                5,
-                3,
+                (
+                    5,
+                    true,
+                ),
+                (
+                    3,
+                    true,
+                ),
             ],
             max_prior_for_term: {
                 3: 10,
@@ -889,10 +961,22 @@ StateVec(
                 ],
             ),
             sorted_terminals: [
-                0,
-                1,
-                2,
-                4,
+                (
+                    0,
+                    true,
+                ),
+                (
+                    1,
+                    true,
+                ),
+                (
+                    2,
+                    true,
+                ),
+                (
+                    4,
+                    true,
+                ),
             ],
             max_prior_for_term: {},
         },
@@ -969,10 +1053,22 @@ StateVec(
                 ],
             ),
             sorted_terminals: [
-                0,
-                1,
-                2,
-                4,
+                (
+                    0,
+                    true,
+                ),
+                (
+                    1,
+                    true,
+                ),
+                (
+                    2,
+                    true,
+                ),
+                (
+                    4,
+                    true,
+                ),
             ],
             max_prior_for_term: {
                 2: 10,
@@ -1039,10 +1135,22 @@ StateVec(
                 ],
             ),
             sorted_terminals: [
-                0,
-                1,
-                2,
-                4,
+                (
+                    0,
+                    true,
+                ),
+                (
+                    1,
+                    true,
+                ),
+                (
+                    2,
+                    true,
+                ),
+                (
+                    4,
+                    true,
+                ),
             ],
             max_prior_for_term: {},
         },

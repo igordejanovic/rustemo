@@ -1,0 +1,18 @@
+// This grammar
+S: 's' A Rest?;
+A: Tregex1 | Tregex2 | Tstr;
+
+terminals
+Ts: 's';
+Tregex1: /a \d+/;
+
+// This regex match will match longer part of the string and will take
+// precendence over Tregex1 if longest match strategy is on (by default is).
+Tregex2: /a \d+\.\d+/;
+
+// In case most specific is turned on (which by default is), this str match
+// would take precendence. But, for this test we have disabled most specific
+// strategy.
+Tstr: 'a 4';
+
+Rest: /.+/;

@@ -347,12 +347,49 @@ where
             self.definition.expected_token_kinds(head.state());
         let mut layout_parsing = true;
         loop {
-            let tokens: Vec<_> = self
+            let mut tokens: Vec<_> = self
                 .lexer
                 .next_tokens(head, input, expected_tokens.clone())
                 .collect();
 
             if !tokens.is_empty() {
+                if tokens.len() > 1 {
+                    log!(
+                        "{} Trying configured disambiguation strategies.",
+                        "Lexical ambiguity.".red()
+                    );
+                    // We still have lexical ambiguity after priorities and most
+                    // specific match handled by table construction and string
+                    // lexer. Try to disambiguate if additional strategies are
+                    // configured.
+                    if D::longest_match() {
+                        log!(
+                            "{}",
+                            "Applying longest match disambiguation strategy"
+                                .green()
+                        );
+                        // Longest match strategy for lexical disambiguation
+                        let longest_len = tokens
+                            .iter()
+                            .max_by_key(|token| token.value.len())
+                            .unwrap()
+                            .value
+                            .len();
+                        tokens.retain(|token| token.value.len() == longest_len);
+                        log!("{} {:?}", "Tokens retained:".green(), &tokens);
+                    }
+
+                    if D::grammar_order() {
+                        // Take the first by the grammar order. This is safe as
+                        // at least one token must be in the tokens vector.
+                        log!(
+                            "{}",
+                            "Applying grammar order disambiguation strategy"
+                                .green()
+                        );
+                        tokens.truncate(1)
+                    }
+                }
                 return tokens;
             } else if layout_parsing {
                 layout_parsing = false;
@@ -382,7 +419,7 @@ where
         // even if we are not at the end of the input
         let stop_kind = <TK as Default>::default();
         if self.partial_parse
-            && expected_tokens.iter().any(|tk| *tk == stop_kind)
+            && expected_tokens.iter().any(|tk| tk.0 == stop_kind)
         {
             vec![Token {
                 kind: stop_kind,
@@ -943,6 +980,9 @@ where
                 .flat_map(|&head_idx| {
                     self.definition
                         .expected_token_kinds(gss.head(head_idx).state())
+                        .into_iter()
+                        .map(|t| t.0)
+                        .collect::<Vec<_>>()
                 })
                 .collect::<Vec<_>>();
             expected.clear_duplicates();

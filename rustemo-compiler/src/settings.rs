@@ -92,6 +92,10 @@ pub struct Settings {
     pub(crate) generator_table_type: GeneratorTableType,
     pub(crate) input_type: String,
 
+    pub(crate) lexical_disamb_most_specific: bool,
+    pub(crate) lexical_disamb_longest_match: bool,
+    pub(crate) lexical_disamb_grammar_order: bool,
+
     pub(crate) partial_parse: bool,
     pub(crate) skip_ws: bool,
 
@@ -124,6 +128,9 @@ impl Default for Settings {
             builder_type: Default::default(),
             generator_table_type: Default::default(),
             input_type: "str".into(),
+            lexical_disamb_most_specific: true,
+            lexical_disamb_longest_match: true,
+            lexical_disamb_grammar_order: true,
             partial_parse: false,
             skip_ws: true,
             force: false,
@@ -211,12 +218,17 @@ impl Settings {
 
     /// LR algorithm to use
     pub fn parser_algo(mut self, parser_algo: ParserAlgo) -> Self {
-        if let ParserAlgo::GLR = parser_algo {
-            // For GLR we are using RN tables
-            self.table_type = TableType::LALR_RN;
-            // For GLR we should not favour shifts at all
-            self.prefer_shifts = false;
-            self.prefer_shifts_over_empty = false;
+        match parser_algo {
+            ParserAlgo::LR => {}
+            ParserAlgo::GLR => {
+                // For GLR we are using RN tables
+                self.table_type = TableType::LALR_RN;
+                // For GLR we should not favour shifts at all
+                self.prefer_shifts = false;
+                self.prefer_shifts_over_empty = false;
+                // We don't use grammar order by default
+                self.lexical_disamb_grammar_order = false;
+            }
         }
         self.parser_algo = parser_algo;
         self
@@ -247,6 +259,29 @@ impl Settings {
     /// Sets the input type. Default is `str`
     pub fn input_type(mut self, input_type: String) -> Self {
         self.input_type = input_type;
+        self
+    }
+
+    /// Lexical disambiguation using most specific match strategy.
+    pub fn lexical_disamb_most_specific(mut self, most_specific: bool) -> Self {
+        self.lexical_disamb_most_specific = most_specific;
+        self
+    }
+
+    /// Lexical disambiguation using longest match strategy.
+    pub fn lexical_disamb_longest_match(mut self, longest_match: bool) -> Self {
+        self.lexical_disamb_longest_match = longest_match;
+        self
+    }
+
+    /// Lexical disambiguation using grammar order.
+    pub fn lexical_disamb_grammar_order(mut self, grammar_order: bool) -> Self {
+        if let ParserAlgo::LR = self.parser_algo {
+            if !grammar_order {
+                panic!("Can't disable grammar order strategy for LR.")
+            }
+        }
+        self.lexical_disamb_grammar_order = grammar_order;
         self
     }
 

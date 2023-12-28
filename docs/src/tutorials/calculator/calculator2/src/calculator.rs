@@ -148,7 +148,7 @@ pub enum NonTerminal {
 pub struct CalculatorParserDefinition {
     actions: [[[Action<State, ProdKind>; MAX_ACTIONS]; TERMINAL_COUNT]; STATE_COUNT],
     gotos: [[Option<State>; NONTERMINAL_COUNT]; STATE_COUNT],
-    token_kinds: [[Option<TokenKind>; MAX_RECOGNIZERS]; STATE_COUNT],
+    token_kinds: [[Option<(TokenKind, bool)>; MAX_RECOGNIZERS]; STATE_COUNT],
 }
 pub(crate) static PARSER_DEFINITION: CalculatorParserDefinition = CalculatorParserDefinition {
     actions: [
@@ -220,17 +220,53 @@ pub(crate) static PARSER_DEFINITION: CalculatorParserDefinition = CalculatorPars
         [None, None, None],
     ],
     token_kinds: [
-        [Some(TK::Number), None, None, None, None],
-        [Some(TK::STOP), Some(TK::Plus), Some(TK::Minus), Some(TK::Mul), Some(TK::Div)],
-        [Some(TK::STOP), Some(TK::Plus), Some(TK::Minus), Some(TK::Mul), Some(TK::Div)],
-        [Some(TK::Number), None, None, None, None],
-        [Some(TK::Number), None, None, None, None],
-        [Some(TK::Number), None, None, None, None],
-        [Some(TK::Number), None, None, None, None],
-        [Some(TK::STOP), Some(TK::Plus), Some(TK::Minus), Some(TK::Mul), Some(TK::Div)],
-        [Some(TK::STOP), Some(TK::Plus), Some(TK::Minus), Some(TK::Mul), Some(TK::Div)],
-        [Some(TK::STOP), Some(TK::Plus), Some(TK::Minus), Some(TK::Mul), Some(TK::Div)],
-        [Some(TK::STOP), Some(TK::Plus), Some(TK::Minus), Some(TK::Mul), Some(TK::Div)],
+        [Some((TK::Number, false)), None, None, None, None],
+        [
+            Some((TK::STOP, true)),
+            Some((TK::Plus, true)),
+            Some((TK::Minus, true)),
+            Some((TK::Mul, true)),
+            Some((TK::Div, true)),
+        ],
+        [
+            Some((TK::STOP, true)),
+            Some((TK::Plus, true)),
+            Some((TK::Minus, true)),
+            Some((TK::Mul, true)),
+            Some((TK::Div, true)),
+        ],
+        [Some((TK::Number, false)), None, None, None, None],
+        [Some((TK::Number, false)), None, None, None, None],
+        [Some((TK::Number, false)), None, None, None, None],
+        [Some((TK::Number, false)), None, None, None, None],
+        [
+            Some((TK::STOP, true)),
+            Some((TK::Plus, true)),
+            Some((TK::Minus, true)),
+            Some((TK::Mul, true)),
+            Some((TK::Div, true)),
+        ],
+        [
+            Some((TK::STOP, true)),
+            Some((TK::Plus, true)),
+            Some((TK::Minus, true)),
+            Some((TK::Mul, true)),
+            Some((TK::Div, true)),
+        ],
+        [
+            Some((TK::STOP, true)),
+            Some((TK::Plus, true)),
+            Some((TK::Minus, true)),
+            Some((TK::Mul, true)),
+            Some((TK::Div, true)),
+        ],
+        [
+            Some((TK::STOP, true)),
+            Some((TK::Plus, true)),
+            Some((TK::Minus, true)),
+            Some((TK::Mul, true)),
+            Some((TK::Div, true)),
+        ],
     ],
 };
 impl ParserDefinition<State, ProdKind, TokenKind, NonTermKind>
@@ -246,8 +282,14 @@ for CalculatorParserDefinition {
     fn goto(&self, state: State, nonterm: NonTermKind) -> State {
         PARSER_DEFINITION.gotos[state as usize][nonterm as usize].unwrap()
     }
-    fn expected_token_kinds(&self, state: State) -> Vec<TokenKind> {
+    fn expected_token_kinds(&self, state: State) -> Vec<(TokenKind, bool)> {
         PARSER_DEFINITION.token_kinds[state as usize].iter().map_while(|t| *t).collect()
+    }
+    fn longest_match() -> bool {
+        true
+    }
+    fn grammar_order() -> bool {
+        true
     }
 }
 pub(crate) type Context<'i, I> = LRContext<'i, I, State, TokenKind>;

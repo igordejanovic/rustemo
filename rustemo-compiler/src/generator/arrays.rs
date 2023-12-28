@@ -51,7 +51,7 @@ impl<'g, 's> PartGenerator<'g, 's> for ArrayPartGenerator {
             pub struct #parser_definition {
                 actions: [[[Action<State, ProdKind>; MAX_ACTIONS]; TERMINAL_COUNT]; STATE_COUNT],
                 gotos: [[Option<State>; NONTERMINAL_COUNT]; STATE_COUNT],
-                token_kinds: [[Option<TokenKind>; MAX_RECOGNIZERS]; STATE_COUNT],
+                token_kinds: [[Option<(TokenKind, bool)>; MAX_RECOGNIZERS]; STATE_COUNT],
             }
         });
 
@@ -118,12 +118,13 @@ impl<'g, 's> PartGenerator<'g, 's> for ArrayPartGenerator {
                 let terminals: Vec<syn::Expr> = state
                     .sorted_terminals
                     .iter()
-                    .map(|term_index| {
+                    .map(|(term_index, finish)| {
                         let term: &Terminal =
                             generator.grammar.term_by_index(*term_index);
                         let token_kind = format_ident!("{}", &term.name);
+                        let finish = format_ident!("{finish}");
                         parse_quote! {
-                            Some(TK::#token_kind)
+                            Some((TK::#token_kind, #finish))
                         }
                     })
                     .chain(
@@ -148,6 +149,14 @@ impl<'g, 's> PartGenerator<'g, 's> for ArrayPartGenerator {
             };
         });
 
+        let longest_match = format_ident!(
+            "{}",
+            generator.settings.lexical_disamb_longest_match
+        );
+        let grammar_order = format_ident!(
+            "{}",
+            generator.settings.lexical_disamb_grammar_order
+        );
         ast.push(parse_quote! {
             impl ParserDefinition<State, ProdKind, TokenKind, NonTermKind> for #parser_definition {
                 fn actions(&self, state: State, token: TokenKind) -> Vec<Action<State, ProdKind>> {
@@ -159,8 +168,14 @@ impl<'g, 's> PartGenerator<'g, 's> for ArrayPartGenerator {
                 fn goto(&self, state: State, nonterm: NonTermKind) -> State {
                     PARSER_DEFINITION.gotos[state as usize][nonterm as usize].unwrap()
                 }
-                fn expected_token_kinds(&self, state: State) -> Vec<TokenKind> {
+                fn expected_token_kinds(&self, state: State) -> Vec<(TokenKind, bool)> {
                     PARSER_DEFINITION.token_kinds[state as usize].iter().map_while(|t| *t).collect()
+                }
+                fn longest_match() -> bool {
+                    #longest_match
+                }
+                fn grammar_order() -> bool {
+                    #grammar_order
                 }
             }
         });

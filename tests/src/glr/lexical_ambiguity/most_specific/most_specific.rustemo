@@ -1,0 +1,13 @@
+S: 's' A;
+// These two alternative overlaps at the lexical level but the first one wins as
+// it uses a string match which is more specific than regex match.
+//
+// This stategy is by default on but can be turned off in the settings.
+A: 'a' Float | Complex;
+
+
+terminals
+Ta: 'a';
+Ts: 's';
+Float: /\d+\.\d+/;
+Complex: /a \d+\.\d+/;

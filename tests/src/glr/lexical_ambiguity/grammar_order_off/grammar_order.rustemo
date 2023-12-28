@@ -1,0 +1,19 @@
+S: 's' A Rest?;
+// All three alternatives are possible since we have disabled
+// lexical disambiguation strategies
+A: Tregex1 | Tregex2 | Tstr;
+
+terminals
+Ts: 's';
+
+Tregex1: /a \d+/;
+
+// This is longer match but longest match is disabled.
+Tregex2: /a \d+\.\d+/;
+
+// In case most specific is turned on (which by default is), this str match
+// would take precendence. But, for this test we have disabled most specific
+// strategy.
+Tstr: 'a 4';
+
+Rest: /.+/;

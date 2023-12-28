@@ -1,0 +1,12 @@
+S: 'a' A 'one'?;
+A: 'firstone' | 'first';
+
+
+terminals
+TA: 'a';
+One: 'one';
+FO: 'firstone';
+
+// This match, although shorter, has higher
+// priority and will be favored
+F: 'first' {15};
