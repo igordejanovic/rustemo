@@ -182,12 +182,16 @@ where
         &self,
         gss: &mut GssGraph<'i, I, S, P, TK>,
         frontier: &BTreeMap<TK, BTreeMap<S, NodeIndex>>,
-        pending_reductions: &mut VecDeque<Reduction<P>>,
+        pending_reductions: &mut BTreeMap<TK, VecDeque<Reduction<P>>>,
         pending_shifts: &mut Vec<(NodeIndex, S)>,
         accepted_heads: &mut Vec<NodeIndex>,
     ) {
-        log!("\n{}", "Preparing frontier.".red());
-        for subfrontier in frontier.values() {
+        for (token_kind, subfrontier) in frontier {
+            log!(
+                "\n{} {:?}.",
+                "Preparing subfrontier for token".red(),
+                token_kind
+            );
             for (&state, head) in subfrontier {
                 log!(
                     "  {}",
@@ -207,11 +211,14 @@ where
                                     head.index(),
                                     length
                                 );
-                                pending_reductions.push_back(Reduction {
-                                    start: ReductionStart::Node(*head),
-                                    production: prod,
-                                    length,
-                                })
+                                pending_reductions
+                                    .entry(*token_kind)
+                                    .or_default()
+                                    .push_back(Reduction {
+                                        start: ReductionStart::Node(*head),
+                                        production: prod,
+                                        length,
+                                    })
                             } else {
                                 for edge in gss.backedges(*head) {
                                     log!(
@@ -221,11 +228,16 @@ where
                                         edge.source().index(), edge.target().index(),
                                         length
                                     );
-                                    pending_reductions.push_back(Reduction {
-                                        start: ReductionStart::Edge(edge.id()),
-                                        production: prod,
-                                        length,
-                                    })
+                                    pending_reductions
+                                        .entry(*token_kind)
+                                        .or_default()
+                                        .push_back(Reduction {
+                                            start: ReductionStart::Edge(
+                                                edge.id(),
+                                            ),
+                                            production: prod,
+                                            length,
+                                        })
                                 }
                             }
                         }
@@ -264,12 +276,12 @@ where
     fn create_frontier(
         &self,
         gss: &mut GssGraph<'i, I, S, P, TK>,
-        frontier_base: &BTreeMap<S, NodeIndex>,
+        frontier_base: &Vec<NodeIndex>,
         input: &'i I,
     ) -> BTreeMap<TK, BTreeMap<S, NodeIndex>> {
         let mut frontier: BTreeMap<TK, BTreeMap<S, NodeIndex>> =
             BTreeMap::new();
-        for &head_idx in frontier_base.values() {
+        for &head_idx in frontier_base {
             // Multiple heads are possible per state in case of lexical ambiguity.
             let head = gss.head(head_idx);
             if let Some(token) = &head.token_ahead() {
@@ -390,11 +402,34 @@ where
         head_idx: NodeIndex,
         lookahead: Token<'i, I, TK>,
     ) -> NodeIndex {
-        let head = gss.head(head_idx);
-        let new_head = gss.add_head(head.with_tok(lookahead));
+        let head = gss.head(head_idx).with_tok(lookahead);
+
+        #[cfg(debug_assertions)]
+        let new_head_str = format!("{:?}", head);
+        let new_head = gss.add_head(head);
+
+        log!(
+            "    {} {}: {}",
+            "Created head for lookahead".green(),
+            new_head.index(),
+            new_head_str
+        );
+
         let new_parents: Vec<_> = gss
             .backedges(head_idx)
-            .map(|e| (e.target(), Rc::clone(e.weight())))
+            .map(|e| {
+                (
+                    e.target(),
+                    Rc::new({
+                        let p = e.weight();
+                        Parent {
+                            head_node: new_head,
+                            root_node: p.root_node,
+                            possibilities: p.possibilities.clone(),
+                        }
+                    }),
+                )
+            })
             .collect();
 
         for (target, parent) in new_parents {
@@ -688,7 +723,7 @@ where
         gss: &mut GssGraph<'i, I, S, P, TK>,
         pending_shifts: &mut Vec<(NodeIndex, S)>,
         frontier_idx: usize,
-    ) -> BTreeMap<S, NodeIndex> {
+    ) -> Vec<NodeIndex> {
         log!(
             "\n{}{}",
             "Shifting".red(),
@@ -716,7 +751,7 @@ where
                 )
                 .green()
             );
-            let shifted_head_idx = match frontier_base.get(&state) {
+            let shifted_head_idx = match frontier_base.get(&(state, position)) {
                 Some(&shifted_head) => {
                     log!(
                         "  {}",
@@ -750,7 +785,7 @@ where
                         )
                         .green()
                     );
-                    frontier_base.insert(state, new_head_idx);
+                    frontier_base.insert((state, position), new_head_idx);
                     new_head_idx
                 }
             };
@@ -771,7 +806,7 @@ where
                 }),
             );
         }
-        frontier_base
+        frontier_base.into_values().collect()
     }
 
     /// For the given reduction find all possible reduction paths by
@@ -896,7 +931,7 @@ where
         &self,
         gss: GssGraph<'i, I, S, P, TK>,
         input: &I,
-        last_frontier_base: BTreeMap<S, NodeIndex>,
+        last_frontier_base: Vec<NodeIndex>,
     ) -> Error {
         // TODO: It would be possible that different heads have progressed
         // differently due to context-aware lexing. Thus, error report
@@ -904,8 +939,11 @@ where
         // possible parses.
         let expected = {
             let mut expected = last_frontier_base
-                .keys()
-                .flat_map(|state| self.definition.expected_token_kinds(*state))
+                .iter()
+                .flat_map(|&head_idx| {
+                    self.definition
+                        .expected_token_kinds(gss.head(head_idx).state())
+                })
                 .collect::<Vec<_>>();
             expected.clear_duplicates();
             expected
@@ -913,8 +951,7 @@ where
 
         let context = gss.head(
             *last_frontier_base
-                .values()
-                .next()
+                .first()
                 .expect("There must be a head in the last frontier!"),
         );
 
@@ -976,19 +1013,21 @@ where
         // This is the base of the frontier which is created before lookaheads
         // are found. The full frontier will be created by `create_frontier`
         // method.
-        // The initial frontier base U0 has only the initial state 0.
+        //
+        // The initial frontier base U0 has only the start head for state and
+        // position taken from the context.
         let mut frontier_idx = 0usize;
-        let mut frontier_base: BTreeMap<S, NodeIndex> =
-            BTreeMap::from([(context.state(), start_head)]);
+        let mut frontier_base: Vec<NodeIndex> = vec![start_head];
 
         // We keep track of the last base frontier for error reporting.
-        let mut last_frontier_base: BTreeMap<S, NodeIndex> = Default::default();
+        let mut last_frontier_base: Vec<NodeIndex> = vec![];
 
         // Shifts that will be the basis of the next frontier base.
         let mut pending_shifts: Vec<(NodeIndex, S)> = vec![];
 
-        // A queue of reductions that needs to be done.
-        let mut pending_reductions: VecDeque<Reduction<P>> = VecDeque::new();
+        // A queue of reductions that need to be done per subfrontier.
+        let mut pending_reductions: BTreeMap<TK, VecDeque<Reduction<P>>> =
+            Default::default();
 
         let mut accepted_heads: Vec<NodeIndex> = vec![];
 
@@ -1003,11 +1042,16 @@ where
                 &mut pending_shifts,
                 &mut accepted_heads,
             );
-            for subfrontier in frontier.values_mut() {
+            for (token_kind, subfrontier) in frontier.iter_mut() {
+                log!(
+                    "\n{} {:?}.",
+                    "Reducing for subfrontier for token".red(),
+                    token_kind
+                );
                 // Reduce everything that is possible for this subfrontier
                 self.reducer(
                     &mut gss,
-                    &mut pending_reductions,
+                    pending_reductions.entry(*token_kind).or_default(),
                     &mut pending_shifts,
                     &mut accepted_heads,
                     subfrontier,
