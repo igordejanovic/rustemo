@@ -937,25 +937,18 @@ impl<'g, 's> LRTable<'g, 's> {
                 .collect::<Vec<_>>();
 
             let term_prio = |term: &Terminal| -> u32 {
-                // Make STOP the first to try
-                if self.grammar.term_to_symbol_index(term.idx)
-                    == self.grammar.stop_index
-                {
-                    1e6 as u32
-                } else {
-                    term.prio * 1000
-                        + match &term.recognizer {
-                            Some(recognizer) => {
-                                (match recognizer {
-                                    Recognizer::StrConst(str_rec) => {
-                                        str_rec.as_ref().len()
-                                    }
-                                    Recognizer::RegexTerm(_) => 0,
-                                }) as u32
-                            }
-                            None => 0,
+                term.prio * 1000
+                    + match &term.recognizer {
+                        Some(recognizer) => {
+                            (match recognizer {
+                                Recognizer::StrConst(str_rec) => {
+                                    str_rec.as_ref().len()
+                                }
+                                Recognizer::RegexTerm(_) => 0,
+                            }) as u32
                         }
-                }
+                        None => 0,
+                    }
             };
             terminals.sort_by(|&l, &r| {
                 let l_term_prio = term_prio(&self.grammar.terminals[l]);

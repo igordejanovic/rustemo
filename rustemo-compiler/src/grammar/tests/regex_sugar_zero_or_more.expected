@@ -663,7 +663,7 @@ Grammar {
                 reachable: Cell {
                     value: false,
                 },
-                prio: 10,
+                prio: 100,
                 assoc: None,
                 meta: {},
             },

@@ -97,7 +97,8 @@ impl GrammarBuilder {
             Terminal {
                 idx: term_idx,
                 name: "STOP".to_string(),
-                prio: DEFAULT_PRIORITY,
+                // STOP has the highest priority
+                prio: 100,
                 meta: TermMetaDatas::new(),
                 ..Default::default()
             },
@@ -193,7 +194,16 @@ impl GrammarBuilder {
                     prio: if let Some(ConstVal::Int(prio)) =
                         terminal.meta.remove("priority")
                     {
-                        prio.into()
+                        let p = prio.clone().into();
+                        if p > 99 {
+                            err!(
+                                "Priority must be <=99.".to_owned(),
+                                Some(self.file.clone()),
+                                prio.location
+                            )?
+                        } else {
+                            p
+                        }
                     } else {
                         DEFAULT_PRIORITY
                     },
