@@ -793,7 +793,7 @@ impl<'g, 's> LRTable<'g, 's> {
                         assert!(shifts.len() <= 1);
 
                         let mut should_reduce = true;
-                        if let Some(shift) = shifts.get(0) {
+                        if let Some(shift) = shifts.first() {
                             // Shift/Reduce conflict. Use assoc and priority to
                             // resolve. For disambiguation treat ACCEPT action the
                             // same as SHIFT.

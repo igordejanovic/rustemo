@@ -36,6 +36,7 @@ pub struct EC5 {
     pub e_3: Box<E>,
 }
 #[derive(Debug, Clone)]
+#[allow(clippy::enum_variant_names)]
 pub enum E {
     C1(EC1),
     C2(EC2),
