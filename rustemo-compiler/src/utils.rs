@@ -9,6 +9,15 @@ pub fn string_difference(a: &str, b: &str) -> Option<(usize, (char, char))> {
         .zip(b.chars())
         .enumerate()
         .find(|(_, (a, b))| a != b)
+        .or_else(|| match a.len().cmp(&b.len()) {
+            std::cmp::Ordering::Less => {
+                Some((a.len(), (' ', b[a.len()..].chars().next().unwrap())))
+            }
+            std::cmp::Ordering::Greater => {
+                Some((b.len(), (' ', a[b.len()..].chars().next().unwrap())))
+            }
+            std::cmp::Ordering::Equal => None,
+        })
 }
 
 /// Used in tests for storing and comparing string representations in files.
