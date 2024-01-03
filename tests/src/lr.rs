@@ -4,7 +4,6 @@ mod ambiguity;
 mod builder;
 mod errors;
 mod from_file;
-mod glr;
 mod layout;
 mod lexer;
 mod lexical_ambiguity;

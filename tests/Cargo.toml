@@ -28,6 +28,14 @@ rustemo-compiler = { path = "../rustemo-compiler" }
 [build-dependencies]
 rustemo-compiler = { path = "../rustemo-compiler" }
 
+[[test]]
+name = "glr"
+path = "src/glr/mod.rs"
+
+[[test]]
+name = "lr"
+path = "src/lr.rs"
+
 [features]
 
 # Used for testing different table generator approaches

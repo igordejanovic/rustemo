@@ -1,5 +1,4 @@
 use rustemo::{rustemo_mod, Parser};
-use rustemo_compiler::output_cmp;
 
 rustemo_mod!(lang, "/src/glr/special/knuth_lr1");
 rustemo_mod!(lang_actions, "/src/glr/special/knuth_lr1");

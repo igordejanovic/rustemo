@@ -1,5 +1,4 @@
 use rustemo::{rustemo_mod, Parser};
-use rustemo_compiler::output_cmp;
 
 rustemo_mod!(lang, "/src/glr/special/cyclic_2");
 rustemo_mod!(lang_actions, "/src/glr/special/cyclic_2");
