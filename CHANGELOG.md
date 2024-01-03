@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # [Unreleased]
 
+## Added
+
+- Support for lexical disambiguation strategies. See [the docs](https://www.igordejanovic.net/rustemo/lexers.html#lexical-disambiguation).
+
+## Fixed
+
+- Bug in GLR in the context of lexical ambiguity
+
+
 # [0.3.0] - 2023-12-27
 
 ## Added
