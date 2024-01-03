@@ -1,8 +1,14 @@
 # Lexers
 
-Lexers are components that break an input sequence into its constituent parts called
-"tokens" or "lexemes". Given the current parsing context they return the next
-token from the input stream.
+Lexers are components that break an input sequence into its constituent parts
+called "tokens" or "lexemes". Rustemo implements context-aware lexing. Given the
+current parsing context lexers return the next possible tokens from the input
+stream. This gives a greater recognition strength as the lexing is done just for
+the tokens expected in a given parser state.
+
+Generally, multiple tokens can match at a given location in which case we say
+that we have a lexical ambiguity. Rustemo has a built-in mechanism for [lexical
+disambiguation](#lexical-disambiguation).
 
 To abstract over all possible inputs, Rustemo provides a trait `lexer::Input`
 which must be implemented by any type that can be used as an input to the
@@ -92,3 +98,53 @@ provide information of expected tokens at the location.
 
 For more info see the [full test for custom
 lexers](https://github.com/igordejanovic/rustemo/tree/main/tests/src/lexer/custom_lexer).
+
+
+```admonish note
+Each lexer accepts a vector of tokens expected at a given location. This vector
+elements are actually pairs of `(token_kind, finish flag)` (e.g. `_token_kinds:
+Vec<(TokenKind, bool)>` above). Finish flag signifies that if the token is found
+lexer should not return any other token, i.e. lexing should terminate on a first
+succesful match where finish flag is true.
+```
+
+
+# Lexical disambiguation
+
+When a lexical ambiguity is encountered during the parsing process Rustemo will
+use several disambiguation strategies. Some of these strategies can be
+controlled by the configuration parameters. The job of all these strategies is
+to reduce a set of possible tokens at the given location.
+
+The following table give and overview of the strategies, their defaults and
+possibility of control.
+
+| Strategy      | Default LR | Default GLR | Can be disabled in LR | Can dis. GLR | Impl. In |
+|---------------|------------|-------------|-----------------------|--------------|----------|
+| Priorities    | yes        | yes         | no                    | no           | lexer    |
+| Most specific | yes        | yes         | yes                   | yes          | lexer    |
+| Longest match | yes        | yes         | yes                   | yes          | parser   |
+| Gram. order   | yes        | no          | no                    | yes          | parser   |
+
+Strategies are applied in the following order:
+- *Priorities* - expected tokens are sorted by priority. A first match in a
+  priority group will reduce further matches only on that group. You can specify
+  the priority of a terminal inside curly braces. The default priority is 10.
+  For example: 
+  ```
+  terminals
+  SomeTerminal: 'some match' {15};
+  ```
+- *Most specific match* - string matches take precedence over regex matches.
+  String matches are ordered by length. When the first string match succeeds no
+  further matches are tried. This strategy is implemented in `StringLexer`.
+- *Longest match* - All possible matches based on previous strategies are found
+  and the longest match is used. There still can be multiple matches with the
+  same length. A further disambiguation will be handled by the next strategy.
+- *Grammar order* - Matches are tried in the grammar order. First match wins.
+
+Since LR can't handle ambiguity, grammar order is a final resolution strategy
+which always resolve to a single token. For GLR this strategy is not enabled by
+default as we usually want to handle lexical ambiguity by using the GLR
+machinery.
+
