@@ -14,6 +14,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Fixed
 
 - Bug in GLR in the context of lexical ambiguity
+- Bug in `string_difference` used in tests.
+- Regex recognizers anchoring which lead to unanchored search when `|` was used.
+
+## Changed
+
+- Minimal supported Rust version is 1.74.
+- Default parser tables implementation is function-based.
 
 
 # [0.3.0] - 2023-12-27
