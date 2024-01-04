@@ -17,7 +17,7 @@ done
 cd -
 # Deafult test
 cargo test
-# Test with function based table generator
-cargo test --features functions
+# Test with array-based table generator
+cargo test --features arrays
 cargo clippy --all --all-targets -- -D warnings
 cargo fmt --all

@@ -43,11 +43,11 @@ pub enum GeneratorTableType {
     /// Table is generated as nested static arrays
     /// Access time should be relatively good but it produces
     /// larger executables.
-    #[default]
     Arrays,
     /// Table is an array of function pointers where functions contain match
     /// expression for further disambiguation. Uses less statically allocated
     /// storage but requires function call and pattern matching.
+    #[default]
     Functions,
 }
 

@@ -5,9 +5,9 @@ use rustemo_compiler::{BuilderType, LexerType, ParserAlgo, Settings};
 fn main() {
     fn default_settings() -> Settings {
         let mut settings = rustemo_compiler::Settings::new().force(true);
-        if std::env::var("CARGO_FEATURE_FUNCTIONS").is_ok() {
+        if std::env::var("CARGO_FEATURE_ARRAYS").is_ok() {
             settings = settings.generator_table_type(
-                rustemo_compiler::GeneratorTableType::Functions,
+                rustemo_compiler::GeneratorTableType::Arrays,
             );
         }
         settings

@@ -39,4 +39,4 @@ path = "src/lr.rs"
 [features]
 
 # Used for testing different table generator approaches
-functions = []
+arrays = []

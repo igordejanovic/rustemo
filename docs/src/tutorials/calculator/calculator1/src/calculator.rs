@@ -18,13 +18,10 @@ use rustemo::debug::{log, logn};
 #[cfg(debug_assertions)]
 use colored::*;
 pub type Input = str;
-use rustemo::Action::Error;
-const TERMINAL_COUNT: usize = 3usize;
-const NONTERMINAL_COUNT: usize = 3usize;
 const STATE_COUNT: usize = 5usize;
-#[allow(dead_code)]
-const MAX_ACTIONS: usize = 1usize;
 const MAX_RECOGNIZERS: usize = 1usize;
+#[allow(dead_code)]
+const TERMINAL_COUNT: usize = 3usize;
 #[allow(clippy::upper_case_acronyms)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum TokenKind {
@@ -115,26 +112,65 @@ pub enum Terminal {
 pub enum NonTerminal {
     Expression(calculator_actions::Expression),
 }
+type ActionFn = fn(token: TokenKind) -> Vec<Action<State, ProdKind>>;
 pub struct CalculatorParserDefinition {
-    actions: [[[Action<State, ProdKind>; MAX_ACTIONS]; TERMINAL_COUNT]; STATE_COUNT],
-    gotos: [[Option<State>; NONTERMINAL_COUNT]; STATE_COUNT],
+    actions: [ActionFn; STATE_COUNT],
+    gotos: [fn(nonterm: NonTermKind) -> State; STATE_COUNT],
     token_kinds: [[Option<(TokenKind, bool)>; MAX_RECOGNIZERS]; STATE_COUNT],
+}
+fn action_aug_s0(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+    match token_kind {
+        TK::Operand => Vec::from(&[Shift(State::OperandS1)]),
+        _ => vec![],
+    }
+}
+fn action_operand_s1(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+    match token_kind {
+        TK::Operator => Vec::from(&[Shift(State::OperatorS3)]),
+        _ => vec![],
+    }
+}
+fn action_expression_s2(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+    match token_kind {
+        TK::STOP => Vec::from(&[Accept]),
+        _ => vec![],
+    }
+}
+fn action_operator_s3(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+    match token_kind {
+        TK::Operand => Vec::from(&[Shift(State::OperandS4)]),
+        _ => vec![],
+    }
+}
+fn action_operand_s4(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+    match token_kind {
+        TK::STOP => Vec::from(&[Reduce(PK::ExpressionP1, 3usize)]),
+        _ => vec![],
+    }
+}
+fn goto_aug_s0(nonterm_kind: NonTermKind) -> State {
+    match nonterm_kind {
+        NonTermKind::Expression => State::ExpressionS2,
+        _ => {
+            panic!(
+                "Invalid terminal kind ({nonterm_kind:?}) for GOTO state ({:?}).",
+                State::AUGS0
+            )
+        }
+    }
+}
+fn goto_invalid(_nonterm_kind: NonTermKind) -> State {
+    panic!("Invalid GOTO entry!");
 }
 pub(crate) static PARSER_DEFINITION: CalculatorParserDefinition = CalculatorParserDefinition {
     actions: [
-        [[Error], [Shift(State::OperandS1)], [Error]],
-        [[Error], [Error], [Shift(State::OperatorS3)]],
-        [[Accept], [Error], [Error]],
-        [[Error], [Shift(State::OperandS4)], [Error]],
-        [[Reduce(PK::ExpressionP1, 3usize)], [Error], [Error]],
+        action_aug_s0,
+        action_operand_s1,
+        action_expression_s2,
+        action_operator_s3,
+        action_operand_s4,
     ],
-    gotos: [
-        [None, None, Some(State::ExpressionS2)],
-        [None, None, None],
-        [None, None, None],
-        [None, None, None],
-        [None, None, None],
-    ],
+    gotos: [goto_aug_s0, goto_invalid, goto_invalid, goto_invalid, goto_invalid],
     token_kinds: [
         [Some((TK::Operand, false))],
         [Some((TK::Operator, false))],
@@ -146,15 +182,10 @@ pub(crate) static PARSER_DEFINITION: CalculatorParserDefinition = CalculatorPars
 impl ParserDefinition<State, ProdKind, TokenKind, NonTermKind>
 for CalculatorParserDefinition {
     fn actions(&self, state: State, token: TokenKind) -> Vec<Action<State, ProdKind>> {
-        PARSER_DEFINITION
-            .actions[state as usize][token as usize]
-            .iter()
-            .copied()
-            .take_while(|a| !matches!(a, Action::Error))
-            .collect()
+        PARSER_DEFINITION.actions[state as usize](token)
     }
     fn goto(&self, state: State, nonterm: NonTermKind) -> State {
-        PARSER_DEFINITION.gotos[state as usize][nonterm as usize].unwrap()
+        PARSER_DEFINITION.gotos[state as usize](nonterm)
     }
     fn expected_token_kinds(&self, state: State) -> Vec<(TokenKind, bool)> {
         PARSER_DEFINITION.token_kinds[state as usize].iter().map_while(|t| *t).collect()

@@ -18,13 +18,10 @@ use rustemo::debug::{log, logn};
 #[cfg(debug_assertions)]
 use colored::*;
 pub type Input = str;
-use rustemo::Action::Error;
-const TERMINAL_COUNT: usize = 6usize;
-const NONTERMINAL_COUNT: usize = 3usize;
 const STATE_COUNT: usize = 11usize;
-#[allow(dead_code)]
-const MAX_ACTIONS: usize = 1usize;
 const MAX_RECOGNIZERS: usize = 5usize;
+#[allow(dead_code)]
+const TERMINAL_COUNT: usize = 6usize;
 #[allow(clippy::upper_case_acronyms)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum TokenKind {
@@ -145,79 +142,186 @@ pub enum Terminal {
 pub enum NonTerminal {
     E(calculator_actions::E),
 }
+type ActionFn = fn(token: TokenKind) -> Vec<Action<State, ProdKind>>;
 pub struct CalculatorParserDefinition {
-    actions: [[[Action<State, ProdKind>; MAX_ACTIONS]; TERMINAL_COUNT]; STATE_COUNT],
-    gotos: [[Option<State>; NONTERMINAL_COUNT]; STATE_COUNT],
+    actions: [ActionFn; STATE_COUNT],
+    gotos: [fn(nonterm: NonTermKind) -> State; STATE_COUNT],
     token_kinds: [[Option<(TokenKind, bool)>; MAX_RECOGNIZERS]; STATE_COUNT],
+}
+fn action_aug_s0(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+    match token_kind {
+        TK::Number => Vec::from(&[Shift(State::NumberS1)]),
+        _ => vec![],
+    }
+}
+fn action_number_s1(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+    match token_kind {
+        TK::STOP => Vec::from(&[Reduce(PK::EP5, 1usize)]),
+        TK::Plus => Vec::from(&[Reduce(PK::EP5, 1usize)]),
+        TK::Minus => Vec::from(&[Reduce(PK::EP5, 1usize)]),
+        TK::Mul => Vec::from(&[Reduce(PK::EP5, 1usize)]),
+        TK::Div => Vec::from(&[Reduce(PK::EP5, 1usize)]),
+        _ => vec![],
+    }
+}
+fn action_e_s2(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+    match token_kind {
+        TK::STOP => Vec::from(&[Accept]),
+        TK::Plus => Vec::from(&[Shift(State::PlusS3)]),
+        TK::Minus => Vec::from(&[Shift(State::MinusS4)]),
+        TK::Mul => Vec::from(&[Shift(State::MulS5)]),
+        TK::Div => Vec::from(&[Shift(State::DivS6)]),
+        _ => vec![],
+    }
+}
+fn action_plus_s3(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+    match token_kind {
+        TK::Number => Vec::from(&[Shift(State::NumberS1)]),
+        _ => vec![],
+    }
+}
+fn action_minus_s4(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+    match token_kind {
+        TK::Number => Vec::from(&[Shift(State::NumberS1)]),
+        _ => vec![],
+    }
+}
+fn action_mul_s5(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+    match token_kind {
+        TK::Number => Vec::from(&[Shift(State::NumberS1)]),
+        _ => vec![],
+    }
+}
+fn action_div_s6(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+    match token_kind {
+        TK::Number => Vec::from(&[Shift(State::NumberS1)]),
+        _ => vec![],
+    }
+}
+fn action_e_s7(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+    match token_kind {
+        TK::STOP => Vec::from(&[Reduce(PK::EP1, 3usize)]),
+        TK::Plus => Vec::from(&[Reduce(PK::EP1, 3usize)]),
+        TK::Minus => Vec::from(&[Reduce(PK::EP1, 3usize)]),
+        TK::Mul => Vec::from(&[Shift(State::MulS5)]),
+        TK::Div => Vec::from(&[Shift(State::DivS6)]),
+        _ => vec![],
+    }
+}
+fn action_e_s8(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+    match token_kind {
+        TK::STOP => Vec::from(&[Reduce(PK::EP2, 3usize)]),
+        TK::Plus => Vec::from(&[Reduce(PK::EP2, 3usize)]),
+        TK::Minus => Vec::from(&[Reduce(PK::EP2, 3usize)]),
+        TK::Mul => Vec::from(&[Shift(State::MulS5)]),
+        TK::Div => Vec::from(&[Shift(State::DivS6)]),
+        _ => vec![],
+    }
+}
+fn action_e_s9(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+    match token_kind {
+        TK::STOP => Vec::from(&[Reduce(PK::EP3, 3usize)]),
+        TK::Plus => Vec::from(&[Reduce(PK::EP3, 3usize)]),
+        TK::Minus => Vec::from(&[Reduce(PK::EP3, 3usize)]),
+        TK::Mul => Vec::from(&[Reduce(PK::EP3, 3usize)]),
+        TK::Div => Vec::from(&[Reduce(PK::EP3, 3usize)]),
+        _ => vec![],
+    }
+}
+fn action_e_s10(token_kind: TokenKind) -> Vec<Action<State, ProdKind>> {
+    match token_kind {
+        TK::STOP => Vec::from(&[Reduce(PK::EP4, 3usize)]),
+        TK::Plus => Vec::from(&[Reduce(PK::EP4, 3usize)]),
+        TK::Minus => Vec::from(&[Reduce(PK::EP4, 3usize)]),
+        TK::Mul => Vec::from(&[Reduce(PK::EP4, 3usize)]),
+        TK::Div => Vec::from(&[Reduce(PK::EP4, 3usize)]),
+        _ => vec![],
+    }
+}
+fn goto_aug_s0(nonterm_kind: NonTermKind) -> State {
+    match nonterm_kind {
+        NonTermKind::E => State::ES2,
+        _ => {
+            panic!(
+                "Invalid terminal kind ({nonterm_kind:?}) for GOTO state ({:?}).",
+                State::AUGS0
+            )
+        }
+    }
+}
+fn goto_plus_s3(nonterm_kind: NonTermKind) -> State {
+    match nonterm_kind {
+        NonTermKind::E => State::ES7,
+        _ => {
+            panic!(
+                "Invalid terminal kind ({nonterm_kind:?}) for GOTO state ({:?}).",
+                State::PlusS3
+            )
+        }
+    }
+}
+fn goto_minus_s4(nonterm_kind: NonTermKind) -> State {
+    match nonterm_kind {
+        NonTermKind::E => State::ES8,
+        _ => {
+            panic!(
+                "Invalid terminal kind ({nonterm_kind:?}) for GOTO state ({:?}).",
+                State::MinusS4
+            )
+        }
+    }
+}
+fn goto_mul_s5(nonterm_kind: NonTermKind) -> State {
+    match nonterm_kind {
+        NonTermKind::E => State::ES9,
+        _ => {
+            panic!(
+                "Invalid terminal kind ({nonterm_kind:?}) for GOTO state ({:?}).",
+                State::MulS5
+            )
+        }
+    }
+}
+fn goto_div_s6(nonterm_kind: NonTermKind) -> State {
+    match nonterm_kind {
+        NonTermKind::E => State::ES10,
+        _ => {
+            panic!(
+                "Invalid terminal kind ({nonterm_kind:?}) for GOTO state ({:?}).",
+                State::DivS6
+            )
+        }
+    }
+}
+fn goto_invalid(_nonterm_kind: NonTermKind) -> State {
+    panic!("Invalid GOTO entry!");
 }
 pub(crate) static PARSER_DEFINITION: CalculatorParserDefinition = CalculatorParserDefinition {
     actions: [
-        [[Error], [Shift(State::NumberS1)], [Error], [Error], [Error], [Error]],
-        [
-            [Reduce(PK::EP5, 1usize)],
-            [Error],
-            [Reduce(PK::EP5, 1usize)],
-            [Reduce(PK::EP5, 1usize)],
-            [Reduce(PK::EP5, 1usize)],
-            [Reduce(PK::EP5, 1usize)],
-        ],
-        [
-            [Accept],
-            [Error],
-            [Shift(State::PlusS3)],
-            [Shift(State::MinusS4)],
-            [Shift(State::MulS5)],
-            [Shift(State::DivS6)],
-        ],
-        [[Error], [Shift(State::NumberS1)], [Error], [Error], [Error], [Error]],
-        [[Error], [Shift(State::NumberS1)], [Error], [Error], [Error], [Error]],
-        [[Error], [Shift(State::NumberS1)], [Error], [Error], [Error], [Error]],
-        [[Error], [Shift(State::NumberS1)], [Error], [Error], [Error], [Error]],
-        [
-            [Reduce(PK::EP1, 3usize)],
-            [Error],
-            [Reduce(PK::EP1, 3usize)],
-            [Reduce(PK::EP1, 3usize)],
-            [Shift(State::MulS5)],
-            [Shift(State::DivS6)],
-        ],
-        [
-            [Reduce(PK::EP2, 3usize)],
-            [Error],
-            [Reduce(PK::EP2, 3usize)],
-            [Reduce(PK::EP2, 3usize)],
-            [Shift(State::MulS5)],
-            [Shift(State::DivS6)],
-        ],
-        [
-            [Reduce(PK::EP3, 3usize)],
-            [Error],
-            [Reduce(PK::EP3, 3usize)],
-            [Reduce(PK::EP3, 3usize)],
-            [Reduce(PK::EP3, 3usize)],
-            [Reduce(PK::EP3, 3usize)],
-        ],
-        [
-            [Reduce(PK::EP4, 3usize)],
-            [Error],
-            [Reduce(PK::EP4, 3usize)],
-            [Reduce(PK::EP4, 3usize)],
-            [Reduce(PK::EP4, 3usize)],
-            [Reduce(PK::EP4, 3usize)],
-        ],
+        action_aug_s0,
+        action_number_s1,
+        action_e_s2,
+        action_plus_s3,
+        action_minus_s4,
+        action_mul_s5,
+        action_div_s6,
+        action_e_s7,
+        action_e_s8,
+        action_e_s9,
+        action_e_s10,
     ],
     gotos: [
-        [None, None, Some(State::ES2)],
-        [None, None, None],
-        [None, None, None],
-        [None, None, Some(State::ES7)],
-        [None, None, Some(State::ES8)],
-        [None, None, Some(State::ES9)],
-        [None, None, Some(State::ES10)],
-        [None, None, None],
-        [None, None, None],
-        [None, None, None],
-        [None, None, None],
+        goto_aug_s0,
+        goto_invalid,
+        goto_invalid,
+        goto_plus_s3,
+        goto_minus_s4,
+        goto_mul_s5,
+        goto_div_s6,
+        goto_invalid,
+        goto_invalid,
+        goto_invalid,
+        goto_invalid,
     ],
     token_kinds: [
         [Some((TK::Number, false)), None, None, None, None],
@@ -272,15 +376,10 @@ pub(crate) static PARSER_DEFINITION: CalculatorParserDefinition = CalculatorPars
 impl ParserDefinition<State, ProdKind, TokenKind, NonTermKind>
 for CalculatorParserDefinition {
     fn actions(&self, state: State, token: TokenKind) -> Vec<Action<State, ProdKind>> {
-        PARSER_DEFINITION
-            .actions[state as usize][token as usize]
-            .iter()
-            .copied()
-            .take_while(|a| !matches!(a, Action::Error))
-            .collect()
+        PARSER_DEFINITION.actions[state as usize](token)
     }
     fn goto(&self, state: State, nonterm: NonTermKind) -> State {
-        PARSER_DEFINITION.gotos[state as usize][nonterm as usize].unwrap()
+        PARSER_DEFINITION.gotos[state as usize](nonterm)
     }
     fn expected_token_kinds(&self, state: State) -> Vec<(TokenKind, bool)> {
         PARSER_DEFINITION.token_kinds[state as usize].iter().map_while(|t| *t).collect()
