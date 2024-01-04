@@ -421,7 +421,7 @@ pub(crate) static RECOGNIZERS: [TokenRecognizer; TERMINAL_COUNT] = [
     TokenRecognizer(
         TokenKind::Number,
         Recognizer::RegexMatch(
-            Lazy::new(|| { Regex::new(concat!("^", "\\d+(\\.\\d+)?")).unwrap() }),
+            Lazy::new(|| { Regex::new(concat!("^(", "\\d+(\\.\\d+)?", ")")).unwrap() }),
         ),
     ),
     TokenRecognizer(TokenKind::Plus, Recognizer::StrMatch("+")),

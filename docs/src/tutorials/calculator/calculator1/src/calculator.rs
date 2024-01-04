@@ -295,13 +295,13 @@ pub(crate) static RECOGNIZERS: [TokenRecognizer; TERMINAL_COUNT] = [
     TokenRecognizer(
         TokenKind::Operand,
         Recognizer::RegexMatch(
-            Lazy::new(|| { Regex::new(concat!("^", "\\d+(\\.\\d+)?")).unwrap() }),
+            Lazy::new(|| { Regex::new(concat!("^(", "\\d+(\\.\\d+)?", ")")).unwrap() }),
         ),
     ),
     TokenRecognizer(
         TokenKind::Operator,
         Recognizer::RegexMatch(
-            Lazy::new(|| { Regex::new(concat!("^", "\\+|-|\\*|/")).unwrap() }),
+            Lazy::new(|| { Regex::new(concat!("^(", "\\+|-|\\*|/", ")")).unwrap() }),
         ),
     ),
 ];

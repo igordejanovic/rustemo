@@ -16900,27 +16900,29 @@ pub(crate) static RECOGNIZERS: [TokenRecognizer; TERMINAL_COUNT] = [
         TokenKind::Name,
         Recognizer::RegexMatch(
             Lazy::new(|| {
-                Regex::new(concat!("^", "[a-zA-Z_][a-zA-Z0-9_\\.]*")).unwrap()
+                Regex::new(concat!("^(", "[a-zA-Z_][a-zA-Z0-9_\\.]*", ")")).unwrap()
             }),
         ),
     ),
     TokenRecognizer(
         TokenKind::RegexTerm,
         Recognizer::RegexMatch(
-            Lazy::new(|| { Regex::new(concat!("^", "/(\\\\.|[^/\\\\])*/")).unwrap() }),
+            Lazy::new(|| {
+                Regex::new(concat!("^(", "/(\\\\.|[^/\\\\])*/", ")")).unwrap()
+            }),
         ),
     ),
     TokenRecognizer(
         TokenKind::IntConst,
         Recognizer::RegexMatch(
-            Lazy::new(|| { Regex::new(concat!("^", "\\d+")).unwrap() }),
+            Lazy::new(|| { Regex::new(concat!("^(", "\\d+", ")")).unwrap() }),
         ),
     ),
     TokenRecognizer(
         TokenKind::FloatConst,
         Recognizer::RegexMatch(
             Lazy::new(|| {
-                Regex::new(concat!("^", "[+-]?[0-9]+[.][0-9]*([e][+-]?[0-9]+)?"))
+                Regex::new(concat!("^(", "[+-]?[0-9]+[.][0-9]*([e][+-]?[0-9]+)?", ")"))
                     .unwrap()
             }),
         ),
@@ -16928,7 +16930,7 @@ pub(crate) static RECOGNIZERS: [TokenRecognizer; TERMINAL_COUNT] = [
     TokenRecognizer(
         TokenKind::BoolConst,
         Recognizer::RegexMatch(
-            Lazy::new(|| { Regex::new(concat!("^", "true|false")).unwrap() }),
+            Lazy::new(|| { Regex::new(concat!("^(", "true|false", ")")).unwrap() }),
         ),
     ),
     TokenRecognizer(
@@ -16937,8 +16939,9 @@ pub(crate) static RECOGNIZERS: [TokenRecognizer; TERMINAL_COUNT] = [
             Lazy::new(|| {
                 Regex::new(
                         concat!(
-                            "^",
-                            "(?s)(^'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')|(^\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\")"
+                            "^(",
+                            "(?s)(^'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')|(^\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\")",
+                            ")"
                         ),
                     )
                     .unwrap()
@@ -16948,26 +16951,26 @@ pub(crate) static RECOGNIZERS: [TokenRecognizer; TERMINAL_COUNT] = [
     TokenRecognizer(
         TokenKind::Annotation,
         Recognizer::RegexMatch(
-            Lazy::new(|| { Regex::new(concat!("^", "@[a-zA-Z0-9_]+")).unwrap() }),
+            Lazy::new(|| { Regex::new(concat!("^(", "@[a-zA-Z0-9_]+", ")")).unwrap() }),
         ),
     ),
     TokenRecognizer(
         TokenKind::WS,
         Recognizer::RegexMatch(
-            Lazy::new(|| { Regex::new(concat!("^", "\\s+")).unwrap() }),
+            Lazy::new(|| { Regex::new(concat!("^(", "\\s+", ")")).unwrap() }),
         ),
     ),
     TokenRecognizer(
         TokenKind::CommentLine,
         Recognizer::RegexMatch(
-            Lazy::new(|| { Regex::new(concat!("^", "//.*")).unwrap() }),
+            Lazy::new(|| { Regex::new(concat!("^(", "//.*", ")")).unwrap() }),
         ),
     ),
     TokenRecognizer(
         TokenKind::NotComment,
         Recognizer::RegexMatch(
             Lazy::new(|| {
-                Regex::new(concat!("^", "((\\*[^/])|[^\\s*/]|/[^\\*])+")).unwrap()
+                Regex::new(concat!("^(", "((\\*[^/])|[^\\s*/]|/[^\\*])+", ")")).unwrap()
             }),
         ),
     ),
