@@ -43,7 +43,7 @@ prettyplease = "0.1.18"
 colored = "2"
 
 # Needed by rustemo generated parsers.
-rustemo = { path = "../rustemo", version = "0.3"}
+rustemo = { path = "../rustemo", version = "0.4"}
 
 # Default string lexer uses regexes and once_cell to init regexes only once.
 once_cell = { version = "1" }
