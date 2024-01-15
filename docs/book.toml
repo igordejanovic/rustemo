@@ -15,6 +15,19 @@ title = "Rustemo book"
 additional-css = ["./mdbook-admonish.css", "theme/pagetoc.css"] #, "style.css"]
 additional-js = ["theme/pagetoc.js"] # , "sidebar.js"]
 
+# [output.pandoc.profile.pdf]
+# output-file = "Rustemo.pdf"
+# to = "latex"
+
+# # PDF-specific settings
+# pdf-engine = "xelatex" # engine to use to produce PDF output
+
+# # `mdbook-pandoc` overrides Pandoc's defaults for the following options to better support mdBooks
+# file-scope = true # parse each file individually before combining
+# number-sections = true # number sections headings
+# standalone = true # produce output with an appropriate header and footer
+# table-of-contents = true # include an automatically generated table of contents
+
 [output.linkcheck]
 follow-web-links = false
 traverse-parent-directories = false
@@ -35,8 +48,8 @@ sidebar-width            = "300px"
 command = "mdbook-admonish"
 assets_version = "3.0.1" # do not edit: managed by `mdbook-admonish install`
 
-[preprocessor.bib]
-bibliography = "references.bib"
+# [preprocessor.bib]
+# bibliography = "references.bib"
 
 [preprocessor.plantuml]
 
