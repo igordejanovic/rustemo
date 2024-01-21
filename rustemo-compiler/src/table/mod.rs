@@ -1161,6 +1161,9 @@ impl<'g, 's> LRTable<'g, 's> {
                 .replace('?', r"\?")
         };
 
+        let conflicts = self.get_conflicts();
+        let is_conflict_state = |state: &LRState| conflicts.iter().any(|s| s.state == state);
+
         for state in &self.states {
             let mut kernel_items_str = String::new();
             for item in state.kernel_items() {
@@ -1223,7 +1226,7 @@ impl<'g, 's> LRTable<'g, 's> {
             };
 
             dot += &format!(
-                "{} [label=\"{}|{}{}{}\"]\n",
+                "{} [label=\"{}|{}{}{}\"{}]\n",
                 state.idx,
                 dot_escape(&format!(
                     "{}:{}",
@@ -1232,7 +1235,8 @@ impl<'g, 's> LRTable<'g, 's> {
                 )),
                 kernel_items_str,
                 nonkernel_items_str,
-                reductions
+                reductions,
+                if is_conflict_state(state) { ", fillcolor=\"lightpink\"" } else {""}
             );
 
             // GOTOs
