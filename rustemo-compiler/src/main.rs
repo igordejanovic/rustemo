@@ -3,6 +3,7 @@
 use std::path::PathBuf;
 
 use clap::Parser;
+use colored::Colorize;
 use rustemo_compiler::{
     BuilderType, GeneratorTableType, LexerType, ParserAlgo, Settings, TableType,
 };
@@ -148,7 +149,7 @@ fn main() {
     };
 
     if let Err(e) = result {
-        println!("{e}");
-        println!("Parser(s) not generated.");
+        println!("{}", e.to_string().red());
+        println!("{}", "Parser(s) not generated.".red());
     }
 }

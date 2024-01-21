@@ -964,11 +964,6 @@ impl<'g, 's> LRTable<'g, 's> {
                 r_term_prio.cmp(&l_term_prio)
             });
 
-            log!(
-                "SORTED: {:?}",
-                terminals.iter().map(|t| &t.name).collect::<Vec<_>>()
-            );
-
             // Calculate "finish" flags
             let mut sorted_terminals: Vec<(TermIndex, bool)> = vec![];
             let mut last_prio = None;
@@ -1103,10 +1098,14 @@ impl<'g, 's> LRTable<'g, 's> {
             .filter(|c| matches!(c.kind, ConflictKind::ReduceReduce(..)))
             .count();
         println!(
-            "{} conflict(s). {} Shift/Reduce and {} Reduce/Reduce.",
-            shift_reduce_len + reduce_reduce_len,
-            shift_reduce_len,
-            reduce_reduce_len
+            "{}",
+            format!(
+                "{} conflict(s). {} Shift/Reduce and {} Reduce/Reduce.",
+                shift_reduce_len + reduce_reduce_len,
+                shift_reduce_len,
+                reduce_reduce_len
+            )
+            .green()
         );
     }
 
@@ -1208,7 +1207,6 @@ impl<'g, 's> LRTable<'g, 's> {
                     }
                 }
                 if !term_reduction_prods.is_empty() {
-                    dbg!(&term_reduction_prods);
                     let r = term_reduction_prods.join(", ");
                     reductions.push(if term_reduction_prods.len() > 1 {
                         format!("{}:[{}]", dot_escape(&term.name), r)
@@ -1637,8 +1635,6 @@ mod tests {
             &follow_sets[grammar.symbol_index("E")],
             &follow(grammar.symbol_indexes(&["RParen", "STOP"]))
         );
-        dbg!(grammar
-            .symbol_names(follow_sets[grammar.symbol_index("Ep")].clone()));
         assert_eq!(
             &follow_sets[grammar.symbol_index("Ep")],
             &follow(grammar.symbol_indexes(&["RParen", "STOP"]))

@@ -3,6 +3,7 @@ mod arrays;
 mod base;
 mod functions;
 
+use colored::Colorize;
 use quote::format_ident;
 use rustemo::Parser;
 use std::{
@@ -130,6 +131,7 @@ pub fn generate_parser(
     if let ParserAlgo::LR = settings.parser_algo {
         let conflicts = table.get_conflicts();
         if !conflicts.is_empty() {
+            println!("{}", "\nCONFLICTS:".red());
             table.print_conflicts_report(&conflicts);
             return Err(Error::Error(
                 "Grammar is not deterministic. There are conflicts."
