@@ -1,0 +1,8 @@
+E: E '+' E
+ | E '-' E
+ | num;
+
+terminals
+Plus: '+';
+Minus: '-';
+num: /\d+/;
