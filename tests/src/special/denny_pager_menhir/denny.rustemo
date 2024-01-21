@@ -1,0 +1,24 @@
+// Grammar from the paper (Fig 4):
+// Denny, Joel E., and Brian A. Malloy. "The IELR (1) algorithm for generating
+// minimal LR (1) parser tables for non-LR (1) grammars with conflict
+// resolution." Science of Computer Programming 75.11 (2010): 943-979.
+//
+// This grammar has RR conflicts in LALR(1) tables
+//
+// rcomp --table-type lalr denny.rustemo
+//
+// Also, grammar shows the problem with Pager's weak compatibility test which
+// doesn't work on a token level which can still case mysterious new RR
+// conflicts. Pager's variant implemented in Menhir and used by Rustemo doesn't
+// have this problem.
+S: "a" A "a"
+ | "a" A "b"
+ | "a" B "a"
+ | "b" A "a"
+ | "b" B "b";
+A: "a";
+B: "a";
+
+terminals
+Ta: "a";
+Tb: "b";

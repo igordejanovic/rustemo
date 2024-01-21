@@ -11,7 +11,7 @@ use std::{
 
 use clap::ValueEnum;
 use colored::Colorize;
-use itertools::Itertools;
+use itertools::{chain, Itertools};
 use rustemo::log;
 
 use crate::{
@@ -663,6 +663,12 @@ impl<'g, 's> LRTable<'g, 's> {
         if settings.table_type != TableType::LALR {
             // If this is not pure LALR check to see if merging would introduce R/R.
             // In case it would, do not merge but keep these states split.
+            //
+            // Menhir's week compatibility test (variant of Pager's weak comp. test).
+            // See Definition 2.29 from the paper:
+            // Denny, Joel E., and Brian A. Malloy. "The IELR (1) algorithm for generating
+            // minimal LR (1) parser tables for non-LR (1) grammars with conflict
+            // resolution." Science of Computer Programming 75.11 (2010): 943-979.
             for (old, new) in &item_pairs {
                 if !old.is_reducing() {
                     continue;
@@ -671,14 +677,35 @@ impl<'g, 's> LRTable<'g, 's> {
                     if old == old_in {
                         continue;
                     }
-                    // Check if any of the current follow terminals exists in any other
-                    // new follow but not in the same item old follow.
-                    if old.follow.borrow().iter().any(|x| {
-                        new_in.follow.borrow().contains(x)
-                            && !old_in.follow.borrow().contains(x)
-                            && !new.follow.borrow().contains(x) // If conflict exist in new, merge anyway
-                    }) {
-                        return false;
+                    // ∀t, at least one of the following is true:
+                    // (a) t ∈ {K1 ∩ K2' } ∧ t ∈ {K2 ∩ K1' }.
+                    // (b) t ∈ {K1 ∩ K2 }.
+                    // (c) t ∈ {K1' ∩ K2' }.
+                    for t in chain(
+                        old.follow
+                            .borrow()
+                            .intersection(&*new_in.follow.borrow()),
+                        old_in
+                            .follow
+                            .borrow()
+                            .intersection(&*new.follow.borrow()),
+                    ) {
+                        // Test (b) and (c) conditions
+                        if old
+                            .follow
+                            .borrow()
+                            .intersection(&*old_in.follow.borrow())
+                            .all(|x| x != t)
+                            && new
+                                .follow
+                                .borrow()
+                                .intersection(&*new_in.follow.borrow())
+                                .all(|x| x != t)
+                        {
+                            // We have found terminal which would introduce RR
+                            // conflict if states are merged.
+                            return false;
+                        }
                     }
                 }
             }
@@ -1162,7 +1189,8 @@ impl<'g, 's> LRTable<'g, 's> {
         };
 
         let conflicts = self.get_conflicts();
-        let is_conflict_state = |state: &LRState| conflicts.iter().any(|s| s.state == state);
+        let is_conflict_state =
+            |state: &LRState| conflicts.iter().any(|s| s.state == state);
 
         for state in &self.states {
             let mut kernel_items_str = String::new();
@@ -1236,7 +1264,11 @@ impl<'g, 's> LRTable<'g, 's> {
                 kernel_items_str,
                 nonkernel_items_str,
                 reductions,
-                if is_conflict_state(state) { ", fillcolor=\"lightpink\"" } else {""}
+                if is_conflict_state(state) {
+                    ", fillcolor=\"lightpink\""
+                } else {
+                    ""
+                }
             );
 
             // GOTOs
@@ -1876,7 +1908,7 @@ mod tests {
             &mut old_state_3,
             &new_state_3
         ));
-        // Verify that no merge happened
+        // Verify that merge happened
         assert_eq!(
             *old_state_3.items[ItemIndex(0)].follow.borrow(),
             follow([1, 3])
