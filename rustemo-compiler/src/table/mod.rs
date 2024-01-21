@@ -46,7 +46,7 @@ pub enum TableType {
     /// A slight modification of LALR tables to prevent some reduce/reduce
     /// conflicts. Inspired by <https://doi.org/10.1007/BF00290336>
     #[default]
-    LALR_PAGERW,
+    LALR_PAGER,
     /// LALR tables extended with right-nulled entries. Used for GLR parsing
     /// (RNGLR). See <https://doi.org/10.1145/1146809.1146810>
     LALR_RN,
@@ -1963,16 +1963,16 @@ mod tests {
             format!("{grammar}\n\n{:#?}", table.states)
         );
 
-        // In LALR_PAGERW construction method R/R conflicts are avoided during
+        // In LALR_PAGER construction method R/R conflicts are avoided during
         // merge phase where states are kept split if merging would introduce
-        // new R/R conflict. This essentially makes LALR_PAGERW very close in
+        // new R/R conflict. This essentially makes LALR_PAGER very close in
         // power to canonical LR(1) but with the number of states which is
         // almost like in LALR (i.e. LR(0)).
         //
         // In this case we have 13 states while in previous LALR case there was
         // 12 states.
         let settings = Settings {
-            table_type: TableType::LALR_PAGERW,
+            table_type: TableType::LALR_PAGER,
             ..Settings::default()
         };
 
@@ -1997,7 +1997,7 @@ mod tests {
         .unwrap();
 
         let settings = Settings {
-            table_type: TableType::LALR_PAGERW,
+            table_type: TableType::LALR_PAGER,
             ..Settings::default()
         };
 
