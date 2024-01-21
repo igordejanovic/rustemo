@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # [Unreleased]
 
+## Added
+
+- `dot` export marks conflict states in red color.
+- More special grammars tests.
+
+## Fixed
+- Pager's compatibility test for LALR states merging/splitting. Implemented
+  Menhir's version.
+  
+## Changed
+- Table type in CLI renamed from `lalr-pagerw` to `lalr-pager`.
+
 
 # [0.4.0] - 2024-01-14
 
