@@ -1,0 +1,14 @@
+// This grammar is from LALRPOP issue 768: https://github.com/lalrpop/lalrpop/issues/768
+// It is accepted by Rustemo with Pager's LALR state splitting
+A: T "a" | U "a";
+T: "t" X1 | "t" X2 "b";
+U: "u" X2 | "u" X1 "b";
+X1: "x";
+X2: "x";
+
+terminals
+Ta: "a";
+Tb: "b";
+Tt: "t";
+Tu: "u";
+Tx: "x";

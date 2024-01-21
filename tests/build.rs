@@ -82,6 +82,8 @@ fn main() {
         // Special
         ("special/lalr_reduce_reduce_conflict", Box::new(|s| s)),
         ("special/nondeterministic_palindromes", Box::new(|s| s)),
+        ("special/pager_g1", Box::new(|s| s)),
+        ("special/lalrpop768", Box::new(|s| s)),
         // GLR
         ("glr/errors", Box::new(|s| s.parser_algo(ParserAlgo::GLR))),
         ("glr/forest", Box::new(|s| s.parser_algo(ParserAlgo::GLR))),

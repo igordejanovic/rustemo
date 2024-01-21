@@ -1,0 +1,30 @@
+// This grammar is from the paper:
+// David Pager and Xin Chen: The Lane Table Method Of Constructing LR(1)
+// Parsers, APPLC’12, June 14, 2012, Beijing, China.
+//
+// This grammar is not LALR(1) which can be verified by running:
+// rcomp --dot --table-type lalr pager_g1.rustemo
+// State 4 has R/R conflicts
+//
+// Pager's state splitting removes the conflict
+// rcomp --dot --table-type lalr-pager pager_g1.rustemo
+//
+// Some relevant discussions from LALRPOP project can be found here:
+// https://github.com/lalrpop/lalrpop/tree/master/lalrpop/src/lr1/lane_table
+// https://github.com/lalrpop/lalrpop/issues/851
+//
+G1: "a" X "d"
+  | "a" Y "c"
+  | "b" X "c"
+  | "b" Y "d";
+X: "e" X
+ | "e";
+Y: "e" Y
+ | "e";
+
+terminals
+Ta: "a";
+Tb: "b";
+Tc: "c";
+Td: "d";
+Te: "e";

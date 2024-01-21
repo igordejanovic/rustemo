@@ -1,6 +1,6 @@
 // Naive merging of states can lead to R/R conflict as shown in this grammar
 // from the Dragon Book.
-// But the extended LALR state compression algorithm used in Rustemo doesn't
+// But the Pager's LALR state compression algorithm used in Rustemo doesn't
 // exibit this problem.
 
 S: 'a' A 'd' | 'b' B 'd' | 'a' B 'e' | 'b' A 'e';
