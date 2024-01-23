@@ -113,7 +113,7 @@ Writting dot file: "calc.dot"
 LALR(1) automaton for this grammar has conflicts in states 5 and 6 but that's
 not a problem for GLR.
 
-![](https://raw.githubusercontent.com/igordejanovic/rustemo/main/docs/src/readme_example/src/calc.dot.png)
+![](https://raw.githubusercontent.com/igordejanovic/rustemo/main/docs/src/readme_example/src/testglr/calc.dot.png)
 
 
 Let's now test our parser.
