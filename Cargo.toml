@@ -15,11 +15,13 @@ members = [
         "docs/src/tutorials/calculator/calculator3",
         "docs/src/tutorials/calculator/calculator4",
         "docs/src/tutorials/calculator/calculator5",
+        # example
+        "docs/src/readme_example",
 ]
 
 [workspace.package]
 repository = "https://github.com/igordejanovic/rustemo"
-authors = ["Igor Dejanović <igor.dejanovic@gmail.com>"]
+authors = ["Igor R. Dejanović <igor.dejanovic@gmail.com>"]
 keywords = ["parser", "generator", "LR", "grammar"]
 categories = ["parsing"]
 license = "Apache-2.0 OR MIT"

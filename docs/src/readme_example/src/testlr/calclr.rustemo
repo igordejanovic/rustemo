@@ -1,0 +1,9 @@
+E: E '+' E {left, 1}
+ | E '*' E {left, 2}
+ | Number
+;
+
+terminals
+Number: /\d+/;
+Add: '+';
+Mul: '*';
