@@ -7,7 +7,8 @@ use rustemo::Parser;
 #[test]
 fn test_glr() {
     let forest = CalcParser::new().parse("2 + 3 * 4 + 1").unwrap();
-    // We have 5 possible solutions
+
+    // We have 5 possible solutions, see https://en.wikipedia.org/wiki/Catalan_number
     assert_eq!(forest.solutions(), 5);
 
     // Evaluate each tree from the forest
