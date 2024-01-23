@@ -1,3 +1,5 @@
+![](https://raw.githubusercontent.com/igordejanovic/rustemo/main/art/rustemo-logo-small.png)
+
 # Introduction
 
 Rustemo is a LR/GLR parser generator for Rust (a.k.a.
