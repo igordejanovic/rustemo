@@ -1,3 +1,5 @@
+![](https://raw.githubusercontent.com/igordejanovic/rustemo/main/art/rustemo-logo.png)
+
 # Rustemo &emsp; [![build Status]][actions] [![documentation status]][book] [![latest Version]][crates.io]
 
 [build Status]: https://img.shields.io/github/actions/workflow/status/igordejanovic/rustemo/ci.yml?branch=main
