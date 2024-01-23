@@ -13,9 +13,8 @@ Rustemo is a LR/GLR parser generator for Rust.
 
 ---
 
-**Status:** Fairly complete feature set for the initial release. Very good
-test/docs coverage. Not yet optimized for speed so don't expect blazing
-performance.
+**Status:** Fairly complete feature set. Very good test/docs coverage. Not yet
+optimized for speed so don't expect blazing performance.
 
 Feedback is welcome!
 
