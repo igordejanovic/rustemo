@@ -101,6 +101,7 @@ pub struct Settings {
 
     pub(crate) force: bool,
     pub(crate) dot: bool,
+    pub(crate) fancy_regex: bool,
 }
 
 impl Default for Settings {
@@ -136,6 +137,7 @@ impl Default for Settings {
             force: false,
             exclude: vec![],
             dot: false,
+            fancy_regex: false,
         }
     }
 }
@@ -322,6 +324,13 @@ impl Settings {
     /// compiling.
     pub fn dot(mut self, dot: bool) -> Self {
         self.dot = dot;
+        self
+    }
+
+    /// Set whether or not we use [`fancy_regex`](https://docs.rs/fancy-regex/latest/fancy_regex/) 
+    /// instead of [`regex`](https://docs.rs/regex/latest/regex/) 
+    pub fn fancy_regex(mut self, fancy_regex: bool) -> Self {
+        self.fancy_regex = fancy_regex;
         self
     }
 

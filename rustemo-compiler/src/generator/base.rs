@@ -32,8 +32,17 @@ impl<'g, 's> PartGenerator<'g, 's> for BasePartGenerator {
         let mut imports: Vec<syn::Stmt> = vec![];
 
         if let LexerType::Default = generator.settings.lexer_type {
+            let regex: syn::Stmt = if generator.settings.fancy_regex { 
+                parse_quote! {
+                    use fancy_regex::Regex;
+                }
+            } else {
+                parse_quote! {
+                    use regex::Regex;
+                }
+            };
             imports.extend::<Vec<syn::Stmt>>(parse_quote! {
-                use regex::Regex;
+                #regex
                 use once_cell::sync::Lazy;
                 use rustemo::StringLexer;
             });
@@ -552,6 +561,18 @@ impl<'g, 's> PartGenerator<'g, 's> for BasePartGenerator {
             #[derive(Debug)]
             pub struct TokenRecognizer(TokenKind, Recognizer);
         });
+
+        let regex: syn::Expr = if generator.settings.fancy_regex {
+            parse_quote!{
+                Ok(Some(x))
+            }
+            
+        } else {
+            parse_quote!{
+                Some(x)
+            }
+        };
+
         ast.push(parse_quote!{
             impl<'i> TokenRecognizerT<'i> for TokenRecognizer {
                 fn recognize(&self, input: &'i str) -> Option<&'i str> {
@@ -572,12 +593,12 @@ impl<'g, 's> PartGenerator<'g, 's> for BasePartGenerator {
                             logn!("{} {:?} -- ", "    Recognizing".green(), token_kind);
                             let match_str = r.find(input);
                             match match_str {
-                                Some(x) => {
+                                #regex => {
                                     let x_str = x.as_str();
                                     log!("{} '{}'", "recognized".bold().green(), x_str);
                                     Some(x_str)
                                 },
-                                None => {
+                                _ => {
                                     log!("{}", "not recognized".red());
                                     None
                                 }
