@@ -4,7 +4,7 @@ use crate::{
 #[cfg(debug_assertions)]
 use colored::*;
 use core::fmt::Debug;
-use std::marker::PhantomData;
+use core::marker::PhantomData;
 
 /// The trait implemented by all Rustemo lexers
 ///
@@ -219,7 +219,7 @@ where
     I::Output: Debug,
     TK: Debug,
 {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(
             f,
             "{:?}({:?} {:?})",
