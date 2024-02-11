@@ -28,6 +28,10 @@ struct Cli {
     #[clap(short, long, action)]
     noactions: bool,
 
+    /// Do not print trace logs
+    #[clap(long, action)]
+    notrace: bool,
+
     /// Grammar file or directory to process
     #[clap(value_parser, value_name="GRAMMAR FILE/DIR", value_hint = clap::ValueHint::AnyPath)]
     grammar_file_or_dir: PathBuf,
@@ -112,6 +116,7 @@ fn main() {
         .force(cli.force)
         .dot(cli.dot)
         .actions(!cli.noactions)
+        .notrace(cli.notrace)
         .exclude(cli.exclude)
         .prefer_shifts(cli.prefer_shifts)
         .prefer_shifts_over_empty(!cli.no_shifts_over_empty)
