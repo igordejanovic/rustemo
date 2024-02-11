@@ -440,10 +440,11 @@ impl LRItem {
             .collect::<Vec<_>>();
         rhs.insert(self.position, ".".into());
         format!(
-            "{}: {} = {}    {{{}}}",
-            prod.idx,
+            "{}: {}: {}    {{{}}}",
+            prod.idx.to_string().green(),
             grammar
-                .symbol_name(grammar.nonterm_to_symbol_index(prod.nonterminal)),
+                .symbol_name(grammar.nonterm_to_symbol_index(prod.nonterminal))
+                .green(),
             rhs.join(" "),
             self.follow
                 .borrow()
@@ -1310,10 +1311,17 @@ impl<'g, 's> Display for LRTable<'g, 's> {
         for state in &self.states {
             writeln!(
                 f,
-                "\nState {}:{}",
-                state.idx,
-                self.grammar.symbol_name(state.symbol),
+                "\n{}",
+                format!(
+                    "State {}:{}",
+                    state.idx,
+                    self.grammar.symbol_name(state.symbol)
+                )
+                .green(),
             )?;
+            for item in &state.items {
+                writeln!(f, "\t{}", item.to_string(self.grammar))?;
+            }
             let actions = state
                 .actions
                 .iter()
@@ -1339,9 +1347,9 @@ impl<'g, 's> Display for LRTable<'g, 's> {
                 .collect::<Vec<_>>();
 
             if !actions.is_empty() {
-                writeln!(f, "\tACTIONS:")?;
+                writeln!(f, "{}", "\tACTIONS:".green())?;
                 for (term, action) in actions {
-                    writeln!(f, "\t\t{term} => {action}")?;
+                    writeln!(f, "\t\t{term} {} {action}", "=>".green())?;
                 }
             }
 
@@ -1367,9 +1375,9 @@ impl<'g, 's> Display for LRTable<'g, 's> {
                 .collect::<Vec<_>>();
 
             if !gotos.is_empty() {
-                writeln!(f, "\tGOTOs:")?;
+                writeln!(f, "{}", "\tGOTOs:".green())?;
                 for (nonterm, goto) in gotos {
-                    writeln!(f, "\t\t{nonterm} => {goto}")?;
+                    writeln!(f, "\t\t{nonterm} {} {goto}", "=>".green())?;
                 }
             }
         }
