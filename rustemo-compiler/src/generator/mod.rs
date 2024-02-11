@@ -276,6 +276,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         }));
 
         let out_file = out_dir.join(&self.file_name).with_extension("rs");
+        println!("Writing parser file {:?}", out_file);
         std::fs::write(&out_file, prettyplease::unparse(&file)).map_err(
             |e| {
                 Error::Error(format!(

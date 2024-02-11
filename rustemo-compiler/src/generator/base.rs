@@ -651,13 +651,7 @@ impl<'g, 's> PartGenerator<'g, 's> for BasePartGenerator {
 
         // Generate actions
         if generator.settings.actions {
-            generate_parser_actions(
-                generator, // generator.grammar,
-                          // generator.types.as_ref().unwrap(),
-                          // &generator.file_name,
-                          // out_dir_actions,
-                          // generator.settings,
-            )?;
+            generate_parser_actions(generator)?;
         }
 
         let actions_file = &generator.actions_file;
