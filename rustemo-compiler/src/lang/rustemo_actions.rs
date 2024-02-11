@@ -32,7 +32,12 @@ pub fn bool_const(ctx: &Ctx, token: Token) -> BoolConst {
 pub type StrConst = ValLoc<String>;
 pub fn str_const(ctx: &Ctx, token: Token) -> StrConst {
     StrConst::new(
-        token.value.trim_matches('\'').trim_matches('"').into(),
+        token
+            .value[1..token.value.len()-1]
+            .replace(r#"\'"#, r#"'"#)
+            .replace(r#"\\"#, r#"\"#)
+            .replace(r#"\n"#, "\n")
+            .replace(r#"\t"#, "\t"),
         Some(ctx.location()),
     )
 }
