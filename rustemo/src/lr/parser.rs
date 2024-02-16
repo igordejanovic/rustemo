@@ -423,6 +423,16 @@ where
                     log!("{} {:?} -> {:?}", "GOTO".green(), from_state, state);
                     builder.reduce_action(context, prod, prod_len);
                     context.set_location(context_location);
+
+                    // After the reduction we need to run lexer again as the set
+                    // of possible tokens in the new state may be different.
+                    // But, the layout must remain the same.
+                    // TODO: This should be optimized to prevent repetitions of the same
+                    //       tokens recognitions.
+                    let layout = context.layout_ahead();
+                    next_token = self.next_token(input, context, &layout_parser)?;
+                    context.set_layout_ahead(layout);
+                    log!("{}: {:?}", "Token ahead".green(), next_token);
                 }
                 Action::Accept => {
                     log!("{}", "Accept".green().bold());
