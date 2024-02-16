@@ -7,9 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # [Unreleased]
 
+## Added
+
+- disable trace log output with switch `--notrace` or env variable
+  `RUSTEMO_NOTRACE`. Trace log is sent to std error. Thanks
+  @stevefan1999-personal for reporting. See [4].
+
 ## Fixed
 
 - call lexer after reduction in LR parser as the set of possible tokens may change.
+- string escaping in Rustemo grammars
+
+## Changed
+
+- improved debug trace prints.
+- improved LR automata table print output.
+
+[4]: https://github.com/igordejanovic/rustemo/issues/4
 
 
 # [0.5.0] - 2024-01-23
@@ -22,7 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Fixed
 - Pager's compatibility test for LALR states merging/splitting. Implemented
   Menhir's version.
-  
+
 ## Changed
 - Table type in CLI renamed from `lalr-pagerw` to `lalr-pager`.
 
