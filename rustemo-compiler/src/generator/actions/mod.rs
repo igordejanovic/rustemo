@@ -183,7 +183,7 @@ pub(super) fn generate_parser_actions(
             }
         });
 
-    log!("Writing action file {:?}", action_file);
+    println!("Writing actions file {:?}", action_file);
     std::fs::create_dir_all(&generator.out_dir_actions).map_err(|e| {
         Error::Error(format!(
             "Cannot create directories for path '{:?}': {e:?}.",

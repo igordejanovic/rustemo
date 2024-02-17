@@ -6,14 +6,14 @@
 #[macro_export]
 #[cfg(debug_assertions)]
 macro_rules! logn {
-    ($( $args:expr ),*) => { print!( $( $args ),* ); }
+    ($( $args:expr ),*) => { if std::env::var("RUSTEMO_NOTRACE").is_err() { eprint!( $( $args ),* )}; }
 }
 
 /// Prints with newline to stdout in debug profile
 #[macro_export]
 #[cfg(debug_assertions)]
 macro_rules! log {
-    ($( $args:expr ),*) => { println!( $( $args ),* ); }
+    ($( $args:expr ),*) => { if std::env::var("RUSTEMO_NOTRACE").is_err() { eprintln!( $( $args ),* )}; }
 }
 
 #[macro_export]
