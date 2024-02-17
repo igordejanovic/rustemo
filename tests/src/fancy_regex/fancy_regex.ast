@@ -1,0 +1,10 @@
+Ok(
+    S {
+        double_word: "foo foo",
+        number_before_number1: [
+            "42 ",
+            "27 ",
+        ],
+        number: "13",
+    },
+)

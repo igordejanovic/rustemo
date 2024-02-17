@@ -22,6 +22,7 @@ fn main() {
         ("rule_patterns", Box::new(|s| s)),
         ("sugar", Box::new(|s| s)),
         ("unicode", Box::new(|s| s)),
+        ("fancy_regex", Box::new(|s| s.fancy_regex(true))),
         ("errors/syntax_errors", Box::new(|s| s)),
         ("ambiguity", Box::new(|s| s.prefer_shifts(true))),
         // LR lexical ambiguities

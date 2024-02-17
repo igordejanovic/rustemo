@@ -1,0 +1,12 @@
+S: DoubleWord NumberBeforeNumber+ Number;
+
+terminals
+
+// this should match repeated word
+DoubleWord: /(\w+) (\1)/;
+
+// Look ahead. Number matched before other number.
+NumberBeforeNumber: /\d+ (?=\d+)/;
+
+// A regular number that matches always
+Number: /\d+/;

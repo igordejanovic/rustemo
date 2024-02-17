@@ -1,6 +1,7 @@
 #![allow(unused_imports)]
 #![cfg(test)]
 mod ambiguity;
+mod fancy_regex;
 mod builder;
 mod errors;
 mod from_file;
