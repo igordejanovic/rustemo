@@ -525,6 +525,11 @@ impl<'g, 's> LRTable<'g, 's> {
         log!("Sort terminals for lexical disambiguation");
         table.sort_terminals();
 
+        println!("Terminals: {}", grammar.terminals.len());
+        println!("Non-terminals: {}", grammar.nonterminals().len());
+        println!("Productions: {}", grammar.productions().len());
+        println!("States: {}", table.states.len());
+
         if settings.print_table {
             println!("LR TABLE:");
             println!("{}", table);
