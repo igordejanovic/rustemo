@@ -84,6 +84,10 @@ struct Cli {
     #[clap(long, default_missing_value = "true", require_equals = true)]
     lexical_disamb_grammar_order: Option<bool>,
 
+    /// Should fancy_regex crate be used instead of regex.
+    #[clap(long)]
+    fancy_regex: bool,
+
     /// Parser can succeed without consuming the whole input.
     #[clap(long)]
     partial_parse: bool,
@@ -115,6 +119,7 @@ fn main() {
         .exclude(cli.exclude)
         .prefer_shifts(cli.prefer_shifts)
         .prefer_shifts_over_empty(!cli.no_shifts_over_empty)
+        .fancy_regex(cli.fancy_regex)
         .partial_parse(cli.partial_parse)
         .skip_ws(!cli.no_skip_ws)
         .table_type(cli.table_type)

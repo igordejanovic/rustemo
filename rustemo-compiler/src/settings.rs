@@ -287,6 +287,13 @@ impl Settings {
         self
     }
 
+    /// Set whether or not we use [`fancy_regex`](https://docs.rs/fancy-regex/latest/fancy_regex/)
+    /// instead of [`regex`](https://docs.rs/regex/latest/regex/)
+    pub fn fancy_regex(mut self, fancy_regex: bool) -> Self {
+        self.fancy_regex = fancy_regex;
+        self
+    }
+
     pub fn print_table(mut self, print_table: bool) -> Self {
         self.print_table = print_table;
         self
@@ -324,13 +331,6 @@ impl Settings {
     /// compiling.
     pub fn dot(mut self, dot: bool) -> Self {
         self.dot = dot;
-        self
-    }
-
-    /// Set whether or not we use [`fancy_regex`](https://docs.rs/fancy-regex/latest/fancy_regex/) 
-    /// instead of [`regex`](https://docs.rs/regex/latest/regex/) 
-    pub fn fancy_regex(mut self, fancy_regex: bool) -> Self {
-        self.fancy_regex = fancy_regex;
         self
     }
 
