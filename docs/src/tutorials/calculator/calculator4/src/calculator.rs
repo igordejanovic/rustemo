@@ -496,7 +496,7 @@ impl<'i> TokenRecognizerT<'i> for TokenRecognizer {
                         log!("{} '{}'", "recognized".bold().green(), x_str);
                         Some(x_str)
                     }
-                    None => {
+                    _ => {
                         log!("{}", "not recognized".red());
                         None
                     }
@@ -520,7 +520,7 @@ pub(crate) static RECOGNIZERS: [TokenRecognizer; TERMINAL_COUNT] = [
     TokenRecognizer(
         TokenKind::Number,
         Recognizer::RegexMatch(
-            Lazy::new(|| { Regex::new(concat!("^(", "\\d+(\\.\\d+)?", ")")).unwrap() }),
+            Lazy::new(|| { Regex::new(concat!("^", "\\d+(\\.\\d+)?")).unwrap() }),
         ),
     ),
     TokenRecognizer(TokenKind::Plus, Recognizer::StrMatch("+")),
