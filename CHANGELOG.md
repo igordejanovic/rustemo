@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - disable trace log output with switch `--notrace` or env variable
   `RUSTEMO_NOTRACE`. Trace log is sent to std error. Thanks
   @stevefan1999-personal for reporting. See [4].
+- [fancy-regex] support. Thanks @stevefan1999-personal. See [8].
 
 ## Fixed
 
@@ -24,6 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - improved LR automata table print output.
 
 [4]: https://github.com/igordejanovic/rustemo/issues/4
+[8]: https://github.com/igordejanovic/rustemo/pull/8
+[fancy-regex]: https://github.com/fancy-regex/fancy-regex
 
 
 # [0.5.0] - 2024-01-23
