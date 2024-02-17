@@ -32,7 +32,7 @@ impl<'g, 's> PartGenerator<'g, 's> for BasePartGenerator {
         let mut imports: Vec<syn::Stmt> = vec![];
 
         if let LexerType::Default = generator.settings.lexer_type {
-            let regex: syn::Stmt = if generator.settings.fancy_regex { 
+            let regex: syn::Stmt = if generator.settings.fancy_regex {
                 parse_quote! {
                     use fancy_regex::Regex;
                 }
@@ -563,12 +563,11 @@ impl<'g, 's> PartGenerator<'g, 's> for BasePartGenerator {
         });
 
         let regex: syn::Expr = if generator.settings.fancy_regex {
-            parse_quote!{
+            parse_quote! {
                 Ok(Some(x))
             }
-            
         } else {
-            parse_quote!{
+            parse_quote! {
                 Some(x)
             }
         };
