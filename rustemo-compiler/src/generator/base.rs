@@ -639,7 +639,7 @@ impl<'g, 's> PartGenerator<'g, 's> for BasePartGenerator {
                                 let r = r.as_ref();
                                 parse_quote! {
                                     TokenRecognizer(TokenKind::#token_kind, Recognizer::RegexMatch(Lazy::new(|| {
-                                        Regex::new(concat!("^(", #r, ")")).unwrap()
+                                        Regex::new(concat!("^", #r)).unwrap()
                                     })))
                                 }
                             },
