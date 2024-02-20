@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # [Unreleased]
 
+
+# [0.6.0] - 2024-02-20
+
 ## Added
 
 - disable trace log output with switch `--notrace` or env variable
@@ -101,7 +104,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial release. See the README for the features available in this release.
 
 
-[unreleased]: https://github.com/igordejanovic/rustemo/compare/0.5.0...HEAD
+[unreleased]: https://github.com/igordejanovic/rustemo/compare/0.6.0...HEAD
+[0.6.0]: https://github.com/igordejanovic/rustemo/compare/0.5.0...0.6.0
 [0.5.0]: https://github.com/igordejanovic/rustemo/compare/0.4.0...0.5.0
 [0.4.0]: https://github.com/igordejanovic/rustemo/compare/0.3.0...0.4.0
 [0.3.0]: https://github.com/igordejanovic/rustemo/compare/0.2.0...0.3.0
