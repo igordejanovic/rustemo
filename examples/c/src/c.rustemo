@@ -162,6 +162,13 @@ Statement:
 ForInitClause: ";" {None} | Expression ";" {ForInitWithExpression} | Declaration {ForInitWithDeclaration};
 
 
+// Layout - comments, whitespaces.
+Layout: LayoutItem*;
+LayoutItem: WS | Comment;
+Comment: '/*' Corncs '*/' | CommentLine;
+Corncs: Cornc*;
+Cornc: Comment | NotComment | WS;
+
 terminals
 
 Ampersand: '&';
@@ -251,5 +258,12 @@ Volatile: "volatile";
 While: 'while';
 
 Num: /[+\-]?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+\-]?\d+)?/;
-Identifier: /\p{XID_Start}\p{XID_Continue}*/;
+Identifier: /[a-zA-Z_][0-9a-zA-Z_]*/;
 StringLiteral: /"[^"]*"/;
+
+// Layout terminals
+WS: /\s+/;
+CommentLine: /\/\/.*/;
+NotComment: /((\*[^\/])|[^\s*\/]|\/[^\*])+/;
+BCommentBegin: '/*';
+BCommentEnd:  '*/';
