@@ -6,6 +6,7 @@ members = [
         "tests",
         "examples/calculator",
         "examples/json",
+        "examples/c",
 
         # docs
         "docs/src/parsing/expressions",
