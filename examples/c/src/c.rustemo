@@ -1,0 +1,255 @@
+TranslationUnit: ExternalDeclaration | TranslationUnit ExternalDeclaration;
+ExternalDeclaration: FunctionDefinition | Declaration;
+FunctionDefinition: DeclarationSpecifier+ Declarator Declaration* CompoundStatement;
+
+DeclarationSpecifier: StorageClassSpecifier | TypeSpecifier | TypeQualifier | FunctionSpecifier;
+
+StorageClassSpecifier: "typedef" | "extern" | "static" | "auto" | "register";
+TypeSpecifier:
+   "void"
+ | "char"
+ | "short"
+ | "int"
+ | "long"
+ | "float"
+ | "double"
+ | "signed"
+ | "unsigned"
+ | "_Bool"
+ | "_Complex"
+ | StructOrUnionSpecifier
+ | EnumSpecifier
+ | TypedefName
+;
+
+StructOrUnionSpecifier:
+   StructOrUnion Identifier? "{" StructDeclaration+ "}"
+ | StructOrUnion Identifier
+;
+StructOrUnion: "struct" | "union";
+StructDeclaration: SpecifierQualifierKind+ StructDeclaratorList ";";
+SpecifierQualifierKind: TypeSpecifier | TypeQualifier;
+TypeQualifier: "const" | "restrict" | "volatile";
+StructDeclaratorList: StructDeclaratorList "," StructDeclarator | StructDeclarator;
+StructDeclarator: Declarator | Declarator? ":" ConstantExpression;
+Declarator: Pointer? DirectDeclarator;
+Pointer: "*" TypeQualifier* | "*" TypeQualifier* Pointer;
+DirectDeclarator: Identifier
+ | "(" Declarator ")"
+ | DirectDeclarator "[" TypeQualifier* AssignmentExpression? "]"
+ | DirectDeclarator "[" "static" TypeQualifier* AssignmentExpression "]"
+ | DirectDeclarator "[" TypeQualifier+ "static" AssignmentExpression "]"
+ | DirectDeclarator "[" TypeQualifier* "*" "]"
+ | DirectDeclarator "(" ParameterTypeList ")"
+ | DirectDeclarator "(" IdentifierList? ")"
+;
+
+Expression:
+   left=Expression ',' right=Expression {CommaExpression, 0, left}
+ | AssignmentExpression {1, right}
+;
+
+AssignmentOperators: '=' | '+=' | '-=' | '*=' | '/=' | '%=' | '<<=' | '>>=' | '&=' | '^=' | '|=';
+AssignmentExpression: ConditionalExpression | left=UnaryExpression AssignmentOperators right=Expression {right};
+ConditionalExpression: ArithmeticExpression | condition=Expression "?" branch_true=Expression ":" branch_false=Expression {right};
+ArithmeticExpression: UnaryExpression
+ | left=Expression '||' right=Expression {LogicalOrExpression, 3}
+ | left=Expression '&&' right=Expression {LogicalAndExpression, 4}
+ | left=Expression '|' right=Expression {BitwiseOrExpression, 5}
+ | left=Expression '^' right=Expression {BitwiseExclusiveOrExpression, 6}
+ | left=Expression '&' right=Expression {BitwiseAndExpression, 7}
+ | left=Expression '==' right=Expression {LogicalEqualExpression, 8}
+ | left=Expression '!=' right=Expression {LogicalNotEqualExpression, 8}
+ | left=Expression '<' right=Expression {LessThanExpression, 9}
+ | left=Expression '<=' right=Expression {LessThanOrEqualExpression, 9}
+ | left=Expression '>' right=Expression {GreaterThanExpression, 9}
+ | left=Expression '>=' right=Expression {GreaterThanOrEqualExpression, 9}
+ | left=Expression '<<' right=Expression {BitwiseLeftShiftExpression, 10}
+ | left=Expression '>>' right=Expression {BitwiseRightShiftExpression, 10}
+ | left=Expression '+' right=Expression {AdditionExpression, 11}
+ | left=Expression '-' right=Expression {SubtractionExpression, 11}
+ | left=Expression '*' right=Expression {MultiplyExpression, 12}
+ | left=Expression '/' right=Expression {DivisionExpression, 12}
+ | left=Expression '%' right=Expression {ModuloExpression, 12}
+;
+
+TypeCast: "(" TypeName ")";
+
+UnaryExpression: PrimaryExpression
+ | "++" UnaryExpression {PreIncrementExpression, 13, right}
+ | "--" UnaryExpression {PreDecrementExpression, 13, right}
+ | '!' TypeCast? UnaryExpression {LogicalNotExpression, 13, right}
+ | '~' TypeCast? UnaryExpression {BitwiseNotExpression, 13, right}
+ | '+' TypeCast? UnaryExpression {PlusExpression, 13, right}
+ | '-' TypeCast? UnaryExpression {MinusExpression, 13, right}
+ | '*' TypeCast? UnaryExpression {DereferenceExpression, 13, right}
+ | '&' TypeCast? UnaryExpression {ReferenceExpression, 13, right}
+ | "sizeof" Expression {SizeOfExpressionExpression, 13, right}
+ | "sizeof" "(" TypeName ")" {SizeOfTypenameExpression, 13, right}
+ | assumed_array=UnaryExpression "[" index=Expression "]" {ArrayAccessExpression, 14, left}
+ | assumed_callable=UnaryExpression "(" arguments=ArgumentExpressionList? ")" {FunctionCallExpression, 14, left}
+ | assumed_variable=UnaryExpression "." Identifier {AccessExpression, 14, left}
+ | assumed_pointer=UnaryExpression "->" Identifier {PointerAccessExpression, 14, left}
+ | assumed_increment=UnaryExpression "++" {PostIncrementExpression, 14, left}
+ | assumed_decrement=UnaryExpression "--" {PostDecrementExpression, 14, left}
+ | TypeCast "{" InitializerList ","? "}" {CompoundLiteralExpression, 14, left}
+;
+
+
+PrimaryExpression:
+   Num {Number}
+ | Identifier {Identifier}
+ | StringLiteral {StringLiteral}
+ | '(' Expression ')' {Paren}
+;
+
+ArgumentExpressionList: AssignmentExpression | ArgumentExpressionList "," AssignmentExpression;
+TypeName: SpecifierQualifierKind+ AbstractDeclarator?;
+AbstractDeclarator: Pointer | Pointer? DirectAbstractDeclarator;
+DirectAbstractDeclarator:
+   "(" AbstractDeclarator ")"
+ | DirectAbstractDeclarator? "[" TypeQualifier* AssignmentExpression? "]"
+ | DirectAbstractDeclarator? "[" "static" TypeQualifier* AssignmentExpression "]"
+ | DirectAbstractDeclarator? "[" TypeQualifier+ "static" AssignmentExpression "]"
+ | DirectAbstractDeclarator? "[" "*" "]"
+ | DirectAbstractDeclarator? "(" ParameterTypeList? ")"
+;
+
+ParameterTypeList: ParameterList | ParameterList "," "...";
+ParameterList: ParameterDeclaration | ParameterList "," ParameterDeclaration;
+
+ParameterDeclarationKind: Declarator | AbstractDeclarator?;
+ParameterDeclaration: DeclarationSpecifier+ kind=ParameterDeclarationKind;
+InitializerList: Designation? Initializer | InitializerList "," Designation? Initializer;
+Designation: Designator+ "=";
+Designator: "[" ConstantExpression "]" | "." Identifier;
+ConstantExpression: ConditionalExpression;
+Initializer: AssignmentExpression | "{" InitializerList ","? "}";
+
+IdentifierList: Identifier | IdentifierList "," Identifier;
+
+EnumSpecifier:
+   "enum" Identifier? "{" EnumeratorList ","? "}"
+ | "enum" Identifier
+;
+EnumeratorList: Enumerator | EnumeratorList "," Enumerator;
+Enumerator: EnumerationConstant | EnumerationConstant "=" ConstantExpression;
+EnumerationConstant: Identifier; // Hack
+TypedefName: Identifier;
+FunctionSpecifier: "inline";
+Declaration: DeclarationSpecifier+ InitDeclaratorList? ";" ;
+InitDeclaratorList: InitDeclarator | InitDeclaratorList "," InitDeclarator;
+InitDeclarator: Declarator | Declarator "=" Initializer;
+CompoundStatement: "{" statements=BlockItem* "}";
+BlockItem: Declaration | Statement;
+Statement:
+   label=Identifier ":" body=Statement {LabelStatement}
+ | "case" condition=ConstantExpression ":" body=Statement {CaseClause}
+ | "default" ":" body=Statement {DefaultClause}
+ | CompoundStatement
+ | expression=Expression? ";" {ExpressionStatement}
+ | "if" "(" condition=Expression ")" body=Statement {IfStatement}
+ | "if" "(" condition=Expression ")" branch_true=Statement "else" branch_false=Statement {IfElseStatement}
+ | "switch" "(" condition=Expression ")" body=Statement {SwitchStatement}
+ | "while" "(" condition=Expression ")" body=Statement {WhileStatement}
+ | "do" body=Statement "while" "(" condition=Expression ")" ";" {DoWhileStatement}
+ | "for" "(" init=ForInitClause condition=Expression? ";" step=Expression? ")" body=Statement {ForStatement}
+ | "goto" label=Identifier ";" {GotoStatement}
+ | "continue" ";" {ContinueStatement}
+ | "break" ";" {BreakStatement}
+ | "return" value=Expression? ";" {ReturnStatement}
+;
+ForInitClause: ";" {None} | Expression ";" {ForInitWithExpression} | Declaration {ForInitWithDeclaration};
+
+
+terminals
+
+Ampersand: '&';
+Caret: '^';
+Colon: ':';
+Comma: ',';
+Dash: '-';
+Dot: '.';
+Equal: '=';
+Exclaim: '!';
+LeftBracket: '<';
+LeftCurlyBracket: '{';
+LeftParen: '(';
+LeftSquareBracket: '[';
+Percent: '%';
+Plus: '+';
+Question: '?';
+RightBracket: '>';
+RightCurlyBracket: '}';
+RightParen: ')';
+RightSquareBracket: ']';
+Semicolon: ';';
+Sizeof: 'sizeof';
+Slash: '/';
+Star: '*';
+Tilde: '~';
+VerticalBar: '|';
+
+AmpersandEqual: '&=';
+CaretEqual: '^=';
+DashEqual: '-=';
+DashRightBracket: '->';
+DoubleAmpersand: '&&';
+DoubleEqual: '==';
+DoubleLeft: '<<';
+DoubleDash: '--';
+DoublePlus: '++';
+DoubleRight: '>>';
+DoubleVerticalBar: '||';
+ExclaimEqual: '!=';
+LeftBracketEqual: '<=';
+PercentEqual: '%=';
+PlusEqual: '+=';
+RightBracketEqual: '>=';
+SlashEqual: '/=';
+StarEqual: '*=';
+VerticalBarEqual: '|=';
+
+Ellipsis: '...';
+DoubleLeftEqual: '<<=';
+DoubleRightEqual: '>>=';
+
+Auto: "auto";
+Break: 'break';
+Case: 'case';
+Char: "char";
+Const: "const";
+Continue: 'continue';
+Default: 'default';
+Do: 'do';
+Double: "double";
+Else: 'else';
+Enum: 'enum';
+Extern: "extern";
+Float: "float";
+For: 'for';
+Goto: 'goto';
+If: 'if';
+Inline: "inline";
+Int: "int";
+Long: "long";
+Register: "register";
+Restrict: "restrict";
+Return: 'return';
+Short: "short";
+Signed: "signed";
+Static: 'static';
+Struct: 'struct';
+Switch: 'switch';
+Typedef: "typedef";
+UnderscoreBool: "_Bool";
+UnderscoreComplex: "_Complex";
+Union: 'union';
+Unsigned: "unsigned";
+Void: "void";
+Volatile: "volatile";
+While: 'while';
+
+Num: /[+\-]?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+\-]?\d+)?/;
+Identifier: /\p{XID_Start}\p{XID_Continue}*/;
+StringLiteral: /"[^"]*"/;
