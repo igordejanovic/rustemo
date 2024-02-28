@@ -1,10 +1,9 @@
-use std::{
-    cell::RefCell,
-    collections::{HashSet, VecDeque},
-    fmt::Debug,
-    ops::Range,
-    rc::Rc,
-};
+use alloc::collections::VecDeque;
+use alloc::rc::Rc;
+use core::cell::RefCell;
+use core::fmt::Debug;
+use core::ops::Range;
+use fnv::FnvHashSet as HashSet;
 
 use petgraph::{graph::Edges, prelude::*};
 
@@ -486,12 +485,12 @@ where
 {
 }
 
-impl<'i, I, P, TK> std::hash::Hash for Parent<'i, I, P, TK>
+impl<'i, I, P, TK> core::hash::Hash for Parent<'i, I, P, TK>
 where
     I: Input + ?Sized,
     TK: Copy,
 {
-    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+    fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
         self.root_node.hash(state);
         self.head_node.hash(state);
     }
@@ -565,7 +564,7 @@ where
     I: Input + ?Sized + Debug,
     TK: Copy,
 {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match &*self.root {
             SPPFTree::Term { token, .. } => write!(f, "{:#?}", token.value),
             SPPFTree::NonTerm { .. } => write!(f, "{:#?}", self.children()),
@@ -743,7 +742,7 @@ where
     #[inline]
     pub fn ambiguities(&self) -> usize {
         #[allow(clippy::mutable_key_type)]
-        let mut visited: HashSet<Rc<Parent<'i, I, P, TK>>> = HashSet::new();
+        let mut visited: HashSet<Rc<Parent<'i, I, P, TK>>> = HashSet::default();
         self.results
             .iter()
             .map(|n| n.ambiguities(&mut visited))

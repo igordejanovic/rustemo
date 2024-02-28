@@ -1,7 +1,7 @@
 use crate::{location::Location, Context, Input, State};
-use std::fmt::{Debug, Display};
+use core::fmt::{Debug, Display};
 
-pub type Result<R> = std::result::Result<R, Error>;
+pub type Result<R> = core::result::Result<R, Error>;
 
 /// Error type returned in `Err` variant of `Result` type from the parser.
 // ANCHOR: parser-error
@@ -51,7 +51,7 @@ impl Error {
 }
 
 impl Display for Error {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self {
             Error::Error {
                 message,

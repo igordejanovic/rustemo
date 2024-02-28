@@ -1,4 +1,4 @@
-use std::fmt::{Debug, Display};
+use core::fmt::{Debug, Display};
 
 /// A line-column based location for use where applicable (e.g. plain text).
 #[derive(PartialEq, Eq, Debug, Copy, Clone)]
@@ -55,7 +55,7 @@ impl Default for Position {
 }
 
 impl Display for Position {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self {
             Position::Position(pos) => write!(f, "{pos}"),
             Position::LineBased(lb) => write!(f, "{},{}", lb.line, lb.column),
@@ -95,7 +95,7 @@ impl Location {
 }
 
 impl Debug for Location {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self.end {
             Some(ref end) => write!(f, "[{}-{}]", self.start, end),
             None => write!(f, "[{}]", self.start),
@@ -122,7 +122,7 @@ pub struct ValLoc<T> {
 }
 
 impl<T: Display> Display for ValLoc<T> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "{}", self.value)
     }
 }

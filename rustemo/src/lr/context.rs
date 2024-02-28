@@ -1,4 +1,4 @@
-use std::ops::Range;
+use core::ops::Range;
 
 use crate::{
     context::Context, input::Input, lexer::Token, location::Location,

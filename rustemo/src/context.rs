@@ -1,4 +1,4 @@
-use std::ops::Range;
+use core::ops::Range;
 
 use crate::{input::Input, lexer::Token, location::Location, parser::State};
 

@@ -17,6 +17,7 @@ rust-version.workspace = true
 
 [dependencies]
 colored = "2"
+fnv = "1.0.7"
 petgraph = { version = "0.6", optional = true }
 
 
