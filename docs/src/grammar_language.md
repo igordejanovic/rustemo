@@ -124,6 +124,15 @@ write and they don't add to readability so it is always better to reference
 regex terminal by name in grammar rules.
 ```
 
+```admonish warning
+During regex construction a `^` prefix is added to the regex from the grammar to
+make sure that the content is matched at the current input position. This can be
+an issue if you use a pattern like `A|B` in your regex as it translates to
+`^A|B` which matches either `A` at the current position or `B` in the rest of
+the input. So, the workaround for now is to use `(A|B)`, i.e. always wrap
+alternative choices in parentheses.
+```
+
 
 ## Usual patterns
 This section explains how some common grammar patterns can be written using just
