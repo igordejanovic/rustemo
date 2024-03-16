@@ -590,11 +590,11 @@ impl<'g, 's> LRTable<'g, 's> {
             let new_states =
                 Self::create_new_states(self.grammar, &state, per_next_symbol);
 
-            // Find states that already exists and try to merge. If not possible to
-            // merge or not found push state to state queue.
+            // Find states that already exist and try to merge. If not possible
+            // to merge or not found push state to state queue.
             for mut new_state in new_states {
+                let target_state_symbol = new_state.symbol;
                 let mut new_state_found = true;
-                let mut target_state_symbol = new_state.symbol;
                 let mut target_state_idx = StateIndex(current_state_idx);
                 for old_state in self
                     .states
@@ -606,7 +606,6 @@ impl<'g, 's> LRTable<'g, 's> {
                     // If the same state already exists try to merge.
                     if Self::merge_state(self.settings, old_state, &new_state) {
                         new_state_found = false;
-                        target_state_symbol = old_state.symbol;
                         target_state_idx = old_state.idx;
                         break;
                     }
