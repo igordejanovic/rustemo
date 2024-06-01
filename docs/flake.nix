@@ -6,9 +6,16 @@
 			url = "github:zjp-CN/mdbook-theme";
 			flake = false;
 		};
+		# mdbook with fixes.
+		# Current fixes:
+		# - https://github.com/rust-lang/mdBook/pull/1718
+		mdbook = rec {
+			url = "github:igordejanovic/mdbook?ref=merged-prs";
+			flake = false;
+		};
   };
 
-  outputs = { self, nixpkgs, flake-utils, mdbook-theme }: 
+  outputs = { self, nixpkgs, flake-utils, mdbook-theme, mdbook }:
 		flake-utils.lib.eachDefaultSystem (system: 
 			let
 				pkgs = nixpkgs.legacyPackages.${system};
@@ -19,7 +26,13 @@
 					cargoLock.lockFile = mdbook-theme.outPath + "/Cargo.lock";
 					src = mdbook-theme;
 				};
-				buildInputs = with pkgs; [ wget git mdbook mdbook-admonish mdbook-plantuml mdbook-graphviz mdbook-theme-pkg graphviz mdbook-linkcheck ];
+				mdbook-pkg = pkgs.rustPlatform.buildRustPackage {
+					pname = "mdbook";
+					version = "0.4.26.fix";
+					cargoLock.lockFile = mdbook.outPath + "/Cargo.lock";
+					src = mdbook;
+				};
+				buildInputs = with pkgs; [ wget git mdbook-pkg mdbook-admonish mdbook-plantuml mdbook-graphviz mdbook-theme-pkg mdbook-linkcheck plantuml graphviz ];
 			in
 			{
 				devShells.default = mkShell { inherit buildInputs; };
