@@ -16,7 +16,7 @@
   };
 
   outputs = { self, nixpkgs, flake-utils, mdbook-theme, mdbook }:
-		flake-utils.lib.eachDefaultSystem (system: 
+		flake-utils.lib.eachDefaultSystem (system:
 			let
 				pkgs = nixpkgs.legacyPackages.${system};
 				inherit (pkgs) stdenv mkShell;
@@ -32,7 +32,15 @@
 					cargoLock.lockFile = mdbook.outPath + "/Cargo.lock";
 					src = mdbook;
 				};
-				buildInputs = with pkgs; [ wget git mdbook-pkg mdbook-admonish mdbook-plantuml mdbook-graphviz mdbook-theme-pkg mdbook-linkcheck plantuml graphviz ];
+				tex = pkgs.texlive.combine {
+				  inherit (pkgs.texlive) scheme-minimal standalone qtree;
+				};
+				buildInputs = with pkgs; [ wget git
+																	 mdbook-pkg mdbook-admonish mdbook-plantuml
+																	 mdbook-graphviz mdbook-theme-pkg mdbook-linkcheck
+																	 plantuml graphviz
+																	 tex
+																	 poppler_utils];
 			in
 			{
 				devShells.default = mkShell { inherit buildInputs; };
@@ -50,4 +58,4 @@
 				};
 			}
 		);
-}	
+}
