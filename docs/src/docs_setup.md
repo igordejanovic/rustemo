@@ -29,6 +29,22 @@ Optional:
 
 In the root of the `docs` directory run `mdbook serve`. The book will be available
 at [http://localhost:3000/]()
+
+# Setup using Nix Flakes
+
+Alternatively, you can use [Nix package manager](https://nixos.org/) to setup
+documentation locally. Instead of the above steps just install Nix, [enable
+flakes](https://nixos.wiki/wiki/flakes), and from the `docs` folder run:
+
+```
+nix develop
+mdbook serve
+```
+
+Nix-based shell has an added benefix that it provides all additional required
+dependencies (e.g. `pdflatex` and required package for building tree images,
+plantuml, graphviz). To rebuild tree images from `.tex` files run script
+`./build-latex-images.sh` (See [Trees diagrams](#trees-diagrams) bellow).
   
 # Admonitions
 
