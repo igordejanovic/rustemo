@@ -17,6 +17,9 @@ nix develop
 mdbook serve docs
 ```
 
+The docs will be available at [http://localhost:3000/](http://localhost:3000/)
+and the server will watch for changes and rebuild.
+
 Nix-based shell has an added benefix that it provides all additional required
 dependencies (e.g. `pdflatex` and required package for building tree images,
 plantuml, graphviz). E.g., to rebuild tree images from `.tex` files you can run
