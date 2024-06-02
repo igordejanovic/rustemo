@@ -43,15 +43,14 @@ jobs:
       - name: Build book
         shell: bash
         run: |
-          cd docs
-          nix build -o book
+          nix build
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'docs/book/html'
+          path: 'result/html'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
