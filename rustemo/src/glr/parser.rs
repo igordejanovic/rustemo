@@ -24,16 +24,13 @@ use crate::{
 #[cfg(debug_assertions)]
 use colored::*;
 use petgraph::prelude::*;
-use std::{
-    borrow::Borrow,
-    cell::RefCell,
-    collections::{BTreeMap, VecDeque},
-    fmt::{Debug, Display},
-    marker::PhantomData,
-    ops::Range,
-    rc::Rc,
-};
-
+use core::borrow::Borrow;
+use core::cell::RefCell;
+use core::fmt::{Debug, Display};
+use core::marker::PhantomData;
+use core::ops::Range;
+use alloc::collections::{BTreeMap, VecDeque};
+use alloc::rc::Rc;
 use super::gss::{Forest, GssGraph, GssHead, SPPFTree, TreeData};
 
 /// The start of the reduction. For length 0 it will carry the node of the
@@ -80,7 +77,7 @@ where
     I: Input + ?Sized,
     TK: Copy,
 {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         let mut pariter = self.parents.iter().rev();
         if let Some(parent) = pariter.next() {
             write!(f, "{}", parent.head_node.index())?;

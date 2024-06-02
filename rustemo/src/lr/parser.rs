@@ -9,14 +9,13 @@ use crate::parser::{Parser, State};
 use crate::{err, Error};
 #[cfg(debug_assertions)]
 use colored::*;
-use std::borrow::Borrow;
-use std::cell::RefCell;
-use std::fmt::Debug;
-use std::marker::PhantomData;
-use std::ops::Range;
+use core::borrow::Borrow;
+use core::cell::RefCell;
+use core::fmt::Debug;
+use core::marker::PhantomData;
+use core::ops::Range;
 use std::path::Path;
-use std::rc::Rc;
-
+use alloc::rc::Rc;
 use super::builder::LRBuilder;
 
 /// Provides LR actions and GOTOs given the state and term/nonterm.
@@ -44,7 +43,7 @@ struct StackItem<S> {
 }
 
 impl<S: Debug> Debug for StackItem<S> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(
             f,
             "State({:?}, {:?} {:?})",
@@ -59,7 +58,7 @@ struct ParseStack<S, I: ?Sized, C, TK> {
 }
 
 impl<S: Debug, I: ?Sized, C, TK> Debug for ParseStack<S, I, C, TK> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_struct("ParseStack")
             .field("stack", &self.stack)
             .finish()

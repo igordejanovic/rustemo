@@ -2,13 +2,11 @@ use crate::{
     error::Result,
     location::{LineColumn, Location, Position},
 };
-use std::{
-    borrow::ToOwned,
-    cmp::min,
-    iter::once,
-    ops::{Deref, Index, Range},
-    path::Path,
-};
+use alloc::borrow::ToOwned;
+use core::cmp::min;
+use core::iter::once;
+use core::ops::{Deref, Index, Range};
+use std::path::Path;
 /// Input is a sliceable sequence-like type with a concept of length.
 ///
 /// This trait must be implemented by all types that should be parsed by
