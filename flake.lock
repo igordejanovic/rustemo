@@ -36,23 +36,6 @@
         "type": "github"
       }
     },
-    "mdbook": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1676041770,
-        "narHash": "sha256-nMDj2b8SE96P/uOyv4RMN36U/1t8O7UFufOjwQPqMOA=",
-        "owner": "igordejanovic",
-        "repo": "mdbook",
-        "rev": "68e2bafbc4a88754e7412103e0007ea667380012",
-        "type": "github"
-      },
-      "original": {
-        "owner": "igordejanovic",
-        "ref": "merged-prs",
-        "repo": "mdbook",
-        "type": "github"
-      }
-    },
     "mdbook-theme": {
       "flake": false,
       "locked": {
@@ -104,7 +87,6 @@
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
-        "mdbook": "mdbook",
         "mdbook-theme": "mdbook-theme",
         "nixpkgs": "nixpkgs",
         "rust-overlay": "rust-overlay"

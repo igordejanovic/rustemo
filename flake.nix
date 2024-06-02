@@ -8,16 +8,9 @@
       url = "github:zjp-CN/mdbook-theme";
       flake = false;
     };
-    # mdbook with fixes.
-    # Current fixes:
-    # - https://github.com/rust-lang/mdBook/pull/1718
-    mdbook = {
-      url = "github:igordejanovic/mdbook?ref=merged-prs";
-      flake = false;
-    };
   };
 
-  outputs = { self, nixpkgs, flake-utils, rust-overlay, mdbook-theme, mdbook }:
+  outputs = { self, nixpkgs, flake-utils, rust-overlay, mdbook-theme}:
     flake-utils.lib.eachDefaultSystem (system:
       let
         overlays = [ (import rust-overlay) ];
@@ -33,20 +26,13 @@
           src = mdbook-theme;
         };
 
-        mdbook-pkg = pkgs.rustPlatform.buildRustPackage {
-          pname = "mdbook";
-          version = "0.4.26.fix";
-          cargoLock.lockFile = mdbook.outPath + "/Cargo.lock";
-          src = mdbook;
-        };
-
         tex = pkgs.texlive.combine {
           inherit (pkgs.texlive) scheme-small standalone qtree pict2e preview;
         };
 
         buildInputsDocs = with pkgs; [
           wget git bash
-          mdbook-pkg mdbook-admonish mdbook-plantuml
+          mdbook mdbook-admonish mdbook-plantuml
           mdbook-graphviz mdbook-theme-pkg mdbook-linkcheck
           plantuml graphviz tex poppler_utils];
 
@@ -62,12 +48,10 @@
           buildInputs = buildInputsDocs;
 
           buildPhase = ''
-             cd docs
-             ./build-latex-images.sh
-             mdbook build
+             mdbook build docs
           '';
           installPhase = ''
-             mv book $out
+             mv docs/book $out
           '';
         };
       }

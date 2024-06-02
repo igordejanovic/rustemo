@@ -49,9 +49,9 @@ To work with Rustemo a usual sequence of steps is as follows (after installing
 1. Write a grammar in a textual file with `.rustemo` extension. For example, a
    JSON grammar might look like this (see the examples directory):
 
-   ```
-   {{#include ../../examples/json/src/json.rustemo}} 
-   ```
+```
+{{#include ../../examples/json/src/json.rustemo}} 
+```
 
 2. Run `rcomp` compiler (a binary installed from `rustemo-compiler` crate) with
    the given grammar to produce the parser code and optional builder actions
