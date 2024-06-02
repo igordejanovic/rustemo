@@ -43,8 +43,9 @@ mdbook serve docs
 
 Nix-based shell has an added benefix that it provides all additional required
 dependencies (e.g. `pdflatex` and required package for building tree images,
-plantuml, graphviz). To rebuild tree images from `.tex` files run
-`docs/build-latex-images.sh` (See [Trees diagrams](#trees-diagrams) bellow).
+plantuml, graphviz). E.g., to rebuild tree images from `.tex` files you can run
+`docs/build-latex-images.sh` (it is automatically called by `mdbook serve docs`,
+see [Trees diagrams](#trees-diagrams) bellow).
   
 # Admonitions
 
