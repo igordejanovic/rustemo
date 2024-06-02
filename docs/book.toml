@@ -13,7 +13,7 @@ title = "Rustemo book"
 
 [output.html]
 additional-css = ["./mdbook-admonish.css", "theme/pagetoc.css"] #, "style.css"]
-additional-js = ["theme/pagetoc.js"] # , "sidebar.js"]
+additional-js = ["theme/pagetoc.js"]                            # , "sidebar.js"]
 
 # [output.pandoc.profile.pdf]
 # output-file = "Rustemo.pdf"
@@ -36,24 +36,25 @@ warning-policy = "error"
 [preprocessor]
 
 [preprocessor.theme]
-turn-off = true         # Comment this line and run `mdbook build` when theme is changed
-pagetoc        = true
-pagetoc-width            = "13%"
-content-max-width        = "85%"
-pagetoc-fontsize         = "14.5px"
-sidebar-width            = "300px"
+turn-off = true             # Comment this line and run `mdbook build` when theme is changed
+pagetoc = true
+pagetoc-width = "13%"
+content-max-width = "85%"
+pagetoc-fontsize = "14.5px"
+sidebar-width = "300px"
 
 
 [preprocessor.admonish]
 command = "mdbook-admonish"
-assets_version = "3.0.1" # do not edit: managed by `mdbook-admonish install`
+assets_version = "3.0.1"    # do not edit: managed by `mdbook-admonish install`
 
 # [preprocessor.bib]
 # bibliography = "references.bib"
 
 [preprocessor.plantuml]
+plantuml-cmd = "plantuml"
 
 [preprocessor.graphviz]
 after = ["links"]
 output-to-file = true # defaults to false, change to true to create SVG files
-                      # instead of rendering them inline
+# instead of rendering them inline
