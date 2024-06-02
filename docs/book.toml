@@ -58,3 +58,6 @@ plantuml-cmd = "plantuml"
 after = ["links"]
 output-to-file = true # defaults to false, change to true to create SVG files
 # instead of rendering them inline
+
+[preprocessor.lateximages]
+command = "docs/build-latex-images.sh"
