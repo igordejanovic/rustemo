@@ -34,17 +34,17 @@ at [http://localhost:3000/]()
 
 Alternatively, you can use [Nix package manager](https://nixos.org/) to setup
 documentation locally. Instead of the above steps just install Nix, [enable
-flakes](https://nixos.wiki/wiki/flakes), and from the `docs` folder run:
+flakes](https://nixos.wiki/wiki/flakes), and from the root of the project run:
 
 ```
 nix develop
-mdbook serve
+mdbook serve docs
 ```
 
 Nix-based shell has an added benefix that it provides all additional required
 dependencies (e.g. `pdflatex` and required package for building tree images,
-plantuml, graphviz). To rebuild tree images from `.tex` files run script
-`./build-latex-images.sh` (See [Trees diagrams](#trees-diagrams) bellow).
+plantuml, graphviz). To rebuild tree images from `.tex` files run
+`docs/build-latex-images.sh` (See [Trees diagrams](#trees-diagrams) bellow).
   
 # Admonitions
 

@@ -41,7 +41,7 @@
         };
 
         tex = pkgs.texlive.combine {
-          inherit (pkgs.texlive) scheme-minimal standalone qtree;
+          inherit (pkgs.texlive) scheme-small standalone qtree pict2e preview;
         };
 
         buildInputsDocs = with pkgs; [
@@ -62,11 +62,13 @@
           buildInputs = buildInputsDocs;
 
           buildPhase = ''
-             mdbook build docs
+             cd docs
+             ./build-latex-images.sh
+             mdbook build
           '';
- 					installPhase = ''
- 						 mv docs/book $out
- 					'';
+          installPhase = ''
+             mv book $out
+          '';
         };
       }
     );

@@ -5,5 +5,5 @@ while IFS= read -d '' -r file ; do
     pdflatex -output-directory=$(dirname $file) $file 2>&1 >> ${file%.tex}.log
     pdftoppm ${file%tex}pdf ${file%.tex} -png -singlefile
     #convert -density 200 -alpha deactivate ${file%.tex}.pdf ${file%.tex}.png
-    rm ${file%.tex}.{log,pdf,aux}
+    # rm ${file%.tex}.{log,pdf,aux}
 done < <(find . -iname '*.tex' -print0)
