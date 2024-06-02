@@ -10,22 +10,11 @@ Cargo.lock
 **/*.rs.bk
 
 
-# Added by cargo
-
-/target
-
-
-# Added by cargo
-#
-# already existing elements were commented out
-
-#/target
-#Cargo.lock
 /.gdb_history
 
 # Bootstrapping files
 /rustemo/src/lang/*_bootstrap.rs
-/docs/index.html
 /CONTRIBUTING.html
-/docs/CONTRIBUTING.html
-/docs/**/.auctex-auto/
+
+# Nix
+result

@@ -2,3 +2,13 @@ book
 result
 *.generated.svg
 *mdbook-plantuml-img*
+CONTRIBUTING.html
+**/.auctex-auto/
+index.html
+
+src/handling_errors/images/*
+!src/handling_errors/images/*.tex
+src/images/ast.*
+!src/images/ast.tex
+src/parsing/images/tree.*
+!src/parsing/images/tree.tex
