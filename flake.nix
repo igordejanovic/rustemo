@@ -15,7 +15,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, flake-utils, rust-overlay, crane, mdbook-theme, mdbook }:
+  outputs = { self, nixpkgs, flake-utils, rust-overlay, crane, mdbook-theme }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         overlays = [ (import rust-overlay) ];
@@ -24,7 +24,7 @@
         };
 
 				book = import ./docs {
-					inherit pkgs mdbook mdbook-theme;
+					inherit pkgs mdbook-theme;
 				};
 				rustemo = import ./. {
 					inherit crane pkgs;

@@ -1,4 +1,4 @@
-{ pkgs, mdbook, mdbook-theme }:
+{ pkgs, mdbook-theme }:
 let
 	inherit (pkgs) stdenv;
 	
@@ -9,20 +9,13 @@ let
     src = mdbook-theme;
   };
 
-  mdbook-pkg = pkgs.rustPlatform.buildRustPackage {
-    pname = "mdbook";
-    version = "0.4.26.fix";
-    cargoLock.lockFile = mdbook.outPath + "/Cargo.lock";
-    src = mdbook;
-  };
-
   tex = pkgs.texlive.combine {
     inherit (pkgs.texlive) scheme-small standalone qtree pict2e preview;
   };
 
   buildInputs = with pkgs; [
     wget git bash
-    mdbook-pkg mdbook-admonish mdbook-plantuml
+    mdbook mdbook-admonish mdbook-plantuml
     mdbook-graphviz mdbook-theme-pkg mdbook-linkcheck
     plantuml graphviz tex poppler_utils];
 	book = stdenv.mkDerivation {
