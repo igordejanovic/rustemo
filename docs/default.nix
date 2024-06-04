@@ -24,12 +24,10 @@ let
 		inherit buildInputs;
 
 		buildPhase = ''
-			cd docs
-			./build-latex-images.sh
-			mdbook build
+			mdbook build docs
 		'';
 		installPhase = ''
-			mv book $out
+			mv docs/book $out
 		'';
 	};
 in
