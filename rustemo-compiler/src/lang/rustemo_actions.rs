@@ -461,6 +461,7 @@ pub fn bool_assignment_c1(
     BoolAssignment { name, gsymref }
 }
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct ProductionGroup(pub GrammarRuleRHS);
 pub fn production_group_c1(
     _ctx: &Ctx,
@@ -472,6 +473,7 @@ pub fn production_group_c1(
 pub struct GrammarSymbolRef {
     pub gsymbol: Option<GrammarSymbol>,
     pub repetition_op: RepetitionOperatorOpt,
+    #[allow(dead_code)]
     pub production_group: Option<ProductionGroup>,
 }
 pub fn grammar_symbol_ref_c1(

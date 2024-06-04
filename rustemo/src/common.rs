@@ -7,6 +7,7 @@
 #[macro_export]
 macro_rules! rustemo_mod {
     ($(#[$attr:meta])* $vis:vis $modname:ident, $source:expr) => {
+        #[allow(dead_code)]
         $(#[$attr])* $vis mod $modname { include!(concat!(env!("OUT_DIR"),
                                                           $source, "/",
                                                           stringify!($modname), ".rs")); }

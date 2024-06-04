@@ -1,6 +1,7 @@
 use rustemo::rustemo_mod;
 
 rustemo_mod!(json, "/src");
+#[allow(dead_code)]
 mod json_actions;
 
 fn main() {}

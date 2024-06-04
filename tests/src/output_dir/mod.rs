@@ -10,12 +10,14 @@ use self::output_dir_act::OutputDirActParser;
 #[allow(clippy::module_inception)]
 mod output_dir;
 #[rustfmt::skip]
+#[allow(dead_code)]
 mod output_dir_actions;
 
 // For the second grammar only actions are generated in the source tree but the
 // parser is generated in the Cargo output folder.
 rustemo_mod!(output_dir_act, "/src/output_dir");
 #[rustfmt::skip]
+#[allow(dead_code)]
 mod output_dir_act_actions;
 
 #[test]

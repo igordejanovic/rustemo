@@ -2,6 +2,7 @@ use rustemo::{rustemo_mod, Parser};
 use rustemo_compiler::output_cmp;
 
 rustemo_mod!(calc, "/src/glr/evaluate");
+#[allow(dead_code)]
 mod calc_actions;
 rustemo_mod!(calc_eval, "/src/glr/evaluate");
 mod calc_eval_actions;
