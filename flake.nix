@@ -23,12 +23,12 @@
           inherit system overlays;
         };
 
+				rev = if builtins.hasAttr "rev" self then self.rev else self.dirtyRev;
 				book = import ./docs {
 					inherit pkgs mdbook-theme;
 				};
 				rustemo = import ./. {
-					inherit crane pkgs;
-					rev = self.dirtyRev;
+					inherit crane pkgs rev;
 				};
 			in
       {
