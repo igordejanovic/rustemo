@@ -19,25 +19,31 @@ fn main() {
         }
     }
 
-    // If we are building this crate from source set git hash as a part of the version
-    let git_hash = if matches!(std::env::var("CARGO_PKG_NAME"), Ok(pkg_name) if pkg_name == "rustemo-compiler")
+    let git_hash = std::env::var("GIT_HASH")
+        .ok()
+        .or_else(get_git_hash_if_building_compiler)
+        .unwrap_or_default();
+
+    println!("cargo:rustc-env=GIT_HASH=-{}", cut_git_hash(&git_hash));
+}
+
+fn get_git_hash_if_building_compiler() -> Option<String> {
+    if matches!(std::env::var("CARGO_PKG_NAME"), Ok(pkg_name) if pkg_name == "rustemo-compiler")
     {
-        // Setting environment with current head git hash to include in the version.
-        // See: https://stackoverflow.com/questions/43753491/include-git-commit-hash-as-string-into-rust-program
         let output = Command::new("git")
             .args(["rev-parse", "HEAD"])
             .output()
             .unwrap();
-        String::from_utf8(output.stdout)
-            .unwrap()
-            .chars()
-            .take(10)
-            .collect::<String>()
+        Some(String::from_utf8(output.stdout).unwrap())
     } else {
-        "".into()
-    };
+        None
+    }
+}
 
-    println!("cargo:rustc-env=GIT_HASH=-{}", git_hash);
+fn cut_git_hash(hash: &str) -> &str {
+    const CUT_COUNT: usize = 10;
+    let end_idx = hash.char_indices().nth(CUT_COUNT).unwrap().0;
+    &hash[..end_idx]
 }
 
 fn bootstrap() -> Result<(), Box<dyn Error>> {
