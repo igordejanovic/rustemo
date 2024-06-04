@@ -15,39 +15,13 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        rust:
-          - "1.74"
-          - stable
-          - beta
-          - nightly
-        cargo-update:
-          - true
-        include:
-          - rust: stable
-            cargo-update: false
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: ${{ matrix.rust }}
-      - name: Update
-        if: matrix.cargo-update
-        run: cargo update
-      - name: Run tests
-        run: cargo test
-  lint:
+  check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@master
+      - uses: cachix/install-nix-action@v27
         with:
-          toolchain: stable
-          components: rustfmt clippy
-      - name: Run rustfmt check
-        run: cargo fmt --all -- --check
-      - name: Run clippy
-        run: cargo clippy --all --all-targets -- -D warnings
+          nix_path: nixpkgs=channel:nixos-unstable
+      - uses:  DeterminateSystems/magic-nix-cache-action@v6
+      - name: Run checks
+        run: nix flake check

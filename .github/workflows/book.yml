@@ -41,9 +41,7 @@ jobs:
       - uses:  DeterminateSystems/magic-nix-cache-action@v6
 
       - name: Build book
-        shell: bash
-        run: |
-          nix build
+        run: nix build .#book
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
