@@ -12,7 +12,7 @@ workspace = "../../../.."
 rustemo = { path = "../../../../rustemo" }
 
 # Default string lexer uses regexes and once_cell to init regexes only once.
-regex = { version = "1", default_features = false, features = ["std", "unicode-perl"] }
+regex = { version = "1", default-features = false, features = ["std", "unicode-perl"] }
 once_cell = "1"
 colored = "2"
 
