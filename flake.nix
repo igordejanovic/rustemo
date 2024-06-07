@@ -10,7 +10,6 @@
 			};
 		};
 
-		
 		crane = {
 			url = "github:ipetkov/crane";
 			inputs.nixpkgs.follows = "nixpkgs";
@@ -32,7 +31,7 @@
 
 				rev = if builtins.hasAttr "rev" self then self.rev else self.dirtyRev;
 				book = import ./docs {
-					inherit pkgs mdbook-theme;
+					inherit pkgs crane mdbook-theme;
 				};
 				rustemo = import ./. {
 					inherit crane pkgs rev;
