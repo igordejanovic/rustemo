@@ -1,15 +1,14 @@
 { pkgs, crane, mdbook-theme }:
 let
 	inherit (pkgs) stdenv lib;
-	
+	craneLib = crane.mkLib pkgs;
+
 	mdbook-theme-pkg = pkgs.rustPlatform.buildRustPackage {
 		pname = "mdbook-theme";
 		version = "0.1.4";
 		cargoLock.lockFile = mdbook-theme.outPath + "/Cargo.lock";
 		src = mdbook-theme;
 	};
-
-	craneLib = crane.mkLib pkgs;
 
 	tex = pkgs.texlive.combine {
 		inherit (pkgs.texlive) scheme-small standalone qtree pict2e preview;
@@ -21,8 +20,8 @@ let
 		mdbook-graphviz mdbook-theme-pkg mdbook-linkcheck
 		plantuml graphviz tex poppler_utils];
 
-	docsFileTypes = [ ".*md$" ".*rustemo$" ".*err$" ".*ast$" ".*tex$" ".*png$" ".*css$" ".*js$" ".*sh$"];
-	docsFilter = path: _type: builtins.any (pattern: builtins.match pattern path != null) docsFileTypes;
+	docsFileTypes = [ ".md" ".rustemo" ".err" ".ast" ".tex" ".png" ".css" ".js" ".sh"];
+	docsFilter = path: _type: builtins.any (ext: lib.hasSuffix ext path) docsFileTypes;
 	docsOrCargoFilter = path: type:
 		(docsFilter path type) || (craneLib.filterCargoSources path type);
 
