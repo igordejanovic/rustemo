@@ -2,7 +2,7 @@
 
 [![build Status]][actions] [![documentation status]][book] [![latest Version]][crates.io]
 
-[build Status]: https://img.shields.io/github/actions/workflow/status/igordejanovic/rustemo/ci.yml?branch=main
+[build Status]: https://img.shields.io/github/actions/workflow/status/igordejanovic/rustemo/checks.yml?branch=main
 [actions]: https://github.com/igordejanovic/rustemo/actions?query=branch%3Amain
 [documentation status]: https://img.shields.io/badge/docs-latest-green.svg
 [book]: https://igordejanovic.github.io/rustemo/
