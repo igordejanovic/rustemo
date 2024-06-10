@@ -4,7 +4,7 @@ let
 
 	craneLib = crane.mkLib pkgs;
 
-	rustemoFileTypes = [ ".rustemo" ".err" ".ast" ];
+	rustemoFileTypes = [ ".rustemo" ".err" ".ast" ".json" ".bytes" ".calc" ];
 	rustemoFilter = path: _type: builtins.any (ext: lib.hasSuffix ext path) rustemoFileTypes;
 	rustemoOrCargoFilter = path: type:
 		(rustemoFilter path type) || (craneLib.filterCargoSources path type);
