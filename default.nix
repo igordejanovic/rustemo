@@ -53,6 +53,7 @@ let
 			craneLibToolchain = craneLib.overrideToolchain toolchain;
 			tests = craneLibToolchain.cargoNextest (commonArgs // {
 				inherit (cargoArtifactsForToolchain toolchain) cargoArtifacts;
+				doCheck = true;
 			});
 			clippy = craneLibToolchain.cargoClippy (commonArgs // {
 				inherit (cargoArtifactsForToolchain toolchain) cargoArtifacts;
