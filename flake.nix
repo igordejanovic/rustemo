@@ -36,11 +36,18 @@
 				rustemo = import ./. {
 					inherit crane pkgs rev;
 				};
+				shellPkgs = [ pkgs.cargo-nextest ];
 			in
 			{
-				devShells.default = pkgs.mkShell { buildInputs = book.buildInputs ++ rustemo.buildInputs; };
-				devShells.beta = pkgs.mkShell { buildInputs = book.buildInputs ++ [ pkgs.rust-bin.beta.latest.default ]; };
-				devShells.nightly = pkgs.mkShell { buildInputs = book.buildInputs ++ [ pkgs.rust-bin.nightly.latest.default ]; };
+				devShells.default = pkgs.mkShell {
+					buildInputs = book.buildInputs ++ rustemo.buildInputs ++ shellPkgs;
+				};
+				devShells.beta = pkgs.mkShell {
+					buildInputs = book.buildInputs ++ [ pkgs.rust-bin.beta.latest.default ] ++ shellPkgs;
+				};
+				devShells.nightly = pkgs.mkShell {
+					buildInputs = book.buildInputs ++ [ pkgs.rust-bin.nightly.latest.default ] ++ shellPkgs;
+				};
 				inherit (rustemo) checks;
 				packages = rustemo.packages // book.packages;
 			}
