@@ -39,6 +39,8 @@
 			in
 			{
 				devShells.default = pkgs.mkShell { buildInputs = book.buildInputs ++ rustemo.buildInputs; };
+				devShells.beta = pkgs.mkShell { buildInputs = book.buildInputs ++ [ pkgs.rust-bin.beta.latest.default ]; };
+				devShells.nigtly = pkgs.mkShell { buildInputs = book.buildInputs ++ [ pkgs.rust-bin.nightly.latest.default ]; };
 				inherit (rustemo) checks;
 				packages = rustemo.packages // book.packages;
 			}
