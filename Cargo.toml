@@ -19,6 +19,27 @@ members = [
         "docs/src/readme_example",
 ]
 
+[workspace.dependencies]
+colored = "2"
+petgraph = "0.6"
+itertools = { version = "0.10", default-features = false, features = ["use_std"] }
+convert_case = { version = "0.5.0", default-features = false }
+clap = { version = "3.2.13", features = ["derive"] }
+quote = "1.0.20"
+syn = { version = "1.0.98", features = ["parsing", "full", "printing"] }
+proc-macro2 = "1.0.43"
+prettyplease = "0.1.18"
+
+# Default string lexer uses regexes and once_cell to init regexes only once.
+once_cell = "1"
+regex = { version = "1", default-features = false, features = ["std", "unicode-perl"] }
+fancy-regex = "0.13.0"
+
+criterion = "0.3.5"
+
+rustemo = { path = "./rustemo", version = "0.6"}
+rustemo-compiler = { path = "./rustemo-compiler" }
+
 [workspace.package]
 repository = "https://github.com/igordejanovic/rustemo"
 authors = ["Igor R. Dejanović <igor.dejanovic@gmail.com>"]

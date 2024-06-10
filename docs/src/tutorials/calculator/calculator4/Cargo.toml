@@ -6,11 +6,11 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-once_cell = "1"
-regex = { version = "1.7.1", default-features = false, features = ["std", "unicode-perl"] }
-colored = "2"
-rustemo = { path = "../../../../../rustemo" }
+once_cell = { workspace = true }
+regex = { workspace = true }
+colored = { workspace = true }
+rustemo = { workspace = true }
 
 [dev-dependencies]
 # For output_cmp for testing
-rustemo-compiler = { path = "../../../../../rustemo-compiler" }
+rustemo-compiler = { workspace = true }
