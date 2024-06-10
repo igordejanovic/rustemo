@@ -2,76 +2,67 @@
 let
 	inherit (pkgs) stdenv lib;
 
-	src = lib.cleanSource ./.;
-	inherit (let craneLib = crane.mkLib pkgs; in craneLib.crateNameFromCargoToml { inherit src; }) version;
-	
-	packageArtifactsForLib = craneLib: args: rec {
-			commonArgs = args // {
-				inherit src;
-				strictDeps = true;
-			};
-			cargoArtifacts = craneLib.buildDepsOnly commonArgs;
+	craneLib = crane.mkLib pkgs;
+
+	rustemoFileTypes = [ ".rustemo" ".err" ".ast" ];
+	rustemoFilter = path: _type: builtins.any (ext: lib.hasSuffix ext path) rustemoFileTypes;
+	rustemoOrCargoFilter = path: type:
+		(rustemoFilter path type) || (craneLib.filterCargoSources path type);
+
+	src = lib.cleanSourceWith {
+		src = craneLib.path ./.;
+		filter = rustemoOrCargoFilter;
 	};
+
+	inherit (craneLib.crateNameFromCargoToml { inherit src; }) version;
+
+	commonArgs = {
+		inherit src;
+		strictDeps = true;
+		pname = "rustemo-workspace";
+		doCheck = false;
+		GIT_HASH = rev;
+	};
+
+	# Build *just* the cargo dependencies (of the entire workspace),
+	# so we can reuse all of that work (e.g. via cachix) when running in CI
+	# It is *highly* recommended to use something like cargo-hakari to avoid
+	# cache misses when building individual top-level-crates
+	cargoArtifactsForToolchain = toolchain:
+		let
+			craneLibToolchain = craneLib.overrideToolchain toolchain;
+		in {
+			cargoArtifacts = craneLibToolchain.buildDepsOnly commonArgs;
+		};
+
+
 	buildPackageForToolchain = toolchain:
 		let 
-			craneLib = (crane.mkLib pkgs).overrideToolchain toolchain;
+			craneLibToolchain = craneLib.overrideToolchain toolchain;
 		in pname:
 			let
-				inherit (packageArtifactsForLib craneLib { inherit pname; }) commonArgs cargoArtifacts;
 				buildArgs = commonArgs // {
-					inherit cargoArtifacts version;
+					inherit (cargoArtifactsForToolchain toolchain) cargoArtifacts;
+					inherit version;
 					cargoExtraArgs = "-p ${pname}";
-					GIT_HASH = rev;
 				};
-			in craneLib.buildPackage buildArgs;
-
-	checksForPackage = { craneLib, commonArgs, cargoArtifacts }:
-		let
-			tests = craneLib.cargoNextest (commonArgs // {
-				inherit cargoArtifacts;
-			});
-			clippy = craneLib.cargoClippy (commonArgs // {
-				inherit cargoArtifacts;
-				cargoClippyExtraArgs = "--all-targets -- --deny warnings";
-			});
-			fmt = craneLib.cargoFmt commonArgs;
-		in stdenv.mkDerivation {
-			name = "${commonArgs.pname}-check";
-			buildInputs = [ tests clippy fmt ];
-			dontUnpack = true;
-			installPhase = ''
-				touch $out
-			'';
-		};
+			in craneLibToolchain.buildPackage buildArgs;
 
 	workspaceChecksForToolchain = toolchain:
 		let
-			craneLib = (crane.mkLib pkgs).overrideToolchain toolchain;
-			checksGenerationArgs = pname: 
-			let
-				inherit (packageArtifactsForLib craneLib { inherit pname; }) commonArgs cargoArtifacts;
-			in {
-				inherit craneLib cargoArtifacts;
-				commonArgs = commonArgs // { GIT_HASH = rev; };
-			};
-			pnames = [ 
-				"rustemo"
-				"rustemo-compiler"
-				"rustemo-tests"
-				"calculator"
-				"calculator1"
-				"calculator2"
-				"calculator3"
-				"calculator4"
-				"calculator5"
-				"expressions"
-				"readme_example"
-			];
+			craneLibToolchain = craneLib.overrideToolchain toolchain;
+			tests = craneLibToolchain.cargoNextest (commonArgs // {
+				inherit (cargoArtifactsForToolchain toolchain) cargoArtifacts;
+			});
+			clippy = craneLibToolchain.cargoClippy (commonArgs // {
+				inherit (cargoArtifactsForToolchain toolchain) cargoArtifacts;
+				cargoClippyExtraArgs = "--all-targets -- --deny warnings";
+			});
+			fmt = craneLibToolchain.cargoFmt commonArgs;
 		in stdenv.mkDerivation {
 			name = "rustemo-workspace-check";
-			buildInputs = map (pname: checksForPackage (checksGenerationArgs pname)) pnames;
+			buildInputs = [ tests clippy fmt ];
 			dontUnpack = true;
-			GIT_HASH = rev;
 			installPhase = ''
 				touch $out
 			'';
