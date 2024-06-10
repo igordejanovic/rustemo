@@ -29,7 +29,7 @@
 					inherit system overlays;
 				};
 
-				rev = if builtins.hasAttr "rev" self then self.rev else self.dirtyRev;
+				rev = if (self ? rev) then self.rev else self.dirtyRev;
 				book = import ./docs {
 					inherit pkgs crane mdbook-theme;
 				};
@@ -43,4 +43,8 @@
 				packages = rustemo.packages // book.packages;
 			}
 		);
+
+	nixConfig = {
+		bash-prompt-prefix = "rustemo-dev:";
+	};
 }
