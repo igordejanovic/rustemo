@@ -36,7 +36,7 @@
 				rustemo = import ./. {
 					inherit crane pkgs rev;
 				};
-				shellPkgs = [ pkgs.cargo-nextest ];
+				shellPkgs = [ pkgs.cargo-nextest rustemo.packages.compiler ];
 			in
 			{
 				devShells.default = pkgs.mkShell {
