@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # [Unreleased]
 
 
+## Changed
+
+- Development setup changed to use [Nix package manager](https://nixos.org/).
+  See [12] and [Contributing
+  guide](https://www.igordejanovic.net/rustemo/contributing.html). Thanks
+  AlexSherbinin@GitHub for the contribution.
+
+[12]: https://github.com/igordejanovic/rustemo/pull/12
+
+
 # [0.6.0] - 2024-02-20
 
 ## Added
