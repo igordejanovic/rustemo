@@ -64,7 +64,7 @@ let
 			name = "rustemo-workspace-check";
 
 			# A convenience for running each individual check when needed from CLI.
-			# E.g.: nix build .\#checks.x86_64-linux.stable.clippy
+			# E.g.: nix build .#checks.x86_64-linux.stable.clippy
 			# Until this is solved: https://github.com/NixOS/nix/issues/8881
 			inherit tests clippy fmt;
 
@@ -78,6 +78,7 @@ in
 {
 	buildInputs = [ pkgs.rust-bin.stable.latest.default ];
 	checks = with pkgs.rust-bin; {
+		base = workspaceChecksForToolchain stable."1.74.1".default;
 		stable = workspaceChecksForToolchain stable.latest.default;
 		beta = workspaceChecksForToolchain beta.latest.default;
 		nightly = workspaceChecksForToolchain nightly.latest.default;

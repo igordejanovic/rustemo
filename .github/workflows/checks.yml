@@ -17,6 +17,13 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rust:
+          - base
+          - stable
+          - beta
+          - nightly
     steps:
       - uses: actions/checkout@v4
       - uses: cachix/install-nix-action@v27
@@ -24,4 +31,4 @@ jobs:
           nix_path: nixpkgs=channel:nixos-unstable
       - uses:  DeterminateSystems/magic-nix-cache-action@v6
       - name: Run checks
-        run: nix flake check
+        run: nix build .#checks.x86_64-linux.${{ matrix.rust }}
