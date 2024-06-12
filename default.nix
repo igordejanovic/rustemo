@@ -62,6 +62,12 @@ let
 			fmt = craneLibToolchain.cargoFmt commonArgs;
 		in stdenv.mkDerivation {
 			name = "rustemo-workspace-check";
+
+			# A convenience for running each individual check when needed from CLI.
+			# E.g.: nix build .\#checks.x86_64-linux.stable.clippy
+			# Until this is solved: https://github.com/NixOS/nix/issues/8881
+			inherit tests clippy fmt;
+
 			buildInputs = [ tests clippy fmt ];
 			dontUnpack = true;
 			installPhase = ''
