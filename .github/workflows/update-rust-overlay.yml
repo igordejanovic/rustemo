@@ -12,7 +12,7 @@ jobs:
       - uses: cachix/install-nix-action@v27
         with:
           nix_path: nixpkgs=channel:nixos-unstable
-      - run: nix flake lock --update-input rust-overlay
+      - run: nix flake update rust-overlay
       - name: Commit changes
         id: commit
         continue-on-error: true
