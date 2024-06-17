@@ -23,9 +23,11 @@ jobs:
           git config user.email "action@github.com"
           git add flake.lock
           git commit -m "build: update rust-overlay"
+          git rebase main
       - name: Push changes
         if: steps.commit.outcome == 'success'
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: rust-overlay
+          force_with_lease: true
