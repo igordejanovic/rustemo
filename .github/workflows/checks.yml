@@ -8,6 +8,8 @@ on:
   merge_group:
   workflow_run:
     workflows: ["Update rust-overlay"]
+    branches:
+      - 'rust-overlay'
     types:
       - completed
 
