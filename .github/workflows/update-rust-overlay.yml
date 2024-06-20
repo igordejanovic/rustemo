@@ -1,8 +1,7 @@
 name: Update rust-overlay
 on:
   schedule:
-    #- cron: "0 3 * * *" # Every day 03:00 UTC
-    - cron: "*/10 * * * *" # testing
+    - cron: "0 3 * * *" # Every day 03:00 UTC
 jobs:
   update:
     permissions:
