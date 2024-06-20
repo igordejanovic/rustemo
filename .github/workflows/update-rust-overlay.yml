@@ -25,7 +25,7 @@ jobs:
           git config user.email "action@github.com"
           git add flake.lock
           git commit -m "build: update rust-overlay"
-          git rebase main
+          git rebase origin/main
       - name: Push changes
         if: steps.commit.outcome == 'success'
         uses: ad-m/github-push-action@master
