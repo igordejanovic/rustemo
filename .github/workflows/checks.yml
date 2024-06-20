@@ -8,8 +8,6 @@ on:
   merge_group:
   workflow_run:
     workflows: ["Update rust-overlay"]
-    branches:
-      - 'rust-overlay'
     types:
       - completed
 
@@ -23,6 +21,9 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
+    env:
+      TARGET_BRANCH: ${{ github.ref }}
+
     strategy:
       matrix:
         rust:
@@ -30,11 +31,21 @@ jobs:
           - stable
           - beta
           - nightly
+
     steps:
+      - name: Switch to rust-overlay branch if triggered by update
+        if: ${{ github.event_name == 'workflow_run' }}
+        run: echo "TARGET_BRANCH=rust-overlay" >> $GITHUB_ENV
+
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TARGET_BRANCH }}
+
       - uses: cachix/install-nix-action@v27
         with:
           nix_path: nixpkgs=channel:nixos-unstable
+
       - uses:  DeterminateSystems/magic-nix-cache-action@v6
+
       - name: Run checks
         run: nix build .#checks.x86_64-linux.${{ matrix.rust }}
