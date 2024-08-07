@@ -74,6 +74,11 @@ The best place to start at the moment is [the calculator
 tutorial](./tutorials/calculator/calculator.md) with a reference to the [grammar
 language](grammar_language.md) section and other sections as needed.
 
+User [fogarecious](https://github.com/fogarecious) has contributed a [simple
+tutorial](https://github.com/fogarecious/rustemo_tutorial) geared towards
+Rustemo beginners so, though unofficial, this is also a good material to read
+while learning Rustemo.
+
 Besides the tutorial and this docs, another source of information are
 [integration tests](https://github.com/igordejanovic/rustemo/tree/main/tests).
 Tests are usually implemented by a grammar where Rustemo compiler is called from

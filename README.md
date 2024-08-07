@@ -28,6 +28,11 @@ can serve as a very good source of information.
 There are also a [few
 examples](https://github.com/igordejanovic/rustemo/tree/main/examples).
 
+User [fogarecious](https://github.com/fogarecious) has contributed a [simple
+tutorial](https://github.com/fogarecious/rustemo_tutorial) geared towards
+Rustemo beginners so, though unofficial, this is also a good material to read
+while learning Rustemo.
+
 ## Aspirations
 
 - **Both LR and GLR parsing from the same grammar**
