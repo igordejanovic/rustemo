@@ -101,6 +101,8 @@ pub struct Settings {
     pub(crate) skip_ws: bool,
 
     pub(crate) force: bool,
+    force_explicit: bool,
+
     pub(crate) dot: bool,
     pub(crate) fancy_regex: bool,
 }
@@ -136,7 +138,8 @@ impl Default for Settings {
             lexical_disamb_grammar_order: true,
             partial_parse: false,
             skip_ws: true,
-            force: false,
+            force: true, // Overwriting actions by default
+            force_explicit: false,
             exclude: vec![],
             dot: false,
             fancy_regex: false,
@@ -179,8 +182,11 @@ impl Settings {
     /// in out `OUT_DIR`.
     pub fn in_source_tree(mut self) -> Self {
         self.out_dir_root = None;
-        self.out_dir_actions_root = None;
-        self
+        if matches!(self.builder_type, BuilderType::Default) {
+            self.actions_in_source_tree()
+        } else {
+            self
+        }
     }
 
     /// Generate actions in the source tree (if the default builder is used),
@@ -190,6 +196,9 @@ impl Settings {
             panic!("Settings 'actions_in_source_tree' is only available for the default builder type!");
         }
         self.out_dir_actions_root = None;
+        if !self.force_explicit {
+            self.force = false;
+        }
         self
     }
 
@@ -341,6 +350,7 @@ impl Settings {
     /// Should actions file be recreated if exist. Use with care.
     pub fn force(mut self, force: bool) -> Self {
         self.force = force;
+        self.force_explicit = true;
         self
     }
 

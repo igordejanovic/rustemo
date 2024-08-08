@@ -1972,10 +1972,7 @@ mod tests {
     fn test_lr_states_for_grammar_2() {
         let grammar = test_grammar_2();
 
-        let settings = Settings {
-            table_type: TableType::LALR,
-            ..Settings::default()
-        };
+        let settings = Settings::new().table_type(TableType::LALR);
 
         let table = LRTable::new(&grammar, &settings).unwrap();
         output_cmp!(
@@ -1995,10 +1992,7 @@ mod tests {
         // Conflicts are found in state 2 which is entered when 'd' is
         // recognized in the input. There are two R/R conflicts, for inputs 'a'
         // and 'c'. In both case parser may reduce both A and B.
-        let settings = Settings {
-            table_type: TableType::LALR,
-            ..Settings::default()
-        };
+        let settings = Settings::new().table_type(TableType::LALR);
 
         let table = LRTable::new(&grammar, &settings).unwrap();
 
@@ -2015,10 +2009,7 @@ mod tests {
         //
         // In this case we have 13 states while in previous LALR case there was
         // 12 states.
-        let settings = Settings {
-            table_type: TableType::LALR_PAGER,
-            ..Settings::default()
-        };
+        let settings = Settings::new().table_type(TableType::LALR_PAGER);
 
         let table = LRTable::new(&grammar, &settings).unwrap();
 
@@ -2040,10 +2031,7 @@ mod tests {
         .parse()
         .unwrap();
 
-        let settings = Settings {
-            table_type: TableType::LALR_PAGER,
-            ..Settings::default()
-        };
+        let settings = Settings::new().table_type(TableType::LALR_PAGER);
 
         let table = LRTable::new(&grammar, &settings).unwrap();
         assert_eq!(

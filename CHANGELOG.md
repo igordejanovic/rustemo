@@ -15,7 +15,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   guide](https://www.igordejanovic.net/rustemo/contributing.html). Thanks
   AlexSherbinin@GitHub for the contribution.
 
+## Fixed
+
+- Always regenerate `_actions.rs` in `OUT_DIR` folder. See [13]. Thanks
+  safinaskar@GitHub for reporting.
+
 [12]: https://github.com/igordejanovic/rustemo/pull/12
+[13]: https://github.com/igordejanovic/rustemo/issues/13
 
 
 # [0.6.0] - 2024-02-20
