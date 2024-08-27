@@ -51,9 +51,10 @@ pub enum GeneratorTableType {
     Functions,
 }
 
-/// Provides parser settings information. It is the main entry point in the
-/// parser generation process. It is meant to be used from the project
-/// `build.rs` script. See [tests crate `build.rs`
+/// Provides parser settings information.
+///
+/// It is the main entry point in the parser generation process. It is meant to
+/// be used from the project `build.rs` script. See [tests crate `build.rs`
 /// script](https://github.com/igordejanovic/rustemo/blob/main/tests/build.rs)
 /// for examples of various configurations.
 ///
