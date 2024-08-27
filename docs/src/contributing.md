@@ -94,3 +94,12 @@ nix flake check -L
 Please do note that it is a requirement for full checks to pass for the
 contribution to be merged to the main branch. But, you don't have to run it
 locally. When you make a Pull Request, GitHub CI will run them.
+
+To get a specific Rust version environment you can do one of:
+
+```
+nix develop .#default
+nix develop .#beta
+nix develop .#nightly
+```
+
