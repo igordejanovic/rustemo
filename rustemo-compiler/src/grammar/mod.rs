@@ -458,13 +458,6 @@ impl Grammar {
         self.symbol_to_nonterm(self.nonterm_to_symbol_index(index))
     }
 
-    /// Convert symbol index to non-terminal. Panics if symbol index is a
-    /// terminal index.
-    // #[inline]
-    // pub fn symbol_to_nonterm(&self, index: SymbolIndex) -> NonTermIndex {
-    //     NonTermIndex(index.0.checked_sub(self.term_len()).unwrap())
-    // }
-
     #[inline]
     pub fn is_nonterm(&self, index: SymbolIndex) -> bool {
         index.0 >= self.terminals.len()
