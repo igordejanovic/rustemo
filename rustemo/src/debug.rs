@@ -1,5 +1,4 @@
 #[allow(unused_macros)]
-
 /// Prints without newline to stdout in debug profile
 ///
 /// See <https://stackoverflow.com/questions/38141056/does-rust-have-a-debug-macro>

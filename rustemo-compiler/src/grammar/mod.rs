@@ -335,8 +335,8 @@ impl Grammar {
         )
     }
 
-    /// Parses given file and constructs a Grammar instance
-    /// FIXME: Return/move owned string from file content.
+    // /// Parses given file and constructs a Grammar instance
+    // /// FIXME: Return/move owned string from file content.
     // pub fn from_file<F: AsRef<Path>>(file: F) -> Result<Self> {
     //     use crate::rustemo_types::{NonTerminal, Symbol};
     //     if let Symbol::NonTerminal(NonTerminal::PGFile(pgfile)) =
