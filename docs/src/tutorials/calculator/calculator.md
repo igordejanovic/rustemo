@@ -164,6 +164,12 @@ cargo add regex --no-default-features --features std,unicode-perl
 cargo add once_cell
 ```
 
+We use `colored` for coloring the CLI log output.
+
+```sh
+cargo add colored
+```
+
 Your `Cargo.toml` should look like this:
 ```toml
 {{#include ./calculator1/Cargo.toml:tutorial }}
