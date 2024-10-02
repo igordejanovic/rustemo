@@ -1193,6 +1193,8 @@ impl<'g, 's> LRTable<'g, 's> {
                 .replace('?', r"\?")
         };
 
+        colored::control::set_override(false);
+
         let conflicts = self.get_conflicts();
         let is_conflict_state =
             |state: &LRState| conflicts.iter().any(|s| s.state == state);
@@ -1286,6 +1288,8 @@ impl<'g, 's> LRTable<'g, 's> {
                 }
             }
         }
+        colored::control::unset_override();
+
         dot += "\n}\n";
         dot
     }
