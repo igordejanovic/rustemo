@@ -5,6 +5,9 @@ export RUST_BACKTRACE=1
 export CARGO_INCREMENTAL=1
 export CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
 
+# Test linter issues first
+cargo clippy --all --all-targets -- -D warnings
+
 # We must first test and install compiler itself
 cargo nextest run -p rustemo-compiler
 cargo install --path rustemo-compiler --debug
@@ -22,5 +25,4 @@ cargo nextest run
 # Test with array-based table generator
 cargo nextest run --features arrays
 
-cargo clippy --all --all-targets -- -D warnings
 cargo fmt --all

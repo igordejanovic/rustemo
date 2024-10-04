@@ -66,9 +66,9 @@ let
 			# A convenience for running each individual check when needed from CLI.
 			# E.g.: nix build .#checks.x86_64-linux.stable.clippy
 			# Until this is solved: https://github.com/NixOS/nix/issues/8881
-			inherit tests clippy fmt;
+			inherit clippy tests fmt;
 
-			buildInputs = [ tests clippy fmt ];
+			buildInputs = [ clippy tests fmt ];
 			dontUnpack = true;
 			installPhase = ''
 				touch $out
