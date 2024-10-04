@@ -41,7 +41,7 @@ where
     res_stack: Vec<TreeNode<'i, I, P, TK>>,
 }
 
-impl<'i, I, P, TK> TreeBuilder<'i, I, P, TK>
+impl<I, P, TK> TreeBuilder<'_, I, P, TK>
 where
     I: Input + ?Sized,
 {
@@ -50,7 +50,7 @@ where
     }
 }
 
-impl<'i, I, P, TK> Default for TreeBuilder<'i, I, P, TK>
+impl<I, P, TK> Default for TreeBuilder<'_, I, P, TK>
 where
     I: Input + ?Sized,
 {

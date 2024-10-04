@@ -26,7 +26,7 @@ pub struct GssGraph<'i, I: Input + ?Sized, S, P, TK: Copy>(
     Graph<GssHead<'i, I, S, TK>, Rc<Parent<'i, I, P, TK>>>,
 );
 
-impl<'i, I, S, P, TK> Default for GssGraph<'i, I, S, P, TK>
+impl<I, S, P, TK> Default for GssGraph<'_, I, S, P, TK>
 where
     I: Input + ?Sized,
     TK: Copy,
@@ -183,7 +183,7 @@ where
     token_ahead: Option<Token<'i, I, TK>>,
 }
 
-impl<'i, I, S, TK> Clone for GssHead<'i, I, S, TK>
+impl<I, S, TK> Clone for GssHead<'_, I, S, TK>
 where
     I: Input + ?Sized,
     S: State,
@@ -206,7 +206,7 @@ where
     }
 }
 
-impl<'i, I: Input + ?Sized, S: Default, TK> Default for GssHead<'i, I, S, TK> {
+impl<I: Input + ?Sized, S: Default, TK> Default for GssHead<'_, I, S, TK> {
     fn default() -> Self {
         Self {
             state: Default::default(),
@@ -404,7 +404,7 @@ where
     }
 }
 
-impl<'i, I, P, TK> Clone for SPPFTree<'i, I, P, TK>
+impl<I, P, TK> Clone for SPPFTree<'_, I, P, TK>
 where
     I: Input + ?Sized,
     P: Clone,
@@ -440,7 +440,7 @@ where
     pub layout: Option<&'i I>,
 }
 
-impl<'i, I> Clone for TreeData<'i, I>
+impl<I> Clone for TreeData<'_, I>
 where
     I: Input + ?Sized,
 {
@@ -470,7 +470,7 @@ where
     pub possibilities: RefCell<Vec<Rc<SPPFTree<'i, I, P, TK>>>>,
 }
 
-impl<'i, I, P, TK> PartialEq for Parent<'i, I, P, TK>
+impl<I, P, TK> PartialEq for Parent<'_, I, P, TK>
 where
     I: Input + ?Sized,
     TK: Copy,
@@ -479,14 +479,14 @@ where
         self.root_node == other.root_node && self.head_node == other.head_node
     }
 }
-impl<'i, I, P, TK> Eq for Parent<'i, I, P, TK>
+impl<I, P, TK> Eq for Parent<'_, I, P, TK>
 where
     I: Input + ?Sized,
     TK: Copy,
 {
 }
 
-impl<'i, I, P, TK> std::hash::Hash for Parent<'i, I, P, TK>
+impl<I, P, TK> std::hash::Hash for Parent<'_, I, P, TK>
 where
     I: Input + ?Sized,
     TK: Copy,
@@ -560,7 +560,7 @@ where
     root: Rc<SPPFTree<'i, I, P, TK>>,
 }
 
-impl<'i, I, P, TK> Debug for Tree<'i, I, P, TK>
+impl<I, P, TK> Debug for Tree<'_, I, P, TK>
 where
     I: Input + ?Sized + Debug,
     TK: Copy,
@@ -817,7 +817,7 @@ where
     tree_idx: usize,
 }
 
-impl<'i, 'f, I, P, TK> Iterator for ForestIterator<'i, 'f, I, P, TK>
+impl<'i, I, P, TK> Iterator for ForestIterator<'i, '_, I, P, TK>
 where
     I: Input + ?Sized,
     TK: Copy,

@@ -27,15 +27,13 @@ pub struct LRContext<'i, I: Input + ?Sized, S, TK> {
     state: S,
 }
 
-impl<'i, I: Input + ?Sized, S: Default, TK> Default
-    for LRContext<'i, I, S, TK>
-{
+impl<I: Input + ?Sized, S: Default, TK> Default for LRContext<'_, I, S, TK> {
     fn default() -> Self {
         Self::new(0)
     }
 }
 
-impl<'i, I: Input + ?Sized, S: Default, TK> LRContext<'i, I, S, TK> {
+impl<I: Input + ?Sized, S: Default, TK> LRContext<'_, I, S, TK> {
     pub fn new(position: usize) -> Self {
         Self {
             position,

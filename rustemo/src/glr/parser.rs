@@ -75,7 +75,7 @@ where
     root_head: NodeIndex,
 }
 
-impl<'i, I, P, TK> Display for ReductionPath<'i, I, P, TK>
+impl<I, P, TK> Display for ReductionPath<'_, I, P, TK>
 where
     I: Input + ?Sized,
     TK: Copy,

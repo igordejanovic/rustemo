@@ -203,7 +203,7 @@ pub struct Token<'i, I: Input + ?Sized, TK> {
     pub location: Location,
 }
 
-impl<'i, I: Input + ?Sized, TK: Copy> Clone for Token<'i, I, TK> {
+impl<I: Input + ?Sized, TK: Copy> Clone for Token<'_, I, TK> {
     fn clone(&self) -> Self {
         Self {
             kind: self.kind,
@@ -213,7 +213,7 @@ impl<'i, I: Input + ?Sized, TK: Copy> Clone for Token<'i, I, TK> {
     }
 }
 
-impl<'i, I, TK> Debug for Token<'i, I, TK>
+impl<I, TK> Debug for Token<'_, I, TK>
 where
     I: Input + ?Sized,
     I::Output: Debug,

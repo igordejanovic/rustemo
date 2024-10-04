@@ -145,7 +145,7 @@ impl<'t> ProductionActionsGenerator<'t> {
     }
 }
 
-impl<'t> ActionsGenerator for ProductionActionsGenerator<'t> {
+impl ActionsGenerator for ProductionActionsGenerator<'_> {
     fn nonterminal_types(&self, nonterminal: &NonTerminal) -> Vec<syn::Item> {
         let ty = self
             .types

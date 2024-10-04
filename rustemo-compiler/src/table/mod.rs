@@ -102,7 +102,7 @@ pub struct LRState<'g> {
 }
 
 /// Two LR states are equal if they contain the same kernel items.
-impl<'g> PartialEq for LRState<'g> {
+impl PartialEq for LRState<'_> {
     fn eq(&self, other: &Self) -> bool {
         let self_ki = self.kernel_items();
         let other_ki = other.kernel_items();
@@ -110,9 +110,9 @@ impl<'g> PartialEq for LRState<'g> {
             && self_ki.iter().zip(other_ki.iter()).all(|(x, y)| x == y)
     }
 }
-impl<'g> Eq for LRState<'g> {}
+impl Eq for LRState<'_> {}
 
-impl<'g> Display for LRState<'g> {
+impl Display for LRState<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
@@ -133,7 +133,7 @@ impl<'g> Display for LRState<'g> {
     }
 }
 
-impl<'g> std::fmt::Debug for LRState<'g> {
+impl std::fmt::Debug for LRState<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("LRState")
             .field("idx", &self.idx)
@@ -467,7 +467,7 @@ pub struct Conflict<'g, 's> {
     kind: ConflictKind,
 }
 
-impl<'g, 's> Display for Conflict<'g, 's> {
+impl Display for Conflict<'_, '_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "")?;
         Ok(())
@@ -1314,7 +1314,7 @@ fn production_rn_lengths(
     prod_rn_lens
 }
 
-impl<'g, 's> Display for LRTable<'g, 's> {
+impl Display for LRTable<'_, '_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         for state in &self.states {
             writeln!(
