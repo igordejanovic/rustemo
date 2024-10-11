@@ -24,12 +24,11 @@ fn main() {
         .or_else(get_git_hash_if_building_compiler)
         .unwrap_or_default();
 
-    if git_hash.len() > 0 {
+    if !git_hash.is_empty() {
         println!("cargo:rustc-env=GIT_HASH=-{}", cut_git_hash(&git_hash));
     } else {
         println!("cargo:rustc-env=GIT_HASH=");
     }
-
 }
 
 fn get_git_hash_if_building_compiler() -> Option<String> {
@@ -47,7 +46,11 @@ fn get_git_hash_if_building_compiler() -> Option<String> {
 
 fn cut_git_hash(hash: &str) -> &str {
     const CUT_COUNT: usize = 10;
-    let end_idx = hash.char_indices().map(|x| x.0).nth(CUT_COUNT).unwrap_or(hash.len());
+    let end_idx = hash
+        .char_indices()
+        .map(|x| x.0)
+        .nth(CUT_COUNT)
+        .unwrap_or(hash.len());
     &hash[..end_idx]
 }
 
