@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # [Unreleased]
 
 
+# [0.6.2] - 2024-10-11
+
+## Fixed
+
+- `unwrap` panic if rustemo-compiler is built outside of git repo (e.g. from crates.io).
+
+
 # [0.6.1] - 2024-10-02
 
 ## Changed
