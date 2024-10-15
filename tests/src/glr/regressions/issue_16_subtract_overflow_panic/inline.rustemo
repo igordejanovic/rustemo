@@ -1,0 +1,43 @@
+Inline: InlineEl*;
+InlineEl: prefix=StrongDelim children=Inline suffix=StrongDelim? {Strong, 11, left}
+        | prefix=EmphasisDelim children=Inline suffix=EmphasisDelim? {Emphasis, 11, left} 
+        | title_prefix=LinkTitlePrefix title=Inline continuation=Link1? {Link , 11, left}
+        | prefix=CodeDelim text=CodeChar* suffix=CodeDelim? {Code, 11, left} 
+        | text=TextChar+ {Text, 9, left};
+
+StrongDelim: StrongT;
+
+EmphasisDelim: EmphasisT;
+
+LinkTitlePrefix: LinkTitlePrefixT;
+LinkTitleSuffix: LinkTitleSuffixT;
+LinkAddressPrefix: LinkAddressPrefixT;
+LinkAddressSuffix: LinkAddressSuffixT;
+Link1: title_suffix=LinkTitleSuffix address=LinkAddress?;
+LinkAddress: prefix=LinkAddressPrefix address=LinkAddressChar* suffix=LinkAddressSuffix?;
+LinkAddressChar: LinkAddressCharT | EscapedChar;
+
+CodeDelim: CodeDelimT;
+CodeChar: CodeCharT | EscapedChar;
+
+TextChar: TextCharT | EscapedChar;
+
+EscapeChar: EscapeT;
+EscapedChar: prefix=EscapeChar text=AnyCharT;
+
+Layout: Empty;
+
+terminals
+Empty: "";
+EscapeT: "\\";
+AnyCharT: /./;
+TextCharT: /[^*_`\\]/;
+CodeDelimT: "`";
+CodeCharT: /[^`\\]/;
+LinkTitlePrefixT: "[";
+LinkTitleSuffixT: "](";
+LinkAddressPrefixT: "(";
+LinkAddressSuffixT: ")";
+LinkAddressCharT: /[^)\\]/;
+StrongT: "*";
+EmphasisT: "_";

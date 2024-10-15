@@ -200,6 +200,10 @@ fn main() {
             "glr/special/farshi_g8",
             Box::new(|s| s.parser_algo(ParserAlgo::GLR)),
         ),
+        (
+            "glr/regressions/issue_16_subtract_overflow_panic",
+            Box::new(|s| s.parser_algo(ParserAlgo::GLR)),
+        ),
     ];
 
     for (test, config) in tests {
