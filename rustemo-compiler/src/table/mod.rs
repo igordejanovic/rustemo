@@ -490,11 +490,9 @@ pub struct LRTable<'g, 's> {
 impl<'g, 's> LRTable<'g, 's> {
     pub fn new(grammar: &'g Grammar, settings: &'s Settings) -> Result<Self> {
         let first_sets = first_sets(grammar);
-        let production_rn_lengths = if settings.table_type == TableType::LALR_RN
-        {
-            Some(production_rn_lengths(&first_sets, grammar))
-        } else {
-            None
+        let production_rn_lengths = match settings.table_type {
+            TableType::LALR_RN => Some(production_rn_lengths(&first_sets, grammar)),
+            TableType::LALR | TableType::LALR_PAGER => None,
         };
         let mut table = Self {
             grammar,
