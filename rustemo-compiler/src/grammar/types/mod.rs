@@ -35,10 +35,7 @@ pub(crate) fn has_empty_type_name<S: AsRef<str>>(type_name: S) -> String {
     to_pascal_case(format!("{}NoO", type_name.as_ref()))
 }
 
-pub(crate) fn choice_name(
-    prod: &Production,
-    ref_type: Option<&String>,
-) -> String {
+pub(crate) fn choice_name(prod: &Production, ref_type: Option<&String>) -> String {
     if let Some(ref kind) = prod.kind {
         kind.clone()
     } else if let Some(ref_type) = ref_type {
@@ -53,10 +50,7 @@ pub(crate) fn choice_name(
 impl SymbolTypes {
     pub fn new(grammar: &Grammar) -> Self {
         Self {
-            symbol_types: Self::symbol_types(
-                grammar,
-                grammar.symbol_name(grammar.start_index),
-            ),
+            symbol_types: Self::symbol_types(grammar, grammar.symbol_name(grammar.start_index)),
         }
     }
 
@@ -65,10 +59,7 @@ impl SymbolTypes {
     }
 
     /// Returns a vector of all types inferred from the provided grammar.
-    pub(crate) fn symbol_types(
-        grammar: &Grammar,
-        start_symbol: String,
-    ) -> SymbolVec<SymbolType> {
+    pub(crate) fn symbol_types(grammar: &Grammar, start_symbol: String) -> SymbolVec<SymbolType> {
         let mut types = SymbolVec::new();
         for terminal in &grammar.terminals {
             assert!(types.len() == terminal.idx.into());
@@ -107,8 +98,7 @@ impl SymbolTypes {
                     }
                     // A single non-content reference
                     0 if production.rhs.len() == 1 => {
-                        let ref_type =
-                            grammar.symbol_name(production.rhs_symbols()[0]);
+                        let ref_type = grammar.symbol_name(production.rhs_symbols()[0]);
                         Choice {
                             name: choice_name(production, Some(&ref_type)),
                             kind: ChoiceKind::Plain,
@@ -132,30 +122,24 @@ impl SymbolTypes {
                     }
                     _ => {
                         let mut fields = vec![];
-                        let type_names = grammar.symbol_names(
-                            rhs.iter().map(|a| a.symbol).collect::<Vec<_>>(),
-                        );
+                        let type_names =
+                            grammar.symbol_names(rhs.iter().map(|a| a.symbol).collect::<Vec<_>>());
                         for assign in &rhs {
                             let ref_type = grammar.symbol_name(assign.symbol);
-                            let name =
-                                assign.name.clone().unwrap_or(Name::new(
-                                    format!(
-                                        "{}{}",
-                                        to_snake_case(&ref_type),
-                                        if type_names
-                                            .iter()
-                                            .filter(|&ty| *ty == ref_type)
-                                            .count()
-                                            > 1
-                                        {
-                                            // Not a unique rule ref inside this choice
-                                            format!("_{}", assign.idx + 1)
-                                        } else {
-                                            "".into()
-                                        }
-                                    ),
-                                    None,
-                                ));
+                            let name = assign.name.clone().unwrap_or(Name::new(
+                                format!(
+                                    "{}{}",
+                                    to_snake_case(&ref_type),
+                                    if type_names.iter().filter(|&ty| *ty == ref_type).count() > 1
+                                    {
+                                        // Not a unique rule ref inside this choice
+                                        format!("_{}", assign.idx + 1)
+                                    } else {
+                                        "".into()
+                                    }
+                                ),
+                                None,
+                            ));
                             fields.push(Field {
                                 name: name.as_ref().clone(),
                                 ref_type: ref_type.clone(),
@@ -200,10 +184,7 @@ impl SymbolTypes {
     /// A: A B | B; or A: A B | B | EMPTY; ---> A is Vec<B>
     /// A: <Whatever> ... | EMPTY; ---> A optional Enum
     /// ```
-    fn get_type_kind(
-        nt: &NonTerminal,
-        choices: &Vec<Choice>,
-    ) -> SymbolTypeKind {
+    fn get_type_kind(nt: &NonTerminal, choices: &Vec<Choice>) -> SymbolTypeKind {
         let type_name = &nt.name;
         struct Match {
             no_match: bool,
@@ -234,13 +215,9 @@ impl SymbolTypes {
                     }
                     [a, b] => {
                         if m.recurse.is_none() {
-                            if a.ref_type == *type_name
-                                && b.ref_type != *type_name
-                            {
+                            if a.ref_type == *type_name && b.ref_type != *type_name {
                                 m.recurse = Some(b.ref_type.clone())
-                            } else if b.ref_type == *type_name
-                                && a.ref_type != *type_name
-                            {
+                            } else if b.ref_type == *type_name && a.ref_type != *type_name {
                                 m.recurse = Some(a.ref_type.clone())
                             } else {
                                 m.no_match = true
@@ -251,9 +228,7 @@ impl SymbolTypes {
                     }
                     _ => m.no_match = true,
                 },
-                ChoiceKind::Ref { ref_type, .. } => {
-                    m.single = Some(ref_type.clone())
-                }
+                ChoiceKind::Ref { ref_type, .. } => m.single = Some(ref_type.clone()),
                 ChoiceKind::Plain => m.no_match = true,
             }
         }
@@ -280,17 +255,13 @@ impl SymbolTypes {
                 }
             }
             Match { empty, .. } => {
-                if choices_noe.len() == 1
-                    && !matches! {choices_noe[0].kind, ChoiceKind::Plain}
-                {
+                if choices_noe.len() == 1 && !matches! {choices_noe[0].kind, ChoiceKind::Plain} {
                     // Promote
                     match &choices_noe[0].kind {
-                        ChoiceKind::Ref { ref_type, .. } => {
-                            SymbolTypeKind::Ref {
-                                ref_type: ref_type.to_string(),
-                                recursive: Cell::new(false),
-                            }
-                        }
+                        ChoiceKind::Ref { ref_type, .. } => SymbolTypeKind::Ref {
+                            ref_type: ref_type.to_string(),
+                            recursive: Cell::new(false),
+                        },
                         ChoiceKind::Struct { .. } => SymbolTypeKind::Struct {
                             type_name: if empty {
                                 has_empty_type_name(type_name)
@@ -314,10 +285,7 @@ impl SymbolTypes {
     }
 
     /// Flags recursive types by performing a DFS over the types reference graph.
-    fn find_recursions(
-        symbol_types: &mut SymbolVec<SymbolType>,
-        start_symbol: String,
-    ) {
+    fn find_recursions(symbol_types: &mut SymbolVec<SymbolType>, start_symbol: String) {
         let types: HashMap<String, &SymbolType> =
             symbol_types.iter().map(|t| (t.name.clone(), t)).collect();
         fn dfs(
@@ -338,10 +306,7 @@ impl SymbolTypes {
                         if visiting.contains(ref_type) {
                             recursive.set(true);
                             for choice in &ty.choices {
-                                if let ChoiceKind::Ref {
-                                    ref recursive, ..
-                                } = choice.kind
-                                {
+                                if let ChoiceKind::Ref { ref recursive, .. } = choice.kind {
                                     recursive.set(true);
                                 }
                             }
@@ -364,11 +329,7 @@ impl SymbolTypes {
                                         recursive.set(true);
                                     } else {
                                         visiting.insert(ref_type.clone());
-                                        dfs(
-                                            types.get(ref_type).unwrap(),
-                                            visiting,
-                                            types,
-                                        );
+                                        dfs(types.get(ref_type).unwrap(), visiting, types);
                                         visiting.remove(ref_type);
                                     }
                                 }
@@ -379,12 +340,9 @@ impl SymbolTypes {
                                         if visiting.contains(&field.ref_type) {
                                             field.recursive.set(true);
                                         } else {
-                                            visiting
-                                                .insert(field.ref_type.clone());
+                                            visiting.insert(field.ref_type.clone());
                                             dfs(
-                                                types
-                                                    .get(&field.ref_type)
-                                                    .unwrap(),
+                                                types.get(&field.ref_type).unwrap(),
                                                 visiting,
                                                 types,
                                             );

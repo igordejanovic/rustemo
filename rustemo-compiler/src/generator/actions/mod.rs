@@ -27,11 +27,7 @@ pub(crate) trait ActionsGenerator {
             pub type #type_name_ident = String;
         }
     }
-    fn terminal_action(
-        &self,
-        terminal: &Terminal,
-        _settings: &Settings,
-    ) -> syn::Item {
+    fn terminal_action(&self, terminal: &Terminal, _settings: &Settings) -> syn::Item {
         let type_name_ident = Ident::new(&terminal.name, Span::call_site());
         let action_name = to_snake_case(&terminal.name);
         let action_name_ident = Ident::new(&action_name, Span::call_site());
@@ -53,9 +49,7 @@ pub(crate) trait ActionsGenerator {
     ) -> Vec<(String, syn::Item)>;
 }
 
-pub(super) fn generate_parser_actions(
-    generator: &ParserGenerator,
-) -> Result<()> {
+pub(super) fn generate_parser_actions(generator: &ParserGenerator) -> Result<()> {
     let parser_mod = PathBuf::from(&generator.file_name)
         .file_stem()
         .unwrap()
@@ -127,11 +121,10 @@ pub(super) fn generate_parser_actions(
         };
     }
 
-    let actions_generator: Box<dyn ActionsGenerator> =
-        production::ProductionActionsGenerator::new(
-            generator.grammar,
-            generator.types.as_ref().unwrap(),
-        );
+    let actions_generator: Box<dyn ActionsGenerator> = production::ProductionActionsGenerator::new(
+        generator.grammar,
+        generator.types.as_ref().unwrap(),
+    );
 
     // Generate types and actions for terminals
     generator
@@ -150,10 +143,8 @@ pub(super) fn generate_parser_actions(
             let action_name = to_snake_case(&terminal.name);
             if !action_names.contains(&action_name) {
                 log!("Create action function for terminal '{type_name}'.");
-                ast.items.push(
-                    actions_generator
-                        .terminal_action(terminal, generator.settings),
-                )
+                ast.items
+                    .push(actions_generator.terminal_action(terminal, generator.settings))
             }
         });
 
@@ -173,8 +164,8 @@ pub(super) fn generate_parser_actions(
             }
 
             // Add non-terminal actions
-            for (action_name, action) in actions_generator
-                .nonterminal_actions(nonterminal, generator.settings)
+            for (action_name, action) in
+                actions_generator.nonterminal_actions(nonterminal, generator.settings)
             {
                 if !action_names.contains(&action_name) {
                     log!("Creating action '{action_name}'.");

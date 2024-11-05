@@ -109,9 +109,7 @@ fn terminals_regex() {
             .collect::<Vec<_>>(),
         &["STOP", "foo", "some", "rmatch_term", "more_regex"]
     );
-    for (term_name, term_regex) in
-        [("rmatch_term", r#""[^"]+""#), ("more_regex", r"\d{2,5}")]
-    {
+    for (term_name, term_regex) in [("rmatch_term", r#""[^"]+""#), ("more_regex", r"\d{2,5}")] {
         assert!(match grammar
             .symbol_to_term(grammar.term_by_name[term_name])
             .recognizer

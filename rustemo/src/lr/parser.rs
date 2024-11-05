@@ -98,11 +98,7 @@ where
         context.set_state(state);
     }
 
-    fn pop_states(
-        &mut self,
-        context: &mut C,
-        states: usize,
-    ) -> (S, Range<usize>, Location) {
+    fn pop_states(&mut self, context: &mut C, states: usize) -> (S, Range<usize>, Location) {
         let states_removed = self.stack.split_off(self.stack.len() - states);
         let state = self.stack.last().unwrap().state;
 
@@ -117,8 +113,7 @@ where
             )
         } else {
             (
-                states_removed[0].range.start
-                    ..states_removed.last().unwrap().range.end,
+                states_removed[0].range.start..states_removed.last().unwrap().range.end,
                 Location {
                     start: states_removed[0].location.start,
                     end: states_removed.last().unwrap().location.end,
@@ -157,8 +152,7 @@ pub struct LRParser<
 type LayoutParser<'i, C, S, P, TK, NTK, D, L, I> =
     Option<LRParser<'i, C, S, P, TK, NTK, D, L, SliceBuilder<'i, I>, I>>;
 
-impl<'i, C, S, P, I, TK, NTK, D, L, B>
-    LRParser<'i, C, S, P, TK, NTK, D, L, B, I>
+impl<'i, C, S, P, I, TK, NTK, D, L, B> LRParser<'i, C, S, P, TK, NTK, D, L, B, I>
 where
     C: Context<'i, I, S, TK>,
     S: State,
@@ -231,10 +225,8 @@ where
         // If error run layout_parser. If there is layout try next tokens again.
         // If no next token can be returned report error returned from the lexer.
         loop {
-            let expected_tokens =
-                self.definition.expected_token_kinds(context.state());
-            let mut next_tokens =
-                self.lexer.next_tokens(context, input, expected_tokens);
+            let expected_tokens = self.definition.expected_token_kinds(context.state());
+            let mut next_tokens = self.lexer.next_tokens(context, input, expected_tokens);
             let next_token = if D::longest_match() {
                 let mut tokens = next_tokens.collect::<Vec<_>>();
                 if tokens.len() > 1 {
@@ -244,8 +236,7 @@ where
                     );
                     log!(
                         "{}",
-                        "Applying longest match disambiguation strategy"
-                            .green()
+                        "Applying longest match disambiguation strategy".green()
                     );
                     let longest_len = tokens
                         .iter()
@@ -289,21 +280,14 @@ where
                     .into_iter()
                     .map(|t| t.0)
                     .collect::<Vec<_>>();
-                if self.partial_parse
-                    && expected.iter().any(|&t| t == stop_kind)
-                {
+                if self.partial_parse && expected.iter().any(|&t| t == stop_kind) {
                     return Ok(Token {
                         kind: stop_kind,
                         value: &input[context.position()..context.position()],
                         location: context.location(),
                     });
                 } else {
-                    return Err(error_expected(
-                        input,
-                        &self.file_name,
-                        context,
-                        &expected,
-                    ));
+                    return Err(error_expected(input, &self.file_name, context, &expected));
                 }
             }
         }
@@ -332,13 +316,8 @@ where
         self.parse_with_context(&mut context, input)
     }
 
-    fn parse_with_context(
-        &self,
-        context: &mut C,
-        input: &'i I,
-    ) -> Result<Self::Output> {
-        let mut parse_stack: ParseStack<S, I, C, TK> =
-            ParseStack::new(context, self.start_state);
+    fn parse_with_context(&self, context: &mut C, input: &'i I) -> Result<Self::Output> {
+        let mut parse_stack: ParseStack<S, I, C, TK> = ParseStack::new(context, self.start_state);
 
         let mut builder = self.builder.borrow_mut();
 
@@ -378,14 +357,17 @@ where
             match action {
                 Action::Shift(state_id) => {
                     state = state_id;
-                    context.set_range(context.position()..(context.position() + next_token.value.len()));
+                    context.set_range(
+                        context.position()..(context.position() + next_token.value.len()),
+                    );
                     let new_location = next_token.value.location_after(context.location());
-                    context.set_location(Location{
+                    context.set_location(Location {
                         start: context.location().start,
                         end: Some(new_location.start),
                     });
 
-                    log!("{} to state {:?} at location {:?} with token {:?}",
+                    log!(
+                        "{} to state {:?} at location {:?} with token {:?}",
                         "Shifting".bold().green(),
                         state_id,
                         context.location(),
@@ -413,8 +395,7 @@ where
                         prod,
                         prod_len
                     );
-                    let (from_state, range, location) =
-                        parse_stack.pop_states(context, prod_len);
+                    let (from_state, range, location) = parse_stack.pop_states(context, prod_len);
                     context.set_range(range);
                     state = self.definition.goto(from_state, prod.into());
                     let context_location = context.location();
@@ -436,15 +417,17 @@ where
                 }
                 Action::Accept => {
                     log!("{}", "Accept".green().bold());
-                    break
-                },
+                    break;
+                }
                 // This can't happen for context-aware lexing. If there is no
                 // action for a lookahead then the lookahead would not be found.
                 // The only place where this can trigger is when parsing layout.
                 // It may happen that a wrong recognition is done in the content
                 // after the layout. Also, in the future, if parser composition
                 // would be done similar problem may arise.
-                Action::Error => err!(format!("Can't continue in state {state:?} with lookahead {next_token:?}."))?,
+                Action::Error => err!(format!(
+                    "Can't continue in state {state:?} with lookahead {next_token:?}."
+                ))?,
             }
             log!("{}: {:#?}", "Stack".green(), parse_stack);
             log!("{}: {:?}", "Current state".green(), state);
@@ -452,10 +435,7 @@ where
         Ok(builder.get_result())
     }
 
-    fn parse_file<'a, F: AsRef<Path>>(
-        &'a mut self,
-        file: F,
-    ) -> Result<Self::Output>
+    fn parse_file<'a, F: AsRef<Path>>(&'a mut self, file: F) -> Result<Self::Output>
     where
         'a: 'i,
     {

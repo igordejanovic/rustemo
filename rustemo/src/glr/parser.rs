@@ -97,20 +97,8 @@ where
 type Content<'i, L, I, S, TK> =
     <<L as Lexer<'i, GssHead<'i, I, S, TK>, S, TK>>::Input as ToOwned>::Owned;
 
-type LayoutParser<'i, I, S, P, TK, NTK, D, L> = Option<
-    LRParser<
-        'i,
-        GssHead<'i, I, S, TK>,
-        S,
-        P,
-        TK,
-        NTK,
-        D,
-        L,
-        SliceBuilder<'i, I>,
-        I,
-    >,
->;
+type LayoutParser<'i, I, S, P, TK, NTK, D, L> =
+    Option<LRParser<'i, GssHead<'i, I, S, TK>, S, P, TK, NTK, D, L, SliceBuilder<'i, I>, I>>;
 
 /// An implementation of Right-Nulled GLR parsing (RNGLR)
 pub struct GlrParser<
@@ -158,12 +146,7 @@ where
     TK: Copy + Default + PartialEq + Ord + Debug + 'i,
     P: Copy + Debug + Into<NTK> + PartialEq,
 {
-    pub fn new(
-        definition: &'static D,
-        partial_parse: bool,
-        has_layout: bool,
-        lexer: L,
-    ) -> Self {
+    pub fn new(definition: &'static D, partial_parse: bool, has_layout: bool, lexer: L) -> Self {
         Self {
             file_name: "<str>".into(),
             content: None,
@@ -195,14 +178,11 @@ where
                 position
             );
             for (&state, head) in subfrontier {
-                log!(
-                    "  {}",
-                    format!("Processing head {}", head.index()).green()
-                );
-                for action in self.definition.actions(
-                    state,
-                    gss.head(*head).token_ahead().as_ref().unwrap().kind,
-                ) {
+                log!("  {}", format!("Processing head {}", head.index()).green());
+                for action in self
+                    .definition
+                    .actions(state, gss.head(*head).token_ahead().as_ref().unwrap().kind)
+                {
                     match action {
                         Action::Reduce(prod, length) => {
                             if length == 0 {
@@ -227,16 +207,15 @@ where
                                         "    {} '{:?}' over edge {} -> {} by len {}",
                                         "Register new reduction".green(),
                                         prod,
-                                        edge.source().index(), edge.target().index(),
+                                        edge.source().index(),
+                                        edge.target().index(),
                                         length
                                     );
                                     pending_reductions
                                         .entry((*position, *token_kind))
                                         .or_default()
                                         .push_back(Reduction {
-                                            start: ReductionStart::Edge(
-                                                edge.id(),
-                                            ),
+                                            start: ReductionStart::Edge(edge.id()),
                                             production: prod,
                                             length,
                                         })
@@ -246,20 +225,12 @@ where
                         Action::Shift(state) => {
                             log!(
                                 "    {}",
-                                format!(
-                                    "Adding head {} to pending shifts.",
-                                    head.index()
-                                )
-                                .green()
+                                format!("Adding head {} to pending shifts.", head.index()).green()
                             );
                             pending_shifts.push((*head, state))
                         }
                         Action::Accept => {
-                            log!(
-                                "    {}",
-                                format!("Accepting head {}.", head.index())
-                                    .red()
-                            );
+                            log!("    {}", format!("Accepting head {}.", head.index()).red());
                             accepted_heads.push(*head)
                         }
                         Action::Error => break,
@@ -281,8 +252,7 @@ where
         frontier_base: &Vec<NodeIndex>,
         input: &'i I,
     ) -> BTreeMap<(usize, TK), BTreeMap<S, NodeIndex>> {
-        let mut frontier: BTreeMap<(usize, TK), BTreeMap<S, NodeIndex>> =
-            BTreeMap::new();
+        let mut frontier: BTreeMap<(usize, TK), BTreeMap<S, NodeIndex>> = BTreeMap::new();
         for &head_idx in frontier_base {
             // Multiple heads are possible per state in case of lexical ambiguity.
             let head = gss.head(head_idx);
@@ -296,11 +266,9 @@ where
                 // Find lookaheads
                 log!(
                     "  {}.",
-                    format!("Finding lookaheads for head {}", head_idx.index())
-                        .green()
+                    format!("Finding lookaheads for head {}", head_idx.index()).green()
                 );
-                let mut lookahead_tokens =
-                    self.find_lookaheads(gss, head_idx, input).into_iter();
+                let mut lookahead_tokens = self.find_lookaheads(gss, head_idx, input).into_iter();
                 let head = gss.head_mut(head_idx);
                 let position = head.position();
                 if let Some(token) = lookahead_tokens.next() {
@@ -324,12 +292,7 @@ where
                         frontier
                             .entry((position, lookahead.kind))
                             .or_default()
-                            .insert(
-                                state,
-                                self.head_for_lookahead(
-                                    gss, head_idx, lookahead,
-                                ),
-                            );
+                            .insert(state, self.head_for_lookahead(gss, head_idx, lookahead));
                     }
                 } else {
                     log!("No lookaheads found. Killing head.");
@@ -351,8 +314,7 @@ where
         input: &'i I,
     ) -> Vec<Token<'i, I, TK>> {
         let head = gss.head_mut(head);
-        let expected_tokens =
-            self.definition.expected_token_kinds(head.state());
+        let expected_tokens = self.definition.expected_token_kinds(head.state());
         let mut layout_parsing = true;
         loop {
             let mut tokens: Vec<_> = self
@@ -373,8 +335,7 @@ where
                     if D::longest_match() {
                         log!(
                             "{}",
-                            "Applying longest match disambiguation strategy"
-                                .green()
+                            "Applying longest match disambiguation strategy".green()
                         );
                         // Longest match strategy for lexical disambiguation
                         let longest_len = tokens
@@ -392,8 +353,7 @@ where
                         // at least one token must be in the tokens vector.
                         log!(
                             "{}",
-                            "Applying grammar order disambiguation strategy"
-                                .green()
+                            "Applying grammar order disambiguation strategy".green()
                         );
                         tokens.truncate(1)
                     }
@@ -401,9 +361,7 @@ where
                 return tokens;
             } else if layout_parsing {
                 layout_parsing = false;
-                if let Some(layout_parser) =
-                    self.layout_parser.borrow_mut().as_ref()
-                {
+                if let Some(layout_parser) = self.layout_parser.borrow_mut().as_ref() {
                     log!("\n{}", "*** Parsing layout".red().bold());
                     let current_state = head.state();
                     head.set_state(S::default_layout().unwrap());
@@ -426,9 +384,7 @@ where
         // No tokens are found. For partial parsing return STOP if expected
         // even if we are not at the end of the input
         let stop_kind = <TK as Default>::default();
-        if self.partial_parse
-            && expected_tokens.iter().any(|tk| tk.0 == stop_kind)
-        {
+        if self.partial_parse && expected_tokens.iter().any(|tk| tk.0 == stop_kind) {
             vec![Token {
                 kind: stop_kind,
                 value: &input[0..0],
@@ -520,51 +476,42 @@ where
                 "Reducing by production".green(),
                 production,
                 match reduction.start {
-                    ReductionStart::Edge(e) => format!(
-                        "edge {} -> {}",
-                        gss.start(e).index(),
-                        gss.end(e).index()
-                    ),
+                    ReductionStart::Edge(e) =>
+                        format!("edge {} -> {}", gss.start(e).index(), gss.end(e).index()),
                     ReductionStart::Node(n) => format!("head {}", n.index()),
                 },
                 reduction.length
             );
             for path in self.find_reduction_paths(gss, &reduction) {
                 log!("  {} {path}", "Reducing over path:".green());
-                let token_kind_ahead =
-                    gss.head(start_head).token_ahead().as_ref().unwrap().kind;
+                let token_kind_ahead = gss.head(start_head).token_ahead().as_ref().unwrap().kind;
                 let root_state = gss.head(path.root_head).state();
-                let next_state =
-                    self.definition.goto(root_state, production.into());
+                let next_state = self.definition.goto(root_state, production.into());
 
                 // Get all non-error actions
-                let actions =
-                    self.definition.actions(next_state, token_kind_ahead);
+                let actions = self.definition.actions(next_state, token_kind_ahead);
 
                 if actions.is_empty() {
-                    log!("    No actions for new state {:?} and lookahead {:?}. Skipping.",
-                         next_state, token_kind_ahead);
+                    log!(
+                        "    No actions for new state {:?} and lookahead {:?}. Skipping.",
+                        next_state,
+                        token_kind_ahead
+                    );
                 } else {
                     // Find a head with the same state or create new if it doesn't exist
                     let mut head_created = false;
-                    let head = if let Some(head) = subfrontier.get(&next_state)
-                    {
+                    let head = if let Some(head) = subfrontier.get(&next_state) {
                         log!(
                             "    {}",
-                            format!(
-                                "Head {} with the same state already exists.",
-                                head.index()
-                            )
-                            .green()
+                            format!("Head {} with the same state already exists.", head.index())
+                                .green()
                         );
                         *head
                     } else {
                         // Create new head
                         let shead = gss.head(start_head);
-                        let new_head = shead.with_tok_state(
-                            shead.token_ahead().cloned().unwrap(),
-                            next_state,
-                        );
+                        let new_head = shead
+                            .with_tok_state(shead.token_ahead().cloned().unwrap(), next_state);
                         #[cfg(debug_assertions)]
                         let new_head_str = format!("{:?}", new_head);
                         let new_head_idx = gss.add_head(new_head);
@@ -582,9 +529,7 @@ where
                     // Find an edge between the head and the root_head or create new
                     // if it doesn't exist
                     let mut edge_created = false;
-                    let edge = if let Some(edge) =
-                        gss.edge_between(head, path.root_head)
-                    {
+                    let edge = if let Some(edge) = gss.edge_between(head, path.root_head) {
                         log!(
                             "      {}",
                             format!(
@@ -635,19 +580,10 @@ where
                             .green()
                         );
                         // Replace children for this solution
-                        for possibility in gss
-                            .parent(edge)
-                            .possibilities
-                            .borrow_mut()
-                            .iter_mut()
-                        {
-                            if let SPPFTree::NonTerm {
-                                prod, children, ..
-                            } = &**possibility
-                            {
+                        for possibility in gss.parent(edge).possibilities.borrow_mut().iter_mut() {
+                            if let SPPFTree::NonTerm { prod, children, .. } = &**possibility {
                                 if *prod == production
-                                    && (path.parents.len()
-                                        > children.borrow().len())
+                                    && (path.parents.len() > children.borrow().len())
                                 {
                                     *children.borrow_mut() = path.parents;
                                     break;
@@ -682,18 +618,13 @@ where
                             },
                             children: RefCell::new(path.parents),
                         });
-                        gss.parent(edge)
-                            .possibilities
-                            .borrow_mut()
-                            .push(solution);
+                        gss.parent(edge).possibilities.borrow_mut().push(solution);
 
                         // Register actions
                         for action in actions {
                             match action {
                                 Action::Reduce(production, length) => {
-                                    if (edge_created && length > 0)
-                                        || head_created
-                                    {
+                                    if (edge_created && length > 0) || head_created {
                                         let start = if length > 0 {
                                             ReductionStart::Edge(edge)
                                         } else {
@@ -704,27 +635,21 @@ where
                                             "Register new reduction".green(),
                                             production,
                                             match start {
-                                                ReductionStart::Edge(e) =>
-                                                    format!(
-                                                        "over edge {} -> {}",
-                                                        gss.start(e).index(),
-                                                        gss.end(e).index()
-                                                    ),
+                                                ReductionStart::Edge(e) => format!(
+                                                    "over edge {} -> {}",
+                                                    gss.start(e).index(),
+                                                    gss.end(e).index()
+                                                ),
                                                 ReductionStart::Node(n) =>
-                                                    format!(
-                                                        "over head {}",
-                                                        n.index()
-                                                    ),
+                                                    format!("over head {}", n.index()),
                                             },
                                             length
                                         );
-                                        pending_reductions.push_back(
-                                            Reduction {
-                                                start,
-                                                production,
-                                                length,
-                                            },
-                                        );
+                                        pending_reductions.push_back(Reduction {
+                                            start,
+                                            production,
+                                            length,
+                                        });
                                     }
                                 }
                                 Action::Shift(s) => {
@@ -744,11 +669,7 @@ where
                                     if head_created {
                                         log!(
                                             "      {}",
-                                            format!(
-                                                "Accepting head {}.",
-                                                head.index()
-                                            )
-                                            .red()
+                                            format!("Accepting head {}.", head.index()).red()
                                         );
                                         accepted_heads.push(head)
                                     }
@@ -798,10 +719,7 @@ where
             );
             let shifted_head_idx = match frontier_base.get(&(state, position)) {
                 Some(&shifted_head) => {
-                    log!(
-                        "  {}",
-                        "Head already exists. Adding new edge.".green()
-                    );
+                    log!("  {}", "Head already exists. Adding new edge.".green());
                     shifted_head
                 }
                 None => {
@@ -824,11 +742,7 @@ where
                     let new_head_idx = gss.add_head(new_head);
                     log!(
                         "  {}: {new_head_str}",
-                        format!(
-                            "Creating new shifted head {}",
-                            new_head_idx.index()
-                        )
-                        .green()
+                        format!("Creating new shifted head {}", new_head_idx.index()).green()
                     );
                     frontier_base.insert((state, position), new_head_idx);
                     new_head_idx
@@ -868,8 +782,7 @@ where
                 reduction.length,
                 match reduction.start {
                     ReductionStart::Node(head) => head.index(),
-                    ReductionStart::Edge(start_edge) =>
-                        gss.start(start_edge).index(),
+                    ReductionStart::Edge(start_edge) => gss.start(start_edge).index(),
                 }
             )
             .green()
@@ -877,17 +790,10 @@ where
         let mut paths = vec![];
         match reduction.start {
             ReductionStart::Node(head) => {
-                debug_assert!(
-                    reduction.length == 0,
-                    "Node based reductions must be EMPTY"
-                );
+                debug_assert!(reduction.length == 0, "Node based reductions must be EMPTY");
                 log!(
                     "  {}",
-                    format!(
-                        "Found EMPTY reduction path for head {}",
-                        head.index()
-                    )
-                    .green()
+                    format!("Found EMPTY reduction path for head {}", head.index()).green()
                 );
                 paths.push(ReductionPath {
                     parents: VecDeque::new(),
@@ -906,8 +812,7 @@ where
                     left_to_go: usize,
                     parents: VecDeque<Rc<Parent<'i, I, P, TK>>>,
                 }
-                let mut pending_paths: VecDeque<PendingPath<I, P, TK>> =
-                    VecDeque::new();
+                let mut pending_paths: VecDeque<PendingPath<I, P, TK>> = VecDeque::new();
                 pending_paths.push_back(PendingPath {
                     current_root: gss.end(start_edge),
                     left_to_go: reduction.length - 1,
@@ -1074,16 +979,13 @@ where
         let mut pending_shifts: Vec<(NodeIndex, S)> = vec![];
 
         // A queue of reductions that need to be done per subfrontier.
-        let mut pending_reductions: BTreeMap<
-            (usize, TK),
-            VecDeque<Reduction<P>>,
-        > = Default::default();
+        let mut pending_reductions: BTreeMap<(usize, TK), VecDeque<Reduction<P>>> =
+            Default::default();
 
         let mut accepted_heads: Vec<NodeIndex> = vec![];
 
         while !frontier_base.is_empty() {
-            let mut frontier =
-                self.create_frontier(&mut gss, &frontier_base, input);
+            let mut frontier = self.create_frontier(&mut gss, &frontier_base, input);
             // Create initial shifts/reductions for this frontier
             self.initial_process_frontier(
                 &mut gss,
@@ -1134,10 +1036,7 @@ where
         }
     }
 
-    fn parse_file<'a, F: AsRef<std::path::Path>>(
-        &'a mut self,
-        file: F,
-    ) -> Result<Self::Output>
+    fn parse_file<'a, F: AsRef<std::path::Path>>(&'a mut self, file: F) -> Result<Self::Output>
     where
         'a: 'i,
     {

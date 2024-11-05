@@ -28,10 +28,7 @@ pub trait Input: ToOwned + Index<Range<usize>, Output = Self> {
     /// Implement for types which may cause panic on slicing with full `Range`
     /// (e.g. `str`).
     #[inline]
-    fn slice(
-        &self,
-        range: Range<usize>,
-    ) -> &<Self as Index<Range<usize>>>::Output {
+    fn slice(&self, range: Range<usize>) -> &<Self as Index<Range<usize>>>::Output {
         &self[range]
     }
 
@@ -81,10 +78,7 @@ impl Input for str {
     /// Slicing for string works by taking a byte position of range.start and
     /// slicing by a range.end-range.start chars.
     #[inline]
-    fn slice(
-        &self,
-        range: Range<usize>,
-    ) -> &<Self as Index<Range<usize>>>::Output {
+    fn slice(&self, range: Range<usize>) -> &<Self as Index<Range<usize>>>::Output {
         &self[range.start
             ..range.start
                 + self[range.start..]
@@ -112,8 +106,7 @@ impl Input for str {
         };
 
         line += self.as_bytes().iter().filter(|&c| *c == b'\n').count();
-        if let Some(new_col) = self.as_bytes().iter().rposition(|&c| c == b'\n')
-        {
+        if let Some(new_col) = self.as_bytes().iter().rposition(|&c| c == b'\n') {
             column = self.len() - new_col - 1;
         } else {
             column += self.len();
@@ -172,9 +165,7 @@ impl Input for [u8] {
 
 impl<T, I> Input for T
 where
-    Self: Deref<Target = I>
-        + ToOwned<Owned = I::Owned>
-        + Index<Range<usize>, Output = Self>,
+    Self: Deref<Target = I> + ToOwned<Owned = I::Owned> + Index<Range<usize>, Output = Self>,
     I: Input + ?Sized,
 {
     #[inline]

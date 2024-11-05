@@ -8,7 +8,6 @@ rustemo_mod!(unicode_actions, "/src/unicode");
 
 #[test]
 fn partial_parse() {
-    let result = UnicodeParser::new()
-        .parse("Тестирање: čokančićem ћу те, чоканчићем ћеш ме.");
+    let result = UnicodeParser::new().parse("Тестирање: čokančićem ћу те, чоканчићем ћеш ме.");
     output_cmp!("src/unicode/unicode.ast", format!("{:#?}", result));
 }

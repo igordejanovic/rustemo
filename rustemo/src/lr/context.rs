@@ -1,9 +1,6 @@
 use std::ops::Range;
 
-use crate::{
-    context::Context, input::Input, lexer::Token, location::Location,
-    parser::State,
-};
+use crate::{context::Context, input::Input, lexer::Token, location::Location, parser::State};
 
 /// [`Context`] implementation for LR parsing
 #[derive(Debug)]

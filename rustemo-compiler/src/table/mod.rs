@@ -19,8 +19,8 @@ use crate::{
     error::{Error, Result},
     grammar::{Associativity, Priority, Terminal, DEFAULT_PRIORITY},
     index::{
-        NonTermIndex, NonTermVec, ProdIndex, ProdVec, StateIndex, StateVec,
-        SymbolIndex, SymbolVec, TermIndex, TermVec,
+        NonTermIndex, NonTermVec, ProdIndex, ProdVec, StateIndex, StateVec, SymbolIndex,
+        SymbolVec, TermIndex, TermVec,
     },
     lang::rustemo_actions::Recognizer,
     settings::{ParserAlgo, Settings},
@@ -106,8 +106,7 @@ impl PartialEq for LRState<'_> {
     fn eq(&self, other: &Self) -> bool {
         let self_ki = self.kernel_items();
         let other_ki = other.kernel_items();
-        self_ki.len() == other_ki.len()
-            && self_ki.iter().zip(other_ki.iter()).all(|(x, y)| x == y)
+        self_ki.len() == other_ki.len() && self_ki.iter().zip(other_ki.iter()).all(|(x, y)| x == y)
     }
 }
 impl Eq for LRState<'_> {}
@@ -148,11 +147,7 @@ impl std::fmt::Debug for LRState<'_> {
 }
 
 impl<'g> LRState<'g> {
-    fn new(
-        grammar: &'g Grammar,
-        index: StateIndex,
-        symbol: SymbolIndex,
-    ) -> Self {
+    fn new(grammar: &'g Grammar, index: StateIndex, symbol: SymbolIndex) -> Self {
         Self {
             grammar,
             idx: index,
@@ -202,11 +197,7 @@ impl<'g> LRState<'g> {
     /// item, if right of the dot is a non-terminal, adds all items where LHS is
     /// a given non-terminal and the dot is at the beginning. In other words,
     /// adds all missing non-kernel items.
-    fn closure(
-        &mut self,
-        first_sets: &FirstSets,
-        prod_rn_lengths: &Option<ProdVec<usize>>,
-    ) {
+    fn closure(&mut self, first_sets: &FirstSets, prod_rn_lengths: &Option<ProdVec<usize>>) {
         loop {
             // This is OK as Hash uses only non-interior-mutable part of the
             // LRItem type.
@@ -219,9 +210,7 @@ impl<'g> LRState<'g> {
                         let mut new_follow;
                         // Find first set of substring that follow symbol at
                         // position
-                        if item.position + 1
-                            < self.grammar.productions[item.prod].rhs.len()
-                        {
+                        if item.position + 1 < self.grammar.productions[item.prod].rhs.len() {
                             new_follow = firsts(
                                 self.grammar,
                                 first_sets,
@@ -243,11 +232,8 @@ impl<'g> LRState<'g> {
 
                         // Get all productions of the current non-terminal and
                         // create LR items with the calculated follow.
-                        let nonterm =
-                            self.grammar.symbol_to_nonterm_index(symbol);
-                        for prod in
-                            &self.grammar.nonterminals[nonterm].productions
-                        {
+                        let nonterm = self.grammar.symbol_to_nonterm_index(symbol);
+                        for prod in &self.grammar.nonterminals[nonterm].productions {
                             new_items.insert(LRItem::with_follow(
                                 self.grammar,
                                 *prod,
@@ -288,11 +274,8 @@ impl<'g> LRState<'g> {
 
     /// Group LR items per grammar symbol right of the dot, and calculate
     /// terminal max priorities.
-    fn group_per_next_symbol(
-        &mut self,
-    ) -> BTreeMap<SymbolIndex, Vec<ItemIndex>> {
-        let mut per_next_symbol: BTreeMap<SymbolIndex, Vec<ItemIndex>> =
-            BTreeMap::new();
+    fn group_per_next_symbol(&mut self) -> BTreeMap<SymbolIndex, Vec<ItemIndex>> {
+        let mut per_next_symbol: BTreeMap<SymbolIndex, Vec<ItemIndex>> = BTreeMap::new();
 
         for (idx, item) in self.items.iter().enumerate() {
             let symbol = item.symbol_at_position(self.grammar);
@@ -550,17 +533,13 @@ impl<'g, 's> LRTable<'g, 's> {
         assert_eq!(prods.len(), 1);
 
         // Create a state for the first production (augmented)
-        let state = LRState::new(
-            self.grammar,
-            StateIndex(current_state_idx),
-            start_symbol,
-        )
-        .add_item(LRItem::with_follow(
-            self.grammar,
-            prods[0],
-            self.production_rn_lengths.as_ref().map(|p| p[prods[0]]),
-            Follow::from([self.grammar.stop_index]),
-        ));
+        let state = LRState::new(self.grammar, StateIndex(current_state_idx), start_symbol)
+            .add_item(LRItem::with_follow(
+                self.grammar,
+                prods[0],
+                self.production_rn_lengths.as_ref().map(|p| p[prods[0]]),
+                Follow::from([self.grammar.stop_index]),
+            ));
         current_state_idx += 1;
 
         // States to be processed.
@@ -589,8 +568,7 @@ impl<'g, 's> LRTable<'g, 's> {
             }
 
             // Create new states reachable from the current state.
-            let new_states =
-                Self::create_new_states(self.grammar, &state, per_next_symbol);
+            let new_states = Self::create_new_states(self.grammar, &state, per_next_symbol);
 
             // Find states that already exist and try to merge. If not possible
             // to merge or not found push state to state queue.
@@ -615,13 +593,10 @@ impl<'g, 's> LRTable<'g, 's> {
 
                 // Create GOTO for non-terminal or Shift Action for terminal.
                 if self.grammar.is_nonterm(target_state_symbol) {
-                    state.gotos[self
-                        .grammar
-                        .symbol_to_nonterm_index(target_state_symbol)] =
+                    state.gotos[self.grammar.symbol_to_nonterm_index(target_state_symbol)] =
                         Some(target_state_idx);
                 } else {
-                    let term =
-                        self.grammar.symbol_to_term_index(new_state.symbol);
+                    let term = self.grammar.symbol_to_term_index(new_state.symbol);
                     state.actions[term].push(Action::Shift(target_state_idx));
                 }
 
@@ -662,8 +637,7 @@ impl<'g, 's> LRTable<'g, 's> {
         // Item pairs of item from an old state and corresponding item from the new state.
         let item_pairs: Vec<(&mut LRItem, &LRItem)> = iter::zip(
             old_state.items.iter_mut().filter(|item| item.is_kernel()),
-            old_state_items
-                .map(|x| new_state.items.iter().find(|&i| *i == x).unwrap()),
+            old_state_items.map(|x| new_state.items.iter().find(|&i| *i == x).unwrap()),
         )
         .collect();
 
@@ -689,13 +663,8 @@ impl<'g, 's> LRTable<'g, 's> {
                     // (b) t ∈ {K1 ∩ K2 }.
                     // (c) t ∈ {K1' ∩ K2' }.
                     for t in chain(
-                        old.follow
-                            .borrow()
-                            .intersection(&*new_in.follow.borrow()),
-                        old_in
-                            .follow
-                            .borrow()
-                            .intersection(&*new.follow.borrow()),
+                        old.follow.borrow().intersection(&*new_in.follow.borrow()),
+                        old_in.follow.borrow().intersection(&*new.follow.borrow()),
                     ) {
                         // Test (b) and (c) conditions
                         if old
@@ -760,25 +729,19 @@ impl<'g, 's> LRTable<'g, 's> {
                             .filter(|x| x.is_kernel())
                         {
                             // Find corresponding item in state
-                            if let Some(source_item) =
-                                state.items.iter().find(|&x| {
-                                    x.prod == target_item.prod
-                                        && x.position
-                                            == target_item.position - 1
-                                })
-                            {
+                            if let Some(source_item) = state.items.iter().find(|&x| {
+                                x.prod == target_item.prod
+                                    && x.position == target_item.position - 1
+                            }) {
                                 // Update follow of target item with item from state
-                                let follow_len =
-                                    target_item.follow.borrow().len();
+                                let follow_len = target_item.follow.borrow().len();
                                 target_item
                                     .follow
                                     .borrow_mut()
                                     .extend(source_item.follow.borrow().iter());
 
                                 // if target item follow was changed set changed to true
-                                if target_item.follow.borrow().len()
-                                    > follow_len
-                                {
+                                if target_item.follow.borrow().len() > follow_len {
                                     changed = true
                                 }
                             }
@@ -800,9 +763,7 @@ impl<'g, 's> LRTable<'g, 's> {
                 let prod = &self.grammar.productions[item.prod];
 
                 // Accept if reducing by augmented productions for STOP lookahead
-                if aug_symbols.contains(
-                    &self.grammar.nonterm_to_symbol_index(prod.nonterminal),
-                ) {
+                if aug_symbols.contains(&self.grammar.nonterm_to_symbol_index(prod.nonterminal)) {
                     let actions = &mut state.actions[TermIndex(0)];
                     actions.push(Action::Accept);
                     continue;
@@ -810,8 +771,7 @@ impl<'g, 's> LRTable<'g, 's> {
 
                 let new_reduce = Action::Reduce(item.prod, item.position);
                 for follow_symbol in item.follow.borrow().iter() {
-                    let follow_term =
-                        self.grammar.symbol_to_term(*follow_symbol);
+                    let follow_term = self.grammar.symbol_to_term(*follow_symbol);
                     let actions = &mut state.actions[follow_term.idx];
                     if actions.is_empty() {
                         // No other action are possible for this follow terminal.
@@ -819,10 +779,10 @@ impl<'g, 's> LRTable<'g, 's> {
                         actions.push(new_reduce.clone());
                     } else {
                         // Conflict. Try to resolve.
-                        let (shifts, reduces): (Vec<_>, Vec<_>) =
-                            actions.clone().into_iter().partition(|x| {
-                                matches!(x, Action::Shift(_) | Action::Accept)
-                            });
+                        let (shifts, reduces): (Vec<_>, Vec<_>) = actions
+                            .clone()
+                            .into_iter()
+                            .partition(|x| matches!(x, Action::Shift(_) | Action::Accept));
                         // Only one SHIFT or ACCEPT might exists for a single
                         // terminal but many REDUCEs might exist.
                         assert!(shifts.len() <= 1);
@@ -847,19 +807,13 @@ impl<'g, 's> LRTable<'g, 's> {
                                     // Terminals associativity has priority over
                                     // production associativity
                                     match (&prod.assoc, &follow_term.assoc) {
-                                        (
-                                            Associativity::Left,
-                                            Associativity::None,
-                                        )
+                                        (Associativity::Left, Associativity::None)
                                         | (_, Associativity::Right) => {
                                             // Override SHIFT with this REDUCE
                                             assert!(actions.len() == 1);
                                             actions.pop();
                                         }
-                                        (
-                                            Associativity::Right,
-                                            Associativity::None,
-                                        )
+                                        (Associativity::Right, Associativity::None)
                                         | (_, Associativity::Left) => {
                                             // If associativity is right leave SHIFT
                                             // action as "stronger" and don't consider
@@ -868,24 +822,18 @@ impl<'g, 's> LRTable<'g, 's> {
                                             // same set of actions together with SHIFTs.
                                             should_reduce = false;
                                         }
-                                        (
-                                            Associativity::None,
-                                            Associativity::None,
-                                        ) => {
+                                        (Associativity::None, Associativity::None) => {
                                             // If priorities are the same and no
                                             // associativity defined use preferred
                                             // strategy.
                                             let empty = prod.rhs.is_empty();
                                             let prod_pse = empty
-                                                && self
-                                                    .settings
-                                                    .prefer_shifts_over_empty
+                                                && self.settings.prefer_shifts_over_empty
                                                 && !prod.nopse;
                                             let prod_ps = !empty
                                                 && self.settings.prefer_shifts
                                                 && !prod.nops;
-                                            should_reduce =
-                                                !(prod_pse || prod_ps);
+                                            should_reduce = !(prod_pse || prod_ps);
                                         }
                                     }
                                 }
@@ -910,38 +858,28 @@ impl<'g, 's> LRTable<'g, 's> {
                                         Action::Reduce(prod, ..) => {
                                             self.grammar.productions[*prod].prio
                                         }
-                                        other => panic!(
-                                            "This should not happen. Got {:?}",
-                                            other
-                                        ),
+                                        other => panic!("This should not happen. Got {:?}", other),
                                     })
                                     .collect::<Vec<_>>();
                                 if reduces_prio.iter().all(|x| prod.prio < *x) {
                                     // Current product priority is less than all
                                     // other reductions. Do not add this reduction.
-                                } else if reduces_prio
-                                    .iter()
-                                    .all(|x| prod.prio > *x)
-                                {
+                                } else if reduces_prio.iter().all(|x| prod.prio > *x) {
                                     // Current product priority is greater than all
                                     // other reductions. This reduction should
                                     // replace all others.
-                                    actions.retain(|x| {
-                                        !matches!(x, Action::Reduce(..))
-                                    });
+                                    actions.retain(|x| !matches!(x, Action::Reduce(..)));
                                     actions.push(new_reduce.clone())
                                 } else {
                                     // For LR parsing non-empty reductions are
                                     // preferred over empty...
-                                    if let ParserAlgo::LR =
-                                        self.settings.parser_algo
-                                    {
+                                    if let ParserAlgo::LR = self.settings.parser_algo {
                                         // ... so remove all empty reductions.
-                                        actions.retain(|x| !matches!(x, Action::Reduce(_, len) if *len == 0));
+                                        actions.retain(
+                                            |x| !matches!(x, Action::Reduce(_, len) if *len == 0),
+                                        );
 
-                                        if item.prod_len > 0
-                                            || actions.is_empty()
-                                        {
+                                        if item.prod_len > 0 || actions.is_empty() {
                                             // If current reduction is non-empty add it.
                                             actions.push(new_reduce.clone())
                                         }
@@ -981,9 +919,7 @@ impl<'g, 's> LRTable<'g, 's> {
                         match &term.recognizer {
                             Some(recognizer) => {
                                 (match recognizer {
-                                    Recognizer::StrConst(str_rec) => {
-                                        str_rec.as_ref().len()
-                                    }
+                                    Recognizer::StrConst(str_rec) => str_rec.as_ref().len(),
                                     Recognizer::RegexTerm(_) => 0,
                                 }) as u32
                             }
@@ -1004,12 +940,8 @@ impl<'g, 's> LRTable<'g, 's> {
             let mut last_prio = None;
             for terminal in terminals {
                 let finish = self.settings.lexical_disamb_most_specific
-                    && matches!(
-                        terminal.recognizer,
-                        Some(Recognizer::StrConst(_))
-                    );
-                let last_finish =
-                    last_prio.is_some_and(|prio| terminal.prio != prio);
+                    && matches!(terminal.recognizer, Some(Recognizer::StrConst(_)));
+                let last_finish = last_prio.is_some_and(|prio| terminal.prio != prio);
                 last_prio = Some(terminal.prio);
                 if let Some(t) = sorted_terminals.last_mut() {
                     t.1 |= last_finish
@@ -1063,35 +995,43 @@ impl<'g, 's> LRTable<'g, 's> {
     }
 
     pub fn get_conflicts(&'s self) -> Vec<Conflict<'g, 's>> {
-        self.states.iter().flat_map(|state| {
-            state
-                .actions
-                .iter()
-                .enumerate()
-                .filter(|(_, actions)| actions.len() > 1)
-                .flat_map(|(idx, actions)| {
-                    actions.iter().combinations(2).map(move |conflict| (idx, conflict))
-                })
-                .map(|(term_index, conflict)| {
-                    let kind = match &conflict[..] {
-                        [Action::Shift(_), Action::Reduce(prod, _)]
-                            | [Action::Reduce(prod, _), Action::Shift(_)]=>
-                                ConflictKind::ShiftReduce(*prod),
-                        [Action::Reduce(prod1, _), Action::Reduce(prod2, _)] =>
-                            ConflictKind::ReduceReduce(*prod1,  *prod2),
-                        e => {
-                            // This cannot happen as we have combinations of size 2.
-                            print!("{e:?}");
-                            unreachable!()
+        self.states
+            .iter()
+            .flat_map(|state| {
+                state
+                    .actions
+                    .iter()
+                    .enumerate()
+                    .filter(|(_, actions)| actions.len() > 1)
+                    .flat_map(|(idx, actions)| {
+                        actions
+                            .iter()
+                            .combinations(2)
+                            .map(move |conflict| (idx, conflict))
+                    })
+                    .map(|(term_index, conflict)| {
+                        let kind = match &conflict[..] {
+                            [Action::Shift(_), Action::Reduce(prod, _)]
+                            | [Action::Reduce(prod, _), Action::Shift(_)] => {
+                                ConflictKind::ShiftReduce(*prod)
+                            }
+                            [Action::Reduce(prod1, _), Action::Reduce(prod2, _)] => {
+                                ConflictKind::ReduceReduce(*prod1, *prod2)
+                            }
+                            e => {
+                                // This cannot happen as we have combinations of size 2.
+                                print!("{e:?}");
+                                unreachable!()
+                            }
+                        };
+                        Conflict {
+                            state,
+                            follow: TermIndex(term_index),
+                            kind,
                         }
-                    };
-                    Conflict {
-                        state,
-                        follow: TermIndex(term_index),
-                        kind
-                    }
-                })
-        }).collect()
+                    })
+            })
+            .collect()
     }
 
     pub fn print_conflicts_report(&self, conflicts: &Vec<Conflict<'g, 's>>) {
@@ -1101,9 +1041,7 @@ impl<'g, 's> LRTable<'g, 's> {
                 "When I saw {} and see token {} ahead I can't decide",
                 self.grammar.symbol_name(conflict.state.symbol).green(),
                 self.grammar
-                    .symbol_name(
-                        self.grammar.term_to_symbol_index(conflict.follow)
-                    )
+                    .symbol_name(self.grammar.term_to_symbol_index(conflict.follow))
                     .green()
             );
             match conflict.kind {
@@ -1118,8 +1056,12 @@ impl<'g, 's> LRTable<'g, 's> {
                 ConflictKind::ReduceReduce(prod1, prod2) => {
                     println!(
                         " should I reduce by production:\n{}\nor production:\n{}\n",
-                        self.grammar.productions[prod1].to_string(self.grammar).green(),
-                        self.grammar.productions[prod2].to_string(self.grammar).green()
+                        self.grammar.productions[prod1]
+                            .to_string(self.grammar)
+                            .green(),
+                        self.grammar.productions[prod2]
+                            .to_string(self.grammar)
+                            .green()
                     );
                 }
             }
@@ -1149,9 +1091,7 @@ impl<'g, 's> LRTable<'g, 's> {
     pub fn max_actions(&self) -> usize {
         self.states
             .iter()
-            .map(|state| {
-                state.actions.iter().map(|a| a.len()).max().unwrap_or(0)
-            })
+            .map(|state| state.actions.iter().map(|a| a.len()).max().unwrap_or(0))
             .max()
             .unwrap()
     }
@@ -1198,16 +1138,12 @@ impl<'g, 's> LRTable<'g, 's> {
         colored::control::set_override(false);
 
         let conflicts = self.get_conflicts();
-        let is_conflict_state =
-            |state: &LRState| conflicts.iter().any(|s| s.state == state);
+        let is_conflict_state = |state: &LRState| conflicts.iter().any(|s| s.state == state);
 
         for state in &self.states {
             let mut kernel_items_str = String::new();
             for item in state.kernel_items() {
-                kernel_items_str += &format!(
-                    "{}\\l",
-                    dot_escape(&item.to_string(self.grammar))
-                );
+                kernel_items_str += &format!("{}\\l", dot_escape(&item.to_string(self.grammar)));
             }
 
             let nonkernel_items = state.nonkernel_items();
@@ -1218,10 +1154,8 @@ impl<'g, 's> LRTable<'g, 's> {
             };
 
             for item in nonkernel_items {
-                nonkernel_items_str += &format!(
-                    "{}\\l",
-                    dot_escape(&item.to_string(self.grammar))
-                );
+                nonkernel_items_str +=
+                    &format!("{}\\l", dot_escape(&item.to_string(self.grammar)));
             }
 
             let mut reductions: Vec<String> = vec![];
@@ -1236,14 +1170,10 @@ impl<'g, 's> LRTable<'g, 's> {
                             )
                         }
                         Action::Reduce(prod_idx, len) => {
-                            term_reduction_prods
-                                .push(format!("({},{})", prod_idx, len));
+                            term_reduction_prods.push(format!("({},{})", prod_idx, len));
                         }
                         Action::Accept => {
-                            dot += &format!(
-                                "{} -> ACCEPT [label=\"{}\"]\n",
-                                state.idx, term.name
-                            )
+                            dot += &format!("{} -> ACCEPT [label=\"{}\"]\n", state.idx, term.name)
                         }
                     }
                 }
@@ -1346,8 +1276,7 @@ impl Display for LRTable<'_, '_> {
                             Action::Reduce(p, l) => {
                                 format!(
                                     "Reduce for len {l} by:   {}",
-                                    self.grammar.productions[*p]
-                                        .to_string(self.grammar)
+                                    self.grammar.productions[*p].to_string(self.grammar)
                                 )
                             }
                             Action::Accept => "Accept".into(),
@@ -1372,9 +1301,7 @@ impl Display for LRTable<'_, '_> {
                 .map(|(idx, g)| {
                     let g = g.unwrap();
                     (
-                        self.grammar.nonterminals[NonTermIndex(idx)]
-                            .name
-                            .clone(),
+                        self.grammar.nonterminals[NonTermIndex(idx)].name.clone(),
                         format!(
                             "State {}:{}",
                             self.grammar.symbol_name(self.states[g].symbol),
@@ -1422,11 +1349,9 @@ fn first_sets(grammar: &Grammar) -> FirstSets {
     while additions {
         additions = false;
         for production in &grammar.productions {
-            let lhs_nonterm =
-                grammar.nonterm_to_symbol_index(production.nonterminal);
+            let lhs_nonterm = grammar.nonterm_to_symbol_index(production.nonterminal);
 
-            let rhs_firsts =
-                firsts(grammar, &first_sets, &production.rhs_symbols());
+            let rhs_firsts = firsts(grammar, &first_sets, &production.rhs_symbols());
 
             let lhs_len = first_sets[lhs_nonterm].len();
 
@@ -1446,11 +1371,7 @@ fn first_sets(grammar: &Grammar) -> FirstSets {
 /// Finds all terminals which can start the given sequence of symbols. Note that
 /// if all symbols in the sequence can derive EMPTY, EMPTY will be a part of the
 /// returned set.
-fn firsts(
-    grammar: &Grammar,
-    first_sets: &FirstSets,
-    symbols: &[SymbolIndex],
-) -> Firsts {
+fn firsts(grammar: &Grammar, first_sets: &FirstSets, symbols: &[SymbolIndex]) -> Firsts {
     let mut firsts = Firsts::new();
     let mut break_out = false;
     for &symbol in symbols {
@@ -1503,8 +1424,7 @@ fn follow_sets(grammar: &Grammar, first_sets: &FirstSets) -> FollowSets {
     while additions {
         additions = false;
         for production in &grammar.productions {
-            let lhs_symbol =
-                grammar.nonterm_to_symbol_index(production.nonterminal);
+            let lhs_symbol = grammar.nonterm_to_symbol_index(production.nonterminal);
 
             // Rule 2: If there is a production A -> α B β then everything in
             // FIRST(β) except EMPTY is in FOLLOW(B).
@@ -1515,11 +1435,8 @@ fn follow_sets(grammar: &Grammar, first_sets: &FirstSets) -> FollowSets {
                 for rnext in &production.rhs[idx + 1..] {
                     let follow_symbols = &first_sets[res_symbol(rnext)];
 
-                    follow_sets[rhs_symbol].extend(
-                        follow_symbols
-                            .iter()
-                            .filter(|&&s| s != grammar.empty_index),
-                    );
+                    follow_sets[rhs_symbol]
+                        .extend(follow_symbols.iter().filter(|&&s| s != grammar.empty_index));
 
                     if !follow_symbols.contains(&grammar.empty_index) {
                         break_out = true;
@@ -1531,8 +1448,7 @@ fn follow_sets(grammar: &Grammar, first_sets: &FirstSets) -> FollowSets {
                     // Rule 3: If all symbols right of current RHS produce EMPTY
                     // then this RHS symbol must contain all what follows symbol
                     // at LHS.
-                    let lhs_follows: Follow =
-                        follow_sets[lhs_symbol].iter().copied().collect();
+                    let lhs_follows: Follow = follow_sets[lhs_symbol].iter().copied().collect();
                     follow_sets[rhs_symbol].extend(lhs_follows.iter());
                 }
 
@@ -1552,9 +1468,7 @@ mod tests {
     use std::collections::BTreeSet;
 
     use crate::index::{ProdIndex, StateIndex, SymbolIndex};
-    use crate::table::{
-        first_sets, follow_sets, ItemIndex, LRTable, TableType,
-    };
+    use crate::table::{first_sets, follow_sets, ItemIndex, LRTable, TableType};
     use crate::{
         grammar::Grammar,
         output_cmp,
@@ -1709,8 +1623,7 @@ mod tests {
         let grammar = test_grammar();
         let first_sets = first_sets(&grammar);
 
-        let production_rn_lengths =
-            production_rn_lengths(&first_sets, &grammar);
+        let production_rn_lengths = production_rn_lengths(&first_sets, &grammar);
 
         // RN length of "E: T Ep" is 1 as "Ep" can derive EMPTY but "T" can't.
         assert_eq!(production_rn_lengths[ProdIndex(1)], 1);
@@ -1749,36 +1662,35 @@ mod tests {
         let grammar = test_ambiguous_grammar();
 
         // Create some LR state
-        let mut lr_state =
-            LRState::new(&grammar, 0.into(), grammar.symbol_index("E"))
-                .add_item(LRItem {
-                    prod: 1.into(),
-                    prod_len: grammar.production_len(1.into()),
-                    rn_len: None,
-                    position: 1,
-                    follow: RefCell::new(Follow::new()),
-                })
-                .add_item(LRItem {
-                    prod: 2.into(),
-                    prod_len: grammar.production_len(2.into()),
-                    rn_len: None,
-                    position: 1,
-                    follow: RefCell::new(Follow::new()),
-                })
-                .add_item(LRItem {
-                    prod: 3.into(),
-                    prod_len: grammar.production_len(2.into()),
-                    rn_len: None,
-                    position: 1,
-                    follow: RefCell::new(Follow::new()),
-                })
-                .add_item(LRItem {
-                    prod: 4.into(),
-                    prod_len: grammar.production_len(3.into()),
-                    rn_len: None,
-                    position: 2,
-                    follow: RefCell::new(Follow::new()),
-                });
+        let mut lr_state = LRState::new(&grammar, 0.into(), grammar.symbol_index("E"))
+            .add_item(LRItem {
+                prod: 1.into(),
+                prod_len: grammar.production_len(1.into()),
+                rn_len: None,
+                position: 1,
+                follow: RefCell::new(Follow::new()),
+            })
+            .add_item(LRItem {
+                prod: 2.into(),
+                prod_len: grammar.production_len(2.into()),
+                rn_len: None,
+                position: 1,
+                follow: RefCell::new(Follow::new()),
+            })
+            .add_item(LRItem {
+                prod: 3.into(),
+                prod_len: grammar.production_len(2.into()),
+                rn_len: None,
+                position: 1,
+                follow: RefCell::new(Follow::new()),
+            })
+            .add_item(LRItem {
+                prod: 4.into(),
+                prod_len: grammar.production_len(3.into()),
+                rn_len: None,
+                position: 2,
+                follow: RefCell::new(Follow::new()),
+            });
 
         let per_next_symbol = lr_state.group_per_next_symbol();
 
@@ -1944,13 +1856,9 @@ mod tests {
 
         // Create some LR state
         let mut lr_state =
-            LRState::new(&grammar, StateIndex(0), grammar.symbol_index("T"))
-                .add_item(LRItem::with_follow(
-                    &grammar,
-                    ProdIndex(1),
-                    None,
-                    follow([grammar.stop_index]),
-                ));
+            LRState::new(&grammar, StateIndex(0), grammar.symbol_index("T")).add_item(
+                LRItem::with_follow(&grammar, ProdIndex(1), None, follow([grammar.stop_index])),
+            );
 
         lr_state.closure(&firsts, &None);
 
@@ -1964,12 +1872,10 @@ mod tests {
 
         assert_eq!(lr_state.items.len(), 4);
 
-        itertools::izip!(&lr_state.items, prods, follow_sets).for_each(
-            |(item, prod, follows)| {
-                assert_eq!(item.prod, prod.into());
-                assert!(item.follow.borrow().iter().eq(follows.iter()));
-            },
-        );
+        itertools::izip!(&lr_state.items, prods, follow_sets).for_each(|(item, prod, follows)| {
+            assert_eq!(item.prod, prod.into());
+            assert!(item.follow.borrow().iter().eq(follows.iter()));
+        });
 
         log!("{:?}", lr_state);
     }

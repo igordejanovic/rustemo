@@ -6,16 +6,13 @@ fn main() {
     fn default_settings() -> Settings {
         let mut settings = rustemo_compiler::Settings::new().force(true);
         if std::env::var("CARGO_FEATURE_ARRAYS").is_ok() {
-            settings = settings.generator_table_type(
-                rustemo_compiler::GeneratorTableType::Arrays,
-            );
+            settings = settings.generator_table_type(rustemo_compiler::GeneratorTableType::Arrays);
         }
         settings
     }
     let root_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
 
-    let out_dir =
-        PathBuf::from(env::var("OUT_DIR").expect("Cargo didn't set OUT_DIR"));
+    let out_dir = PathBuf::from(env::var("OUT_DIR").expect("Cargo didn't set OUT_DIR"));
 
     #[allow(clippy::type_complexity)]
     let tests: &[(&str, Box<dyn Fn(Settings) -> Settings>)] = &[
@@ -230,9 +227,10 @@ fn main() {
         eprintln!("{}", e);
         exit(1);
     }
-    if let Err(e) = default_settings().actions_in_source_tree().process_grammar(
-        &root_dir.join("src/output_dir/output_dir_act.rustemo"),
-    ) {
+    if let Err(e) = default_settings()
+        .actions_in_source_tree()
+        .process_grammar(&root_dir.join("src/output_dir/output_dir_act.rustemo"))
+    {
         eprintln!("{}", e);
         exit(1);
     }

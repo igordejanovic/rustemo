@@ -8,7 +8,6 @@ rustemo_mod!(partial_actions, "/src/partial");
 
 #[test]
 fn partial_parse() {
-    let result =
-        PartialParser::new().parse("Numbers: 1 7 42 b b whatever .... bla bla");
+    let result = PartialParser::new().parse("Numbers: 1 7 42 b b whatever .... bla bla");
     output_cmp!("src/partial/partial.ast", format!("{:#?}", result));
 }

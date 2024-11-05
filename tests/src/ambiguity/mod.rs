@@ -23,28 +23,18 @@ fn reduce_empty_2() {
 
 #[test]
 fn prod_assoc_prio() {
-    rustemo_compiler::process_grammar(local_file!(
-        file!(),
-        "prio_assoc_prod.rustemo"
-    ))
-    .unwrap();
+    rustemo_compiler::process_grammar(local_file!(file!(), "prio_assoc_prod.rustemo")).unwrap();
 }
 
 #[test]
 fn term_assoc_prod_prio() {
-    rustemo_compiler::process_grammar(local_file!(
-        file!(),
-        "prio_assoc_term.rustemo"
-    ))
-    .unwrap();
+    rustemo_compiler::process_grammar(local_file!(file!(), "prio_assoc_term.rustemo")).unwrap();
 }
 
 #[test]
 fn no_assoc_prod_conflicts() {
-    let result = rustemo_compiler::process_grammar(local_file!(
-        file!(),
-        "no_prio_assoc_invalid.rustemo"
-    ));
+    let result =
+        rustemo_compiler::process_grammar(local_file!(file!(), "no_prio_assoc_invalid.rustemo"));
     output_cmp!(
         "src/ambiguity/no_prio_assoc_invalid.err",
         format!("{:#?}", result)

@@ -112,12 +112,11 @@ impl Default for Settings {
     fn default() -> Self {
         // If called from cargo build use OUT_DIR as a default out_dir directory
         // for both parser and actions.
-        let out_dir_root =
-            std::env::var("OUT_DIR").map_or(None, |d| Some(PathBuf::from(d)));
+        let out_dir_root = std::env::var("OUT_DIR").map_or(None, |d| Some(PathBuf::from(d)));
 
         // By default root dir is the root of the cargo project.
-        let root_dir = std::env::var("CARGO_MANIFEST_DIR")
-            .map_or(None, |d| Some(PathBuf::from(d)));
+        let root_dir =
+            std::env::var("CARGO_MANIFEST_DIR").map_or(None, |d| Some(PathBuf::from(d)));
 
         Self {
             root_dir,
@@ -262,10 +261,7 @@ impl Settings {
     }
 
     /// Sets generator table type. The default is nested static arrays.
-    pub fn generator_table_type(
-        mut self,
-        generator_table_type: GeneratorTableType,
-    ) -> Self {
+    pub fn generator_table_type(mut self, generator_table_type: GeneratorTableType) -> Self {
         self.generator_table_type = generator_table_type;
         self
     }
@@ -392,10 +388,14 @@ impl Settings {
             Ok(p.join(
                 grammar
                     .parent()
-                    .ok_or(Error::Error("Cannot find parent of '{grammar:?}' file.".to_string()))?
+                    .ok_or(Error::Error(
+                        "Cannot find parent of '{grammar:?}' file.".to_string(),
+                    ))?
                     .strip_prefix(self.root_dir.as_ref().expect("'root_dir' must be set!"))
-                    .or(Err(Error::Error("Cannot remove prefix '{root_dir:?}' from '{grammar:?}'.".to_string())))?
-                ))
+                    .or(Err(Error::Error(
+                        "Cannot remove prefix '{root_dir:?}' from '{grammar:?}'.".to_string(),
+                    )))?,
+            ))
         };
 
         let out_dir = self
@@ -427,11 +427,7 @@ impl Settings {
 
     /// Recursively visits dirs starting from the given `dir` and calls
     /// `visitor` for each Rustemo grammar found.
-    fn visit_dirs(
-        &self,
-        dir: &Path,
-        visitor: &dyn Fn(&Path) -> Result<()>,
-    ) -> Result<()> {
+    fn visit_dirs(&self, dir: &Path, visitor: &dyn Fn(&Path) -> Result<()>) -> Result<()> {
         if dir.is_dir() {
             for entry in fs::read_dir(dir)? {
                 let entry = entry?;
@@ -446,8 +442,7 @@ impl Settings {
 
                 if path.is_dir() {
                     self.visit_dirs(&path, visitor)?;
-                } else if matches!(path.extension(), Some(ext) if ext == "rustemo")
-                {
+                } else if matches!(path.extension(), Some(ext) if ext == "rustemo") {
                     visitor(&path)?
                 }
             }

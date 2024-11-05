@@ -30,32 +30,17 @@ impl Builder for MyCustomBuilder {
 // ANCHOR_END: custom-builder-base
 
 // ANCHOR: custom-builder-lr
-impl<'i> LRBuilder<'i, str, Context<'i>, State, ProdKind, TokenKind>
-    for MyCustomBuilder
-{
-    fn shift_action(
-        &mut self,
-        _context: &mut Context<'i>,
-        token: Token<'i, str, TokenKind>,
-    ) {
+impl<'i> LRBuilder<'i, str, Context<'i>, State, ProdKind, TokenKind> for MyCustomBuilder {
+    fn shift_action(&mut self, _context: &mut Context<'i>, token: Token<'i, str, TokenKind>) {
         if let TokenKind::Num = token.kind {
             self.stack.push(token.value.parse().unwrap())
         }
     }
 
-    fn reduce_action(
-        &mut self,
-        _context: &mut Context<'i>,
-        prod: ProdKind,
-        _prod_len: usize,
-    ) {
+    fn reduce_action(&mut self, _context: &mut Context<'i>, prod: ProdKind, _prod_len: usize) {
         let res = match prod {
-            ProdKind::EAdd => {
-                self.stack.pop().unwrap() + self.stack.pop().unwrap()
-            }
-            ProdKind::EMul => {
-                self.stack.pop().unwrap() * self.stack.pop().unwrap()
-            }
+            ProdKind::EAdd => self.stack.pop().unwrap() + self.stack.pop().unwrap(),
+            ProdKind::EMul => self.stack.pop().unwrap() * self.stack.pop().unwrap(),
             ProdKind::ENum => self.stack.pop().unwrap(),
         };
         self.stack.push(res);

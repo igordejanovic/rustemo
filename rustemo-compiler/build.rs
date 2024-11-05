@@ -32,8 +32,7 @@ fn main() {
 }
 
 fn get_git_hash_if_building_compiler() -> Option<String> {
-    if matches!(std::env::var("CARGO_PKG_NAME"), Ok(pkg_name) if pkg_name == "rustemo-compiler")
-    {
+    if matches!(std::env::var("CARGO_PKG_NAME"), Ok(pkg_name) if pkg_name == "rustemo-compiler") {
         let output = Command::new("git")
             .args(["rev-parse", "HEAD"])
             .output()
@@ -57,8 +56,7 @@ fn cut_git_hash(hash: &str) -> &str {
 fn bootstrap() -> Result<(), Box<dyn Error>> {
     println!("Building bootstrap binary.");
 
-    let out_dir =
-        PathBuf::from(env::var("OUT_DIR").expect("Cargo didn't set OUT_DIR"));
+    let out_dir = PathBuf::from(env::var("OUT_DIR").expect("Cargo didn't set OUT_DIR"));
 
     fs::create_dir_all(out_dir.join("src/lang"))?;
 

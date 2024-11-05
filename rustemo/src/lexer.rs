@@ -1,6 +1,4 @@
-use crate::{
-    context::Context, input::Input, location::Location, log, parser::State,
-};
+use crate::{context::Context, input::Input, location::Location, log, parser::State};
 #[cfg(debug_assertions)]
 use colored::*;
 use core::fmt::Debug;
@@ -70,10 +68,7 @@ impl<
         const TERMINAL_COUNT: usize,
     > StringLexer<C, S, TK, TR, TERMINAL_COUNT>
 {
-    pub fn new(
-        skip_ws: bool,
-        token_recognizers: &'static [TR; TERMINAL_COUNT],
-    ) -> Self {
+    pub fn new(skip_ws: bool, token_recognizers: &'static [TR; TERMINAL_COUNT]) -> Self {
         Self {
             skip_ws,
             token_recognizers,
@@ -88,8 +83,7 @@ impl<
             .map(|c| c.len_utf8())
             .sum();
         if skipped_len > 0 {
-            let skipped =
-                &input[context.position()..context.position() + skipped_len];
+            let skipped = &input[context.position()..context.position() + skipped_len];
             log!("\t{} {}", "Skipped ws:".bold().green(), skipped_len);
             context.set_layout_ahead(Some(skipped));
             context.set_position(context.position() + skipped_len);
@@ -137,12 +131,9 @@ where
     fn next(&mut self) -> Option<Self::Item> {
         loop {
             if !self.finish && self.index < self.token_recognizers.len() {
-                let (recognizer, token_kind, finish) =
-                    &self.token_recognizers[self.index];
+                let (recognizer, token_kind, finish) = &self.token_recognizers[self.index];
                 self.index += 1;
-                if let Some(recognized) =
-                    recognizer.recognize(&self.input[self.position..])
-                {
+                if let Some(recognized) = recognizer.recognize(&self.input[self.position..]) {
                     self.finish = *finish;
                     return Some(Token {
                         kind: *token_kind,
@@ -184,9 +175,7 @@ where
             context.location(),
             expected_tokens
                 .iter()
-                .map(|&tok| {
-                    (&self.token_recognizers[tok.0.into()], tok.0, tok.1)
-                })
+                .map(|&tok| (&self.token_recognizers[tok.0.into()], tok.0, tok.1))
                 .collect::<Vec<_>>(),
         ))
     }

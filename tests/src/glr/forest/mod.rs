@@ -106,8 +106,7 @@ fn glr_forest_into_iter() {
     let mut forest_iter_string = String::new();
 
     for tree_idx in 0..forest.solutions() {
-        forest_get_tree_string
-            .push_str(&format!("{:#?}", forest.get_tree(tree_idx).unwrap()))
+        forest_get_tree_string.push_str(&format!("{:#?}", forest.get_tree(tree_idx).unwrap()))
     }
 
     for tree in forest {
@@ -125,8 +124,7 @@ fn glr_forest_iter() {
     let mut forest_iter_ref_string = String::new();
 
     for tree_idx in 0..forest.solutions() {
-        forest_get_tree_string
-            .push_str(&format!("{:#?}", forest.get_tree(tree_idx).unwrap()))
+        forest_get_tree_string.push_str(&format!("{:#?}", forest.get_tree(tree_idx).unwrap()))
     }
 
     for tree in forest.iter() {

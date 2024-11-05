@@ -1,6 +1,6 @@
 use crate::{
-    builder::Builder, context::Context, input::Input, lexer::Token,
-    location::Location, parser::State,
+    builder::Builder, context::Context, input::Input, lexer::Token, location::Location,
+    parser::State,
 };
 use core::fmt::Debug;
 
@@ -70,8 +70,7 @@ where
     }
 }
 
-impl<'i, I, C, S, P, TK> LRBuilder<'i, I, C, S, P, TK>
-    for TreeBuilder<'i, I, P, TK>
+impl<'i, I, C, S, P, TK> LRBuilder<'i, I, C, S, P, TK> for TreeBuilder<'i, I, P, TK>
 where
     I: Input + ?Sized,
     C: Context<'i, I, S, TK>,
@@ -88,8 +87,7 @@ where
         let children;
         let layout;
         if prod_len > 0 {
-            children =
-                self.res_stack.split_off(self.res_stack.len() - prod_len);
+            children = self.res_stack.split_off(self.res_stack.len() - prod_len);
             layout = match children[0] {
                 TreeNode::TermNode { layout, .. } => layout,
                 TreeNode::NonTermNode { layout, .. } => layout,

@@ -32,52 +32,28 @@ use crate::{
 /// different parser implementation strategies.
 trait PartGenerator<'g, 's> {
     fn delegate(&self) -> &dyn PartGenerator<'g, 's>;
-    fn header(
-        &self,
-        generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>> {
+    fn header(&self, generator: &ParserGenerator<'g, 's>) -> Result<Vec<syn::Stmt>> {
         self.delegate().header(generator)
     }
-    fn parser_header(
-        &self,
-        generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>> {
+    fn parser_header(&self, generator: &ParserGenerator<'g, 's>) -> Result<Vec<syn::Stmt>> {
         self.delegate().parser_header(generator)
     }
-    fn symbols(
-        &self,
-        generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>> {
+    fn symbols(&self, generator: &ParserGenerator<'g, 's>) -> Result<Vec<syn::Stmt>> {
         self.delegate().symbols(generator)
     }
-    fn types(
-        &self,
-        generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>> {
+    fn types(&self, generator: &ParserGenerator<'g, 's>) -> Result<Vec<syn::Stmt>> {
         self.delegate().types(generator)
     }
-    fn parser(
-        &self,
-        generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>> {
+    fn parser(&self, generator: &ParserGenerator<'g, 's>) -> Result<Vec<syn::Stmt>> {
         self.delegate().parser(generator)
     }
-    fn lexer_definition(
-        &self,
-        generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>> {
+    fn lexer_definition(&self, generator: &ParserGenerator<'g, 's>) -> Result<Vec<syn::Stmt>> {
         self.delegate().lexer_definition(generator)
     }
-    fn parser_definition(
-        &self,
-        generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>> {
+    fn parser_definition(&self, generator: &ParserGenerator<'g, 's>) -> Result<Vec<syn::Stmt>> {
         self.delegate().parser_definition(generator)
     }
-    fn builder(
-        &self,
-        generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>> {
+    fn builder(&self, generator: &ParserGenerator<'g, 's>) -> Result<Vec<syn::Stmt>> {
         self.delegate().builder(generator)
     }
 }
@@ -93,21 +69,16 @@ pub fn generate_parser(
         return Err(Error::Error("Grammar file doesn't exist.".to_string()));
     }
 
-    let grammar_dir =
-        PathBuf::from(grammar_path.parent().ok_or_else(|| {
-            Error::Error(
-                "Cannot deduce parent directory of the grammar file."
-                    .to_string(),
-            )
-        })?);
+    let grammar_dir = PathBuf::from(grammar_path.parent().ok_or_else(|| {
+        Error::Error("Cannot deduce parent directory of the grammar file.".to_string())
+    })?);
 
     let out_dir = out_dir.unwrap_or(&grammar_dir);
     let out_dir_actions = out_dir_actions.unwrap_or(&grammar_dir);
 
     let mut parser = RustemoParser::new();
     let file = parser.parse_file(grammar_path)?;
-    let grammar: Grammar =
-        GrammarBuilder::new().try_from_file(file, Some(grammar_path))?;
+    let grammar: Grammar = GrammarBuilder::new().try_from_file(file, Some(grammar_path))?;
 
     // Check recognizers definition. If default string lexer is used all
     // recognizers must be defined. If custom lexer is used no recognizer should
@@ -136,8 +107,7 @@ pub fn generate_parser(
             println!("{}", "\nCONFLICTS:".red());
             table.print_conflicts_report(&conflicts);
             return Err(Error::Error(
-                "Grammar is not deterministic. There are conflicts."
-                    .to_string(),
+                "Grammar is not deterministic. There are conflicts.".to_string(),
             ));
         }
     }
@@ -202,8 +172,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                 ))
             })?;
         let parser_name = to_pascal_case(file_name);
-        let root_symbol =
-            format_ident!("{}", grammar.symbol_name(grammar.start_index));
+        let root_symbol = format_ident!("{}", grammar.symbol_name(grammar.start_index));
         let parser = format_ident!("{}Parser", parser_name);
         let layout_parser = format_ident!("{}LayoutParser", parser_name);
         let parser_definition = format_ident!("{}Definition", parser);
@@ -212,15 +181,10 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         let builder_file = format_ident!("{}_builder", file_name);
 
         // Choose parser implementation strategy.
-        let part_generator: Box<dyn PartGenerator> =
-            match settings.generator_table_type {
-                GeneratorTableType::Arrays => {
-                    Box::new(arrays::ArrayPartGenerator::new())
-                }
-                GeneratorTableType::Functions => {
-                    Box::new(functions::FunctionPartGenerator::new())
-                }
-            };
+        let part_generator: Box<dyn PartGenerator> = match settings.generator_table_type {
+            GeneratorTableType::Arrays => Box::new(arrays::ArrayPartGenerator::new()),
+            GeneratorTableType::Functions => Box::new(functions::FunctionPartGenerator::new()),
+        };
 
         let input_type = syn::parse_str(&settings.input_type)?;
 
@@ -277,13 +241,9 @@ impl<'g, 's> ParserGenerator<'g, 's> {
 
         let out_file = out_dir.join(&self.file_name).with_extension("rs");
         println!("Writing parser file {:?}", out_file);
-        std::fs::write(&out_file, prettyplease::unparse(&file)).map_err(
-            |e| {
-                Error::Error(format!(
-                    "Cannot write parser file '{out_file:?}': {e:?}."
-                ))
-            },
-        )?;
+        std::fs::write(&out_file, prettyplease::unparse(&file)).map_err(|e| {
+            Error::Error(format!("Cannot write parser file '{out_file:?}': {e:?}."))
+        })?;
 
         Ok(())
     }
@@ -328,8 +288,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
                     parse_quote! { Shift(State::#state_kind_ident) }
                 }
                 Action::Reduce(prod, len) => {
-                    let prod_kind =
-                        self.prod_kind_ident(&self.grammar.productions[*prod]);
+                    let prod_kind = self.prod_kind_ident(&self.grammar.productions[*prod]);
                     parse_quote! { Reduce(PK::#prod_kind, #len) }
                 }
                 Action::Accept => parse_quote! { Accept },

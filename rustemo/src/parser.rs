@@ -20,20 +20,13 @@ where
     /// parsing state (e.g. position, location). Used in situation when we need
     /// to continue parsing from a specific state, like in parsing the layout
     /// from the current location.
-    fn parse_with_context(
-        &self,
-        context: &mut C,
-        input: &'i I,
-    ) -> Result<Self::Output>;
+    fn parse_with_context(&self, context: &mut C, input: &'i I) -> Result<Self::Output>;
 
     /// A convenience method for loading the content from the given file and
     /// calling `parse`. The parser will own the content being parsed and thus
     /// has to outlive `Self::Output` if it borrows from the content loaded from
     /// the file.
-    fn parse_file<'a, F: AsRef<Path>>(
-        &'a mut self,
-        file: F,
-    ) -> Result<Self::Output>
+    fn parse_file<'a, F: AsRef<Path>>(&'a mut self, file: F) -> Result<Self::Output>
     where
         'a: 'i;
 }

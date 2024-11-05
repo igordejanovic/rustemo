@@ -155,10 +155,7 @@ macro_rules! create_index {
 
         impl<T> Index<std::ops::RangeFrom<usize>> for $collection<T> {
             type Output = [T];
-            fn index(
-                &self,
-                index: std::ops::RangeFrom<usize>,
-            ) -> &Self::Output {
+            fn index(&self, index: std::ops::RangeFrom<usize>) -> &Self::Output {
                 &self.0[index.start..]
             }
         }

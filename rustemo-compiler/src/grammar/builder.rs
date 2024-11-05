@@ -8,19 +8,15 @@ use rustemo::{Error, Result, ValLoc};
 
 use crate::{
     grammar::{Grammar, DEFAULT_PRIORITY},
-    index::{
-        NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, TermIndex,
-        TermVec,
-    },
+    index::{NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, TermIndex, TermVec},
     lang::rustemo_actions::{
-        self, ConstVal, File, GrammarRule, GrammarSymbol, GrammarSymbolRef,
-        Name, Recognizer, RepetitionOperatorOp, TermMetaDatas,
+        self, ConstVal, File, GrammarRule, GrammarSymbol, GrammarSymbolRef, Name, Recognizer,
+        RepetitionOperatorOp, TermMetaDatas,
     },
 };
 
 use super::{
-    Associativity, NonTerminal, Production, ResolvingAssignment,
-    ResolvingSymbolIndex, Terminal,
+    Associativity, NonTerminal, Production, ResolvingAssignment, ResolvingSymbolIndex, Terminal,
 };
 
 macro_rules! resolving {
@@ -82,11 +78,7 @@ impl GrammarBuilder {
         ret
     }
 
-    pub fn try_from_file(
-        mut self,
-        file: File,
-        path: Option<&Path>,
-    ) -> Result<Grammar> {
+    pub fn try_from_file(mut self, file: File, path: Option<&Path>) -> Result<Grammar> {
         if let Some(path) = path {
             self.file = path.to_string_lossy().into();
         }
@@ -126,15 +118,12 @@ impl GrammarBuilder {
             imports: file.imports.unwrap_or_default(),
             productions: self.productions,
             empty_index: term_len.into(), // Right after the last terminal
-            augmented_index: (term_len
-                + self.nonterminals.get("AUG").unwrap().idx.0)
-                .into(),
+            augmented_index: (term_len + self.nonterminals.get("AUG").unwrap().idx.0).into(),
             augmented_layout_index: self
                 .nonterminals
                 .get("AUGL")
                 .map(|x| SymbolIndex(term_len + x.idx.0)),
-            start_index: (term_len
-                + self.nonterminals.get(&self.start_rule_name).unwrap().idx.0)
+            start_index: (term_len + self.nonterminals.get(&self.start_rule_name).unwrap().idx.0)
                 .into(),
             stop_index: 0.into(),
             term_by_name: self
@@ -143,8 +132,7 @@ impl GrammarBuilder {
                 .map(|t| (t.name.clone(), t.idx.symbol_index()))
                 .collect(),
             terminals: {
-                let mut terms: TermVec<_> =
-                    self.terminals.into_values().collect();
+                let mut terms: TermVec<_> = self.terminals.into_values().collect();
                 terms.sort();
                 terms
             },
@@ -154,8 +142,7 @@ impl GrammarBuilder {
                 .map(|nt| (nt.name.clone(), nt.idx.symbol_index(term_len)))
                 .collect(),
             nonterminals: {
-                let mut nonterms: NonTermVec<_> =
-                    self.nonterminals.into_values().collect();
+                let mut nonterms: NonTermVec<_> = self.nonterminals.into_values().collect();
                 nonterms.sort();
                 nonterms
             },
@@ -191,9 +178,7 @@ impl GrammarBuilder {
                     },
                     recognizer: terminal.recognizer,
                     // Extract priority from meta-data
-                    prio: if let Some(ConstVal::Int(prio)) =
-                        terminal.meta.remove("priority")
-                    {
+                    prio: if let Some(ConstVal::Int(prio)) = terminal.meta.remove("priority") {
                         let p = prio.clone().into();
                         if p > 99 {
                             err!(
@@ -224,10 +209,8 @@ impl GrammarBuilder {
             // Collect each terminal which uses a string match recognizer
             // Those can be used as inline terminals in productions.
             if let Some(Recognizer::StrConst(m)) = &terminal.recognizer {
-                self.terminals_matches.insert(
-                    (*m).as_ref().into(),
-                    (terminal.name.clone(), terminal.idx),
-                );
+                self.terminals_matches
+                    .insert((*m).as_ref().into(), (terminal.name.clone(), terminal.idx));
             }
         }
         log!("Terminal matches: {:?}", self.terminals_matches);
@@ -235,10 +218,7 @@ impl GrammarBuilder {
         Ok(())
     }
 
-    fn extract_productions_and_symbols(
-        &mut self,
-        rules: Vec<GrammarRule>,
-    ) -> Result<()> {
+    fn extract_productions_and_symbols(&mut self, rules: Vec<GrammarRule>) -> Result<()> {
         // EMPTY non-terminal is implicit
         let nt_idx = self.get_nonterm_idx();
         self.nonterminals.insert(
@@ -258,18 +238,14 @@ impl GrammarBuilder {
             .iter()
             .find(|r| r.name.as_ref().to_lowercase() == "layout");
         if let Some(layout_rule) = layout_rule {
-            self.create_aug_nt_and_production(
-                "AUGL",
-                layout_rule.name.as_ref(),
-            );
+            self.create_aug_nt_and_production("AUGL", layout_rule.name.as_ref());
         }
 
         for rule in rules {
             self.check_identifier(&rule.name)?;
             // Create new nonterm index if needed
             let nt_idx;
-            if let Some(nonterminal) = self.nonterminals.get(rule.name.as_ref())
-            {
+            if let Some(nonterminal) = self.nonterminals.get(rule.name.as_ref()) {
                 nt_idx = nonterminal.idx;
             } else {
                 nt_idx = self.get_nonterm_idx();
@@ -302,11 +278,9 @@ impl GrammarBuilder {
                         // Map all RHS elements to Assignments
                         .map(|assignment| -> Result<ResolvingAssignment> {
                             use rustemo_actions::Assignment::*;
-                            let is_bool =
-                                matches! { assignment, BoolAssignment(_) };
+                            let is_bool = matches! { assignment, BoolAssignment(_) };
                             match assignment {
-                                PlainAssignment(mut assign)
-                                | BoolAssignment(mut assign) => {
+                                PlainAssignment(mut assign) | BoolAssignment(mut assign) => {
                                     self.check_identifier(&assign.name)?;
                                     self.desugar_regex(
                                         &mut assign.gsymref,
@@ -316,19 +290,13 @@ impl GrammarBuilder {
                                         name: Some(assign.name),
                                         symbol: ResolvingSymbolIndex {
                                             index: None,
-                                            symbol: assign
-                                                .gsymref
-                                                .gsymbol
-                                                .unwrap(),
+                                            symbol: assign.gsymref.gsymbol.unwrap(),
                                         },
                                         is_bool,
                                     })
                                 }
                                 GrammarSymbolRef(mut reference) => {
-                                    self.desugar_regex(
-                                        &mut reference,
-                                        &mut desugar_productions,
-                                    )?;
+                                    self.desugar_regex(&mut reference, &mut desugar_productions)?;
                                     Ok(ResolvingAssignment {
                                         name: None,
                                         symbol: ResolvingSymbolIndex {
@@ -353,15 +321,11 @@ impl GrammarBuilder {
                 }
 
                 // Map meta-data to production fields for easier access
-                if let Some(ConstVal::Int(prio)) =
-                    new_production.meta.remove("priority")
-                {
+                if let Some(ConstVal::Int(prio)) = new_production.meta.remove("priority") {
                     new_production.prio = prio.into();
                 }
 
-                if let Some(ConstVal::String(kind)) =
-                    new_production.meta.remove("kind")
-                {
+                if let Some(ConstVal::String(kind)) = new_production.meta.remove("kind") {
                     new_production.kind = Some(kind.into());
                 }
 
@@ -386,10 +350,7 @@ impl GrammarBuilder {
                     .or_insert_with(|| NonTerminal {
                         idx: nt_idx,
                         name: rule.name.as_ref().into(),
-                        annotation: rule
-                            .annotation
-                            .as_ref()
-                            .map(|a| a.as_ref().into()),
+                        annotation: rule.annotation.as_ref().map(|a| a.as_ref().into()),
                         ..Default::default()
                     });
                 nonterminal.productions.push(prod_idx);
@@ -398,11 +359,7 @@ impl GrammarBuilder {
         Ok(())
     }
 
-    fn create_aug_nt_and_production(
-        &mut self,
-        nt_name: &str,
-        rhs_rule_name: &str,
-    ) {
+    fn create_aug_nt_and_production(&mut self, nt_name: &str, rhs_rule_name: &str) {
         // Augmented non-terminal and production.
         let nt_idx = self.get_nonterm_idx();
         let prod_idx = self.get_prod_idx();
@@ -425,9 +382,7 @@ impl GrammarBuilder {
                 name: None,
                 symbol: ResolvingSymbolIndex {
                     index: None,
-                    symbol: GrammarSymbol::Name(
-                        rhs_rule_name.to_string().into(),
-                    ),
+                    symbol: GrammarSymbol::Name(rhs_rule_name.to_string().into()),
                 },
                 is_bool: false,
             }],
@@ -480,9 +435,7 @@ impl GrammarBuilder {
             {
                 GrammarSymbol::Name(ref name) => name.clone(),
                 GrammarSymbol::StrConst(ref mtch) => {
-                    if let Some(term) =
-                        self.terminals_matches.get(mtch.as_ref())
-                    {
+                    if let Some(term) = self.terminals_matches.get(mtch.as_ref()) {
                         ValLoc::new(term.0.clone(), mtch.location)
                     } else {
                         return err!(
@@ -499,15 +452,9 @@ impl GrammarBuilder {
 
             match op.rep_op {
                 RepetitionOperatorOp::ZeroOrMore => {
-                    let one_name =
-                        nt_name(&ref_type, &RepetitionOperatorOp::OneOrMore);
+                    let one_name = nt_name(&ref_type, &RepetitionOperatorOp::OneOrMore);
                     if !self.nonterminals.contains_key(one_name.as_ref()) {
-                        self.create_one(
-                            one_name.clone(),
-                            &ref_type,
-                            &modifier,
-                            productions,
-                        );
+                        self.create_one(one_name.clone(), &ref_type, &modifier, productions);
                     }
                     let name = nt_name(&ref_type, &op.rep_op);
                     if !self.nonterminals.contains_key(name.as_ref()) {
@@ -518,23 +465,14 @@ impl GrammarBuilder {
                 RepetitionOperatorOp::OneOrMore => {
                     let name = nt_name(&ref_type, &op.rep_op);
                     if !self.nonterminals.contains_key(name.as_ref()) {
-                        self.create_one(
-                            name.clone(),
-                            &ref_type,
-                            &modifier,
-                            productions,
-                        );
+                        self.create_one(name.clone(), &ref_type, &modifier, productions);
                     }
                     gsymref.gsymbol = Some(GrammarSymbol::Name(name))
                 }
                 RepetitionOperatorOp::Optional => {
                     let name = nt_name(&ref_type, &op.rep_op);
                     if !self.nonterminals.contains_key(name.as_ref()) {
-                        self.create_optional(
-                            name.clone(),
-                            &ref_type,
-                            productions,
-                        );
+                        self.create_optional(name.clone(), &ref_type, productions);
                     }
                     gsymref.gsymbol = Some(GrammarSymbol::Name(name))
                 }
@@ -574,9 +512,9 @@ impl GrammarBuilder {
                         err!(
                             format!(
                                 concat!(
-                                "Terminal \"{}\" used in production \"{}\" ",
-                                "is not defined in the 'terminals' section."
-                            ),
+                                    "Terminal \"{}\" used in production \"{}\" ",
+                                    "is not defined in the 'terminals' section."
+                                ),
                                 mtch, production_str
                             ),
                             Some(self.file.clone()),
@@ -601,42 +539,45 @@ impl GrammarBuilder {
                 } = &assign.symbol
                 {
                     assign.symbol.index = Some(match symbol {
-                    GrammarSymbol::Name(name) =>
-                            if let Some(terminal) =
-                                self.terminals.get(name.as_ref())
-                            {
+                        GrammarSymbol::Name(name) => {
+                            if let Some(terminal) = self.terminals.get(name.as_ref()) {
                                 terminal.idx.symbol_index()
                             } else {
                                 let nt_idx = self
-                                        .nonterminals
-                                        .get(name.as_ref())
-                                        .ok_or_else(|| {
-                                            let r: Result<()> = err!(format!("Unexisting symbol '{}' in production '{}'.",
-                                                         name, production_str),
-                                                 Some(self.file.clone()), name.location);
-                                            r.unwrap_err()
-                                        })?.idx;
-                                if rhs_len == 1
-                                    && nt_idx == production.nonterminal
-                                {
+                                    .nonterminals
+                                    .get(name.as_ref())
+                                    .ok_or_else(|| {
+                                        let r: Result<()> = err!(
+                                            format!(
+                                                "Unexisting symbol '{}' in production '{}'.",
+                                                name, production_str
+                                            ),
+                                            Some(self.file.clone()),
+                                            name.location
+                                        );
+                                        r.unwrap_err()
+                                    })?
+                                    .idx;
+                                if rhs_len == 1 && nt_idx == production.nonterminal {
                                     err!(format!("Infinite recursion on symbol '{}' in production '{}'.",
                                             name, production_str),
                                              Some(self.file.clone()), name.location)?;
                                 }
                                 nt_idx.symbol_index(self.terminals.len())
-                            },
-                    GrammarSymbol::StrConst(name) =>
-                                self.terminals
-                                    .get(name.as_ref())
-                                    .unwrap_or_else(|| {
-                                        // This should never happen.
-                                        panic!(
-                                            "terminal {:?} not created in production '{}'.",
-                                            name, production_str
-                                        )
-                                    })
-                                    .idx
-                                    .symbol_index()
+                            }
+                        }
+                        GrammarSymbol::StrConst(name) => self
+                            .terminals
+                            .get(name.as_ref())
+                            .unwrap_or_else(|| {
+                                // This should never happen.
+                                panic!(
+                                    "terminal {:?} not created in production '{}'.",
+                                    name, production_str
+                                )
+                            })
+                            .idx
+                            .symbol_index(),
                     });
                 }
             }
@@ -644,12 +585,7 @@ impl GrammarBuilder {
         Ok(())
     }
 
-    fn create_optional(
-        &mut self,
-        name: Name,
-        ref_name: &Name,
-        productions: &mut Vec<Production>,
-    ) {
+    fn create_optional(&mut self, name: Name, ref_name: &Name, productions: &mut Vec<Production>) {
         let nt_index = self.get_nonterm_idx();
         let nt = NonTerminal {
             idx: nt_index,
@@ -704,10 +640,7 @@ impl GrammarBuilder {
                             ntidx: idx,
                             rhs: if modifier.is_none() {
                                 // without separator
-                                vec![
-                                    resolving!(name.clone()),
-                                    resolving!(ref_name.clone()),
-                                ]
+                                vec![resolving!(name.clone()), resolving!(ref_name.clone())]
                             } else {
                                 // with separator.
                                 let sep = modifier.unwrap().clone();
@@ -736,12 +669,7 @@ impl GrammarBuilder {
         self.nonterminals.insert(name.into(), nt);
     }
 
-    fn create_zero(
-        &mut self,
-        name: Name,
-        one_name: &Name,
-        productions: &mut Vec<Production>,
-    ) {
+    fn create_zero(&mut self, name: Name, one_name: &Name, productions: &mut Vec<Production>) {
         let nt_idx = self.get_nonterm_idx();
         let nt = NonTerminal {
             idx: nt_idx,
@@ -804,11 +732,7 @@ fn mark_reachable_symbols(grammar: &Grammar) {
             visited.insert(*prod);
             for symbol in grammar.productions[*prod].rhs_symbols() {
                 if grammar.is_nonterm(symbol) {
-                    mark_reachable(
-                        grammar,
-                        grammar.symbol_to_nonterm(symbol),
-                        visited,
-                    )
+                    mark_reachable(grammar, grammar.symbol_to_nonterm(symbol), visited)
                 } else {
                     grammar.symbol_to_term(symbol).reachable.set(true);
                 }
@@ -818,8 +742,7 @@ fn mark_reachable_symbols(grammar: &Grammar) {
 
     mark_reachable(
         grammar,
-        &grammar.nonterminals
-            [grammar.symbol_to_nonterm_index(grammar.start_index)],
+        &grammar.nonterminals[grammar.symbol_to_nonterm_index(grammar.start_index)],
         &mut visited,
     );
 }

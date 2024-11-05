@@ -10,8 +10,7 @@ use rustemo::{Error, Parser, Result};
 
 use crate::{
     index::{
-        NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, SymbolVec,
-        TermIndex, TermVec,
+        NonTermIndex, NonTermVec, ProdIndex, ProdVec, SymbolIndex, SymbolVec, TermIndex, TermVec,
     },
     lang::{rustemo::RustemoParser, rustemo_actions::Name},
 };
@@ -303,9 +302,10 @@ pub struct Assignment {
 /// Called for Assignment to extract resolved SymbolIndex.
 #[inline]
 pub(crate) fn res_symbol(assign: &ResolvingAssignment) -> SymbolIndex {
-    assign.symbol.index.unwrap_or_else(|| {
-        panic!("Unresolved symbol {:?}", &assign.symbol.symbol)
-    })
+    assign
+        .symbol
+        .index
+        .unwrap_or_else(|| panic!("Unresolved symbol {:?}", &assign.symbol.symbol))
 }
 
 // This can be used at the moment due to conflict with a blankt impl in the core.
@@ -329,10 +329,8 @@ impl FromStr for Grammar {
 impl Grammar {
     /// Parses given string and constructs a Grammar instance
     fn from_string<G: AsRef<str>>(grammar_str: G) -> Result<Self> {
-        GrammarBuilder::new().try_from_file(
-            RustemoParser::new().parse(grammar_str.as_ref())?,
-            None,
-        )
+        GrammarBuilder::new()
+            .try_from_file(RustemoParser::new().parse(grammar_str.as_ref())?, None)
     }
 
     // /// Parses given file and constructs a Grammar instance
@@ -377,8 +375,7 @@ impl Grammar {
     #[inline]
     pub fn symbol_has_content(&self, symbol: SymbolIndex) -> bool {
         !self.is_empty(symbol)
-            && (self.is_nonterm(symbol)
-                || self.symbol_to_term(symbol).has_content)
+            && (self.is_nonterm(symbol) || self.symbol_to_term(symbol).has_content)
     }
 
     pub fn symbol_indexes(&self, names: &[&str]) -> SymbolVec<SymbolIndex> {
@@ -442,8 +439,7 @@ impl Grammar {
     /// terminal index.
     #[inline]
     pub fn symbol_to_nonterm(&self, index: SymbolIndex) -> &NonTerminal {
-        &self.nonterminals
-            [NonTermIndex(index.0.checked_sub(self.terminals.len()).unwrap())]
+        &self.nonterminals[NonTermIndex(index.0.checked_sub(self.terminals.len()).unwrap())]
     }
 
     /// Get NonTerminal by name.

@@ -20,10 +20,7 @@ impl ArrayPartGenerator {
 }
 
 impl<'g, 's> PartGenerator<'g, 's> for ArrayPartGenerator {
-    fn parser_header(
-        &self,
-        generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>> {
+    fn parser_header(&self, generator: &ParserGenerator<'g, 's>) -> Result<Vec<syn::Stmt>> {
         let max_actions = generator.table.max_actions();
         let max_recognizers = generator.table.max_recognizers();
         let term_count = generator.grammar.terminals.len();
@@ -40,10 +37,7 @@ impl<'g, 's> PartGenerator<'g, 's> for ArrayPartGenerator {
         })
     }
 
-    fn parser_definition(
-        &self,
-        generator: &ParserGenerator<'g, 's>,
-    ) -> Result<Vec<syn::Stmt>> {
+    fn parser_definition(&self, generator: &ParserGenerator<'g, 's>) -> Result<Vec<syn::Stmt>> {
         let parser_definition = &generator.parser_definition;
         let mut ast: Vec<syn::Stmt> = vec![];
 
@@ -96,8 +90,7 @@ impl<'g, 's> PartGenerator<'g, 's> for ArrayPartGenerator {
                     .iter()
                     .map(|x| match x {
                         Some(state) => {
-                            let state_kind_ident =
-                                generator.state_kind_ident(*state);
+                            let state_kind_ident = generator.state_kind_ident(*state);
                             parse_quote! { Some(State::#state_kind_ident) }
                         }
                         None => parse_quote! { None },
@@ -119,8 +112,7 @@ impl<'g, 's> PartGenerator<'g, 's> for ArrayPartGenerator {
                     .sorted_terminals
                     .iter()
                     .map(|(term_index, finish)| {
-                        let term: &Terminal =
-                            generator.grammar.term_by_index(*term_index);
+                        let term: &Terminal = generator.grammar.term_by_index(*term_index);
                         let token_kind = format_ident!("{}", &term.name);
                         let finish = format_ident!("{finish}");
                         parse_quote! {
@@ -129,9 +121,8 @@ impl<'g, 's> PartGenerator<'g, 's> for ArrayPartGenerator {
                     })
                     .chain(
                         // Fill the rest with "None"
-                        repeat(parse_quote! {None}).take(
-                            max_recognizers - state.sorted_terminals.len(),
-                        ),
+                        repeat(parse_quote! {None})
+                            .take(max_recognizers - state.sorted_terminals.len()),
                     )
                     .collect();
 
@@ -149,14 +140,8 @@ impl<'g, 's> PartGenerator<'g, 's> for ArrayPartGenerator {
             };
         });
 
-        let longest_match = format_ident!(
-            "{}",
-            generator.settings.lexical_disamb_longest_match
-        );
-        let grammar_order = format_ident!(
-            "{}",
-            generator.settings.lexical_disamb_grammar_order
-        );
+        let longest_match = format_ident!("{}", generator.settings.lexical_disamb_longest_match);
+        let grammar_order = format_ident!("{}", generator.settings.lexical_disamb_grammar_order);
         ast.push(parse_quote! {
             impl ParserDefinition<State, ProdKind, TokenKind, NonTermKind> for #parser_definition {
                 fn actions(&self, state: State, token: TokenKind) -> Vec<Action<State, ProdKind>> {

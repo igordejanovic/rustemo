@@ -169,10 +169,7 @@ macro_rules! from_valloc {
     };
 }
 // Implement value with location support for all primitive types.
-from_valloc!(
-    i8, i16, i32, i64, i128, isize, u8, u16, u32, u64, u128, usize, f32, f64,
-    bool, char
-);
+from_valloc!(i8, i16, i32, i64, i128, isize, u8, u16, u32, u64, u128, usize, f32, f64, bool, char);
 
 #[cfg(test)]
 mod tests {
@@ -199,8 +196,7 @@ mod tests {
 
     #[test]
     pub fn test_location() {
-        let r =
-            Location::new(Position::from_lc(5, 15), Position::from_lc(13, 27));
+        let r = Location::new(Position::from_lc(5, 15), Position::from_lc(13, 27));
 
         assert_eq!(format!("{r:?}"), "[5,15-13,27]");
 

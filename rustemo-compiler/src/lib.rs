@@ -37,8 +37,8 @@ pub mod grammar;
 pub mod utils;
 
 pub use crate::settings::{
-    process_crate_dir, process_dir, process_grammar, BuilderType,
-    GeneratorTableType, LexerType, ParserAlgo, Settings,
+    process_crate_dir, process_dir, process_grammar, BuilderType, GeneratorTableType, LexerType,
+    ParserAlgo, Settings,
 };
 pub use crate::table::TableType;
 

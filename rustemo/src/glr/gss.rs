@@ -22,8 +22,7 @@ use crate::{
 /// Nodes keep information about state while edges keep all alternative
 /// sub-trees constructed by reduction across the edge.
 pub struct GssGraph<'i, I: Input + ?Sized, S, P, TK: Copy>(
-    #[allow(clippy::type_complexity)]
-    Graph<GssHead<'i, I, S, TK>, Rc<Parent<'i, I, P, TK>>>,
+    #[allow(clippy::type_complexity)] Graph<GssHead<'i, I, S, TK>, Rc<Parent<'i, I, P, TK>>>,
 );
 
 impl<I, S, P, TK> Default for GssGraph<'_, I, S, P, TK>
@@ -93,19 +92,12 @@ where
             self.parent(edge).possibilities.borrow_mut().push(solution);
             None
         } else {
-            Some(self.add_parent(
-                start,
-                end,
-                Rc::new(Parent::new(end, start, vec![solution])),
-            ))
+            Some(self.add_parent(start, end, Rc::new(Parent::new(end, start, vec![solution]))))
         }
     }
 
     #[inline]
-    pub fn backedges(
-        &self,
-        head: NodeIndex,
-    ) -> Edges<Rc<Parent<'i, I, P, TK>>, Directed> {
+    pub fn backedges(&self, head: NodeIndex) -> Edges<Rc<Parent<'i, I, P, TK>>, Directed> {
         self.0.edges_directed(head, Direction::Outgoing)
     }
 
@@ -126,11 +118,7 @@ where
     }
 
     #[inline]
-    pub fn edge_between(
-        &self,
-        start: NodeIndex,
-        end: NodeIndex,
-    ) -> Option<EdgeIndex> {
+    pub fn edge_between(&self, start: NodeIndex, end: NodeIndex) -> Option<EdgeIndex> {
         self.0.find_edge(start, end)
     }
 }
@@ -258,11 +246,7 @@ where
             token_ahead,
         }
     }
-    pub fn with_tok_state(
-        &self,
-        token_ahead: Token<'i, I, TK>,
-        state: S,
-    ) -> Self {
+    pub fn with_tok_state(&self, token_ahead: Token<'i, I, TK>, state: S) -> Self {
         Self {
             state,
             token_ahead: Some(token_ahead),
@@ -382,10 +366,7 @@ where
     }
 
     #[allow(clippy::mutable_key_type)]
-    fn ambiguities(
-        &self,
-        visited: &mut HashSet<Rc<Parent<'i, I, P, TK>>>,
-    ) -> usize {
+    fn ambiguities(&self, visited: &mut HashSet<Rc<Parent<'i, I, P, TK>>>) -> usize {
         match self {
             SPPFTree::Term { .. } => 0,
             SPPFTree::NonTerm { children, .. } => children
@@ -529,10 +510,7 @@ where
     /// Number of ambiguous nodes in the span covered by this parent link.
     /// If there is more than one possibility this parent link is ambiguous.
     #[allow(clippy::mutable_key_type)]
-    pub fn ambiguities(
-        &self,
-        visited: &mut HashSet<Rc<Parent<'i, I, P, TK>>>,
-    ) -> usize {
+    pub fn ambiguities(&self, visited: &mut HashSet<Rc<Parent<'i, I, P, TK>>>) -> usize {
         let ambiguity: usize = if self.possibilities.borrow().len() > 1 {
             1
         } else {
@@ -602,15 +580,12 @@ where
                     .iter()
                     .enumerate()
                     .map(|(idx, child)| {
-                        let factor: usize =
-                            weights[(idx + 1)..].iter().product();
+                        let factor: usize = weights[(idx + 1)..].iter().product();
                         let tree_idx_residual = tree_idx / factor;
                         tree_idx %= factor;
-                        let (root, new_tree_idx) = Self::find_tree_root(
-                            &child.possibilities.borrow(),
-                            tree_idx_residual,
-                        )
-                        .expect("Tree index must be valid.");
+                        let (root, new_tree_idx) =
+                            Self::find_tree_root(&child.possibilities.borrow(), tree_idx_residual)
+                                .expect("Tree index must be valid.");
                         Tree::new(root, new_tree_idx)
                     })
                     .collect()
@@ -619,10 +594,7 @@ where
     }
 
     /// Build an output of the tree using the given builder.
-    pub fn build<B: LRBuilder<'i, I, C, S, P, TK>, C, S>(
-        &self,
-        builder: &mut B,
-    ) -> B::Output
+    pub fn build<B: LRBuilder<'i, I, C, S, P, TK>, C, S>(&self, builder: &mut B) -> B::Output
     where
         C: Context<'i, I, S, TK> + Default,
         S: State,
@@ -633,19 +605,14 @@ where
         builder.get_result()
     }
 
-    fn build_inner<B: LRBuilder<'i, I, C, S, P, TK>, C, S>(
-        &self,
-        context: &mut C,
-        builder: &mut B,
-    ) where
+    fn build_inner<B: LRBuilder<'i, I, C, S, P, TK>, C, S>(&self, context: &mut C, builder: &mut B)
+    where
         C: Context<'i, I, S, TK> + Default,
         S: State,
         P: Copy,
     {
         match &*self.root {
-            SPPFTree::Term { token, .. } => {
-                builder.shift_action(context, token.clone())
-            }
+            SPPFTree::Term { token, .. } => builder.shift_action(context, token.clone()),
             SPPFTree::NonTerm { prod, .. } => {
                 let children = self.children();
                 children.iter().for_each(|c| {
@@ -721,8 +688,7 @@ where
 
     /// Extracts a tree with the given index
     pub fn get_tree(&self, idx: usize) -> Option<Tree<'i, I, P, TK>> {
-        Tree::find_tree_root(&self.results, idx)
-            .map(|(root, idx)| Tree::new(root, idx))
+        Tree::find_tree_root(&self.results, idx).map(|(root, idx)| Tree::new(root, idx))
     }
 
     #[inline]
