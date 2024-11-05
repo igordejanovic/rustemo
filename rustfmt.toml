@@ -1,3 +1,3 @@
 # Note: parser generated files are ignored using #[rustfmt:skip] on module
 # imports.
-max_width = 80
+max_width = 99
