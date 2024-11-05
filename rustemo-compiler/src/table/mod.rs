@@ -484,6 +484,10 @@ pub struct LRTable<'g, 's> {
     /// Right-nulled length of productions. Used in RNGLR. RN length is a
     /// position in a production after which all the remaining symbols can
     /// derive EMPTY.
+    ///
+    /// E.g. if there is 3 symbols at the RHS and the last one can derive EMPTY
+    /// but others can't then its rn length is 2. Or, in other words, this
+    /// length is the minimal length of reduction for this production.
     pub production_rn_lengths: Option<ProdVec<usize>>,
 }
 
