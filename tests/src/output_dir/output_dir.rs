@@ -426,7 +426,7 @@ for DefaultBuilder {
         &mut self,
         context: &mut Context<'i, Input>,
         prod: ProdKind,
-        _prod_len: usize,
+        prod_len: usize,
     ) {
         let prod = match prod {
             ProdKind::AP1 => {
