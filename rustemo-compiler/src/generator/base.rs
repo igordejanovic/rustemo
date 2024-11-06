@@ -811,7 +811,6 @@ impl<'g, 's> PartGenerator<'g, 's> for BasePartGenerator {
                                 && !generator.grammar.symbol_has_content(production.rhs_symbol(0)) {
                                 parse_quote! {
                                     {
-                                        #match_expr;
                                         NonTerminal::#nonterminal(#actions_file::#action(&*context, #(#params),*))
                                     }
                                 }
