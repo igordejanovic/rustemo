@@ -1,0 +1,29 @@
+Some(
+    [
+        Strong(
+            Strong {
+                prefix: StrongT,
+                children: None,
+                suffix: None,
+            },
+        ),
+        Text(
+            Text {
+                text: [
+                    TextCharT(
+                        "l",
+                    ),
+                    TextCharT(
+                        "d",
+                    ),
+                    TextCharT(
+                        " ",
+                    ),
+                    TextCharT(
+                        "2",
+                    ),
+                ],
+            },
+        ),
+    ],
+)
