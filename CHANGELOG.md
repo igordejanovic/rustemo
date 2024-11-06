@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # [Unreleased]
 
+## Fixed
+
+- attempt to subtract causes overflow in GLR default builder. See [16]. Thanks
+  andrewbaxter@GitHub for the bug report and regression test.
+  
+[16]: https://github.com/igordejanovic/rustemo/issues/16
+
 
 # [0.6.2] - 2024-10-11
 
