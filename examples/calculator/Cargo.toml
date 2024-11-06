@@ -15,11 +15,6 @@ rust-version.workspace = true
 # Needed by rustemo generated parsers.
 rustemo = { workspace = true }
 
-# Default string lexer uses regexes and once_cell to init regexes only once.
-regex = { workspace = true }
-once_cell = { workspace = true }
-colored = { workspace = true }
-
 [dev-dependencies]
 # For output_cmp for testing
 rustemo-compiler = { workspace = true }

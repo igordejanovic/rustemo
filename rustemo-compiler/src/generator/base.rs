@@ -30,16 +30,16 @@ impl<'g, 's> PartGenerator<'g, 's> for BasePartGenerator {
         if let LexerType::Default = generator.settings.lexer_type {
             let regex: syn::Stmt = if generator.settings.fancy_regex {
                 parse_quote! {
-                    use fancy_regex::Regex;
+                    use rustemo::fancy_regex::Regex;
                 }
             } else {
                 parse_quote! {
-                    use regex::Regex;
+                    use rustemo::regex::Regex;
                 }
             };
             imports.extend::<Vec<syn::Stmt>>(parse_quote! {
                 #regex
-                use once_cell::sync::Lazy;
+                use rustemo::once_cell::sync::Lazy;
                 use rustemo::StringLexer;
             });
         }
@@ -82,7 +82,7 @@ impl<'g, 's> PartGenerator<'g, 's> for BasePartGenerator {
             use rustemo::debug::{log, logn};
             #[allow(unused_imports)]
             #[cfg(debug_assertions)]
-            use colored::*;
+            use rustemo::colored::*;
 
             pub type Input = #input_type;
         };

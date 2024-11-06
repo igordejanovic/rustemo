@@ -43,3 +43,11 @@ pub use crate::glr::{
     gss::{Forest, GssHead},
     parser::GlrParser,
 };
+
+// Reexporting dependencies of generated parsers so that users of the library
+// do not have to pollute their Cargo.toml.
+// See: https://github.com/igordejanovic/rustemo/issues/15
+pub use colored;
+pub use fancy_regex;
+pub use once_cell;
+pub use regex;

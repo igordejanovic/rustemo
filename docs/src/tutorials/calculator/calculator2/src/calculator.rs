@@ -5,8 +5,8 @@ use rustemo::{
     Result, Input as InputT, Lexer, Token, TokenRecognizer as TokenRecognizerT, Parser,
     ParserDefinition, State as StateT, Builder,
 };
-use regex::Regex;
-use once_cell::sync::Lazy;
+use rustemo::regex::Regex;
+use rustemo::once_cell::sync::Lazy;
 use rustemo::StringLexer;
 use rustemo::LRBuilder;
 use super::calculator_actions;
@@ -16,7 +16,7 @@ use rustemo::Action::{self, Shift, Reduce, Accept};
 use rustemo::debug::{log, logn};
 #[allow(unused_imports)]
 #[cfg(debug_assertions)]
-use colored::*;
+use rustemo::colored::*;
 pub type Input = str;
 const STATE_COUNT: usize = 11usize;
 const MAX_RECOGNIZERS: usize = 5usize;

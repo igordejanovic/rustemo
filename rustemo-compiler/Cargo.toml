@@ -45,10 +45,6 @@ colored = { workspace = true }
 # Needed by rustemo generated parsers.
 rustemo = { workspace = true }
 
-# Default string lexer uses regexes and once_cell to init regexes only once.
-once_cell = { workspace = true }
-regex = { workspace = true }
-
 [dev-dependencies]
 criterion = { workspace = true }
 

@@ -59,9 +59,6 @@ checksum = "79296716171880943b8470b5f8d03aa55eb2e645a4874bdbb28adb49162e012c"
 name = "calculator"
 version = "0.6.2"
 dependencies = [
- "colored",
- "once_cell",
- "regex",
  "rustemo",
  "rustemo-compiler",
 ]
@@ -70,9 +67,6 @@ dependencies = [
 name = "calculator1"
 version = "0.1.0"
 dependencies = [
- "colored",
- "once_cell",
- "regex",
  "rustemo",
  "rustemo-compiler",
 ]
@@ -81,9 +75,6 @@ dependencies = [
 name = "calculator2"
 version = "0.1.0"
 dependencies = [
- "colored",
- "once_cell",
- "regex",
  "rustemo",
  "rustemo-compiler",
 ]
@@ -92,9 +83,6 @@ dependencies = [
 name = "calculator3"
 version = "0.1.0"
 dependencies = [
- "colored",
- "once_cell",
- "regex",
  "rustemo",
  "rustemo-compiler",
 ]
@@ -103,9 +91,6 @@ dependencies = [
 name = "calculator4"
 version = "0.1.0"
 dependencies = [
- "colored",
- "once_cell",
- "regex",
  "rustemo",
  "rustemo-compiler",
 ]
@@ -114,9 +99,6 @@ dependencies = [
 name = "calculator5"
 version = "0.1.0"
 dependencies = [
- "colored",
- "once_cell",
- "regex",
  "rustemo",
  "rustemo-compiler",
 ]
@@ -297,9 +279,6 @@ checksum = "5443807d6dff69373d433ab9ef5378ad8df50ca6298caf15de6e52e24aaf54d5"
 name = "expressions"
 version = "0.1.0"
 dependencies = [
- "colored",
- "once_cell",
- "regex",
  "rustemo",
  "rustemo-compiler",
 ]
@@ -402,9 +381,6 @@ dependencies = [
 name = "json"
 version = "0.6.2"
 dependencies = [
- "colored",
- "once_cell",
- "regex",
  "rustemo",
  "rustemo-compiler",
 ]
@@ -583,9 +559,6 @@ dependencies = [
 name = "readme_example"
 version = "0.6.2"
 dependencies = [
- "colored",
- "once_cell",
- "regex",
  "rustemo",
 ]
 
@@ -623,7 +596,10 @@ name = "rustemo"
 version = "0.6.2"
 dependencies = [
  "colored",
+ "fancy-regex",
+ "once_cell",
  "petgraph",
+ "regex",
 ]
 
 [[package]]
@@ -635,11 +611,9 @@ dependencies = [
  "convert_case",
  "criterion",
  "itertools",
- "once_cell",
  "prettyplease",
  "proc-macro2",
  "quote",
- "regex",
  "rustemo",
  "syn 1.0.109",
 ]
@@ -648,10 +622,6 @@ dependencies = [
 name = "rustemo-tests"
 version = "0.6.2"
 dependencies = [
- "colored",
- "fancy-regex",
- "once_cell",
- "regex",
  "rustemo",
  "rustemo-compiler",
 ]

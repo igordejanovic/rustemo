@@ -11,8 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - attempt to subtract causes overflow in GLR default builder. See [16]. Thanks
   andrewbaxter@GitHub for the bug report and regression test.
+- reexported dependencies for generated parsers. Now, the only dependency
+  required by the client code is `rustemo`. See [15]. Thanks andrewbaxter@GitHub
+  for the idea
   
 [16]: https://github.com/igordejanovic/rustemo/issues/16
+[15]: https://github.com/igordejanovic/rustemo/issues/15
 
 
 # [0.6.2] - 2024-10-11

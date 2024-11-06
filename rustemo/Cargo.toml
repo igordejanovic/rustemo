@@ -16,7 +16,10 @@ rust-version.workspace = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-colored = "2"
+colored = { workspace = true }
+regex = { workspace = true }
+fancy-regex = { workspace = true }
+once_cell = { workspace = true }
 petgraph = { workspace = true, optional = true }
 
 [features]

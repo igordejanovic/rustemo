@@ -5,8 +5,8 @@ use rustemo::{
     Result, Input as InputT, Lexer, Token, TokenRecognizer as TokenRecognizerT, Parser,
     ParserDefinition, State as StateT, Builder,
 };
-use regex::Regex;
-use once_cell::sync::Lazy;
+use rustemo::regex::Regex;
+use rustemo::once_cell::sync::Lazy;
 use rustemo::StringLexer;
 use rustemo::LRBuilder;
 use super::calc_actions;
@@ -16,7 +16,7 @@ use rustemo::Action::{self, Shift, Reduce, Accept};
 use rustemo::debug::{log, logn};
 #[allow(unused_imports)]
 #[cfg(debug_assertions)]
-use colored::*;
+use rustemo::colored::*;
 pub type Input = str;
 const STATE_COUNT: usize = 7usize;
 const MAX_RECOGNIZERS: usize = 3usize;
@@ -354,7 +354,7 @@ impl<'i> TokenRecognizerT<'i> for TokenRecognizer {
                         log!("{} '{}'", "recognized".bold().green(), x_str);
                         Some(x_str)
                     }
-                    None => {
+                    _ => {
                         log!("{}", "not recognized".red());
                         None
                     }
@@ -378,7 +378,7 @@ pub(crate) static RECOGNIZERS: [TokenRecognizer; TERMINAL_COUNT] = [
     TokenRecognizer(
         TokenKind::Number,
         Recognizer::RegexMatch(
-            Lazy::new(|| { Regex::new(concat!("^(", "\\d+", ")")).unwrap() }),
+            Lazy::new(|| { Regex::new(concat!("^", "\\d+")).unwrap() }),
         ),
     ),
     TokenRecognizer(TokenKind::Add, Recognizer::StrMatch("+")),
@@ -422,7 +422,7 @@ for DefaultBuilder {
         &mut self,
         context: &mut Context<'i, Input>,
         prod: ProdKind,
-        _prod_len: usize,
+        prod_len: usize,
     ) {
         let prod = match prod {
             ProdKind::EP1 => {
