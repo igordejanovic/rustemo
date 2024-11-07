@@ -1,5 +1,4 @@
-use proc_macro2::{Ident, Span};
-use quote::quote;
+use quote::{format_ident, quote};
 use syn::{parse::Parser, parse_quote};
 
 use crate::{
@@ -35,8 +34,8 @@ impl<'t> ProductionActionsGenerator<'t> {
             ChoiceKind::Plain => (), // No args for plain enum
             ChoiceKind::Struct { fields, .. } => {
                 for field in fields {
-                    let f_name = Ident::new(&field.name, Span::call_site());
-                    let f_type = Ident::new(&field.ref_type, Span::call_site());
+                    let f_name = format_ident!("{}", field.name);
+                    let f_type = format_ident!("{}", field.ref_type);
 
                     // If this type is Vec and ref type is recursion make it
                     // mutable to support *, +...
@@ -49,8 +48,8 @@ impl<'t> ProductionActionsGenerator<'t> {
                 }
             }
             ChoiceKind::Ref { ref_type, .. } => {
-                let ty = Ident::new(ref_type, Span::call_site());
-                let name = Ident::new(&to_snake_case(ref_type), Span::call_site());
+                let ty = format_ident!("{ref_type}");
+                let name = format_ident!("{}", to_snake_case(ref_type));
                 fn_args.push(parse_quote! { #name: #ty });
             }
             ChoiceKind::Empty => (),
@@ -59,18 +58,18 @@ impl<'t> ProductionActionsGenerator<'t> {
     }
 
     fn get_action_body(&self, ty: &SymbolType, target_type: &str, choice: &Choice) -> syn::Expr {
-        let target_type = Ident::new(target_type, Span::call_site());
-        let choice_ident = Ident::new(&choice.name, Span::call_site());
+        let target_type = format_ident!("{target_type}");
+        let choice_ident = format_ident!("{}", choice.name);
         let expr: syn::Expr = match &choice.kind {
             ChoiceKind::Plain => {
                 parse_quote! { #target_type::#choice_ident }
             }
             ChoiceKind::Struct { type_name, fields } => {
-                let struct_ty = Ident::new(type_name, Span::call_site());
+                let struct_ty = format_ident!("{type_name}");
                 let fields: Vec<syn::FieldValue> = fields
                     .iter()
                     .map(|f| {
-                        let field = Ident::new(&f.name, Span::call_site());
+                        let field = format_ident!("{}", f.name);
                         if f.recursive.get() {
                             parse_quote! { #field: Box::new(#field) }
                         } else {
@@ -99,7 +98,7 @@ impl<'t> ProductionActionsGenerator<'t> {
                 ref_type,
                 recursive,
             } => {
-                let ref_type_var_ident = Ident::new(&to_snake_case(ref_type), Span::call_site());
+                let ref_type_var_ident = format_ident!("{}", to_snake_case(ref_type));
                 let mut ref_type_var: syn::Expr = parse_quote! { #ref_type_var_ident };
 
                 if recursive.get() {
@@ -131,7 +130,7 @@ impl ActionsGenerator for ProductionActionsGenerator<'_> {
         let ty = self
             .types
             .get_type(nonterminal.idx.symbol_index(self.term_len));
-        let type_ident = Ident::new(&ty.name, Span::call_site());
+        let type_ident = format_ident!("{}", ty.name);
 
         fn get_choice_type(choice: &Choice, type_name: Option<&str>) -> Option<syn::Item> {
             match &choice.kind {
@@ -140,16 +139,16 @@ impl ActionsGenerator for ProductionActionsGenerator<'_> {
                     fields,
                 } => {
                     let type_ident = if let Some(type_name) = type_name {
-                        Ident::new(type_name, Span::call_site())
+                        format_ident!("{type_name}")
                     } else {
-                        Ident::new(struct_type, Span::call_site())
+                        format_ident!("{struct_type}")
                     };
 
                     let fields: Vec<syn::Field> = fields
                         .iter()
                         .map(|f| {
-                            let field_name = Ident::new(&f.name, Span::call_site());
-                            let field_type = Ident::new(&f.ref_type, Span::call_site());
+                            let field_name = format_ident!("{}", f.name);
+                            let field_type = format_ident!("{}", f.ref_type);
                             syn::Field::parse_named
                                 .parse2(if f.recursive.get() {
                                     // Handle direct recursion
@@ -182,22 +181,23 @@ impl ActionsGenerator for ProductionActionsGenerator<'_> {
             choices
                 .iter()
                 .filter_map(|v| {
-                    let variant_ident = Ident::new(&v.name, Span::call_site());
+                    let variant_ident = format_ident!("{}", v.name);
                     match &v.kind {
                         ChoiceKind::Plain => Some(parse_quote! { #variant_ident }),
                         ChoiceKind::Struct { type_name, .. } => {
-                            let type_ident = Ident::new(type_name, Span::call_site());
+                            let type_ident = format_ident!("{type_name}");
                             Some(parse_quote! { #variant_ident(#type_ident) })
                         }
                         ChoiceKind::Ref {
                             ref_type,
                             recursive,
                         } => {
-                            let ref_type_ident = Ident::new(ref_type, Span::call_site());
-                            let mut ref_type: syn::Type = parse_quote! { #ref_type_ident };
-                            if recursive.get() {
-                                ref_type = parse_quote! { Box<#ref_type> };
-                            }
+                            let ref_type = format_ident!("{ref_type}");
+                            let ref_type: syn::Type = if recursive.get() {
+                                parse_quote! { Box<#ref_type> }
+                            } else {
+                                parse_quote! { #ref_type }
+                            };
                             Some(parse_quote! { #variant_ident(#ref_type) })
                         }
                         ChoiceKind::Empty => None,
@@ -212,7 +212,7 @@ impl ActionsGenerator for ProductionActionsGenerator<'_> {
             } => {
                 let mut types = get_choice_types(&ty.choices, None);
                 let variants = get_variants(&ty.choices);
-                let enum_type = Ident::new(enum_type, Span::call_site());
+                let enum_type = format_ident!("{enum_type}");
 
                 if ty.optional {
                     types.push(parse_quote! {pub type #type_ident = Option<#enum_type>;});
@@ -229,7 +229,7 @@ impl ActionsGenerator for ProductionActionsGenerator<'_> {
                 type_name: struct_type,
             } => {
                 let mut types = get_choice_types(&ty.choices, Some(struct_type));
-                let struct_type = Ident::new(struct_type, Span::call_site());
+                let struct_type = format_ident!("{struct_type}");
                 if ty.optional {
                     types.push(parse_quote! {pub type #type_ident = Option<#struct_type>;});
                 }
@@ -239,11 +239,12 @@ impl ActionsGenerator for ProductionActionsGenerator<'_> {
                 ref_type,
                 recursive,
             } => {
-                let ref_type_ident = Ident::new(ref_type, Span::call_site());
-                let mut ref_type: syn::Type = parse_quote! { #ref_type_ident };
-                if recursive.get() {
-                    ref_type = parse_quote! { Box<#ref_type> }
-                }
+                let ref_type = format_ident!("{ref_type}");
+                let ref_type: syn::Type = if recursive.get() {
+                    parse_quote! { Box<#ref_type> }
+                } else {
+                    parse_quote! { #ref_type }
+                };
                 if ty.optional {
                     vec![parse_quote! { pub type #type_ident = Option<#ref_type>; }]
                 } else {
@@ -254,7 +255,7 @@ impl ActionsGenerator for ProductionActionsGenerator<'_> {
                 ref_type,
                 recursive,
             } => {
-                let ref_type = Ident::new(ref_type, Span::call_site());
+                let ref_type = format_ident!("{ref_type}");
                 if recursive.get() {
                     vec![parse_quote! { pub type #type_ident = Vec<Box<#ref_type>>; }]
                 } else {
@@ -273,7 +274,7 @@ impl ActionsGenerator for ProductionActionsGenerator<'_> {
         let ty = self
             .types
             .get_type(nonterminal.idx.symbol_index(self.term_len));
-        let ret_type = Ident::new(&nonterminal.name, Span::call_site());
+        let ret_type = format_ident!("{}", nonterminal.name);
 
         match &ty.kind {
             SymbolTypeKind::Enum {
@@ -290,7 +291,7 @@ impl ActionsGenerator for ProductionActionsGenerator<'_> {
                 .iter()
                 .map(|choice| {
                     let action_name = action_name(nonterminal, choice);
-                    let action = Ident::new(&action_name, Span::call_site());
+                    let action = format_ident!("{action_name}");
                     let args = self.get_action_args(ty, choice);
                     let body = self.get_action_body(ty, target_type, choice);
 
@@ -309,7 +310,7 @@ impl ActionsGenerator for ProductionActionsGenerator<'_> {
                 .iter()
                 .map(|choice| {
                     let action_name = action_name(nonterminal, choice);
-                    let action = Ident::new(&action_name, Span::call_site());
+                    let action = format_ident!("{action_name}");
                     let args = self.get_action_args(ty, choice);
 
                     let mut body: Vec<syn::Expr> = vec![];
@@ -319,8 +320,8 @@ impl ActionsGenerator for ProductionActionsGenerator<'_> {
                         ChoiceKind::Struct { fields, .. } => {
                             match &fields[..] {
                                 [a, b] => {
-                                    let mut a_i = Ident::new(&a.name, Span::call_site());
-                                    let mut b_i = Ident::new(&b.name, Span::call_site());
+                                    let mut a_i = format_ident!("{}", a.name);
+                                    let mut b_i = format_ident!("{}", b.name);
                                     // Find which one is a vector
                                     if b.ref_type == nonterminal.name {
                                         (a_i, b_i) = (b_i, a_i)
@@ -333,8 +334,7 @@ impl ActionsGenerator for ProductionActionsGenerator<'_> {
                                     body.push(parse_quote! { #a_i });
                                 }
                                 [a] => {
-                                    let a_i =
-                                        Ident::new(&to_snake_case(&a.name), Span::call_site());
+                                    let a_i = format_ident!("{}", to_snake_case(&a.name));
                                     if recursive.get() {
                                         body.push(parse_quote! { vec![Box::new(#a_i)] });
                                     } else {
@@ -345,7 +345,7 @@ impl ActionsGenerator for ProductionActionsGenerator<'_> {
                             }
                         }
                         ChoiceKind::Ref { ref_type, .. } => {
-                            let i = Ident::new(&to_snake_case(ref_type), Span::call_site());
+                            let i = format_ident!("{}", to_snake_case(ref_type));
                             if recursive.get() {
                                 log!("{:?}", i);
                                 body.push(parse_quote! { vec![Box::new(#i)] });

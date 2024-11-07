@@ -5,7 +5,6 @@
 
 use std::{collections::BTreeSet, path::PathBuf};
 
-use proc_macro2::{Ident, Span};
 use quote::format_ident;
 use syn::{self, parse_quote};
 
@@ -22,17 +21,16 @@ mod production;
 
 pub(crate) trait ActionsGenerator {
     fn terminal_type(&self, terminal: &Terminal) -> syn::Item {
-        let type_name_ident = Ident::new(&terminal.name, Span::call_site());
+        let type_name_ident = format_ident!("{}", terminal.name);
         parse_quote! {
             pub type #type_name_ident = String;
         }
     }
     fn terminal_action(&self, terminal: &Terminal, _settings: &Settings) -> syn::Item {
-        let type_name_ident = Ident::new(&terminal.name, Span::call_site());
-        let action_name = to_snake_case(&terminal.name);
-        let action_name_ident = Ident::new(&action_name, Span::call_site());
+        let type_name = format_ident!("{}", terminal.name);
+        let action_name = format_ident!("{}", to_snake_case(&terminal.name));
         parse_quote! {
-            pub fn #action_name_ident(_ctx: &Ctx, token: Token) -> #type_name_ident {
+            pub fn #action_name(_ctx: &Ctx, token: Token) -> #type_name {
                 token.value.into()
             }
         }
