@@ -5617,7 +5617,7 @@ impl<'i> TokenRecognizerT<'i> for TokenRecognizer {
                         log!("{} '{}'", "recognized".bold().green(), x_str);
                         Some(x_str)
                     }
-                    None => {
+                    _ => {
                         log!("{}", "not recognized".red());
                         None
                     }
@@ -5675,29 +5675,27 @@ pub(crate) static RECOGNIZERS: [TokenRecognizer; TERMINAL_COUNT] = [
         TokenKind::Name,
         Recognizer::RegexMatch(
             Lazy::new(|| {
-                Regex::new(concat!("^(", "[a-zA-Z_][a-zA-Z0-9_\\.]*", ")")).unwrap()
+                Regex::new(concat!("^", "[a-zA-Z_][a-zA-Z0-9_\\.]*")).unwrap()
             }),
         ),
     ),
     TokenRecognizer(
         TokenKind::RegexTerm,
         Recognizer::RegexMatch(
-            Lazy::new(|| {
-                Regex::new(concat!("^(", "/(\\\\.|[^/\\\\])*/", ")")).unwrap()
-            }),
+            Lazy::new(|| { Regex::new(concat!("^", "/(\\\\.|[^/\\\\])*/")).unwrap() }),
         ),
     ),
     TokenRecognizer(
         TokenKind::IntConst,
         Recognizer::RegexMatch(
-            Lazy::new(|| { Regex::new(concat!("^(", "\\d+", ")")).unwrap() }),
+            Lazy::new(|| { Regex::new(concat!("^", "\\d+")).unwrap() }),
         ),
     ),
     TokenRecognizer(
         TokenKind::FloatConst,
         Recognizer::RegexMatch(
             Lazy::new(|| {
-                Regex::new(concat!("^(", "[+-]?[0-9]+[.][0-9]*([e][+-]?[0-9]+)?", ")"))
+                Regex::new(concat!("^", "[+-]?[0-9]+[.][0-9]*([e][+-]?[0-9]+)?"))
                     .unwrap()
             }),
         ),
@@ -5705,7 +5703,7 @@ pub(crate) static RECOGNIZERS: [TokenRecognizer; TERMINAL_COUNT] = [
     TokenRecognizer(
         TokenKind::BoolConst,
         Recognizer::RegexMatch(
-            Lazy::new(|| { Regex::new(concat!("^(", "true|false", ")")).unwrap() }),
+            Lazy::new(|| { Regex::new(concat!("^", "true|false")).unwrap() }),
         ),
     ),
     TokenRecognizer(
@@ -5714,9 +5712,8 @@ pub(crate) static RECOGNIZERS: [TokenRecognizer; TERMINAL_COUNT] = [
             Lazy::new(|| {
                 Regex::new(
                         concat!(
-                            "^(",
-                            "(?s)(^'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')|(^\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\")",
-                            ")"
+                            "^",
+                            "(?s)(^'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')|(^\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\")"
                         ),
                     )
                     .unwrap()
@@ -5726,26 +5723,26 @@ pub(crate) static RECOGNIZERS: [TokenRecognizer; TERMINAL_COUNT] = [
     TokenRecognizer(
         TokenKind::Annotation,
         Recognizer::RegexMatch(
-            Lazy::new(|| { Regex::new(concat!("^(", "@[a-zA-Z0-9_]+", ")")).unwrap() }),
+            Lazy::new(|| { Regex::new(concat!("^", "@[a-zA-Z0-9_]+")).unwrap() }),
         ),
     ),
     TokenRecognizer(
         TokenKind::WS,
         Recognizer::RegexMatch(
-            Lazy::new(|| { Regex::new(concat!("^(", "\\s+", ")")).unwrap() }),
+            Lazy::new(|| { Regex::new(concat!("^", "\\s+")).unwrap() }),
         ),
     ),
     TokenRecognizer(
         TokenKind::CommentLine,
         Recognizer::RegexMatch(
-            Lazy::new(|| { Regex::new(concat!("^(", "//.*", ")")).unwrap() }),
+            Lazy::new(|| { Regex::new(concat!("^", "//.*")).unwrap() }),
         ),
     ),
     TokenRecognizer(
         TokenKind::NotComment,
         Recognizer::RegexMatch(
             Lazy::new(|| {
-                Regex::new(concat!("^(", "((\\*[^/])|[^\\s*/]|/[^\\*])+", ")")).unwrap()
+                Regex::new(concat!("^", "((\\*[^/])|[^\\s*/]|/[^\\*])+")).unwrap()
             }),
         ),
     ),
@@ -5773,7 +5770,7 @@ for DefaultBuilder {
     #![allow(unused_variables)]
     fn shift_action(
         &mut self,
-        context: &mut Context<'i, Input>,
+        context: &Context<'i, Input>,
         token: Token<'i, Input, TokenKind>,
     ) {
         let val = match token.kind {
@@ -5809,24 +5806,24 @@ for DefaultBuilder {
             TokenKind::Prefer => Terminal::Prefer,
             TokenKind::Finish => Terminal::Finish,
             TokenKind::NoFinish => Terminal::NoFinish,
-            TokenKind::Name => Terminal::Name(rustemo_actions::name(&*context, token)),
+            TokenKind::Name => Terminal::Name(rustemo_actions::name(context, token)),
             TokenKind::RegexTerm => {
-                Terminal::RegexTerm(rustemo_actions::regex_term(&*context, token))
+                Terminal::RegexTerm(rustemo_actions::regex_term(context, token))
             }
             TokenKind::IntConst => {
-                Terminal::IntConst(rustemo_actions::int_const(&*context, token))
+                Terminal::IntConst(rustemo_actions::int_const(context, token))
             }
             TokenKind::FloatConst => {
-                Terminal::FloatConst(rustemo_actions::float_const(&*context, token))
+                Terminal::FloatConst(rustemo_actions::float_const(context, token))
             }
             TokenKind::BoolConst => {
-                Terminal::BoolConst(rustemo_actions::bool_const(&*context, token))
+                Terminal::BoolConst(rustemo_actions::bool_const(context, token))
             }
             TokenKind::StrConst => {
-                Terminal::StrConst(rustemo_actions::str_const(&*context, token))
+                Terminal::StrConst(rustemo_actions::str_const(context, token))
             }
             TokenKind::Annotation => {
-                Terminal::Annotation(rustemo_actions::annotation(&*context, token))
+                Terminal::Annotation(rustemo_actions::annotation(context, token))
             }
             _ => panic!("Shift of unreachable terminal!"),
         };
@@ -5834,9 +5831,9 @@ for DefaultBuilder {
     }
     fn reduce_action(
         &mut self,
-        context: &mut Context<'i, Input>,
+        context: &Context<'i, Input>,
         prod: ProdKind,
-        _prod_len: usize,
+        prod_len: usize,
     ) {
         let prod = match prod {
             ProdKind::FileP1 => {
@@ -5847,7 +5844,7 @@ for DefaultBuilder {
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::GrammarRule1(p0)) => {
                         NonTerminal::File(
-                            rustemo_actions::file_grammar_rule1(&*context, p0),
+                            rustemo_actions::file_grammar_rule1(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -5864,7 +5861,7 @@ for DefaultBuilder {
                         Symbol::NonTerminal(NonTerminal::GrammarRule(p1)),
                     ) => {
                         NonTerminal::GrammarRule1(
-                            rustemo_actions::grammar_rule1_c1(&*context, p0, p1),
+                            rustemo_actions::grammar_rule1_c1(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -5878,7 +5875,7 @@ for DefaultBuilder {
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::GrammarRule(p0)) => {
                         NonTerminal::GrammarRule1(
-                            rustemo_actions::grammar_rule1_grammar_rule(&*context, p0),
+                            rustemo_actions::grammar_rule1_grammar_rule(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -5893,7 +5890,7 @@ for DefaultBuilder {
                     (
                         Symbol::NonTerminal(NonTerminal::ImportStm1(p0)),
                         Symbol::NonTerminal(NonTerminal::GrammarRule1(p1)),
-                    ) => NonTerminal::File(rustemo_actions::file_c2(&*context, p0, p1)),
+                    ) => NonTerminal::File(rustemo_actions::file_c2(context, p0, p1)),
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
@@ -5908,7 +5905,7 @@ for DefaultBuilder {
                         Symbol::NonTerminal(NonTerminal::ImportStm(p1)),
                     ) => {
                         NonTerminal::ImportStm1(
-                            rustemo_actions::import_stm1_c1(&*context, p0, p1),
+                            rustemo_actions::import_stm1_c1(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -5922,7 +5919,7 @@ for DefaultBuilder {
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::ImportStm(p0)) => {
                         NonTerminal::ImportStm1(
-                            rustemo_actions::import_stm1_import_stm(&*context, p0),
+                            rustemo_actions::import_stm1_import_stm(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -5938,7 +5935,7 @@ for DefaultBuilder {
                         Symbol::NonTerminal(NonTerminal::GrammarRule1(p0)),
                         _,
                         Symbol::NonTerminal(NonTerminal::TerminalRule1(p1)),
-                    ) => NonTerminal::File(rustemo_actions::file_c3(&*context, p0, p1)),
+                    ) => NonTerminal::File(rustemo_actions::file_c3(context, p0, p1)),
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
@@ -5953,7 +5950,7 @@ for DefaultBuilder {
                         Symbol::NonTerminal(NonTerminal::TerminalRule(p1)),
                     ) => {
                         NonTerminal::TerminalRule1(
-                            rustemo_actions::terminal_rule1_c1(&*context, p0, p1),
+                            rustemo_actions::terminal_rule1_c1(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -5967,7 +5964,7 @@ for DefaultBuilder {
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::TerminalRule(p0)) => {
                         NonTerminal::TerminalRule1(
-                            rustemo_actions::terminal_rule1_terminal_rule(&*context, p0),
+                            rustemo_actions::terminal_rule1_terminal_rule(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -5989,11 +5986,7 @@ for DefaultBuilder {
                         Symbol::NonTerminal(NonTerminal::GrammarRule1(p1)),
                         _,
                         Symbol::NonTerminal(NonTerminal::TerminalRule1(p2)),
-                    ) => {
-                        NonTerminal::File(
-                            rustemo_actions::file_c4(&*context, p0, p1, p2),
-                        )
-                    }
+                    ) => NonTerminal::File(rustemo_actions::file_c4(context, p0, p1, p2)),
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
@@ -6005,7 +5998,7 @@ for DefaultBuilder {
                 match (i.next().unwrap(), i.next().unwrap()) {
                     (_, Symbol::NonTerminal(NonTerminal::TerminalRule1(p0))) => {
                         NonTerminal::File(
-                            rustemo_actions::file_terminal_rule1(&*context, p0),
+                            rustemo_actions::file_terminal_rule1(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6019,7 +6012,7 @@ for DefaultBuilder {
                 match (i.next().unwrap(), i.next().unwrap()) {
                     (_, Symbol::Terminal(Terminal::StrConst(p0))) => {
                         NonTerminal::ImportStm(
-                            rustemo_actions::import_stm_c1(&*context, p0),
+                            rustemo_actions::import_stm_c1(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6043,7 +6036,7 @@ for DefaultBuilder {
                         Symbol::Terminal(Terminal::Name(p1)),
                     ) => {
                         NonTerminal::ImportStm(
-                            rustemo_actions::import_stm_c2(&*context, p0, p1),
+                            rustemo_actions::import_stm_c2(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6069,7 +6062,7 @@ for DefaultBuilder {
                         _,
                     ) => {
                         NonTerminal::GrammarRule(
-                            rustemo_actions::grammar_rule_c1(&*context, p0, p1, p2),
+                            rustemo_actions::grammar_rule_c1(context, p0, p1, p2),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6083,7 +6076,7 @@ for DefaultBuilder {
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::Annotation(p0)) => {
                         NonTerminal::AnnotationOpt(
-                            rustemo_actions::annotation_opt_annotation(&*context, p0),
+                            rustemo_actions::annotation_opt_annotation(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6120,7 +6113,7 @@ for DefaultBuilder {
                         _,
                     ) => {
                         NonTerminal::GrammarRule(
-                            rustemo_actions::grammar_rule_c2(&*context, p0, p1, p2, p3),
+                            rustemo_actions::grammar_rule_c2(context, p0, p1, p2, p3),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6138,7 +6131,7 @@ for DefaultBuilder {
                         Symbol::NonTerminal(NonTerminal::Production(p1)),
                     ) => {
                         NonTerminal::GrammarRuleRHS(
-                            rustemo_actions::grammar_rule_rhs_c1(&*context, p0, p1),
+                            rustemo_actions::grammar_rule_rhs_c1(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6152,7 +6145,7 @@ for DefaultBuilder {
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::Production(p0)) => {
                         NonTerminal::GrammarRuleRHS(
-                            rustemo_actions::grammar_rule_rhs_production(&*context, p0),
+                            rustemo_actions::grammar_rule_rhs_production(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6166,7 +6159,7 @@ for DefaultBuilder {
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::Assignment1(p0)) => {
                         NonTerminal::Production(
-                            rustemo_actions::production_assignment1(&*context, p0),
+                            rustemo_actions::production_assignment1(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6183,7 +6176,7 @@ for DefaultBuilder {
                         Symbol::NonTerminal(NonTerminal::Assignment(p1)),
                     ) => {
                         NonTerminal::Assignment1(
-                            rustemo_actions::assignment1_c1(&*context, p0, p1),
+                            rustemo_actions::assignment1_c1(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6197,7 +6190,7 @@ for DefaultBuilder {
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::Assignment(p0)) => {
                         NonTerminal::Assignment1(
-                            rustemo_actions::assignment1_assignment(&*context, p0),
+                            rustemo_actions::assignment1_assignment(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6221,7 +6214,7 @@ for DefaultBuilder {
                         _,
                     ) => {
                         NonTerminal::Production(
-                            rustemo_actions::production_c2(&*context, p0, p1),
+                            rustemo_actions::production_c2(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6247,7 +6240,7 @@ for DefaultBuilder {
                         _,
                     ) => {
                         NonTerminal::TerminalRule(
-                            rustemo_actions::terminal_rule_c1(&*context, p0, p1, p2),
+                            rustemo_actions::terminal_rule_c1(context, p0, p1, p2),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6271,7 +6264,7 @@ for DefaultBuilder {
                         _,
                     ) => {
                         NonTerminal::TerminalRule(
-                            rustemo_actions::terminal_rule_c2(&*context, p0, p1),
+                            rustemo_actions::terminal_rule_c2(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6303,7 +6296,7 @@ for DefaultBuilder {
                         _,
                     ) => {
                         NonTerminal::TerminalRule(
-                            rustemo_actions::terminal_rule_c3(&*context, p0, p1, p2, p3),
+                            rustemo_actions::terminal_rule_c3(context, p0, p1, p2, p3),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6333,7 +6326,7 @@ for DefaultBuilder {
                         _,
                     ) => {
                         NonTerminal::TerminalRule(
-                            rustemo_actions::terminal_rule_c4(&*context, p0, p1, p2),
+                            rustemo_actions::terminal_rule_c4(context, p0, p1, p2),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6400,7 +6393,7 @@ for DefaultBuilder {
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::IntConst(p0)) => {
                         NonTerminal::ProdMetaData(
-                            rustemo_actions::prod_meta_data_priority(&*context, p0),
+                            rustemo_actions::prod_meta_data_priority(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6414,7 +6407,7 @@ for DefaultBuilder {
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::UserMetaData(p0)) => {
                         NonTerminal::ProdMetaData(
-                            rustemo_actions::prod_meta_data_user_meta_data(&*context, p0),
+                            rustemo_actions::prod_meta_data_user_meta_data(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6428,7 +6421,7 @@ for DefaultBuilder {
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::ProdKind(p0)) => {
                         NonTerminal::ProdMetaData(
-                            rustemo_actions::prod_meta_data_prod_kind(&*context, p0),
+                            rustemo_actions::prod_meta_data_prod_kind(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6446,7 +6439,7 @@ for DefaultBuilder {
                         Symbol::NonTerminal(NonTerminal::ProdMetaData(p1)),
                     ) => {
                         NonTerminal::ProdMetaDatas(
-                            rustemo_actions::prod_meta_datas_c1(&*context, p0, p1),
+                            rustemo_actions::prod_meta_datas_c1(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6460,7 +6453,7 @@ for DefaultBuilder {
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::ProdMetaData(p0)) => {
                         NonTerminal::ProdMetaDatas(
-                            rustemo_actions::prod_meta_datas_c2(&*context, p0),
+                            rustemo_actions::prod_meta_datas_c2(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6540,7 +6533,7 @@ for DefaultBuilder {
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::IntConst(p0)) => {
                         NonTerminal::TermMetaData(
-                            rustemo_actions::term_meta_data_priority(&*context, p0),
+                            rustemo_actions::term_meta_data_priority(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6554,7 +6547,7 @@ for DefaultBuilder {
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::UserMetaData(p0)) => {
                         NonTerminal::TermMetaData(
-                            rustemo_actions::term_meta_data_user_meta_data(&*context, p0),
+                            rustemo_actions::term_meta_data_user_meta_data(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6572,7 +6565,7 @@ for DefaultBuilder {
                         Symbol::NonTerminal(NonTerminal::TermMetaData(p1)),
                     ) => {
                         NonTerminal::TermMetaDatas(
-                            rustemo_actions::term_meta_datas_c1(&*context, p0, p1),
+                            rustemo_actions::term_meta_datas_c1(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6586,7 +6579,7 @@ for DefaultBuilder {
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::TermMetaData(p0)) => {
                         NonTerminal::TermMetaDatas(
-                            rustemo_actions::term_meta_datas_c2(&*context, p0),
+                            rustemo_actions::term_meta_datas_c2(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6604,7 +6597,7 @@ for DefaultBuilder {
                         Symbol::NonTerminal(NonTerminal::ConstVal(p1)),
                     ) => {
                         NonTerminal::UserMetaData(
-                            rustemo_actions::user_meta_data_c1(&*context, p0, p1),
+                            rustemo_actions::user_meta_data_c1(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6618,7 +6611,7 @@ for DefaultBuilder {
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::Name(p0)) => {
                         NonTerminal::ProdKind(
-                            rustemo_actions::prod_kind_name(&*context, p0),
+                            rustemo_actions::prod_kind_name(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6632,7 +6625,7 @@ for DefaultBuilder {
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::IntConst(p0)) => {
                         NonTerminal::ConstVal(
-                            rustemo_actions::const_val_int_const(&*context, p0),
+                            rustemo_actions::const_val_int_const(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6646,7 +6639,7 @@ for DefaultBuilder {
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::FloatConst(p0)) => {
                         NonTerminal::ConstVal(
-                            rustemo_actions::const_val_float_const(&*context, p0),
+                            rustemo_actions::const_val_float_const(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6660,7 +6653,7 @@ for DefaultBuilder {
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::BoolConst(p0)) => {
                         NonTerminal::ConstVal(
-                            rustemo_actions::const_val_bool_const(&*context, p0),
+                            rustemo_actions::const_val_bool_const(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6674,7 +6667,7 @@ for DefaultBuilder {
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::StrConst(p0)) => {
                         NonTerminal::ConstVal(
-                            rustemo_actions::const_val_str_const(&*context, p0),
+                            rustemo_actions::const_val_str_const(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6688,7 +6681,7 @@ for DefaultBuilder {
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::PlainAssignment(p0)) => {
                         NonTerminal::Assignment(
-                            rustemo_actions::assignment_plain_assignment(&*context, p0),
+                            rustemo_actions::assignment_plain_assignment(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6702,7 +6695,7 @@ for DefaultBuilder {
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::BoolAssignment(p0)) => {
                         NonTerminal::Assignment(
-                            rustemo_actions::assignment_bool_assignment(&*context, p0),
+                            rustemo_actions::assignment_bool_assignment(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6716,7 +6709,7 @@ for DefaultBuilder {
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::GrammarSymbolRef(p0)) => {
                         NonTerminal::Assignment(
-                            rustemo_actions::assignment_grammar_symbol_ref(&*context, p0),
+                            rustemo_actions::assignment_grammar_symbol_ref(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6734,7 +6727,7 @@ for DefaultBuilder {
                         Symbol::NonTerminal(NonTerminal::GrammarSymbolRef(p1)),
                     ) => {
                         NonTerminal::PlainAssignment(
-                            rustemo_actions::plain_assignment_c1(&*context, p0, p1),
+                            rustemo_actions::plain_assignment_c1(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6752,7 +6745,7 @@ for DefaultBuilder {
                         Symbol::NonTerminal(NonTerminal::GrammarSymbolRef(p1)),
                     ) => {
                         NonTerminal::BoolAssignment(
-                            rustemo_actions::bool_assignment_c1(&*context, p0, p1),
+                            rustemo_actions::bool_assignment_c1(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6766,7 +6759,7 @@ for DefaultBuilder {
                 match (i.next().unwrap(), i.next().unwrap(), i.next().unwrap()) {
                     (_, Symbol::NonTerminal(NonTerminal::GrammarRuleRHS(p0)), _) => {
                         NonTerminal::ProductionGroup(
-                            rustemo_actions::production_group_c1(&*context, p0),
+                            rustemo_actions::production_group_c1(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6783,7 +6776,7 @@ for DefaultBuilder {
                         Symbol::NonTerminal(NonTerminal::RepetitionOperatorOpt(p1)),
                     ) => {
                         NonTerminal::GrammarSymbolRef(
-                            rustemo_actions::grammar_symbol_ref_c1(&*context, p0, p1),
+                            rustemo_actions::grammar_symbol_ref_c1(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6798,7 +6791,7 @@ for DefaultBuilder {
                     Symbol::NonTerminal(NonTerminal::RepetitionOperator(p0)) => {
                         NonTerminal::RepetitionOperatorOpt(
                             rustemo_actions::repetition_operator_opt_repetition_operator(
-                                &*context,
+                                context,
                                 p0,
                             ),
                         )
@@ -6822,7 +6815,7 @@ for DefaultBuilder {
                         Symbol::NonTerminal(NonTerminal::RepetitionOperatorOpt(p1)),
                     ) => {
                         NonTerminal::GrammarSymbolRef(
-                            rustemo_actions::grammar_symbol_ref_c2(&*context, p0, p1),
+                            rustemo_actions::grammar_symbol_ref_c2(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6839,7 +6832,7 @@ for DefaultBuilder {
                         Symbol::NonTerminal(NonTerminal::RepetitionModifiersOpt(p1)),
                     ) => {
                         NonTerminal::RepetitionOperator(
-                            rustemo_actions::repetition_operator_c1(&*context, p0, p1),
+                            rustemo_actions::repetition_operator_c1(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6854,7 +6847,7 @@ for DefaultBuilder {
                     Symbol::NonTerminal(NonTerminal::RepetitionModifiers(p0)) => {
                         NonTerminal::RepetitionModifiersOpt(
                             rustemo_actions::repetition_modifiers_opt_repetition_modifiers(
-                                &*context,
+                                context,
                                 p0,
                             ),
                         )
@@ -6930,7 +6923,7 @@ for DefaultBuilder {
                     (_, Symbol::NonTerminal(NonTerminal::RepetitionModifier1(p0)), _) => {
                         NonTerminal::RepetitionModifiers(
                             rustemo_actions::repetition_modifiers_repetition_modifier1(
-                                &*context,
+                                context,
                                 p0,
                             ),
                         )
@@ -6950,7 +6943,7 @@ for DefaultBuilder {
                         Symbol::NonTerminal(NonTerminal::RepetitionModifier(p1)),
                     ) => {
                         NonTerminal::RepetitionModifier1(
-                            rustemo_actions::repetition_modifier1_c1(&*context, p0, p1),
+                            rustemo_actions::repetition_modifier1_c1(context, p0, p1),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6965,7 +6958,7 @@ for DefaultBuilder {
                     Symbol::NonTerminal(NonTerminal::RepetitionModifier(p0)) => {
                         NonTerminal::RepetitionModifier1(
                             rustemo_actions::repetition_modifier1_repetition_modifier(
-                                &*context,
+                                context,
                                 p0,
                             ),
                         )
@@ -6981,7 +6974,7 @@ for DefaultBuilder {
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::Name(p0)) => {
                         NonTerminal::RepetitionModifier(
-                            rustemo_actions::repetition_modifier_name(&*context, p0),
+                            rustemo_actions::repetition_modifier_name(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -6995,7 +6988,7 @@ for DefaultBuilder {
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::Name(p0)) => {
                         NonTerminal::GrammarSymbol(
-                            rustemo_actions::grammar_symbol_name(&*context, p0),
+                            rustemo_actions::grammar_symbol_name(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -7009,7 +7002,7 @@ for DefaultBuilder {
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::StrConst(p0)) => {
                         NonTerminal::GrammarSymbol(
-                            rustemo_actions::grammar_symbol_str_const(&*context, p0),
+                            rustemo_actions::grammar_symbol_str_const(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -7023,7 +7016,7 @@ for DefaultBuilder {
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::StrConst(p0)) => {
                         NonTerminal::Recognizer(
-                            rustemo_actions::recognizer_str_const(&*context, p0),
+                            rustemo_actions::recognizer_str_const(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),
@@ -7037,7 +7030,7 @@ for DefaultBuilder {
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::RegexTerm(p0)) => {
                         NonTerminal::Recognizer(
-                            rustemo_actions::recognizer_regex_term(&*context, p0),
+                            rustemo_actions::recognizer_regex_term(context, p0),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),

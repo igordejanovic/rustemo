@@ -33,7 +33,7 @@ pub type StrConst = ValLoc<String>;
 pub fn str_const(ctx: &Ctx, token: Token) -> StrConst {
     StrConst::new(
         token
-            .value[1..token.value.len()-1]
+            .value[1..token.value.len() - 1]
             .replace(r#"\'"#, r#"'"#)
             .replace(r#"\\"#, r#"\"#)
             .replace(r#"\n"#, "\n")
