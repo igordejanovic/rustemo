@@ -10,7 +10,7 @@ fn glr_syntax_error_unexpected() {
     let input = "1 + 4 * 9 ! 3 * 2 + 7";
     let result = CalcParser::new().parse(input);
     output_cmp!(
-        "src/glr/errors/calc_unexpected.error",
+        "src/glr/errors/calc_unexpected.err",
         format!("{:#?}", result.unwrap_err())
     );
 }
@@ -20,7 +20,7 @@ fn glr_syntax_error_missing() {
     let input = "1 + 4 * 9 3 * 2 + 7";
     let result = CalcParser::new().parse(input);
     output_cmp!(
-        "src/glr/errors/calc_missing.error",
+        "src/glr/errors/calc_missing.err",
         format!("{:#?}", result.unwrap_err())
     );
 }
@@ -30,7 +30,7 @@ fn glr_syntax_error_incomplete() {
     let input = "1 + 4 * 9 + 3 * 2 +";
     let result = CalcParser::new().parse(input);
     output_cmp!(
-        "src/glr/errors/calc_incomplete.error",
+        "src/glr/errors/calc_incomplete.err",
         format!("{:#?}", result.unwrap_err())
     );
 }

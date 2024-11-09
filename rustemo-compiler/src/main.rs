@@ -76,6 +76,11 @@ struct Cli {
     #[clap(short, long, arg_enum, default_value_t)]
     builder_type: BuilderType,
 
+    /// Should generated default AST builder types contain location/layout information
+    /// This is only used for the default builder type.
+    #[clap(long)]
+    builder_loc_info: bool,
+
     /// Lexical disambiguation using most specific match strategy.
     #[clap(long, default_missing_value = "true", require_equals = true)]
     lexical_disamb_most_specific: Option<bool>,
@@ -133,6 +138,7 @@ fn main() {
         .generator_table_type(cli.generator_table_type)
         .lexer_type(cli.lexer_type)
         .builder_type(cli.builder_type)
+        .builder_loc_info(cli.builder_loc_info)
         .input_type(cli.input_type);
 
     if let Some(most_specific) = cli.lexical_disamb_most_specific {

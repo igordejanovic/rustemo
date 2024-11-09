@@ -5,7 +5,9 @@ Forest {
             data: TreeData {
                 range: 0..17,
                 location: [1,0-0],
-                layout: None,
+                layout: Some(
+                    "1",
+                ),
             },
             children: RefCell {
                 value: [
@@ -19,7 +21,9 @@ Forest {
                                     data: TreeData {
                                         range: 0..13,
                                         location: [1,0-0],
-                                        layout: None,
+                                        layout: Some(
+                                            "1",
+                                        ),
                                     },
                                     children: RefCell {
                                         value: [
@@ -33,7 +37,9 @@ Forest {
                                                             data: TreeData {
                                                                 range: 0..9,
                                                                 location: [1,0-0],
-                                                                layout: None,
+                                                                layout: Some(
+                                                                    "1",
+                                                                ),
                                                             },
                                                             children: RefCell {
                                                                 value: [
@@ -47,7 +53,9 @@ Forest {
                                                                                     data: TreeData {
                                                                                         range: 0..5,
                                                                                         location: [1,0-0],
-                                                                                        layout: None,
+                                                                                        layout: Some(
+                                                                                            "1",
+                                                                                        ),
                                                                                     },
                                                                                     children: RefCell {
                                                                                         value: [
@@ -61,7 +69,9 @@ Forest {
                                                                                                             data: TreeData {
                                                                                                                 range: 0..1,
                                                                                                                 location: [1,0-0],
-                                                                                                                layout: None,
+                                                                                                                layout: Some(
+                                                                                                                    "1",
+                                                                                                                ),
                                                                                                             },
                                                                                                             children: RefCell {
                                                                                                                 value: [
@@ -73,8 +83,8 @@ Forest {
                                                                                                                                 Term {
                                                                                                                                     token: Num("\"1\"" [1,0-1,1]),
                                                                                                                                     data: TreeData {
-                                                                                                                                        range: 0..0,
-                                                                                                                                        location: [0],
+                                                                                                                                        range: 0..1,
+                                                                                                                                        location: [1,0-1,1],
                                                                                                                                         layout: None,
                                                                                                                                     },
                                                                                                                                 },
@@ -93,10 +103,10 @@ Forest {
                                                                                                 possibilities: RefCell {
                                                                                                     value: [
                                                                                                         Term {
-                                                                                                            token: Plus("\"+\"" [1,2-1,3]),
+                                                                                                            token: Plus("\"+\"" [1,1-1,2]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 2..3,
+                                                                                                                location: [1,1-1,2],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -125,10 +135,10 @@ Forest {
                                                                                                                         possibilities: RefCell {
                                                                                                                             value: [
                                                                                                                                 Term {
-                                                                                                                                    token: Num("\"4\"" [1,4-1,5]),
+                                                                                                                                    token: Num("\"4\"" [1,2-1,3]),
                                                                                                                                     data: TreeData {
-                                                                                                                                        range: 0..0,
-                                                                                                                                        location: [0],
+                                                                                                                                        range: 4..5,
+                                                                                                                                        location: [1,2-1,3],
                                                                                                                                         layout: None,
                                                                                                                                     },
                                                                                                                                 },
@@ -153,10 +163,10 @@ Forest {
                                                                         possibilities: RefCell {
                                                                             value: [
                                                                                 Term {
-                                                                                    token: Mul("\"*\"" [1,6-1,7]),
+                                                                                    token: Mul("\"*\"" [1,3-1,4]),
                                                                                     data: TreeData {
-                                                                                        range: 0..0,
-                                                                                        location: [0],
+                                                                                        range: 6..7,
+                                                                                        location: [1,3-1,4],
                                                                                         layout: None,
                                                                                     },
                                                                                 },
@@ -185,10 +195,10 @@ Forest {
                                                                                                 possibilities: RefCell {
                                                                                                     value: [
                                                                                                         Term {
-                                                                                                            token: Num("\"9\"" [1,8-1,9]),
+                                                                                                            token: Num("\"9\"" [1,4-1,5]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 8..9,
+                                                                                                                location: [1,4-1,5],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -209,7 +219,9 @@ Forest {
                                                             data: TreeData {
                                                                 range: 0..9,
                                                                 location: [1,0-0],
-                                                                layout: None,
+                                                                layout: Some(
+                                                                    "1",
+                                                                ),
                                                             },
                                                             children: RefCell {
                                                                 value: [
@@ -223,7 +235,9 @@ Forest {
                                                                                     data: TreeData {
                                                                                         range: 0..1,
                                                                                         location: [1,0-0],
-                                                                                        layout: None,
+                                                                                        layout: Some(
+                                                                                            "1",
+                                                                                        ),
                                                                                     },
                                                                                     children: RefCell {
                                                                                         value: [
@@ -235,8 +249,8 @@ Forest {
                                                                                                         Term {
                                                                                                             token: Num("\"1\"" [1,0-1,1]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 0..1,
+                                                                                                                location: [1,0-1,1],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -255,10 +269,10 @@ Forest {
                                                                         possibilities: RefCell {
                                                                             value: [
                                                                                 Term {
-                                                                                    token: Plus("\"+\"" [1,2-1,3]),
+                                                                                    token: Plus("\"+\"" [1,1-1,2]),
                                                                                     data: TreeData {
-                                                                                        range: 0..0,
-                                                                                        location: [0],
+                                                                                        range: 2..3,
+                                                                                        location: [1,1-1,2],
                                                                                         layout: None,
                                                                                     },
                                                                                 },
@@ -303,10 +317,10 @@ Forest {
                                                                                                                         possibilities: RefCell {
                                                                                                                             value: [
                                                                                                                                 Term {
-                                                                                                                                    token: Num("\"4\"" [1,4-1,5]),
+                                                                                                                                    token: Num("\"4\"" [1,2-1,3]),
                                                                                                                                     data: TreeData {
-                                                                                                                                        range: 0..0,
-                                                                                                                                        location: [0],
+                                                                                                                                        range: 4..5,
+                                                                                                                                        location: [1,2-1,3],
                                                                                                                                         layout: None,
                                                                                                                                     },
                                                                                                                                 },
@@ -325,10 +339,10 @@ Forest {
                                                                                                 possibilities: RefCell {
                                                                                                     value: [
                                                                                                         Term {
-                                                                                                            token: Mul("\"*\"" [1,6-1,7]),
+                                                                                                            token: Mul("\"*\"" [1,3-1,4]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 6..7,
+                                                                                                                location: [1,3-1,4],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -357,10 +371,10 @@ Forest {
                                                                                                                         possibilities: RefCell {
                                                                                                                             value: [
                                                                                                                                 Term {
-                                                                                                                                    token: Num("\"9\"" [1,8-1,9]),
+                                                                                                                                    token: Num("\"9\"" [1,4-1,5]),
                                                                                                                                     data: TreeData {
-                                                                                                                                        range: 0..0,
-                                                                                                                                        location: [0],
+                                                                                                                                        range: 8..9,
+                                                                                                                                        location: [1,4-1,5],
                                                                                                                                         layout: None,
                                                                                                                                     },
                                                                                                                                 },
@@ -391,10 +405,10 @@ Forest {
                                                 possibilities: RefCell {
                                                     value: [
                                                         Term {
-                                                            token: Plus("\"+\"" [1,10-1,11]),
+                                                            token: Plus("\"+\"" [1,5-1,6]),
                                                             data: TreeData {
-                                                                range: 0..0,
-                                                                location: [0],
+                                                                range: 10..11,
+                                                                location: [1,5-1,6],
                                                                 layout: None,
                                                             },
                                                         },
@@ -423,10 +437,10 @@ Forest {
                                                                         possibilities: RefCell {
                                                                             value: [
                                                                                 Term {
-                                                                                    token: Num("\"3\"" [1,12-1,13]),
+                                                                                    token: Num("\"3\"" [1,6-1,7]),
                                                                                     data: TreeData {
-                                                                                        range: 0..0,
-                                                                                        location: [0],
+                                                                                        range: 12..13,
+                                                                                        location: [1,6-1,7],
                                                                                         layout: None,
                                                                                     },
                                                                                 },
@@ -447,7 +461,9 @@ Forest {
                                     data: TreeData {
                                         range: 0..13,
                                         location: [1,0-0],
-                                        layout: None,
+                                        layout: Some(
+                                            "1",
+                                        ),
                                     },
                                     children: RefCell {
                                         value: [
@@ -461,7 +477,9 @@ Forest {
                                                             data: TreeData {
                                                                 range: 0..5,
                                                                 location: [1,0-0],
-                                                                layout: None,
+                                                                layout: Some(
+                                                                    "1",
+                                                                ),
                                                             },
                                                             children: RefCell {
                                                                 value: [
@@ -475,7 +493,9 @@ Forest {
                                                                                     data: TreeData {
                                                                                         range: 0..1,
                                                                                         location: [1,0-0],
-                                                                                        layout: None,
+                                                                                        layout: Some(
+                                                                                            "1",
+                                                                                        ),
                                                                                     },
                                                                                     children: RefCell {
                                                                                         value: [
@@ -487,8 +507,8 @@ Forest {
                                                                                                         Term {
                                                                                                             token: Num("\"1\"" [1,0-1,1]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 0..1,
+                                                                                                                location: [1,0-1,1],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -507,10 +527,10 @@ Forest {
                                                                         possibilities: RefCell {
                                                                             value: [
                                                                                 Term {
-                                                                                    token: Plus("\"+\"" [1,2-1,3]),
+                                                                                    token: Plus("\"+\"" [1,1-1,2]),
                                                                                     data: TreeData {
-                                                                                        range: 0..0,
-                                                                                        location: [0],
+                                                                                        range: 2..3,
+                                                                                        location: [1,1-1,2],
                                                                                         layout: None,
                                                                                     },
                                                                                 },
@@ -539,10 +559,10 @@ Forest {
                                                                                                 possibilities: RefCell {
                                                                                                     value: [
                                                                                                         Term {
-                                                                                                            token: Num("\"4\"" [1,4-1,5]),
+                                                                                                            token: Num("\"4\"" [1,2-1,3]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 4..5,
+                                                                                                                location: [1,2-1,3],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -567,10 +587,10 @@ Forest {
                                                 possibilities: RefCell {
                                                     value: [
                                                         Term {
-                                                            token: Mul("\"*\"" [1,6-1,7]),
+                                                            token: Mul("\"*\"" [1,3-1,4]),
                                                             data: TreeData {
-                                                                range: 0..0,
-                                                                location: [0],
+                                                                range: 6..7,
+                                                                location: [1,3-1,4],
                                                                 layout: None,
                                                             },
                                                         },
@@ -615,10 +635,10 @@ Forest {
                                                                                                 possibilities: RefCell {
                                                                                                     value: [
                                                                                                         Term {
-                                                                                                            token: Num("\"9\"" [1,8-1,9]),
+                                                                                                            token: Num("\"9\"" [1,4-1,5]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 8..9,
+                                                                                                                location: [1,4-1,5],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -637,10 +657,10 @@ Forest {
                                                                         possibilities: RefCell {
                                                                             value: [
                                                                                 Term {
-                                                                                    token: Plus("\"+\"" [1,10-1,11]),
+                                                                                    token: Plus("\"+\"" [1,5-1,6]),
                                                                                     data: TreeData {
-                                                                                        range: 0..0,
-                                                                                        location: [0],
+                                                                                        range: 10..11,
+                                                                                        location: [1,5-1,6],
                                                                                         layout: None,
                                                                                     },
                                                                                 },
@@ -669,10 +689,10 @@ Forest {
                                                                                                 possibilities: RefCell {
                                                                                                     value: [
                                                                                                         Term {
-                                                                                                            token: Num("\"3\"" [1,12-1,13]),
+                                                                                                            token: Num("\"3\"" [1,6-1,7]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 12..13,
+                                                                                                                location: [1,6-1,7],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -699,7 +719,9 @@ Forest {
                                     data: TreeData {
                                         range: 0..13,
                                         location: [1,0-0],
-                                        layout: None,
+                                        layout: Some(
+                                            "1",
+                                        ),
                                     },
                                     children: RefCell {
                                         value: [
@@ -713,7 +735,9 @@ Forest {
                                                             data: TreeData {
                                                                 range: 0..1,
                                                                 location: [1,0-0],
-                                                                layout: None,
+                                                                layout: Some(
+                                                                    "1",
+                                                                ),
                                                             },
                                                             children: RefCell {
                                                                 value: [
@@ -725,8 +749,8 @@ Forest {
                                                                                 Term {
                                                                                     token: Num("\"1\"" [1,0-1,1]),
                                                                                     data: TreeData {
-                                                                                        range: 0..0,
-                                                                                        location: [0],
+                                                                                        range: 0..1,
+                                                                                        location: [1,0-1,1],
                                                                                         layout: None,
                                                                                     },
                                                                                 },
@@ -745,10 +769,10 @@ Forest {
                                                 possibilities: RefCell {
                                                     value: [
                                                         Term {
-                                                            token: Plus("\"+\"" [1,2-1,3]),
+                                                            token: Plus("\"+\"" [1,1-1,2]),
                                                             data: TreeData {
-                                                                range: 0..0,
-                                                                location: [0],
+                                                                range: 2..3,
+                                                                location: [1,1-1,2],
                                                                 layout: None,
                                                             },
                                                         },
@@ -809,10 +833,10 @@ Forest {
                                                                                                                         possibilities: RefCell {
                                                                                                                             value: [
                                                                                                                                 Term {
-                                                                                                                                    token: Num("\"4\"" [1,4-1,5]),
+                                                                                                                                    token: Num("\"4\"" [1,2-1,3]),
                                                                                                                                     data: TreeData {
-                                                                                                                                        range: 0..0,
-                                                                                                                                        location: [0],
+                                                                                                                                        range: 4..5,
+                                                                                                                                        location: [1,2-1,3],
                                                                                                                                         layout: None,
                                                                                                                                     },
                                                                                                                                 },
@@ -831,10 +855,10 @@ Forest {
                                                                                                 possibilities: RefCell {
                                                                                                     value: [
                                                                                                         Term {
-                                                                                                            token: Mul("\"*\"" [1,6-1,7]),
+                                                                                                            token: Mul("\"*\"" [1,3-1,4]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 6..7,
+                                                                                                                location: [1,3-1,4],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -863,10 +887,10 @@ Forest {
                                                                                                                         possibilities: RefCell {
                                                                                                                             value: [
                                                                                                                                 Term {
-                                                                                                                                    token: Num("\"9\"" [1,8-1,9]),
+                                                                                                                                    token: Num("\"9\"" [1,4-1,5]),
                                                                                                                                     data: TreeData {
-                                                                                                                                        range: 0..0,
-                                                                                                                                        location: [0],
+                                                                                                                                        range: 8..9,
+                                                                                                                                        location: [1,4-1,5],
                                                                                                                                         layout: None,
                                                                                                                                     },
                                                                                                                                 },
@@ -891,10 +915,10 @@ Forest {
                                                                         possibilities: RefCell {
                                                                             value: [
                                                                                 Term {
-                                                                                    token: Plus("\"+\"" [1,10-1,11]),
+                                                                                    token: Plus("\"+\"" [1,5-1,6]),
                                                                                     data: TreeData {
-                                                                                        range: 0..0,
-                                                                                        location: [0],
+                                                                                        range: 10..11,
+                                                                                        location: [1,5-1,6],
                                                                                         layout: None,
                                                                                     },
                                                                                 },
@@ -923,10 +947,10 @@ Forest {
                                                                                                 possibilities: RefCell {
                                                                                                     value: [
                                                                                                         Term {
-                                                                                                            token: Num("\"3\"" [1,12-1,13]),
+                                                                                                            token: Num("\"3\"" [1,6-1,7]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 12..13,
+                                                                                                                location: [1,6-1,7],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -975,10 +999,10 @@ Forest {
                                                                                                 possibilities: RefCell {
                                                                                                     value: [
                                                                                                         Term {
-                                                                                                            token: Num("\"4\"" [1,4-1,5]),
+                                                                                                            token: Num("\"4\"" [1,2-1,3]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 4..5,
+                                                                                                                location: [1,2-1,3],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -997,10 +1021,10 @@ Forest {
                                                                         possibilities: RefCell {
                                                                             value: [
                                                                                 Term {
-                                                                                    token: Mul("\"*\"" [1,6-1,7]),
+                                                                                    token: Mul("\"*\"" [1,3-1,4]),
                                                                                     data: TreeData {
-                                                                                        range: 0..0,
-                                                                                        location: [0],
+                                                                                        range: 6..7,
+                                                                                        location: [1,3-1,4],
                                                                                         layout: None,
                                                                                     },
                                                                                 },
@@ -1045,10 +1069,10 @@ Forest {
                                                                                                                         possibilities: RefCell {
                                                                                                                             value: [
                                                                                                                                 Term {
-                                                                                                                                    token: Num("\"9\"" [1,8-1,9]),
+                                                                                                                                    token: Num("\"9\"" [1,4-1,5]),
                                                                                                                                     data: TreeData {
-                                                                                                                                        range: 0..0,
-                                                                                                                                        location: [0],
+                                                                                                                                        range: 8..9,
+                                                                                                                                        location: [1,4-1,5],
                                                                                                                                         layout: None,
                                                                                                                                     },
                                                                                                                                 },
@@ -1067,10 +1091,10 @@ Forest {
                                                                                                 possibilities: RefCell {
                                                                                                     value: [
                                                                                                         Term {
-                                                                                                            token: Plus("\"+\"" [1,10-1,11]),
+                                                                                                            token: Plus("\"+\"" [1,5-1,6]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 10..11,
+                                                                                                                location: [1,5-1,6],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -1099,10 +1123,10 @@ Forest {
                                                                                                                         possibilities: RefCell {
                                                                                                                             value: [
                                                                                                                                 Term {
-                                                                                                                                    token: Num("\"3\"" [1,12-1,13]),
+                                                                                                                                    token: Num("\"3\"" [1,6-1,7]),
                                                                                                                                     data: TreeData {
-                                                                                                                                        range: 0..0,
-                                                                                                                                        location: [0],
+                                                                                                                                        range: 12..13,
+                                                                                                                                        location: [1,6-1,7],
                                                                                                                                         layout: None,
                                                                                                                                     },
                                                                                                                                 },
@@ -1139,10 +1163,10 @@ Forest {
                         possibilities: RefCell {
                             value: [
                                 Term {
-                                    token: Mul("\"*\"" [1,14-1,15]),
+                                    token: Mul("\"*\"" [1,7-1,8]),
                                     data: TreeData {
-                                        range: 0..0,
-                                        location: [0],
+                                        range: 14..15,
+                                        location: [1,7-1,8],
                                         layout: None,
                                     },
                                 },
@@ -1171,10 +1195,10 @@ Forest {
                                                 possibilities: RefCell {
                                                     value: [
                                                         Term {
-                                                            token: Num("\"2\"" [1,16-1,17]),
+                                                            token: Num("\"2\"" [1,8-1,9]),
                                                             data: TreeData {
-                                                                range: 0..0,
-                                                                location: [0],
+                                                                range: 16..17,
+                                                                location: [1,8-1,9],
                                                                 layout: None,
                                                             },
                                                         },
@@ -1195,7 +1219,9 @@ Forest {
             data: TreeData {
                 range: 0..17,
                 location: [1,0-0],
-                layout: None,
+                layout: Some(
+                    "1",
+                ),
             },
             children: RefCell {
                 value: [
@@ -1209,7 +1235,9 @@ Forest {
                                     data: TreeData {
                                         range: 0..1,
                                         location: [1,0-0],
-                                        layout: None,
+                                        layout: Some(
+                                            "1",
+                                        ),
                                     },
                                     children: RefCell {
                                         value: [
@@ -1221,8 +1249,8 @@ Forest {
                                                         Term {
                                                             token: Num("\"1\"" [1,0-1,1]),
                                                             data: TreeData {
-                                                                range: 0..0,
-                                                                location: [0],
+                                                                range: 0..1,
+                                                                location: [1,0-1,1],
                                                                 layout: None,
                                                             },
                                                         },
@@ -1241,10 +1269,10 @@ Forest {
                         possibilities: RefCell {
                             value: [
                                 Term {
-                                    token: Plus("\"+\"" [1,2-1,3]),
+                                    token: Plus("\"+\"" [1,1-1,2]),
                                     data: TreeData {
-                                        range: 0..0,
-                                        location: [0],
+                                        range: 2..3,
+                                        location: [1,1-1,2],
                                         layout: None,
                                     },
                                 },
@@ -1321,10 +1349,10 @@ Forest {
                                                                                                                         possibilities: RefCell {
                                                                                                                             value: [
                                                                                                                                 Term {
-                                                                                                                                    token: Num("\"4\"" [1,4-1,5]),
+                                                                                                                                    token: Num("\"4\"" [1,2-1,3]),
                                                                                                                                     data: TreeData {
-                                                                                                                                        range: 0..0,
-                                                                                                                                        location: [0],
+                                                                                                                                        range: 4..5,
+                                                                                                                                        location: [1,2-1,3],
                                                                                                                                         layout: None,
                                                                                                                                     },
                                                                                                                                 },
@@ -1343,10 +1371,10 @@ Forest {
                                                                                                 possibilities: RefCell {
                                                                                                     value: [
                                                                                                         Term {
-                                                                                                            token: Mul("\"*\"" [1,6-1,7]),
+                                                                                                            token: Mul("\"*\"" [1,3-1,4]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 6..7,
+                                                                                                                location: [1,3-1,4],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -1375,10 +1403,10 @@ Forest {
                                                                                                                         possibilities: RefCell {
                                                                                                                             value: [
                                                                                                                                 Term {
-                                                                                                                                    token: Num("\"9\"" [1,8-1,9]),
+                                                                                                                                    token: Num("\"9\"" [1,4-1,5]),
                                                                                                                                     data: TreeData {
-                                                                                                                                        range: 0..0,
-                                                                                                                                        location: [0],
+                                                                                                                                        range: 8..9,
+                                                                                                                                        location: [1,4-1,5],
                                                                                                                                         layout: None,
                                                                                                                                     },
                                                                                                                                 },
@@ -1403,10 +1431,10 @@ Forest {
                                                                         possibilities: RefCell {
                                                                             value: [
                                                                                 Term {
-                                                                                    token: Plus("\"+\"" [1,10-1,11]),
+                                                                                    token: Plus("\"+\"" [1,5-1,6]),
                                                                                     data: TreeData {
-                                                                                        range: 0..0,
-                                                                                        location: [0],
+                                                                                        range: 10..11,
+                                                                                        location: [1,5-1,6],
                                                                                         layout: None,
                                                                                     },
                                                                                 },
@@ -1435,10 +1463,10 @@ Forest {
                                                                                                 possibilities: RefCell {
                                                                                                     value: [
                                                                                                         Term {
-                                                                                                            token: Num("\"3\"" [1,12-1,13]),
+                                                                                                            token: Num("\"3\"" [1,6-1,7]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 12..13,
+                                                                                                                location: [1,6-1,7],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -1487,10 +1515,10 @@ Forest {
                                                                                                 possibilities: RefCell {
                                                                                                     value: [
                                                                                                         Term {
-                                                                                                            token: Num("\"4\"" [1,4-1,5]),
+                                                                                                            token: Num("\"4\"" [1,2-1,3]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 4..5,
+                                                                                                                location: [1,2-1,3],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -1509,10 +1537,10 @@ Forest {
                                                                         possibilities: RefCell {
                                                                             value: [
                                                                                 Term {
-                                                                                    token: Mul("\"*\"" [1,6-1,7]),
+                                                                                    token: Mul("\"*\"" [1,3-1,4]),
                                                                                     data: TreeData {
-                                                                                        range: 0..0,
-                                                                                        location: [0],
+                                                                                        range: 6..7,
+                                                                                        location: [1,3-1,4],
                                                                                         layout: None,
                                                                                     },
                                                                                 },
@@ -1557,10 +1585,10 @@ Forest {
                                                                                                                         possibilities: RefCell {
                                                                                                                             value: [
                                                                                                                                 Term {
-                                                                                                                                    token: Num("\"9\"" [1,8-1,9]),
+                                                                                                                                    token: Num("\"9\"" [1,4-1,5]),
                                                                                                                                     data: TreeData {
-                                                                                                                                        range: 0..0,
-                                                                                                                                        location: [0],
+                                                                                                                                        range: 8..9,
+                                                                                                                                        location: [1,4-1,5],
                                                                                                                                         layout: None,
                                                                                                                                     },
                                                                                                                                 },
@@ -1579,10 +1607,10 @@ Forest {
                                                                                                 possibilities: RefCell {
                                                                                                     value: [
                                                                                                         Term {
-                                                                                                            token: Plus("\"+\"" [1,10-1,11]),
+                                                                                                            token: Plus("\"+\"" [1,5-1,6]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 10..11,
+                                                                                                                location: [1,5-1,6],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -1611,10 +1639,10 @@ Forest {
                                                                                                                         possibilities: RefCell {
                                                                                                                             value: [
                                                                                                                                 Term {
-                                                                                                                                    token: Num("\"3\"" [1,12-1,13]),
+                                                                                                                                    token: Num("\"3\"" [1,6-1,7]),
                                                                                                                                     data: TreeData {
-                                                                                                                                        range: 0..0,
-                                                                                                                                        location: [0],
+                                                                                                                                        range: 12..13,
+                                                                                                                                        location: [1,6-1,7],
                                                                                                                                         layout: None,
                                                                                                                                     },
                                                                                                                                 },
@@ -1645,10 +1673,10 @@ Forest {
                                                 possibilities: RefCell {
                                                     value: [
                                                         Term {
-                                                            token: Mul("\"*\"" [1,14-1,15]),
+                                                            token: Mul("\"*\"" [1,7-1,8]),
                                                             data: TreeData {
-                                                                range: 0..0,
-                                                                location: [0],
+                                                                range: 14..15,
+                                                                location: [1,7-1,8],
                                                                 layout: None,
                                                             },
                                                         },
@@ -1677,10 +1705,10 @@ Forest {
                                                                         possibilities: RefCell {
                                                                             value: [
                                                                                 Term {
-                                                                                    token: Num("\"2\"" [1,16-1,17]),
+                                                                                    token: Num("\"2\"" [1,8-1,9]),
                                                                                     data: TreeData {
-                                                                                        range: 0..0,
-                                                                                        location: [0],
+                                                                                        range: 16..17,
+                                                                                        location: [1,8-1,9],
                                                                                         layout: None,
                                                                                     },
                                                                                 },
@@ -1745,10 +1773,10 @@ Forest {
                                                                                                 possibilities: RefCell {
                                                                                                     value: [
                                                                                                         Term {
-                                                                                                            token: Num("\"4\"" [1,4-1,5]),
+                                                                                                            token: Num("\"4\"" [1,2-1,3]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 4..5,
+                                                                                                                location: [1,2-1,3],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -1767,10 +1795,10 @@ Forest {
                                                                         possibilities: RefCell {
                                                                             value: [
                                                                                 Term {
-                                                                                    token: Mul("\"*\"" [1,6-1,7]),
+                                                                                    token: Mul("\"*\"" [1,3-1,4]),
                                                                                     data: TreeData {
-                                                                                        range: 0..0,
-                                                                                        location: [0],
+                                                                                        range: 6..7,
+                                                                                        location: [1,3-1,4],
                                                                                         layout: None,
                                                                                     },
                                                                                 },
@@ -1799,10 +1827,10 @@ Forest {
                                                                                                 possibilities: RefCell {
                                                                                                     value: [
                                                                                                         Term {
-                                                                                                            token: Num("\"9\"" [1,8-1,9]),
+                                                                                                            token: Num("\"9\"" [1,4-1,5]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 8..9,
+                                                                                                                location: [1,4-1,5],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -1827,10 +1855,10 @@ Forest {
                                                 possibilities: RefCell {
                                                     value: [
                                                         Term {
-                                                            token: Plus("\"+\"" [1,10-1,11]),
+                                                            token: Plus("\"+\"" [1,5-1,6]),
                                                             data: TreeData {
-                                                                range: 0..0,
-                                                                location: [0],
+                                                                range: 10..11,
+                                                                location: [1,5-1,6],
                                                                 layout: None,
                                                             },
                                                         },
@@ -1875,10 +1903,10 @@ Forest {
                                                                                                 possibilities: RefCell {
                                                                                                     value: [
                                                                                                         Term {
-                                                                                                            token: Num("\"3\"" [1,12-1,13]),
+                                                                                                            token: Num("\"3\"" [1,6-1,7]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 12..13,
+                                                                                                                location: [1,6-1,7],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -1897,10 +1925,10 @@ Forest {
                                                                         possibilities: RefCell {
                                                                             value: [
                                                                                 Term {
-                                                                                    token: Mul("\"*\"" [1,14-1,15]),
+                                                                                    token: Mul("\"*\"" [1,7-1,8]),
                                                                                     data: TreeData {
-                                                                                        range: 0..0,
-                                                                                        location: [0],
+                                                                                        range: 14..15,
+                                                                                        location: [1,7-1,8],
                                                                                         layout: None,
                                                                                     },
                                                                                 },
@@ -1929,10 +1957,10 @@ Forest {
                                                                                                 possibilities: RefCell {
                                                                                                     value: [
                                                                                                         Term {
-                                                                                                            token: Num("\"2\"" [1,16-1,17]),
+                                                                                                            token: Num("\"2\"" [1,8-1,9]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 16..17,
+                                                                                                                location: [1,8-1,9],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -1987,10 +2015,10 @@ Forest {
                                                                         possibilities: RefCell {
                                                                             value: [
                                                                                 Term {
-                                                                                    token: Num("\"4\"" [1,4-1,5]),
+                                                                                    token: Num("\"4\"" [1,2-1,3]),
                                                                                     data: TreeData {
-                                                                                        range: 0..0,
-                                                                                        location: [0],
+                                                                                        range: 4..5,
+                                                                                        location: [1,2-1,3],
                                                                                         layout: None,
                                                                                     },
                                                                                 },
@@ -2009,10 +2037,10 @@ Forest {
                                                 possibilities: RefCell {
                                                     value: [
                                                         Term {
-                                                            token: Mul("\"*\"" [1,6-1,7]),
+                                                            token: Mul("\"*\"" [1,3-1,4]),
                                                             data: TreeData {
-                                                                range: 0..0,
-                                                                location: [0],
+                                                                range: 6..7,
+                                                                location: [1,3-1,4],
                                                                 layout: None,
                                                             },
                                                         },
@@ -2073,10 +2101,10 @@ Forest {
                                                                                                                         possibilities: RefCell {
                                                                                                                             value: [
                                                                                                                                 Term {
-                                                                                                                                    token: Num("\"9\"" [1,8-1,9]),
+                                                                                                                                    token: Num("\"9\"" [1,4-1,5]),
                                                                                                                                     data: TreeData {
-                                                                                                                                        range: 0..0,
-                                                                                                                                        location: [0],
+                                                                                                                                        range: 8..9,
+                                                                                                                                        location: [1,4-1,5],
                                                                                                                                         layout: None,
                                                                                                                                     },
                                                                                                                                 },
@@ -2095,10 +2123,10 @@ Forest {
                                                                                                 possibilities: RefCell {
                                                                                                     value: [
                                                                                                         Term {
-                                                                                                            token: Plus("\"+\"" [1,10-1,11]),
+                                                                                                            token: Plus("\"+\"" [1,5-1,6]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 10..11,
+                                                                                                                location: [1,5-1,6],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -2127,10 +2155,10 @@ Forest {
                                                                                                                         possibilities: RefCell {
                                                                                                                             value: [
                                                                                                                                 Term {
-                                                                                                                                    token: Num("\"3\"" [1,12-1,13]),
+                                                                                                                                    token: Num("\"3\"" [1,6-1,7]),
                                                                                                                                     data: TreeData {
-                                                                                                                                        range: 0..0,
-                                                                                                                                        location: [0],
+                                                                                                                                        range: 12..13,
+                                                                                                                                        location: [1,6-1,7],
                                                                                                                                         layout: None,
                                                                                                                                     },
                                                                                                                                 },
@@ -2155,10 +2183,10 @@ Forest {
                                                                         possibilities: RefCell {
                                                                             value: [
                                                                                 Term {
-                                                                                    token: Mul("\"*\"" [1,14-1,15]),
+                                                                                    token: Mul("\"*\"" [1,7-1,8]),
                                                                                     data: TreeData {
-                                                                                        range: 0..0,
-                                                                                        location: [0],
+                                                                                        range: 14..15,
+                                                                                        location: [1,7-1,8],
                                                                                         layout: None,
                                                                                     },
                                                                                 },
@@ -2187,10 +2215,10 @@ Forest {
                                                                                                 possibilities: RefCell {
                                                                                                     value: [
                                                                                                         Term {
-                                                                                                            token: Num("\"2\"" [1,16-1,17]),
+                                                                                                            token: Num("\"2\"" [1,8-1,9]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 16..17,
+                                                                                                                location: [1,8-1,9],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -2239,10 +2267,10 @@ Forest {
                                                                                                 possibilities: RefCell {
                                                                                                     value: [
                                                                                                         Term {
-                                                                                                            token: Num("\"9\"" [1,8-1,9]),
+                                                                                                            token: Num("\"9\"" [1,4-1,5]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 8..9,
+                                                                                                                location: [1,4-1,5],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -2261,10 +2289,10 @@ Forest {
                                                                         possibilities: RefCell {
                                                                             value: [
                                                                                 Term {
-                                                                                    token: Plus("\"+\"" [1,10-1,11]),
+                                                                                    token: Plus("\"+\"" [1,5-1,6]),
                                                                                     data: TreeData {
-                                                                                        range: 0..0,
-                                                                                        location: [0],
+                                                                                        range: 10..11,
+                                                                                        location: [1,5-1,6],
                                                                                         layout: None,
                                                                                     },
                                                                                 },
@@ -2309,10 +2337,10 @@ Forest {
                                                                                                                         possibilities: RefCell {
                                                                                                                             value: [
                                                                                                                                 Term {
-                                                                                                                                    token: Num("\"3\"" [1,12-1,13]),
+                                                                                                                                    token: Num("\"3\"" [1,6-1,7]),
                                                                                                                                     data: TreeData {
-                                                                                                                                        range: 0..0,
-                                                                                                                                        location: [0],
+                                                                                                                                        range: 12..13,
+                                                                                                                                        location: [1,6-1,7],
                                                                                                                                         layout: None,
                                                                                                                                     },
                                                                                                                                 },
@@ -2331,10 +2359,10 @@ Forest {
                                                                                                 possibilities: RefCell {
                                                                                                     value: [
                                                                                                         Term {
-                                                                                                            token: Mul("\"*\"" [1,14-1,15]),
+                                                                                                            token: Mul("\"*\"" [1,7-1,8]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 14..15,
+                                                                                                                location: [1,7-1,8],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -2363,10 +2391,10 @@ Forest {
                                                                                                                         possibilities: RefCell {
                                                                                                                             value: [
                                                                                                                                 Term {
-                                                                                                                                    token: Num("\"2\"" [1,16-1,17]),
+                                                                                                                                    token: Num("\"2\"" [1,8-1,9]),
                                                                                                                                     data: TreeData {
-                                                                                                                                        range: 0..0,
-                                                                                                                                        location: [0],
+                                                                                                                                        range: 16..17,
+                                                                                                                                        location: [1,8-1,9],
                                                                                                                                         layout: None,
                                                                                                                                     },
                                                                                                                                 },
@@ -2405,7 +2433,9 @@ Forest {
             data: TreeData {
                 range: 0..17,
                 location: [1,0-0],
-                layout: None,
+                layout: Some(
+                    "1",
+                ),
             },
             children: RefCell {
                 value: [
@@ -2419,7 +2449,9 @@ Forest {
                                     data: TreeData {
                                         range: 0..9,
                                         location: [1,0-0],
-                                        layout: None,
+                                        layout: Some(
+                                            "1",
+                                        ),
                                     },
                                     children: RefCell {
                                         value: [
@@ -2433,7 +2465,9 @@ Forest {
                                                             data: TreeData {
                                                                 range: 0..5,
                                                                 location: [1,0-0],
-                                                                layout: None,
+                                                                layout: Some(
+                                                                    "1",
+                                                                ),
                                                             },
                                                             children: RefCell {
                                                                 value: [
@@ -2447,7 +2481,9 @@ Forest {
                                                                                     data: TreeData {
                                                                                         range: 0..1,
                                                                                         location: [1,0-0],
-                                                                                        layout: None,
+                                                                                        layout: Some(
+                                                                                            "1",
+                                                                                        ),
                                                                                     },
                                                                                     children: RefCell {
                                                                                         value: [
@@ -2459,8 +2495,8 @@ Forest {
                                                                                                         Term {
                                                                                                             token: Num("\"1\"" [1,0-1,1]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 0..1,
+                                                                                                                location: [1,0-1,1],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -2479,10 +2515,10 @@ Forest {
                                                                         possibilities: RefCell {
                                                                             value: [
                                                                                 Term {
-                                                                                    token: Plus("\"+\"" [1,2-1,3]),
+                                                                                    token: Plus("\"+\"" [1,1-1,2]),
                                                                                     data: TreeData {
-                                                                                        range: 0..0,
-                                                                                        location: [0],
+                                                                                        range: 2..3,
+                                                                                        location: [1,1-1,2],
                                                                                         layout: None,
                                                                                     },
                                                                                 },
@@ -2511,10 +2547,10 @@ Forest {
                                                                                                 possibilities: RefCell {
                                                                                                     value: [
                                                                                                         Term {
-                                                                                                            token: Num("\"4\"" [1,4-1,5]),
+                                                                                                            token: Num("\"4\"" [1,2-1,3]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 4..5,
+                                                                                                                location: [1,2-1,3],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -2539,10 +2575,10 @@ Forest {
                                                 possibilities: RefCell {
                                                     value: [
                                                         Term {
-                                                            token: Mul("\"*\"" [1,6-1,7]),
+                                                            token: Mul("\"*\"" [1,3-1,4]),
                                                             data: TreeData {
-                                                                range: 0..0,
-                                                                location: [0],
+                                                                range: 6..7,
+                                                                location: [1,3-1,4],
                                                                 layout: None,
                                                             },
                                                         },
@@ -2571,10 +2607,10 @@ Forest {
                                                                         possibilities: RefCell {
                                                                             value: [
                                                                                 Term {
-                                                                                    token: Num("\"9\"" [1,8-1,9]),
+                                                                                    token: Num("\"9\"" [1,4-1,5]),
                                                                                     data: TreeData {
-                                                                                        range: 0..0,
-                                                                                        location: [0],
+                                                                                        range: 8..9,
+                                                                                        location: [1,4-1,5],
                                                                                         layout: None,
                                                                                     },
                                                                                 },
@@ -2595,7 +2631,9 @@ Forest {
                                     data: TreeData {
                                         range: 0..9,
                                         location: [1,0-0],
-                                        layout: None,
+                                        layout: Some(
+                                            "1",
+                                        ),
                                     },
                                     children: RefCell {
                                         value: [
@@ -2609,7 +2647,9 @@ Forest {
                                                             data: TreeData {
                                                                 range: 0..1,
                                                                 location: [1,0-0],
-                                                                layout: None,
+                                                                layout: Some(
+                                                                    "1",
+                                                                ),
                                                             },
                                                             children: RefCell {
                                                                 value: [
@@ -2621,8 +2661,8 @@ Forest {
                                                                                 Term {
                                                                                     token: Num("\"1\"" [1,0-1,1]),
                                                                                     data: TreeData {
-                                                                                        range: 0..0,
-                                                                                        location: [0],
+                                                                                        range: 0..1,
+                                                                                        location: [1,0-1,1],
                                                                                         layout: None,
                                                                                     },
                                                                                 },
@@ -2641,10 +2681,10 @@ Forest {
                                                 possibilities: RefCell {
                                                     value: [
                                                         Term {
-                                                            token: Plus("\"+\"" [1,2-1,3]),
+                                                            token: Plus("\"+\"" [1,1-1,2]),
                                                             data: TreeData {
-                                                                range: 0..0,
-                                                                location: [0],
+                                                                range: 2..3,
+                                                                location: [1,1-1,2],
                                                                 layout: None,
                                                             },
                                                         },
@@ -2689,10 +2729,10 @@ Forest {
                                                                                                 possibilities: RefCell {
                                                                                                     value: [
                                                                                                         Term {
-                                                                                                            token: Num("\"4\"" [1,4-1,5]),
+                                                                                                            token: Num("\"4\"" [1,2-1,3]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 4..5,
+                                                                                                                location: [1,2-1,3],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -2711,10 +2751,10 @@ Forest {
                                                                         possibilities: RefCell {
                                                                             value: [
                                                                                 Term {
-                                                                                    token: Mul("\"*\"" [1,6-1,7]),
+                                                                                    token: Mul("\"*\"" [1,3-1,4]),
                                                                                     data: TreeData {
-                                                                                        range: 0..0,
-                                                                                        location: [0],
+                                                                                        range: 6..7,
+                                                                                        location: [1,3-1,4],
                                                                                         layout: None,
                                                                                     },
                                                                                 },
@@ -2743,10 +2783,10 @@ Forest {
                                                                                                 possibilities: RefCell {
                                                                                                     value: [
                                                                                                         Term {
-                                                                                                            token: Num("\"9\"" [1,8-1,9]),
+                                                                                                            token: Num("\"9\"" [1,4-1,5]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 8..9,
+                                                                                                                location: [1,4-1,5],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -2777,10 +2817,10 @@ Forest {
                         possibilities: RefCell {
                             value: [
                                 Term {
-                                    token: Plus("\"+\"" [1,10-1,11]),
+                                    token: Plus("\"+\"" [1,5-1,6]),
                                     data: TreeData {
-                                        range: 0..0,
-                                        location: [0],
+                                        range: 10..11,
+                                        location: [1,5-1,6],
                                         layout: None,
                                     },
                                 },
@@ -2825,10 +2865,10 @@ Forest {
                                                                         possibilities: RefCell {
                                                                             value: [
                                                                                 Term {
-                                                                                    token: Num("\"3\"" [1,12-1,13]),
+                                                                                    token: Num("\"3\"" [1,6-1,7]),
                                                                                     data: TreeData {
-                                                                                        range: 0..0,
-                                                                                        location: [0],
+                                                                                        range: 12..13,
+                                                                                        location: [1,6-1,7],
                                                                                         layout: None,
                                                                                     },
                                                                                 },
@@ -2847,10 +2887,10 @@ Forest {
                                                 possibilities: RefCell {
                                                     value: [
                                                         Term {
-                                                            token: Mul("\"*\"" [1,14-1,15]),
+                                                            token: Mul("\"*\"" [1,7-1,8]),
                                                             data: TreeData {
-                                                                range: 0..0,
-                                                                location: [0],
+                                                                range: 14..15,
+                                                                location: [1,7-1,8],
                                                                 layout: None,
                                                             },
                                                         },
@@ -2879,10 +2919,10 @@ Forest {
                                                                         possibilities: RefCell {
                                                                             value: [
                                                                                 Term {
-                                                                                    token: Num("\"2\"" [1,16-1,17]),
+                                                                                    token: Num("\"2\"" [1,8-1,9]),
                                                                                     data: TreeData {
-                                                                                        range: 0..0,
-                                                                                        location: [0],
+                                                                                        range: 16..17,
+                                                                                        location: [1,8-1,9],
                                                                                         layout: None,
                                                                                     },
                                                                                 },
@@ -2909,7 +2949,9 @@ Forest {
             data: TreeData {
                 range: 0..17,
                 location: [1,0-0],
-                layout: None,
+                layout: Some(
+                    "1",
+                ),
             },
             children: RefCell {
                 value: [
@@ -2923,7 +2965,9 @@ Forest {
                                     data: TreeData {
                                         range: 0..5,
                                         location: [1,0-0],
-                                        layout: None,
+                                        layout: Some(
+                                            "1",
+                                        ),
                                     },
                                     children: RefCell {
                                         value: [
@@ -2937,7 +2981,9 @@ Forest {
                                                             data: TreeData {
                                                                 range: 0..1,
                                                                 location: [1,0-0],
-                                                                layout: None,
+                                                                layout: Some(
+                                                                    "1",
+                                                                ),
                                                             },
                                                             children: RefCell {
                                                                 value: [
@@ -2949,8 +2995,8 @@ Forest {
                                                                                 Term {
                                                                                     token: Num("\"1\"" [1,0-1,1]),
                                                                                     data: TreeData {
-                                                                                        range: 0..0,
-                                                                                        location: [0],
+                                                                                        range: 0..1,
+                                                                                        location: [1,0-1,1],
                                                                                         layout: None,
                                                                                     },
                                                                                 },
@@ -2969,10 +3015,10 @@ Forest {
                                                 possibilities: RefCell {
                                                     value: [
                                                         Term {
-                                                            token: Plus("\"+\"" [1,2-1,3]),
+                                                            token: Plus("\"+\"" [1,1-1,2]),
                                                             data: TreeData {
-                                                                range: 0..0,
-                                                                location: [0],
+                                                                range: 2..3,
+                                                                location: [1,1-1,2],
                                                                 layout: None,
                                                             },
                                                         },
@@ -3001,10 +3047,10 @@ Forest {
                                                                         possibilities: RefCell {
                                                                             value: [
                                                                                 Term {
-                                                                                    token: Num("\"4\"" [1,4-1,5]),
+                                                                                    token: Num("\"4\"" [1,2-1,3]),
                                                                                     data: TreeData {
-                                                                                        range: 0..0,
-                                                                                        location: [0],
+                                                                                        range: 4..5,
+                                                                                        location: [1,2-1,3],
                                                                                         layout: None,
                                                                                     },
                                                                                 },
@@ -3029,10 +3075,10 @@ Forest {
                         possibilities: RefCell {
                             value: [
                                 Term {
-                                    token: Mul("\"*\"" [1,6-1,7]),
+                                    token: Mul("\"*\"" [1,3-1,4]),
                                     data: TreeData {
-                                        range: 0..0,
-                                        location: [0],
+                                        range: 6..7,
+                                        location: [1,3-1,4],
                                         layout: None,
                                     },
                                 },
@@ -3093,10 +3139,10 @@ Forest {
                                                                                                 possibilities: RefCell {
                                                                                                     value: [
                                                                                                         Term {
-                                                                                                            token: Num("\"9\"" [1,8-1,9]),
+                                                                                                            token: Num("\"9\"" [1,4-1,5]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 8..9,
+                                                                                                                location: [1,4-1,5],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -3115,10 +3161,10 @@ Forest {
                                                                         possibilities: RefCell {
                                                                             value: [
                                                                                 Term {
-                                                                                    token: Plus("\"+\"" [1,10-1,11]),
+                                                                                    token: Plus("\"+\"" [1,5-1,6]),
                                                                                     data: TreeData {
-                                                                                        range: 0..0,
-                                                                                        location: [0],
+                                                                                        range: 10..11,
+                                                                                        location: [1,5-1,6],
                                                                                         layout: None,
                                                                                     },
                                                                                 },
@@ -3147,10 +3193,10 @@ Forest {
                                                                                                 possibilities: RefCell {
                                                                                                     value: [
                                                                                                         Term {
-                                                                                                            token: Num("\"3\"" [1,12-1,13]),
+                                                                                                            token: Num("\"3\"" [1,6-1,7]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 12..13,
+                                                                                                                location: [1,6-1,7],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -3175,10 +3221,10 @@ Forest {
                                                 possibilities: RefCell {
                                                     value: [
                                                         Term {
-                                                            token: Mul("\"*\"" [1,14-1,15]),
+                                                            token: Mul("\"*\"" [1,7-1,8]),
                                                             data: TreeData {
-                                                                range: 0..0,
-                                                                location: [0],
+                                                                range: 14..15,
+                                                                location: [1,7-1,8],
                                                                 layout: None,
                                                             },
                                                         },
@@ -3207,10 +3253,10 @@ Forest {
                                                                         possibilities: RefCell {
                                                                             value: [
                                                                                 Term {
-                                                                                    token: Num("\"2\"" [1,16-1,17]),
+                                                                                    token: Num("\"2\"" [1,8-1,9]),
                                                                                     data: TreeData {
-                                                                                        range: 0..0,
-                                                                                        location: [0],
+                                                                                        range: 16..17,
+                                                                                        location: [1,8-1,9],
                                                                                         layout: None,
                                                                                     },
                                                                                 },
@@ -3259,10 +3305,10 @@ Forest {
                                                                         possibilities: RefCell {
                                                                             value: [
                                                                                 Term {
-                                                                                    token: Num("\"9\"" [1,8-1,9]),
+                                                                                    token: Num("\"9\"" [1,4-1,5]),
                                                                                     data: TreeData {
-                                                                                        range: 0..0,
-                                                                                        location: [0],
+                                                                                        range: 8..9,
+                                                                                        location: [1,4-1,5],
                                                                                         layout: None,
                                                                                     },
                                                                                 },
@@ -3281,10 +3327,10 @@ Forest {
                                                 possibilities: RefCell {
                                                     value: [
                                                         Term {
-                                                            token: Plus("\"+\"" [1,10-1,11]),
+                                                            token: Plus("\"+\"" [1,5-1,6]),
                                                             data: TreeData {
-                                                                range: 0..0,
-                                                                location: [0],
+                                                                range: 10..11,
+                                                                location: [1,5-1,6],
                                                                 layout: None,
                                                             },
                                                         },
@@ -3329,10 +3375,10 @@ Forest {
                                                                                                 possibilities: RefCell {
                                                                                                     value: [
                                                                                                         Term {
-                                                                                                            token: Num("\"3\"" [1,12-1,13]),
+                                                                                                            token: Num("\"3\"" [1,6-1,7]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 12..13,
+                                                                                                                location: [1,6-1,7],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },
@@ -3351,10 +3397,10 @@ Forest {
                                                                         possibilities: RefCell {
                                                                             value: [
                                                                                 Term {
-                                                                                    token: Mul("\"*\"" [1,14-1,15]),
+                                                                                    token: Mul("\"*\"" [1,7-1,8]),
                                                                                     data: TreeData {
-                                                                                        range: 0..0,
-                                                                                        location: [0],
+                                                                                        range: 14..15,
+                                                                                        location: [1,7-1,8],
                                                                                         layout: None,
                                                                                     },
                                                                                 },
@@ -3383,10 +3429,10 @@ Forest {
                                                                                                 possibilities: RefCell {
                                                                                                     value: [
                                                                                                         Term {
-                                                                                                            token: Num("\"2\"" [1,16-1,17]),
+                                                                                                            token: Num("\"2\"" [1,8-1,9]),
                                                                                                             data: TreeData {
-                                                                                                                range: 0..0,
-                                                                                                                location: [0],
+                                                                                                                range: 16..17,
+                                                                                                                location: [1,8-1,9],
                                                                                                                 layout: None,
                                                                                                             },
                                                                                                         },

@@ -277,6 +277,10 @@ where
                         .or_default()
                         .insert(head.state(), head_idx);
 
+                    let token_start_pos = token.location.start.position();
+                    if token_start_pos > head.position() {
+                        head.set_layout_ahead(Some(input.slice(head.position()..token_start_pos)));
+                    }
                     head.set_token_ahead(token);
                     log!(
                         "    {} {}: {:?}",
@@ -561,7 +565,7 @@ where
                         // based on the same production
                         || gss.parent(edge).possibilities.borrow().iter().all(
                             |t| match **t {
-                                SPPFTree::Term { .. } => false,
+                                SPPFTree::Term { .. } | SPPFTree::Empty => false,
                                 SPPFTree::NonTerm { prod, ref children, ..} => {
                                     prod != production || (path.parents.len() == children.borrow().len())
                                 }
@@ -602,18 +606,35 @@ where
                         );
 
                         let root_head = gss.head(path.root_head);
-                        let start_head = gss.head(start_head);
+                        let range = Range {
+                            start: <SPPFTree<'_, I, P, TK> as Context<'_, I, S, TK>>::range(
+                                &path.parents[0].possibilities.borrow()[0],
+                            )
+                            .start,
+                            end: <SPPFTree<'_, I, P, TK> as Context<'_, I, S, TK>>::range(
+                                &path.parents[path.parents.len() - 1].possibilities.borrow()[0],
+                            )
+                            .end,
+                        };
+                        let location = Location {
+                            start: <SPPFTree<'_, I, P, TK> as Context<'_, I, S, TK>>::location(
+                                &path.parents[0].possibilities.borrow()[0],
+                            )
+                            .start,
+                            end: Some(
+                                <SPPFTree<'_, I, P, TK> as Context<'_, I, S, TK>>::location(
+                                    &path.parents[path.parents.len() - 1].possibilities.borrow()
+                                        [0],
+                                )
+                                .end
+                                .unwrap(),
+                            ),
+                        };
                         let solution = Rc::new(SPPFTree::NonTerm {
                             prod: production,
                             data: TreeData {
-                                range: Range {
-                                    start: root_head.position_ahead,
-                                    end: start_head.position_before,
-                                },
-                                location: Location {
-                                    start: root_head.location_pos_ahead,
-                                    end: Some(start_head.location_pos_before),
-                                },
+                                range,
+                                location,
                                 layout: root_head.layout_ahead(),
                             },
                             children: RefCell::new(path.parents),
@@ -717,49 +738,54 @@ where
                 )
                 .green()
             );
-            let shifted_head_idx = match frontier_base.get(&(state, position)) {
-                Some(&shifted_head) => {
+            let (shifted_head_idx, range, location) = match frontier_base.get(&(state, position)) {
+                Some(&shifted_head_idx) => {
                     log!("  {}", "Head already exists. Adding new edge.".green());
-                    shifted_head
+                    let shifted_head = gss.head(shifted_head_idx);
+                    (
+                        shifted_head_idx,
+                        shifted_head.range(),
+                        shifted_head.location(),
+                    )
                 }
                 None => {
                     let new_head = GssHead::new(
                         state,
                         frontier_idx,
-                        // FIXME
                         position,
                         head.position()..position,
-                        token.value.location_after(head.location()),
+                        token.location,
+                        // FIXME
                         position,
                         position,
-                        Default::default(),
-                        Default::default(),
+                        token.location,
+                        token.location,
                         None,
                         None,
                     );
                     #[cfg(debug_assertions)]
                     let new_head_str = format!("{new_head:?}");
+                    let (new_head_range, new_head_location) =
+                        (new_head.range(), new_head.location());
                     let new_head_idx = gss.add_head(new_head);
                     log!(
                         "  {}: {new_head_str}",
                         format!("Creating new shifted head {}", new_head_idx.index()).green()
                     );
                     frontier_base.insert((state, position), new_head_idx);
-                    new_head_idx
+                    (new_head_idx, new_head_range, new_head_location)
                 }
             };
+            dbg!(&range, &location);
             gss.add_solution(
                 shifted_head_idx,
                 head_idx,
                 Rc::new(SPPFTree::Term {
                     token,
                     data: TreeData {
+                        range,
+                        location,
                         // FIXME:
-                        range: Default::default(),
-                        location: Location {
-                            start: Default::default(),
-                            end: Default::default(),
-                        },
                         layout: None,
                     },
                 }),

@@ -4,7 +4,7 @@ use crate::{input::Input, lexer::Token, location::Location, parser::State};
 
 /// Lexer/Parser context is used to keep the state. It provides necessary
 /// information to parsers and actions.
-pub trait Context<'i, I: Input + ?Sized, S: State, TK> {
+pub trait Context<'i, I: Input + ?Sized, S: State, TK>: Default {
     /// The current parser state.
     fn state(&self) -> S;
     fn set_state(&mut self, state: S);

@@ -13,8 +13,8 @@ cargo nextest run -p rustemo-compiler
 cargo install --path rustemo-compiler --debug
 
 # README Examples
-rcomp docs/src/readme_example/src/textlr/calclr.rustemo
-rcomp --parser-algo glr docs/src/readme_example/src/textglr/calc.rustemo
+rcomp docs/src/readme_example/src/testlr/calclr.rustemo
+rcomp --parser-algo glr docs/src/readme_example/src/testglr/calc.rustemo
 
 cd docs/src/tutorials/calculator/
 for i in {1..5}; do

@@ -67,6 +67,7 @@ fn main() {
                 s.force(false).actions_in_source_tree()
             }),
         ),
+        ("builder/loc_info", Box::new(|s| s.builder_loc_info(true))),
         // Lexer
         (
             "lexer/custom_lexer",
@@ -85,7 +86,15 @@ fn main() {
         // GLR
         ("glr/errors", Box::new(|s| s.parser_algo(ParserAlgo::GLR))),
         ("glr/forest", Box::new(|s| s.parser_algo(ParserAlgo::GLR))),
-        ("glr/build", Box::new(|s| s.parser_algo(ParserAlgo::GLR))),
+        // GLR builders
+        (
+            "glr/build/basic",
+            Box::new(|s| s.parser_algo(ParserAlgo::GLR)),
+        ),
+        (
+            "glr/build/loc_info",
+            Box::new(|s| s.parser_algo(ParserAlgo::GLR).builder_loc_info(true)),
+        ),
         // GLR lexical ambiguities
         (
             "glr/lexical_ambiguity/priorities",

@@ -1,20 +1,20 @@
 NonTermNode {
     prod: S: A S Tb,
-    location: [1,0],
+    location: [1,0-1,1],
     children: [
         NonTermNode {
             prod: A: ,
-            location: [1,0],
+            location: [1,0-1,0],
             children: [],
             layout: None,
         },
         NonTermNode {
             prod: S: A S Tb,
-            location: [1,0],
+            location: [1,0-1,1],
             children: [
                 NonTermNode {
                     prod: A: Tt,
-                    location: [1,0],
+                    location: [1,0-1,1],
                     children: [
                         TermNode {
                             token: Tt("\"t\"" [1,0-1,1]),
@@ -25,75 +25,75 @@ NonTermNode {
                 },
                 NonTermNode {
                     prod: S: A S Tb,
-                    location: [1,0],
+                    location: [1,0-1,1],
                     children: [
                         NonTermNode {
                             prod: A: ,
-                            location: [1,0],
+                            location: [0-0],
                             children: [],
                             layout: None,
                         },
                         NonTermNode {
                             prod: S: A S Tb,
-                            location: [1,0],
+                            location: [1,0-1,1],
                             children: [
                                 NonTermNode {
                                     prod: A: ,
-                                    location: [1,0],
+                                    location: [0-0],
                                     children: [],
                                     layout: None,
                                 },
                                 NonTermNode {
                                     prod: S: A S Tb,
-                                    location: [1,0],
+                                    location: [1,0-1,1],
                                     children: [
                                         NonTermNode {
                                             prod: A: ,
-                                            location: [1,0],
+                                            location: [0-0],
                                             children: [],
                                             layout: None,
                                         },
                                         NonTermNode {
                                             prod: S: Tx,
-                                            location: [1,0],
+                                            location: [1,0-1,1],
                                             children: [
                                                 TermNode {
-                                                    token: Tx("\"x\"" [1,1-1,2]),
+                                                    token: Tx("\"x\"" [1,0-1,1]),
                                                     layout: None,
                                                 },
                                             ],
                                             layout: None,
                                         },
                                         TermNode {
-                                            token: Tb("\"b\"" [1,2-1,3]),
+                                            token: Tb("\"b\"" [1,0-1,1]),
                                             layout: None,
                                         },
                                     ],
                                     layout: None,
                                 },
                                 TermNode {
-                                    token: Tb("\"b\"" [1,3-1,4]),
+                                    token: Tb("\"b\"" [1,0-1,1]),
                                     layout: None,
                                 },
                             ],
                             layout: None,
                         },
                         TermNode {
-                            token: Tb("\"b\"" [1,4-1,5]),
+                            token: Tb("\"b\"" [1,0-1,1]),
                             layout: None,
                         },
                     ],
                     layout: None,
                 },
                 TermNode {
-                    token: Tb("\"b\"" [1,5-1,6]),
+                    token: Tb("\"b\"" [1,0-1,1]),
                     layout: None,
                 },
             ],
             layout: None,
         },
         TermNode {
-            token: Tb("\"b\"" [1,6-1,7]),
+            token: Tb("\"b\"" [1,0-1,1]),
             layout: None,
         },
     ],

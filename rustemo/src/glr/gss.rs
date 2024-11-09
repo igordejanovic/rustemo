@@ -349,6 +349,8 @@ where
         /// the parent links keeps all solutions along that back-path.
         children: RefCell<VecDeque<Rc<Parent<'i, I, P, TK>>>>,
     },
+    // Empty Tree
+    Empty,
 }
 
 impl<'i, I, P, TK> SPPFTree<'i, I, P, TK>
@@ -362,13 +364,14 @@ where
             SPPFTree::NonTerm { children, .. } => {
                 children.borrow().iter().map(|p| p.solutions()).product()
             }
+            SPPFTree::Empty => 0,
         }
     }
 
     #[allow(clippy::mutable_key_type)]
     fn ambiguities(&self, visited: &mut HashSet<Rc<Parent<'i, I, P, TK>>>) -> usize {
         match self {
-            SPPFTree::Term { .. } => 0,
+            SPPFTree::Term { .. } | SPPFTree::Empty => 0,
             SPPFTree::NonTerm { children, .. } => children
                 .borrow()
                 .iter()
@@ -382,6 +385,69 @@ where
                 })
                 .sum(),
         }
+    }
+}
+
+/// Implementation of Context trait for usage in Tree::build.
+impl<'i, I, S, P, TK> Context<'i, I, S, TK> for SPPFTree<'i, I, P, TK>
+where
+    I: Input + ?Sized,
+    TK: Copy,
+    S: State,
+{
+    fn state(&self) -> S {
+        panic!("state() called on SPPFTree")
+    }
+
+    fn set_state(&mut self, _state: S) {}
+
+    fn position(&self) -> usize {
+        panic!("position() called on SPPFTree")
+    }
+
+    fn set_position(&mut self, _position: usize) {}
+
+    fn location(&self) -> Location {
+        match self {
+            SPPFTree::Term { data, .. } | SPPFTree::NonTerm { data, .. } => data.location,
+            _ => panic!("Called location() on empty tree!"),
+        }
+    }
+
+    fn set_location(&mut self, _location: Location) {}
+
+    fn range(&self) -> Range<usize> {
+        match self {
+            SPPFTree::Term { data, .. } | SPPFTree::NonTerm { data, .. } => data.range.clone(),
+            _ => panic!("Called range() on empty tree!"),
+        }
+    }
+
+    fn set_range(&mut self, _range: Range<usize>) {}
+
+    fn token_ahead(&self) -> Option<&Token<'i, I, TK>> {
+        None
+    }
+
+    fn set_token_ahead(&mut self, _token: Token<'i, I, TK>) {}
+
+    fn layout_ahead(&self) -> Option<&'i I> {
+        match self {
+            SPPFTree::Term { data, .. } | SPPFTree::NonTerm { data, .. } => data.layout,
+            _ => panic!("Called layout_ahead() on empty tree!"),
+        }
+    }
+
+    fn set_layout_ahead(&mut self, _layout: Option<&'i I>) {}
+}
+
+impl<'i, I, P, TK> Default for SPPFTree<'i, I, P, TK>
+where
+    I: Input + ?Sized,
+    TK: Copy,
+{
+    fn default() -> Self {
+        Self::Empty
     }
 }
 
@@ -406,6 +472,7 @@ where
                 data: data.clone(),
                 children: children.clone(),
             },
+            Self::Empty => Self::Empty,
         }
     }
 }
@@ -547,6 +614,7 @@ where
         match &*self.root {
             SPPFTree::Term { token, .. } => write!(f, "{:#?}", token.value),
             SPPFTree::NonTerm { .. } => write!(f, "{:#?}", self.children()),
+            SPPFTree::Empty => write!(f, "EMPTY"),
         }
     }
 }
@@ -564,7 +632,7 @@ where
     /// current tree index and weighted numbering system.
     pub fn children(&self) -> Vec<Tree<'i, I, P, TK>> {
         match *self.root {
-            SPPFTree::Term { .. } => vec![],
+            SPPFTree::Term { .. } | SPPFTree::Empty => vec![],
             SPPFTree::NonTerm { ref children, .. } => {
                 let mut tree_idx = self.idx;
                 // Calculate counter division based on weighted numbering
@@ -594,13 +662,15 @@ where
     }
 
     /// Build an output of the tree using the given builder.
-    pub fn build<B: LRBuilder<'i, I, C, S, P, TK>, C, S>(&self, builder: &mut B) -> B::Output
+    pub fn build<B: LRBuilder<'i, I, GssHead<'i, I, S, TK>, S, P, TK>, S>(
+        &self,
+        builder: &mut B,
+    ) -> B::Output
     where
-        C: Context<'i, I, S, TK> + Default,
         S: State,
         P: Copy,
     {
-        let mut context = C::default();
+        let mut context = GssHead::default();
         self.build_inner(&mut context, builder);
         builder.get_result()
     }
@@ -611,15 +681,21 @@ where
         S: State,
         P: Copy,
     {
+
         match &*self.root {
-            SPPFTree::Term { token, .. } => builder.shift_action(context, token.clone()),
+            SPPFTree::Term { token, .. } => {
+                context.set_location(Context::<I, S, TK>::location(&*self.root));
+                builder.shift_action(context, token.clone())
+            },
             SPPFTree::NonTerm { prod, .. } => {
                 let children = self.children();
                 children.iter().for_each(|c| {
                     c.build_inner(context, builder);
                 });
+                context.set_location(Context::<I, S, TK>::location(&*self.root));
                 builder.reduce_action(context, *prod, children.len())
             }
+            SPPFTree::Empty => (),
         }
     }
 

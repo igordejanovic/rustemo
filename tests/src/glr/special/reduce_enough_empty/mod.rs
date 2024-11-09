@@ -1,4 +1,4 @@
-use rustemo::{rustemo_mod, GssHead, Parser, TreeBuilder};
+use rustemo::{rustemo_mod, Parser, TreeBuilder};
 use rustemo_compiler::output_cmp;
 
 rustemo_mod!(lang, "/src/glr/special/reduce_enough_empty");
@@ -16,14 +16,10 @@ fn glr_special_reduce_enough_empty() {
         "src/glr/special/reduce_enough_empty/tree.ast",
         format!(
             "{:#?}",
-            tree.unwrap().build::<TreeBuilder<
-                '_,
-                str,
-                lang::ProdKind,
-                lang::TokenKind,
-            >, GssHead<'_, str, lang::State, lang::TokenKind>, lang::State>(
-                &mut builder
-            )
+            tree.unwrap()
+                .build::<TreeBuilder<'_, str, lang::ProdKind, lang::TokenKind>, lang::State>(
+                    &mut builder
+                )
         )
     );
 }

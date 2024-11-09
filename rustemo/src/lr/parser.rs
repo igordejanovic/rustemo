@@ -297,7 +297,7 @@ where
 impl<'i, C, S, P, I, TK, NTK, D, L, B> Parser<'i, I, C, S, TK>
     for LRParser<'i, C, S, P, TK, NTK, D, L, B, I>
 where
-    C: Context<'i, I, S, TK> + Default,
+    C: Context<'i, I, S, TK>,
     S: State + Debug,
     P: Debug + Copy + Into<NTK>,
     I: Input + ?Sized + Debug + 'i,

@@ -169,6 +169,8 @@ where
         }
         log!("  {} {:?}", "Trying recognizers:".green(), expected_tokens);
 
+        dbg!(context.position(), context.location());
+
         Box::new(TokenIterator::new(
             input,
             context.position(),

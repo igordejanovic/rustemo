@@ -1,4 +1,4 @@
-use rustemo::{rustemo_mod, GssHead, Parser, TreeBuilder};
+use rustemo::{rustemo_mod, Parser, TreeBuilder};
 use rustemo_compiler::output_cmp;
 
 rustemo_mod!(lang, "/src/glr/special/unbounded_ambiguity");
@@ -17,14 +17,10 @@ fn glr_special_unbounded_ambiguity() {
             &format!("src/glr/special/unbounded_ambiguity/tree_{}.ast", i),
             format!(
                 "{:#?}",
-                tree.unwrap().build::<TreeBuilder<
-                    '_,
-                    str,
-                    lang::ProdKind,
-                    lang::TokenKind,
-                >, GssHead<'_, str, lang::State, lang::TokenKind>, lang::State>(
-                    &mut builder
-                )
+                tree.unwrap()
+                    .build::<TreeBuilder<'_, str, lang::ProdKind, lang::TokenKind>, lang::State>(
+                        &mut builder
+                    )
             )
         );
     });

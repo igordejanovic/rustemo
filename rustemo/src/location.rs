@@ -1,4 +1,7 @@
-use std::fmt::{Debug, Display};
+use std::{
+    fmt::{Debug, Display},
+    ops::Deref,
+};
 
 /// A line-column based location for use where applicable (e.g. plain text).
 #[derive(PartialEq, Eq, Debug, Copy, Clone)]
@@ -92,6 +95,15 @@ impl Location {
     pub fn from_start(start: Position) -> Self {
         Self { start, end: None }
     }
+
+    /// Creates a new location starting from the current location ending with
+    /// loc_to location.
+    pub fn to(&self, loc_to: Self) -> Self {
+        Self {
+            start: self.start,
+            end: loc_to.end.or(Some(loc_to.start))
+        }
+    }
 }
 
 impl Debug for Location {
@@ -126,11 +138,13 @@ impl<T: Display> Display for ValLoc<T> {
         write!(f, "{}", self.value)
     }
 }
+
 impl<T> AsRef<T> for ValLoc<T> {
     fn as_ref(&self) -> &T {
         &self.value
     }
 }
+
 impl<T> From<T> for ValLoc<T> {
     fn from(value: T) -> Self {
         Self {
@@ -139,6 +153,15 @@ impl<T> From<T> for ValLoc<T> {
         }
     }
 }
+
+impl<T> Deref for ValLoc<T> {
+    type Target = T;
+
+    fn deref(&self) -> &Self::Target {
+        &self.value
+    }
+}
+
 impl From<ValLoc<String>> for String {
     fn from(value: ValLoc<String>) -> Self {
         value.value

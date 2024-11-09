@@ -43,13 +43,25 @@ without the concrete syntax information.
 
 For example, `3 + 2 * 5` represents an algebric expression where we multiply `2`
 and `5` and then add product to `3`. AST should be the same no matter what is
-the concrete syntax used to write down this information. 
+the concrete syntax used to write down this information.
 
 ![](images/ast.png)
 
 We could write the same expression in the post-fix ([Reverse Polish](https://en.wikipedia.org/wiki/Reverse_Polish_notation)) notation
 like `3 2 5 * +`. CST would be different but the AST would be the same.
 ```
+
+```admonish tip "Location informations"
+By default, this builder do not store location information in the generated AST
+types. This can be changed by `builder_loc_info` [settings](./configuration.md).
+If this settings is configured then each token and generated struct type is
+wrapped in [ValLoc](https://docs.rs/rustemo/latest/rustemo/struct.ValLoc.html)
+type which provides `location` field and can be dereferenced to the wrapped
+value.
+
+See also [loc_info test](https://github.com/igordejanovic/rustemo/blob/main/tests/src/builder/loc_info/).
+```
+
 
 
 ### AST type inference

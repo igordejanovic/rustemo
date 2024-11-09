@@ -12,6 +12,16 @@ use crate::{
 
 use super::ActionsGenerator;
 
+macro_rules! name_valloc {
+    ($base_str:expr, $s:ident) => {
+        if $s.builder_loc_info {
+            format!("{}Base", $base_str)
+        } else {
+            $base_str.to_string()
+        }
+    };
+}
+
 pub(crate) struct ProductionActionsGenerator<'t> {
     types: &'t SymbolTypes,
     term_len: usize,
@@ -57,8 +67,15 @@ impl<'t> ProductionActionsGenerator<'t> {
         fn_args
     }
 
-    fn get_action_body(&self, ty: &SymbolType, target_type: &str, choice: &Choice) -> syn::Expr {
+    fn get_action_body(
+        &self,
+        ty: &SymbolType,
+        target_type: &str,
+        choice: &Choice,
+        settings: &Settings,
+    ) -> syn::Expr {
         let target_type = format_ident!("{target_type}");
+        let target_type_base = format_ident!("{target_type}Base");
         let choice_ident = format_ident!("{}", choice.name);
         let expr: syn::Expr = match &choice.kind {
             ChoiceKind::Plain => {
@@ -66,6 +83,7 @@ impl<'t> ProductionActionsGenerator<'t> {
             }
             ChoiceKind::Struct { type_name, fields } => {
                 let struct_ty = format_ident!("{type_name}");
+                let struct_ty_base = format_ident!("{type_name}Base");
                 let fields: Vec<syn::FieldValue> = fields
                     .iter()
                     .map(|f| {
@@ -79,12 +97,28 @@ impl<'t> ProductionActionsGenerator<'t> {
                     .collect();
 
                 if matches!(ty.kind, SymbolTypeKind::Enum { .. }) {
+                    if settings.builder_loc_info {
+                        parse_quote! {
+                            #target_type::#choice_ident(
+                                #struct_ty::new(#struct_ty_base {
+                                    #(#fields),*
+                                }, Some(_ctx.location()))
+                            )
+                        }
+                    } else {
+                        parse_quote! {
+                            #target_type::#choice_ident(
+                                #struct_ty {
+                                    #(#fields),*
+                                }
+                            )
+                        }
+                    }
+                } else if settings.builder_loc_info {
                     parse_quote! {
-                        #target_type::#choice_ident(
-                            #struct_ty {
-                                #(#fields),*
-                            }
-                        )
+                        #target_type::new(#target_type_base {
+                            #(#fields),*
+                        }, Some(_ctx.location()))
                     }
                 } else {
                     parse_quote! {
@@ -126,58 +160,70 @@ impl<'t> ProductionActionsGenerator<'t> {
 }
 
 impl ActionsGenerator for ProductionActionsGenerator<'_> {
-    fn nonterminal_types(&self, nonterminal: &NonTerminal) -> Vec<syn::Item> {
+    fn nonterminal_types(&self, nonterminal: &NonTerminal, settings: &Settings) -> Vec<syn::Item> {
         let ty = self
             .types
             .get_type(nonterminal.idx.symbol_index(self.term_len));
         let type_ident = format_ident!("{}", ty.name);
 
-        fn get_choice_type(choice: &Choice, type_name: Option<&str>) -> Option<syn::Item> {
-            match &choice.kind {
-                ChoiceKind::Struct {
-                    type_name: struct_type,
-                    fields,
-                } => {
-                    let type_ident = if let Some(type_name) = type_name {
-                        format_ident!("{type_name}")
-                    } else {
-                        format_ident!("{struct_type}")
-                    };
+        let get_choice_type =
+            |choice: &Choice, type_name: Option<&str>| -> Option<Vec<syn::Item>> {
+                match &choice.kind {
+                    ChoiceKind::Struct {
+                        type_name: struct_type,
+                        fields,
+                    } => {
+                        let type_name = if let Some(type_name) = type_name {
+                            type_name.to_string()
+                        } else {
+                            struct_type.into()
+                        };
+                        let type_ident = format_ident!("{}", name_valloc!(type_name, settings));
 
-                    let fields: Vec<syn::Field> = fields
-                        .iter()
-                        .map(|f| {
-                            let field_name = format_ident!("{}", f.name);
-                            let field_type = format_ident!("{}", f.ref_type);
-                            syn::Field::parse_named
-                                .parse2(if f.recursive.get() {
-                                    // Handle direct recursion
-                                    quote! { pub #field_name: Box<#field_type> }
-                                } else {
-                                    quote! {pub #field_name: #field_type}
-                                })
-                                .unwrap()
-                        })
-                        .collect();
-                    Some(parse_quote! {
-                        #[derive(Debug, Clone)]
-                        pub struct #type_ident {
-                            #(#fields),*
+                        let fields: Vec<syn::Field> = fields
+                            .iter()
+                            .map(|f| {
+                                let field_name = format_ident!("{}", f.name);
+                                let field_type = format_ident!("{}", f.ref_type);
+                                syn::Field::parse_named
+                                    .parse2(if f.recursive.get() {
+                                        // Handle direct recursion
+                                        quote! { pub #field_name: Box<#field_type> }
+                                    } else {
+                                        quote! {pub #field_name: #field_type}
+                                    })
+                                    .unwrap()
+                            })
+                            .collect();
+
+                        let mut types = vec![];
+                        types.push(parse_quote! {
+                            #[derive(Debug, Clone)]
+                            pub struct #type_ident {
+                                #(#fields),*
+                            }
+                        });
+                        if settings.builder_loc_info {
+                            let type_ident_loc = format_ident!("{type_name}");
+                            types.push(parse_quote! {
+                                pub type #type_ident_loc = ValLoc<#type_ident>;
+                            });
                         }
-                    })
+                        Some(types)
+                    }
+                    _ => None,
                 }
-                _ => None,
-            }
-        }
+            };
 
-        fn get_choice_types(choices: &[Choice], type_name: Option<&str>) -> Vec<syn::Item> {
+        let get_choice_types = |choices: &[Choice], type_name: Option<&str>| -> Vec<syn::Item> {
             choices
                 .iter()
                 .filter_map(|choice| get_choice_type(choice, type_name))
+                .flatten()
                 .collect()
-        }
+        };
 
-        fn get_variants(choices: &[Choice]) -> Vec<syn::Variant> {
+        let get_variants = |choices: &[Choice]| -> Vec<syn::Variant> {
             choices
                 .iter()
                 .filter_map(|v| {
@@ -204,7 +250,7 @@ impl ActionsGenerator for ProductionActionsGenerator<'_> {
                     }
                 })
                 .collect()
-        }
+        };
 
         match &ty.kind {
             SymbolTypeKind::Enum {
@@ -269,7 +315,7 @@ impl ActionsGenerator for ProductionActionsGenerator<'_> {
     fn nonterminal_actions(
         &self,
         nonterminal: &NonTerminal,
-        _settings: &Settings,
+        settings: &Settings,
     ) -> Vec<(String, syn::Item)> {
         let ty = self
             .types
@@ -293,8 +339,7 @@ impl ActionsGenerator for ProductionActionsGenerator<'_> {
                     let action_name = action_name(nonterminal, choice);
                     let action = format_ident!("{action_name}");
                     let args = self.get_action_args(ty, choice);
-                    let body = self.get_action_body(ty, target_type, choice);
-
+                    let body = self.get_action_body(ty, target_type, choice, settings);
                     (
                         action_name,
                         parse_quote! {

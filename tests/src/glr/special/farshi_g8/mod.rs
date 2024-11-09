@@ -1,4 +1,4 @@
-use rustemo::{rustemo_mod, GssHead, Parser, TreeBuilder};
+use rustemo::{rustemo_mod, Parser, TreeBuilder};
 use rustemo_compiler::output_cmp;
 
 rustemo_mod!(lang, "/src/glr/special/farshi_g8");
@@ -17,14 +17,10 @@ fn glr_special_farshi_g8() {
             &format!("src/glr/special/farshi_g8/tree_{}.ast", i),
             format!(
                 "{:#?}",
-                tree.unwrap().build::<TreeBuilder<
-                    '_,
-                    str,
-                    lang::ProdKind,
-                    lang::TokenKind,
-                >, GssHead<'_, str, lang::State, lang::TokenKind>, lang::State>(
-                    &mut builder
-                )
+                tree.unwrap()
+                    .build::<TreeBuilder<'_, str, lang::ProdKind, lang::TokenKind>, lang::State>(
+                        &mut builder
+                    )
             )
         );
     });

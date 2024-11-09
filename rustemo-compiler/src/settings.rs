@@ -91,6 +91,7 @@ pub struct Settings {
 
     pub(crate) lexer_type: LexerType,
     pub(crate) builder_type: BuilderType,
+    pub(crate) builder_loc_info: bool,
     pub(crate) generator_table_type: GeneratorTableType,
     pub(crate) input_type: String,
 
@@ -131,6 +132,7 @@ impl Default for Settings {
             notrace: false,
             lexer_type: Default::default(),
             builder_type: Default::default(),
+            builder_loc_info: false,
             generator_table_type: Default::default(),
             input_type: "str".into(),
             lexical_disamb_most_specific: true,
@@ -257,6 +259,13 @@ impl Settings {
     /// Sets builder type. The default builder will deduce AST types and actions.
     pub fn builder_type(mut self, builder_type: BuilderType) -> Self {
         self.builder_type = builder_type;
+        self
+    }
+
+    /// Should generated default AST builder types contain location/layout information
+    /// This is only used if builder-type is default.
+    pub fn builder_loc_info(mut self, builder_loc_info: bool) -> Self {
+        self.builder_loc_info = builder_loc_info;
         self
     }
 

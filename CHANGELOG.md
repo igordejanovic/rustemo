@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # [Unreleased]
 
+## Added
+
+- `builder-loc-info` config option which provides location information in the
+  default builder generated AST types. See the discussion at [2] and [the
+  docs](https://www.igordejanovic.net/rustemo/builders.html)
+  
+[2]: https://github.com/igordejanovic/rustemo/issues/2
+
 
 # [0.6.3] - 2024-11-11
 

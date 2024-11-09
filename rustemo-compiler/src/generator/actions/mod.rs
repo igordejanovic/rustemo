@@ -20,24 +20,35 @@ use super::ParserGenerator;
 mod production;
 
 pub(crate) trait ActionsGenerator {
-    fn terminal_type(&self, terminal: &Terminal) -> syn::Item {
-        let type_name_ident = format_ident!("{}", terminal.name);
-        parse_quote! {
-            pub type #type_name_ident = String;
+    fn terminal_type(&self, terminal: &Terminal, settings: &Settings) -> syn::Item {
+        let type_name = format_ident!("{}", terminal.name);
+        if settings.builder_loc_info {
+            parse_quote! {
+                pub type #type_name = ValLoc<String>;
+            }
+        } else {
+            parse_quote! {
+                pub type #type_name = String;
+            }
         }
     }
-    fn terminal_action(&self, terminal: &Terminal, _settings: &Settings) -> syn::Item {
+    fn terminal_action(&self, terminal: &Terminal, settings: &Settings) -> syn::Item {
         let type_name = format_ident!("{}", terminal.name);
         let action_name = format_ident!("{}", to_snake_case(&terminal.name));
+        let body: syn::Expr = if settings.builder_loc_info {
+            parse_quote! { #type_name::new(token.value.into(), Some(_ctx.location())) }
+        } else {
+            parse_quote! { token.value.into() }
+        };
         parse_quote! {
             pub fn #action_name(_ctx: &Ctx, token: Token) -> #type_name {
-                token.value.into()
+                #body
             }
         }
     }
 
     /// Create Rust types for the given non-terminal.
-    fn nonterminal_types(&self, nonterminal: &NonTerminal) -> Vec<syn::Item>;
+    fn nonterminal_types(&self, nonterminal: &NonTerminal, settings: &Settings) -> Vec<syn::Item>;
 
     /// Creates an action function for each production of the given non-terminal.
     fn nonterminal_actions(
@@ -73,11 +84,16 @@ pub(super) fn generate_parser_actions(generator: &ParserGenerator) -> Result<()>
                 use super::#lexer_mod::Input;
             },
         };
+        let mut base_use: Vec<syn::Stmt> = vec![];
+        if generator.settings.builder_loc_info {
+            base_use.push(parse_quote! {use rustemo::{ValLoc, Context as C};})
+        };
+        base_use.push(parse_quote! {use rustemo::Token as RustemoToken;});
+        base_use.push(parse_quote! {use super::#parser_mod::{TokenKind, Context};});
         parse_quote! {
             /// This file is maintained by rustemo but can be modified manually.
             /// All manual changes will be preserved except non-doc comments.
-            use rustemo::Token as RustemoToken;
-            use super::#parser_mod::{TokenKind, Context};
+            #(#base_use)*
             #input_type
             pub type Ctx<'i> = Context<'i, Input>;
             #[allow(dead_code)]
@@ -135,7 +151,8 @@ pub(super) fn generate_parser_actions(generator: &ParserGenerator) -> Result<()>
             let type_name = &terminal.name;
             if !type_names.contains(type_name) {
                 log!("Create type for terminal '{type_name}'.");
-                ast.items.push(actions_generator.terminal_type(terminal));
+                ast.items
+                    .push(actions_generator.terminal_type(terminal, generator.settings));
             }
             // Add terminal actions
             let action_name = to_snake_case(&terminal.name);
@@ -156,7 +173,7 @@ pub(super) fn generate_parser_actions(generator: &ParserGenerator) -> Result<()>
             // Add non-terminal type
             if !type_names.contains(&nonterminal.name) {
                 log!("Creating types for non-terminal '{}'.", nonterminal.name);
-                for ty in actions_generator.nonterminal_types(nonterminal) {
+                for ty in actions_generator.nonterminal_types(nonterminal, generator.settings) {
                     ast.items.push(ty);
                 }
             }
