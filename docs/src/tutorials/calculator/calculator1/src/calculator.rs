@@ -359,23 +359,23 @@ for DefaultBuilder {
     #![allow(unused_variables)]
     fn shift_action(
         &mut self,
-        context: &mut Context<'i, Input>,
+        context: &Context<'i, Input>,
         token: Token<'i, Input, TokenKind>,
     ) {
         let val = match token.kind {
             TokenKind::STOP => panic!("Cannot shift STOP token!"),
             TokenKind::Operand => {
-                Terminal::Operand(calculator_actions::operand(&*context, token))
+                Terminal::Operand(calculator_actions::operand(context, token))
             }
             TokenKind::Operator => {
-                Terminal::Operator(calculator_actions::operator(&*context, token))
+                Terminal::Operator(calculator_actions::operator(context, token))
             }
         };
         self.res_stack.push(Symbol::Terminal(val));
     }
     fn reduce_action(
         &mut self,
-        context: &mut Context<'i, Input>,
+        context: &Context<'i, Input>,
         prod: ProdKind,
         prod_len: usize,
     ) {
@@ -392,7 +392,7 @@ for DefaultBuilder {
                         Symbol::Terminal(Terminal::Operand(p2)),
                     ) => {
                         NonTerminal::Expression(
-                            calculator_actions::expression_c1(&*context, p0, p1, p2),
+                            calculator_actions::expression_c1(context, p0, p1, p2),
                         )
                     }
                     _ => panic!("Invalid symbol parse stack data."),

@@ -20,7 +20,7 @@ where
     ///
     /// * `term_idx` - A terminal unique identifier - index.
     /// * `token` - A token recognized in the input.
-    fn shift_action(&mut self, context: &mut C, token: Token<'i, I, TK>);
+    fn shift_action(&mut self, context: &C, token: Token<'i, I, TK>);
 
     /// Called when LR reduce is taking place.
     ///
@@ -30,7 +30,7 @@ where
     ///                to perform.
     /// * `prod_len` - A RHS length, used to pop appropriate number of
     ///                subresults from the stack
-    fn reduce_action(&mut self, context: &mut C, prod: P, prod_len: usize);
+    fn reduce_action(&mut self, context: &C, prod: P, prod_len: usize);
 }
 
 /// TreeBuilder is a builder that builds a generic concrete parse tree.
@@ -76,14 +76,14 @@ where
     C: Context<'i, I, S, TK>,
     S: State,
 {
-    fn shift_action(&mut self, context: &mut C, token: Token<'i, I, TK>) {
+    fn shift_action(&mut self, context: &C, token: Token<'i, I, TK>) {
         self.res_stack.push(TreeNode::TermNode {
             token,
             layout: context.layout_ahead(),
         })
     }
 
-    fn reduce_action(&mut self, context: &mut C, prod: P, prod_len: usize) {
+    fn reduce_action(&mut self, context: &C, prod: P, prod_len: usize) {
         let children;
         let layout;
         if prod_len > 0 {
@@ -160,11 +160,11 @@ where
     C: Context<'i, I, S, TK>,
     S: State,
 {
-    fn shift_action(&mut self, _context: &mut C, _token: Token<'i, I, TK>) {
+    fn shift_action(&mut self, _context: &C, _token: Token<'i, I, TK>) {
         // We do nothing on shift
     }
 
-    fn reduce_action(&mut self, context: &mut C, _prod: P, _prod_len: usize) {
+    fn reduce_action(&mut self, context: &C, _prod: P, _prod_len: usize) {
         // On reduce, save the slice of the input.
         self.slice = Some(&self.input[context.range()]);
     }

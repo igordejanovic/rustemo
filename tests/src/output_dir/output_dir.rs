@@ -412,19 +412,19 @@ for DefaultBuilder {
     #![allow(unused_variables)]
     fn shift_action(
         &mut self,
-        context: &mut Context<'i, Input>,
+        context: &Context<'i, Input>,
         token: Token<'i, Input, TokenKind>,
     ) {
         let val = match token.kind {
             TokenKind::STOP => panic!("Cannot shift STOP token!"),
             TokenKind::Tb => Terminal::Tb,
-            TokenKind::Num => Terminal::Num(output_dir_actions::num(&*context, token)),
+            TokenKind::Num => Terminal::Num(output_dir_actions::num(context, token)),
         };
         self.res_stack.push(Symbol::Terminal(val));
     }
     fn reduce_action(
         &mut self,
-        context: &mut Context<'i, Input>,
+        context: &Context<'i, Input>,
         prod: ProdKind,
         prod_len: usize,
     ) {
@@ -438,7 +438,7 @@ for DefaultBuilder {
                     (
                         Symbol::NonTerminal(NonTerminal::B1(p0)),
                         Symbol::Terminal(Terminal::Num(p1)),
-                    ) => NonTerminal::A(output_dir_actions::a_c1(&*context, p0, p1)),
+                    ) => NonTerminal::A(output_dir_actions::a_c1(context, p0, p1)),
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
@@ -451,7 +451,7 @@ for DefaultBuilder {
                     (
                         Symbol::NonTerminal(NonTerminal::B1(p0)),
                         Symbol::NonTerminal(NonTerminal::B(p1)),
-                    ) => NonTerminal::B1(output_dir_actions::b1_c1(&*context, p0, p1)),
+                    ) => NonTerminal::B1(output_dir_actions::b1_c1(context, p0, p1)),
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
@@ -462,7 +462,7 @@ for DefaultBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::NonTerminal(NonTerminal::B(p0)) => {
-                        NonTerminal::B1(output_dir_actions::b1_b(&*context, p0))
+                        NonTerminal::B1(output_dir_actions::b1_b(context, p0))
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }

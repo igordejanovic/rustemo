@@ -421,14 +421,12 @@ for DefaultBuilder {
     #![allow(unused_variables)]
     fn shift_action(
         &mut self,
-        context: &mut Context<'i, Input>,
+        context: &Context<'i, Input>,
         token: Token<'i, Input, TokenKind>,
     ) {
         let val = match token.kind {
             TokenKind::STOP => panic!("Cannot shift STOP token!"),
-            TokenKind::Number => {
-                Terminal::Number(calclr_actions::number(&*context, token))
-            }
+            TokenKind::Number => Terminal::Number(calclr_actions::number(context, token)),
             TokenKind::Add => Terminal::Add,
             TokenKind::Mul => Terminal::Mul,
         };
@@ -436,7 +434,7 @@ for DefaultBuilder {
     }
     fn reduce_action(
         &mut self,
-        context: &mut Context<'i, Input>,
+        context: &Context<'i, Input>,
         prod: ProdKind,
         prod_len: usize,
     ) {
@@ -451,7 +449,7 @@ for DefaultBuilder {
                         Symbol::NonTerminal(NonTerminal::E(p0)),
                         _,
                         Symbol::NonTerminal(NonTerminal::E(p1)),
-                    ) => NonTerminal::E(calclr_actions::e_c1(&*context, p0, p1)),
+                    ) => NonTerminal::E(calclr_actions::e_c1(context, p0, p1)),
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
@@ -465,7 +463,7 @@ for DefaultBuilder {
                         Symbol::NonTerminal(NonTerminal::E(p0)),
                         _,
                         Symbol::NonTerminal(NonTerminal::E(p1)),
-                    ) => NonTerminal::E(calclr_actions::e_c2(&*context, p0, p1)),
+                    ) => NonTerminal::E(calclr_actions::e_c2(context, p0, p1)),
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
@@ -476,7 +474,7 @@ for DefaultBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::Number(p0)) => {
-                        NonTerminal::E(calclr_actions::e_number(&*context, p0))
+                        NonTerminal::E(calclr_actions::e_number(context, p0))
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }

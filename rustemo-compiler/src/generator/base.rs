@@ -672,21 +672,23 @@ impl<'g, 's> PartGenerator<'g, 's> for BasePartGenerator {
             }
         });
 
-        let mut shift_match_arms: Vec<syn::Arm> =
-            generator.grammar.terminals[1..].iter().filter(|t| t.reachable.get())
-                                                   .map(|terminal| {
-            let action = format_ident!("{}", to_snake_case(&terminal.name));
-            let term = format_ident!("{}", terminal.name);
-            if let Some(Recognizer::StrConst(_)) = terminal.recognizer {
-                parse_quote!{
-                    TokenKind::#term => Terminal::#term
+        let mut shift_match_arms: Vec<syn::Arm> = generator.grammar.terminals[1..]
+            .iter()
+            .filter(|t| t.reachable.get())
+            .map(|terminal| {
+                let action = format_ident!("{}", to_snake_case(&terminal.name));
+                let term = format_ident!("{}", terminal.name);
+                if let Some(Recognizer::StrConst(_)) = terminal.recognizer {
+                    parse_quote! {
+                        TokenKind::#term => Terminal::#term
+                    }
+                } else {
+                    parse_quote! {
+                        TokenKind::#term => Terminal::#term(#actions_file::#action(context, token))
+                    }
                 }
-            } else {
-                parse_quote!{
-                    TokenKind::#term => Terminal::#term(#actions_file::#action(&*context, token))
-                }
-            }
-        }).collect();
+            })
+            .collect();
 
         if generator.grammar.terminals[1..]
             .iter()
@@ -811,13 +813,13 @@ impl<'g, 's> PartGenerator<'g, 's> for BasePartGenerator {
                                 && !generator.grammar.symbol_has_content(production.rhs_symbol(0)) {
                                 parse_quote! {
                                     {
-                                        NonTerminal::#nonterminal(#actions_file::#action(&*context, #(#params),*))
+                                        NonTerminal::#nonterminal(#actions_file::#action(context, #(#params),*))
                                     }
                                 }
                             } else {
                                 parse_quote! {
                                     match #match_expr {
-                                        #match_lhs => NonTerminal::#nonterminal(#actions_file::#action(&*context, #(#params),*)),
+                                        #match_lhs => NonTerminal::#nonterminal(#actions_file::#action(context, #(#params),*)),
                                         _ => panic!("Invalid symbol parse stack data.")
                                     }
                                 }
@@ -845,7 +847,7 @@ impl<'g, 's> PartGenerator<'g, 's> for BasePartGenerator {
                                     // Special handling of right-nullable reduction of size 0. It
                                     // is similar to EMPTY reduction except that we still have
                                     // parameters of the action which are all None.
-                                    parse_quote! { 0 => NonTerminal::#nonterminal(#actions_file::#action(&*context, #(#params),*)) }
+                                    parse_quote! { 0 => NonTerminal::#nonterminal(#actions_file::#action(context, #(#params),*)) }
                                 } else {
                                     let match_lhs = match_lhs(len);
                                     let match_expr = match_expr(len);
@@ -883,7 +885,7 @@ impl<'g, 's> PartGenerator<'g, 's> for BasePartGenerator {
                 #![allow(unused_variables)]
                 fn shift_action(
                     &mut self,
-                    #context_var: &mut Context<'i, Input>,
+                    #context_var: &Context<'i, Input>,
                     token: Token<'i, Input, TokenKind>) {
                     let val = match token.kind {
                         TokenKind::STOP => panic!("Cannot shift STOP token!"),
@@ -894,7 +896,7 @@ impl<'g, 's> PartGenerator<'g, 's> for BasePartGenerator {
 
                 fn reduce_action(
                     &mut self,
-                    #context_var: &mut Context<'i, Input>,
+                    #context_var: &Context<'i, Input>,
                     prod: ProdKind,
                     prod_len: usize) {
                     let prod = match prod {

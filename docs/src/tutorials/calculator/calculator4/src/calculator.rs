@@ -551,13 +551,13 @@ for DefaultBuilder {
     #![allow(unused_variables)]
     fn shift_action(
         &mut self,
-        context: &mut Context<'i, Input>,
+        context: &Context<'i, Input>,
         token: Token<'i, Input, TokenKind>,
     ) {
         let val = match token.kind {
             TokenKind::STOP => panic!("Cannot shift STOP token!"),
             TokenKind::Number => {
-                Terminal::Number(calculator_actions::number(&*context, token))
+                Terminal::Number(calculator_actions::number(context, token))
             }
             TokenKind::Plus => Terminal::Plus,
             TokenKind::Minus => Terminal::Minus,
@@ -568,7 +568,7 @@ for DefaultBuilder {
     }
     fn reduce_action(
         &mut self,
-        context: &mut Context<'i, Input>,
+        context: &Context<'i, Input>,
         prod: ProdKind,
         prod_len: usize,
     ) {
@@ -583,7 +583,7 @@ for DefaultBuilder {
                         Symbol::NonTerminal(NonTerminal::E(p0)),
                         _,
                         Symbol::NonTerminal(NonTerminal::E(p1)),
-                    ) => NonTerminal::E(calculator_actions::e_add(&*context, p0, p1)),
+                    ) => NonTerminal::E(calculator_actions::e_add(context, p0, p1)),
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
@@ -597,7 +597,7 @@ for DefaultBuilder {
                         Symbol::NonTerminal(NonTerminal::E(p0)),
                         _,
                         Symbol::NonTerminal(NonTerminal::E(p1)),
-                    ) => NonTerminal::E(calculator_actions::e_sub(&*context, p0, p1)),
+                    ) => NonTerminal::E(calculator_actions::e_sub(context, p0, p1)),
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
@@ -611,7 +611,7 @@ for DefaultBuilder {
                         Symbol::NonTerminal(NonTerminal::E(p0)),
                         _,
                         Symbol::NonTerminal(NonTerminal::E(p1)),
-                    ) => NonTerminal::E(calculator_actions::e_mul(&*context, p0, p1)),
+                    ) => NonTerminal::E(calculator_actions::e_mul(context, p0, p1)),
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
@@ -625,7 +625,7 @@ for DefaultBuilder {
                         Symbol::NonTerminal(NonTerminal::E(p0)),
                         _,
                         Symbol::NonTerminal(NonTerminal::E(p1)),
-                    ) => NonTerminal::E(calculator_actions::e_div(&*context, p0, p1)),
+                    ) => NonTerminal::E(calculator_actions::e_div(context, p0, p1)),
                     _ => panic!("Invalid symbol parse stack data."),
                 }
             }
@@ -636,7 +636,7 @@ for DefaultBuilder {
                     .into_iter();
                 match i.next().unwrap() {
                     Symbol::Terminal(Terminal::Number(p0)) => {
-                        NonTerminal::E(calculator_actions::e_number(&*context, p0))
+                        NonTerminal::E(calculator_actions::e_number(context, p0))
                     }
                     _ => panic!("Invalid symbol parse stack data."),
                 }
