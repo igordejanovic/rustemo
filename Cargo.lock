@@ -57,7 +57,7 @@ checksum = "79296716171880943b8470b5f8d03aa55eb2e645a4874bdbb28adb49162e012c"
 
 [[package]]
 name = "calculator"
-version = "0.6.2"
+version = "0.6.3"
 dependencies = [
  "rustemo",
  "rustemo-compiler",
@@ -379,7 +379,7 @@ dependencies = [
 
 [[package]]
 name = "json"
-version = "0.6.2"
+version = "0.6.3"
 dependencies = [
  "rustemo",
  "rustemo-compiler",
@@ -557,7 +557,7 @@ dependencies = [
 
 [[package]]
 name = "readme_example"
-version = "0.6.2"
+version = "0.6.3"
 dependencies = [
  "rustemo",
 ]
@@ -593,7 +593,7 @@ checksum = "2b15c43186be67a4fd63bee50d0303afffcef381492ebe2c5d87f324e1b8815c"
 
 [[package]]
 name = "rustemo"
-version = "0.6.2"
+version = "0.6.3"
 dependencies = [
  "colored",
  "fancy-regex",
@@ -604,7 +604,7 @@ dependencies = [
 
 [[package]]
 name = "rustemo-compiler"
-version = "0.6.2"
+version = "0.6.3"
 dependencies = [
  "clap 3.2.25",
  "colored",
@@ -620,7 +620,7 @@ dependencies = [
 
 [[package]]
 name = "rustemo-tests"
-version = "0.6.2"
+version = "0.6.3"
 dependencies = [
  "rustemo",
  "rustemo-compiler",
