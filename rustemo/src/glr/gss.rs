@@ -12,7 +12,7 @@ use crate::{
     context::Context,
     input::Input,
     lexer::Token,
-    location::{Location, Position},
+    location::Location,
     lr::builder::LRBuilder,
     parser::State,
 };
@@ -151,18 +151,6 @@ where
 
     location: Location,
 
-    /// The start of the first token ahead (after the layout)
-    pub position_ahead: usize,
-
-    /// The end position of the last token before this head
-    pub position_before: usize,
-
-    /// The start of the first token ahead as input-specific position
-    pub location_pos_ahead: Position,
-
-    /// The end position of the last token before this head as an input-specific position
-    pub location_pos_before: Position,
-
     /// Layout before the first token ahead
     layout_ahead: Option<&'i I>,
 
@@ -184,10 +172,6 @@ where
             position: self.position,
             range: self.range.clone(),
             location: self.location,
-            position_ahead: self.position_ahead,
-            position_before: self.position_before,
-            location_pos_ahead: self.location_pos_ahead,
-            location_pos_before: self.location_pos_before,
             layout_ahead: self.layout_ahead,
             token_ahead: self.token_ahead().cloned(),
         }
@@ -202,10 +186,6 @@ impl<I: Input + ?Sized, S: Default, TK> Default for GssHead<'_, I, S, TK> {
             position: Default::default(),
             range: Default::default(),
             location: I::start_location(),
-            position_ahead: Default::default(),
-            position_before: Default::default(),
-            location_pos_ahead: I::start_location().start,
-            location_pos_before: I::start_location().start,
             layout_ahead: Default::default(),
             token_ahead: Default::default(),
         }
@@ -225,10 +205,6 @@ where
         position: usize,
         range: Range<usize>,
         location: Location,
-        position_ahead: usize,
-        position_before: usize,
-        location_pos_ahead: Position,
-        location_pos_before: Position,
         layout_ahead: Option<&'i I>,
         token_ahead: Option<Token<'i, I, TK>>,
     ) -> Self {
@@ -238,10 +214,6 @@ where
             position,
             range,
             location,
-            position_ahead,
-            position_before,
-            location_pos_ahead,
-            location_pos_before,
             layout_ahead,
             token_ahead,
         }

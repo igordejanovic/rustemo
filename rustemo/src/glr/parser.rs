@@ -755,11 +755,6 @@ where
                         position,
                         head.position()..position,
                         token.location,
-                        // FIXME
-                        position,
-                        position,
-                        token.location,
-                        token.location,
                         None,
                         None,
                     );
