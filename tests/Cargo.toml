@@ -14,14 +14,15 @@ rust-version.workspace = true
 
 [dependencies]
 # Needed by rustemo generated parsers.
-rustemo = { workspace = true }
+rustemo.workspace = true
 
 [dev-dependencies]
 # For output_cmp for testing
-rustemo-compiler = { workspace = true }
+rustemo-compiler.workspace = true
+serial_test.workspace = true
 
 [build-dependencies]
-rustemo-compiler = { workspace = true }
+rustemo-compiler.workspace = true
 
 [[test]]
 name = "glr"

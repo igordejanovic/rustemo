@@ -19,6 +19,16 @@ members = [
         "docs/src/readme_example",
 ]
 
+[workspace.package]
+repository = "https://github.com/igordejanovic/rustemo"
+authors = ["Igor R. Dejanović <igor.dejanovic@gmail.com>"]
+keywords = ["parser", "generator", "LR", "grammar"]
+categories = ["parsing"]
+license = "Apache-2.0 OR MIT"
+version = "0.6.3"
+edition = "2021"
+rust-version = "1.74"
+
 [workspace.dependencies]
 colored = "2"
 petgraph = "0.6"
@@ -36,16 +46,7 @@ regex = { version = "1", default-features = false, features = ["std", "unicode-p
 fancy-regex = "0.13.0"
 
 criterion = "0.3.5"
+serial_test = "3.2.0"
 
 rustemo = { path = "./rustemo", version = "0.6"}
 rustemo-compiler = { path = "./rustemo-compiler" }
-
-[workspace.package]
-repository = "https://github.com/igordejanovic/rustemo"
-authors = ["Igor R. Dejanović <igor.dejanovic@gmail.com>"]
-keywords = ["parser", "generator", "LR", "grammar"]
-categories = ["parsing"]
-license = "Apache-2.0 OR MIT"
-version = "0.6.3"
-edition = "2021"
-rust-version = "1.74"
