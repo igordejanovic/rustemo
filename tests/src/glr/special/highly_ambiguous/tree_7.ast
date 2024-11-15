@@ -1,6 +1,6 @@
 NonTermNode {
     prod: S: S S,
-    location: [1,0-1,1],
+    location: [1,0-1,4],
     children: [
         NonTermNode {
             prod: S: Tb,
@@ -15,18 +15,18 @@ NonTermNode {
         },
         NonTermNode {
             prod: S: S S,
-            location: [1,0-1,1],
+            location: [1,1-1,4],
             children: [
                 NonTermNode {
                     prod: S: S S,
-                    location: [1,0-1,1],
+                    location: [1,1-1,3],
                     children: [
                         NonTermNode {
                             prod: S: Tb,
-                            location: [1,0-1,1],
+                            location: [1,1-1,2],
                             children: [
                                 TermNode {
-                                    token: Tb("\"b\"" [1,0-1,1]),
+                                    token: Tb("\"b\"" [1,1-1,2]),
                                     layout: None,
                                 },
                             ],
@@ -34,10 +34,10 @@ NonTermNode {
                         },
                         NonTermNode {
                             prod: S: Tb,
-                            location: [1,0-1,1],
+                            location: [1,2-1,3],
                             children: [
                                 TermNode {
-                                    token: Tb("\"b\"" [1,0-1,1]),
+                                    token: Tb("\"b\"" [1,2-1,3]),
                                     layout: None,
                                 },
                             ],
@@ -48,10 +48,10 @@ NonTermNode {
                 },
                 NonTermNode {
                     prod: S: Tb,
-                    location: [1,0-1,1],
+                    location: [1,3-1,4],
                     children: [
                         TermNode {
-                            token: Tb("\"b\"" [1,0-1,1]),
+                            token: Tb("\"b\"" [1,3-1,4]),
                             layout: None,
                         },
                     ],

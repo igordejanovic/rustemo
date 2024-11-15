@@ -606,29 +606,44 @@ where
                         );
 
                         let root_head = gss.head(path.root_head);
-                        let range = Range {
-                            start: <SPPFTree<'_, I, P, TK> as Context<'_, I, S, TK>>::range(
-                                &path.parents[0].possibilities.borrow()[0],
-                            )
-                            .start,
-                            end: <SPPFTree<'_, I, P, TK> as Context<'_, I, S, TK>>::range(
-                                &path.parents[path.parents.len() - 1].possibilities.borrow()[0],
-                            )
-                            .end,
-                        };
-                        let location = Location {
-                            start: <SPPFTree<'_, I, P, TK> as Context<'_, I, S, TK>>::location(
-                                &path.parents[0].possibilities.borrow()[0],
-                            )
-                            .start,
-                            end: Some(
-                                <SPPFTree<'_, I, P, TK> as Context<'_, I, S, TK>>::location(
-                                    &path.parents[path.parents.len() - 1].possibilities.borrow()
-                                        [0],
+                        let range = if path.parents.is_empty() {
+                            Range {
+                                start: root_head.position(),
+                                end: root_head.position(),
+                            }
+                        } else {
+                            Range {
+                                start: <SPPFTree<'_, I, P, TK> as Context<'_, I, S, TK>>::range(
+                                    &path.parents[0].possibilities.borrow()[0],
                                 )
-                                .end
-                                .unwrap(),
-                            ),
+                                .start,
+                                end: <SPPFTree<'_, I, P, TK> as Context<'_, I, S, TK>>::range(
+                                    &path.parents[path.parents.len() - 1].possibilities.borrow()[0],
+                                )
+                                .end,
+                            }
+                        };
+                        let location = if path.parents.is_empty() {
+                            let end = root_head.location().into();
+                            Location {
+                                start: end,
+                                end: Some(end),
+                            }
+                        } else {
+                            Location {
+                                start: <SPPFTree<'_, I, P, TK> as Context<'_, I, S, TK>>::location(
+                                    &path.parents[0].possibilities.borrow()[0],
+                                )
+                                .start,
+                                end: Some(
+                                    <SPPFTree<'_, I, P, TK> as Context<'_, I, S, TK>>::location(
+                                        &path.parents[path.parents.len() - 1].possibilities.borrow()
+                                            [0],
+                                    )
+                                    .end
+                                    .unwrap(),
+                                ),
+                            }
                         };
                         let solution = Rc::new(SPPFTree::NonTerm {
                             prod: production,

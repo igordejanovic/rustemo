@@ -1,6 +1,6 @@
 NonTermNode {
     prod: S: B S Tb,
-    location: [1,0-1,1],
+    location: [1,0-1,4],
     children: [
         NonTermNode {
             prod: B: A A,
@@ -23,7 +23,7 @@ NonTermNode {
         },
         NonTermNode {
             prod: S: A S Tb,
-            location: [1,0-1,1],
+            location: [1,0-1,3],
             children: [
                 NonTermNode {
                     prod: A: ,
@@ -33,7 +33,7 @@ NonTermNode {
                 },
                 NonTermNode {
                     prod: S: A S Tb,
-                    location: [1,0-1,1],
+                    location: [1,0-1,2],
                     children: [
                         NonTermNode {
                             prod: A: ,
@@ -53,21 +53,21 @@ NonTermNode {
                             layout: None,
                         },
                         TermNode {
-                            token: Tb("\"b\"" [1,0-1,1]),
+                            token: Tb("\"b\"" [1,1-1,2]),
                             layout: None,
                         },
                     ],
                     layout: None,
                 },
                 TermNode {
-                    token: Tb("\"b\"" [1,0-1,1]),
+                    token: Tb("\"b\"" [1,2-1,3]),
                     layout: None,
                 },
             ],
             layout: None,
         },
         TermNode {
-            token: Tb("\"b\"" [1,0-1,1]),
+            token: Tb("\"b\"" [1,3-1,4]),
             layout: None,
         },
     ],

@@ -50,7 +50,7 @@ pub trait Input: ToOwned + Index<Range<usize>, Output = Self> {
     /// location and extending over self.
     fn location_span(&self, location: Location) -> Location {
         Location {
-            start: location.start,
+            start: location.into(),
             end: Some(self.location_after(location).start),
         }
     }
@@ -97,11 +97,8 @@ impl Input for str {
     }
 
     fn location_after(&self, location: Location) -> Location {
-        let (mut line, mut column) = match location {
-            Location {
-                start: Position::LineBased(lb),
-                ..
-            } => (lb.line, lb.column),
+        let (mut line, mut column) = match location.into() {
+            Position::LineBased(lb) => (lb.line, lb.column),
             _ => panic!("Location not in line/column format!"),
         };
 
@@ -141,20 +138,13 @@ impl Input for [u8] {
     }
 
     fn location_after(&self, location: Location) -> Location {
-        if let Location {
-            start: Position::Position(p),
-            ..
-        } = location
-        {
-            Location {
+        let position = location.into();
+        match position {
+            Position::Position(p) => Location {
                 start: Position::Position(p + self.len()),
                 end: None,
-            }
-        } else {
-            Location {
-                start: Position::Position(self.len()),
-                end: None,
-            }
+            },
+            _ => panic!("Invalid Position variant for [u8] type"),
         }
     }
 

@@ -66,6 +66,12 @@ impl Display for Position {
     }
 }
 
+impl From<Location> for Position {
+    fn from(value: Location) -> Self {
+        value.end.unwrap_or(value.start)
+    }
+}
+
 /// Describes a span from start till end in the parsed input.
 ///
 /// Start is mandatory while the end is not.
