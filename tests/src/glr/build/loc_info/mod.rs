@@ -1,6 +1,6 @@
-use serial_test::serial;
 use rustemo::{rustemo_mod, Parser};
 use rustemo_compiler::{local_file, output_cmp};
+use serial_test::serial;
 
 use self::json::JsonParser;
 
@@ -13,7 +13,10 @@ fn glr_loc_info() {
     let mut parser = JsonParser::new();
     let forest = parser
         // Using the same input file from LR test.
-        .parse_file(local_file!(file!(), "../../../builder/loc_info/loc_info.json"))
+        .parse_file(local_file!(
+            file!(),
+            "../../../builder/loc_info/loc_info.json"
+        ))
         .unwrap();
 
     output_cmp!(

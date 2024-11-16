@@ -3,7 +3,7 @@
 //! The implementation is based on this paper:
 //! Elizabeth Scott and Adrian Johnstone. 2006. Right nulled GLR parsers. ACM
 //! Trans. Program. Lang. Syst. 28, 4 (July 2006), 577–618.
-//! https://doi.org/10.1145/1146809.1146810
+//! <https://doi.org/10.1145/1146809.1146810>
 
 use crate::{
     context::Context,
@@ -618,7 +618,8 @@ where
                                 )
                                 .start,
                                 end: <SPPFTree<'_, I, P, TK> as Context<'_, I, S, TK>>::range(
-                                    &path.parents[path.parents.len() - 1].possibilities.borrow()[0],
+                                    &path.parents[path.parents.len() - 1].possibilities.borrow()
+                                        [0],
                                 )
                                 .end,
                             }
@@ -631,14 +632,16 @@ where
                             }
                         } else {
                             Location {
-                                start: <SPPFTree<'_, I, P, TK> as Context<'_, I, S, TK>>::location(
-                                    &path.parents[0].possibilities.borrow()[0],
-                                )
-                                .start,
+                                start:
+                                    <SPPFTree<'_, I, P, TK> as Context<'_, I, S, TK>>::location(
+                                        &path.parents[0].possibilities.borrow()[0],
+                                    )
+                                    .start,
                                 end: Some(
                                     <SPPFTree<'_, I, P, TK> as Context<'_, I, S, TK>>::location(
-                                        &path.parents[path.parents.len() - 1].possibilities.borrow()
-                                            [0],
+                                        &path.parents[path.parents.len() - 1]
+                                            .possibilities
+                                            .borrow()[0],
                                     )
                                     .end
                                     .unwrap(),

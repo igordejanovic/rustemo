@@ -1,7 +1,10 @@
 use rustemo::{rustemo_mod, Parser};
 use rustemo_compiler::output_cmp;
 
-rustemo_mod!(most_specific, "/src/glr/lexical_ambiguity/most_specific_off");
+rustemo_mod!(
+    most_specific,
+    "/src/glr/lexical_ambiguity/most_specific_off"
+);
 rustemo_mod!(
     most_specific_actions,
     "/src/glr/lexical_ambiguity/most_specific_off"

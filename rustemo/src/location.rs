@@ -107,7 +107,7 @@ impl Location {
     pub fn to(&self, loc_to: Self) -> Self {
         Self {
             start: self.start,
-            end: loc_to.end.or(Some(loc_to.start))
+            end: loc_to.end.or(Some(loc_to.start)),
         }
     }
 }

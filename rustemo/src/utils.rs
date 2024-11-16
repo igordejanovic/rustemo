@@ -1,5 +1,5 @@
 /// Simple deduplication.
-/// See: https://stackoverflow.com/a/57889826/2024430
+/// See: <https://stackoverflow.com/a/57889826/2024430>
 pub trait Dedup<T: PartialEq + Clone> {
     fn clear_duplicates(&mut self);
 }

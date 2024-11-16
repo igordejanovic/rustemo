@@ -9,11 +9,7 @@ use std::{
 use petgraph::{graph::Edges, prelude::*};
 
 use crate::{
-    context::Context,
-    input::Input,
-    lexer::Token,
-    location::Location,
-    lr::builder::LRBuilder,
+    context::Context, input::Input, lexer::Token, location::Location, lr::builder::LRBuilder,
     parser::State,
 };
 
@@ -653,12 +649,11 @@ where
         S: State,
         P: Copy,
     {
-
         match &*self.root {
             SPPFTree::Term { token, .. } => {
                 context.set_location(Context::<I, S, TK>::location(&*self.root));
                 builder.shift_action(context, token.clone())
-            },
+            }
             SPPFTree::NonTerm { prod, .. } => {
                 let children = self.children();
                 children.iter().for_each(|c| {
