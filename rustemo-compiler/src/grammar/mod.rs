@@ -487,8 +487,7 @@ impl Grammar {
                 let nt_symbol = self.nonterm_to_symbol_index(p.nonterminal);
                 nt_symbol != self.augmented_index
                     && self
-                        .augmented_layout_index
-                        .map_or(true, |li| li != nt_symbol)
+                        .augmented_layout_index != Some(nt_symbol)
             })
             .collect()
     }
@@ -502,8 +501,7 @@ impl Grammar {
                 nt_symbol != self.empty_index
                     && nt_symbol != self.augmented_index
                     && self
-                        .augmented_layout_index
-                        .map_or(true, |li| li != nt_symbol)
+                        .augmented_layout_index != Some(nt_symbol)
             })
             .collect()
     }
