@@ -409,7 +409,7 @@ where
     fn set_layout_ahead(&mut self, _layout: Option<&'i I>) {}
 }
 
-impl<'i, I, P, TK> Default for SPPFTree<'i, I, P, TK>
+impl<I, P, TK> Default for SPPFTree<'_, I, P, TK>
 where
     I: Input + ?Sized,
     TK: Copy,
