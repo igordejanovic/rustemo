@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # [Unreleased]
 
+
+# [0.7.0] - 2024-11-16
+
 ## Added
 
 - `builder-loc-info` config option which provides location information in the
@@ -152,7 +155,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial release. See the README for the features available in this release.
 
 
-[unreleased]: https://github.com/igordejanovic/rustemo/compare/0.6.3...HEAD
+[unreleased]: https://github.com/igordejanovic/rustemo/compare/0.7.0...HEAD
+[0.7.0]: https://github.com/igordejanovic/rustemo/compare/0.6.3...0.7.0
 [0.6.3]: https://github.com/igordejanovic/rustemo/compare/0.6.2...0.6.3
 [0.6.2]: https://github.com/igordejanovic/rustemo/compare/0.6.1...0.6.2
 [0.6.1]: https://github.com/igordejanovic/rustemo/compare/0.6.0...0.6.1

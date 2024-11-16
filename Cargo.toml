@@ -25,7 +25,7 @@ authors = ["Igor R. Dejanović <igor.dejanovic@gmail.com>"]
 keywords = ["parser", "generator", "LR", "grammar"]
 categories = ["parsing"]
 license = "Apache-2.0 OR MIT"
-version = "0.6.3"
+version = "0.7.0"
 edition = "2021"
 rust-version = "1.74"
 
@@ -48,5 +48,5 @@ fancy-regex = "0.13.0"
 criterion = "0.3.5"
 serial_test = "3.2.0"
 
-rustemo = { path = "./rustemo", version = "0.6"}
+rustemo = { path = "./rustemo", version = "0.7"}
 rustemo-compiler = { path = "./rustemo-compiler" }
