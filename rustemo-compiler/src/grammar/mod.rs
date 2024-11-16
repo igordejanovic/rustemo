@@ -485,9 +485,7 @@ impl Grammar {
             .iter()
             .filter(|&p| {
                 let nt_symbol = self.nonterm_to_symbol_index(p.nonterminal);
-                nt_symbol != self.augmented_index
-                    && self
-                        .augmented_layout_index != Some(nt_symbol)
+                nt_symbol != self.augmented_index && self.augmented_layout_index != Some(nt_symbol)
             })
             .collect()
     }
@@ -500,8 +498,7 @@ impl Grammar {
                 let nt_symbol = self.nonterm_to_symbol_index(n.idx);
                 nt_symbol != self.empty_index
                     && nt_symbol != self.augmented_index
-                    && self
-                        .augmented_layout_index != Some(nt_symbol)
+                    && self.augmented_layout_index != Some(nt_symbol)
             })
             .collect()
     }
