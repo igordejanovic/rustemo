@@ -2,7 +2,7 @@
 
 use std::path::PathBuf;
 
-use clap::Parser;
+use clap::{ArgAction, Parser};
 use colored::Colorize;
 use rustemo_compiler::{
     BuilderType, GeneratorTableType, LexerType, ParserAlgo, Settings, TableType,
@@ -53,19 +53,19 @@ struct Cli {
     no_shifts_over_empty: bool,
 
     /// The type of LR table
-    #[clap(short, long, arg_enum, default_value_t)]
+    #[clap(short, long, value_enum, default_value_t)]
     table_type: TableType,
 
     /// Parser algorithm
-    #[clap(short, long, arg_enum, default_value_t)]
+    #[clap(short, long, value_enum, default_value_t)]
     parser_algo: ParserAlgo,
 
     /// Parser generator table type
-    #[clap(short, long, arg_enum, default_value_t)]
+    #[clap(short, long, value_enum, default_value_t)]
     generator_table_type: GeneratorTableType,
 
     /// What kind of lexer should be used.
-    #[clap(short, long, arg_enum, default_value_t)]
+    #[clap(short, long, value_enum, default_value_t)]
     lexer_type: LexerType,
 
     /// The type of the input if non-default lexer is used
@@ -73,7 +73,7 @@ struct Cli {
     input_type: String,
 
     /// Generated builder type.
-    #[clap(short, long, arg_enum, default_value_t)]
+    #[clap(short, long, value_enum, default_value_t)]
     builder_type: BuilderType,
 
     /// Should generated default AST builder types contain location/layout information
@@ -114,8 +114,8 @@ struct Cli {
     exclude: Vec<String>,
 
     /// Verbosity level 0-2
-    #[clap(short, long, parse(from_occurrences))]
-    verbosity: usize,
+    #[clap(short, long, action = ArgAction::Count)]
+    verbosity: u8,
 }
 
 fn main() {

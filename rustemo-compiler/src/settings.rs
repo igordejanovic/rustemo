@@ -1,5 +1,6 @@
-use clap::clap_derive::ArgEnum;
 use std::fs;
+
+use clap::ValueEnum;
 
 use crate::table::TableType;
 use crate::{Error, Result};
@@ -8,7 +9,7 @@ use std::path::{Path, PathBuf};
 use crate::generator::generate_parser;
 
 /// The parsing algorithm used
-#[derive(Debug, Default, Clone, ArgEnum)]
+#[derive(Debug, Default, Clone, ValueEnum)]
 pub enum ParserAlgo {
     #[default]
     LR,
@@ -16,7 +17,7 @@ pub enum ParserAlgo {
 }
 
 /// The lexer type used during parsing to break the input into tokens
-#[derive(Debug, Default, Clone, ArgEnum)]
+#[derive(Debug, Default, Clone, ValueEnum)]
 pub enum LexerType {
     /// Default lexer if the input is `str` is based on string/regex recognizers
     #[default]
@@ -26,7 +27,7 @@ pub enum LexerType {
 }
 
 /// The builder type used during parsing to construct the output
-#[derive(Debug, Default, Clone, ArgEnum)]
+#[derive(Debug, Default, Clone, ValueEnum)]
 pub enum BuilderType {
     /// Default builder type constructs AST using inferred node types
     #[default]
@@ -38,7 +39,7 @@ pub enum BuilderType {
 }
 
 /// Different generated parser table variants with different trade-offs
-#[derive(Debug, Default, Clone, ArgEnum)]
+#[derive(Debug, Default, Clone, ValueEnum)]
 pub enum GeneratorTableType {
     /// Table is generated as nested static arrays
     /// Access time should be relatively good but it produces
