@@ -398,13 +398,14 @@ impl Settings {
             Ok(p.join(
                 grammar
                     .parent()
-                    .ok_or(Error::Error(
-                        "Cannot find parent of '{grammar:?}' file.".to_string(),
-                    ))?
+                    .ok_or(Error::Error(format!(
+                        "Cannot find parent of '{grammar:?}' file."
+                    )))?
                     .strip_prefix(self.root_dir.as_ref().expect("'root_dir' must be set!"))
-                    .or(Err(Error::Error(
-                        "Cannot remove prefix '{root_dir:?}' from '{grammar:?}'.".to_string(),
-                    )))?,
+                    .or(Err(Error::Error(format!(
+                        "Cannot remove prefix '{:?}' from '{grammar:?}'.",
+                        &self.root_dir
+                    ))))?,
             ))
         };
 
