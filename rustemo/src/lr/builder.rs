@@ -27,9 +27,9 @@ where
     /// # Arguments
     ///
     /// * `prod_idx` - A production unique identifier, used to decide the action
-    ///                to perform.
+    ///   to perform.
     /// * `prod_len` - A RHS length, used to pop appropriate number of
-    ///                subresults from the stack
+    ///   subresults from the stack
     fn reduce_action(&mut self, context: &C, prod: P, prod_len: usize);
 }
 
