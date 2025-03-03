@@ -280,7 +280,7 @@ where
                     .into_iter()
                     .map(|t| t.0)
                     .collect::<Vec<_>>();
-                if self.partial_parse && expected.iter().any(|&t| t == stop_kind) {
+                if self.partial_parse && expected.contains(&stop_kind) {
                     return Ok(Token {
                         kind: stop_kind,
                         value: &input[context.position()..context.position()],
