@@ -47,7 +47,7 @@ impl std::fmt::Debug for ProdKind {
         let name = match self {
             ProdKind::ExpressionP1 => "Expression: Operand Operator Operand",
         };
-        write!(f, "{}", name)
+        write!(f, "{name}")
     }
 }
 #[allow(clippy::upper_case_acronyms)]

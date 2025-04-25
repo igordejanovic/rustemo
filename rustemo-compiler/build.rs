@@ -14,7 +14,7 @@ fn main() {
 
     if env::var("CARGO_FEATURE_BOOTSTRAP").is_ok() {
         if let Err(err) = bootstrap() {
-            eprintln!("{}", err);
+            eprintln!("{err}");
             exit(1);
         }
     }
@@ -65,9 +65,9 @@ fn bootstrap() -> Result<(), Box<dyn Error>> {
         format!("{PROJECT}/src/lang/rustemo_actions.rs"),
     ] {
         let output = Command::new("git")
-            .args(["show", &format!("main:{}", f)])
+            .args(["show", &format!("main:{f}")])
             .output()
-            .unwrap_or_else(|_| panic!("Cannot checkout file {:?}", f));
+            .unwrap_or_else(|_| panic!("Cannot checkout file {f:?}"));
 
         if !output.status.success() {
             panic!(
@@ -82,10 +82,10 @@ fn bootstrap() -> Result<(), Box<dyn Error>> {
                 .unwrap(),
         );
 
-        println!("{:?}", out_file);
+        println!("{out_file:?}");
 
         fs::write(&out_file, output.stdout)
-            .unwrap_or_else(|_| panic!("Cannot write to file {:?}.", out_file));
+            .unwrap_or_else(|_| panic!("Cannot write to file {out_file:?}."));
     }
 
     println!("Git checkout complete!");

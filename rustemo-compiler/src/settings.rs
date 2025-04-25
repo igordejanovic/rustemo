@@ -393,7 +393,7 @@ impl Settings {
     /// default builder is used). Used as the last call to the configured
     /// [Settings] value.
     pub fn process_grammar(&self, grammar: &Path) -> Result<()> {
-        println!("Generating parser for grammar {:?}", grammar);
+        println!("Generating parser for grammar {grammar:?}");
         let relative_outdir = |p: &Path| -> Result<PathBuf> {
             Ok(p.join(
                 grammar

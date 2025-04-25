@@ -210,7 +210,7 @@ mod tests {
 
         assert_eq!(p.line(), 2);
         assert_eq!(p.column(), 4);
-        assert_eq!(format!("{}", p), "2,4");
+        assert_eq!(format!("{p}"), "2,4");
     }
 
     #[test]
@@ -220,7 +220,7 @@ mod tests {
         assert_eq!(p.line(), 5);
         assert_eq!(p.column(), 0);
         assert_eq!(p.position(), 5);
-        assert_eq!(format!("{}", p), "5");
+        assert_eq!(format!("{p}"), "5");
     }
 
     #[test]

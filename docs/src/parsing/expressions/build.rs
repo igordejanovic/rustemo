@@ -7,7 +7,7 @@ fn main() {
         .builder_type(BuilderType::Generic)
         .process_dir()
     {
-        eprintln!("{}", e);
+        eprintln!("{e}");
         exit(1);
     }
 }

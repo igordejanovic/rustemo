@@ -17,7 +17,7 @@ fn glr_special_highly_ambiguous() {
         let tree = forest.get_tree(i - 1);
         let mut builder = TreeBuilder::new();
         output_cmp!(
-            &format!("src/glr/special/highly_ambiguous/tree_{}.ast", i),
+            &format!("src/glr/special/highly_ambiguous/tree_{i}.ast"),
             format!(
                 "{:#?}",
                 tree.unwrap()

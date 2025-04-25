@@ -357,7 +357,7 @@ impl Grammar {
     pub fn symbol_index(&self, name: &str) -> SymbolIndex {
         *self.term_by_name.get(name).unwrap_or_else(|| {
             self.nonterm_by_name.get(name).unwrap_or_else(|| {
-                panic!("No Symbol by name {:?}", name);
+                panic!("No Symbol by name {name:?}");
             })
         })
     }

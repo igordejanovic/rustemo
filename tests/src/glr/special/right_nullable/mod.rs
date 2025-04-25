@@ -13,7 +13,7 @@ fn glr_special_right_nullable_g2() {
         let tree = forest.get_tree(i - 1);
         let mut builder = TreeBuilder::new();
         output_cmp!(
-            &format!("src/glr/special/right_nullable/tree_{}.ast", i),
+            &format!("src/glr/special/right_nullable/tree_{i}.ast"),
             format!(
                 "{:#?}",
                 tree.unwrap()

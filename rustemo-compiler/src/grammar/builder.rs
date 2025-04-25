@@ -493,7 +493,7 @@ impl GrammarBuilder {
     /// same string match.
     fn resolve_inline_terminals_from_productions(&mut self) -> Result<()> {
         for production in &mut self.productions {
-            let production_str = format!("{}", production);
+            let production_str = format!("{production}");
             for assign in &mut production.rhs {
                 if let ResolvingSymbolIndex {
                     symbol: GrammarSymbol::StrConst(mtch),
@@ -531,7 +531,7 @@ impl GrammarBuilder {
         // Resolve references.
         for production in &mut self.productions {
             let rhs_len = production.rhs.len();
-            let production_str = format!("{}", production);
+            let production_str = format!("{production}");
             for assign in &mut production.rhs {
                 if let ResolvingSymbolIndex {
                     symbol,
@@ -572,8 +572,7 @@ impl GrammarBuilder {
                             .unwrap_or_else(|| {
                                 // This should never happen.
                                 panic!(
-                                    "terminal {:?} not created in production '{}'.",
-                                    name, production_str
+                                    "terminal {name:?} not created in production '{production_str}'."
                                 )
                             })
                             .idx

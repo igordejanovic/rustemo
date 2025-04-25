@@ -223,7 +223,7 @@ fn main() {
         .root_dir(root_dir.join(p))
         .process_dir()
         {
-            eprintln!("{}", e);
+            eprintln!("{e}");
             exit(1);
         }
     }
@@ -233,14 +233,14 @@ fn main() {
         .in_source_tree()
         .process_grammar(&root_dir.join("src/output_dir/output_dir.rustemo"))
     {
-        eprintln!("{}", e);
+        eprintln!("{e}");
         exit(1);
     }
     if let Err(e) = default_settings()
         .actions_in_source_tree()
         .process_grammar(&root_dir.join("src/output_dir/output_dir_act.rustemo"))
     {
-        eprintln!("{}", e);
+        eprintln!("{e}");
         exit(1);
     }
 }

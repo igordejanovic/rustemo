@@ -58,7 +58,7 @@ impl std::fmt::Debug for ProdKind {
             ProdKind::EDiv => "E: E Div E",
             ProdKind::EP5 => "E: Number",
         };
-        write!(f, "{}", name)
+        write!(f, "{name}")
     }
 }
 #[allow(clippy::upper_case_acronyms)]

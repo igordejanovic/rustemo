@@ -29,6 +29,6 @@ fn main() {
     let result = CalculatorParser::new().parse(&expression);
 
     // Print the result using Debug formatter.
-    println!("{:#?}", result);
+    println!("{result:#?}");
 }
 // ANCHOR_END: main

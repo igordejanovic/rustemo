@@ -334,7 +334,7 @@ impl std::fmt::Debug for ProdKind {
             ProdKind::CorncP2 => "Cornc: NotComment",
             ProdKind::CorncP3 => "Cornc: WS",
         };
-        write!(f, "{}", name)
+        write!(f, "{name}")
     }
 }
 #[allow(clippy::upper_case_acronyms)]

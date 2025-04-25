@@ -45,7 +45,7 @@ impl Error {
                 }
                 format!("{}:\n\t{}", loc_str, message.replace('\n', "\n\t"))
             }
-            Error::IOError(e) => format!("IOError: {}", e),
+            Error::IOError(e) => format!("IOError: {e}"),
         }
     }
 }
@@ -73,7 +73,7 @@ impl Display for Error {
                 }
                 write!(f, "{}:\n\t{}", loc_str, message.replace('\n', "\n\t"))
             }
-            Error::IOError(e) => write!(f, "IOError: {}", e),
+            Error::IOError(e) => write!(f, "IOError: {e}"),
         }
     }
 }

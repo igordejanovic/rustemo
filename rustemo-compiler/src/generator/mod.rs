@@ -160,15 +160,13 @@ impl<'g, 's> ParserGenerator<'g, 's> {
             .file_stem()
             .ok_or_else(|| {
                 Error::Error(format!(
-                    "Cannot deduce base file name from {:?}",
-                    grammar_path
+                    "Cannot deduce base file name from {grammar_path:?}"
                 ))
             })?
             .to_str()
             .ok_or_else(|| {
                 Error::Error(format!(
-                    "Cannot deduce base file name from {:?}",
-                    grammar_path
+                    "Cannot deduce base file name from {grammar_path:?}"
                 ))
             })?;
         let parser_name = to_pascal_case(file_name);
@@ -240,7 +238,7 @@ impl<'g, 's> ParserGenerator<'g, 's> {
         }));
 
         let out_file = out_dir.join(&self.file_name).with_extension("rs");
-        println!("Writing parser file {:?}", out_file);
+        println!("Writing parser file {out_file:?}");
         std::fs::write(&out_file, prettyplease::unparse(&file)).map_err(|e| {
             Error::Error(format!("Cannot write parser file '{out_file:?}': {e:?}."))
         })?;

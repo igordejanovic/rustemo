@@ -410,7 +410,7 @@ where
         let head = gss.head(head_idx).with_tok(lookahead);
 
         #[cfg(debug_assertions)]
-        let new_head_str = format!("{:?}", head);
+        let new_head_str = format!("{head:?}");
         let new_head = gss.add_head(head);
 
         log!(
@@ -517,7 +517,7 @@ where
                         let new_head = shead
                             .with_tok_state(shead.token_ahead().cloned().unwrap(), next_state);
                         #[cfg(debug_assertions)]
-                        let new_head_str = format!("{:?}", new_head);
+                        let new_head_str = format!("{new_head:?}");
                         let new_head_idx = gss.add_head(new_head);
                         subfrontier.insert(next_state, new_head_idx);
                         log!(
@@ -952,7 +952,7 @@ where
         log!(
             "\n{}. {}",
             "Syntax error".red(),
-            format!("{:?}", error).green()
+            format!("{error:?}").green()
         );
         error
     }

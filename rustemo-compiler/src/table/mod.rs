@@ -517,7 +517,7 @@ impl<'g, 's> LRTable<'g, 's> {
 
         if settings.print_table {
             println!("LR TABLE:");
-            println!("{}", table);
+            println!("{table}");
         }
 
         Ok(table)
@@ -858,7 +858,7 @@ impl<'g, 's> LRTable<'g, 's> {
                                         Action::Reduce(prod, ..) => {
                                             self.grammar.productions[*prod].prio
                                         }
-                                        other => panic!("This should not happen. Got {:?}", other),
+                                        other => panic!("This should not happen. Got {other:?}"),
                                     })
                                     .collect::<Vec<_>>();
                                 if reduces_prio.iter().all(|x| prod.prio < *x) {
@@ -1170,7 +1170,7 @@ impl<'g, 's> LRTable<'g, 's> {
                             )
                         }
                         Action::Reduce(prod_idx, len) => {
-                            term_reduction_prods.push(format!("({},{})", prod_idx, len));
+                            term_reduction_prods.push(format!("({prod_idx},{len})"));
                         }
                         Action::Accept => {
                             dot += &format!("{} -> ACCEPT [label=\"{}\"]\n", state.idx, term.name)

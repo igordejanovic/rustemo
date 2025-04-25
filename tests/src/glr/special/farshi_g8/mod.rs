@@ -14,7 +14,7 @@ fn glr_special_farshi_g8() {
         let tree = forest.get_tree(i - 1);
         let mut builder = TreeBuilder::new();
         output_cmp!(
-            &format!("src/glr/special/farshi_g8/tree_{}.ast", i),
+            &format!("src/glr/special/farshi_g8/tree_{i}.ast"),
             format!(
                 "{:#?}",
                 tree.unwrap()

@@ -14,7 +14,7 @@ fn glr_special_bounded_ambiguity() {
         let tree = forest.get_tree(i - 1);
         let mut builder = TreeBuilder::new();
         output_cmp!(
-            &format!("src/glr/special/bounded_ambiguity/tree_{}.ast", i),
+            &format!("src/glr/special/bounded_ambiguity/tree_{i}.ast"),
             format!(
                 "{:#?}",
                 tree.unwrap()
