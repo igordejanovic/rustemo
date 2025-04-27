@@ -218,7 +218,7 @@ impl<'g, 's> PartGenerator<'g, 's> for BasePartGenerator {
                     let name = match self {
                         #(#display_arms),*
                     };
-                    write!(f, "{}", name)
+                    write!(f, "{name}")
                 }
             }
         });
