@@ -2,49 +2,48 @@
 
 Lexers are components that break an input sequence into its constituent parts
 called "tokens" or "lexemes". Rustemo implements context-aware lexing. Given the
-current parsing context lexers return the next possible tokens from the input
-stream. This gives a greater recognition strength as the lexing is done just for
-the tokens expected in a given parser state.
+current parsing context, lexers return the next possible tokens from the input
+stream. This provides greater recognition strength as the lexing is done just
+for the tokens expected in a given parser state.
 
-Generally, multiple tokens can match at a given location in which case we say
+Generally, multiple tokens can match at a given location, in which case we say
 that we have a lexical ambiguity. Rustemo has a built-in mechanism for [lexical
 disambiguation](#lexical-disambiguation).
 
-To abstract over all possible inputs, Rustemo provides a trait `lexer::Input`
+To abstract over all possible inputs, Rustemo provides a trait `lexer::Input`,
 which must be implemented by any type that can be used as an input to the
-parsing process. Types `str` and `[u8]` implement this trait and thus parsing a
+parsing process. Types `str` and `[u8]` implement this trait, and thus parsing a
 string or a sequence of bytes is possible out-of-the-box.
 
 String parsing is facilitated by so-called
-[recognizers](grammar_language.md#terminals), basically a string and regex
-patterns defined for each terminal in the `terminals` section of the grammar.
-Recognizers are used to configure the default string lexer.
+[recognizers](grammar_language.md#terminals), which are basically string and
+regex patterns defined for each terminal in the `terminals` section of the
+grammar. Recognizers are used to configure the default string lexer.
 
-For parsing other types you can provide your custom lexer.
+For parsing other types, you can provide your custom lexer.
 
 
 ## Custom lexers
 
-To create the custom lexer implement trait `rustemo::lexer::Lexer` for your
-type. Method `next_token` should return a result holding the next token given
-the current parsing context.
+To create a custom lexer, implement the trait `rustemo::lexer::Lexer` for your
+type. The method `next_token` should return a result holding the next token
+given the current parsing context.
 
-The lexer type should be defined in a file `<grammar name)_lexer.rs` where
-`<grammar name>` is the base name of the grammar file.
+The lexer type should be defined in a file `<grammar_name>_lexer.rs` where
+`<grammar_name>` is the base name of the grammar file.
 
-In the [tests project](https://github.com/igordejanovic/rustemo/tree/main/tests)
-a
+In the [tests
+project](https://github.com/igordejanovic/rustemo/tree/main/tests), a
 [custom_lexer](https://github.com/igordejanovic/rustemo/tree/main/tests/src/lexer/custom_lexer)
-test is given which demonstrates implementation of a custom lexer. The lexer
-implemented in this test is used to tokenize a sequence of varints which are
-variable-width integers used in [Google's protocol buffers wire
+test demonstrates the implementation of a custom lexer. The lexer implemented in
+this test is used to tokenize a sequence of varints, which are variable-width
+integers used in [Google's protocol buffers wire
 format](https://protobuf.dev/programming-guides/encoding/#varints).
 
-So, our lexer has to figure out what is the next varint in the sequence of
-bytes. 
+Our lexer must determine the next varint in the sequence of bytes.
 
-There are more than one approach to handle this. Here is one (see the test for
-additional information).
+There are multiple approaches to handle this. Here is one (see the test for
+additional information):
 
 We start with the following grammar in a file, say `custom_lexer_2.rustemo`:
 
@@ -52,11 +51,11 @@ We start with the following grammar in a file, say `custom_lexer_2.rustemo`:
 {{#include ../../tests/src/lexer/custom_lexer/custom_lexer_2.rustemo:lexer-doc}}
 ```
 
-We have defined that the input consists of one or more varint and that each
+We have defined that the input consists of one or more varints and that each
 varint contains zero or more `MSBByte` (a byte whose highest bit is set) and
 exactly one `NonMSBByte` (a byte whose highest bit is not set) at the end.
 
-And in file `custom_lexer_2_lexer.rs` we specify our lexer:
+In the file `custom_lexer_2_lexer.rs`, we specify our lexer:
 
 ```rust
 {{#include ../../tests/src/lexer/custom_lexer/custom_lexer_2_lexer.rs:custom-lexer}}
@@ -64,7 +63,7 @@ And in file `custom_lexer_2_lexer.rs` we specify our lexer:
 
 The job of the lexer in this case is to return `STOP` if at the end of the input
 or to return a token of `MSBByte` kind containing a single byte at the current
-position if the highest bit is set or `NonMSBByte` otherwise.
+position if the highest bit is set, or `NonMSBByte` otherwise.
 
 The transformation of a sequence of `(Non)MSBByte` to varint is done in semantic
 actions given in the file `custom_lexer_2_actions.rs`. The relevant
@@ -74,77 +73,75 @@ actions given in the file `custom_lexer_2_actions.rs`. The relevant
 {{#include ../../tests/src/lexer/custom_lexer/custom_lexer_2_actions.rs:lexer-doc}}
 ```
 
-Next, we configure Rustemo to generate the parser which use custom lexer. We do
-this either through the API by calling `lexer_type(LexerType::Custom)` (see the
-`build.rs` file in the tests project), or using `--lexer-type custom` if the
+Next, we configure Rustemo to generate the parser which uses a custom lexer. We
+do this either through the API by calling `lexer_type(LexerType::Custom)` (see
+the `build.rs` file in the tests project), or using `--lexer-type custom` if the
 parser is generated by the `rcomp` tool.
 
-Finally, we need to configure generated parser with our lexer as follows:
+Finally, we need to configure the generated parser with our lexer as follows:
 
 ```rust
 {{#include ../../tests/src/lexer/custom_lexer/mod.rs:custom-lexer}}
 ```
 
-Notice the instance of the lexer passed into `new` method during parser
+Notice the instance of the lexer passed into the `new` method during parser
 construction.
 
-In this example, lexer doesn't need to know what tokens are expected at the
-current location. But, sometimes we need that information to make a more
-powerful context aware lexing. To do that you can import `LEXER_DEFINITION`
-value from the generated parser which implements `LexerDefinition` trait which
-has `recognizers` method accepting the current LR state (you can find it in the
-passed in context) and resulting in a iterator of token recognizers which
-provide information of expected tokens at the location.
+In this example, the lexer doesn't need to know what tokens are expected at the
+current location. But sometimes we need that information to make a more powerful
+context-aware lexing. To do that, you can import the `LEXER_DEFINITION` value
+from the generated parser which implements the `LexerDefinition` trait. This has
+a `recognizers` method accepting the current LR state (you can find it in the
+passed-in context) and resulting in an iterator of token recognizers which
+provide information about expected tokens at the location.
 
-For more info see the [full test for custom
+For more info, see the [full test for custom
 lexers](https://github.com/igordejanovic/rustemo/tree/main/tests/src/lexer/custom_lexer).
 
-
 ```admonish note
-Each lexer accepts a vector of tokens expected at a given location. This vector
+Each lexer accepts a vector of tokens expected at a given location. These vector
 elements are actually pairs of `(token_kind, finish flag)` (e.g. `_token_kinds:
-Vec<(TokenKind, bool)>` above). Finish flag signifies that if the token is found
-lexer should not return any other token, i.e. lexing should terminate on a first
-succesful match where finish flag is true.
+Vec<(TokenKind, bool)>` above). The finish flag signifies that if the token is
+found, the lexer should not return any other token, i.e. lexing should terminate
+on the first successful match where the finish flag is true.
 ```
 
 
 # Lexical disambiguation
 
-When a lexical ambiguity is encountered during the parsing process Rustemo will
+When a lexical ambiguity is encountered during the parsing process, Rustemo will
 use several disambiguation strategies. Some of these strategies can be
-controlled by the configuration parameters. The job of all these strategies is
-to reduce a set of possible tokens at the given location.
+controlled by configuration parameters. The job of all these strategies is to
+reduce a set of possible tokens at the given location.
 
-The following table give and overview of the strategies, their defaults and
+The following table gives an overview of the strategies, their defaults and
 possibility of control.
 
-| Strategy      | Default LR | Default GLR | Can be disabled in LR | Can dis. GLR | Impl. In |
-|---------------|------------|-------------|-----------------------|--------------|----------|
-| Priorities    | yes        | yes         | no                    | no           | lexer    |
-| Most specific | yes        | yes         | yes                   | yes          | lexer    |
-| Longest match | yes        | yes         | yes                   | yes          | parser   |
-| Gram. order   | yes        | no          | no                    | yes          | parser   |
+| Strategy      | Default LR | Default GLR | Can be disabled in LR | Can be disabled in GLR | Impl. In |
+|---------------|------------|-------------|-----------------------|------------------------|----------|
+| Priorities    | yes        | yes         | no                    | no                     | lexer    |
+| Most specific | yes        | yes         | yes                   | yes                    | lexer    |
+| Longest match | yes        | yes         | yes                   | yes                    | parser   |
+| Gram. order   | yes        | no          | no                    | yes                    | parser   |
 
 Strategies are applied in the following order:
-- *Priorities* - expected tokens are sorted by priority. A first match in a
-  priority group will reduce further matches only on that group. You can specify
+- *Priorities* - Expected tokens are sorted by priority. A first match in a
+  priority group will reduce further matches only to that group. You can specify
   the priority of a terminal inside curly braces. The default priority is 10.
   For example: 
   ```
   terminals
   SomeTerminal: 'some match' {15};
   ```
-- *Most specific match* - string matches take precedence over regex matches.
-  String matches are ordered by length. When the first string match succeeds no
+- *Most specific match* - String matches take precedence over regex matches.
+  String matches are ordered by length. When the first string match succeeds, no
   further matches are tried. This strategy is implemented in `StringLexer`.
 - *Longest match* - All possible matches based on previous strategies are found
   and the longest match is used. There still can be multiple matches with the
-  same length. A further disambiguation will be handled by the next strategy.
+  same length. Further disambiguation will be handled by the next strategy.
 - *Grammar order* - Matches are tried in the grammar order. First match wins.
 
 Since LR can't handle ambiguity, grammar order is a final resolution strategy
-which always resolve to a single token. For GLR this strategy is not enabled by
-default as we usually want to handle lexical ambiguity by using the GLR
+which always resolves to a single token. For GLR, this strategy is not enabled
+by default as we usually want to handle lexical ambiguity by using the GLR
 machinery.
-

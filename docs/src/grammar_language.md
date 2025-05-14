@@ -19,7 +19,7 @@ Each derivation/production rule is of the form:
     <symbol>: <expression> ;
 
 where `<symbol>` is a grammar non-terminal and `<expression>` is one or more
-sequences of grammar symbol references separated by choice operator `|`.
+sequences of grammar symbol references separated by the choice operator `|`.
 
 For example:
 
@@ -27,7 +27,7 @@ For example:
 
 Here `Fields` is a non-terminal grammar symbol and it is defined as either a
 single `Field` or, recursively, as `Fields` followed by a string terminal `,`
-and than by another `Field`. It is not given here but `Field` could also be
+and then by another `Field`. It is not given here, but `Field` could also be
 defined as a non-terminal. For example:
 
     Field: QuotedField | FieldContent;
@@ -48,16 +48,16 @@ Terminals are specified at the end of the grammar file, after production rules,
 following the keyword `terminals`.
 
 Tokens are recognized from the input by a `lexer` component. Rustemo provides a
-string lexer out-of-the-box which enable lexing based on recognizers provided in
-the grammar. If more control is needed, or if non-textual context has been
-parsed a custom lexer must be provided. See the [lexers section](./lexers.md)
+string lexer out-of-the-box which enables lexing based on recognizers provided in
+the grammar. If more control is needed, or if non-textual context has to be
+parsed, a custom lexer must be provided. See the [lexers section](./lexers.md)
 for more.
 
 Each terminal definition is in the form:
 
     <terminal name>: <recognizer>;
 
-where `<recognizer>` can be omitted if custom lexer is used.
+where `<recognizer>` can be omitted if a custom lexer is used.
 
 The default string lexer enables specification of two kinds of terminal
 recognizers:
@@ -67,14 +67,12 @@ recognizers:
 
 
 ### String recognizer
-String recognizer is defined as a plain string inside single or double quotes.
+A string recognizer is defined as a plain string inside single or double quotes.
 For example, in a grammar rule:
 
 ```
 MyRule: "start" OtherRule "end";
-
 ```
-
 
 `"start"` and `"end"` will be terminals with string recognizers that match
 exactly the words `start` and `end`. In this example we have recognizers inlined
@@ -87,7 +85,6 @@ section in order to define a terminal name.
 terminals
 Start: "start";
 End: "end";
-
 ```
 
 You can reference the terminal from the grammar rule, like:
@@ -96,15 +93,15 @@ You can reference the terminal from the grammar rule, like:
 MyRule: Start OtherRule End;
 ```
 
-or use the same string recognizer inlined in the grammar rules, like we have
+or use the same string recognizer inlined in the grammar rules, as we have
 seen before. It is your choice. Sometimes it is more readable to use string
-recognizers directly. But, anyway you must always declare the terminal in the
+recognizers directly. But in any case, you must always declare the terminal in the
 `terminals` section for the sake of providing names which are used in the code
 of the generated parser.
 
 
 ### Regular expression recognizer
-Or regex recognizer for short is a regex pattern written inside slashes
+A regex recognizer, or regex for short, is a regex pattern written inside slashes
 (`/.../`).
 
 For example:
@@ -118,55 +115,54 @@ This rule defines terminal symbol `Number` which has a regex recognizer that
 will recognize one or more digits from the input.
 
 ```admonish note
-You cannot write regex recognizers inline like you can do with string
+You cannot write regex recognizers inline like you can with string
 recognizers. This constraint is introduced because regexes are not that easy to
-write and they don't add to readability so it is always better to reference
-regex terminal by name in grammar rules.
+write and they don't add to readability, so it is always better to reference
+regex terminals by name in grammar rules.
 ```
 
 ```admonish warning
-During regex construction a `^` prefix is added to the regex from the grammar to
+During regex construction, a `^` prefix is added to the regex from the grammar to
 make sure that the content is matched at the current input position. This can be
 an issue if you use a pattern like `A|B` in your regex as it translates to
-`^A|B` which matches either `A` at the current position or `B` in the rest of
-the input. So, the workaround for now is to use `(A|B)`, i.e. always wrap
+`^A|B`, which matches either `A` at the current position or `B` in the rest of
+the input. The workaround for now is to use `(A|B)`, i.e., always wrap
 alternative choices in parentheses.
 ```
 
-
 ## Usual patterns
 This section explains how some common grammar patterns can be written using just
-a plain Rustemo BNF-like notation. Afterwards we'll see some syntax sugar
-extensions which can be used to write these patterns in a more compact and
+a plain Rustemo BNF-like notation. Afterwards, we'll see some syntax sugar
+extensions that can be used to write these patterns in a more compact and
 readable form.
 
 ### One or more
 
 This pattern is used to match one or more things.
 
-For example, `Sections` rule below will match one or more `Section`.
+For example, the `Sections` rule below will match one or more `Section`s.
 
 ```
 Sections: Section | Sections Section;
 ```
-Notice the recursive definition of the rule. You can read this as
+Notice the recursive definition of the rule. You can read this as:
 
-> `Sections` is either a single Section or `Sections` followed by a `Section`.
+> `Sections` is either a single `Section` or `Sections` followed by a `Section`.
 
 ```admonish note
 Please note that you could do the same with this rule:
 
     Sections: Section | Section Sections;
 
-which will give you similar result but the resulting tree will be different.
+which will give you similar results but the resulting tree will be different.
 Notice the recursive reference is now at the end of the second production.
 
-Previous example will reduce sections early and then add another section to it,
+The previous example will reduce sections early and then add another section to it,
 thus the tree will be expanding to the left. The example in this note will
-collect all the sections and than start reducing from the end, thus building a
+collect all the sections and then start reducing from the end, thus building a
 tree expanding to the right. These are subtle differences that are important
-when you start writing your semantic actions. Most of the time you don't care
-so use the first version as it is more efficient in the context of the LR parsing.
+when you start writing your semantic actions. Most of the time you don't care,
+so use the first version as it is more efficient in the context of LR parsing.
 ```
 
 
@@ -174,7 +170,7 @@ so use the first version as it is more efficient in the context of the LR parsin
 
 This pattern is used to match zero or more things.
 
-For example, `Sections` rule below will match zero or more `Section`.
+For example, the `Sections` rule below will match zero or more `Section`s.
 
 ```
 Sections: Section | Sections Section | EMPTY;
@@ -184,28 +180,23 @@ Notice the addition of the `EMPTY` choice at the end. This means that matching
 nothing is a valid `Sections` non-terminal. Basically, this rule is the same as
 one-or-more except that matching nothing is also a valid solution.
 
-Same note from the above applies here to.
+The same note from above applies here too.
 
 
 ### Optional
 
-When we want to match something optionally we can use this pattern:
+To optionally match something, use this pattern:
 
 ```
 OptHeader: Header | EMPTY;
 ```
 
-In this example `OptHeader` is either a `Header` or nothing.
+In this example, `OptHeader` is either a `Header` or nothing.
 
 
 ## Syntactic sugar - BNF extensions
-Previous section gives the overview of the basic BNF syntax. If you got to use
-various BNF extensions (like [Kleene
-star](https://en.wikipedia.org/wiki/Kleene_star)) you might find writing
-patterns in the previous section awkward. Since some of the patterns are used
-frequently in the grammars (zero-or-more, one-or-more etc.) Rustemo provides
-syntactic sugar for this common idioms using a well known regular expression
-syntax.
+
+The previous section covered basic BNF syntax. If you've used BNF extensions (like the [Kleene star](https://en.wikipedia.org/wiki/Kleene_star)), you might find writing patterns in basic BNF awkward. Since these patterns are common in grammars (zero-or-more, one-or-more, etc.), Rustemo provides syntactic sugar for them using regular expression syntax.
 
 
 ### Optional
