@@ -4,11 +4,14 @@ use rustemo_compiler::{BuilderType, LexerType, ParserAlgo, Settings};
 
 fn main() {
     fn default_settings() -> Settings {
-        let mut settings = rustemo_compiler::Settings::new().force(true);
-        if std::env::var("CARGO_FEATURE_ARRAYS").is_ok() {
-            settings = settings.generator_table_type(rustemo_compiler::GeneratorTableType::Arrays);
-        }
-        settings
+        use rustemo_compiler::GeneratorTableType::*;
+        rustemo_compiler::Settings::new()
+            .force(true)
+            .generator_table_type(if std::env::var("CARGO_FEATURE_ARRAYS").is_ok() {
+                Arrays
+            } else {
+                Functions
+            })
     }
     let root_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
 
