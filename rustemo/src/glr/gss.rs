@@ -93,7 +93,7 @@ where
     }
 
     #[inline]
-    pub fn backedges(&self, head: NodeIndex) -> Edges<Rc<Parent<'i, I, P, TK>>, Directed> {
+    pub fn backedges(&self, head: NodeIndex) -> Edges<'_, Rc<Parent<'i, I, P, TK>>, Directed> {
         self.0.edges_directed(head, Direction::Outgoing)
     }
 
