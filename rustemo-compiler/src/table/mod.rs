@@ -762,10 +762,16 @@ impl<'g, 's> LRTable<'g, 's> {
             for item in state.items.iter().filter(|x| x.is_reducing()) {
                 let prod = &self.grammar.productions[item.prod];
 
-                // Accept if reducing by augmented productions for STOP lookahead
+                // Accept if reducing by augmented productions for STOP
+                // lookahead but do not take into account RN reductions as the
+                // whole AUG production may be right nullable which would
+                // produce an Accept action from the initial state which would
+                // be in conflict with empty reduction.
                 if aug_symbols.contains(&self.grammar.nonterm_to_symbol_index(prod.nonterminal)) {
-                    let actions = &mut state.actions[TermIndex(0)];
-                    actions.push(Action::Accept);
+                    if item.position == item.prod_len {
+                        let actions = &mut state.actions[TermIndex(0)];
+                        actions.push(Action::Accept);
+                    }
                     continue;
                 }
 
@@ -1020,7 +1026,7 @@ impl<'g, 's> LRTable<'g, 's> {
                             }
                             e => {
                                 // This cannot happen as we have combinations of size 2.
-                                print!("{e:?}");
+                                eprint!("{e:?}");
                                 unreachable!()
                             }
                         };

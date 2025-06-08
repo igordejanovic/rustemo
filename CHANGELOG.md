@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # [Unreleased]
 
+## Fixed
+
+- Accept/Reduce conflict in the initial state in GLR automata due to
+  right-nulled reduction in grammars which accept empty strings. See [22].
+  Thanks maloneymr@GitHub for the report and initial analysis.
+
+[22]: https://github.com/igordejanovic/rustemo/issues/22
+
 
 # [0.7.0] - 2024-11-16
 

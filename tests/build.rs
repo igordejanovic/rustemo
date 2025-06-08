@@ -213,6 +213,10 @@ fn main() {
             "glr/regressions/issue_16_subtract_overflow_panic",
             Box::new(|s| s.parser_algo(ParserAlgo::GLR)),
         ),
+        (
+            "glr/regressions/issue_22_panic_get_conflicts",
+            Box::new(|s| s.parser_algo(ParserAlgo::GLR).dot(true)),
+        ),
     ];
 
     for (test, config) in tests {
