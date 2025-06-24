@@ -789,7 +789,6 @@ where
                     (new_head_idx, new_head_range, new_head_location)
                 }
             };
-            dbg!(&range, &location);
             gss.add_solution(
                 shifted_head_idx,
                 head_idx,
