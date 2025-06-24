@@ -45,9 +45,6 @@ colored = { workspace = true }
 # Needed by rustemo generated parsers.
 rustemo = { workspace = true }
 
-[dev-dependencies]
-criterion = { workspace = true }
-
 [features]
 
 # ----- Features used when developing Rustemo.
