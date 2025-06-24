@@ -7,8 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # [Unreleased]
 
-## Fixed
 
+# [0.7.1] - 2025-06-24
+
+## Changed
+- Upgraded hashbrown dependency to 0.15.4.
+- Dropped criterion dev. dependency. Not used at the moment.
+
+## Fixed
 - Accept/Reduce conflict in the initial state in GLR automata due to
   right-nulled reduction in grammars which accept empty strings. See [22].
   Thanks maloneymr@GitHub for the report and initial analysis.
@@ -163,7 +169,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial release. See the README for the features available in this release.
 
 
-[unreleased]: https://github.com/igordejanovic/rustemo/compare/0.7.0...HEAD
+[unreleased]: https://github.com/igordejanovic/rustemo/compare/0.7.1...HEAD
+[0.7.1]: https://github.com/igordejanovic/rustemo/compare/0.7.0...0.7.1
 [0.7.0]: https://github.com/igordejanovic/rustemo/compare/0.6.3...0.7.0
 [0.6.3]: https://github.com/igordejanovic/rustemo/compare/0.6.2...0.6.3
 [0.6.2]: https://github.com/igordejanovic/rustemo/compare/0.6.1...0.6.2
