@@ -88,7 +88,7 @@ pub struct Settings {
     pub(crate) print_table: bool,
     pub(crate) exclude: Vec<String>,
     pub(crate) actions: bool,
-    pub(crate) notrace: bool,
+    pub(crate) trace: bool,
 
     pub(crate) lexer_type: LexerType,
     pub(crate) builder_type: BuilderType,
@@ -130,7 +130,7 @@ impl Default for Settings {
             parser_algo: Default::default(),
             print_table: false,
             actions: true,
-            notrace: false,
+            trace: false,
             lexer_type: Default::default(),
             builder_type: Default::default(),
             builder_loc_info: false,
@@ -341,16 +341,16 @@ impl Settings {
 
     /// Should trace log be printed. `false` by default. Does nothing for
     /// release builds as trace is only available in debug build. Can also be
-    /// set by `RUSTEMO_NOTRACE=1` env variable.
-    pub fn notrace(mut self, notrace: bool) -> Self {
-        let notrace = if !notrace {
-            std::env::var("RUSTEMO_NOTRACE").is_ok()
+    /// set by `RUSTEMO_TRACE=1` env variable.
+    pub fn trace(mut self, trace: bool) -> Self {
+        let trace = if !trace {
+            std::env::var("RUSTEMO_TRACE").is_ok()
         } else {
-            std::env::set_var("RUSTEMO_NOTRACE", "1");
+            std::env::set_var("RUSTEMO_TRACE", "1");
             true
         };
 
-        self.notrace = notrace;
+        self.trace = trace;
         self
     }
 
