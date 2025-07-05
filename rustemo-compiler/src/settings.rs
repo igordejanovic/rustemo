@@ -402,7 +402,7 @@ impl Settings {
                         "Cannot find parent of '{grammar_path:?}' file."
                     )))?
                     .strip_prefix(self.root_dir.as_ref().expect("'root_dir' must be set!"))
-                    .unwrap_or(grammar_path)
+                    .unwrap_or(grammar_path),
             ))
         };
 
