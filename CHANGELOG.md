@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # [Unreleased]
 
+## Changed
+- Debug trace is now off by default. Thanks @andrewbaxter for PR [23].
+
+[23]: https://github.com/igordejanovic/rustemo/pull/23
 
 # [0.7.1] - 2025-06-24
 
