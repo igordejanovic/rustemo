@@ -392,20 +392,17 @@ impl Settings {
     /// Process the given grammar and generates the parser and actions (if
     /// default builder is used). Used as the last call to the configured
     /// [Settings] value.
-    pub fn process_grammar(&self, grammar: &Path) -> Result<()> {
-        println!("Generating parser for grammar {grammar:?}");
+    pub fn process_grammar(&self, grammar_path: &Path) -> Result<()> {
+        println!("Generating parser for grammar {grammar_path:?}");
         let relative_outdir = |p: &Path| -> Result<PathBuf> {
             Ok(p.join(
-                grammar
+                grammar_path
                     .parent()
                     .ok_or(Error::Error(format!(
-                        "Cannot find parent of '{grammar:?}' file."
+                        "Cannot find parent of '{grammar_path:?}' file."
                     )))?
                     .strip_prefix(self.root_dir.as_ref().expect("'root_dir' must be set!"))
-                    .or(Err(Error::Error(format!(
-                        "Cannot remove prefix '{:?}' from '{grammar:?}'.",
-                        &self.root_dir
-                    ))))?,
+                    .unwrap_or(grammar_path)
             ))
         };
 
@@ -429,7 +426,7 @@ impl Settings {
         }
 
         generate_parser(
-            grammar,
+            grammar_path,
             out_dir.as_deref(),
             out_dir_actions.as_deref(),
             self,
