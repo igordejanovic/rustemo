@@ -47,6 +47,7 @@
           devShells.default = pkgs.mkShell {
             buildInputs = book.buildInputs ++ rustemo.buildInputs ++ shellPkgs ++ [ rustStable ];
             RUST_SRC_PATH = "${rustStable}/lib/rustlib/src/rust/library";
+            LD_LIBRARY_PATH = "${pkgs.lib.makeLibraryPath [ pkgs.zlib ]}";
             shellHook = ''
             echo "Using STABLE Rust environment"
           '';
@@ -57,6 +58,7 @@
           devShells.nightly = pkgs.mkShell {
             buildInputs = book.buildInputs ++ [ rustNightly ] ++ shellPkgs;
             RUST_SRC_PATH = "${rustNightly}/lib/rustlib/src/rust/library";
+            LD_LIBRARY_PATH = "${pkgs.lib.makeLibraryPath [ pkgs.zlib ]}";
             shellHook = ''
             echo "Using NIGHTLY Rust environment"
           '';
