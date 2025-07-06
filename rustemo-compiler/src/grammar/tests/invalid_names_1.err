@@ -1,12 +1,14 @@
 Err(
-    Error {
-        message: "Can't use 'fn' as a valid Rust identifier.",
-        file: Some(
-            "<str>",
-        ),
-        position: Some(
-            58(5,8),
-        ),
-        span: None,
-    },
+    ParseError(
+        ParseError {
+            message: "Can't use 'fn' as a valid Rust identifier.",
+            file: Some(
+                "<str>",
+            ),
+            position: Some(
+                58(5,8),
+            ),
+            span: None,
+        },
+    ),
 )

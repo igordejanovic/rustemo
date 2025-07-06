@@ -1,12 +1,14 @@
 Err(
-    Error {
-        message: "Can't use 'for' as a valid Rust identifier.",
-        file: Some(
-            "<str>",
-        ),
-        position: Some(
-            27(3,8),
-        ),
-        span: None,
-    },
+    ParseError(
+        ParseError {
+            message: "Can't use 'for' as a valid Rust identifier.",
+            file: Some(
+                "<str>",
+            ),
+            position: Some(
+                27(3,8),
+            ),
+            span: None,
+        },
+    ),
 )

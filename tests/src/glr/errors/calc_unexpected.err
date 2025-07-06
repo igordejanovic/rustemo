@@ -1,10 +1,12 @@
-Error {
-    message: "...1 + 4 * 9 -->! 3 * 2 + 7...\nExpected one of STOP, Plus, Mul.",
-    file: Some(
-        "<str>",
-    ),
-    position: Some(
-        10(1,10),
-    ),
-    span: None,
-}
+ParseError(
+    ParseError {
+        message: "...1 + 4 * 9 -->! 3 * 2 + 7...\nExpected one of STOP, Plus, Mul.",
+        file: Some(
+            "<str>",
+        ),
+        position: Some(
+            10(1,10),
+        ),
+        span: None,
+    },
+)

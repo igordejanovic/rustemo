@@ -1,12 +1,14 @@
 Err(
-    Error {
-        message: "Can't use 'impl' as a valid Rust identifier.",
-        file: Some(
-            "<str>",
-        ),
-        position: Some(
-            14(2,13),
-        ),
-        span: None,
-    },
+    ParseError(
+        ParseError {
+            message: "Can't use 'impl' as a valid Rust identifier.",
+            file: Some(
+                "<str>",
+            ),
+            position: Some(
+                14(2,13),
+            ),
+            span: None,
+        },
+    ),
 )

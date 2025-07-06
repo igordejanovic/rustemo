@@ -1,10 +1,12 @@
-Error {
-    message: "...4 * 9 + 3 * 2 +-->...\nExpected Num.",
-    file: Some(
-        "<str>",
-    ),
-    position: Some(
-        19(1,19),
-    ),
-    span: None,
-}
+ParseError(
+    ParseError {
+        message: "...4 * 9 + 3 * 2 +-->...\nExpected Num.",
+        file: Some(
+            "<str>",
+        ),
+        position: Some(
+            19(1,19),
+        ),
+        span: None,
+    },
+)

@@ -1,12 +1,14 @@
 Err(
-    Error {
-        message: "...01100100100110-->...\nExpected one of One, Zero.",
-        file: Some(
-            "<str>",
-        ),
-        position: Some(
-            14(1,14),
-        ),
-        span: None,
-    },
+    ParseError(
+        ParseError {
+            message: "...01100100100110-->...\nExpected one of One, Zero.",
+            file: Some(
+                "<str>",
+            ),
+            position: Some(
+                14(1,14),
+            ),
+            span: None,
+        },
+    ),
 )
