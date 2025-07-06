@@ -1,5 +1,5 @@
 use super::custom_lexer_2::{State, TokenKind};
-use rustemo::{Context, LRContext, Lexer, Location, Position, Result, Token};
+use rustemo::{Context, LRContext, Lexer, Position, Result, SourceSpan, Token};
 use std::iter;
 
 // ANCHOR: custom-lexer
@@ -30,11 +30,11 @@ impl<'i> Lexer<'i, Ctx<'i>, State, TokenKind> for MyCustomLexer2 {
     ) -> Box<dyn Iterator<Item = Token<'i, Self::Input, TokenKind>> + 'i> {
         let value;
         let kind: TokenKind;
-        if context.position() >= input.len() {
+        if context.position().pos >= input.len() {
             value = &[][..];
             kind = TokenKind::STOP;
         } else {
-            value = &input[context.position()..=context.position()];
+            value = &input[context.position().pos..=context.position().pos];
             if value[0] & 0b1000_0000 != 0 {
                 kind = TokenKind::MSBByte;
             } else {
@@ -45,9 +45,9 @@ impl<'i> Lexer<'i, Ctx<'i>, State, TokenKind> for MyCustomLexer2 {
         Box::new(iter::once(Token {
             kind,
             value,
-            location: Location {
-                start: Position::Position(context.position()),
-                end: Some(Position::Position(context.position())),
+            span: SourceSpan {
+                start: context.position(),
+                end: context.position(),
             },
         }))
     }

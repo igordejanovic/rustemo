@@ -1,253 +1,253 @@
 Object(
     Some(
         [
-            ValLoc {
+            ValSpan {
                 value: MemberBase {
-                    json_string: ValLoc {
+                    json_string: ValSpan {
                         value: "\"glossary\"",
-                        location: Some(
-                            [2,4-2,14],
+                        span: Some(
+                            [6(2,4)-16(2,14)],
                         ),
                     },
                     value: Object(
                         Some(
                             [
-                                ValLoc {
+                                ValSpan {
                                     value: MemberBase {
-                                        json_string: ValLoc {
+                                        json_string: ValSpan {
                                             value: "\"title\"",
-                                            location: Some(
-                                                [3,8-3,15],
+                                            span: Some(
+                                                [28(3,8)-35(3,15)],
                                             ),
                                         },
                                         value: JsonString(
-                                            ValLoc {
+                                            ValSpan {
                                                 value: "\"example glossary\"",
-                                                location: Some(
-                                                    [3,17-3,35],
+                                                span: Some(
+                                                    [37(3,17)-55(3,35)],
                                                 ),
                                             },
                                         ),
                                     },
-                                    location: Some(
-                                        [3,8-3,35],
+                                    span: Some(
+                                        [28(3,8)-55(3,35)],
                                     ),
                                 },
-                                ValLoc {
+                                ValSpan {
                                     value: MemberBase {
-                                        json_string: ValLoc {
+                                        json_string: ValSpan {
                                             value: "\"GlossDiv\"",
-                                            location: Some(
-                                                [4,8-4,18],
+                                            span: Some(
+                                                [65(4,8)-75(4,18)],
                                             ),
                                         },
                                         value: Object(
                                             Some(
                                                 [
-                                                    ValLoc {
+                                                    ValSpan {
                                                         value: MemberBase {
-                                                            json_string: ValLoc {
+                                                            json_string: ValSpan {
                                                                 value: "\"title\"",
-                                                                location: Some(
-                                                                    [5,12-5,19],
+                                                                span: Some(
+                                                                    [91(5,12)-98(5,19)],
                                                                 ),
                                                             },
                                                             value: JsonString(
-                                                                ValLoc {
+                                                                ValSpan {
                                                                     value: "\"S\"",
-                                                                    location: Some(
-                                                                        [5,21-5,24],
+                                                                    span: Some(
+                                                                        [100(5,21)-103(5,24)],
                                                                     ),
                                                                 },
                                                             ),
                                                         },
-                                                        location: Some(
-                                                            [5,12-5,24],
+                                                        span: Some(
+                                                            [91(5,12)-103(5,24)],
                                                         ),
                                                     },
-                                                    ValLoc {
+                                                    ValSpan {
                                                         value: MemberBase {
-                                                            json_string: ValLoc {
+                                                            json_string: ValSpan {
                                                                 value: "\"GlossList\"",
-                                                                location: Some(
-                                                                    [6,12-6,23],
+                                                                span: Some(
+                                                                    [117(6,12)-128(6,23)],
                                                                 ),
                                                             },
                                                             value: Object(
                                                                 Some(
                                                                     [
-                                                                        ValLoc {
+                                                                        ValSpan {
                                                                             value: MemberBase {
-                                                                                json_string: ValLoc {
+                                                                                json_string: ValSpan {
                                                                                     value: "\"GlossEntry\"",
-                                                                                    location: Some(
-                                                                                        [7,16-7,28],
+                                                                                    span: Some(
+                                                                                        [148(7,16)-160(7,28)],
                                                                                     ),
                                                                                 },
                                                                                 value: Object(
                                                                                     Some(
                                                                                         [
-                                                                                            ValLoc {
+                                                                                            ValSpan {
                                                                                                 value: MemberBase {
-                                                                                                    json_string: ValLoc {
+                                                                                                    json_string: ValSpan {
                                                                                                         value: "\"ID\"",
-                                                                                                        location: Some(
-                                                                                                            [8,20-8,24],
+                                                                                                        span: Some(
+                                                                                                            [184(8,20)-188(8,24)],
                                                                                                         ),
                                                                                                     },
                                                                                                     value: JsonString(
-                                                                                                        ValLoc {
+                                                                                                        ValSpan {
                                                                                                             value: "\"SGML\"",
-                                                                                                            location: Some(
-                                                                                                                [8,26-8,32],
+                                                                                                            span: Some(
+                                                                                                                [190(8,26)-196(8,32)],
                                                                                                             ),
                                                                                                         },
                                                                                                     ),
                                                                                                 },
-                                                                                                location: Some(
-                                                                                                    [8,20-8,32],
+                                                                                                span: Some(
+                                                                                                    [184(8,20)-196(8,32)],
                                                                                                 ),
                                                                                             },
-                                                                                            ValLoc {
+                                                                                            ValSpan {
                                                                                                 value: MemberBase {
-                                                                                                    json_string: ValLoc {
+                                                                                                    json_string: ValSpan {
                                                                                                         value: "\"SortAs\"",
-                                                                                                        location: Some(
-                                                                                                            [9,20-9,28],
+                                                                                                        span: Some(
+                                                                                                            [218(9,20)-226(9,28)],
                                                                                                         ),
                                                                                                     },
                                                                                                     value: JsonString(
-                                                                                                        ValLoc {
+                                                                                                        ValSpan {
                                                                                                             value: "\"SGML\"",
-                                                                                                            location: Some(
-                                                                                                                [9,30-9,36],
+                                                                                                            span: Some(
+                                                                                                                [228(9,30)-234(9,36)],
                                                                                                             ),
                                                                                                         },
                                                                                                     ),
                                                                                                 },
-                                                                                                location: Some(
-                                                                                                    [9,20-9,36],
+                                                                                                span: Some(
+                                                                                                    [218(9,20)-234(9,36)],
                                                                                                 ),
                                                                                             },
-                                                                                            ValLoc {
+                                                                                            ValSpan {
                                                                                                 value: MemberBase {
-                                                                                                    json_string: ValLoc {
+                                                                                                    json_string: ValSpan {
                                                                                                         value: "\"GlossTerm\"",
-                                                                                                        location: Some(
-                                                                                                            [10,20-10,31],
+                                                                                                        span: Some(
+                                                                                                            [256(10,20)-267(10,31)],
                                                                                                         ),
                                                                                                     },
                                                                                                     value: JsonString(
-                                                                                                        ValLoc {
+                                                                                                        ValSpan {
                                                                                                             value: "\"Standard Generalized Markup Language\"",
-                                                                                                            location: Some(
-                                                                                                                [10,33-10,71],
+                                                                                                            span: Some(
+                                                                                                                [269(10,33)-307(10,71)],
                                                                                                             ),
                                                                                                         },
                                                                                                     ),
                                                                                                 },
-                                                                                                location: Some(
-                                                                                                    [10,20-10,71],
+                                                                                                span: Some(
+                                                                                                    [256(10,20)-307(10,71)],
                                                                                                 ),
                                                                                             },
-                                                                                            ValLoc {
+                                                                                            ValSpan {
                                                                                                 value: MemberBase {
-                                                                                                    json_string: ValLoc {
+                                                                                                    json_string: ValSpan {
                                                                                                         value: "\"Acronym\"",
-                                                                                                        location: Some(
-                                                                                                            [11,20-11,29],
+                                                                                                        span: Some(
+                                                                                                            [329(11,20)-338(11,29)],
                                                                                                         ),
                                                                                                     },
                                                                                                     value: JsonString(
-                                                                                                        ValLoc {
+                                                                                                        ValSpan {
                                                                                                             value: "\"SGML\"",
-                                                                                                            location: Some(
-                                                                                                                [11,31-11,37],
+                                                                                                            span: Some(
+                                                                                                                [340(11,31)-346(11,37)],
                                                                                                             ),
                                                                                                         },
                                                                                                     ),
                                                                                                 },
-                                                                                                location: Some(
-                                                                                                    [11,20-11,37],
+                                                                                                span: Some(
+                                                                                                    [329(11,20)-346(11,37)],
                                                                                                 ),
                                                                                             },
-                                                                                            ValLoc {
+                                                                                            ValSpan {
                                                                                                 value: MemberBase {
-                                                                                                    json_string: ValLoc {
+                                                                                                    json_string: ValSpan {
                                                                                                         value: "\"Abbrev\"",
-                                                                                                        location: Some(
-                                                                                                            [12,20-12,28],
+                                                                                                        span: Some(
+                                                                                                            [368(12,20)-376(12,28)],
                                                                                                         ),
                                                                                                     },
                                                                                                     value: JsonString(
-                                                                                                        ValLoc {
+                                                                                                        ValSpan {
                                                                                                             value: "\"ISO 8879:1986\"",
-                                                                                                            location: Some(
-                                                                                                                [12,30-12,45],
+                                                                                                            span: Some(
+                                                                                                                [378(12,30)-393(12,45)],
                                                                                                             ),
                                                                                                         },
                                                                                                     ),
                                                                                                 },
-                                                                                                location: Some(
-                                                                                                    [12,20-12,45],
+                                                                                                span: Some(
+                                                                                                    [368(12,20)-393(12,45)],
                                                                                                 ),
                                                                                             },
-                                                                                            ValLoc {
+                                                                                            ValSpan {
                                                                                                 value: MemberBase {
-                                                                                                    json_string: ValLoc {
+                                                                                                    json_string: ValSpan {
                                                                                                         value: "\"GlossDef\"",
-                                                                                                        location: Some(
-                                                                                                            [13,20-13,30],
+                                                                                                        span: Some(
+                                                                                                            [415(13,20)-425(13,30)],
                                                                                                         ),
                                                                                                     },
                                                                                                     value: Object(
                                                                                                         Some(
                                                                                                             [
-                                                                                                                ValLoc {
+                                                                                                                ValSpan {
                                                                                                                     value: MemberBase {
-                                                                                                                        json_string: ValLoc {
+                                                                                                                        json_string: ValSpan {
                                                                                                                             value: "\"para\"",
-                                                                                                                            location: Some(
-                                                                                                                                [14,24-14,30],
+                                                                                                                            span: Some(
+                                                                                                                                [453(14,24)-459(14,30)],
                                                                                                                             ),
                                                                                                                         },
                                                                                                                         value: JsonString(
-                                                                                                                            ValLoc {
+                                                                                                                            ValSpan {
                                                                                                                                 value: "\"A meta-markup language, used to create markup languages such as DocBook.\"",
-                                                                                                                                location: Some(
-                                                                                                                                    [14,32-14,106],
+                                                                                                                                span: Some(
+                                                                                                                                    [461(14,32)-535(14,106)],
                                                                                                                                 ),
                                                                                                                             },
                                                                                                                         ),
                                                                                                                     },
-                                                                                                                    location: Some(
-                                                                                                                        [14,24-14,106],
+                                                                                                                    span: Some(
+                                                                                                                        [453(14,24)-535(14,106)],
                                                                                                                     ),
                                                                                                                 },
-                                                                                                                ValLoc {
+                                                                                                                ValSpan {
                                                                                                                     value: MemberBase {
-                                                                                                                        json_string: ValLoc {
+                                                                                                                        json_string: ValSpan {
                                                                                                                             value: "\"GlossSeeAlso\"",
-                                                                                                                            location: Some(
-                                                                                                                                [15,24-15,38],
+                                                                                                                            span: Some(
+                                                                                                                                [561(15,24)-575(15,38)],
                                                                                                                             ),
                                                                                                                         },
                                                                                                                         value: Array(
                                                                                                                             Some(
                                                                                                                                 [
                                                                                                                                     JsonString(
-                                                                                                                                        ValLoc {
+                                                                                                                                        ValSpan {
                                                                                                                                             value: "\"GML\"",
-                                                                                                                                            location: Some(
-                                                                                                                                                [15,41-15,46],
+                                                                                                                                            span: Some(
+                                                                                                                                                [578(15,41)-583(15,46)],
                                                                                                                                             ),
                                                                                                                                         },
                                                                                                                                     ),
                                                                                                                                     JsonString(
-                                                                                                                                        ValLoc {
+                                                                                                                                        ValSpan {
                                                                                                                                             value: "\"XML\"",
-                                                                                                                                            location: Some(
-                                                                                                                                                [15,48-15,53],
+                                                                                                                                            span: Some(
+                                                                                                                                                [585(15,48)-590(15,53)],
                                                                                                                                             ),
                                                                                                                                         },
                                                                                                                                     ),
@@ -255,69 +255,69 @@ Object(
                                                                                                                             ),
                                                                                                                         ),
                                                                                                                     },
-                                                                                                                    location: Some(
-                                                                                                                        [15,24-15,54],
+                                                                                                                    span: Some(
+                                                                                                                        [561(15,24)-591(15,54)],
                                                                                                                     ),
                                                                                                                 },
                                                                                                             ],
                                                                                                         ),
                                                                                                     ),
                                                                                                 },
-                                                                                                location: Some(
-                                                                                                    [13,20-16,21],
+                                                                                                span: Some(
+                                                                                                    [415(13,20)-613(16,21)],
                                                                                                 ),
                                                                                             },
-                                                                                            ValLoc {
+                                                                                            ValSpan {
                                                                                                 value: MemberBase {
-                                                                                                    json_string: ValLoc {
+                                                                                                    json_string: ValSpan {
                                                                                                         value: "\"GlossSee\"",
-                                                                                                        location: Some(
-                                                                                                            [17,20-17,30],
+                                                                                                        span: Some(
+                                                                                                            [635(17,20)-645(17,30)],
                                                                                                         ),
                                                                                                     },
                                                                                                     value: JsonString(
-                                                                                                        ValLoc {
+                                                                                                        ValSpan {
                                                                                                             value: "\"markup\"",
-                                                                                                            location: Some(
-                                                                                                                [17,32-17,40],
+                                                                                                            span: Some(
+                                                                                                                [647(17,32)-655(17,40)],
                                                                                                             ),
                                                                                                         },
                                                                                                     ),
                                                                                                 },
-                                                                                                location: Some(
-                                                                                                    [17,20-17,40],
+                                                                                                span: Some(
+                                                                                                    [635(17,20)-655(17,40)],
                                                                                                 ),
                                                                                             },
                                                                                         ],
                                                                                     ),
                                                                                 ),
                                                                             },
-                                                                            location: Some(
-                                                                                [7,16-18,17],
+                                                                            span: Some(
+                                                                                [148(7,16)-673(18,17)],
                                                                             ),
                                                                         },
                                                                     ],
                                                                 ),
                                                             ),
                                                         },
-                                                        location: Some(
-                                                            [6,12-19,13],
+                                                        span: Some(
+                                                            [117(6,12)-687(19,13)],
                                                         ),
                                                     },
                                                 ],
                                             ),
                                         ),
                                     },
-                                    location: Some(
-                                        [4,8-20,9],
+                                    span: Some(
+                                        [65(4,8)-697(20,9)],
                                     ),
                                 },
                             ],
                         ),
                     ),
                 },
-                location: Some(
-                    [2,4-21,5],
+                span: Some(
+                    [6(2,4)-703(21,5)],
                 ),
             },
         ],

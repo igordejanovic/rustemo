@@ -102,7 +102,7 @@ impl<'t> ProductionActionsGenerator<'t> {
                             #target_type::#choice_ident(
                                 #struct_ty::new(#struct_ty_base {
                                     #(#fields),*
-                                }, Some(_ctx.location()))
+                                }, Some(_ctx.span()))
                             )
                         }
                     } else {
@@ -118,7 +118,7 @@ impl<'t> ProductionActionsGenerator<'t> {
                     parse_quote! {
                         #target_type::new(#target_type_base {
                             #(#fields),*
-                        }, Some(_ctx.location()))
+                        }, Some(_ctx.span()))
                     }
                 } else {
                     parse_quote! {
@@ -206,7 +206,7 @@ impl ActionsGenerator for ProductionActionsGenerator<'_> {
                         if settings.builder_loc_info {
                             let type_ident_loc = format_ident!("{type_name}");
                             types.push(parse_quote! {
-                                pub type #type_ident_loc = ValLoc<#type_ident>;
+                                pub type #type_ident_loc = ValSpan<#type_ident>;
                             });
                         }
                         Some(types)

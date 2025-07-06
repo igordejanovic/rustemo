@@ -1,2 +1,2 @@
-Error at unexisting.rustemo:[2,3-2,4]:
+Error at unexisting.rustemo14(2,3):
 	Unexisting symbol 'C' in production '2: C Tc'.

@@ -14,8 +14,8 @@ mod context;
 mod error;
 mod input;
 mod lexer;
-mod location;
 mod parser;
+mod position;
 mod utils;
 
 mod lr;
@@ -27,7 +27,7 @@ pub use crate::context::Context;
 pub use crate::error::Error;
 pub use crate::error::Result;
 pub use crate::input::Input;
-pub use crate::location::{LineColumn, Location, Position, ValLoc};
+pub use crate::position::{LineColumn, Position, SourceSpan, ValSpan};
 
 pub use crate::builder::Builder;
 pub use crate::lexer::{Lexer, StringLexer, Token, TokenRecognizer};

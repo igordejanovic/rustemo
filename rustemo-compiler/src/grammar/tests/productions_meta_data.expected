@@ -15,9 +15,9 @@ Grammar {
                                 4,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "S",
-                                    location: None,
+                                    span: None,
                                 },
                             ),
                         },
@@ -44,10 +44,10 @@ Grammar {
                                 5,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "A",
-                                    location: Some(
-                                        [2,11-2,12],
+                                    span: Some(
+                                        [12(2,11)-13(2,12)],
                                     ),
                                 },
                             ),
@@ -61,10 +61,10 @@ Grammar {
                                 1,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "some_term",
-                                    location: Some(
-                                        [2,13-2,24],
+                                    span: Some(
+                                        [14(2,13)-25(2,24)],
                                     ),
                                 },
                             ),
@@ -78,10 +78,10 @@ Grammar {
                                 6,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "B",
-                                    location: Some(
-                                        [2,25-2,26],
+                                    span: Some(
+                                        [26(2,25)-27(2,26)],
                                     ),
                                 },
                             ),
@@ -109,10 +109,10 @@ Grammar {
                                 6,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "B",
-                                    location: Some(
-                                        [2,33-2,34],
+                                    span: Some(
+                                        [34(2,33)-35(2,34)],
                                     ),
                                 },
                             ),
@@ -140,10 +140,10 @@ Grammar {
                                 6,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "B",
-                                    location: Some(
-                                        [3,11-3,12],
+                                    span: Some(
+                                        [55(3,11)-56(3,12)],
                                     ),
                                 },
                             ),
@@ -158,10 +158,10 @@ Grammar {
                 nopse: true,
                 meta: {
                     "bla": Int(
-                        ValLoc {
+                        ValSpan {
                             value: 5,
-                            location: Some(
-                                [3,26-3,27],
+                            span: Some(
+                                [70(3,26)-71(3,27)],
                             ),
                         },
                     ),
@@ -180,10 +180,10 @@ Grammar {
                                 1,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "some_term",
-                                    location: Some(
-                                        [4,11-4,20],
+                                    span: Some(
+                                        [85(4,11)-94(4,20)],
                                     ),
                                 },
                             ),
@@ -221,10 +221,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "some_term",
-                            location: Some(
-                                [6,19-6,30],
+                            span: Some(
+                                [141(6,19)-152(6,30)],
                             ),
                         },
                     ),

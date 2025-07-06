@@ -4,8 +4,9 @@ Err(
         file: Some(
             "<str>",
         ),
-        location: Some(
-            [1,14],
+        position: Some(
+            14(1,14),
         ),
+        span: None,
     },
 )

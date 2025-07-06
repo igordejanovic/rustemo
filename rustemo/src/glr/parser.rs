@@ -11,15 +11,15 @@ use crate::{
     glr::gss::Parent,
     input::Input,
     lexer::{Lexer, Token},
-    location::Location,
     log,
     lr::{
         builder::SliceBuilder,
         parser::{Action, LRParser, ParserDefinition},
     },
     parser::{Parser, State},
+    position::SourceSpan,
     utils::Dedup,
-    Error, Result,
+    Error, Position, Result,
 };
 #[cfg(debug_assertions)]
 use colored::*;
@@ -30,7 +30,6 @@ use std::{
     collections::{BTreeMap, VecDeque},
     fmt::{Debug, Display},
     marker::PhantomData,
-    ops::Range,
     rc::Rc,
 };
 
@@ -130,7 +129,7 @@ pub struct GlrParser<
     /// consumed. Use with care in GLR as it can lead to a *huge* number of
     /// possible solutions/trees.
     partial_parse: bool,
-    start_position: usize,
+    start_position: Position,
     has_layout: bool,
     lexer: Rc<L>,
 
@@ -153,7 +152,7 @@ where
             layout_parser: RefCell::new(None),
             definition,
             partial_parse,
-            start_position: 0,
+            start_position: I::start_position(),
             has_layout,
             lexer: Rc::new(lexer),
             phantom: PhantomData,
@@ -164,14 +163,14 @@ where
     fn initial_process_frontier(
         &self,
         gss: &mut GssGraph<'i, I, S, P, TK>,
-        frontier: &BTreeMap<(usize, TK), BTreeMap<S, NodeIndex>>,
-        pending_reductions: &mut BTreeMap<(usize, TK), VecDeque<Reduction<P>>>,
+        frontier: &BTreeMap<(Position, TK), BTreeMap<S, NodeIndex>>,
+        pending_reductions: &mut BTreeMap<(Position, TK), VecDeque<Reduction<P>>>,
         pending_shifts: &mut Vec<(NodeIndex, S)>,
         accepted_heads: &mut Vec<NodeIndex>,
     ) {
         for ((position, token_kind), subfrontier) in frontier {
             log!(
-                "\n{} {:?} {} {}.",
+                "\n{} {:?} {} {:?}.",
                 "Preparing subfrontier for token".red(),
                 token_kind,
                 "at position".red(),
@@ -251,8 +250,8 @@ where
         gss: &mut GssGraph<'i, I, S, P, TK>,
         frontier_base: &Vec<NodeIndex>,
         input: &'i I,
-    ) -> BTreeMap<(usize, TK), BTreeMap<S, NodeIndex>> {
-        let mut frontier: BTreeMap<(usize, TK), BTreeMap<S, NodeIndex>> = BTreeMap::new();
+    ) -> BTreeMap<(Position, TK), BTreeMap<S, NodeIndex>> {
+        let mut frontier: BTreeMap<(Position, TK), BTreeMap<S, NodeIndex>> = BTreeMap::new();
         for &head_idx in frontier_base {
             // Multiple heads are possible per state in case of lexical ambiguity.
             let head = gss.head(head_idx);
@@ -277,9 +276,11 @@ where
                         .or_default()
                         .insert(head.state(), head_idx);
 
-                    let token_start_pos = token.location.start.position();
+                    let token_start_pos = token.span.start;
                     if token_start_pos > head.position() {
-                        head.set_layout_ahead(Some(input.slice(head.position()..token_start_pos)));
+                        head.set_layout_ahead(Some(
+                            input.slice(head.position().pos..token_start_pos.pos),
+                        ));
                     }
                     head.set_token_ahead(token);
                     log!(
@@ -392,7 +393,7 @@ where
             vec![Token {
                 kind: stop_kind,
                 value: &input[0..0],
-                location: head.location(),
+                span: head.span(),
             }]
         } else {
             vec![]
@@ -606,53 +607,26 @@ where
                         );
 
                         let root_head = gss.head(path.root_head);
-                        let range = if path.parents.is_empty() {
-                            Range {
-                                start: root_head.position(),
-                                end: root_head.position(),
-                            }
+                        let span = if path.parents.is_empty() {
+                            let end = root_head.span().end;
+                            SourceSpan { start: end, end }
                         } else {
-                            Range {
-                                start: <SPPFTree<'_, I, P, TK> as Context<'_, I, S, TK>>::range(
+                            SourceSpan {
+                                start: <SPPFTree<'_, I, P, TK> as Context<'_, I, S, TK>>::span(
                                     &path.parents[0].possibilities.borrow()[0],
                                 )
                                 .start,
-                                end: <SPPFTree<'_, I, P, TK> as Context<'_, I, S, TK>>::range(
+                                end: <SPPFTree<'_, I, P, TK> as Context<'_, I, S, TK>>::span(
                                     &path.parents[path.parents.len() - 1].possibilities.borrow()
                                         [0],
                                 )
                                 .end,
                             }
                         };
-                        let location = if path.parents.is_empty() {
-                            let end = root_head.location().into();
-                            Location {
-                                start: end,
-                                end: Some(end),
-                            }
-                        } else {
-                            Location {
-                                start:
-                                    <SPPFTree<'_, I, P, TK> as Context<'_, I, S, TK>>::location(
-                                        &path.parents[0].possibilities.borrow()[0],
-                                    )
-                                    .start,
-                                end: Some(
-                                    <SPPFTree<'_, I, P, TK> as Context<'_, I, S, TK>>::location(
-                                        &path.parents[path.parents.len() - 1]
-                                            .possibilities
-                                            .borrow()[0],
-                                    )
-                                    .end
-                                    .unwrap(),
-                                ),
-                            }
-                        };
                         let solution = Rc::new(SPPFTree::NonTerm {
                             prod: production,
                             data: TreeData {
-                                range,
-                                location,
+                                span,
                                 layout: root_head.layout_ahead(),
                             },
                             children: RefCell::new(path.parents),
@@ -746,7 +720,7 @@ where
         while let Some((head_idx, state)) = pending_shifts.pop() {
             let head = gss.head(head_idx);
             let token = head.token_ahead().cloned().unwrap();
-            let position = head.position() + token.value.len();
+            let position = token.value.position_after(head.position());
             log!(
                 "{}",
                 format!(
@@ -756,37 +730,25 @@ where
                 )
                 .green()
             );
-            let (shifted_head_idx, range, location) = match frontier_base.get(&(state, position)) {
+            let (shifted_head_idx, span) = match frontier_base.get(&(state, position)) {
                 Some(&shifted_head_idx) => {
                     log!("  {}", "Head already exists. Adding new edge.".green());
                     let shifted_head = gss.head(shifted_head_idx);
-                    (
-                        shifted_head_idx,
-                        shifted_head.range(),
-                        shifted_head.location(),
-                    )
+                    (shifted_head_idx, shifted_head.span())
                 }
                 None => {
-                    let new_head = GssHead::new(
-                        state,
-                        frontier_idx,
-                        position,
-                        head.position()..position,
-                        token.location,
-                        None,
-                        None,
-                    );
+                    let new_head =
+                        GssHead::new(state, frontier_idx, position, token.span, None, None);
                     #[cfg(debug_assertions)]
                     let new_head_str = format!("{new_head:?}");
-                    let (new_head_range, new_head_location) =
-                        (new_head.range(), new_head.location());
+                    let new_head_span = new_head.span();
                     let new_head_idx = gss.add_head(new_head);
                     log!(
                         "  {}: {new_head_str}",
                         format!("Creating new shifted head {}", new_head_idx.index()).green()
                     );
                     frontier_base.insert((state, position), new_head_idx);
-                    (new_head_idx, new_head_range, new_head_location)
+                    (new_head_idx, new_head_span)
                 }
             };
             gss.add_solution(
@@ -795,8 +757,7 @@ where
                 Rc::new(SPPFTree::Term {
                     token,
                     data: TreeData {
-                        range,
-                        location,
+                        span,
                         // FIXME:
                         layout: None,
                     },
@@ -1017,7 +978,7 @@ where
         let mut pending_shifts: Vec<(NodeIndex, S)> = vec![];
 
         // A queue of reductions that need to be done per subfrontier.
-        let mut pending_reductions: BTreeMap<(usize, TK), VecDeque<Reduction<P>>> =
+        let mut pending_reductions: BTreeMap<(Position, TK), VecDeque<Reduction<P>>> =
             Default::default();
 
         let mut accepted_heads: Vec<NodeIndex> = vec![];
@@ -1034,7 +995,7 @@ where
             );
             for ((position, token_kind), subfrontier) in frontier.iter_mut() {
                 log!(
-                    "\n{} {:?} {} {}.",
+                    "\n{} {:?} {} {:?}.",
                     "Reducing for subfrontier for token".red(),
                     token_kind,
                     "at position".red(),

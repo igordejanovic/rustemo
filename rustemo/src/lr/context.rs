@@ -1,20 +1,14 @@
-use std::ops::Range;
-
-use crate::{context::Context, input::Input, lexer::Token, location::Location, parser::State};
+use crate::{
+    context::Context, input::Input, lexer::Token, parser::State, position::SourceSpan, Position,
+};
 
 /// [`Context`] implementation for LR parsing
 #[derive(Debug)]
 pub struct LRContext<'i, I: Input + ?Sized, S, TK> {
-    position: usize,
+    position: Position,
 
-    /// The range of token/non-terminal during shift/reduce operation.
-    range: Range<usize>,
-
-    /// Similar to position but has line/column format for text based inputs.
-    ///
-    /// If this prove to be pricey overhead we might make tracking of this info
-    /// configurable.
-    location: Location,
+    /// The span of token/non-terminal during shift/reduce operation.
+    span: SourceSpan,
 
     /// Layout before the lookahead token (e.g. whitespaces, comments...)
     layout_ahead: Option<&'i I>,
@@ -26,17 +20,19 @@ pub struct LRContext<'i, I: Input + ?Sized, S, TK> {
 
 impl<I: Input + ?Sized, S: Default, TK> Default for LRContext<'_, I, S, TK> {
     fn default() -> Self {
-        Self::new(0)
+        Self::new(I::start_position())
     }
 }
 
 impl<I: Input + ?Sized, S: Default, TK> LRContext<'_, I, S, TK> {
-    pub fn new(position: usize) -> Self {
+    pub fn new(position: Position) -> Self {
         Self {
             position,
-            location: I::start_location(),
+            span: SourceSpan {
+                start: position,
+                end: position,
+            },
             layout_ahead: None,
-            range: 0..0,
             token_ahead: None,
             state: S::default(),
         }
@@ -59,33 +55,23 @@ where
     }
 
     #[inline]
-    fn position(&self) -> usize {
+    fn position(&self) -> Position {
         self.position
     }
 
     #[inline]
-    fn set_position(&mut self, position: usize) {
+    fn set_position(&mut self, position: Position) {
         self.position = position
     }
 
     #[inline]
-    fn location(&self) -> Location {
-        self.location
+    fn span(&self) -> SourceSpan {
+        self.span
     }
 
     #[inline]
-    fn set_location(&mut self, location: Location) {
-        self.location = location
-    }
-
-    #[inline]
-    fn range(&self) -> Range<usize> {
-        self.range.clone()
-    }
-
-    #[inline]
-    fn set_range(&mut self, range: Range<usize>) {
-        self.range = range
+    fn set_span(&mut self, location: SourceSpan) {
+        self.span = location
     }
 
     #[inline]

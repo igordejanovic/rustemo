@@ -1,26 +1,26 @@
 Ok(
     NonTermNode {
         prod: S: A1 B,
-        location: [1,0-1,10],
+        span: [0(1,0)-10(1,10)],
         children: [
             NonTermNode {
                 prod: A1: A1 A,
-                location: [1,0-1,8],
+                span: [0(1,0)-8(1,8)],
                 children: [
                     NonTermNode {
                         prod: A1: A,
-                        location: [1,0-1,4],
+                        span: [0(1,0)-4(1,4)],
                         children: [
                             NonTermNode {
                                 prod: A: Ta Num,
-                                location: [1,0-1,4],
+                                span: [0(1,0)-4(1,4)],
                                 children: [
                                     TermNode {
-                                        token: Ta("\"a\"" [1,0-1,1]),
+                                        token: Ta("\"a\"" [0(1,0)-1(1,1)]),
                                         layout: None,
                                     },
                                     TermNode {
-                                        token: Num("\"42\"" [1,2-1,4]),
+                                        token: Num("\"42\"" [2(1,2)-4(1,4)]),
                                         layout: Some(
                                             " ",
                                         ),
@@ -33,16 +33,16 @@ Ok(
                     },
                     NonTermNode {
                         prod: A: Ta Num,
-                        location: [1,5-1,8],
+                        span: [5(1,5)-8(1,8)],
                         children: [
                             TermNode {
-                                token: Ta("\"a\"" [1,5-1,6]),
+                                token: Ta("\"a\"" [5(1,5)-6(1,6)]),
                                 layout: Some(
                                     " ",
                                 ),
                             },
                             TermNode {
-                                token: Num("\"3\"" [1,7-1,8]),
+                                token: Num("\"3\"" [7(1,7)-8(1,8)]),
                                 layout: Some(
                                     " ",
                                 ),
@@ -56,7 +56,7 @@ Ok(
                 layout: None,
             },
             TermNode {
-                token: B("\"b\"" [1,9-1,10]),
+                token: B("\"b\"" [9(1,9)-10(1,10)]),
                 layout: Some(
                     " ",
                 ),

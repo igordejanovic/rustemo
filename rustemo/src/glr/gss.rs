@@ -2,15 +2,14 @@ use std::{
     cell::RefCell,
     collections::{HashSet, VecDeque},
     fmt::Debug,
-    ops::Range,
     rc::Rc,
 };
 
 use petgraph::{graph::Edges, prelude::*};
 
 use crate::{
-    context::Context, input::Input, lexer::Token, location::Location, lr::builder::LRBuilder,
-    parser::State,
+    context::Context, input::Input, lexer::Token, lr::builder::LRBuilder, parser::State,
+    position::SourceSpan, Position,
 };
 
 /// Graph Structured Stack
@@ -140,12 +139,10 @@ where
     pub frontier: usize,
 
     /// Current position in the input
-    position: usize,
+    position: Position,
 
-    /// The range of token/non-terminal during shift/reduce operation.
-    range: Range<usize>,
-
-    location: Location,
+    /// The span of token/non-terminal during shift/reduce operation.
+    span: SourceSpan,
 
     /// Layout before the first token ahead
     layout_ahead: Option<&'i I>,
@@ -166,8 +163,7 @@ where
             state: self.state,
             frontier: self.frontier,
             position: self.position,
-            range: self.range.clone(),
-            location: self.location,
+            span: self.span,
             layout_ahead: self.layout_ahead,
             token_ahead: self.token_ahead().cloned(),
         }
@@ -179,9 +175,11 @@ impl<I: Input + ?Sized, S: Default, TK> Default for GssHead<'_, I, S, TK> {
         Self {
             state: Default::default(),
             frontier: Default::default(),
-            position: Default::default(),
-            range: Default::default(),
-            location: I::start_location(),
+            position: I::start_position(),
+            span: SourceSpan {
+                start: I::start_position(),
+                end: I::start_position(),
+            },
             layout_ahead: Default::default(),
             token_ahead: Default::default(),
         }
@@ -198,9 +196,8 @@ where
     pub fn new(
         state: S,
         frontier: usize,
-        position: usize,
-        range: Range<usize>,
-        location: Location,
+        position: Position,
+        span: SourceSpan,
         layout_ahead: Option<&'i I>,
         token_ahead: Option<Token<'i, I, TK>>,
     ) -> Self {
@@ -208,8 +205,7 @@ where
             state,
             frontier,
             position,
-            range,
-            location,
+            span,
             layout_ahead,
             token_ahead,
         }
@@ -218,14 +214,12 @@ where
         Self {
             state,
             token_ahead: Some(token_ahead),
-            range: self.range(),
             ..*self
         }
     }
     pub fn with_tok(&self, token_ahead: Token<'i, I, TK>) -> Self {
         Self {
             token_ahead: Some(token_ahead),
-            range: self.range(),
             ..*self
         }
     }
@@ -247,33 +241,23 @@ where
     }
 
     #[inline]
-    fn position(&self) -> usize {
+    fn position(&self) -> Position {
         self.position
     }
 
     #[inline]
-    fn set_position(&mut self, position: usize) {
+    fn set_position(&mut self, position: Position) {
         self.position = position
     }
 
     #[inline]
-    fn location(&self) -> Location {
-        self.location
+    fn span(&self) -> SourceSpan {
+        self.span
     }
 
     #[inline]
-    fn set_location(&mut self, location: Location) {
-        self.location = location
-    }
-
-    #[inline]
-    fn range(&self) -> Range<usize> {
-        self.range.clone()
-    }
-
-    #[inline]
-    fn set_range(&mut self, range: Range<usize>) {
-        self.range = range
+    fn set_span(&mut self, span: SourceSpan) {
+        self.span = span
     }
 
     #[inline]
@@ -369,29 +353,20 @@ where
 
     fn set_state(&mut self, _state: S) {}
 
-    fn position(&self) -> usize {
+    fn position(&self) -> Position {
         panic!("position() called on SPPFTree")
     }
 
-    fn set_position(&mut self, _position: usize) {}
+    fn set_position(&mut self, _position: Position) {}
 
-    fn location(&self) -> Location {
+    fn span(&self) -> SourceSpan {
         match self {
-            SPPFTree::Term { data, .. } | SPPFTree::NonTerm { data, .. } => data.location,
-            _ => panic!("Called location() on empty tree!"),
+            SPPFTree::Term { data, .. } | SPPFTree::NonTerm { data, .. } => data.span,
+            _ => panic!("Called span() on empty tree!"),
         }
     }
 
-    fn set_location(&mut self, _location: Location) {}
-
-    fn range(&self) -> Range<usize> {
-        match self {
-            SPPFTree::Term { data, .. } | SPPFTree::NonTerm { data, .. } => data.range.clone(),
-            _ => panic!("Called range() on empty tree!"),
-        }
-    }
-
-    fn set_range(&mut self, _range: Range<usize>) {}
+    fn set_span(&mut self, _span: SourceSpan) {}
 
     fn token_ahead(&self) -> Option<&Token<'i, I, TK>> {
         None
@@ -451,8 +426,7 @@ pub struct TreeData<'i, I>
 where
     I: Input + ?Sized,
 {
-    pub range: Range<usize>,
-    pub location: Location,
+    pub span: SourceSpan,
     pub layout: Option<&'i I>,
 }
 
@@ -462,8 +436,7 @@ where
 {
     fn clone(&self) -> Self {
         Self {
-            range: self.range.clone(),
-            location: self.location,
+            span: self.span,
             layout: self.layout,
         }
     }
@@ -651,7 +624,7 @@ where
     {
         match &*self.root {
             SPPFTree::Term { token, .. } => {
-                context.set_location(Context::<I, S, TK>::location(&*self.root));
+                context.set_span(Context::<I, S, TK>::span(&*self.root));
                 builder.shift_action(context, token.clone())
             }
             SPPFTree::NonTerm { prod, .. } => {
@@ -659,7 +632,7 @@ where
                 children.iter().for_each(|c| {
                     c.build_inner(context, builder);
                 });
-                context.set_location(Context::<I, S, TK>::location(&*self.root));
+                context.set_span(Context::<I, S, TK>::span(&*self.root));
                 builder.reduce_action(context, *prod, children.len())
             }
             SPPFTree::Empty => (),

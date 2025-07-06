@@ -1,2 +1,2 @@
-Error at terminal_not_defined_sugar.rustemo:[1,6-1,9]:
+Error at terminal_not_defined_sugar.rustemo6(1,6):
 	Terminal "c" is not defined in the terminals section.

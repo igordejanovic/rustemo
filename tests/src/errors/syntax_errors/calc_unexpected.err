@@ -1,1 +1,1 @@
-"Error at <str>:[1,6]:\n\t...2 + 3 -->/ 4 + 5...\n\tExpected one of STOP, Plus."
+"Error at <str>:6(1,6):\n\t...2 + 3 -->/ 4 + 5...\n\tExpected one of STOP, Plus."

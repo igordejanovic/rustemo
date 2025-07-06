@@ -3,7 +3,8 @@ Error {
     file: Some(
         "<str>",
     ),
-    location: Some(
-        [1,18-1,19],
+    position: Some(
+        19(1,19),
     ),
+    span: None,
 }

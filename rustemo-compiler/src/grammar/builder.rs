@@ -4,7 +4,7 @@ use std::{
     path::Path,
 };
 
-use rustemo::{Error, Result, ValLoc};
+use rustemo::{Error, Result, ValSpan};
 
 use crate::{
     grammar::{Grammar, DEFAULT_PRIORITY},
@@ -184,7 +184,7 @@ impl GrammarBuilder {
                             err!(
                                 "Priority must be <=99.".to_owned(),
                                 Some(self.file.clone()),
-                                prio.location
+                                prio.span.map(|s| s.into())
                             )?
                         } else {
                             p
@@ -411,7 +411,7 @@ impl GrammarBuilder {
                         RepetitionOperatorOp::OptionalGreedy => "OptGreedy",
                     }
                 ),
-                name.location,
+                name.span,
             )
         }
 
@@ -436,7 +436,7 @@ impl GrammarBuilder {
                 GrammarSymbol::Name(ref name) => name.clone(),
                 GrammarSymbol::StrConst(ref mtch) => {
                     if let Some(term) = self.terminals_matches.get(mtch.as_ref()) {
-                        ValLoc::new(term.0.clone(), mtch.location)
+                        ValSpan::new(term.0.clone(), mtch.span)
                     } else {
                         return err!(
                             format!(
@@ -444,7 +444,7 @@ impl GrammarBuilder {
                                 mtch
                             ),
                             Some(self.file.clone()),
-                            mtch.location
+                            mtch.span.map(|s| s.into())
                         );
                     }
                 }
@@ -518,7 +518,7 @@ impl GrammarBuilder {
                                 mtch, production_str
                             ),
                             Some(self.file.clone()),
-                            mtch.location
+                            mtch.span.map(|s| s.into())
                         )?
                     }
                 }
@@ -553,7 +553,7 @@ impl GrammarBuilder {
                                                 name, production_str
                                             ),
                                             Some(self.file.clone()),
-                                            name.location
+                                            name.span.map(|s| s.into())
                                         );
                                         r.unwrap_err()
                                     })?
@@ -561,7 +561,7 @@ impl GrammarBuilder {
                                 if rhs_len == 1 && nt_idx == production.nonterminal {
                                     err!(format!("Infinite recursion on symbol '{}' in production '{}'.",
                                             name, production_str),
-                                             Some(self.file.clone()), name.location)?;
+                                             Some(self.file.clone()), name.span.map(|s| s.into()))?;
                                 }
                                 nt_idx.symbol_index(self.terminals.len())
                             }
@@ -702,13 +702,13 @@ impl GrammarBuilder {
         self.nonterminals.insert(name.into(), nt);
     }
 
-    fn check_identifier(&self, name: &ValLoc<String>) -> Result<()> {
+    fn check_identifier(&self, name: &ValSpan<String>) -> Result<()> {
         let result = syn::parse_str::<syn::Ident>(name.as_ref());
         if result.is_err() {
             err!(
                 format!("Can't use '{}' as a valid Rust identifier.", &name),
                 Some(self.file.clone()),
-                name.location
+                name.span.map(|s| s.into())
             )?
         }
         Ok(())

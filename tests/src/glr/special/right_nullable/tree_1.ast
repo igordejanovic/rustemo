@@ -1,26 +1,26 @@
 NonTermNode {
     prod: S: Ta S A,
-    location: [1,0-1,2],
+    span: [0(1,0)-2(1,2)],
     children: [
         TermNode {
-            token: Ta("\"a\"" [1,0-1,1]),
+            token: Ta("\"a\"" [0(1,0)-1(1,1)]),
             layout: None,
         },
         NonTermNode {
             prod: S: Ta S A,
-            location: [1,1-1,2],
+            span: [1(1,1)-2(1,2)],
             children: [
                 TermNode {
-                    token: Ta("\"a\"" [1,1-1,2]),
+                    token: Ta("\"a\"" [1(1,1)-2(1,2)]),
                     layout: None,
                 },
                 NonTermNode {
                     prod: S: A,
-                    location: [1,2-1,2],
+                    span: [2(1,2)-2(1,2)],
                     children: [
                         NonTermNode {
                             prod: A: ,
-                            location: [1,2-1,2],
+                            span: [2(1,2)-2(1,2)],
                             children: [],
                             layout: None,
                         },
@@ -29,7 +29,7 @@ NonTermNode {
                 },
                 NonTermNode {
                     prod: A: ,
-                    location: [1,2-1,2],
+                    span: [2(1,2)-2(1,2)],
                     children: [],
                     layout: None,
                 },
@@ -38,7 +38,7 @@ NonTermNode {
         },
         NonTermNode {
             prod: A: ,
-            location: [1,2-1,2],
+            span: [2(1,2)-2(1,2)],
             children: [],
             layout: None,
         },

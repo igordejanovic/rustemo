@@ -3,17 +3,16 @@ use crate::debug::log;
 use crate::error::{error_expected, Result};
 use crate::input::Input;
 use crate::lexer::{Lexer, Token};
-use crate::location::Location;
 use crate::lr::builder::SliceBuilder;
 use crate::parser::{Parser, State};
-use crate::{err, Error};
+use crate::position::SourceSpan;
+use crate::{err, Error, Position};
 #[cfg(debug_assertions)]
 use colored::*;
 use std::borrow::Borrow;
 use std::cell::RefCell;
 use std::fmt::Debug;
 use std::marker::PhantomData;
-use std::ops::Range;
 use std::path::Path;
 use std::rc::Rc;
 
@@ -39,17 +38,12 @@ pub enum Action<S, P> {
 
 struct StackItem<S> {
     state: S,
-    range: Range<usize>,
-    location: Location,
+    span: SourceSpan,
 }
 
 impl<S: Debug> Debug for StackItem<S> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "State({:?}, {:?} {:?})",
-            self.state, self.range, self.location
-        )
+        write!(f, "State({:?}, {:?})", self.state, self.span)
     }
 }
 
@@ -76,8 +70,7 @@ where
         Self {
             stack: vec![StackItem {
                 state: start_state,
-                range: context.range(),
-                location: context.location(),
+                span: context.span(),
             }],
             phantom: PhantomData,
         }
@@ -92,35 +85,28 @@ where
     fn push_state(&mut self, context: &mut C, state: S) {
         self.stack.push(StackItem {
             state,
-            range: context.range(),
-            location: context.location(),
+            span: context.span(),
         });
         context.set_state(state);
     }
 
-    fn pop_states(&mut self, context: &mut C, states: usize) -> (S, Range<usize>, Location) {
+    fn pop_states(&mut self, context: &mut C, states: usize) -> (S, SourceSpan) {
         let states_removed = self.stack.split_off(self.stack.len() - states);
         let state = self.stack.last().unwrap().state;
 
-        let (range, location) = if states == 0 {
+        let span = if states == 0 {
             // EMPTY reduction
-            (
-                context.position()..context.position(),
-                Location {
-                    start: context.location().start,
-                    end: Some(context.location().start),
-                },
-            )
+            SourceSpan {
+                start: context.span().start,
+                end: context.span().start,
+            }
         } else {
-            (
-                states_removed[0].range.start..states_removed.last().unwrap().range.end,
-                Location {
-                    start: states_removed[0].location.start,
-                    end: states_removed.last().unwrap().location.end,
-                },
-            )
+            SourceSpan {
+                start: states_removed[0].span.start,
+                end: states_removed.last().unwrap().span.end,
+            }
         };
-        (state, range, location)
+        (state, span)
     }
 }
 
@@ -141,7 +127,7 @@ pub struct LRParser<
     file_name: String,
     content: Option<<<L as Lexer<'i, C, S, TK>>::Input as ToOwned>::Owned>,
     partial_parse: bool,
-    start_position: usize,
+    start_position: Position,
     start_state: S,
     has_layout: bool,
     lexer: Rc<L>,
@@ -193,7 +179,7 @@ where
             partial_parse,
             file_name: "<str>".into(),
             content: None,
-            start_position: 0,
+            start_position: I::start_position(),
             start_state: state,
             has_layout,
             lexer,
@@ -203,8 +189,8 @@ where
     }
 
     #[inline]
-    pub fn location_str(&self, file: &str, location: Location) -> String {
-        format!("{}:{:?}", file.to_owned(), location)
+    pub fn span_str(&self, file: &str, span: SourceSpan) -> String {
+        format!("{}:{:?}", file.to_owned(), span)
     }
 
     fn next_token(
@@ -283,8 +269,8 @@ where
                 if self.partial_parse && expected.contains(&stop_kind) {
                     return Ok(Token {
                         kind: stop_kind,
-                        value: &input[context.position()..context.position()],
-                        location: context.location(),
+                        value: &input[context.position().pos..context.position().pos],
+                        span: context.span(),
                     });
                 } else {
                     return Err(error_expected(input, &self.file_name, context, &expected));
@@ -336,10 +322,10 @@ where
             });
 
         log!(
-            "{} at {}{:?}: '{}'",
+            "{} at {:?} [{:?}]: '{}'",
             "Context".green(),
             context.position(),
-            context.location(),
+            context.span(),
             input.context_str(context.position())
         );
 
@@ -357,32 +343,28 @@ where
             match action {
                 Action::Shift(state_id) => {
                     state = state_id;
-                    context.set_range(
-                        context.position()..(context.position() + next_token.value.len()),
-                    );
-                    let new_location = next_token.value.location_after(context.location());
-                    context.set_location(Location {
-                        start: context.location().start,
-                        end: Some(new_location.start),
+                    let new_position = next_token.value.position_after(context.position());
+                    context.set_span(SourceSpan {
+                        start: context.position(),
+                        end: new_position,
                     });
+                    context.set_position(new_position);
 
                     log!(
                         "{} to state {:?} at location {:?} with token {:?}",
                         "Shifting".bold().green(),
                         state_id,
-                        context.location(),
+                        context.span(),
                         &next_token
                     );
                     parse_stack.push_state(context, state);
                     builder.shift_action(context, next_token);
 
-                    context.set_position(context.range().end);
-                    context.set_location(new_location);
                     log!(
-                        "{} at {}{:?}:\n{}\n",
+                        "{} at {:?} [{:?}]:\n{}\n",
                         "Context".green(),
                         context.position(),
-                        context.location(),
+                        context.span(),
                         input.context_str(context.position())
                     );
                     next_token = self.next_token(input, context, &layout_parser)?;
@@ -395,15 +377,14 @@ where
                         prod,
                         prod_len
                     );
-                    let (from_state, range, location) = parse_stack.pop_states(context, prod_len);
-                    context.set_range(range);
+                    let (from_state, span) = parse_stack.pop_states(context, prod_len);
                     state = self.definition.goto(from_state, prod.into());
-                    let context_location = context.location();
-                    context.set_location(location);
+                    let context_span = context.span();
+                    context.set_span(span);
                     parse_stack.push_state(context, state);
                     log!("{} {:?} -> {:?}", "GOTO".green(), from_state, state);
                     builder.reduce_action(context, prod, prod_len);
-                    context.set_location(context_location);
+                    context.set_span(context_span);
 
                     // After the reduction we need to run lexer again as the set
                     // of possible tokens in the new state may be different.

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Changed
 - Debug trace is now off by default. Thanks @andrewbaxter for PR [23].
+- Reworked handling of position/span.
 
 [23]: https://github.com/igordejanovic/rustemo/pull/23
 

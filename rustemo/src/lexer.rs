@@ -1,4 +1,4 @@
-use crate::{context::Context, input::Input, location::Location, log, parser::State};
+use crate::{context::Context, input::Input, log, parser::State, position::SourceSpan, Position};
 #[cfg(debug_assertions)]
 use colored::*;
 use core::fmt::Debug;
@@ -77,17 +77,17 @@ impl<
     }
 
     fn skip(input: &'i str, context: &mut C) {
-        let skipped_len: usize = input[context.position()..]
+        let skipped_len: usize = input[context.position().pos..]
             .chars()
             .take_while(|x| x.is_whitespace())
             .map(|c| c.len_utf8())
             .sum();
         if skipped_len > 0 {
-            let skipped = &input[context.position()..context.position() + skipped_len];
+            let skipped = &input[context.position().pos..context.position().pos + skipped_len];
             log!("\t{} {}", "Skipped ws:".bold().green(), skipped_len);
             context.set_layout_ahead(Some(skipped));
-            context.set_position(context.position() + skipped_len);
-            context.set_location(skipped.location_after(context.location()));
+            context.set_position(skipped.position_after(context.position()));
+            //context.set_span();
         } else {
             context.set_layout_ahead(None);
         }
@@ -96,8 +96,7 @@ impl<
 
 struct TokenIterator<'i, TR: 'static, TK> {
     input: &'i str,
-    position: usize,
-    location: Location,
+    position: Position,
     token_recognizers: Vec<(&'static TR, TK, bool)>,
     index: usize,
     finish: bool,
@@ -106,14 +105,12 @@ struct TokenIterator<'i, TR: 'static, TK> {
 impl<'i, TR, TK> TokenIterator<'i, TR, TK> {
     fn new(
         input: &'i str,
-        position: usize,
-        location: Location,
+        position: Position,
         token_recognizers: Vec<(&'static TR, TK, bool)>,
     ) -> Self {
         Self {
             input,
             position,
-            location,
             token_recognizers,
             index: 0,
             finish: false,
@@ -133,12 +130,12 @@ where
             if !self.finish && self.index < self.token_recognizers.len() {
                 let (recognizer, token_kind, finish) = &self.token_recognizers[self.index];
                 self.index += 1;
-                if let Some(recognized) = recognizer.recognize(&self.input[self.position..]) {
+                if let Some(recognized) = recognizer.recognize(&self.input[self.position.pos..]) {
                     self.finish = *finish;
                     return Some(Token {
                         kind: *token_kind,
                         value: recognized,
-                        location: recognized.location_span(self.location),
+                        span: recognized.span_from(self.position),
                     });
                 }
             } else {
@@ -172,7 +169,6 @@ where
         Box::new(TokenIterator::new(
             input,
             context.position(),
-            context.location(),
             expected_tokens
                 .iter()
                 .map(|&tok| (&self.token_recognizers[tok.0.into()], tok.0, tok.1))
@@ -188,8 +184,8 @@ pub struct Token<'i, I: Input + ?Sized, TK> {
     /// The part of the input stream that this token represents.
     pub value: &'i I,
 
-    /// Location (with span) in the input file where this token is found.
-    pub location: Location,
+    /// Span in the input file where this token is found.
+    pub span: SourceSpan,
 }
 
 impl<I: Input + ?Sized, TK: Copy> Clone for Token<'_, I, TK> {
@@ -197,7 +193,7 @@ impl<I: Input + ?Sized, TK: Copy> Clone for Token<'_, I, TK> {
         Self {
             kind: self.kind,
             value: self.value,
-            location: self.location,
+            span: self.span,
         }
     }
 }
@@ -223,7 +219,7 @@ where
             } else {
                 format!("{:?}", self.value)
             },
-            self.location
+            self.span
         )
     }
 }

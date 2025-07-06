@@ -15,9 +15,9 @@ Grammar {
                                 7,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "S",
-                                    location: None,
+                                    span: None,
                                 },
                             ),
                         },
@@ -44,10 +44,10 @@ Grammar {
                                 1,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "foo",
-                                    location: Some(
-                                        [2,11-2,16],
+                                    span: Some(
+                                        [12(2,11)-17(2,16)],
                                     ),
                                 },
                             ),
@@ -61,10 +61,10 @@ Grammar {
                                 3,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "rmatch_term",
-                                    location: Some(
-                                        [2,17-2,28],
+                                    span: Some(
+                                        [18(2,17)-29(2,28)],
                                     ),
                                 },
                             ),
@@ -78,10 +78,10 @@ Grammar {
                                 8,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "A",
-                                    location: Some(
-                                        [2,29-2,30],
+                                    span: Some(
+                                        [30(2,29)-31(2,30)],
                                     ),
                                 },
                             ),
@@ -109,10 +109,10 @@ Grammar {
                                 2,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "some",
-                                    location: Some(
-                                        [3,11-3,17],
+                                    span: Some(
+                                        [44(3,11)-50(3,17)],
                                     ),
                                 },
                             ),
@@ -126,10 +126,10 @@ Grammar {
                                 4,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "more_regex",
-                                    location: Some(
-                                        [3,18-3,28],
+                                    span: Some(
+                                        [51(3,18)-61(3,28)],
                                     ),
                                 },
                             ),
@@ -167,10 +167,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "foo",
-                            location: Some(
-                                [5,13-5,18],
+                            span: Some(
+                                [94(5,13)-99(5,18)],
                             ),
                         },
                     ),
@@ -189,10 +189,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "some",
-                            location: Some(
-                                [6,14-6,20],
+                            span: Some(
+                                [115(6,14)-121(6,20)],
                             ),
                         },
                     ),
@@ -211,10 +211,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     RegexTerm(
-                        ValLoc {
+                        ValSpan {
                             value: "\"[^\"]+\"",
-                            location: Some(
-                                [7,21-7,30],
+                            span: Some(
+                                [144(7,21)-153(7,30)],
                             ),
                         },
                     ),
@@ -233,10 +233,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     RegexTerm(
-                        ValLoc {
+                        ValSpan {
                             value: "\\d{2,5}",
-                            location: Some(
-                                [8,20-8,29],
+                            span: Some(
+                                [175(8,20)-184(8,29)],
                             ),
                         },
                     ),

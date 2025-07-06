@@ -15,9 +15,9 @@ Grammar {
                                 47,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "File",
-                                    location: None,
+                                    span: None,
                                 },
                             ),
                         },
@@ -44,9 +44,9 @@ Grammar {
                                 79,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Layout",
-                                    location: None,
+                                    span: None,
                                 },
                             ),
                         },
@@ -73,10 +73,10 @@ Grammar {
                                 48,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "GrammarRule1",
-                                    location: Some(
-                                        [1,6-1,17],
+                                    span: Some(
+                                        [6(1,6)-17(1,17)],
                                     ),
                                 },
                             ),
@@ -104,10 +104,10 @@ Grammar {
                                 48,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "GrammarRule1",
-                                    location: Some(
-                                        [1,6-1,17],
+                                    span: Some(
+                                        [6(1,6)-17(1,17)],
                                     ),
                                 },
                             ),
@@ -121,10 +121,10 @@ Grammar {
                                 52,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "GrammarRule",
-                                    location: Some(
-                                        [1,6-1,17],
+                                    span: Some(
+                                        [6(1,6)-17(1,17)],
                                     ),
                                 },
                             ),
@@ -152,10 +152,10 @@ Grammar {
                                 52,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "GrammarRule",
-                                    location: Some(
-                                        [1,6-1,17],
+                                    span: Some(
+                                        [6(1,6)-17(1,17)],
                                     ),
                                 },
                             ),
@@ -183,10 +183,10 @@ Grammar {
                                 49,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "ImportStm1",
-                                    location: Some(
-                                        [2,6-2,15],
+                                    span: Some(
+                                        [25(2,6)-34(2,15)],
                                     ),
                                 },
                             ),
@@ -200,10 +200,10 @@ Grammar {
                                 48,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "GrammarRule1",
-                                    location: Some(
-                                        [2,17-2,28],
+                                    span: Some(
+                                        [36(2,17)-47(2,28)],
                                     ),
                                 },
                             ),
@@ -231,10 +231,10 @@ Grammar {
                                 49,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "ImportStm1",
-                                    location: Some(
-                                        [2,6-2,15],
+                                    span: Some(
+                                        [25(2,6)-34(2,15)],
                                     ),
                                 },
                             ),
@@ -248,10 +248,10 @@ Grammar {
                                 51,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "ImportStm",
-                                    location: Some(
-                                        [2,6-2,15],
+                                    span: Some(
+                                        [25(2,6)-34(2,15)],
                                     ),
                                 },
                             ),
@@ -279,10 +279,10 @@ Grammar {
                                 51,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "ImportStm",
-                                    location: Some(
-                                        [2,6-2,15],
+                                    span: Some(
+                                        [25(2,6)-34(2,15)],
                                     ),
                                 },
                             ),
@@ -310,10 +310,10 @@ Grammar {
                                 48,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "GrammarRule1",
-                                    location: Some(
-                                        [3,6-3,17],
+                                    span: Some(
+                                        [55(3,6)-66(3,17)],
                                     ),
                                 },
                             ),
@@ -327,10 +327,10 @@ Grammar {
                                 1,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "terminals",
-                                    location: Some(
-                                        [3,19-3,30],
+                                    span: Some(
+                                        [68(3,19)-79(3,30)],
                                     ),
                                 },
                             ),
@@ -344,10 +344,10 @@ Grammar {
                                 50,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "TerminalRule1",
-                                    location: Some(
-                                        [3,31-3,43],
+                                    span: Some(
+                                        [80(3,31)-92(3,43)],
                                     ),
                                 },
                             ),
@@ -375,10 +375,10 @@ Grammar {
                                 50,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "TerminalRule1",
-                                    location: Some(
-                                        [3,31-3,43],
+                                    span: Some(
+                                        [80(3,31)-92(3,43)],
                                     ),
                                 },
                             ),
@@ -392,10 +392,10 @@ Grammar {
                                 57,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "TerminalRule",
-                                    location: Some(
-                                        [3,31-3,43],
+                                    span: Some(
+                                        [80(3,31)-92(3,43)],
                                     ),
                                 },
                             ),
@@ -423,10 +423,10 @@ Grammar {
                                 57,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "TerminalRule",
-                                    location: Some(
-                                        [3,31-3,43],
+                                    span: Some(
+                                        [80(3,31)-92(3,43)],
                                     ),
                                 },
                             ),
@@ -454,10 +454,10 @@ Grammar {
                                 49,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "ImportStm1",
-                                    location: Some(
-                                        [4,6-4,15],
+                                    span: Some(
+                                        [100(4,6)-109(4,15)],
                                     ),
                                 },
                             ),
@@ -471,10 +471,10 @@ Grammar {
                                 48,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "GrammarRule1",
-                                    location: Some(
-                                        [4,17-4,28],
+                                    span: Some(
+                                        [111(4,17)-122(4,28)],
                                     ),
                                 },
                             ),
@@ -488,10 +488,10 @@ Grammar {
                                 1,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "terminals",
-                                    location: Some(
-                                        [4,30-4,41],
+                                    span: Some(
+                                        [124(4,30)-135(4,41)],
                                     ),
                                 },
                             ),
@@ -505,10 +505,10 @@ Grammar {
                                 50,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "TerminalRule1",
-                                    location: Some(
-                                        [4,42-4,54],
+                                    span: Some(
+                                        [136(4,42)-148(4,54)],
                                     ),
                                 },
                             ),
@@ -536,10 +536,10 @@ Grammar {
                                 1,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "terminals",
-                                    location: Some(
-                                        [5,6-5,17],
+                                    span: Some(
+                                        [156(5,6)-167(5,17)],
                                     ),
                                 },
                             ),
@@ -553,10 +553,10 @@ Grammar {
                                 50,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "TerminalRule1",
-                                    location: Some(
-                                        [5,18-5,30],
+                                    span: Some(
+                                        [168(5,18)-180(5,30)],
                                     ),
                                 },
                             ),
@@ -584,10 +584,10 @@ Grammar {
                                 2,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "import",
-                                    location: Some(
-                                        [7,11-7,19],
+                                    span: Some(
+                                        [195(7,11)-203(7,19)],
                                     ),
                                 },
                             ),
@@ -596,10 +596,10 @@ Grammar {
                     },
                     ResolvingAssignment {
                         name: Some(
-                            ValLoc {
+                            ValSpan {
                                 value: "path",
-                                location: Some(
-                                    [7,20-7,24],
+                                span: Some(
+                                    [204(7,20)-208(7,24)],
                                 ),
                             },
                         ),
@@ -608,10 +608,10 @@ Grammar {
                                 39,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "StrConst",
-                                    location: Some(
-                                        [7,25-7,33],
+                                    span: Some(
+                                        [209(7,25)-217(7,33)],
                                     ),
                                 },
                             ),
@@ -639,10 +639,10 @@ Grammar {
                                 2,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "import",
-                                    location: Some(
-                                        [8,11-8,19],
+                                    span: Some(
+                                        [229(8,11)-237(8,19)],
                                     ),
                                 },
                             ),
@@ -651,10 +651,10 @@ Grammar {
                     },
                     ResolvingAssignment {
                         name: Some(
-                            ValLoc {
+                            ValSpan {
                                 value: "path",
-                                location: Some(
-                                    [8,20-8,24],
+                                span: Some(
+                                    [238(8,20)-242(8,24)],
                                 ),
                             },
                         ),
@@ -663,10 +663,10 @@ Grammar {
                                 39,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "StrConst",
-                                    location: Some(
-                                        [8,25-8,33],
+                                    span: Some(
+                                        [243(8,25)-251(8,33)],
                                     ),
                                 },
                             ),
@@ -680,10 +680,10 @@ Grammar {
                                 3,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "as",
-                                    location: Some(
-                                        [8,34-8,38],
+                                    span: Some(
+                                        [252(8,34)-256(8,38)],
                                     ),
                                 },
                             ),
@@ -697,10 +697,10 @@ Grammar {
                                 34,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Name",
-                                    location: Some(
-                                        [8,39-8,43],
+                                    span: Some(
+                                        [257(8,39)-261(8,43)],
                                     ),
                                 },
                             ),
@@ -728,10 +728,10 @@ Grammar {
                                 53,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "AnnotationOpt",
-                                    location: Some(
-                                        [10,13-10,23],
+                                    span: Some(
+                                        [277(10,13)-287(10,23)],
                                     ),
                                 },
                             ),
@@ -745,10 +745,10 @@ Grammar {
                                 34,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Name",
-                                    location: Some(
-                                        [10,25-10,29],
+                                    span: Some(
+                                        [289(10,25)-293(10,29)],
                                     ),
                                 },
                             ),
@@ -762,10 +762,10 @@ Grammar {
                                 4,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: ":",
-                                    location: Some(
-                                        [10,30-10,33],
+                                    span: Some(
+                                        [294(10,30)-297(10,33)],
                                     ),
                                 },
                             ),
@@ -774,10 +774,10 @@ Grammar {
                     },
                     ResolvingAssignment {
                         name: Some(
-                            ValLoc {
+                            ValSpan {
                                 value: "rhs",
-                                location: Some(
-                                    [10,34-10,37],
+                                span: Some(
+                                    [298(10,34)-301(10,37)],
                                 ),
                             },
                         ),
@@ -786,10 +786,10 @@ Grammar {
                                 54,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "GrammarRuleRHS",
-                                    location: Some(
-                                        [10,38-10,52],
+                                    span: Some(
+                                        [302(10,38)-316(10,52)],
                                     ),
                                 },
                             ),
@@ -803,10 +803,10 @@ Grammar {
                                 5,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: ";",
-                                    location: Some(
-                                        [10,53-10,56],
+                                    span: Some(
+                                        [317(10,53)-320(10,56)],
                                     ),
                                 },
                             ),
@@ -834,10 +834,10 @@ Grammar {
                                 40,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Annotation",
-                                    location: Some(
-                                        [10,13-10,23],
+                                    span: Some(
+                                        [277(10,13)-287(10,23)],
                                     ),
                                 },
                             ),
@@ -878,10 +878,10 @@ Grammar {
                                 53,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "AnnotationOpt",
-                                    location: Some(
-                                        [11,13-11,23],
+                                    span: Some(
+                                        [334(11,13)-344(11,23)],
                                     ),
                                 },
                             ),
@@ -895,10 +895,10 @@ Grammar {
                                 34,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Name",
-                                    location: Some(
-                                        [11,25-11,29],
+                                    span: Some(
+                                        [346(11,25)-350(11,29)],
                                     ),
                                 },
                             ),
@@ -912,10 +912,10 @@ Grammar {
                                 7,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "{",
-                                    location: Some(
-                                        [11,30-11,33],
+                                    span: Some(
+                                        [351(11,30)-354(11,33)],
                                     ),
                                 },
                             ),
@@ -924,10 +924,10 @@ Grammar {
                     },
                     ResolvingAssignment {
                         name: Some(
-                            ValLoc {
+                            ValSpan {
                                 value: "meta",
-                                location: Some(
-                                    [11,34-11,38],
+                                span: Some(
+                                    [355(11,34)-359(11,38)],
                                 ),
                             },
                         ),
@@ -936,10 +936,10 @@ Grammar {
                                 59,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "ProdMetaDatas",
-                                    location: Some(
-                                        [11,39-11,52],
+                                    span: Some(
+                                        [360(11,39)-373(11,52)],
                                     ),
                                 },
                             ),
@@ -953,10 +953,10 @@ Grammar {
                                 8,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "}",
-                                    location: Some(
-                                        [11,53-11,56],
+                                    span: Some(
+                                        [374(11,53)-377(11,56)],
                                     ),
                                 },
                             ),
@@ -970,10 +970,10 @@ Grammar {
                                 4,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: ":",
-                                    location: Some(
-                                        [11,57-11,60],
+                                    span: Some(
+                                        [378(11,57)-381(11,60)],
                                     ),
                                 },
                             ),
@@ -982,10 +982,10 @@ Grammar {
                     },
                     ResolvingAssignment {
                         name: Some(
-                            ValLoc {
+                            ValSpan {
                                 value: "rhs",
-                                location: Some(
-                                    [11,61-11,64],
+                                span: Some(
+                                    [382(11,61)-385(11,64)],
                                 ),
                             },
                         ),
@@ -994,10 +994,10 @@ Grammar {
                                 54,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "GrammarRuleRHS",
-                                    location: Some(
-                                        [11,65-11,79],
+                                    span: Some(
+                                        [386(11,65)-400(11,79)],
                                     ),
                                 },
                             ),
@@ -1011,10 +1011,10 @@ Grammar {
                                 5,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: ";",
-                                    location: Some(
-                                        [11,80-11,83],
+                                    span: Some(
+                                        [401(11,80)-404(11,83)],
                                     ),
                                 },
                             ),
@@ -1037,10 +1037,10 @@ Grammar {
                 rhs: [
                     ResolvingAssignment {
                         name: Some(
-                            ValLoc {
+                            ValSpan {
                                 value: "rhs",
-                                location: Some(
-                                    [12,16-12,19],
+                                span: Some(
+                                    [422(12,16)-425(12,19)],
                                 ),
                             },
                         ),
@@ -1049,10 +1049,10 @@ Grammar {
                                 54,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "GrammarRuleRHS",
-                                    location: Some(
-                                        [12,20-12,34],
+                                    span: Some(
+                                        [426(12,20)-440(12,34)],
                                     ),
                                 },
                             ),
@@ -1066,10 +1066,10 @@ Grammar {
                                 13,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "|",
-                                    location: Some(
-                                        [12,35-12,38],
+                                    span: Some(
+                                        [441(12,35)-444(12,38)],
                                     ),
                                 },
                             ),
@@ -1083,10 +1083,10 @@ Grammar {
                                 55,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Production",
-                                    location: Some(
-                                        [12,39-12,49],
+                                    span: Some(
+                                        [445(12,39)-455(12,49)],
                                     ),
                                 },
                             ),
@@ -1114,10 +1114,10 @@ Grammar {
                                 55,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Production",
-                                    location: Some(
-                                        [13,16-13,26],
+                                    span: Some(
+                                        [472(13,16)-482(13,26)],
                                     ),
                                 },
                             ),
@@ -1145,10 +1145,10 @@ Grammar {
                                 56,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Assignment1",
-                                    location: Some(
-                                        [14,12-14,22],
+                                    span: Some(
+                                        [496(14,12)-506(14,22)],
                                     ),
                                 },
                             ),
@@ -1176,10 +1176,10 @@ Grammar {
                                 56,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Assignment1",
-                                    location: Some(
-                                        [14,12-14,22],
+                                    span: Some(
+                                        [496(14,12)-506(14,22)],
                                     ),
                                 },
                             ),
@@ -1193,10 +1193,10 @@ Grammar {
                                 65,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Assignment",
-                                    location: Some(
-                                        [14,12-14,22],
+                                    span: Some(
+                                        [496(14,12)-506(14,22)],
                                     ),
                                 },
                             ),
@@ -1224,10 +1224,10 @@ Grammar {
                                 65,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Assignment",
-                                    location: Some(
-                                        [14,12-14,22],
+                                    span: Some(
+                                        [496(14,12)-506(14,22)],
                                     ),
                                 },
                             ),
@@ -1255,10 +1255,10 @@ Grammar {
                                 56,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Assignment1",
-                                    location: Some(
-                                        [15,12-15,22],
+                                    span: Some(
+                                        [520(15,12)-530(15,22)],
                                     ),
                                 },
                             ),
@@ -1272,10 +1272,10 @@ Grammar {
                                 7,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "{",
-                                    location: Some(
-                                        [15,24-15,27],
+                                    span: Some(
+                                        [532(15,24)-535(15,27)],
                                     ),
                                 },
                             ),
@@ -1284,10 +1284,10 @@ Grammar {
                     },
                     ResolvingAssignment {
                         name: Some(
-                            ValLoc {
+                            ValSpan {
                                 value: "meta",
-                                location: Some(
-                                    [15,28-15,32],
+                                span: Some(
+                                    [536(15,28)-540(15,32)],
                                 ),
                             },
                         ),
@@ -1296,10 +1296,10 @@ Grammar {
                                 59,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "ProdMetaDatas",
-                                    location: Some(
-                                        [15,33-15,46],
+                                    span: Some(
+                                        [541(15,33)-554(15,46)],
                                     ),
                                 },
                             ),
@@ -1313,10 +1313,10 @@ Grammar {
                                 8,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "}",
-                                    location: Some(
-                                        [15,47-15,50],
+                                    span: Some(
+                                        [555(15,47)-558(15,50)],
                                     ),
                                 },
                             ),
@@ -1344,10 +1344,10 @@ Grammar {
                                 53,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "AnnotationOpt",
-                                    location: Some(
-                                        [17,14-17,24],
+                                    span: Some(
+                                        [575(17,14)-585(17,24)],
                                     ),
                                 },
                             ),
@@ -1361,10 +1361,10 @@ Grammar {
                                 34,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Name",
-                                    location: Some(
-                                        [17,26-17,30],
+                                    span: Some(
+                                        [587(17,26)-591(17,30)],
                                     ),
                                 },
                             ),
@@ -1378,10 +1378,10 @@ Grammar {
                                 4,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: ":",
-                                    location: Some(
-                                        [17,31-17,34],
+                                    span: Some(
+                                        [592(17,31)-595(17,34)],
                                     ),
                                 },
                             ),
@@ -1395,10 +1395,10 @@ Grammar {
                                 78,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Recognizer",
-                                    location: Some(
-                                        [17,35-17,45],
+                                    span: Some(
+                                        [596(17,35)-606(17,45)],
                                     ),
                                 },
                             ),
@@ -1412,10 +1412,10 @@ Grammar {
                                 5,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: ";",
-                                    location: Some(
-                                        [17,46-17,49],
+                                    span: Some(
+                                        [607(17,46)-610(17,49)],
                                     ),
                                 },
                             ),
@@ -1443,10 +1443,10 @@ Grammar {
                                 53,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "AnnotationOpt",
-                                    location: Some(
-                                        [18,14-18,24],
+                                    span: Some(
+                                        [625(18,14)-635(18,24)],
                                     ),
                                 },
                             ),
@@ -1460,10 +1460,10 @@ Grammar {
                                 34,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Name",
-                                    location: Some(
-                                        [18,26-18,30],
+                                    span: Some(
+                                        [637(18,26)-641(18,30)],
                                     ),
                                 },
                             ),
@@ -1477,10 +1477,10 @@ Grammar {
                                 4,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: ":",
-                                    location: Some(
-                                        [18,31-18,34],
+                                    span: Some(
+                                        [642(18,31)-645(18,34)],
                                     ),
                                 },
                             ),
@@ -1494,10 +1494,10 @@ Grammar {
                                 5,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: ";",
-                                    location: Some(
-                                        [18,35-18,38],
+                                    span: Some(
+                                        [646(18,35)-649(18,38)],
                                     ),
                                 },
                             ),
@@ -1525,10 +1525,10 @@ Grammar {
                                 53,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "AnnotationOpt",
-                                    location: Some(
-                                        [19,14-19,24],
+                                    span: Some(
+                                        [664(19,14)-674(19,24)],
                                     ),
                                 },
                             ),
@@ -1542,10 +1542,10 @@ Grammar {
                                 34,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Name",
-                                    location: Some(
-                                        [19,26-19,30],
+                                    span: Some(
+                                        [676(19,26)-680(19,30)],
                                     ),
                                 },
                             ),
@@ -1559,10 +1559,10 @@ Grammar {
                                 4,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: ":",
-                                    location: Some(
-                                        [19,31-19,34],
+                                    span: Some(
+                                        [681(19,31)-684(19,34)],
                                     ),
                                 },
                             ),
@@ -1576,10 +1576,10 @@ Grammar {
                                 78,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Recognizer",
-                                    location: Some(
-                                        [19,35-19,45],
+                                    span: Some(
+                                        [685(19,35)-695(19,45)],
                                     ),
                                 },
                             ),
@@ -1593,10 +1593,10 @@ Grammar {
                                 7,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "{",
-                                    location: Some(
-                                        [19,46-19,49],
+                                    span: Some(
+                                        [696(19,46)-699(19,49)],
                                     ),
                                 },
                             ),
@@ -1605,10 +1605,10 @@ Grammar {
                     },
                     ResolvingAssignment {
                         name: Some(
-                            ValLoc {
+                            ValSpan {
                                 value: "meta",
-                                location: Some(
-                                    [19,50-19,54],
+                                span: Some(
+                                    [700(19,50)-704(19,54)],
                                 ),
                             },
                         ),
@@ -1617,10 +1617,10 @@ Grammar {
                                 61,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "TermMetaDatas",
-                                    location: Some(
-                                        [19,55-19,68],
+                                    span: Some(
+                                        [705(19,55)-718(19,68)],
                                     ),
                                 },
                             ),
@@ -1634,10 +1634,10 @@ Grammar {
                                 8,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "}",
-                                    location: Some(
-                                        [19,69-19,72],
+                                    span: Some(
+                                        [719(19,69)-722(19,72)],
                                     ),
                                 },
                             ),
@@ -1651,10 +1651,10 @@ Grammar {
                                 5,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: ";",
-                                    location: Some(
-                                        [19,73-19,76],
+                                    span: Some(
+                                        [723(19,73)-726(19,76)],
                                     ),
                                 },
                             ),
@@ -1682,10 +1682,10 @@ Grammar {
                                 53,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "AnnotationOpt",
-                                    location: Some(
-                                        [20,14-20,24],
+                                    span: Some(
+                                        [741(20,14)-751(20,24)],
                                     ),
                                 },
                             ),
@@ -1699,10 +1699,10 @@ Grammar {
                                 34,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Name",
-                                    location: Some(
-                                        [20,26-20,30],
+                                    span: Some(
+                                        [753(20,26)-757(20,30)],
                                     ),
                                 },
                             ),
@@ -1716,10 +1716,10 @@ Grammar {
                                 4,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: ":",
-                                    location: Some(
-                                        [20,31-20,34],
+                                    span: Some(
+                                        [758(20,31)-761(20,34)],
                                     ),
                                 },
                             ),
@@ -1733,10 +1733,10 @@ Grammar {
                                 7,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "{",
-                                    location: Some(
-                                        [20,35-20,38],
+                                    span: Some(
+                                        [762(20,35)-765(20,38)],
                                     ),
                                 },
                             ),
@@ -1745,10 +1745,10 @@ Grammar {
                     },
                     ResolvingAssignment {
                         name: Some(
-                            ValLoc {
+                            ValSpan {
                                 value: "meta",
-                                location: Some(
-                                    [20,39-20,43],
+                                span: Some(
+                                    [766(20,39)-770(20,43)],
                                 ),
                             },
                         ),
@@ -1757,10 +1757,10 @@ Grammar {
                                 61,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "TermMetaDatas",
-                                    location: Some(
-                                        [20,44-20,57],
+                                    span: Some(
+                                        [771(20,44)-784(20,57)],
                                     ),
                                 },
                             ),
@@ -1774,10 +1774,10 @@ Grammar {
                                 8,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "}",
-                                    location: Some(
-                                        [20,58-20,61],
+                                    span: Some(
+                                        [785(20,58)-788(20,61)],
                                     ),
                                 },
                             ),
@@ -1791,10 +1791,10 @@ Grammar {
                                 5,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: ";",
-                                    location: Some(
-                                        [20,62-20,65],
+                                    span: Some(
+                                        [789(20,62)-792(20,65)],
                                     ),
                                 },
                             ),
@@ -1824,10 +1824,10 @@ Grammar {
                                 22,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "left",
-                                    location: Some(
-                                        [22,14-22,20],
+                                    span: Some(
+                                        [809(22,14)-815(22,20)],
                                     ),
                                 },
                             ),
@@ -1857,10 +1857,10 @@ Grammar {
                                 24,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "reduce",
-                                    location: Some(
-                                        [22,30-22,38],
+                                    span: Some(
+                                        [825(22,30)-833(22,38)],
                                     ),
                                 },
                             ),
@@ -1890,10 +1890,10 @@ Grammar {
                                 23,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "right",
-                                    location: Some(
-                                        [22,50-22,57],
+                                    span: Some(
+                                        [845(22,50)-852(22,57)],
                                     ),
                                 },
                             ),
@@ -1923,10 +1923,10 @@ Grammar {
                                 25,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "shift",
-                                    location: Some(
-                                        [22,68-22,75],
+                                    span: Some(
+                                        [863(22,68)-870(22,75)],
                                     ),
                                 },
                             ),
@@ -1956,10 +1956,10 @@ Grammar {
                                 26,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "dynamic",
-                                    location: Some(
-                                        [23,14-23,23],
+                                    span: Some(
+                                        [893(23,14)-902(23,23)],
                                     ),
                                 },
                             ),
@@ -1989,10 +1989,10 @@ Grammar {
                                 27,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "nops",
-                                    location: Some(
-                                        [23,36-23,42],
+                                    span: Some(
+                                        [915(23,36)-921(23,42)],
                                     ),
                                 },
                             ),
@@ -2022,10 +2022,10 @@ Grammar {
                                 28,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "nopse",
-                                    location: Some(
-                                        [23,52-23,59],
+                                    span: Some(
+                                        [931(23,52)-938(23,59)],
                                     ),
                                 },
                             ),
@@ -2055,10 +2055,10 @@ Grammar {
                                 36,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "IntConst",
-                                    location: Some(
-                                        [24,14-24,22],
+                                    span: Some(
+                                        [961(24,14)-969(24,22)],
                                     ),
                                 },
                             ),
@@ -2086,10 +2086,10 @@ Grammar {
                                 62,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "UserMetaData",
-                                    location: Some(
-                                        [25,14-25,26],
+                                    span: Some(
+                                        [995(25,14)-1007(25,26)],
                                     ),
                                 },
                             ),
@@ -2117,10 +2117,10 @@ Grammar {
                                 63,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "ProdKind",
-                                    location: Some(
-                                        [26,14-26,22],
+                                    span: Some(
+                                        [1022(26,14)-1030(26,22)],
                                     ),
                                 },
                             ),
@@ -2143,10 +2143,10 @@ Grammar {
                 rhs: [
                     ResolvingAssignment {
                         name: Some(
-                            ValLoc {
+                            ValSpan {
                                 value: "metas",
-                                location: Some(
-                                    [27,15-27,20],
+                                span: Some(
+                                    [1047(27,15)-1052(27,20)],
                                 ),
                             },
                         ),
@@ -2155,10 +2155,10 @@ Grammar {
                                 59,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "ProdMetaDatas",
-                                    location: Some(
-                                        [27,21-27,34],
+                                    span: Some(
+                                        [1053(27,21)-1066(27,34)],
                                     ),
                                 },
                             ),
@@ -2172,10 +2172,10 @@ Grammar {
                                 6,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: ",",
-                                    location: Some(
-                                        [27,35-27,38],
+                                    span: Some(
+                                        [1067(27,35)-1070(27,38)],
                                     ),
                                 },
                             ),
@@ -2184,10 +2184,10 @@ Grammar {
                     },
                     ResolvingAssignment {
                         name: Some(
-                            ValLoc {
+                            ValSpan {
                                 value: "meta",
-                                location: Some(
-                                    [27,39-27,43],
+                                span: Some(
+                                    [1071(27,39)-1075(27,43)],
                                 ),
                             },
                         ),
@@ -2196,10 +2196,10 @@ Grammar {
                                 58,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "ProdMetaData",
-                                    location: Some(
-                                        [27,44-27,56],
+                                    span: Some(
+                                        [1076(27,44)-1088(27,56)],
                                     ),
                                 },
                             ),
@@ -2222,10 +2222,10 @@ Grammar {
                 rhs: [
                     ResolvingAssignment {
                         name: Some(
-                            ValLoc {
+                            ValSpan {
                                 value: "meta",
-                                location: Some(
-                                    [27,59-27,63],
+                                span: Some(
+                                    [1091(27,59)-1095(27,63)],
                                 ),
                             },
                         ),
@@ -2234,10 +2234,10 @@ Grammar {
                                 58,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "ProdMetaData",
-                                    location: Some(
-                                        [27,64-27,76],
+                                    span: Some(
+                                        [1096(27,64)-1108(27,76)],
                                     ),
                                 },
                             ),
@@ -2267,10 +2267,10 @@ Grammar {
                                 29,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "prefer",
-                                    location: Some(
-                                        [29,14-29,22],
+                                    span: Some(
+                                        [1125(29,14)-1133(29,22)],
                                     ),
                                 },
                             ),
@@ -2300,10 +2300,10 @@ Grammar {
                                 30,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "finish",
-                                    location: Some(
-                                        [29,34-29,42],
+                                    span: Some(
+                                        [1145(29,34)-1153(29,42)],
                                     ),
                                 },
                             ),
@@ -2333,10 +2333,10 @@ Grammar {
                                 31,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "nofinish",
-                                    location: Some(
-                                        [29,54-29,64],
+                                    span: Some(
+                                        [1165(29,54)-1175(29,64)],
                                     ),
                                 },
                             ),
@@ -2366,10 +2366,10 @@ Grammar {
                                 22,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "left",
-                                    location: Some(
-                                        [30,14-30,20],
+                                    span: Some(
+                                        [1201(30,14)-1207(30,20)],
                                     ),
                                 },
                             ),
@@ -2399,10 +2399,10 @@ Grammar {
                                 24,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "reduce",
-                                    location: Some(
-                                        [30,30-30,38],
+                                    span: Some(
+                                        [1217(30,30)-1225(30,38)],
                                     ),
                                 },
                             ),
@@ -2432,10 +2432,10 @@ Grammar {
                                 23,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "right",
-                                    location: Some(
-                                        [30,50-30,57],
+                                    span: Some(
+                                        [1237(30,50)-1244(30,57)],
                                     ),
                                 },
                             ),
@@ -2465,10 +2465,10 @@ Grammar {
                                 25,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "shift",
-                                    location: Some(
-                                        [30,68-30,75],
+                                    span: Some(
+                                        [1255(30,68)-1262(30,75)],
                                     ),
                                 },
                             ),
@@ -2498,10 +2498,10 @@ Grammar {
                                 26,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "dynamic",
-                                    location: Some(
-                                        [31,14-31,23],
+                                    span: Some(
+                                        [1285(31,14)-1294(31,23)],
                                     ),
                                 },
                             ),
@@ -2531,10 +2531,10 @@ Grammar {
                                 36,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "IntConst",
-                                    location: Some(
-                                        [32,14-32,22],
+                                    span: Some(
+                                        [1319(32,14)-1327(32,22)],
                                     ),
                                 },
                             ),
@@ -2562,10 +2562,10 @@ Grammar {
                                 62,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "UserMetaData",
-                                    location: Some(
-                                        [33,14-33,26],
+                                    span: Some(
+                                        [1353(33,14)-1365(33,26)],
                                     ),
                                 },
                             ),
@@ -2588,10 +2588,10 @@ Grammar {
                 rhs: [
                     ResolvingAssignment {
                         name: Some(
-                            ValLoc {
+                            ValSpan {
                                 value: "metas",
-                                location: Some(
-                                    [34,15-34,20],
+                                span: Some(
+                                    [1382(34,15)-1387(34,20)],
                                 ),
                             },
                         ),
@@ -2600,10 +2600,10 @@ Grammar {
                                 61,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "TermMetaDatas",
-                                    location: Some(
-                                        [34,21-34,34],
+                                    span: Some(
+                                        [1388(34,21)-1401(34,34)],
                                     ),
                                 },
                             ),
@@ -2617,10 +2617,10 @@ Grammar {
                                 6,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: ",",
-                                    location: Some(
-                                        [34,35-34,38],
+                                    span: Some(
+                                        [1402(34,35)-1405(34,38)],
                                     ),
                                 },
                             ),
@@ -2629,10 +2629,10 @@ Grammar {
                     },
                     ResolvingAssignment {
                         name: Some(
-                            ValLoc {
+                            ValSpan {
                                 value: "meta",
-                                location: Some(
-                                    [34,39-34,43],
+                                span: Some(
+                                    [1406(34,39)-1410(34,43)],
                                 ),
                             },
                         ),
@@ -2641,10 +2641,10 @@ Grammar {
                                 60,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "TermMetaData",
-                                    location: Some(
-                                        [34,44-34,56],
+                                    span: Some(
+                                        [1411(34,44)-1423(34,56)],
                                     ),
                                 },
                             ),
@@ -2667,10 +2667,10 @@ Grammar {
                 rhs: [
                     ResolvingAssignment {
                         name: Some(
-                            ValLoc {
+                            ValSpan {
                                 value: "meta",
-                                location: Some(
-                                    [34,59-34,63],
+                                span: Some(
+                                    [1426(34,59)-1430(34,63)],
                                 ),
                             },
                         ),
@@ -2679,10 +2679,10 @@ Grammar {
                                 60,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "TermMetaData",
-                                    location: Some(
-                                        [34,64-34,76],
+                                    span: Some(
+                                        [1431(34,64)-1443(34,76)],
                                     ),
                                 },
                             ),
@@ -2710,10 +2710,10 @@ Grammar {
                                 34,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Name",
-                                    location: Some(
-                                        [36,14-36,18],
+                                    span: Some(
+                                        [1460(36,14)-1464(36,18)],
                                     ),
                                 },
                             ),
@@ -2727,10 +2727,10 @@ Grammar {
                                 4,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: ":",
-                                    location: Some(
-                                        [36,19-36,22],
+                                    span: Some(
+                                        [1465(36,19)-1468(36,22)],
                                     ),
                                 },
                             ),
@@ -2739,10 +2739,10 @@ Grammar {
                     },
                     ResolvingAssignment {
                         name: Some(
-                            ValLoc {
+                            ValSpan {
                                 value: "value",
-                                location: Some(
-                                    [36,23-36,28],
+                                span: Some(
+                                    [1469(36,23)-1474(36,28)],
                                 ),
                             },
                         ),
@@ -2751,10 +2751,10 @@ Grammar {
                                 64,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "ConstVal",
-                                    location: Some(
-                                        [36,29-36,37],
+                                    span: Some(
+                                        [1475(36,29)-1483(36,37)],
                                     ),
                                 },
                             ),
@@ -2782,10 +2782,10 @@ Grammar {
                                 34,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Name",
-                                    location: Some(
-                                        [37,10-37,14],
+                                    span: Some(
+                                        [1495(37,10)-1499(37,14)],
                                     ),
                                 },
                             ),
@@ -2813,10 +2813,10 @@ Grammar {
                                 36,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "IntConst",
-                                    location: Some(
-                                        [38,10-38,18],
+                                    span: Some(
+                                        [1511(38,10)-1519(38,18)],
                                     ),
                                 },
                             ),
@@ -2844,10 +2844,10 @@ Grammar {
                                 37,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "FloatConst",
-                                    location: Some(
-                                        [38,21-38,31],
+                                    span: Some(
+                                        [1522(38,21)-1532(38,31)],
                                     ),
                                 },
                             ),
@@ -2875,10 +2875,10 @@ Grammar {
                                 38,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "BoolConst",
-                                    location: Some(
-                                        [38,34-38,43],
+                                    span: Some(
+                                        [1535(38,34)-1544(38,43)],
                                     ),
                                 },
                             ),
@@ -2906,10 +2906,10 @@ Grammar {
                                 39,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "StrConst",
-                                    location: Some(
-                                        [38,46-38,54],
+                                    span: Some(
+                                        [1547(38,46)-1555(38,54)],
                                     ),
                                 },
                             ),
@@ -2937,10 +2937,10 @@ Grammar {
                                 66,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "PlainAssignment",
-                                    location: Some(
-                                        [40,12-40,27],
+                                    span: Some(
+                                        [1570(40,12)-1585(40,27)],
                                     ),
                                 },
                             ),
@@ -2968,10 +2968,10 @@ Grammar {
                                 67,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "BoolAssignment",
-                                    location: Some(
-                                        [41,12-41,26],
+                                    span: Some(
+                                        [1598(41,12)-1612(41,26)],
                                     ),
                                 },
                             ),
@@ -2999,10 +2999,10 @@ Grammar {
                                 69,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "GrammarSymbolRef",
-                                    location: Some(
-                                        [42,12-42,28],
+                                    span: Some(
+                                        [1625(42,12)-1641(42,28)],
                                     ),
                                 },
                             ),
@@ -3030,10 +3030,10 @@ Grammar {
                                 34,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Name",
-                                    location: Some(
-                                        [43,17-43,21],
+                                    span: Some(
+                                        [1660(43,17)-1664(43,21)],
                                     ),
                                 },
                             ),
@@ -3047,10 +3047,10 @@ Grammar {
                                 20,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "=",
-                                    location: Some(
-                                        [43,22-43,25],
+                                    span: Some(
+                                        [1665(43,22)-1668(43,25)],
                                     ),
                                 },
                             ),
@@ -3059,10 +3059,10 @@ Grammar {
                     },
                     ResolvingAssignment {
                         name: Some(
-                            ValLoc {
+                            ValSpan {
                                 value: "gsymref",
-                                location: Some(
-                                    [43,26-43,33],
+                                span: Some(
+                                    [1669(43,26)-1676(43,33)],
                                 ),
                             },
                         ),
@@ -3071,10 +3071,10 @@ Grammar {
                                 69,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "GrammarSymbolRef",
-                                    location: Some(
-                                        [43,34-43,50],
+                                    span: Some(
+                                        [1677(43,34)-1693(43,50)],
                                     ),
                                 },
                             ),
@@ -3102,10 +3102,10 @@ Grammar {
                                 34,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Name",
-                                    location: Some(
-                                        [44,16-44,20],
+                                    span: Some(
+                                        [1711(44,16)-1715(44,20)],
                                     ),
                                 },
                             ),
@@ -3119,10 +3119,10 @@ Grammar {
                                 21,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "?=",
-                                    location: Some(
-                                        [44,21-44,25],
+                                    span: Some(
+                                        [1716(44,21)-1720(44,25)],
                                     ),
                                 },
                             ),
@@ -3131,10 +3131,10 @@ Grammar {
                     },
                     ResolvingAssignment {
                         name: Some(
-                            ValLoc {
+                            ValSpan {
                                 value: "gsymref",
-                                location: Some(
-                                    [44,26-44,33],
+                                span: Some(
+                                    [1721(44,26)-1728(44,33)],
                                 ),
                             },
                         ),
@@ -3143,10 +3143,10 @@ Grammar {
                                 69,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "GrammarSymbolRef",
-                                    location: Some(
-                                        [44,34-44,50],
+                                    span: Some(
+                                        [1729(44,34)-1745(44,50)],
                                     ),
                                 },
                             ),
@@ -3174,10 +3174,10 @@ Grammar {
                                 9,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "(",
-                                    location: Some(
-                                        [46,17-46,20],
+                                    span: Some(
+                                        [1765(46,17)-1768(46,20)],
                                     ),
                                 },
                             ),
@@ -3186,10 +3186,10 @@ Grammar {
                     },
                     ResolvingAssignment {
                         name: Some(
-                            ValLoc {
+                            ValSpan {
                                 value: "prod_rule_rhs",
-                                location: Some(
-                                    [46,21-46,34],
+                                span: Some(
+                                    [1769(46,21)-1782(46,34)],
                                 ),
                             },
                         ),
@@ -3198,10 +3198,10 @@ Grammar {
                                 54,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "GrammarRuleRHS",
-                                    location: Some(
-                                        [46,35-46,49],
+                                    span: Some(
+                                        [1783(46,35)-1797(46,49)],
                                     ),
                                 },
                             ),
@@ -3215,10 +3215,10 @@ Grammar {
                                 10,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: ")",
-                                    location: Some(
-                                        [46,50-46,53],
+                                    span: Some(
+                                        [1798(46,50)-1801(46,53)],
                                     ),
                                 },
                             ),
@@ -3241,10 +3241,10 @@ Grammar {
                 rhs: [
                     ResolvingAssignment {
                         name: Some(
-                            ValLoc {
+                            ValSpan {
                                 value: "gsymbol",
-                                location: Some(
-                                    [48,18-48,25],
+                                span: Some(
+                                    [1822(48,18)-1829(48,25)],
                                 ),
                             },
                         ),
@@ -3253,10 +3253,10 @@ Grammar {
                                 77,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "GrammarSymbol",
-                                    location: Some(
-                                        [48,26-48,39],
+                                    span: Some(
+                                        [1830(48,26)-1843(48,39)],
                                     ),
                                 },
                             ),
@@ -3270,10 +3270,10 @@ Grammar {
                                 70,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "RepetitionOperatorOpt",
-                                    location: Some(
-                                        [48,40-48,58],
+                                    span: Some(
+                                        [1844(48,40)-1862(48,58)],
                                     ),
                                 },
                             ),
@@ -3301,10 +3301,10 @@ Grammar {
                                 71,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "RepetitionOperator",
-                                    location: Some(
-                                        [48,40-48,58],
+                                    span: Some(
+                                        [1844(48,40)-1862(48,58)],
                                     ),
                                 },
                             ),
@@ -3345,10 +3345,10 @@ Grammar {
                                 68,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "ProductionGroup",
-                                    location: Some(
-                                        [49,18-49,33],
+                                    span: Some(
+                                        [1882(49,18)-1897(49,33)],
                                     ),
                                 },
                             ),
@@ -3362,10 +3362,10 @@ Grammar {
                                 70,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "RepetitionOperatorOpt",
-                                    location: Some(
-                                        [49,34-49,52],
+                                    span: Some(
+                                        [1898(49,34)-1916(49,52)],
                                     ),
                                 },
                             ),
@@ -3393,10 +3393,10 @@ Grammar {
                                 73,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "RepetitionOperatorOp",
-                                    location: Some(
-                                        [50,20-50,40],
+                                    span: Some(
+                                        [1939(50,20)-1959(50,40)],
                                     ),
                                 },
                             ),
@@ -3410,10 +3410,10 @@ Grammar {
                                 72,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "RepetitionModifiersOpt",
-                                    location: Some(
-                                        [50,41-50,60],
+                                    span: Some(
+                                        [1960(50,41)-1979(50,60)],
                                     ),
                                 },
                             ),
@@ -3441,10 +3441,10 @@ Grammar {
                                 74,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "RepetitionModifiers",
-                                    location: Some(
-                                        [50,41-50,60],
+                                    span: Some(
+                                        [1960(50,41)-1979(50,60)],
                                     ),
                                 },
                             ),
@@ -3487,10 +3487,10 @@ Grammar {
                                 14,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "*",
-                                    location: Some(
-                                        [51,22-51,25],
+                                    span: Some(
+                                        [2004(51,22)-2007(51,25)],
                                     ),
                                 },
                             ),
@@ -3520,10 +3520,10 @@ Grammar {
                                 15,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "*!",
-                                    location: Some(
-                                        [52,22-52,26],
+                                    span: Some(
+                                        [2043(52,22)-2047(52,26)],
                                     ),
                                 },
                             ),
@@ -3553,10 +3553,10 @@ Grammar {
                                 16,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "+",
-                                    location: Some(
-                                        [53,22-53,25],
+                                    span: Some(
+                                        [2089(53,22)-2092(53,25)],
                                     ),
                                 },
                             ),
@@ -3586,10 +3586,10 @@ Grammar {
                                 17,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "+!",
-                                    location: Some(
-                                        [54,22-54,26],
+                                    span: Some(
+                                        [2127(54,22)-2131(54,26)],
                                     ),
                                 },
                             ),
@@ -3619,10 +3619,10 @@ Grammar {
                                 18,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "?",
-                                    location: Some(
-                                        [55,22-55,25],
+                                    span: Some(
+                                        [2172(55,22)-2175(55,25)],
                                     ),
                                 },
                             ),
@@ -3652,10 +3652,10 @@ Grammar {
                                 19,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "?!",
-                                    location: Some(
-                                        [56,22-56,26],
+                                    span: Some(
+                                        [2209(56,22)-2213(56,26)],
                                     ),
                                 },
                             ),
@@ -3683,10 +3683,10 @@ Grammar {
                                 11,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "[",
-                                    location: Some(
-                                        [57,21-57,24],
+                                    span: Some(
+                                        [2253(57,21)-2256(57,24)],
                                     ),
                                 },
                             ),
@@ -3700,10 +3700,10 @@ Grammar {
                                 75,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "RepetitionModifier1",
-                                    location: Some(
-                                        [57,25-57,43],
+                                    span: Some(
+                                        [2257(57,25)-2275(57,43)],
                                     ),
                                 },
                             ),
@@ -3717,10 +3717,10 @@ Grammar {
                                 12,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "]",
-                                    location: Some(
-                                        [57,52-57,55],
+                                    span: Some(
+                                        [2284(57,52)-2287(57,55)],
                                     ),
                                 },
                             ),
@@ -3748,10 +3748,10 @@ Grammar {
                                 75,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "RepetitionModifier1",
-                                    location: Some(
-                                        [57,25-57,43],
+                                    span: Some(
+                                        [2257(57,25)-2275(57,43)],
                                     ),
                                 },
                             ),
@@ -3765,10 +3765,10 @@ Grammar {
                                 6,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Comma",
-                                    location: Some(
-                                        [57,45-57,50],
+                                    span: Some(
+                                        [2277(57,45)-2282(57,50)],
                                     ),
                                 },
                             ),
@@ -3782,10 +3782,10 @@ Grammar {
                                 76,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "RepetitionModifier",
-                                    location: Some(
-                                        [57,25-57,43],
+                                    span: Some(
+                                        [2257(57,25)-2275(57,43)],
                                     ),
                                 },
                             ),
@@ -3813,10 +3813,10 @@ Grammar {
                                 76,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "RepetitionModifier",
-                                    location: Some(
-                                        [57,25-57,43],
+                                    span: Some(
+                                        [2257(57,25)-2275(57,43)],
                                     ),
                                 },
                             ),
@@ -3844,10 +3844,10 @@ Grammar {
                                 34,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Name",
-                                    location: Some(
-                                        [58,20-58,24],
+                                    span: Some(
+                                        [2309(58,20)-2313(58,24)],
                                     ),
                                 },
                             ),
@@ -3875,10 +3875,10 @@ Grammar {
                                 34,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Name",
-                                    location: Some(
-                                        [60,15-60,19],
+                                    span: Some(
+                                        [2331(60,15)-2335(60,19)],
                                     ),
                                 },
                             ),
@@ -3906,10 +3906,10 @@ Grammar {
                                 39,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "StrConst",
-                                    location: Some(
-                                        [60,22-60,30],
+                                    span: Some(
+                                        [2338(60,22)-2346(60,30)],
                                     ),
                                 },
                             ),
@@ -3937,10 +3937,10 @@ Grammar {
                                 39,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "StrConst",
-                                    location: Some(
-                                        [61,12-61,20],
+                                    span: Some(
+                                        [2360(61,12)-2368(61,20)],
                                     ),
                                 },
                             ),
@@ -3968,10 +3968,10 @@ Grammar {
                                 35,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "RegexTerm",
-                                    location: Some(
-                                        [61,23-61,32],
+                                    span: Some(
+                                        [2371(61,23)-2380(61,32)],
                                     ),
                                 },
                             ),
@@ -3999,10 +3999,10 @@ Grammar {
                                 81,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "LayoutItem0",
-                                    location: Some(
-                                        [64,8-64,18],
+                                    span: Some(
+                                        [2409(64,8)-2419(64,18)],
                                     ),
                                 },
                             ),
@@ -4030,10 +4030,10 @@ Grammar {
                                 80,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "LayoutItem1",
-                                    location: Some(
-                                        [64,8-64,18],
+                                    span: Some(
+                                        [2409(64,8)-2419(64,18)],
                                     ),
                                 },
                             ),
@@ -4047,10 +4047,10 @@ Grammar {
                                 82,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "LayoutItem",
-                                    location: Some(
-                                        [64,8-64,18],
+                                    span: Some(
+                                        [2409(64,8)-2419(64,18)],
                                     ),
                                 },
                             ),
@@ -4078,10 +4078,10 @@ Grammar {
                                 82,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "LayoutItem",
-                                    location: Some(
-                                        [64,8-64,18],
+                                    span: Some(
+                                        [2409(64,8)-2419(64,18)],
                                     ),
                                 },
                             ),
@@ -4109,10 +4109,10 @@ Grammar {
                                 80,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "LayoutItem1",
-                                    location: Some(
-                                        [64,8-64,18],
+                                    span: Some(
+                                        [2409(64,8)-2419(64,18)],
                                     ),
                                 },
                             ),
@@ -4153,10 +4153,10 @@ Grammar {
                                 41,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "WS",
-                                    location: Some(
-                                        [65,12-65,14],
+                                    span: Some(
+                                        [2434(65,12)-2436(65,14)],
                                     ),
                                 },
                             ),
@@ -4184,10 +4184,10 @@ Grammar {
                                 83,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Comment",
-                                    location: Some(
-                                        [65,17-65,24],
+                                    span: Some(
+                                        [2439(65,17)-2446(65,24)],
                                     ),
                                 },
                             ),
@@ -4215,10 +4215,10 @@ Grammar {
                                 32,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "/*",
-                                    location: Some(
-                                        [66,9-66,13],
+                                    span: Some(
+                                        [2457(66,9)-2461(66,13)],
                                     ),
                                 },
                             ),
@@ -4232,10 +4232,10 @@ Grammar {
                                 84,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Corncs",
-                                    location: Some(
-                                        [66,14-66,20],
+                                    span: Some(
+                                        [2462(66,14)-2468(66,20)],
                                     ),
                                 },
                             ),
@@ -4249,10 +4249,10 @@ Grammar {
                                 33,
                             ),
                             symbol: StrConst(
-                                ValLoc {
+                                ValSpan {
                                     value: "*/",
-                                    location: Some(
-                                        [66,21-66,25],
+                                    span: Some(
+                                        [2469(66,21)-2473(66,25)],
                                     ),
                                 },
                             ),
@@ -4280,10 +4280,10 @@ Grammar {
                                 42,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "CommentLine",
-                                    location: Some(
-                                        [66,28-66,39],
+                                    span: Some(
+                                        [2476(66,28)-2487(66,39)],
                                     ),
                                 },
                             ),
@@ -4311,10 +4311,10 @@ Grammar {
                                 86,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Cornc0",
-                                    location: Some(
-                                        [67,8-67,13],
+                                    span: Some(
+                                        [2497(67,8)-2502(67,13)],
                                     ),
                                 },
                             ),
@@ -4342,10 +4342,10 @@ Grammar {
                                 85,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Cornc1",
-                                    location: Some(
-                                        [67,8-67,13],
+                                    span: Some(
+                                        [2497(67,8)-2502(67,13)],
                                     ),
                                 },
                             ),
@@ -4359,10 +4359,10 @@ Grammar {
                                 87,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Cornc",
-                                    location: Some(
-                                        [67,8-67,13],
+                                    span: Some(
+                                        [2497(67,8)-2502(67,13)],
                                     ),
                                 },
                             ),
@@ -4390,10 +4390,10 @@ Grammar {
                                 87,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Cornc",
-                                    location: Some(
-                                        [67,8-67,13],
+                                    span: Some(
+                                        [2497(67,8)-2502(67,13)],
                                     ),
                                 },
                             ),
@@ -4421,10 +4421,10 @@ Grammar {
                                 85,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Cornc1",
-                                    location: Some(
-                                        [67,8-67,13],
+                                    span: Some(
+                                        [2497(67,8)-2502(67,13)],
                                     ),
                                 },
                             ),
@@ -4465,10 +4465,10 @@ Grammar {
                                 83,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "Comment",
-                                    location: Some(
-                                        [68,7-68,14],
+                                    span: Some(
+                                        [2512(68,7)-2519(68,14)],
                                     ),
                                 },
                             ),
@@ -4496,10 +4496,10 @@ Grammar {
                                 43,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "NotComment",
-                                    location: Some(
-                                        [68,17-68,27],
+                                    span: Some(
+                                        [2522(68,17)-2532(68,27)],
                                     ),
                                 },
                             ),
@@ -4527,10 +4527,10 @@ Grammar {
                                 41,
                             ),
                             symbol: Name(
-                                ValLoc {
+                                ValSpan {
                                     value: "WS",
-                                    location: Some(
-                                        [68,30-68,32],
+                                    span: Some(
+                                        [2535(68,30)-2537(68,32)],
                                     ),
                                 },
                             ),
@@ -4568,10 +4568,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "terminals",
-                            location: Some(
-                                [73,11-73,22],
+                            span: Some(
+                                [2584(73,11)-2595(73,22)],
                             ),
                         },
                     ),
@@ -4590,10 +4590,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "import",
-                            location: Some(
-                                [74,8-74,16],
+                            span: Some(
+                                [2605(74,8)-2613(74,16)],
                             ),
                         },
                     ),
@@ -4612,10 +4612,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "as",
-                            location: Some(
-                                [75,4-75,8],
+                            span: Some(
+                                [2619(75,4)-2623(75,8)],
                             ),
                         },
                     ),
@@ -4634,10 +4634,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: ":",
-                            location: Some(
-                                [76,7-76,10],
+                            span: Some(
+                                [2632(76,7)-2635(76,10)],
                             ),
                         },
                     ),
@@ -4656,10 +4656,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: ";",
-                            location: Some(
-                                [77,11-77,14],
+                            span: Some(
+                                [2648(77,11)-2651(77,14)],
                             ),
                         },
                     ),
@@ -4678,10 +4678,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: ",",
-                            location: Some(
-                                [78,7-78,10],
+                            span: Some(
+                                [2660(78,7)-2663(78,10)],
                             ),
                         },
                     ),
@@ -4700,10 +4700,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "{",
-                            location: Some(
-                                [79,8-79,11],
+                            span: Some(
+                                [2673(79,8)-2676(79,11)],
                             ),
                         },
                     ),
@@ -4722,10 +4722,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "}",
-                            location: Some(
-                                [80,8-80,11],
+                            span: Some(
+                                [2686(80,8)-2689(80,11)],
                             ),
                         },
                     ),
@@ -4744,10 +4744,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "(",
-                            location: Some(
-                                [81,10-81,13],
+                            span: Some(
+                                [2701(81,10)-2704(81,13)],
                             ),
                         },
                     ),
@@ -4766,10 +4766,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: ")",
-                            location: Some(
-                                [82,10-82,13],
+                            span: Some(
+                                [2716(82,10)-2719(82,13)],
                             ),
                         },
                     ),
@@ -4788,10 +4788,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "[",
-                            location: Some(
-                                [83,11-83,14],
+                            span: Some(
+                                [2732(83,11)-2735(83,14)],
                             ),
                         },
                     ),
@@ -4810,10 +4810,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "]",
-                            location: Some(
-                                [84,11-84,14],
+                            span: Some(
+                                [2748(84,11)-2751(84,14)],
                             ),
                         },
                     ),
@@ -4832,10 +4832,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "|",
-                            location: Some(
-                                [85,8-85,11],
+                            span: Some(
+                                [2761(85,8)-2764(85,11)],
                             ),
                         },
                     ),
@@ -4854,10 +4854,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "*",
-                            location: Some(
-                                [86,12-86,15],
+                            span: Some(
+                                [2778(86,12)-2781(86,15)],
                             ),
                         },
                     ),
@@ -4876,10 +4876,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "*!",
-                            location: Some(
-                                [87,18-87,22],
+                            span: Some(
+                                [2801(87,18)-2805(87,22)],
                             ),
                         },
                     ),
@@ -4898,10 +4898,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "+",
-                            location: Some(
-                                [88,11-88,14],
+                            span: Some(
+                                [2818(88,11)-2821(88,14)],
                             ),
                         },
                     ),
@@ -4920,10 +4920,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "+!",
-                            location: Some(
-                                [89,17-89,21],
+                            span: Some(
+                                [2840(89,17)-2844(89,21)],
                             ),
                         },
                     ),
@@ -4942,10 +4942,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "?",
-                            location: Some(
-                                [90,10-90,13],
+                            span: Some(
+                                [2856(90,10)-2859(90,13)],
                             ),
                         },
                     ),
@@ -4964,10 +4964,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "?!",
-                            location: Some(
-                                [91,16-91,20],
+                            span: Some(
+                                [2877(91,16)-2881(91,20)],
                             ),
                         },
                     ),
@@ -4986,10 +4986,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "=",
-                            location: Some(
-                                [92,8-92,11],
+                            span: Some(
+                                [2891(92,8)-2894(92,11)],
                             ),
                         },
                     ),
@@ -5008,10 +5008,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "?=",
-                            location: Some(
-                                [93,9-93,13],
+                            span: Some(
+                                [2905(93,9)-2909(93,13)],
                             ),
                         },
                     ),
@@ -5030,10 +5030,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "left",
-                            location: Some(
-                                [94,6-94,12],
+                            span: Some(
+                                [2917(94,6)-2923(94,12)],
                             ),
                         },
                     ),
@@ -5052,10 +5052,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "right",
-                            location: Some(
-                                [95,7-95,14],
+                            span: Some(
+                                [2932(95,7)-2939(95,14)],
                             ),
                         },
                     ),
@@ -5074,10 +5074,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "reduce",
-                            location: Some(
-                                [96,8-96,16],
+                            span: Some(
+                                [2949(96,8)-2957(96,16)],
                             ),
                         },
                     ),
@@ -5096,10 +5096,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "shift",
-                            location: Some(
-                                [97,7-97,14],
+                            span: Some(
+                                [2966(97,7)-2973(97,14)],
                             ),
                         },
                     ),
@@ -5118,10 +5118,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "dynamic",
-                            location: Some(
-                                [98,9-98,18],
+                            span: Some(
+                                [2984(98,9)-2993(98,18)],
                             ),
                         },
                     ),
@@ -5140,10 +5140,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "nops",
-                            location: Some(
-                                [99,6-99,12],
+                            span: Some(
+                                [3001(99,6)-3007(99,12)],
                             ),
                         },
                     ),
@@ -5162,10 +5162,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "nopse",
-                            location: Some(
-                                [100,7-100,14],
+                            span: Some(
+                                [3016(100,7)-3023(100,14)],
                             ),
                         },
                     ),
@@ -5184,10 +5184,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "prefer",
-                            location: Some(
-                                [101,8-101,16],
+                            span: Some(
+                                [3033(101,8)-3041(101,16)],
                             ),
                         },
                     ),
@@ -5206,10 +5206,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "finish",
-                            location: Some(
-                                [102,8-102,16],
+                            span: Some(
+                                [3051(102,8)-3059(102,16)],
                             ),
                         },
                     ),
@@ -5228,10 +5228,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "nofinish",
-                            location: Some(
-                                [103,10-103,20],
+                            span: Some(
+                                [3071(103,10)-3081(103,20)],
                             ),
                         },
                     ),
@@ -5250,10 +5250,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "/*",
-                            location: Some(
-                                [104,10-104,14],
+                            span: Some(
+                                [3093(104,10)-3097(104,14)],
                             ),
                         },
                     ),
@@ -5272,10 +5272,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     StrConst(
-                        ValLoc {
+                        ValSpan {
                             value: "*/",
-                            location: Some(
-                                [105,10-105,14],
+                            span: Some(
+                                [3109(105,10)-3113(105,14)],
                             ),
                         },
                     ),
@@ -5294,10 +5294,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     RegexTerm(
-                        ValLoc {
+                        ValSpan {
                             value: "[a-zA-Z_][a-zA-Z0-9_\\.]*",
-                            location: Some(
-                                [106,6-106,32],
+                            span: Some(
+                                [3121(106,6)-3147(106,32)],
                             ),
                         },
                     ),
@@ -5316,10 +5316,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     RegexTerm(
-                        ValLoc {
+                        ValSpan {
                             value: "/(\\\\.|[^/\\\\])*/",
-                            location: Some(
-                                [107,11-107,31],
+                            span: Some(
+                                [3160(107,11)-3180(107,31)],
                             ),
                         },
                     ),
@@ -5338,10 +5338,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     RegexTerm(
-                        ValLoc {
+                        ValSpan {
                             value: "\\d+",
-                            location: Some(
-                                [108,10-108,15],
+                            span: Some(
+                                [3192(108,10)-3197(108,15)],
                             ),
                         },
                     ),
@@ -5360,10 +5360,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     RegexTerm(
-                        ValLoc {
+                        ValSpan {
                             value: "[+-]?[0-9]+[.][0-9]*([e][+-]?[0-9]+)?",
-                            location: Some(
-                                [109,12-109,51],
+                            span: Some(
+                                [3211(109,12)-3250(109,51)],
                             ),
                         },
                     ),
@@ -5382,10 +5382,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     RegexTerm(
-                        ValLoc {
+                        ValSpan {
                             value: "true|false",
-                            location: Some(
-                                [110,11-110,23],
+                            span: Some(
+                                [3263(110,11)-3275(110,23)],
                             ),
                         },
                     ),
@@ -5404,10 +5404,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     RegexTerm(
-                        ValLoc {
+                        ValSpan {
                             value: "(?s)(^'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')|(^\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\")",
-                            location: Some(
-                                [111,10-111,71],
+                            span: Some(
+                                [3287(111,10)-3348(111,71)],
                             ),
                         },
                     ),
@@ -5426,10 +5426,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     RegexTerm(
-                        ValLoc {
+                        ValSpan {
                             value: "@[a-zA-Z0-9_]+",
-                            location: Some(
-                                [112,12-112,28],
+                            span: Some(
+                                [3362(112,12)-3378(112,28)],
                             ),
                         },
                     ),
@@ -5448,10 +5448,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     RegexTerm(
-                        ValLoc {
+                        ValSpan {
                             value: "\\s+",
-                            location: Some(
-                                [113,4-113,9],
+                            span: Some(
+                                [3384(113,4)-3389(113,9)],
                             ),
                         },
                     ),
@@ -5470,10 +5470,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     RegexTerm(
-                        ValLoc {
+                        ValSpan {
                             value: "//.*",
-                            location: Some(
-                                [114,13-114,21],
+                            span: Some(
+                                [3404(114,13)-3412(114,21)],
                             ),
                         },
                     ),
@@ -5492,10 +5492,10 @@ Grammar {
                 annotation: None,
                 recognizer: Some(
                     RegexTerm(
-                        ValLoc {
+                        ValSpan {
                             value: "((\\*[^/])|[^\\s*/]|/[^\\*])+",
-                            location: Some(
-                                [115,12-115,43],
+                            span: Some(
+                                [3426(115,12)-3457(115,43)],
                             ),
                         },
                     ),

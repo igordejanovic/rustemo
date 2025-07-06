@@ -1,5 +1,5 @@
 use super::custom_lexer_1::{State, TokenKind};
-use rustemo::{Context, LRContext, Lexer, Location, Position, Result, Token};
+use rustemo::{Context, LRContext, Lexer, Position, Result, SourceSpan, Token};
 use std::iter;
 
 /// We are parsing a slice of bytes.
@@ -29,25 +29,25 @@ impl<'i> Lexer<'i, Ctx<'i>, State, TokenKind> for MyCustomLexer1 {
         let value;
         let kind: TokenKind;
         let mut pos = context.position();
-        if context.position() >= input.len() {
+        if context.position().pos >= input.len() {
             value = &[][..];
             kind = TokenKind::STOP;
         } else {
             // Increase position as long as the highest bit is set.
-            while (input[pos] & 0b1000_0000) != 0 {
-                pos += 1;
+            while (input[pos.pos] & 0b1000_0000) != 0 {
+                pos.pos += 1;
             }
             // Token value is the slice of the input where VarInt is reconized.
-            value = &input[context.position()..=pos];
+            value = &input[context.position().pos..=pos.pos];
             kind = TokenKind::VarInt;
         }
 
         Box::new(iter::once(Token {
             kind,
             value,
-            location: Location {
-                start: Position::Position(context.position()),
-                end: Some(Position::Position(pos)),
+            span: SourceSpan {
+                start: context.position(),
+                end: pos,
             },
         }))
     }

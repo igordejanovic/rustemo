@@ -1,6 +1,6 @@
 use crate::{
-    builder::Builder, context::Context, input::Input, lexer::Token, location::Location,
-    parser::State,
+    builder::Builder, context::Context, input::Input, lexer::Token, parser::State,
+    position::SourceSpan,
 };
 use core::fmt::Debug;
 
@@ -99,7 +99,7 @@ where
         self.res_stack.push(TreeNode::NonTermNode {
             children,
             prod,
-            location: context.location(),
+            span: context.span(),
             layout,
         });
     }
@@ -117,7 +117,7 @@ where
     },
     NonTermNode {
         prod: P,
-        location: Location,
+        span: SourceSpan,
         children: Vec<TreeNode<'i, I, P, TK>>,
         layout: Option<&'i I>,
     },
@@ -166,6 +166,6 @@ where
 
     fn reduce_action(&mut self, context: &C, _prod: P, _prod_len: usize) {
         // On reduce, save the slice of the input.
-        self.slice = Some(&self.input[context.range()]);
+        self.slice = Some(&self.input[context.span().into()]);
     }
 }

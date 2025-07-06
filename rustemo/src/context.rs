@@ -1,6 +1,4 @@
-use std::ops::Range;
-
-use crate::{input::Input, lexer::Token, location::Location, parser::State};
+use crate::{input::Input, lexer::Token, parser::State, position::SourceSpan, Position};
 
 /// Lexer/Parser context is used to keep the state. It provides necessary
 /// information to parsers and actions.
@@ -9,19 +7,15 @@ pub trait Context<'i, I: Input + ?Sized, S: State, TK>: Default {
     fn state(&self) -> S;
     fn set_state(&mut self, state: S);
 
-    /// An absolute position in the input sequence
+    /// A position in the input sequence.
     ///
     /// The input must be indexable type.
-    fn position(&self) -> usize;
-    fn set_position(&mut self, position: usize);
+    fn position(&self) -> Position;
+    fn set_position(&mut self, position: Position);
 
-    /// A span in the input sequence, possibly in line-column style.
-    fn location(&self) -> Location;
-    fn set_location(&mut self, location: Location);
-
-    /// A span in the input sequence
-    fn range(&self) -> Range<usize>;
-    fn set_range(&mut self, range: Range<usize>);
+    /// A span in the input sequence.
+    fn span(&self) -> SourceSpan;
+    fn set_span(&mut self, span: SourceSpan);
 
     /// Next token recognized in the input at the current parsing location
     fn token_ahead(&self) -> Option<&Token<'i, I, TK>>;

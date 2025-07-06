@@ -24,7 +24,7 @@ pub(crate) trait ActionsGenerator {
         let type_name = format_ident!("{}", terminal.name);
         if settings.builder_loc_info {
             parse_quote! {
-                pub type #type_name = ValLoc<String>;
+                pub type #type_name = ValSpan<String>;
             }
         } else {
             parse_quote! {
@@ -36,7 +36,7 @@ pub(crate) trait ActionsGenerator {
         let type_name = format_ident!("{}", terminal.name);
         let action_name = format_ident!("{}", to_snake_case(&terminal.name));
         let body: syn::Expr = if settings.builder_loc_info {
-            parse_quote! { #type_name::new(token.value.into(), Some(_ctx.location())) }
+            parse_quote! { #type_name::new(token.value.into(), Some(_ctx.span())) }
         } else {
             parse_quote! { token.value.into() }
         };
@@ -86,7 +86,7 @@ pub(super) fn generate_parser_actions(generator: &ParserGenerator) -> Result<()>
         };
         let mut base_use: Vec<syn::Stmt> = vec![];
         if generator.settings.builder_loc_info {
-            base_use.push(parse_quote! {use rustemo::{ValLoc, Context as C};})
+            base_use.push(parse_quote! {use rustemo::{ValSpan, Context as C};})
         };
         base_use.push(parse_quote! {use rustemo::Token as RustemoToken;});
         base_use.push(parse_quote! {use super::#parser_mod::{TokenKind, Context};});

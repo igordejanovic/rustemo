@@ -1,6 +1,6 @@
 use crate::{
     error::Result,
-    location::{LineColumn, Location, Position},
+    position::{LineColumn, Position, SourceSpan},
 };
 use std::{
     borrow::ToOwned,
@@ -15,7 +15,7 @@ use std::{
 /// Rustemo.
 pub trait Input: ToOwned + Index<Range<usize>, Output = Self> {
     /// Returns a string context for the given position. Used in debugging outputs.
-    fn context_str(&self, position: usize) -> String;
+    fn context_str(&self, position: Position) -> String;
 
     /// Returns the length of the input.
     fn len(&self) -> usize;
@@ -35,30 +35,29 @@ pub trait Input: ToOwned + Index<Range<usize>, Output = Self> {
     /// Read the file from the given path into owned version of the input.
     fn read_file<P: AsRef<Path>>(path: P) -> Result<Self::Owned>;
 
-    fn start_location() -> Location {
-        Location {
-            start: Position::Position(0),
-            end: None,
+    fn start_position() -> Position {
+        Position {
+            pos: 0,
+            line_col: None,
         }
     }
 
     /// Given the current location returns the location at the end of self.
-    /// Location is an input-specific concept. E.g. for text it is line/column.
-    fn location_after(&self, location: Location) -> Location;
+    fn position_after(&self, position: Position) -> Position;
 
-    /// Given the current location returns a span starting from the current
-    /// location and extending over self.
-    fn location_span(&self, location: Location) -> Location {
-        Location {
-            start: location.into(),
-            end: Some(self.location_after(location).start),
+    /// Given the current position returns a span starting from the current
+    /// position and extending over self.
+    fn span_from(&self, position: Position) -> SourceSpan {
+        SourceSpan {
+            start: position,
+            end: self.position_after(position),
         }
     }
 }
 
 impl Input for str {
-    fn context_str(&self, position: usize) -> String {
-        self[..position]
+    fn context_str(&self, position: Position) -> String {
+        self[..position.pos]
             .chars()
             .rev()
             .take(15)
@@ -66,7 +65,7 @@ impl Input for str {
             .chars()
             .rev()
             .chain("-->".chars())
-            .chain(self[position..].chars().take(15))
+            .chain(self[position.pos..].chars().take(15))
             .collect::<String>()
     }
 
@@ -89,30 +88,33 @@ impl Input for str {
                     .unwrap_or(range.start)]
     }
 
-    fn start_location() -> Location {
-        Location {
-            start: Position::LineBased(LineColumn { line: 1, column: 0 }),
-            end: None,
+    fn start_position() -> Position {
+        Position {
+            pos: 0,
+            line_col: Some(LineColumn { line: 1, column: 0 }),
         }
     }
 
-    fn location_after(&self, location: Location) -> Location {
-        let (mut line, mut column) = match location.into() {
-            Position::LineBased(lb) => (lb.line, lb.column),
-            _ => panic!("Location not in line/column format!"),
+    fn position_after(&self, position: Position) -> Position {
+        let line_col = if let Some(LineColumn {
+            mut line,
+            mut column,
+        }) = position.line_col
+        {
+            line += self.as_bytes().iter().filter(|&c| *c == b'\n').count();
+            if let Some(new_col) = self.as_bytes().iter().rposition(|&c| c == b'\n') {
+                column = self.len() - new_col - 1;
+            } else {
+                column += self.len();
+            }
+            Some(LineColumn { line, column })
+        } else {
+            None
         };
 
-        line += self.as_bytes().iter().filter(|&c| *c == b'\n').count();
-        if let Some(new_col) = self.as_bytes().iter().rposition(|&c| c == b'\n') {
-            column = self.len() - new_col - 1;
-        } else {
-            column += self.len();
-        }
+        let pos = position.pos + self.len();
 
-        Location {
-            start: Position::LineBased(LineColumn { line, column }),
-            end: None,
-        }
+        Position { pos, line_col }
     }
 
     fn read_file<P: AsRef<Path>>(path: P) -> Result<Self::Owned> {
@@ -121,14 +123,14 @@ impl Input for str {
 }
 
 impl Input for [u8] {
-    fn context_str(&self, position: usize) -> String {
+    fn context_str(&self, position: Position) -> String {
         format!(
             "{:?}",
-            self[position - min(15, position)..position]
+            self[position.pos - min(15, position.pos)..position.pos]
                 .iter()
                 .map(|x| format!("{x}"))
                 .chain(once("-->".to_string()))
-                .chain(self[position..].iter().map(|x| format!("{x}")).take(15))
+                .chain(self[position.pos..].iter().map(|x| format!("{x}")).take(15))
                 .collect::<Vec<_>>()
         )
     }
@@ -137,14 +139,10 @@ impl Input for [u8] {
         self.len()
     }
 
-    fn location_after(&self, location: Location) -> Location {
-        let position = location.into();
-        match position {
-            Position::Position(p) => Location {
-                start: Position::Position(p + self.len()),
-                end: None,
-            },
-            _ => panic!("Invalid Position variant for [u8] type"),
+    fn position_after(&self, position: Position) -> Position {
+        Position {
+            pos: position.pos + self.len(),
+            line_col: None,
         }
     }
 
@@ -159,7 +157,7 @@ where
     I: Input + ?Sized,
 {
     #[inline]
-    fn context_str(&self, position: usize) -> String {
+    fn context_str(&self, position: Position) -> String {
         (**self).context_str(position)
     }
 
@@ -173,7 +171,7 @@ where
     }
 
     #[inline]
-    fn location_after(&self, location: Location) -> Location {
-        (**self).location_after(location)
+    fn position_after(&self, position: Position) -> Position {
+        (**self).position_after(position)
     }
 }

@@ -2,34 +2,34 @@ use ::rustemo::Context;
 /// This file is maintained by rustemo but can be modified manually.
 /// All manual changes will be preserved except non-doc comments.
 use super::rustemo::{self, TokenKind};
-use crate::rustemo::{Token as BaseToken, ValLoc};
+use crate::rustemo::{Token as BaseToken, ValSpan};
 use std::collections::BTreeMap;
-pub type Name = ValLoc<String>;
+pub type Name = ValSpan<String>;
 pub type Ctx<'i> = rustemo::Context<'i, str>;
 pub type Token<'i> = BaseToken<'i, str, TokenKind>;
 pub fn name(ctx: &Ctx, token: Token) -> Name {
-    Name::new(token.value.into(), Some(ctx.location()))
+    Name::new(token.value.into(), Some(ctx.span()))
 }
-pub type RegexTerm = ValLoc<String>;
+pub type RegexTerm = ValSpan<String>;
 pub fn regex_term(ctx: &Ctx, token: Token) -> RegexTerm {
     RegexTerm::new(
         token.value[1..token.value.len() - 1].replace(r"\/", "/"),
-        Some(ctx.location()),
+        Some(ctx.span()),
     )
 }
-pub type IntConst = ValLoc<u32>;
+pub type IntConst = ValSpan<u32>;
 pub fn int_const(ctx: &Ctx, token: Token) -> IntConst {
-    IntConst::new(token.value.parse().unwrap(), Some(ctx.location()))
+    IntConst::new(token.value.parse().unwrap(), Some(ctx.span()))
 }
-pub type FloatConst = ValLoc<f32>;
+pub type FloatConst = ValSpan<f32>;
 pub fn float_const(ctx: &Ctx, token: Token) -> FloatConst {
-    FloatConst::new(token.value.parse().unwrap(), Some(ctx.location()))
+    FloatConst::new(token.value.parse().unwrap(), Some(ctx.span()))
 }
-pub type BoolConst = ValLoc<bool>;
+pub type BoolConst = ValSpan<bool>;
 pub fn bool_const(ctx: &Ctx, token: Token) -> BoolConst {
-    BoolConst::new(token.value == "true", Some(ctx.location()))
+    BoolConst::new(token.value == "true", Some(ctx.span()))
 }
-pub type StrConst = ValLoc<String>;
+pub type StrConst = ValSpan<String>;
 pub fn str_const(ctx: &Ctx, token: Token) -> StrConst {
     StrConst::new(
         token
@@ -38,12 +38,12 @@ pub fn str_const(ctx: &Ctx, token: Token) -> StrConst {
             .replace(r#"\\"#, r#"\"#)
             .replace(r#"\n"#, "\n")
             .replace(r#"\t"#, "\t"),
-        Some(ctx.location()),
+        Some(ctx.span()),
     )
 }
-pub type Annotation = ValLoc<String>;
+pub type Annotation = ValSpan<String>;
 pub fn annotation(ctx: &Ctx, token: Token) -> Annotation {
-    Annotation::new(token.value[1..].into(), Some(ctx.location()))
+    Annotation::new(token.value[1..].into(), Some(ctx.span()))
 }
 #[derive(Debug, Clone, Default)]
 pub struct File {

@@ -24,6 +24,6 @@ fn parse_from_file_err() {
     // ANCHOR_END: parser-call
     output_cmp!(
         "src/from_file/parse_from_file_err.err",
-        result.unwrap_err().to_locfile_str()
+        result.unwrap_err().to_pos_str()
     )
 }

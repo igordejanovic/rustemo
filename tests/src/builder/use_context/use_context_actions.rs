@@ -7,7 +7,7 @@ pub type Ctx<'i> = use_context::Context<'i, Input>;
 pub type Token<'i> = BaseToken<'i, Input, TokenKind>;
 pub type Num = u32;
 pub fn num(context: &Ctx, token: Token) -> Num {
-    token.value.parse::<u32>().unwrap() + context.position() as u32
+    token.value.parse::<u32>().unwrap() + context.position().pos as u32
 }
 pub type A = Num1;
 pub fn a_num1(_ctx: &Ctx, num1: Num1) -> A {

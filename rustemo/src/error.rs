@@ -1,4 +1,4 @@
-use crate::{location::Location, Context, Input, State};
+use crate::{position::SourceSpan, Context, Input, Position, State};
 use std::fmt::{Debug, Display};
 
 pub type Result<R> = std::result::Result<R, Error>;
@@ -10,7 +10,8 @@ pub enum Error {
     Error {
         message: String,
         file: Option<String>,
-        location: Option<Location>,
+        position: Option<Position>,
+        span: Option<SourceSpan>,
     },
     IOError(std::io::Error),
 }
@@ -19,15 +20,16 @@ pub enum Error {
 impl Error {
     /// A string representation of the error without the full file path.
     /// Used in tests to yield the same results at different location.
-    pub fn to_locfile_str(&self) -> String {
+    pub fn to_pos_str(&self) -> String {
         match self {
             Error::Error {
                 message,
                 file,
-                location,
+                position,
+                span,
             } => {
                 let mut loc_str = String::from("Error");
-                if file.is_some() || location.is_some() {
+                if file.is_some() || span.is_some() {
                     loc_str.push_str(" at ");
                 }
                 if let Some(file) = file {
@@ -36,12 +38,14 @@ impl Error {
                     } else {
                         loc_str.push_str(file);
                     }
-                    if location.is_some() {
+                    if span.is_some() {
                         loc_str.push(':');
                     }
                 }
-                if let Some(location) = location {
-                    loc_str.push_str(&format!("{location:?}"));
+                if let Some(span) = span {
+                    loc_str.push_str(&format!("{span:?}"));
+                } else if let Some(position) = position {
+                    loc_str.push_str(&format!("{position:?}"));
                 }
                 format!("{}:\n\t{}", loc_str, message.replace('\n', "\n\t"))
             }
@@ -56,20 +60,23 @@ impl Display for Error {
             Error::Error {
                 message,
                 file,
-                location,
+                position,
+                span,
             } => {
                 let mut loc_str = String::from("Error");
-                if file.is_some() || location.is_some() {
+                if file.is_some() || span.is_some() {
                     loc_str.push_str(" at ");
                 }
                 if let Some(file) = file {
                     loc_str.push_str(file);
-                    if location.is_some() {
+                    if span.is_some() || position.is_some() {
                         loc_str.push(':');
                     }
                 }
-                if let Some(location) = location {
-                    loc_str.push_str(&format!("{location:?}"));
+                if let Some(span) = span {
+                    loc_str.push_str(&format!("{span:?}"));
+                } else if let Some(position) = position {
+                    loc_str.push_str(&format!("{position:?}"));
                 }
                 write!(f, "{}:\n\t{}", loc_str, message.replace('\n', "\n\t"))
             }
@@ -121,32 +128,44 @@ where
             expected
         ),
         file: Some(file_name.to_string()),
-        location: Some(context.location()),
+        position: Some(context.position()),
+        span: None,
     }
 }
 
-/// Creates error Result from message, file and location
+/// Creates error Result from message, file and span
 #[macro_export]
 macro_rules! err {
     ($message:expr) => {
         Result::from(Error::Error {
             message: $message,
             file: None,
-            location: None,
+            position: None,
+            span: None,
         })
     };
     ($message:expr, $file:expr) => {
         Result::from(Error::Error {
             message: $message,
             file: $file,
-            location: None,
+            position: None,
+            span: None,
         })
     };
-    ($message:expr, $file:expr, $location:expr) => {
+    ($message:expr, $file:expr, $position:expr) => {
         Result::from(Error::Error {
             message: $message,
             file: $file,
-            location: $location,
+            position: $position,
+            span: None,
+        })
+    };
+    ($message:expr, $file:expr, ,$span:expr) => {
+        Result::from(Error::Error {
+            message: $message,
+            file: $file,
+            position: None,
+            span: $span,
         })
     };
 }

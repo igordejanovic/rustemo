@@ -1,2 +1,2 @@
-Error at terminal_not_defined.rustemo:[1,6-1,9]:
+Error at terminal_not_defined.rustemo6(1,6):
 	Terminal "c" used in production "1: B1 "c"" is not defined in the 'terminals' section.
