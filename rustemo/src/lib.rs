@@ -24,8 +24,8 @@ mod glr;
 
 // Public API
 pub use crate::context::Context;
-pub use crate::error::Error;
 pub use crate::error::Result;
+pub use crate::error::{Error, ParseError};
 pub use crate::input::Input;
 pub use crate::position::{LineColumn, Position, SourceSpan, ValSpan};
 

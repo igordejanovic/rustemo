@@ -4,7 +4,7 @@ use std::{
     path::Path,
 };
 
-use rustemo::{Error, Result, ValSpan};
+use rustemo::{Result, ValSpan};
 
 use crate::{
     grammar::{Grammar, DEFAULT_PRIORITY},

@@ -4,7 +4,7 @@ pub type Result<R> = std::result::Result<R, Error>;
 
 #[derive(Debug)]
 pub enum Error {
-    RustemoError(rustemo::Error),
+    RustemoError(Box<rustemo::Error>),
     IOError(std::io::Error),
     SynError(syn::Error),
     Error(String),
@@ -36,7 +36,7 @@ impl Display for Error {
 
 impl From<rustemo::Error> for Error {
     fn from(e: rustemo::Error) -> Self {
-        Error::RustemoError(e)
+        Error::RustemoError(Box::new(e))
     }
 }
 

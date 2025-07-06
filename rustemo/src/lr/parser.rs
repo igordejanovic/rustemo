@@ -6,7 +6,7 @@ use crate::lexer::{Lexer, Token};
 use crate::lr::builder::SliceBuilder;
 use crate::parser::{Parser, State};
 use crate::position::SourceSpan;
-use crate::{err, Error, Position};
+use crate::{err, Position};
 #[cfg(debug_assertions)]
 use colored::*;
 use std::borrow::Borrow;
