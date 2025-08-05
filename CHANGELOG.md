@@ -7,9 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # [Unreleased]
 
+## Added
+- Pretty error reports thanks to
+  [codesnake](https://github.com/01mf02/codesnake/) and
+  [yansi](https://github.com/SergioBenitez/yansi).
+
 ## Changed
 - Debug trace is now off by default. Thanks @andrewbaxter for PR [23].
 - Reworked handling of position/span.
+- unsafe code is explicitely forbiden.
+- Replaced colored crate with [yansi](https://github.com/SergioBenitez/yansi).
 
 [23]: https://github.com/igordejanovic/rustemo/pull/23
 
