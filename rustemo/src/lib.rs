@@ -3,7 +3,7 @@
 // For local std docs browsing
 // #[doc(inline)]
 // pub use std;
-
+#![forbid(unsafe_code)]
 #[macro_use]
 mod common;
 #[macro_use]

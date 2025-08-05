@@ -30,6 +30,7 @@
 //!     exit(1);
 //! }
 //! ```
+#![forbid(unsafe_code)]
 #[macro_use]
 extern crate rustemo;
 
