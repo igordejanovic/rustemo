@@ -10,7 +10,7 @@ use std::{
 };
 
 use clap::ValueEnum;
-use colored::Colorize;
+use yansi::Paint;
 use itertools::{chain, Itertools};
 use rustemo::log;
 
@@ -1141,7 +1141,7 @@ impl<'g, 's> LRTable<'g, 's> {
                 .replace('?', r"\?")
         };
 
-        colored::control::set_override(false);
+        yansi::disable();
 
         let conflicts = self.get_conflicts();
         let is_conflict_state = |state: &LRState| conflicts.iter().any(|s| s.state == state);
@@ -1226,7 +1226,8 @@ impl<'g, 's> LRTable<'g, 's> {
                 }
             }
         }
-        colored::control::unset_override();
+
+        yansi::enable();
 
         dot += "\n}\n";
         dot

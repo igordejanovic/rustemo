@@ -1,6 +1,6 @@
 use crate::{context::Context, input::Input, log, parser::State, position::SourceSpan, Position};
 #[cfg(debug_assertions)]
-use colored::*;
+use yansi::Paint;
 use core::fmt::Debug;
 use std::marker::PhantomData;
 

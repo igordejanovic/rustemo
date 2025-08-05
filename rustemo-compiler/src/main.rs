@@ -3,7 +3,7 @@
 use std::path::PathBuf;
 
 use clap::{ArgAction, Parser};
-use colored::Colorize;
+use yansi::Paint;
 use rustemo_compiler::{
     BuilderType, GeneratorTableType, LexerType, ParserAlgo, Settings, TableType,
 };

@@ -22,7 +22,7 @@ use crate::{
     Error, Position, Result,
 };
 #[cfg(debug_assertions)]
-use colored::*;
+use yansi::Paint;
 use petgraph::prelude::*;
 use std::{
     borrow::Borrow,

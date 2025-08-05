@@ -16,7 +16,7 @@ use rustemo::Action::{self, Shift, Reduce, Accept};
 use rustemo::debug::{log, logn};
 #[allow(unused_imports)]
 #[cfg(debug_assertions)]
-use rustemo::colored::*;
+use rustemo::yansi::Paint;
 pub type Input = str;
 const STATE_COUNT: usize = 7usize;
 const MAX_RECOGNIZERS: usize = 2usize;

@@ -82,7 +82,7 @@ impl<'g, 's> PartGenerator<'g, 's> for BasePartGenerator {
             use rustemo::debug::{log, logn};
             #[allow(unused_imports)]
             #[cfg(debug_assertions)]
-            use rustemo::colored::*;
+            use rustemo::yansi::Paint;
 
             pub type Input = #input_type;
         };

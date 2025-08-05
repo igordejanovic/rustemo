@@ -30,8 +30,9 @@ edition = "2021"
 rust-version = "1.74"
 
 [workspace.dependencies]
-colored = "2"
+yansi = "1"
 petgraph = "0.6"
+thiserror = "2"
 itertools = { version = "0.10", default-features = false, features = ["use_std"] }
 convert_case = { version = "0.5.0", default-features = false }
 clap = { version = "4", features = ["derive"] }

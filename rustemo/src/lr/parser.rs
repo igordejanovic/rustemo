@@ -8,7 +8,7 @@ use crate::parser::{Parser, State};
 use crate::position::SourceSpan;
 use crate::{err, Position};
 #[cfg(debug_assertions)]
-use colored::*;
+use yansi::Paint;
 use std::borrow::Borrow;
 use std::cell::RefCell;
 use std::fmt::Debug;

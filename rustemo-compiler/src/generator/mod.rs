@@ -3,7 +3,7 @@ mod arrays;
 mod base;
 mod functions;
 
-use colored::Colorize;
+use yansi::Paint;
 use quote::format_ident;
 use rustemo::Parser;
 use std::{
