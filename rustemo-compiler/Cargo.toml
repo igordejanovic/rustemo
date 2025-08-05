@@ -33,6 +33,7 @@ path = "src/main.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+thiserror = { workspace = true }
 itertools = { workspace = true }
 convert_case = { workspace = true }
 clap = { workspace = true }

@@ -1,13 +1,19 @@
-use std::fmt::Display;
-
 pub type Result<R> = std::result::Result<R, Error>;
 
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
+#[error("Rustemo error")]
 pub enum Error {
+    #[error("{0}")]
     RustemoError(Box<rustemo::Error>),
-    IOError(std::io::Error),
-    SynError(syn::Error),
+
+    #[error("Error: {0}")]
     Error(String),
+
+    #[error("IOError: {0}")]
+    IOError(#[from] std::io::Error),
+
+    #[error("Syn error: {0}")]
+    SynError(#[from] syn::Error),
 }
 
 impl Error {
@@ -23,31 +29,8 @@ impl Error {
     }
 }
 
-impl Display for Error {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Error::RustemoError(e) => write!(f, "{e}"),
-            Error::SynError(e) => write!(f, "Syn error: {e}"),
-            Error::IOError(e) => write!(f, "IOError: {e}"),
-            Error::Error(e) => write!(f, "Error: {e}"),
-        }
-    }
-}
-
 impl From<rustemo::Error> for Error {
     fn from(e: rustemo::Error) -> Self {
         Error::RustemoError(Box::new(e))
-    }
-}
-
-impl From<std::io::Error> for Error {
-    fn from(e: std::io::Error) -> Self {
-        Error::IOError(e)
-    }
-}
-
-impl From<syn::Error> for Error {
-    fn from(e: syn::Error) -> Self {
-        Error::SynError(e)
     }
 }

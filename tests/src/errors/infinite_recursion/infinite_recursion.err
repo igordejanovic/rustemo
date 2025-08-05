@@ -1,2 +1,2 @@
-Error at infinite_recursion.rustemo12(2,3):
+Error at infinite_recursion.rustemo:[12(2,3)-13(2,4)]:
 	Infinite recursion on symbol 'B' in production '2: B'.

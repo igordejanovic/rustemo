@@ -537,6 +537,7 @@ dependencies = [
  "quote",
  "rustemo",
  "syn 1.0.109",
+ "thiserror",
  "yansi",
 ]
 

@@ -1,12 +1,14 @@
 ParseError(
     ParseError {
-        message: "...1 + 4 * 9 -->3 * 2 + 7...\nExpected one of STOP, Plus, Mul.",
+        message: "Expected one of STOP, Plus, Mul.",
+        src: Some(
+            "1 + 4 * 9 3 * 2 + 7",
+        ),
         file: Some(
             "<str>",
         ),
-        position: Some(
+        span: Some(
             10(1,10),
         ),
-        span: None,
     },
 )

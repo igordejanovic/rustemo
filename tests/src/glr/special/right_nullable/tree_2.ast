@@ -16,13 +16,13 @@ NonTermNode {
                 },
                 NonTermNode {
                     prod: S: ,
-                    span: [2(1,2)-2(1,2)],
+                    span: 2(1,2),
                     children: [],
                     layout: None,
                 },
                 NonTermNode {
                     prod: A: ,
-                    span: [2(1,2)-2(1,2)],
+                    span: 2(1,2),
                     children: [],
                     layout: None,
                 },
@@ -31,7 +31,7 @@ NonTermNode {
         },
         NonTermNode {
             prod: A: ,
-            span: [2(1,2)-2(1,2)],
+            span: 2(1,2),
             children: [],
             layout: None,
         },

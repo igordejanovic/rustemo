@@ -4,7 +4,7 @@ NonTermNode {
     children: [
         NonTermNode {
             prod: A: ,
-            span: [0(1,0)-0(1,0)],
+            span: 0(1,0),
             children: [],
             layout: None,
         },
@@ -29,7 +29,7 @@ NonTermNode {
                     children: [
                         NonTermNode {
                             prod: A: ,
-                            span: [1(1,1)-1(1,1)],
+                            span: 1(1,1),
                             children: [],
                             layout: None,
                         },
@@ -39,7 +39,7 @@ NonTermNode {
                             children: [
                                 NonTermNode {
                                     prod: A: ,
-                                    span: [1(1,1)-1(1,1)],
+                                    span: 1(1,1),
                                     children: [],
                                     layout: None,
                                 },
@@ -49,7 +49,7 @@ NonTermNode {
                                     children: [
                                         NonTermNode {
                                             prod: A: ,
-                                            span: [1(1,1)-1(1,1)],
+                                            span: 1(1,1),
                                             children: [],
                                             layout: None,
                                         },

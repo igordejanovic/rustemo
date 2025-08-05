@@ -1,25 +1,63 @@
-use crate::{position::SourceSpan, Context, Input, Position, State};
+use crate::{position::SourceSpan, Context, Input, State};
 use std::fmt::{Debug, Display};
 
 pub type Result<R> = std::result::Result<R, Error>;
 
 /// Error type returned in `Err` variant of `Result` type from the parser.
 // ANCHOR: parser-error
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
 pub struct ParseError {
     pub message: String,
+
+    // FIXME: This should be borrowed when error recovery is implemented.
+    pub src: Option<String>,
+
     pub file: Option<String>,
-    pub position: Option<Position>,
     pub span: Option<SourceSpan>,
 }
-#[derive(Debug)]
+
+impl Display for ParseError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut loc_str = String::from("Error");
+        if self.file.is_some() || self.span.is_some() {
+            loc_str.push_str(" at ");
+        }
+        if let Some(ref file) = self.file {
+            loc_str.push_str(file);
+            if self.span.is_some() {
+                loc_str.push(':');
+            }
+        }
+        if let Some(span) = self.span {
+            loc_str.push_str(&format!("{span:?}"));
+        }
+        write!(f, "{}:\n\t{}", loc_str, self.message.replace('\n', "\n\t"))
+    }
+}
+
+
+#[derive(Debug, thiserror::Error)]
 pub enum Error {
+    #[error(transparent)]
     ParseError(Box<ParseError>),
-    IOError(std::io::Error),
+
+    #[error("{0}")]
+    IOError(#[from] std::io::Error),
 }
 // ANCHOR_END: parser-error
 
 impl Error {
+    /// Adds source string to the error.
+    pub fn with_source(self, src: String) -> Self {
+        match self {
+            Error::ParseError(mut parse_error) => {
+                parse_error.src = Some(src);
+                Error::ParseError(parse_error)
+            }
+            e => e,
+        }
+    }
+
     /// A string representation of the error without the full file path.
     /// Used in tests to yield the same results at different location.
     pub fn to_pos_str(&self) -> String {
@@ -28,7 +66,7 @@ impl Error {
                 let ParseError {
                     ref message,
                     ref file,
-                    position,
+                    src: _,
                     span,
                 } = **e;
                 let mut loc_str = String::from("Error");
@@ -47,8 +85,6 @@ impl Error {
                 }
                 if let Some(span) = span {
                     loc_str.push_str(&format!("{span:?}"));
-                } else if let Some(position) = position {
-                    loc_str.push_str(&format!("{position:?}"));
                 }
                 format!("{}:\n\t{}", loc_str, message.replace('\n', "\n\t"))
             }
@@ -57,43 +93,6 @@ impl Error {
     }
 }
 
-impl Display for Error {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Error::ParseError(e) => {
-                let ParseError {
-                    ref message,
-                    ref file,
-                    position,
-                    span,
-                } = **e;
-                let mut loc_str = String::from("Error");
-                if file.is_some() || span.is_some() {
-                    loc_str.push_str(" at ");
-                }
-                if let Some(file) = file {
-                    loc_str.push_str(file);
-                    if span.is_some() || position.is_some() {
-                        loc_str.push(':');
-                    }
-                }
-                if let Some(span) = span {
-                    loc_str.push_str(&format!("{span:?}"));
-                } else if let Some(position) = position {
-                    loc_str.push_str(&format!("{position:?}"));
-                }
-                write!(f, "{}:\n\t{}", loc_str, message.replace('\n', "\n\t"))
-            }
-            Error::IOError(e) => write!(f, "IOError: {e}"),
-        }
-    }
-}
-
-impl From<std::io::Error> for Error {
-    fn from(e: std::io::Error) -> Self {
-        Error::IOError(e)
-    }
-}
 
 impl From<std::io::Error> for Box<Error> {
     fn from(e: std::io::Error) -> Self {
@@ -138,14 +137,10 @@ where
         format!("{:?}", expected[0])
     };
     Error::ParseError(Box::new(ParseError {
-        message: format!(
-            "...{}...\nExpected {}.",
-            input.context_str(context.position()),
-            expected
-        ),
+        message: format!("Expected {}.", expected),
         file: Some(file_name.to_string()),
-        position: Some(context.position()),
-        span: None,
+        src: input.try_to_string(),
+        span: Some(context.position().into()),
     }))
 }
 
@@ -156,7 +151,7 @@ macro_rules! err {
         Result::from($crate::ParseError {
             message: $message,
             file: None,
-            position: None,
+            src: None,
             span: None,
         })
     };
@@ -164,23 +159,15 @@ macro_rules! err {
         Result::from($crate::ParseError {
             message: $message,
             file: $file,
-            position: None,
+            src: None,
             span: None,
         })
     };
-    ($message:expr, $file:expr, $position:expr) => {
+    ($message:expr, $file:expr, $span:expr) => {
         Result::from($crate::ParseError {
             message: $message,
             file: $file,
-            position: $position,
-            span: None,
-        })
-    };
-    ($message:expr, $file:expr, ,$span:expr) => {
-        Result::from($crate::ParseError {
-            message: $message,
-            file: $file,
-            position: None,
+            src: None,
             span: $span,
         })
     };

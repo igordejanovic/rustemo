@@ -2,13 +2,13 @@ Err(
     ParseError(
         ParseError {
             message: "Can't use 'for' as a valid Rust identifier.",
+            src: None,
             file: Some(
                 "<str>",
             ),
-            position: Some(
-                27(3,8),
+            span: Some(
+                [27(3,8)-30(3,11)],
             ),
-            span: None,
         },
     ),
 )

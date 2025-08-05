@@ -58,7 +58,7 @@ NonTermNode {
                                         },
                                         NonTermNode {
                                             prod: A: ,
-                                            span: [6(1,6)-6(1,6)],
+                                            span: 6(1,6),
                                             children: [],
                                             layout: None,
                                         },
@@ -67,7 +67,7 @@ NonTermNode {
                                 },
                                 NonTermNode {
                                     prod: A: ,
-                                    span: [6(1,6)-6(1,6)],
+                                    span: 6(1,6),
                                     children: [],
                                     layout: None,
                                 },
@@ -76,7 +76,7 @@ NonTermNode {
                         },
                         NonTermNode {
                             prod: A: ,
-                            span: [6(1,6)-6(1,6)],
+                            span: 6(1,6),
                             children: [],
                             layout: None,
                         },

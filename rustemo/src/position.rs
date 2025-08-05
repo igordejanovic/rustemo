@@ -127,7 +127,11 @@ impl From<SourceSpan> for Range<usize> {
 
 impl Debug for SourceSpan {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "[{:?}-{:?}]", self.start, self.end)
+        if self.start == self.end {
+            write!(f, "{:?}", self.start)
+        } else {
+            write!(f, "[{:?}-{:?}]", self.start, self.end)
+        }
     }
 }
 

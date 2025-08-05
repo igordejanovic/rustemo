@@ -2,13 +2,13 @@ Err(
     ParseError(
         ParseError {
             message: "Can't use 'fn' as a valid Rust identifier.",
+            src: None,
             file: Some(
                 "<str>",
             ),
-            position: Some(
-                58(5,8),
+            span: Some(
+                [58(5,8)-60(5,10)],
             ),
-            span: None,
         },
     ),
 )

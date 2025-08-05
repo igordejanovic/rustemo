@@ -35,6 +35,13 @@ pub trait Input: ToOwned + Index<Range<usize>, Output = Self> {
     /// Read the file from the given path into owned version of the input.
     fn read_file<P: AsRef<Path>>(path: P) -> Result<Self::Owned>;
 
+    /// FIXME: This is a temporary fix for producing errors source code string.
+    /// Shouldn't be used for anything else. Eventually, source code in errors
+    /// will be borrowed from the input.
+    fn try_to_string(&self) -> Option<String> {
+        None
+    }
+
     fn start_position() -> Position {
         Position {
             pos: 0,
@@ -119,6 +126,10 @@ impl Input for str {
 
     fn read_file<P: AsRef<Path>>(path: P) -> Result<Self::Owned> {
         Ok(std::fs::read_to_string(path)?)
+    }
+
+    fn try_to_string(&self) -> Option<String> {
+        Some(self.to_string())
     }
 }
 
