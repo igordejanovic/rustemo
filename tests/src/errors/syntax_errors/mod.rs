@@ -13,7 +13,7 @@ fn syntax_error_unexpected() {
         local_file!(file!(), "calc_unexpected.err")
             .to_str()
             .unwrap(),
-        format!("{:#?}", result.unwrap_err().to_string())
+        result.unwrap_err().to_string()
     );
 }
 
@@ -24,6 +24,6 @@ fn syntax_error_incomplete() {
         local_file!(file!(), "calc_incomplete.err")
             .to_str()
             .unwrap(),
-        format!("{:#?}", result.unwrap_err().to_string())
+        result.unwrap_err().to_string()
     );
 }

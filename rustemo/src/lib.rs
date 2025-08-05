@@ -8,6 +8,7 @@
 mod common;
 #[macro_use]
 pub mod debug;
+pub mod colors;
 
 mod builder;
 mod context;
@@ -44,10 +45,13 @@ pub use crate::glr::{
     parser::GlrParser,
 };
 
+// yansi styles for log messages.
+pub use crate::colors::*;
+
 // Reexporting dependencies of generated parsers so that users of the library
 // do not have to pollute their Cargo.toml.
 // See: https://github.com/igordejanovic/rustemo/issues/15
-pub use yansi;
 pub use fancy_regex;
 pub use once_cell;
 pub use regex;
+pub use yansi;

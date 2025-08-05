@@ -1,2 +1,8 @@
-Error at <str>:10(1,10):
-	Expected one of STOP, Plus, Minus, Mul, Div.
+
+  ╭─ Syntax error at <str>:10(1,10)
+  │
+1 │ 2 + 3 * 7 ^ 2.3
+  ┆           ┬    
+  ┆           │    
+  ┆           ╰───── Expected one of STOP, Plus, Minus, Mul, Div.
+──╯

@@ -184,7 +184,7 @@ impl GrammarBuilder {
                             err!(
                                 "Priority must be <=99.".to_owned(),
                                 Some(self.file.clone()),
-                                prio.span.map(|s| s.into())
+                                prio.span
                             )?
                         } else {
                             p
@@ -444,7 +444,7 @@ impl GrammarBuilder {
                                 mtch
                             ),
                             Some(self.file.clone()),
-                            mtch.span.map(|s| s.into())
+                            mtch.span
                         );
                     }
                 }
@@ -518,7 +518,7 @@ impl GrammarBuilder {
                                 mtch, production_str
                             ),
                             Some(self.file.clone()),
-                            mtch.span.map(|s| s.into())
+                            mtch.span
                         )?
                     }
                 }
@@ -553,7 +553,7 @@ impl GrammarBuilder {
                                                 name, production_str
                                             ),
                                             Some(self.file.clone()),
-                                            name.span.map(|s| s.into())
+                                            name.span
                                         );
                                         r.unwrap_err()
                                     })?
@@ -561,7 +561,7 @@ impl GrammarBuilder {
                                 if rhs_len == 1 && nt_idx == production.nonterminal {
                                     err!(format!("Infinite recursion on symbol '{}' in production '{}'.",
                                             name, production_str),
-                                             Some(self.file.clone()), name.span.map(|s| s.into()))?;
+                                             Some(self.file.clone()), name.span)?;
                                 }
                                 nt_idx.symbol_index(self.terminals.len())
                             }
@@ -708,7 +708,7 @@ impl GrammarBuilder {
             err!(
                 format!("Can't use '{}' as a valid Rust identifier.", &name),
                 Some(self.file.clone()),
-                name.span.map(|s| s.into())
+                name.span
             )?
         }
         Ok(())

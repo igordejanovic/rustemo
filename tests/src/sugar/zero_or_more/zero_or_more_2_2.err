@@ -1,2 +1,8 @@
-Error at <str>:8(1,8):
-	Expected STOP.
+
+  ╭─ Syntax error at <str>:8(1,8)
+  │
+1 │ c 1 2 a a
+  ┆         ┬
+  ┆         │
+  ┆         ╰─ Expected STOP.
+──╯

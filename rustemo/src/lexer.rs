@@ -1,8 +1,10 @@
 use crate::{context::Context, input::Input, log, parser::State, position::SourceSpan, Position};
 #[cfg(debug_assertions)]
-use yansi::Paint;
+use crate::{LOG, LOG_BOLD};
 use core::fmt::Debug;
 use std::marker::PhantomData;
+#[cfg(debug_assertions)]
+use yansi::Paint;
 
 /// The trait implemented by all Rustemo lexers
 ///
@@ -84,7 +86,7 @@ impl<
             .sum();
         if skipped_len > 0 {
             let skipped = &input[context.position().pos..context.position().pos + skipped_len];
-            log!("\t{} {}", "Skipped ws:".bold().green(), skipped_len);
+            log!("\t{} {}", "Skipped ws:".paint(LOG_BOLD), skipped_len);
             context.set_layout_ahead(Some(skipped));
             context.set_position(skipped.position_after(context.position()));
             //context.set_span();
@@ -164,7 +166,11 @@ where
         if self.skip_ws {
             Self::skip(input, context);
         }
-        log!("  {} {:?}", "Trying recognizers:".green(), expected_tokens);
+        log!(
+            "  {} {:?}",
+            "Trying recognizers:".paint(LOG),
+            expected_tokens
+        );
 
         Box::new(TokenIterator::new(
             input,

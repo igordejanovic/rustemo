@@ -22,7 +22,8 @@ use crate::{
     Error, Position, Result,
 };
 #[cfg(debug_assertions)]
-use yansi::Paint;
+use crate::{LOG, WARN, WARN_BOLD};
+
 use petgraph::prelude::*;
 use std::{
     borrow::Borrow,
@@ -32,6 +33,8 @@ use std::{
     marker::PhantomData,
     rc::Rc,
 };
+#[cfg(debug_assertions)]
+use yansi::Paint;
 
 use super::gss::{Forest, GssGraph, GssHead, SPPFTree, TreeData};
 
@@ -171,13 +174,16 @@ where
         for ((position, token_kind), subfrontier) in frontier {
             log!(
                 "\n{} {:?} {} {:?}.",
-                "Preparing subfrontier for token".red(),
+                "Preparing subfrontier for token".paint(WARN),
                 token_kind,
-                "at position".red(),
+                "at position".paint(WARN),
                 position
             );
             for (&state, head) in subfrontier {
-                log!("  {}", format!("Processing head {}", head.index()).green());
+                log!(
+                    "  {}",
+                    format!("Processing head {}", head.index()).paint(LOG)
+                );
                 for action in self
                     .definition
                     .actions(state, gss.head(*head).token_ahead().as_ref().unwrap().kind)
@@ -187,7 +193,7 @@ where
                             if length == 0 {
                                 log!(
                                     "    {} '{:?}' over head {} by len {}",
-                                    "Register new reduction".green(),
+                                    "Register new reduction".paint(LOG),
                                     prod,
                                     head.index(),
                                     length
@@ -204,7 +210,7 @@ where
                                 for edge in gss.backedges(*head) {
                                     log!(
                                         "    {} '{:?}' over edge {} -> {} by len {}",
-                                        "Register new reduction".green(),
+                                        "Register new reduction".paint(LOG),
                                         prod,
                                         edge.source().index(),
                                         edge.target().index(),
@@ -224,12 +230,16 @@ where
                         Action::Shift(state) => {
                             log!(
                                 "    {}",
-                                format!("Adding head {} to pending shifts.", head.index()).green()
+                                format!("Adding head {} to pending shifts.", head.index())
+                                    .paint(LOG)
                             );
                             pending_shifts.push((*head, state))
                         }
                         Action::Accept => {
-                            log!("    {}", format!("Accepting head {}.", head.index()).red());
+                            log!(
+                                "    {}",
+                                format!("Accepting head {}.", head.index()).paint(WARN)
+                            );
                             accepted_heads.push(*head)
                         }
                         Action::Error => break,
@@ -265,7 +275,7 @@ where
                 // Find lookaheads
                 log!(
                     "  {}.",
-                    format!("Finding lookaheads for head {}", head_idx.index()).green()
+                    format!("Finding lookaheads for head {}", head_idx.index()).paint(LOG)
                 );
                 let mut lookahead_tokens = self.find_lookaheads(gss, head_idx, input).into_iter();
                 let head = gss.head_mut(head_idx);
@@ -285,7 +295,7 @@ where
                     head.set_token_ahead(token);
                     log!(
                         "    {} {}: {:?}",
-                        "Added lookahead for head".to_string().green(),
+                        "Added lookahead for head".to_string().paint(LOG),
                         head_idx.index(),
                         head
                     );
@@ -331,7 +341,7 @@ where
                 if tokens.len() > 1 {
                     log!(
                         "{} Trying configured disambiguation strategies.",
-                        "Lexical ambiguity.".red()
+                        "Lexical ambiguity.".paint(WARN)
                     );
                     // We still have lexical ambiguity after priorities and most
                     // specific match handled by table construction and string
@@ -340,7 +350,7 @@ where
                     if D::longest_match() {
                         log!(
                             "{}",
-                            "Applying longest match disambiguation strategy".green()
+                            "Applying longest match disambiguation strategy".paint(LOG)
                         );
                         // Longest match strategy for lexical disambiguation
                         let longest_len = tokens
@@ -350,7 +360,7 @@ where
                             .value
                             .len();
                         tokens.retain(|token| token.value.len() == longest_len);
-                        log!("{} {:?}", "Tokens retained:".green(), &tokens);
+                        log!("{} {:?}", "Tokens retained:".paint(LOG), &tokens);
                     }
 
                     if D::grammar_order() {
@@ -358,7 +368,7 @@ where
                         // at least one token must be in the tokens vector.
                         log!(
                             "{}",
-                            "Applying grammar order disambiguation strategy".green()
+                            "Applying grammar order disambiguation strategy".paint(LOG)
                         );
                         tokens.truncate(1)
                     }
@@ -367,7 +377,7 @@ where
             } else if layout_parsing {
                 layout_parsing = false;
                 if let Some(layout_parser) = self.layout_parser.borrow_mut().as_ref() {
-                    log!("\n{}", "*** Parsing layout".red().bold());
+                    log!("\n{}", "*** Parsing layout".paint(WARN_BOLD));
                     let current_state = head.state();
                     head.set_state(S::default_layout().unwrap());
                     let p = layout_parser.parse_with_context(head, input);
@@ -377,7 +387,7 @@ where
                         if layout.len() > 0 {
                             log!("Skipping layout: {layout:?}");
                             head.set_layout_ahead(Some(layout));
-                            log!("\n{}", "*** Parsing content".red().bold());
+                            log!("\n{}", "*** Parsing content".paint(WARN_BOLD));
                             continue;
                         }
                     }
@@ -416,7 +426,7 @@ where
 
         log!(
             "    {} {}: {}",
-            "Created head for lookahead".green(),
+            "Created head for lookahead".paint(LOG),
             new_head.index(),
             new_head_str
         );
@@ -459,7 +469,7 @@ where
     ) {
         log!(
             "\n{}{}",
-            "Reducing".red(),
+            "Reducing".paint(WARN),
             format!(
                 " - {} pending reduction start(s)",
                 if pending_reductions.is_empty() {
@@ -468,7 +478,7 @@ where
                     pending_reductions.len().to_string()
                 }
             )
-            .green()
+            .paint(LOG)
         );
         while let Some(reduction) = pending_reductions.pop_front() {
             let production = reduction.production;
@@ -478,7 +488,7 @@ where
             };
             log!(
                 "\n{} '{:?}' over {} by len {}",
-                "Reducing by production".green(),
+                "Reducing by production".paint(LOG),
                 production,
                 match reduction.start {
                     ReductionStart::Edge(e) =>
@@ -488,7 +498,7 @@ where
                 reduction.length
             );
             for path in self.find_reduction_paths(gss, &reduction) {
-                log!("  {} {path}", "Reducing over path:".green());
+                log!("  {} {path}", "Reducing over path:".paint(LOG));
                 let token_kind_ahead = gss.head(start_head).token_ahead().as_ref().unwrap().kind;
                 let root_state = gss.head(path.root_head).state();
                 let next_state = self.definition.goto(root_state, production.into());
@@ -509,7 +519,7 @@ where
                         log!(
                             "    {}",
                             format!("Head {} with the same state already exists.", head.index())
-                                .green()
+                                .paint(LOG)
                         );
                         *head
                     } else {
@@ -523,7 +533,7 @@ where
                         subfrontier.insert(next_state, new_head_idx);
                         log!(
                             "    {} {}: {}",
-                            "Created reduced head".green(),
+                            "Created reduced head".paint(LOG),
                             new_head_idx.index(),
                             new_head_str
                         );
@@ -542,14 +552,14 @@ where
                                 head.index(),
                                 path.root_head.index()
                             )
-                            .green()
+                            .paint(LOG)
                         );
                         edge
                     } else {
                         // Create new edge
                         log!(
                             "      {} {} -> {}.",
-                            "Created edge".green(),
+                            "Created edge".paint(LOG),
                             head.index(),
                             path.root_head.index()
                         );
@@ -582,7 +592,7 @@ where
                                 path.root_head.index(),
                                 production
                             )
-                            .green()
+                            .paint(LOG)
                         );
                         // Replace children for this solution
                         for possibility in gss.parent(edge).possibilities.borrow_mut().iter_mut() {
@@ -603,7 +613,7 @@ where
                                 head.index(),
                                 path.root_head.index()
                             )
-                            .green()
+                            .paint(LOG)
                         );
 
                         let root_head = gss.head(path.root_head);
@@ -645,7 +655,7 @@ where
                                         };
                                         log!(
                                             "      {} '{:?}' {} by len {}",
-                                            "Register new reduction".green(),
+                                            "Register new reduction".paint(LOG),
                                             production,
                                             match start {
                                                 ReductionStart::Edge(e) => format!(
@@ -673,7 +683,7 @@ where
                                                 "Adding head {} to pending shifts.",
                                                 head.index()
                                             )
-                                            .green()
+                                            .paint(LOG)
                                         );
                                         pending_shifts.push((head, s));
                                     }
@@ -682,7 +692,8 @@ where
                                     if head_created {
                                         log!(
                                             "      {}",
-                                            format!("Accepting head {}.", head.index()).red()
+                                            format!("Accepting head {}.", head.index())
+                                                .paint(WARN)
                                         );
                                         accepted_heads.push(head)
                                     }
@@ -705,7 +716,7 @@ where
     ) -> Vec<NodeIndex> {
         log!(
             "\n{}{}",
-            "Shifting".red(),
+            "Shifting".paint(WARN),
             format!(
                 " - {} pending shift(s)",
                 if pending_shifts.is_empty() {
@@ -714,7 +725,7 @@ where
                     pending_shifts.len().to_string()
                 }
             )
-            .green()
+            .paint(LOG)
         );
         let mut frontier_base = BTreeMap::new();
         while let Some((head_idx, state)) = pending_shifts.pop() {
@@ -728,11 +739,11 @@ where
                     head_idx.index(),
                     token.value
                 )
-                .green()
+                .paint(LOG)
             );
             let (shifted_head_idx, span) = match frontier_base.get(&(state, position)) {
                 Some(&shifted_head_idx) => {
-                    log!("  {}", "Head already exists. Adding new edge.".green());
+                    log!("  {}", "Head already exists. Adding new edge.".paint(LOG));
                     let shifted_head = gss.head(shifted_head_idx);
                     (shifted_head_idx, shifted_head.span())
                 }
@@ -745,7 +756,7 @@ where
                     let new_head_idx = gss.add_head(new_head);
                     log!(
                         "  {}: {new_head_str}",
-                        format!("Creating new shifted head {}", new_head_idx.index()).green()
+                        format!("Creating new shifted head {}", new_head_idx.index()).paint(LOG)
                     );
                     frontier_base.insert((state, position), new_head_idx);
                     (new_head_idx, new_head_span)
@@ -784,7 +795,7 @@ where
                     ReductionStart::Edge(start_edge) => gss.start(start_edge).index(),
                 }
             )
-            .green()
+            .paint(LOG)
         );
         let mut paths = vec![];
         match reduction.start {
@@ -792,7 +803,7 @@ where
                 debug_assert!(reduction.length == 0, "Node based reductions must be EMPTY");
                 log!(
                     "  {}",
-                    format!("Found EMPTY reduction path for head {}", head.index()).green()
+                    format!("Found EMPTY reduction path for head {}", head.index()).paint(LOG)
                 );
                 paths.push(ReductionPath {
                     parents: VecDeque::new(),
@@ -836,7 +847,7 @@ where
                             parents: path.parents,
                             root_head: path.current_root,
                         };
-                        log!("  {}: {path}", "Found reduction path".green());
+                        log!("  {}: {path}", "Found reduction path".paint(LOG));
                         paths.push(path);
                     }
                 }
@@ -844,7 +855,7 @@ where
         }
         log!(
             "  {}",
-            format!("Reduction paths found: {}", paths.len()).green()
+            format!("Reduction paths found: {}", paths.len()).paint(LOG)
         );
         paths
     }
@@ -911,8 +922,8 @@ where
 
         log!(
             "\n{}. {}",
-            "Syntax error".red(),
-            format!("{error:?}").green()
+            "Syntax error".paint(WARN),
+            format!("{error:?}").paint(LOG)
         );
         error
     }
@@ -954,7 +965,7 @@ where
             ))
         }
 
-        log!("{}: {:?}", "Current state".green(), context.state());
+        log!("{}: {:?}", "Current state".paint(LOG), context.state());
 
         // Frontier represents the current "shift-level" or, starting from the
         // shifted nodes, frontier also has all the reduced nodes up to the next
@@ -996,9 +1007,9 @@ where
             for ((position, token_kind), subfrontier) in frontier.iter_mut() {
                 log!(
                     "\n{} {:?} {} {:?}.",
-                    "Reducing for subfrontier for token".red(),
+                    "Reducing for subfrontier for token".paint(WARN),
                     token_kind,
-                    "at position".red(),
+                    "at position".paint(WARN),
                     position
                 );
                 // Reduce everything that is possible for this subfrontier
@@ -1026,8 +1037,8 @@ where
             let forest = self.create_forest(gss, accepted_heads);
             log!(
                 "\n{}. {}",
-                "Finished".red(),
-                format!("{} solutions found.", forest.solutions()).green()
+                "Finished".paint(WARN),
+                format!("{} solutions found.", forest.solutions()).paint(LOG)
             );
             Ok(forest)
         } else {

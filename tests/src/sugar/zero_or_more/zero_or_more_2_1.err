@@ -1,2 +1,8 @@
-Error at <str>:2(1,2):
-	Expected one of Ta, Num.
+
+  ╭─ Syntax error at <str>:2(1,2)
+  │
+1 │ c c a
+  ┆   ┬  
+  ┆   │  
+  ┆   ╰─── Expected one of Ta, Num.
+──╯

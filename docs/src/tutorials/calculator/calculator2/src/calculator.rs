@@ -16,6 +16,9 @@ use rustemo::Action::{self, Shift, Reduce, Accept};
 use rustemo::debug::{log, logn};
 #[allow(unused_imports)]
 #[cfg(debug_assertions)]
+use rustemo::colors::*;
+#[allow(unused_imports)]
+#[cfg(debug_assertions)]
 use rustemo::yansi::Paint;
 pub type Input = str;
 const STATE_COUNT: usize = 11usize;
@@ -477,38 +480,38 @@ impl<'i> TokenRecognizerT<'i> for TokenRecognizer {
         match &self {
             #[allow(unused_variables)]
             TokenRecognizer(token_kind, Recognizer::StrMatch(s)) => {
-                logn!("{} {:?} -- ", "    Recognizing".green(), token_kind);
+                logn!("{} {:?} -- ", "    Recognizing".paint(LOG), token_kind);
                 if input.starts_with(s) {
-                    log!("{}", "recognized".bold().green());
+                    log!("{}", "recognized".paint(LOG_BOLD));
                     Some(s)
                 } else {
-                    log!("{}", "not recognized".red());
+                    log!("{}", "not recognized".paint(WARN));
                     None
                 }
             }
             #[allow(unused_variables)]
             TokenRecognizer(token_kind, Recognizer::RegexMatch(r)) => {
-                logn!("{} {:?} -- ", "    Recognizing".green(), token_kind);
+                logn!("{} {:?} -- ", "    Recognizing".paint(LOG), token_kind);
                 let match_str = r.find(input);
                 match match_str {
                     Some(x) => {
                         let x_str = x.as_str();
-                        log!("{} '{}'", "recognized".bold().green(), x_str);
+                        log!("{} '{}'", "recognized".paint(LOG_BOLD), x_str);
                         Some(x_str)
                     }
                     _ => {
-                        log!("{}", "not recognized".red());
+                        log!("{}", "not recognized".paint(WARN));
                         None
                     }
                 }
             }
             TokenRecognizer(_, Recognizer::Stop) => {
-                logn!("{} STOP -- ", "    Recognizing".green());
+                logn!("{} STOP -- ", "    Recognizing".paint(LOG));
                 if input.is_empty() {
-                    log!("{}", "recognized".bold().green());
+                    log!("{}", "recognized".paint(LOG_BOLD));
                     Some("")
                 } else {
-                    log!("{}", "not recognized".red());
+                    log!("{}", "not recognized".paint(WARN));
                     None
                 }
             }

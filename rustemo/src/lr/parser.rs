@@ -8,13 +8,16 @@ use crate::parser::{Parser, State};
 use crate::position::SourceSpan;
 use crate::{err, Position};
 #[cfg(debug_assertions)]
-use yansi::Paint;
+use crate::{LOG, LOG_BOLD, WARN, WARN_BOLD};
+
 use std::borrow::Borrow;
 use std::cell::RefCell;
 use std::fmt::Debug;
 use std::marker::PhantomData;
 use std::path::Path;
 use std::rc::Rc;
+#[cfg(debug_assertions)]
+use yansi::Paint;
 
 use super::builder::LRBuilder;
 
@@ -218,11 +221,11 @@ where
                 if tokens.len() > 1 {
                     log!(
                         "{} Trying configured disambiguation strategies.",
-                        "Lexical ambiguity.".red()
+                        "Lexical ambiguity.".paint(WARN)
                     );
                     log!(
                         "{}",
-                        "Applying longest match disambiguation strategy".green()
+                        "Applying longest match disambiguation strategy".paint(LOG)
                     );
                     let longest_len = tokens
                         .iter()
@@ -241,7 +244,7 @@ where
             } else {
                 // No token found at current position. Try layout if configured.
                 if let Some(layout_parser) = layout_parser {
-                    log!("\n{}", "*** Parsing layout".red().bold());
+                    log!("\n{}", "*** Parsing layout".paint(WARN_BOLD));
                     let current_state = context.state();
                     context.set_state(S::default_layout().unwrap());
                     let p = layout_parser.parse_with_context(context, input);
@@ -251,7 +254,7 @@ where
                         if layout.len() > 0 {
                             log!("Skipping layout: {layout:?}");
                             context.set_layout_ahead(Some(layout));
-                            log!("\n{}", "*** Parsing content".red().bold());
+                            log!("\n{}", "*** Parsing content".paint(WARN_BOLD));
                             continue;
                         }
                     }
@@ -295,7 +298,7 @@ where
     type Output = B::Output;
 
     fn parse(&self, input: &'i I) -> Result<Self::Output> {
-        log!("\n{}", "*** Parsing started".red().bold());
+        log!("\n{}", "*** Parsing started".paint(WARN_BOLD));
         log!("\nfile: {}", self.file_name);
         let mut context = C::default();
         context.set_position(self.start_position);
@@ -323,7 +326,7 @@ where
 
         log!(
             "{} at {:?} [{:?}]: '{}'",
-            "Context".green(),
+            "Context".paint(LOG),
             context.position(),
             context.span(),
             input.context_str(context.position())
@@ -331,11 +334,11 @@ where
 
         let mut state = parse_stack.state();
 
-        log!("{}: {:#?}", "Stack".green(), parse_stack);
-        log!("{}: {:?}", "Current state".green(), state);
+        log!("{}: {:#?}", "Stack".paint(LOG), parse_stack);
+        log!("{}: {:?}", "Current state".paint(LOG), state);
 
         let mut next_token = self.next_token(input, context, &layout_parser)?;
-        log!("{}: {:?}", "Token ahead".green(), &next_token);
+        log!("{}: {:?}", "Token ahead".paint(LOG), &next_token);
 
         loop {
             let action = self.definition.actions(state, next_token.kind)[0];
@@ -352,7 +355,7 @@ where
 
                     log!(
                         "{} to state {:?} at location {:?} with token {:?}",
-                        "Shifting".bold().green(),
+                        "Shifting".paint(LOG_BOLD),
                         state_id,
                         context.span(),
                         &next_token
@@ -362,18 +365,18 @@ where
 
                     log!(
                         "{} at {:?} [{:?}]:\n{}\n",
-                        "Context".green(),
+                        "Context".paint(LOG),
                         context.position(),
                         context.span(),
                         input.context_str(context.position())
                     );
                     next_token = self.next_token(input, context, &layout_parser)?;
-                    log!("{}: {:?}", "Token ahead".green(), next_token);
+                    log!("{}: {:?}", "Token ahead".paint(LOG), next_token);
                 }
                 Action::Reduce(prod, prod_len) => {
                     log!(
                         "{} by production '{:?}', size {:?}",
-                        "Reduce".bold().green(),
+                        "Reduce".paint(LOG_BOLD),
                         prod,
                         prod_len
                     );
@@ -382,7 +385,7 @@ where
                     let context_span = context.span();
                     context.set_span(span);
                     parse_stack.push_state(context, state);
-                    log!("{} {:?} -> {:?}", "GOTO".green(), from_state, state);
+                    log!("{} {:?} -> {:?}", "GOTO".paint(LOG), from_state, state);
                     builder.reduce_action(context, prod, prod_len);
                     context.set_span(context_span);
 
@@ -394,10 +397,10 @@ where
                     let layout = context.layout_ahead();
                     next_token = self.next_token(input, context, &layout_parser)?;
                     context.set_layout_ahead(layout);
-                    log!("{}: {:?}", "Token ahead".green(), next_token);
+                    log!("{}: {:?}", "Token ahead".paint(LOG), next_token);
                 }
                 Action::Accept => {
-                    log!("{}", "Accept".green().bold());
+                    log!("{}", "Accept".paint(LOG_BOLD));
                     break;
                 }
                 // This can't happen for context-aware lexing. If there is no
@@ -410,8 +413,8 @@ where
                     "Can't continue in state {state:?} with lookahead {next_token:?}."
                 ))?,
             }
-            log!("{}: {:#?}", "Stack".green(), parse_stack);
-            log!("{}: {:?}", "Current state".green(), state);
+            log!("{}: {:#?}", "Stack".paint(LOG), parse_stack);
+            log!("{}: {:?}", "Current state".paint(LOG), state);
         }
         Ok(builder.get_result())
     }

@@ -1,5 +1,7 @@
-use crate::{position::SourceSpan, Context, Input, State};
+use crate::{position::SourceSpan, Context, Input, State, WARN};
+use codesnake::{Block, CodeWidth, Label, LineIndex};
 use std::fmt::{Debug, Display};
+use yansi::{Paint, Style};
 
 pub type Result<R> = std::result::Result<R, Error>;
 
@@ -16,9 +18,13 @@ pub struct ParseError {
     pub span: Option<SourceSpan>,
 }
 
+fn with_style(d: &impl Display, style: Style) -> String {
+    d.paint(style).to_string()
+}
+
 impl Display for ParseError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let mut loc_str = String::from("Error");
+        let mut loc_str = String::from("Syntax error");
         if self.file.is_some() || self.span.is_some() {
             loc_str.push_str(" at ");
         }
@@ -31,10 +37,42 @@ impl Display for ParseError {
         if let Some(span) = self.span {
             loc_str.push_str(&format!("{span:?}"));
         }
-        write!(f, "{}:\n\t{}", loc_str, self.message.replace('\n', "\n\t"))
+        if let (Some(src), Some(span)) = (self.src.as_ref(), self.span) {
+            let idx = LineIndex::new(src);
+            let mut prev_empty = false;
+
+            let style = |style: Style| move |s| with_style(&s, style);
+
+            let block = Block::new(
+                &idx,
+                [Label::new(span.start.pos..span.end.pos)
+                    .with_text(&self.message)
+                    .with_style(style(WARN))],
+            )
+            .unwrap()
+            .map_code(|s| {
+                let sub = usize::from(core::mem::replace(&mut prev_empty, s.is_empty()));
+                let s = s.replace('\t', "    ");
+                let w = unicode_width::UnicodeWidthStr::width(&*s);
+                CodeWidth::new(s, core::cmp::max(w, 1) - sub)
+            });
+            write!(
+                f,
+                "\n{} {}\n{block}{}\n",
+                block.prologue(),
+                loc_str.paint(WARN),
+                block.epilogue()
+            )
+        } else {
+            write!(
+                f,
+                "{}:\n\t{}",
+                loc_str.paint(WARN),
+                self.message.replace('\n', "\n\t")
+            )
+        }
     }
 }
-
 
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
@@ -93,7 +131,6 @@ impl Error {
     }
 }
 
-
 impl From<std::io::Error> for Box<Error> {
     fn from(e: std::io::Error) -> Self {
         Box::new(Error::IOError(e))
@@ -137,7 +174,7 @@ where
         format!("{:?}", expected[0])
     };
     Error::ParseError(Box::new(ParseError {
-        message: format!("Expected {}.", expected),
+        message: format!("Expected {expected}."),
         file: Some(file_name.to_string()),
         src: input.try_to_string(),
         span: Some(context.position().into()),

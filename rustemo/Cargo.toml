@@ -21,7 +21,9 @@ fancy-regex = { workspace = true }
 once_cell = { workspace = true }
 petgraph = { workspace = true, optional = true }
 thiserror = { workspace = true }
+codesnake = { workspace = true }
 yansi = { workspace = true }
+unicode-width = "0.2.1"
 
 [features]
 default = ["glr"]

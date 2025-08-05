@@ -1,2 +1,8 @@
-Error at <str>:12(1,12):
-	Expected one of LParen, Num.
+
+  ╭─ Syntax error at <str>:12(1,12)
+  │
+1 │ 2 + ( 3  *  + 7 ) + 2 * 4
+  ┆             ┬            
+  ┆             │            
+  ┆             ╰───────────── Expected one of LParen, Num.
+──╯

@@ -1,2 +1,8 @@
-Error at <str>:7(1,7):
-	Expected one of Ta, Num.
+
+  ╭─ Syntax error at <str>:7(1,7)
+  │
+1 │ c 1 2 3
+  ┆        ┬
+  ┆        │
+  ┆        ╰─ Expected one of Ta, Num.
+──╯

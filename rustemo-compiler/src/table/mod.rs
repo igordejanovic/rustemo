@@ -10,9 +10,9 @@ use std::{
 };
 
 use clap::ValueEnum;
-use yansi::Paint;
 use itertools::{chain, Itertools};
-use rustemo::log;
+use rustemo::{log, LOG, LOG_BOLD};
+use yansi::Paint;
 
 use crate::{
     create_index,
@@ -121,8 +121,7 @@ impl Display for LRState<'_> {
                 self.idx,
                 self.grammar.symbol_name(self.symbol)
             )
-            .green()
-            .bold(),
+            .paint(LOG_BOLD),
             self.items
                 .iter()
                 .map(|i| i.to_string(self.grammar))
@@ -424,10 +423,10 @@ impl LRItem {
         rhs.insert(self.position, ".".into());
         format!(
             "{}: {}: {}    {{{}}}",
-            prod.idx.to_string().green(),
+            prod.idx.to_string().paint(LOG),
             grammar
                 .symbol_name(grammar.nonterm_to_symbol_index(prod.nonterminal))
-                .green(),
+                .paint(LOG),
             rhs.join(" "),
             self.follow
                 .borrow()
@@ -1042,13 +1041,13 @@ impl<'g, 's> LRTable<'g, 's> {
 
     pub fn print_conflicts_report(&self, conflicts: &Vec<Conflict<'g, 's>>) {
         for conflict in conflicts {
-            println!("{} {}", "In".green().bold(), conflict.state);
+            println!("{} {}", "In".paint(LOG_BOLD), conflict.state);
             print!(
                 "When I saw {} and see token {} ahead I can't decide",
-                self.grammar.symbol_name(conflict.state.symbol).green(),
+                self.grammar.symbol_name(conflict.state.symbol).paint(LOG),
                 self.grammar
                     .symbol_name(self.grammar.term_to_symbol_index(conflict.follow))
-                    .green()
+                    .paint(LOG)
             );
             match conflict.kind {
                 ConflictKind::ShiftReduce(prod) => {
@@ -1056,7 +1055,7 @@ impl<'g, 's> LRTable<'g, 's> {
                         " should I shift or reduce by production:\n{}\n",
                         self.grammar.productions[prod]
                             .to_string(self.grammar)
-                            .green()
+                            .paint(LOG)
                     );
                 }
                 ConflictKind::ReduceReduce(prod1, prod2) => {
@@ -1064,10 +1063,10 @@ impl<'g, 's> LRTable<'g, 's> {
                         " should I reduce by production:\n{}\nor production:\n{}\n",
                         self.grammar.productions[prod1]
                             .to_string(self.grammar)
-                            .green(),
+                            .paint(LOG),
                         self.grammar.productions[prod2]
                             .to_string(self.grammar)
-                            .green()
+                            .paint(LOG)
                     );
                 }
             }
@@ -1088,7 +1087,7 @@ impl<'g, 's> LRTable<'g, 's> {
                 shift_reduce_len,
                 reduce_reduce_len
             )
-            .green()
+            .paint(LOG)
         );
     }
 
@@ -1264,7 +1263,7 @@ impl Display for LRTable<'_, '_> {
                     state.idx,
                     self.grammar.symbol_name(state.symbol)
                 )
-                .green(),
+                .paint(LOG),
             )?;
             for item in &state.items {
                 writeln!(f, "\t{}", item.to_string(self.grammar))?;
@@ -1293,9 +1292,9 @@ impl Display for LRTable<'_, '_> {
                 .collect::<Vec<_>>();
 
             if !actions.is_empty() {
-                writeln!(f, "{}", "\tACTIONS:".green())?;
+                writeln!(f, "{}", "\tACTIONS:".paint(LOG))?;
                 for (term, action) in actions {
-                    writeln!(f, "\t\t{term} {} {action}", "=>".green())?;
+                    writeln!(f, "\t\t{term} {} {action}", "=>".paint(LOG))?;
                 }
             }
 
@@ -1319,9 +1318,9 @@ impl Display for LRTable<'_, '_> {
                 .collect::<Vec<_>>();
 
             if !gotos.is_empty() {
-                writeln!(f, "{}", "\tGOTOs:".green())?;
+                writeln!(f, "{}", "\tGOTOs:".paint(LOG))?;
                 for (nonterm, goto) in gotos {
-                    writeln!(f, "\t\t{nonterm} {} {goto}", "=>".green())?;
+                    writeln!(f, "\t\t{nonterm} {} {goto}", "=>".paint(LOG))?;
                 }
             }
         }

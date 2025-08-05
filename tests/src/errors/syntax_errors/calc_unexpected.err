@@ -1,1 +1,8 @@
-"Error at <str>:6(1,6):\n\tExpected one of STOP, Plus."
+
+  ╭─ Syntax error at <str>:6(1,6)
+  │
+1 │ 2 + 3 / 4 + 5
+  ┆       ┬      
+  ┆       │      
+  ┆       ╰─────── Expected one of STOP, Plus.
+──╯

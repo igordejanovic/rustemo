@@ -1,2 +1,8 @@
-Error at <str>:4(1,4):
-	Expected STOP.
+
+  ╭─ Syntax error at <str>:4(1,4)
+  │
+1 │ c a a
+  ┆     ┬
+  ┆     │
+  ┆     ╰─ Expected STOP.
+──╯

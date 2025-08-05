@@ -1,2 +1,8 @@
-Error at <str>:6(1,6):
-	Expected STOP.
+
+  ╭─ Syntax error at <str>:6(1,6)
+  │
+1 │ c b 1 2
+  ┆       ┬
+  ┆       │
+  ┆       ╰─ Expected STOP.
+──╯

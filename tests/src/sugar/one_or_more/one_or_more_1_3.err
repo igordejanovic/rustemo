@@ -1,2 +1,8 @@
-Error at <str>:3(1,3):
-	Expected Num.
+
+  ╭─ Syntax error at <str>:3(1,3)
+  │
+1 │ c b
+  ┆    ┬
+  ┆    │
+  ┆    ╰─ Expected Num.
+──╯

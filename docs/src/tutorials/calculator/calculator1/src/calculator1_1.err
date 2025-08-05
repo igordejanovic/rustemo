@@ -1,2 +1,8 @@
-Error at <str>:2(1,2):
-	Expected Operator.
+
+  ╭─ Syntax error at <str>:2(1,2)
+  │
+1 │ 2 3
+  ┆   ┬
+  ┆   │
+  ┆   ╰─ Expected Operator.
+──╯

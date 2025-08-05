@@ -3,10 +3,11 @@
 use std::path::PathBuf;
 
 use clap::{ArgAction, Parser};
-use yansi::Paint;
+use rustemo::WARN;
 use rustemo_compiler::{
     BuilderType, GeneratorTableType, LexerType, ParserAlgo, Settings, TableType,
 };
+use yansi::Paint;
 
 #[derive(Parser)]
 #[cfg_attr(feature="bootstrap",
@@ -165,7 +166,7 @@ fn main() {
     };
 
     if let Err(e) = result {
-        println!("{}", e.to_string().red());
-        println!("{}", "Parser(s) not generated.".red());
+        println!("{e}");
+        println!("{}", "Parser(s) not generated.".paint(WARN));
     }
 }

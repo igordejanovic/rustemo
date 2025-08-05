@@ -1,2 +1,8 @@
-Error at <str>:9(1,9):
-	Expected one of STOP, Comma.
+
+  ╭─ Syntax error at <str>:9(1,9)
+  │
+1 │ c b a, a a, a
+  ┆          ┬   
+  ┆          │   
+  ┆          ╰──── Expected one of STOP, Comma.
+──╯

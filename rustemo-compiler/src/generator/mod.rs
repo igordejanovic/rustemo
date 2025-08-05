@@ -3,14 +3,14 @@ mod arrays;
 mod base;
 mod functions;
 
-use yansi::Paint;
 use quote::format_ident;
-use rustemo::Parser;
+use rustemo::{Parser, WARN};
 use std::{
     fs,
     path::{Path, PathBuf},
 };
 use syn::{parse_quote, Ident};
+use yansi::Paint;
 
 use crate::{
     error::{Error, Result},
@@ -104,7 +104,7 @@ pub fn generate_parser(
     if let ParserAlgo::LR = settings.parser_algo {
         let conflicts = table.get_conflicts();
         if !conflicts.is_empty() {
-            println!("{}", "\nCONFLICTS:".red());
+            println!("{}", "\nCONFLICTS:".paint(WARN));
             table.print_conflicts_report(&conflicts);
             return Err(Error::Error(
                 "Grammar is not deterministic. There are conflicts.".to_string(),
