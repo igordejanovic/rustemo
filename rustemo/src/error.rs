@@ -1,4 +1,4 @@
-use crate::{position::SourceSpan, Context, Input, State, WARN};
+use crate::{position::SourceSpan, Context, Input, State, LOG, WARN};
 use codesnake::{Block, CodeWidth, Label, LineIndex};
 use std::fmt::{Debug, Display};
 use yansi::{Paint, Style};
@@ -166,7 +166,7 @@ where
             "one of {}",
             expected
                 .iter()
-                .map(|t| format!("{t:?}"))
+                .map(|t| format!("{:?}", t.paint(LOG)))
                 .collect::<Vec<_>>()
                 .join(", ")
         )

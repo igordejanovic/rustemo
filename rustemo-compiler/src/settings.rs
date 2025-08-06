@@ -1,6 +1,8 @@
 use std::fs;
 
 use clap::ValueEnum;
+use rustemo::LOG;
+use yansi::Paint;
 
 use crate::table::TableType;
 use crate::{Error, Result};
@@ -393,7 +395,11 @@ impl Settings {
     /// default builder is used). Used as the last call to the configured
     /// [Settings] value.
     pub fn process_grammar(&self, grammar_path: &Path) -> Result<()> {
-        println!("Generating parser for grammar {grammar_path:?}");
+        println!(
+            "{} {:?}",
+            "Generating parser for grammar".paint(LOG),
+            grammar_path.paint(LOG)
+        );
         let relative_outdir = |p: &Path| -> Result<PathBuf> {
             Ok(p.join(
                 grammar_path
