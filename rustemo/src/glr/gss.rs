@@ -282,7 +282,7 @@ where
 }
 
 /// A node of the Shared Packed Parse Forest (SPPF) (sub)tree
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub enum SPPFTree<'i, I, P, TK>
 where
     I: Input + ?Sized,
@@ -302,6 +302,7 @@ where
         children: RefCell<VecDeque<Rc<Parent<'i, I, P, TK>>>>,
     },
     // Empty Tree
+    #[default]
     Empty,
 }
 
@@ -382,16 +383,6 @@ where
     }
 
     fn set_layout_ahead(&mut self, _layout: Option<&'i I>) {}
-}
-
-impl<I, P, TK> Default for SPPFTree<'_, I, P, TK>
-where
-    I: Input + ?Sized,
-    TK: Copy,
-{
-    fn default() -> Self {
-        Self::Empty
-    }
 }
 
 impl<I, P, TK> Clone for SPPFTree<'_, I, P, TK>

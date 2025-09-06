@@ -163,7 +163,7 @@ impl<'g, 's> PartGenerator<'g, 's> for FunctionPartGenerator {
             .table
             .states
             .iter()
-            .map(|state| action_state_fn_name(state))
+            .map(action_state_fn_name)
             .collect();
         let goto_fn_names: Vec<syn::Ident> = generator
             .table
