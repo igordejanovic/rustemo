@@ -1,5 +1,4 @@
 use crate::context::Context;
-use crate::debug::log;
 use crate::error::{error_expected, Result};
 use crate::input::Input;
 use crate::lexer::{Lexer, Token};

@@ -1,4 +1,4 @@
-use crate::{context::Context, input::Input, log, parser::State, position::SourceSpan, Position};
+use crate::{context::Context, input::Input, parser::State, position::SourceSpan, Position};
 #[cfg(debug_assertions)]
 use crate::{LOG, LOG_BOLD};
 use core::fmt::Debug;

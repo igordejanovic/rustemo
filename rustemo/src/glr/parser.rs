@@ -11,7 +11,6 @@ use crate::{
     glr::gss::Parent,
     input::Input,
     lexer::{Lexer, Token},
-    log,
     lr::{
         builder::SliceBuilder,
         parser::{Action, LRParser, ParserDefinition},
