@@ -130,8 +130,8 @@ pub struct GssHead<'i, I, S, TK>
 where
     I: Input + ?Sized,
 {
-    /// LR state reached when this node is created. Since LR state is related to
-    /// grammar symbol this carries also an information is what is the last
+    /// The LR state reached when this node is created. Since LR state is
+    /// related to grammar symbols, this also carries information about the last
     /// grammar symbol the parser has seen when reaching the current position.
     state: S,
 
@@ -147,7 +147,7 @@ where
     /// Layout before the first token ahead
     layout_ahead: Option<&'i I>,
 
-    /// Token found ahead of this node. At first it is initialized to `None`.
+    /// Token found ahead of this node. Initially set to `None`.
     /// Finding more than one token at the current position will split the head.
     token_ahead: Option<Token<'i, I, TK>>,
 }
