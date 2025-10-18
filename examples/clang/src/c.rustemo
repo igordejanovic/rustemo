@@ -1,4 +1,6 @@
-// C Grammar taken from: http://www.cs.man.ac.uk/~pjj/bnf/c_syntax.bnf
+// C Grammar taken from: http://www.cs.man.ac.uk/~pjj/bnf/c_syntax.bnf and
+// https://github.com/typhoon-hil/cparser
+// and adapted for Rustemo.
 
 translation_unit            : external_decls=external_decl+
                             ;
@@ -30,12 +32,14 @@ decl_body                   : decl_specs=decl_specs init_decl_list=init_declarat
 decl_list                   : decl+
                             ;
 
-decl_specs                  : (
-                                storage_spec=storage_class_spec
-                              | type_spec=type_spec
-                              | type_qual=type_qualifier
-                              )+
+decl_specs                  : decl_specs decl_spec | decl_spec
                             ;
+
+decl_spec                   : storage_spec=storage_class_spec
+                            | type_spec=type_spec
+                            | type_qual=type_qualifier
+                            ;
+
 
 storage_class_spec          : 'auto' | 'register' | 'static' | 'extern' | 'typedef'
                             ;
@@ -109,11 +113,13 @@ pointer                     : '*' type_qualifier* pointer?
                             ;
 
 
-param_type_list             : param_decl+[comma] (comma ellipsis)?
+param_type_list             : param_decl+[comma] param_type_list_varargs?
                             ;
+param_type_list_varargs     : comma ellipsis;
 
-param_decl                  : decl_specs (declarator | abstract_declarator)?
+param_decl                  : decl_specs param_decl_declarator?
                             ;
+param_decl_declarator       : declarator | abstract_declarator;
 
 initializer                 : assignment_exp
                             | '{' initializer_list comma? '}'
@@ -318,10 +324,101 @@ int_const: /[-+]?[0-9]+[uUlL]{0,2}\b/ {prefer};
 float_const: /[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?[FfLl]?(?<=[\w\.])(?![\w\.])/;
 char_const: /'([^'\\\n]|(\\(([a-zA-Z._~!=&\^\-\\?'"])|(\d+)|(x[0-9a-fA-F]+))))'/;
 hex_const: /0[xX][0-9a-fA-F]+/;
-ellipsis: '...';
-dot: '.';
-comma: ',';
-
 string: /"([^"\\\n]|(\\(([a-zA-Z._~!=&\^\-\\?'"])|(\d+)|(x[0-9a-fA-F]+))))*"/;
 id: /[_a-zA-Z][_a-zA-Z0-9]*/;
 KEYWORD: /\w+/;
+
+ellipsis: '...';
+dot: '.';
+comma: ',';
+hash: '#';
+colon: ':';
+question: '?';
+semicolon: ';';
+ocurly: '{';
+ccurly: '}';
+oparent: '(';
+cparent: ')';
+osquare: '[';
+csquare: ']';
+
+// Keywords
+autokw: 'auto';
+ifkw: 'if';
+elsekw: 'else';
+forkw: 'for';
+registerkw: 'register';
+statickw: 'static';
+externkw: 'extern';
+typedefkw: 'typedef';
+structkw: 'struct';
+enumkw: 'enum';
+unionkw: 'union';
+classkw: 'class';
+casekw: 'case';
+defaultkw: 'default';
+switchkw: 'switch';
+dokw: 'do';
+whilekw: 'while';
+gotokw: 'goto';
+continuekw: 'continue';
+breakkw: 'break';
+returnkw: 'return';
+sizeofkw: 'sizeof';
+newkw: 'new';
+
+// Operators
+mulop: '*';
+mulaop: '*=';
+divop: '/';
+divaop: '/=';
+subop: '-';
+subaop: '-=';
+sumop: '+';
+sumaop: '+=';
+modop: '%';
+modaop: '%=';
+lshiftop: '<<';
+lshiftaop: '<<=';
+rshiftop: '>>';
+rshiftaop: '>>=';
+andop: '&';
+andaop: '&=';
+landop: '&&';
+landaop: '&&=';
+orop: '|';
+oraop: '|=';
+lorop: '||';
+loraop: '||=';
+xorop: '^';
+xoraop: '^=';
+incop: '++';
+decop: '--';
+notop: '~';
+lognotop: '!';
+
+// Relations
+eqrel: '==';
+neqrel: '!=';
+ltrel: '<';
+lteqrel: '<=';
+gtrel: '>';
+gteqrel: '>=';
+
+assign: '=';
+access: '->';
+
+// built-in types and modifiers
+voidt: 'void';
+chart: 'char';
+shortt: 'short';
+intt: 'int';
+longt: 'long';
+floatt: 'float';
+doublet: 'double';
+boolt: '_Bool';
+complext: '_Complex';
+signedt: 'signed';
+unsignedt: 'unsigned';
+constt: 'const';
+volatilet: 'volatile';
