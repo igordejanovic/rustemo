@@ -16,7 +16,7 @@ members = [
         "docs/src/tutorials/calculator/calculator4",
         "docs/src/tutorials/calculator/calculator5",
         # example
-        "docs/src/readme_example",
+        "docs/src/readme_example", "examples/clang",
 ]
 
 [workspace.package]
