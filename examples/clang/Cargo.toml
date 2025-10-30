@@ -10,3 +10,12 @@ edition.workspace = true
 rust-version.workspace = true
 
 [dependencies]
+# Needed by rustemo generated parsers.
+rustemo = { workspace = true }
+
+[dev-dependencies]
+# For output_cmp for testing
+rustemo-compiler = { workspace = true }
+
+[build-dependencies]
+rustemo-compiler = { workspace = true }

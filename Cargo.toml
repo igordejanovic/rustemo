@@ -4,8 +4,11 @@ members = [
         "rustemo",
         "rustemo-compiler",
         "tests",
+
+        # examples
         "examples/calculator",
         "examples/json",
+        "examples/clang",
 
         # docs
         "docs/src/parsing/expressions",
@@ -15,8 +18,8 @@ members = [
         "docs/src/tutorials/calculator/calculator3",
         "docs/src/tutorials/calculator/calculator4",
         "docs/src/tutorials/calculator/calculator5",
-        # example
-        "docs/src/readme_example", "examples/clang",
+        # doc example
+        "docs/src/readme_example",
 ]
 
 [workspace.package]
