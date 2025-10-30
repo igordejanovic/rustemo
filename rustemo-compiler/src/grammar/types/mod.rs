@@ -178,7 +178,9 @@ impl SymbolTypes {
         types
     }
 
-    /// Recognize different rule patters:
+    /// Deduce symbol type kind based on rule's production patterns.
+    ///
+    /// Examples:
     /// ```
     /// A: B | EMPTY ---> A is Option<B>
     /// A: A B | B; or A: A B | B | EMPTY; ---> A is Vec<B>
@@ -369,6 +371,7 @@ impl SymbolTypes {
     }
 }
 
+/// The type of the symbol deduced from the grammar rule.
 #[derive(Debug)]
 pub(crate) struct SymbolType {
     pub name: String,
