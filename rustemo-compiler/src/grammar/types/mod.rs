@@ -59,7 +59,7 @@ impl SymbolTypes {
     }
 
     /// Returns a vector of all types inferred from the provided grammar.
-    pub(crate) fn symbol_types(grammar: &Grammar, start_symbol: String) -> SymbolVec<SymbolType> {
+    fn symbol_types(grammar: &Grammar, start_symbol: String) -> SymbolVec<SymbolType> {
         let mut types = SymbolVec::new();
         for terminal in &grammar.terminals {
             assert!(types.len() == terminal.idx.into());
