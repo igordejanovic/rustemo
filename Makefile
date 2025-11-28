@@ -3,6 +3,10 @@
 	test-compiler install-compiler dev docs
 .DEFAULT_GOAL := help
 
+# Set OFFLINE=True env variable for offline mode
+NIX_FLAGS := $(if $(OFFLINE),--offline,)
+CARGO_FLAGS := $(if $(OFFLINE),--frozen,)
+
 export RUST_BACKTRACE=1
 export CARGO_INCREMENTAL=1
 export CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
@@ -30,16 +34,17 @@ help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
 lint:  ## check code issues with clippy nightly
-	nix develop .#nightly --command cargo clippy --all --all-targets -- -D warnings
+	nix develop $(NIX_FLAGS) .#nightly \
+	--command cargo $(CARGO_FLAGS) clippy --all --all-targets -- -D warnings
 
 test:  ## run tests
     # Default test
-	nix develop --command cargo nextest run
+	nix $(NIX_FLAGS) develop --command cargo $(CARGO_FLAGS) nextest run
     # Test with array-based table generator
-	nix develop --command cargo nextest run --features arrays
+	nix $(NIX_FLAGS) develop --command cargo nextest  $(CARGO_FLAGS) run --features arrays
 
 format:  ## Format the code
-	nix develop --command cargo fmt --all
+	nix $(NIX_FLAGS) develop --command cargo $(CARGO_FLAGS) fmt --all
 
 doc-examples:  install-compiler  ## compile docs examples
 	rcomp docs/src/readme_example/src/testlr/calclr.rustemo
@@ -52,7 +57,7 @@ doc-examples:  install-compiler  ## compile docs examples
 check: lint install-compiler doc-examples test  ## Run all checks
 
 check-all:  ## Run all tests for all versions
-	nix flake check
+	nix $(NIX_FLAGS) flake check
 
 login:  ## login to crates.io and caches the API key - needed for release
 	@echo "Version: $(VERSION)"
@@ -76,17 +81,17 @@ release:  ## release packages to crates.io and create git tag
 	@echo "Don't forget to make GitHub release"
 
 test-compiler:  ## run tests for the compiler
-	nix develop --command cargo nextest run -p rustemo-compiler
+	nix $(NIX_FLAGS) develop --command cargo $(CARGO_FLAGS) nextest run -p rustemo-compiler
 
 install-compiler:  test-compiler  ## install the rcomp compiler
-	nix develop --command cargo install --path rustemo-compiler --debug
+	nix $(NIX_FLAGS) develop --command cargo $(CARGO_FLAGS) install --path rustemo-compiler --debug
 
 dev:  ## Setup development environment
-	nix develop .#default
+	nix $(NIX_FLAGS) develop .#default
 
 nightly:  ## Setup development environment with nightly version
-	nix develop .#nightly
+	nix $(NIX_FLAGS) develop .#nightly
 
 docs:  ## Serve docs locally
 	$(BROWSER) "http://localhost:3000/"
-	(cd docs && nix develop --command mdbook serve)
+	(cd docs && nix $(NIX_FLAGS) develop --command mdbook serve)
