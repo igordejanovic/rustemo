@@ -86,10 +86,10 @@ test-compiler:  ## run tests for the compiler
 install-compiler:  test-compiler  ## install the rcomp compiler
 	nix $(NIX_FLAGS) develop --command cargo $(CARGO_FLAGS) install --path rustemo-compiler --debug
 
-dev:  ## Setup development environment
+stable:  ## Setup development environment with STABLE version
 	nix $(NIX_FLAGS) develop .#default
 
-nightly:  ## Setup development environment with nightly version
+nightly:  ## Setup development environment with NIGHTLY version
 	nix $(NIX_FLAGS) develop .#nightly
 
 docs:  ## Serve docs locally
