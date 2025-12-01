@@ -258,8 +258,8 @@ impl Display for Production {
         write!(f, "{}:", self.idx)?;
         for assign in &self.rhs {
             write!(f, " ")?;
-            if assign.name.is_some() {
-                write!(f, "{}=", assign.name.as_ref().unwrap())?;
+            if let Some(name) = assign.name.as_ref() {
+                write!(f, "{}=", name)?;
             }
             write!(
                 f,
