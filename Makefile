@@ -33,7 +33,11 @@ BROWSER := python -c "$$BROWSER_PYSCRIPT"
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
-lint:  ## check code issues with clippy nightly
+lint:  ## check code issues with clippy
+	nix develop $(NIX_FLAGS) \
+	--command cargo $(CARGO_FLAGS) clippy --all --all-targets -- -D warnings
+
+lint-nightly:  ## check code issues with clippy nightly
 	nix develop $(NIX_FLAGS) .#nightly \
 	--command cargo $(CARGO_FLAGS) clippy --all --all-targets -- -D warnings
 
