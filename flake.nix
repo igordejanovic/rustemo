@@ -18,8 +18,17 @@
     };
   };
 
-  outputs = { self, nixpkgs, flake-utils, rust-overlay, crane, mdbook-theme }:
-    flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      flake-utils,
+      rust-overlay,
+      crane,
+      mdbook-theme,
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
       let
         overlays = [ (import rust-overlay) ];
         pkgs = import nixpkgs {
@@ -27,11 +36,23 @@
         };
 
         rustStable = pkgs.rust-bin.stable.latest.default.override {
-          extensions = [ "rust-src" "clippy" "rustfmt" "rust-docs" ];
+          extensions = [
+            "rust-src"
+            "clippy"
+            "rustfmt"
+            "rust-docs"
+            "rust-analyzer"
+          ];
         };
 
         rustNightly = pkgs.rust-bin.nightly.latest.default.override {
-          extensions = [ "rust-src" "clippy" "rustfmt" "rust-docs" ];
+          extensions = [
+            "rust-src"
+            "clippy"
+            "rustfmt"
+            "rust-docs"
+            "rust-analyzer"
+          ];
         };
 
         rev = if (self ? rev) then self.rev else self.dirtyRev;
@@ -41,31 +62,34 @@
         rustemo = import ./. {
           inherit crane pkgs rev;
         };
-        shellPkgs = [ pkgs.cargo-nextest rustemo.packages.compiler ];
+        shellPkgs = [
+          pkgs.cargo-nextest
+          rustemo.packages.compiler
+        ];
       in
-        {
-          devShells.default = pkgs.mkShell {
-            buildInputs = book.buildInputs ++ rustemo.buildInputs ++ shellPkgs ++ [ rustStable ];
-            RUST_SRC_PATH = "${rustStable}/lib/rustlib/src/rust/library";
-            LD_LIBRARY_PATH = "${pkgs.lib.makeLibraryPath [ pkgs.zlib ]}";
-            shellHook = ''
+      {
+        devShells.default = pkgs.mkShell {
+          buildInputs = book.buildInputs ++ rustemo.buildInputs ++ shellPkgs ++ [ rustStable ];
+          RUST_SRC_PATH = "${rustStable}/lib/rustlib/src/rust/library";
+          LD_LIBRARY_PATH = "${pkgs.lib.makeLibraryPath [ pkgs.zlib ]}";
+          shellHook = ''
             echo "Using STABLE Rust environment"
           '';
-          };
-          devShells.beta = pkgs.mkShell {
-            buildInputs = book.buildInputs ++ [ pkgs.rust-bin.beta.latest.default ] ++ shellPkgs;
-          };
-          devShells.nightly = pkgs.mkShell {
-            buildInputs = book.buildInputs ++ [ rustNightly ] ++ shellPkgs;
-            RUST_SRC_PATH = "${rustNightly}/lib/rustlib/src/rust/library";
-            LD_LIBRARY_PATH = "${pkgs.lib.makeLibraryPath [ pkgs.zlib ]}";
-            shellHook = ''
+        };
+        devShells.beta = pkgs.mkShell {
+          buildInputs = book.buildInputs ++ [ pkgs.rust-bin.beta.latest.default ] ++ shellPkgs;
+        };
+        devShells.nightly = pkgs.mkShell {
+          buildInputs = book.buildInputs ++ [ rustNightly ] ++ shellPkgs;
+          RUST_SRC_PATH = "${rustNightly}/lib/rustlib/src/rust/library";
+          LD_LIBRARY_PATH = "${pkgs.lib.makeLibraryPath [ pkgs.zlib ]}";
+          shellHook = ''
             echo "Using NIGHTLY Rust environment"
           '';
-          };
-          inherit (rustemo) checks;
-          packages = rustemo.packages // book.packages;
-        }
+        };
+        inherit (rustemo) checks;
+        packages = rustemo.packages // book.packages;
+      }
     );
 
   nixConfig = {
