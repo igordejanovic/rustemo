@@ -64,6 +64,7 @@
         };
         shellPkgs = [
           pkgs.cargo-nextest
+          pkgs.just
           rustemo.packages.compiler
         ];
       in

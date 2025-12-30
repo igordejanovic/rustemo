@@ -38,6 +38,7 @@ You can contribute in many ways:
     official documentation. Mdbook and its dependencies are handled by Nix (see
     the next section).
 
+
 ## Development setup
 
 For contributing code and docs you are advised to do a proper setup. Rustemo
@@ -48,47 +49,52 @@ After installing Nix and cloning the project all you have to do to start
 developing is:
 
 ```
-nix develop
+just stable
 ```
 
 in the root of the project. You will get a bash shell with all the required
 dependencies installed for testing, building and working with the docs.
 
-For example: 
+For easier project management Rustemo is using
+[just](https://github.com/casey/just) command runner.
 
-- To run documentation in server mode:
-
-    ```
-    mdbook serve docs
-    ```
-
-    The docs will be available at http://localhost:3000/ and refreshed on each change.
-
-- To run all tests:
-
-  ```
-  cargo nextest run
-  ```
-  
-- To test everything, format the code, run the linter:
-
-  ```
-  ./check-update-all.sh
-  ```
-
-
-To run full checks, as they are run in the CI, use this command from your base
-shell (not development shell from the above):
+To see all recipes run:
 
 ```
-nix flake check
+just
+```
+
+To run documentation in server mode:
+
+```
+just docs
+```
+
+The docs will be available at http://localhost:3000/ and refreshed on each change.
+
+To run all tests:
+
+```
+just test
+```
+  
+To test everything, format the code, run the linter:
+
+```
+just check
+```
+
+To run full checks, as they are run in the CI:
+
+```
+just check-all
 ```
 
 This full check takes a while as the tests are run for 3 versions of Rust. To
-see the progress in more details you can run:
+see the progress in more details you can run `check-all` with `-L` flag:
 
 ```
-nix flake check -L
+just check-all -L
 ```
 
 Please do note that it is a requirement for full checks to pass for the
@@ -98,8 +104,7 @@ locally. When you make a Pull Request, GitHub CI will run them.
 To get a specific Rust version environment you can do one of:
 
 ```
-nix develop .#default
-nix develop .#beta
-nix develop .#nightly
+just stable
+just nightly
 ```
 

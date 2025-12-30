@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # [Unreleased]
 
 ## Added
+- Introduced [Just](https://github.com/casey/just) for project management.
 - Pretty error reports thanks to
   [codesnake](https://github.com/01mf02/codesnake/) and
   [yansi](https://github.com/SergioBenitez/yansi).
