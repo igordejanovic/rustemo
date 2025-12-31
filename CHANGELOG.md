@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # [Unreleased]
 
+
+# [0.8.0] - 2025-12-31
+
 ## Added
 - Introduced [Just](https://github.com/casey/just) for project management.
 - Pretty error reports thanks to
@@ -182,7 +185,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial release. See the README for the features available in this release.
 
 
-[unreleased]: https://github.com/igordejanovic/rustemo/compare/0.7.1...HEAD
+[unreleased]: https://github.com/igordejanovic/rustemo/compare/0.8.0...HEAD
+[0.8.0]: https://github.com/igordejanovic/rustemo/compare/0.7.1...0.8.0
 [0.7.1]: https://github.com/igordejanovic/rustemo/compare/0.7.0...0.7.1
 [0.7.0]: https://github.com/igordejanovic/rustemo/compare/0.6.3...0.7.0
 [0.6.3]: https://github.com/igordejanovic/rustemo/compare/0.6.2...0.6.3
