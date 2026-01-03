@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # [Unreleased]
 
 
-# [0.8.0] - 2025-12-31
+# [0.8.0] - 2026-01-03
 
 ## Added
 - Introduced [Just](https://github.com/casey/just) for project management.
