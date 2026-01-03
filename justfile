@@ -75,21 +75,41 @@ login:
     @echo "Version: {{version}}"
     cargo login
 
-# Dry run test releasing crates to crates.io
-release-test:
-    # Running dry run for rustemo package
+# Dry run test releasing rustemo crate to crates.io
+[private]
+test-release-rustemo:
     cargo publish --dry-run -p rustemo
     cargo package --list -p rustemo
-    # Running dry run for rustemo package
-    cargo publish --dry-run -p rustemo
-    cargo package --list -p rustemo
+    @echo "Ready to publish rustemo version {{version}}?"
+    @read -p "Type 'y' to confirm release: " CONFIRM; \
+    if [ "$CONFIRM" != "y" ]; then \
+        echo "Release aborted."; \
+        exit 1; \
+    fi
 
-# Release packages to crates.io and create git tag
-release:
-    # publish
+# Release rustemo crate to crates.io
+release-rustemo: test-release-rustemo
     cargo publish -p rustemo
+
+# Dry run test releasing rustemo compiler crate to crates.io
+[private]
+test-release-compiler:
+    cargo publish --dry-run -p rustemo-compiler
+    cargo package --list -p rustemo-compiler
+    @echo "Ready to publish rustemo compiler version {{version}}?"
+    @read -p "Type 'y' to confirm release: " CONFIRM; \
+    if [ "$CONFIRM" != "y" ]; then \
+        echo "Release aborted."; \
+        exit 1; \
+    fi
+
+# Release rustemo compiler crate to crates.io
+release-compiler: test-release-compiler
     cargo publish -p rustemo-compiler
+
+# Tag a new release and push to GitHub
+release-tag-push:
     git tag -s {{version}} -m "Release {{version}}"
     git push
-    git push origin {{version}}
+    git push --tags origin {{version}}
     @echo "Don't forget to make GitHub release"
