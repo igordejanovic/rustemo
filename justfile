@@ -67,7 +67,7 @@ doc-examples: install-compiler
     rcomp docs/src/readme_example/src/testlr/calclr.rustemo
     rcomp --parser-algo glr docs/src/readme_example/src/testglr/calc.rustemo
     for i in $(seq 1 5); do \
-      rcomp docs/src/tutorials/calculator/calculator$$i/src/calculator.rustemo; \
+      rcomp docs/src/tutorials/calculator/calculator$i/src/calculator.rustemo; \
     done
 
 # Login to crates.io and cache the API key - needed for release
