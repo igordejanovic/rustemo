@@ -22,8 +22,13 @@ once_cell = { workspace = true }
 petgraph = { workspace = true, optional = true }
 thiserror = { workspace = true }
 codesnake = { workspace = true }
-yansi = { workspace = true }
 unicode-width = "0.2.1"
+
+[target.'cfg(not(target_family = "wasm"))'.dependencies]
+yansi = { workspace = true }
+
+[target.'cfg(target_family = "wasm")'.dependencies]
+yansi = { workspace = true, default-features = false }
 
 [features]
 default = ["glr"]
