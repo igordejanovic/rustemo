@@ -1,0 +1,8 @@
+[package]
+name = "tests-wasm"
+
+[workspace] 
+members = []
+
+[dependencies]
+rustemo = { path = "../rustemo" }
