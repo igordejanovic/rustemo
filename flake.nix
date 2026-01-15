@@ -43,6 +43,7 @@
             "rust-docs"
             "rust-analyzer"
           ];
+          targets = [ "wasm32-unknown-unknown" ];
         };
 
         rustNightly = pkgs.rust-bin.nightly.latest.default.override {
@@ -70,7 +71,7 @@
       in
       {
         devShells.default = pkgs.mkShell {
-          buildInputs = book.buildInputs ++ rustemo.buildInputs ++ shellPkgs ++ [ rustStable ];
+          buildInputs = book.buildInputs ++ shellPkgs ++ [ rustStable ];
           RUST_SRC_PATH = "${rustStable}/lib/rustlib/src/rust/library";
           LD_LIBRARY_PATH = "${pkgs.lib.makeLibraryPath [ pkgs.zlib ]}";
           shellHook = ''
@@ -78,10 +79,10 @@
           '';
         };
         devShells.beta = pkgs.mkShell {
-          buildInputs = book.buildInputs ++ [ pkgs.rust-bin.beta.latest.default ] ++ shellPkgs;
+          buildInputs = book.buildInputs ++ shellPkgs ++ [ pkgs.rust-bin.beta.latest.default ];
         };
         devShells.nightly = pkgs.mkShell {
-          buildInputs = book.buildInputs ++ [ rustNightly ] ++ shellPkgs;
+          buildInputs = book.buildInputs ++ shellPkgs ++ [ rustNightly ];
           RUST_SRC_PATH = "${rustNightly}/lib/rustlib/src/rust/library";
           LD_LIBRARY_PATH = "${pkgs.lib.makeLibraryPath [ pkgs.zlib ]}";
           shellHook = ''

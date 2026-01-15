@@ -74,14 +74,28 @@ let
 				touch $out
 			'';
 		}; 			
+
+    wasmCheck = toolchain:
+      let
+        craneLibToolchain = craneLib.overrideToolchain (toolchain.override {
+          targets = [ "wasm32-unknown-unknown" ];
+        });
+      in craneLibToolchain.buildPackage {
+        src = src;
+        pname = "tests-wasm";
+        version = "0.0.0";
+        strictDeps = true;
+        doCheck = false;
+        cargoExtraArgs = "--target wasm32-unknown-unknown";
+      };
 in
 {
-	buildInputs = [ pkgs.rust-bin.stable.latest.default ];
 	checks = with pkgs.rust-bin; {
 		base = workspaceChecksForToolchain stable."1.74.1".default;
 		stable = workspaceChecksForToolchain stable.latest.default;
 		beta = workspaceChecksForToolchain beta.latest.default;
 		nightly = workspaceChecksForToolchain nightly.latest.default;
+    wasm = wasmCheck stable.latest.default;
 	};
 	packages = rec {
 		default = compiler;
