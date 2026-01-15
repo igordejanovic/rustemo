@@ -23,13 +23,9 @@ petgraph = { workspace = true, optional = true }
 thiserror = { workspace = true }
 codesnake = { workspace = true }
 unicode-width = "0.2.1"
-
-[target.'cfg(not(target_family = "wasm"))'.dependencies]
-yansi = { workspace = true }
-
-[target.'cfg(target_family = "wasm")'.dependencies]
-yansi = { workspace = true, default-features = false }
+yansi = { version = "1", default-features = false }
 
 [features]
-default = ["glr"]
+default = ["glr", "tty"]
 glr = ["dep:petgraph"]
+tty = ["yansi/detect-tty", "yansi/detect-env"]

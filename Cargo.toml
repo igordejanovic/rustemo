@@ -30,7 +30,6 @@ edition = "2021"
 rust-version = "1.74"
 
 [workspace.dependencies]
-yansi = { version="1", features = ["detect-tty", "detect-env"] }
 petgraph = "0.6"
 thiserror = "2"
 itertools = { version = "0.10", default-features = false, features = ["use_std"] }

@@ -41,7 +41,7 @@ quote = { workspace = true }
 syn = { workspace = true }
 proc-macro2 = { workspace = true }
 prettyplease = { workspace = true }
-yansi = { workspace = true }
+yansi = { version="1", features = ["detect-tty", "detect-env"] }
 
 # Needed by rustemo generated parsers.
 rustemo = { workspace = true }

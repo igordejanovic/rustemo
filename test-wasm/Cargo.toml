@@ -1,8 +1,9 @@
 [package]
 name = "tests-wasm"
+edition = "2021"
 
 [workspace] 
 members = []
 
 [dependencies]
-rustemo = { path = "../rustemo" }
+rustemo = { path = "../rustemo", default-features = false }

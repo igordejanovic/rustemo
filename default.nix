@@ -81,12 +81,16 @@ let
           targets = [ "wasm32-unknown-unknown" ];
         });
       in craneLibToolchain.buildPackage {
-        src = src;
+        src = lib.cleanSourceWith {
+          src = craneLib.path ./.;
+          filter = rustemoOrCargoFilter;
+        };
         pname = "tests-wasm";
         version = "0.0.0";
         strictDeps = true;
         doCheck = false;
-        cargoExtraArgs = "--target wasm32-unknown-unknown";
+        cargoExtraArgs = "--target wasm32-unknown-unknown --manifest-path test-wasm/Cargo.toml";
+        CARGO_TARGET_DIR = "target";
       };
 in
 {
