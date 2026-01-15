@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # [Unreleased]
 
+## Fixed
+- Workaround for yansi usage for the WASM target. See [27] and [28]. Thanks
+  @andrewbaxter for the report and test.
+
+[27]: https://github.com/igordejanovic/rustemo/issues/27
+[28]: https://github.com/igordejanovic/rustemo/pull/28
 
 # [0.8.0] - 2026-01-03
 
