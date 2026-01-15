@@ -19,9 +19,9 @@ mod parser;
 mod position;
 mod utils;
 
-mod lr;
-//#[cfg(feature = "glr")]
+#[cfg(feature = "glr")]
 mod glr;
+mod lr;
 
 // Public API
 pub use crate::context::Context;
@@ -39,7 +39,7 @@ pub use crate::lr::{
 };
 pub use crate::parser::{Parser, State};
 
-//#[cfg(feature = "glr")]
+#[cfg(feature = "glr")]
 pub use crate::glr::{
     gss::{Forest, GssHead},
     parser::GlrParser,

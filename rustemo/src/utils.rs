@@ -1,9 +1,11 @@
 /// Simple deduplication.
 /// See: <https://stackoverflow.com/a/57889826/2024430>
+#[cfg(feature = "glr")]
 pub trait Dedup<T: PartialEq + Clone> {
     fn clear_duplicates(&mut self);
 }
 
+#[cfg(feature = "glr")]
 impl<T: PartialEq + Clone> Dedup<T> for Vec<T> {
     fn clear_duplicates(&mut self) {
         let mut already_seen = Vec::with_capacity(self.len());
