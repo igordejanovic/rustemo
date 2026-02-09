@@ -9,7 +9,7 @@ edition = "2021"
 [dependencies]
 # A relative path to rustemo crate is used here for usage in the rustemo project tree.
 # In your projects you should just specify the version.
-rustemo = { version = "0.8", path = "../../../../../rustemo" }
+rustemo = { version = "0.9", path = "../../../../../rustemo" }
 # ANCHOR_END: tutorial
 
 [dev-dependencies]
