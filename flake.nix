@@ -63,6 +63,7 @@
         rustemo = import ./. {
           inherit crane pkgs rev;
         };
+        inherit (rustemo) msrv;
         shellPkgs = [
           pkgs.cargo-nextest
           pkgs.just
@@ -80,9 +81,9 @@
         };
 
         devShells.base = pkgs.mkShell {
-          buildInputs = book.buildInputs ++ shellPkgs ++ [ pkgs.rust-bin.stable."1.82.0".default ];
+          buildInputs = book.buildInputs ++ shellPkgs ++ [ pkgs.rust-bin.stable.${msrv}.default ];
           shellHook = ''
-            echo "Using BASE Rust environment"
+            echo "Using BASE (${msrv}) Rust environment"
           '';
         };
         devShells.beta = pkgs.mkShell {
