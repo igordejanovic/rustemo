@@ -134,10 +134,6 @@ in
       toolchain = stable.${msrv}.default;
       name = "base";
     };
-    beta = workspaceChecksForToolchain {
-      toolchain = beta.latest.default;
-      name = "beta";
-    };
     nightly = workspaceChecksForToolchain {
       toolchain = nightly.latest.default;
       name = "nightly";

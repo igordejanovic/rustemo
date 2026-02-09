@@ -30,7 +30,6 @@ jobs:
         rust:
           - base
           - stable
-          - beta
           - nightly
           - wasm
 

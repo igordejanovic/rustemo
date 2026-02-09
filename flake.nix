@@ -86,9 +86,6 @@
             echo "Using BASE (${msrv}) Rust environment"
           '';
         };
-        devShells.beta = pkgs.mkShell {
-          buildInputs = book.buildInputs ++ shellPkgs ++ [ pkgs.rust-bin.beta.latest.default ];
-        };
         devShells.nightly = pkgs.mkShell {
           buildInputs = book.buildInputs ++ shellPkgs ++ [ rustNightly ];
           RUST_SRC_PATH = "${rustNightly}/lib/rustlib/src/rust/library";
