@@ -78,6 +78,13 @@
             echo "Using STABLE Rust environment"
           '';
         };
+
+        devShells.base = pkgs.mkShell {
+          buildInputs = book.buildInputs ++ shellPkgs ++ [ pkgs.rust-bin.stable."1.82.0".default ];
+          shellHook = ''
+            echo "Using BASE Rust environment"
+          '';
+        };
         devShells.beta = pkgs.mkShell {
           buildInputs = book.buildInputs ++ shellPkgs ++ [ pkgs.rust-bin.beta.latest.default ];
         };
