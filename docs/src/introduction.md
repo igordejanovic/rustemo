@@ -1,4 +1,4 @@
-![](https://raw.githubusercontent.com/igordejanovic/rustemo/main/art/rustemo-logo-small.jpg)
+![](https://raw.githubusercontent.com/igordejanovic/rustemo/main/art/rustemo-logo-small.png)
 
 # Introduction
 
