@@ -33,7 +33,6 @@ let
   commonArgs = {
     inherit src;
     strictDeps = true;
-    pname = "rustemo-workspace";
     doCheck = false;
     GIT_HASH = rev;
   };
@@ -43,57 +42,41 @@ let
   # It is *highly* recommended to use something like cargo-hakari to avoid
   # cache misses when building individual top-level-crates
   cargoArtifactsForToolchain =
-    toolchain:
+    { toolchain, name }:
     let
       craneLibToolchain = craneLib.overrideToolchain toolchain;
     in
-    {
-      cargoArtifacts = craneLibToolchain.buildDepsOnly commonArgs;
-    };
-
-  buildPackageForToolchain =
-    toolchain:
-    let
-      craneLibToolchain = craneLib.overrideToolchain toolchain;
-    in
-    pname:
-    let
-      buildArgs = commonArgs // {
-        inherit (cargoArtifactsForToolchain toolchain) cargoArtifacts;
-        inherit version;
-        cargoExtraArgs = "-p ${pname}";
-      };
-    in
-    craneLibToolchain.buildPackage buildArgs;
+    craneLibToolchain.buildDepsOnly (
+      commonArgs
+      // {
+        pname = "rustemo-${name}-workspace";
+      }
+    );
 
   workspaceChecksForToolchain =
-    toolchain:
+    { toolchain, name }:
     let
       craneLibToolchain = craneLib.overrideToolchain toolchain;
-      tests = craneLibToolchain.cargoNextest (
-        commonArgs
-        // {
-          inherit (cargoArtifactsForToolchain toolchain) cargoArtifacts;
-          doCheck = true;
-        }
-      );
+      pname = "rustemo-${name}-workspace";
+      cargoArtifacts = cargoArtifactsForToolchain { inherit toolchain name; };
+      baseArgs = commonArgs // {
+        inherit cargoArtifacts pname;
+      };
+      tests = craneLibToolchain.cargoNextest (baseArgs // { doCheck = true; });
       clippy = craneLibToolchain.cargoClippy (
-        commonArgs
+        baseArgs
         // {
-          inherit (cargoArtifactsForToolchain toolchain) cargoArtifacts;
           cargoClippyExtraArgs = "--all-targets -- --deny warnings";
         }
       );
-      fmt = craneLibToolchain.cargoFmt commonArgs;
+      fmt = craneLibToolchain.cargoFmt (baseArgs // { inherit pname; });
     in
     stdenv.mkDerivation {
-      name = "rustemo-workspace-check";
-
+      name = "${pname}-check";
       # A convenience for running each individual check when needed from CLI.
       # E.g.: nix build .#checks.x86_64-linux.stable.clippy
       # Until this is solved: https://github.com/NixOS/nix/issues/8881
       inherit clippy tests fmt;
-
       buildInputs = [
         clippy
         tests
@@ -101,9 +84,26 @@ let
       ];
       dontUnpack = true;
       installPhase = ''
-        				touch $out
-        			'';
+        touch $out
+      '';
     };
+
+  buildPackageForToolchain =
+    toolchain: pname:
+    let
+      craneLibToolchain = craneLib.overrideToolchain toolchain;
+    in
+    craneLibToolchain.buildPackage (
+      commonArgs
+      // {
+        cargoArtifacts = cargoArtifactsForToolchain {
+          inherit toolchain;
+          name = "stable";
+        };
+        inherit version pname;
+        cargoExtraArgs = "-p ${pname}";
+      }
+    );
 
   wasmCheck =
     toolchain:
@@ -119,7 +119,7 @@ let
         src = craneLib.path ./.;
         filter = rustemoOrCargoFilter;
       };
-      pname = "tests-wasm";
+      pname = "rustemo-wasm";
       version = "0.0.0";
       strictDeps = true;
       doCheck = false;
@@ -130,10 +130,22 @@ in
 {
   inherit msrv;
   checks = with pkgs.rust-bin; {
-    base = workspaceChecksForToolchain stable.${msrv}.default;
-    stable = workspaceChecksForToolchain stable.latest.default;
-    beta = workspaceChecksForToolchain beta.latest.default;
-    nightly = workspaceChecksForToolchain nightly.latest.default;
+    base = workspaceChecksForToolchain {
+      toolchain = stable.${msrv}.default;
+      name = "base";
+    };
+    beta = workspaceChecksForToolchain {
+      toolchain = beta.latest.default;
+      name = "beta";
+    };
+    nightly = workspaceChecksForToolchain {
+      toolchain = nightly.latest.default;
+      name = "nightly";
+    };
+    stable = workspaceChecksForToolchain {
+      toolchain = stable.latest.default;
+      name = "stable";
+    };
     wasm = wasmCheck stable.latest.default;
   };
   packages = rec {
