@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # [Unreleased]
 
+## Changed
+- Minimal supported Rust version bumped to 1.82.0.
+- Removed checks for the beta version.
+
 ## Fixed
 - Workaround for yansi usage for the WASM target. See [27] and [28]. Thanks
   @andrewbaxter for the report and test.
