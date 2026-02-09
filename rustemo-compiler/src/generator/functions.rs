@@ -1,4 +1,4 @@
-use std::iter::{once, repeat};
+use std::iter::{once, repeat_n};
 
 use super::{arrays::ArrayPartGenerator, ParserGenerator, PartGenerator};
 
@@ -148,8 +148,10 @@ impl<'g, 's> PartGenerator<'g, 's> for FunctionPartGenerator {
                     })
                     .chain(
                         // Fill the rest with "None"
-                        repeat(parse_quote! {None})
-                            .take(max_recognizers - state.sorted_terminals.len()),
+                        repeat_n(
+                            parse_quote! {None},
+                            max_recognizers - state.sorted_terminals.len(),
+                        ),
                     )
                     .collect();
 

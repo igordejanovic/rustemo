@@ -1,4 +1,4 @@
-use std::iter::repeat;
+use std::iter::repeat_n;
 
 use quote::format_ident;
 use syn::parse_quote;
@@ -66,7 +66,7 @@ impl<'g, 's> PartGenerator<'g, 's> for ArrayPartGenerator {
                             .iter()
                             .cloned()
                             .map(Some)
-                            .chain(repeat(None).take(max_actions - l))
+                            .chain(repeat_n(None, max_actions - l))
                             .map(|a| generator.action_to_syntax(&a))
                             .collect();
                         parse_quote! {
@@ -121,8 +121,10 @@ impl<'g, 's> PartGenerator<'g, 's> for ArrayPartGenerator {
                     })
                     .chain(
                         // Fill the rest with "None"
-                        repeat(parse_quote! {None})
-                            .take(max_recognizers - state.sorted_terminals.len()),
+                        repeat_n(
+                            parse_quote! {None},
+                            max_recognizers - state.sorted_terminals.len(),
+                        ),
                     )
                     .collect();
 

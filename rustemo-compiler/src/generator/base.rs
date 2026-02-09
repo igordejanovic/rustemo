@@ -1,4 +1,4 @@
-use std::iter::repeat;
+use std::iter::repeat_n;
 
 use quote::format_ident;
 use syn::parse_quote;
@@ -745,9 +745,7 @@ impl<'g, 's> PartGenerator<'g, 's> for BasePartGenerator {
                     } else {
 
                         let match_expr = |len: usize| -> syn::Expr {
-                            let mut next_rep: Vec<syn::Expr> = repeat(
-                                parse_quote!{ i.next().unwrap() }
-                            ).take(len).collect();
+                            let mut next_rep: Vec<syn::Expr> = repeat_n(parse_quote!{ i.next().unwrap() }, len).collect();
                             if len > 1 {
                                 parse_quote!{ (#(#next_rep),*) }
                             } else {
