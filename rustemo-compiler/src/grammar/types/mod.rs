@@ -290,11 +290,19 @@ impl SymbolTypes {
     fn find_recursions(symbol_types: &mut SymbolVec<SymbolType>, start_symbol: String) {
         let types: HashMap<String, &SymbolType> =
             symbol_types.iter().map(|t| (t.name.clone(), t)).collect();
+
+        let mut visited: HashSet<String> = HashSet::new();
+
         fn dfs(
             ty: &SymbolType,
             visiting: &mut HashSet<String>,
+            visited: &mut HashSet<String>,
             types: &HashMap<String, &SymbolType>,
         ) {
+            if visited.contains(&ty.name) {
+                return;
+            }
+
             match &ty.kind {
                 SymbolTypeKind::Ref {
                     ref recursive,
@@ -314,7 +322,7 @@ impl SymbolTypes {
                             }
                         } else {
                             visiting.insert(ref_type.clone());
-                            dfs(types.get(ref_type).unwrap(), visiting, types);
+                            dfs(types.get(ref_type).unwrap(), visiting, visited, types);
                             visiting.remove(ref_type);
                         }
                     }
@@ -331,7 +339,12 @@ impl SymbolTypes {
                                         recursive.set(true);
                                     } else {
                                         visiting.insert(ref_type.clone());
-                                        dfs(types.get(ref_type).unwrap(), visiting, types);
+                                        dfs(
+                                            types.get(ref_type).unwrap(),
+                                            visiting,
+                                            visited,
+                                            types,
+                                        );
                                         visiting.remove(ref_type);
                                     }
                                 }
@@ -346,6 +359,7 @@ impl SymbolTypes {
                                             dfs(
                                                 types.get(&field.ref_type).unwrap(),
                                                 visiting,
+                                                visited,
                                                 types,
                                             );
                                             visiting.remove(&field.ref_type);
@@ -359,6 +373,8 @@ impl SymbolTypes {
                 }
                 SymbolTypeKind::Terminal => (),
             }
+
+            visited.insert(ty.name.clone());
         }
         log!("Start symbol: {start_symbol:#?}");
         log!("Symbol types: {symbol_types:#?}");
@@ -366,6 +382,7 @@ impl SymbolTypes {
         dfs(
             types.get(&start_symbol).unwrap(),
             &mut HashSet::new(),
+            &mut visited,
             &types,
         );
     }
