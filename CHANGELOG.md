@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # [Unreleased]
 
+## Added
+- C lang example
+
+## Fixed
+- exponential blow-up in recursive types deduction.
+
+
 # [0.9.0] - 2026-02-10
 
 ## Changed
