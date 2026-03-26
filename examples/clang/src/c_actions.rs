@@ -38,7 +38,10 @@ pub fn id(_ctx: &Ctx, token: Token) -> id {
 pub struct translation_unit {
     pub external_decls: external_decl1,
 }
-pub fn translation_unit_c1(_ctx: &Ctx, external_decls: external_decl1) -> translation_unit {
+pub fn translation_unit_translation_unit(
+    _ctx: &Ctx,
+    external_decls: external_decl1,
+) -> translation_unit {
     translation_unit { external_decls }
 }
 pub type external_decl1 = Vec<external_decl>;
@@ -54,33 +57,33 @@ pub fn external_decl1_external_decl(_ctx: &Ctx, external_decl: external_decl) ->
     vec![external_decl]
 }
 #[derive(Debug, Clone)]
-pub struct external_declC1 {
+pub struct ExternalFunction {
     pub function: function_definition,
 }
 #[derive(Debug, Clone)]
-pub struct external_declC2 {
+pub struct ExternalDeclaration {
     pub declaration: Box<decl>,
 }
 #[derive(Debug, Clone)]
-pub struct external_declC3 {
+pub struct ExternalLineDirective {
     pub ld: Box<line_directive>,
 }
 #[derive(Debug, Clone)]
 pub enum external_decl {
-    C1(external_declC1),
-    C2(external_declC2),
-    C3(external_declC3),
+    Function(ExternalFunction),
+    Declaration(ExternalDeclaration),
+    LineDirective(ExternalLineDirective),
 }
-pub fn external_decl_c1(_ctx: &Ctx, function: function_definition) -> external_decl {
-    external_decl::C1(external_declC1 { function })
+pub fn external_decl_function(_ctx: &Ctx, function: function_definition) -> external_decl {
+    external_decl::Function(ExternalFunction { function })
 }
-pub fn external_decl_c2(_ctx: &Ctx, declaration: decl) -> external_decl {
-    external_decl::C2(external_declC2 {
+pub fn external_decl_declaration(_ctx: &Ctx, declaration: decl) -> external_decl {
+    external_decl::Declaration(ExternalDeclaration {
         declaration: Box::new(declaration),
     })
 }
-pub fn external_decl_c3(_ctx: &Ctx, ld: line_directive) -> external_decl {
-    external_decl::C3(external_declC3 { ld: Box::new(ld) })
+pub fn external_decl_line_directive(_ctx: &Ctx, ld: line_directive) -> external_decl {
+    external_decl::LineDirective(ExternalLineDirective { ld: Box::new(ld) })
 }
 #[derive(Debug, Clone)]
 pub struct line_directive {
@@ -88,7 +91,7 @@ pub struct line_directive {
     pub string: Box<string>,
     pub line_directive_int_opt: line_directive_intOpt,
 }
-pub fn line_directive_c1(
+pub fn line_directive_line_directive(
     _ctx: &Ctx,
     int_const: int_const,
     string: string,
@@ -111,109 +114,109 @@ pub fn line_directive_int_opt_empty(_ctx: &Ctx) -> line_directive_intOpt {
     None
 }
 #[derive(Debug, Clone)]
-pub struct line_directive_intC2 {
+pub struct LineDirectiveIntRecursive {
     pub line_directive_int: Box<line_directive_int>,
     pub int_const: Box<int_const>,
 }
 #[derive(Debug, Clone)]
 pub enum line_directive_int {
-    int_const(Box<int_const>),
-    C2(line_directive_intC2),
+    Base(Box<int_const>),
+    Recursive(LineDirectiveIntRecursive),
 }
-pub fn line_directive_int_int_const(_ctx: &Ctx, int_const: int_const) -> line_directive_int {
-    line_directive_int::int_const(Box::new(int_const))
+pub fn line_directive_int_base(_ctx: &Ctx, int_const: int_const) -> line_directive_int {
+    line_directive_int::Base(Box::new(int_const))
 }
-pub fn line_directive_int_c2(
+pub fn line_directive_int_recursive(
     _ctx: &Ctx,
     line_directive_int: line_directive_int,
     int_const: int_const,
 ) -> line_directive_int {
-    line_directive_int::C2(line_directive_intC2 {
+    line_directive_int::Recursive(LineDirectiveIntRecursive {
         line_directive_int: Box::new(line_directive_int),
         int_const: Box::new(int_const),
     })
 }
 #[derive(Debug, Clone)]
-pub struct function_definitionC1 {
+pub struct FunctionFull {
     pub decl_specs: decl_specs,
     pub declarator: Box<declarator>,
     pub decl_list: decl_list,
     pub body: compound_stat,
 }
 #[derive(Debug, Clone)]
-pub struct function_definitionC2 {
+pub struct FunctionNoSpecs {
     pub declarator: Box<declarator>,
     pub decl_list: Box<decl_list>,
     pub body: Box<compound_stat>,
 }
 #[derive(Debug, Clone)]
-pub struct function_definitionC3 {
+pub struct FunctionNoDeclList {
     pub decl_specs: Box<decl_specs>,
     pub declarator: Box<declarator>,
     pub body: Box<compound_stat>,
 }
 #[derive(Debug, Clone)]
-pub struct function_definitionC4 {
+pub struct FunctionMinimal {
     pub declarator: Box<declarator>,
     pub body: Box<compound_stat>,
 }
 #[derive(Debug, Clone)]
 pub enum function_definition {
-    C1(function_definitionC1),
-    C2(function_definitionC2),
-    C3(function_definitionC3),
-    C4(function_definitionC4),
+    Full(FunctionFull),
+    NoSpecs(FunctionNoSpecs),
+    NoDeclList(FunctionNoDeclList),
+    Minimal(FunctionMinimal),
 }
-pub fn function_definition_c1(
+pub fn function_definition_full(
     _ctx: &Ctx,
     decl_specs: decl_specs,
     declarator: declarator,
     decl_list: decl_list,
     body: compound_stat,
 ) -> function_definition {
-    function_definition::C1(function_definitionC1 {
+    function_definition::Full(FunctionFull {
         decl_specs,
         declarator: Box::new(declarator),
         decl_list,
         body,
     })
 }
-pub fn function_definition_c2(
+pub fn function_definition_no_specs(
     _ctx: &Ctx,
     declarator: declarator,
     decl_list: decl_list,
     body: compound_stat,
 ) -> function_definition {
-    function_definition::C2(function_definitionC2 {
+    function_definition::NoSpecs(FunctionNoSpecs {
         declarator: Box::new(declarator),
         decl_list: Box::new(decl_list),
         body: Box::new(body),
     })
 }
-pub fn function_definition_c3(
+pub fn function_definition_no_decl_list(
     _ctx: &Ctx,
     decl_specs: decl_specs,
     declarator: declarator,
     body: compound_stat,
 ) -> function_definition {
-    function_definition::C3(function_definitionC3 {
+    function_definition::NoDeclList(FunctionNoDeclList {
         decl_specs: Box::new(decl_specs),
         declarator: Box::new(declarator),
         body: Box::new(body),
     })
 }
-pub fn function_definition_c4(
+pub fn function_definition_minimal(
     _ctx: &Ctx,
     declarator: declarator,
     body: compound_stat,
 ) -> function_definition {
-    function_definition::C4(function_definitionC4 {
+    function_definition::Minimal(FunctionMinimal {
         declarator: Box::new(declarator),
         body: Box::new(body),
     })
 }
 pub type decl = decl_body;
-pub fn decl_decl_body(_ctx: &Ctx, decl_body: decl_body) -> decl {
+pub fn decl_decl(_ctx: &Ctx, decl_body: decl_body) -> decl {
     decl_body
 }
 #[derive(Debug, Clone)]
@@ -221,7 +224,7 @@ pub struct decl_body {
     pub decl_specs: Box<decl_specs>,
     pub init_decl_list: init_declarator_listOpt,
 }
-pub fn decl_body_c1(
+pub fn decl_body_decl_body(
     _ctx: &Ctx,
     decl_specs: decl_specs,
     init_decl_list: init_declarator_listOpt,
@@ -254,50 +257,54 @@ pub fn decl1_decl(_ctx: &Ctx, decl: decl) -> decl1 {
     vec![decl]
 }
 #[derive(Debug, Clone)]
-pub struct decl_specsC1 {
+pub struct DeclSpecsRecursive {
     pub decl_specs: Box<decl_specs>,
     pub decl_spec: decl_spec,
 }
 #[derive(Debug, Clone)]
 pub enum decl_specs {
-    C1(decl_specsC1),
-    decl_spec(Box<decl_spec>),
+    Recursive(DeclSpecsRecursive),
+    Base(Box<decl_spec>),
 }
-pub fn decl_specs_c1(_ctx: &Ctx, decl_specs: decl_specs, decl_spec: decl_spec) -> decl_specs {
-    decl_specs::C1(decl_specsC1 {
+pub fn decl_specs_recursive(
+    _ctx: &Ctx,
+    decl_specs: decl_specs,
+    decl_spec: decl_spec,
+) -> decl_specs {
+    decl_specs::Recursive(DeclSpecsRecursive {
         decl_specs: Box::new(decl_specs),
         decl_spec,
     })
 }
-pub fn decl_specs_decl_spec(_ctx: &Ctx, decl_spec: decl_spec) -> decl_specs {
-    decl_specs::decl_spec(Box::new(decl_spec))
+pub fn decl_specs_base(_ctx: &Ctx, decl_spec: decl_spec) -> decl_specs {
+    decl_specs::Base(Box::new(decl_spec))
 }
 #[derive(Debug, Clone)]
-pub struct decl_specC1 {
+pub struct DeclSpecStorage {
     pub storage_spec: storage_class_spec,
 }
 #[derive(Debug, Clone)]
-pub struct decl_specC2 {
+pub struct DeclSpecType {
     pub type_spec: type_spec,
 }
 #[derive(Debug, Clone)]
-pub struct decl_specC3 {
+pub struct DeclSpecQualifier {
     pub type_qual: Box<type_qualifier>,
 }
 #[derive(Debug, Clone)]
 pub enum decl_spec {
-    C1(decl_specC1),
-    C2(decl_specC2),
-    C3(decl_specC3),
+    Storage(DeclSpecStorage),
+    Type(DeclSpecType),
+    Qualifier(DeclSpecQualifier),
 }
-pub fn decl_spec_c1(_ctx: &Ctx, storage_spec: storage_class_spec) -> decl_spec {
-    decl_spec::C1(decl_specC1 { storage_spec })
+pub fn decl_spec_storage(_ctx: &Ctx, storage_spec: storage_class_spec) -> decl_spec {
+    decl_spec::Storage(DeclSpecStorage { storage_spec })
 }
-pub fn decl_spec_c2(_ctx: &Ctx, type_spec: type_spec) -> decl_spec {
-    decl_spec::C2(decl_specC2 { type_spec })
+pub fn decl_spec_type(_ctx: &Ctx, type_spec: type_spec) -> decl_spec {
+    decl_spec::Type(DeclSpecType { type_spec })
 }
-pub fn decl_spec_c3(_ctx: &Ctx, type_qual: type_qualifier) -> decl_spec {
-    decl_spec::C3(decl_specC3 {
+pub fn decl_spec_qualifier(_ctx: &Ctx, type_qual: type_qualifier) -> decl_spec {
+    decl_spec::Qualifier(DeclSpecQualifier {
         type_qual: Box::new(type_qual),
     })
 }
@@ -398,55 +405,55 @@ pub fn type_qualifier_volatilet(_ctx: &Ctx) -> type_qualifier {
     type_qualifier::volatilet
 }
 #[derive(Debug, Clone)]
-pub struct struct_or_union_specC1 {
+pub struct StructOrUnionSpecLong {
     pub struct_type: struct_or_union,
     pub id: id,
     pub fields: struct_decl1,
 }
 #[derive(Debug, Clone)]
-pub struct struct_or_union_specC2 {
+pub struct StructOrUnionSpecAnon {
     pub struct_type: Box<struct_or_union>,
     pub fields: Box<struct_decl1>,
 }
 #[derive(Debug, Clone)]
-pub struct struct_or_union_specC3 {
+pub struct StructOrUnionSpecShort {
     pub struct_type: Box<struct_or_union>,
     pub id: Box<id>,
 }
 #[derive(Debug, Clone)]
 pub enum struct_or_union_spec {
-    C1(struct_or_union_specC1),
-    C2(struct_or_union_specC2),
-    C3(struct_or_union_specC3),
+    Long(StructOrUnionSpecLong),
+    Anon(StructOrUnionSpecAnon),
+    Short(StructOrUnionSpecShort),
 }
-pub fn struct_or_union_spec_c1(
+pub fn struct_or_union_spec_long(
     _ctx: &Ctx,
     struct_type: struct_or_union,
     id: id,
     fields: struct_decl1,
 ) -> struct_or_union_spec {
-    struct_or_union_spec::C1(struct_or_union_specC1 {
+    struct_or_union_spec::Long(StructOrUnionSpecLong {
         struct_type,
         id,
         fields,
     })
 }
-pub fn struct_or_union_spec_c2(
+pub fn struct_or_union_spec_anon(
     _ctx: &Ctx,
     struct_type: struct_or_union,
     fields: struct_decl1,
 ) -> struct_or_union_spec {
-    struct_or_union_spec::C2(struct_or_union_specC2 {
+    struct_or_union_spec::Anon(StructOrUnionSpecAnon {
         struct_type: Box::new(struct_type),
         fields: Box::new(fields),
     })
 }
-pub fn struct_or_union_spec_c3(
+pub fn struct_or_union_spec_short(
     _ctx: &Ctx,
     struct_type: struct_or_union,
     id: id,
 ) -> struct_or_union_spec {
-    struct_or_union_spec::C3(struct_or_union_specC3 {
+    struct_or_union_spec::Short(StructOrUnionSpecShort {
         struct_type: Box::new(struct_type),
         id: Box::new(id),
     })
@@ -501,46 +508,46 @@ pub fn init_declarator1_init_declarator(
     vec![init_declarator]
 }
 #[derive(Debug, Clone)]
-pub struct init_declaratorC1 {
+pub struct InitDeclaratorDecl {
     pub decl: Box<declarator>,
 }
 #[derive(Debug, Clone)]
-pub struct init_declaratorC2 {
+pub struct InitDeclaratorInit {
     pub decl: Box<declarator>,
     pub init: initializer,
 }
 #[derive(Debug, Clone)]
 pub enum init_declarator {
-    C1(init_declaratorC1),
-    C2(init_declaratorC2),
+    Decl(InitDeclaratorDecl),
+    Init(InitDeclaratorInit),
 }
-pub fn init_declarator_c1(_ctx: &Ctx, decl: declarator) -> init_declarator {
-    init_declarator::C1(init_declaratorC1 {
+pub fn init_declarator_decl(_ctx: &Ctx, decl: declarator) -> init_declarator {
+    init_declarator::Decl(InitDeclaratorDecl {
         decl: Box::new(decl),
     })
 }
-pub fn init_declarator_c2(_ctx: &Ctx, decl: declarator, init: initializer) -> init_declarator {
-    init_declarator::C2(init_declaratorC2 {
+pub fn init_declarator_init(_ctx: &Ctx, decl: declarator, init: initializer) -> init_declarator {
+    init_declarator::Init(InitDeclaratorInit {
         decl: Box::new(decl),
         init,
     })
 }
 #[derive(Debug, Clone)]
-pub struct struct_declC1 {
+pub struct StructDeclStructDecl {
     pub spec_qualifier_list: spec_qualifier_list,
     pub struct_declarator1: struct_declarator1,
 }
 #[derive(Debug, Clone)]
 pub enum struct_decl {
-    C1(struct_declC1),
+    StructDecl(StructDeclStructDecl),
     line_directive(line_directive),
 }
-pub fn struct_decl_c1(
+pub fn struct_decl_struct_decl(
     _ctx: &Ctx,
     spec_qualifier_list: spec_qualifier_list,
     struct_declarator1: struct_declarator1,
 ) -> struct_decl {
-    struct_decl::C1(struct_declC1 {
+    struct_decl::StructDecl(StructDeclStructDecl {
         spec_qualifier_list,
         struct_declarator1,
     })
@@ -564,114 +571,119 @@ pub fn struct_declarator1_struct_declarator(
     vec![struct_declarator]
 }
 #[derive(Debug, Clone)]
-pub struct spec_qualifier_listC1 {
+pub struct SpecQualifierListTypeRecursive {
     pub type_spec: Box<type_spec>,
     pub spec_qualifier_list: Box<spec_qualifier_list>,
 }
 #[derive(Debug, Clone)]
-pub struct spec_qualifier_listC3 {
+pub struct SpecQualifierListQualRecursive {
     pub type_qualifier: type_qualifier,
     pub spec_qualifier_list: Box<spec_qualifier_list>,
 }
 #[derive(Debug, Clone)]
 pub enum spec_qualifier_list {
-    C1(spec_qualifier_listC1),
-    type_spec(Box<type_spec>),
-    C3(spec_qualifier_listC3),
-    type_qualifier(Box<type_qualifier>),
+    TypeRecursive(SpecQualifierListTypeRecursive),
+    TypeBase(Box<type_spec>),
+    QualRecursive(SpecQualifierListQualRecursive),
+    QualBase(Box<type_qualifier>),
 }
-pub fn spec_qualifier_list_c1(
+pub fn spec_qualifier_list_type_recursive(
     _ctx: &Ctx,
     type_spec: type_spec,
     spec_qualifier_list: spec_qualifier_list,
 ) -> spec_qualifier_list {
-    spec_qualifier_list::C1(spec_qualifier_listC1 {
+    spec_qualifier_list::TypeRecursive(SpecQualifierListTypeRecursive {
         type_spec: Box::new(type_spec),
         spec_qualifier_list: Box::new(spec_qualifier_list),
     })
 }
-pub fn spec_qualifier_list_type_spec(_ctx: &Ctx, type_spec: type_spec) -> spec_qualifier_list {
-    spec_qualifier_list::type_spec(Box::new(type_spec))
+pub fn spec_qualifier_list_type_base(_ctx: &Ctx, type_spec: type_spec) -> spec_qualifier_list {
+    spec_qualifier_list::TypeBase(Box::new(type_spec))
 }
-pub fn spec_qualifier_list_c3(
+pub fn spec_qualifier_list_qual_recursive(
     _ctx: &Ctx,
     type_qualifier: type_qualifier,
     spec_qualifier_list: spec_qualifier_list,
 ) -> spec_qualifier_list {
-    spec_qualifier_list::C3(spec_qualifier_listC3 {
+    spec_qualifier_list::QualRecursive(SpecQualifierListQualRecursive {
         type_qualifier,
         spec_qualifier_list: Box::new(spec_qualifier_list),
     })
 }
-pub fn spec_qualifier_list_type_qualifier(
+pub fn spec_qualifier_list_qual_base(
     _ctx: &Ctx,
     type_qualifier: type_qualifier,
 ) -> spec_qualifier_list {
-    spec_qualifier_list::type_qualifier(Box::new(type_qualifier))
+    spec_qualifier_list::QualBase(Box::new(type_qualifier))
 }
 #[derive(Debug, Clone)]
-pub struct struct_declaratorC2 {
+pub struct StructDeclaratorBitField {
     pub declarator: Box<declarator>,
     pub const_exp: Box<const_exp>,
 }
 #[derive(Debug, Clone)]
 pub enum struct_declarator {
-    declarator(declarator),
-    C2(struct_declaratorC2),
-    const_exp(Box<const_exp>),
+    Field(declarator),
+    BitField(StructDeclaratorBitField),
+    AnonBitField(Box<const_exp>),
 }
-pub fn struct_declarator_declarator(_ctx: &Ctx, declarator: declarator) -> struct_declarator {
-    struct_declarator::declarator(declarator)
+pub fn struct_declarator_field(_ctx: &Ctx, declarator: declarator) -> struct_declarator {
+    struct_declarator::Field(declarator)
 }
-pub fn struct_declarator_c2(
+pub fn struct_declarator_bit_field(
     _ctx: &Ctx,
     declarator: declarator,
     const_exp: const_exp,
 ) -> struct_declarator {
-    struct_declarator::C2(struct_declaratorC2 {
+    struct_declarator::BitField(StructDeclaratorBitField {
         declarator: Box::new(declarator),
         const_exp: Box::new(const_exp),
     })
 }
-pub fn struct_declarator_const_exp(_ctx: &Ctx, const_exp: const_exp) -> struct_declarator {
-    struct_declarator::const_exp(Box::new(const_exp))
+pub fn struct_declarator_anon_bit_field(_ctx: &Ctx, const_exp: const_exp) -> struct_declarator {
+    struct_declarator::AnonBitField(Box::new(const_exp))
 }
 #[derive(Debug, Clone)]
-pub struct enum_specC1 {
+pub struct EnumSpecEnum {
     pub name: Box<id>,
     pub fields: enumerator1,
     pub comma_opt: commaOpt,
 }
 #[derive(Debug, Clone)]
-pub struct enum_specC2 {
+pub struct EnumSpecAnonEnum {
     pub fields: Box<enumerator1>,
     pub comma_opt: Box<commaOpt>,
 }
 #[derive(Debug, Clone)]
-pub struct enum_specC3 {
+pub struct EnumSpecEnumRef {
     pub name: Box<id>,
 }
 #[derive(Debug, Clone)]
 pub enum enum_spec {
-    C1(enum_specC1),
-    C2(enum_specC2),
-    C3(enum_specC3),
+    Enum(EnumSpecEnum),
+    AnonEnum(EnumSpecAnonEnum),
+    EnumRef(EnumSpecEnumRef),
 }
-pub fn enum_spec_c1(_ctx: &Ctx, name: id, fields: enumerator1, comma_opt: commaOpt) -> enum_spec {
-    enum_spec::C1(enum_specC1 {
+pub fn enum_spec_enum(
+    _ctx: &Ctx,
+    name: id,
+    fields: enumerator1,
+    comma_opt: commaOpt,
+) -> enum_spec {
+    enum_spec::Enum(EnumSpecEnum {
         name: Box::new(name),
         fields,
         comma_opt,
     })
 }
-pub fn enum_spec_c2(_ctx: &Ctx, fields: enumerator1, comma_opt: commaOpt) -> enum_spec {
-    enum_spec::C2(enum_specC2 {
+pub fn enum_spec_anon_enum(_ctx: &Ctx, fields: enumerator1, comma_opt: commaOpt) -> enum_spec {
+    enum_spec::AnonEnum(EnumSpecAnonEnum {
         fields: Box::new(fields),
         comma_opt: Box::new(comma_opt),
     })
 }
-pub fn enum_spec_c3(_ctx: &Ctx, name: id) -> enum_spec {
-    enum_spec::C3(enum_specC3 {
+pub fn enum_spec_enum_ref(_ctx: &Ctx, name: id) -> enum_spec {
+    enum_spec::EnumRef(EnumSpecEnumRef {
         name: Box::new(name),
     })
 }
@@ -699,20 +711,20 @@ pub fn comma_opt_empty(_ctx: &Ctx) -> commaOpt {
     None
 }
 #[derive(Debug, Clone)]
-pub struct enumeratorC2 {
+pub struct EnumeratorInit {
     pub id: Box<id>,
     pub const_exp: Box<const_exp>,
 }
 #[derive(Debug, Clone)]
 pub enum enumerator {
-    id(Box<id>),
-    C2(enumeratorC2),
+    Id(Box<id>),
+    Init(EnumeratorInit),
 }
 pub fn enumerator_id(_ctx: &Ctx, id: id) -> enumerator {
-    enumerator::id(Box::new(id))
+    enumerator::Id(Box::new(id))
 }
-pub fn enumerator_c2(_ctx: &Ctx, id: id, const_exp: const_exp) -> enumerator {
-    enumerator::C2(enumeratorC2 {
+pub fn enumerator_init(_ctx: &Ctx, id: id, const_exp: const_exp) -> enumerator {
+    enumerator::Init(EnumeratorInit {
         id: Box::new(id),
         const_exp: Box::new(const_exp),
     })
@@ -722,7 +734,11 @@ pub struct declarator {
     pub pointer_opt: pointerOpt,
     pub dd: direct_declarator,
 }
-pub fn declarator_c1(_ctx: &Ctx, pointer_opt: pointerOpt, dd: direct_declarator) -> declarator {
+pub fn declarator_declarator(
+    _ctx: &Ctx,
+    pointer_opt: pointerOpt,
+    dd: direct_declarator,
+) -> declarator {
     declarator { pointer_opt, dd }
 }
 pub type pointerOpt = Option<pointer>;
@@ -733,87 +749,87 @@ pub fn pointer_opt_empty(_ctx: &Ctx) -> pointerOpt {
     None
 }
 #[derive(Debug, Clone)]
-pub struct direct_declaratorC1 {
+pub struct DirectDeclaratorId {
     pub name: Box<id>,
 }
 #[derive(Debug, Clone)]
-pub struct direct_declaratorC3 {
+pub struct DirectDeclaratorArray {
     pub array: Box<direct_declarator>,
     pub const_exp: const_exp,
 }
 #[derive(Debug, Clone)]
-pub struct direct_declaratorC4 {
+pub struct DirectDeclaratorArrayUnbound {
     pub array: Box<direct_declarator>,
 }
 #[derive(Debug, Clone)]
-pub struct direct_declaratorC5 {
+pub struct DirectDeclaratorFunc {
     pub fnc_decl: Box<direct_declarator>,
     pub param_type_list: Box<param_type_list>,
 }
 #[derive(Debug, Clone)]
-pub struct direct_declaratorC6 {
+pub struct DirectDeclaratorFuncId {
     pub fnc_decl: Box<direct_declarator>,
     pub id1: id1,
 }
 #[derive(Debug, Clone)]
-pub struct direct_declaratorC7 {
+pub struct DirectDeclaratorFuncEmpty {
     pub fnc_decl: Box<direct_declarator>,
 }
 #[derive(Debug, Clone)]
 pub enum direct_declarator {
-    C1(direct_declaratorC1),
-    declarator(Box<declarator>),
-    C3(direct_declaratorC3),
-    C4(direct_declaratorC4),
-    C5(direct_declaratorC5),
-    C6(direct_declaratorC6),
-    C7(direct_declaratorC7),
+    Id(DirectDeclaratorId),
+    Paren(Box<declarator>),
+    Array(DirectDeclaratorArray),
+    ArrayUnbound(DirectDeclaratorArrayUnbound),
+    Func(DirectDeclaratorFunc),
+    FuncId(DirectDeclaratorFuncId),
+    FuncEmpty(DirectDeclaratorFuncEmpty),
 }
-pub fn direct_declarator_c1(_ctx: &Ctx, name: id) -> direct_declarator {
-    direct_declarator::C1(direct_declaratorC1 {
+pub fn direct_declarator_id(_ctx: &Ctx, name: id) -> direct_declarator {
+    direct_declarator::Id(DirectDeclaratorId {
         name: Box::new(name),
     })
 }
-pub fn direct_declarator_declarator(_ctx: &Ctx, declarator: declarator) -> direct_declarator {
-    direct_declarator::declarator(Box::new(declarator))
+pub fn direct_declarator_paren(_ctx: &Ctx, declarator: declarator) -> direct_declarator {
+    direct_declarator::Paren(Box::new(declarator))
 }
-pub fn direct_declarator_c3(
+pub fn direct_declarator_array(
     _ctx: &Ctx,
     array: direct_declarator,
     const_exp: const_exp,
 ) -> direct_declarator {
-    direct_declarator::C3(direct_declaratorC3 {
+    direct_declarator::Array(DirectDeclaratorArray {
         array: Box::new(array),
         const_exp,
     })
 }
-pub fn direct_declarator_c4(_ctx: &Ctx, array: direct_declarator) -> direct_declarator {
-    direct_declarator::C4(direct_declaratorC4 {
+pub fn direct_declarator_array_unbound(_ctx: &Ctx, array: direct_declarator) -> direct_declarator {
+    direct_declarator::ArrayUnbound(DirectDeclaratorArrayUnbound {
         array: Box::new(array),
     })
 }
-pub fn direct_declarator_c5(
+pub fn direct_declarator_func(
     _ctx: &Ctx,
     fnc_decl: direct_declarator,
     param_type_list: param_type_list,
 ) -> direct_declarator {
-    direct_declarator::C5(direct_declaratorC5 {
+    direct_declarator::Func(DirectDeclaratorFunc {
         fnc_decl: Box::new(fnc_decl),
         param_type_list: Box::new(param_type_list),
     })
 }
-pub fn direct_declarator_c6(
+pub fn direct_declarator_func_id(
     _ctx: &Ctx,
     fnc_decl: direct_declarator,
     id1: id1,
 ) -> direct_declarator {
-    direct_declarator::C6(direct_declaratorC6 {
+    direct_declarator::FuncId(DirectDeclaratorFuncId {
         fnc_decl: Box::new(fnc_decl),
         id1,
     })
 }
-pub fn direct_declarator_c7(_ctx: &Ctx, fnc_decl: direct_declarator) -> direct_declarator {
-    direct_declarator::C7(direct_declaratorC7 {
+pub fn direct_declarator_func_empty(_ctx: &Ctx, fnc_decl: direct_declarator) -> direct_declarator {
+    direct_declarator::FuncEmpty(DirectDeclaratorFuncEmpty {
         fnc_decl: Box::new(fnc_decl),
     })
 }
@@ -830,7 +846,7 @@ pub struct pointer {
     pub type_qualifier0: type_qualifier0,
     pub pointer_opt: Box<pointerOpt>,
 }
-pub fn pointer_c1(
+pub fn pointer_pointer(
     _ctx: &Ctx,
     type_qualifier0: type_qualifier0,
     pointer_opt: pointerOpt,
@@ -870,7 +886,7 @@ pub struct param_type_list {
     pub param_decl1: param_decl1,
     pub param_type_list_varargs_opt: param_type_list_varargsOpt,
 }
-pub fn param_type_list_c1(
+pub fn param_type_list_param_type_list(
     _ctx: &Ctx,
     param_decl1: param_decl1,
     param_type_list_varargs_opt: param_type_list_varargsOpt,
@@ -904,17 +920,17 @@ pub fn param_type_list_varargs_opt_empty(_ctx: &Ctx) -> param_type_list_varargsO
 }
 #[derive(Debug, Clone)]
 pub enum param_type_list_varargs {
-    C1,
+    Varargs,
 }
-pub fn param_type_list_varargs_c1(_ctx: &Ctx) -> param_type_list_varargs {
-    param_type_list_varargs::C1
+pub fn param_type_list_varargs_varargs(_ctx: &Ctx) -> param_type_list_varargs {
+    param_type_list_varargs::Varargs
 }
 #[derive(Debug, Clone)]
 pub struct param_decl {
     pub decl_specs: Box<decl_specs>,
     pub param_decl_declarator_opt: param_decl_declaratorOpt,
 }
-pub fn param_decl_c1(
+pub fn param_decl_param_decl(
     _ctx: &Ctx,
     decl_specs: decl_specs,
     param_decl_declarator_opt: param_decl_declaratorOpt,
@@ -936,77 +952,77 @@ pub fn param_decl_declarator_opt_empty(_ctx: &Ctx) -> param_decl_declaratorOpt {
 }
 #[derive(Debug, Clone)]
 pub enum param_decl_declarator {
-    declarator(Box<declarator>),
-    abstract_declarator(Box<abstract_declarator>),
+    Declarator(Box<declarator>),
+    Abstract(Box<abstract_declarator>),
 }
 pub fn param_decl_declarator_declarator(
     _ctx: &Ctx,
     declarator: declarator,
 ) -> param_decl_declarator {
-    param_decl_declarator::declarator(Box::new(declarator))
+    param_decl_declarator::Declarator(Box::new(declarator))
 }
-pub fn param_decl_declarator_abstract_declarator(
+pub fn param_decl_declarator_abstract(
     _ctx: &Ctx,
     abstract_declarator: abstract_declarator,
 ) -> param_decl_declarator {
-    param_decl_declarator::abstract_declarator(Box::new(abstract_declarator))
+    param_decl_declarator::Abstract(Box::new(abstract_declarator))
 }
 #[derive(Debug, Clone)]
-pub struct initializerC2 {
+pub struct InitializerList {
     pub initializer_list: initializer_list,
     pub comma_opt: Box<commaOpt>,
 }
 #[derive(Debug, Clone)]
 pub enum initializer {
-    assignment_exp(Box<assignment_exp>),
-    C2(initializerC2),
+    Base(Box<assignment_exp>),
+    List(InitializerList),
 }
-pub fn initializer_assignment_exp(_ctx: &Ctx, assignment_exp: assignment_exp) -> initializer {
-    initializer::assignment_exp(Box::new(assignment_exp))
+pub fn initializer_base(_ctx: &Ctx, assignment_exp: assignment_exp) -> initializer {
+    initializer::Base(Box::new(assignment_exp))
 }
-pub fn initializer_c2(
+pub fn initializer_list(
     _ctx: &Ctx,
     initializer_list: initializer_list,
     comma_opt: commaOpt,
 ) -> initializer {
-    initializer::C2(initializerC2 {
+    initializer::List(InitializerList {
         initializer_list,
         comma_opt: Box::new(comma_opt),
     })
 }
 #[derive(Debug, Clone)]
-pub struct initializer_listC1 {
+pub struct InitializerListBase {
     pub line_directive_opt: line_directiveOpt,
     pub initializer: Box<initializer>,
 }
 #[derive(Debug, Clone)]
-pub struct initializer_listC2 {
+pub struct InitializerListRecursive {
     pub initializer_list: Box<initializer_list>,
     pub line_directive_opt: Box<line_directiveOpt>,
     pub initializer: Box<initializer>,
 }
 #[derive(Debug, Clone)]
 pub enum initializer_list {
-    C1(initializer_listC1),
-    C2(initializer_listC2),
+    Base(InitializerListBase),
+    Recursive(InitializerListRecursive),
 }
-pub fn initializer_list_c1(
+pub fn initializer_list_base(
     _ctx: &Ctx,
     line_directive_opt: line_directiveOpt,
     initializer: initializer,
 ) -> initializer_list {
-    initializer_list::C1(initializer_listC1 {
+    initializer_list::Base(InitializerListBase {
         line_directive_opt,
         initializer: Box::new(initializer),
     })
 }
-pub fn initializer_list_c2(
+pub fn initializer_list_recursive(
     _ctx: &Ctx,
     initializer_list: initializer_list,
     line_directive_opt: line_directiveOpt,
     initializer: initializer,
 ) -> initializer_list {
-    initializer_list::C2(initializer_listC2 {
+    initializer_list::Recursive(InitializerListRecursive {
         initializer_list: Box::new(initializer_list),
         line_directive_opt: Box::new(line_directive_opt),
         initializer: Box::new(initializer),
@@ -1023,138 +1039,135 @@ pub fn line_directive_opt_empty(_ctx: &Ctx) -> line_directiveOpt {
     None
 }
 #[derive(Debug, Clone)]
-pub struct type_nameC1 {
+pub struct TypeNameFull {
     pub spec_qualifier_list: Box<spec_qualifier_list>,
     pub abstract_declarator: abstract_declarator,
 }
 #[derive(Debug, Clone)]
 pub enum type_name {
-    C1(type_nameC1),
-    spec_qualifier_list(Box<spec_qualifier_list>),
+    Full(TypeNameFull),
+    Base(Box<spec_qualifier_list>),
 }
-pub fn type_name_c1(
+pub fn type_name_full(
     _ctx: &Ctx,
     spec_qualifier_list: spec_qualifier_list,
     abstract_declarator: abstract_declarator,
 ) -> type_name {
-    type_name::C1(type_nameC1 {
+    type_name::Full(TypeNameFull {
         spec_qualifier_list: Box::new(spec_qualifier_list),
         abstract_declarator,
     })
 }
-pub fn type_name_spec_qualifier_list(
-    _ctx: &Ctx,
-    spec_qualifier_list: spec_qualifier_list,
-) -> type_name {
-    type_name::spec_qualifier_list(Box::new(spec_qualifier_list))
+pub fn type_name_base(_ctx: &Ctx, spec_qualifier_list: spec_qualifier_list) -> type_name {
+    type_name::Base(Box::new(spec_qualifier_list))
 }
 #[derive(Debug, Clone)]
-pub struct abstract_declaratorC2 {
+pub struct AbstractDeclaratorRecursive {
     pub pointer: Box<pointer>,
     pub direct_abstract_declarator: direct_abstract_declarator,
 }
 #[derive(Debug, Clone)]
 pub enum abstract_declarator {
-    pointer(Box<pointer>),
-    C2(abstract_declaratorC2),
-    direct_abstract_declarator(Box<direct_abstract_declarator>),
+    Base(Box<pointer>),
+    Recursive(AbstractDeclaratorRecursive),
+    Direct(Box<direct_abstract_declarator>),
 }
-pub fn abstract_declarator_pointer(_ctx: &Ctx, pointer: pointer) -> abstract_declarator {
-    abstract_declarator::pointer(Box::new(pointer))
+pub fn abstract_declarator_base(_ctx: &Ctx, pointer: pointer) -> abstract_declarator {
+    abstract_declarator::Base(Box::new(pointer))
 }
-pub fn abstract_declarator_c2(
+pub fn abstract_declarator_recursive(
     _ctx: &Ctx,
     pointer: pointer,
     direct_abstract_declarator: direct_abstract_declarator,
 ) -> abstract_declarator {
-    abstract_declarator::C2(abstract_declaratorC2 {
+    abstract_declarator::Recursive(AbstractDeclaratorRecursive {
         pointer: Box::new(pointer),
         direct_abstract_declarator,
     })
 }
-pub fn abstract_declarator_direct_abstract_declarator(
+pub fn abstract_declarator_direct(
     _ctx: &Ctx,
     direct_abstract_declarator: direct_abstract_declarator,
 ) -> abstract_declarator {
-    abstract_declarator::direct_abstract_declarator(Box::new(direct_abstract_declarator))
+    abstract_declarator::Direct(Box::new(direct_abstract_declarator))
 }
 #[derive(Debug, Clone)]
-pub struct direct_abstract_declaratorC2 {
+pub struct DirectAbstractDeclaratorArray {
     pub direct_abstract_declarator: Box<direct_abstract_declarator>,
     pub const_exp: Box<const_exp>,
 }
 #[derive(Debug, Clone)]
-pub struct direct_abstract_declaratorC6 {
+pub struct DirectAbstractDeclaratorFunc {
     pub direct_abstract_declarator: Box<direct_abstract_declarator>,
     pub param_type_list: param_type_list,
 }
 #[derive(Debug, Clone)]
 pub enum direct_abstract_declarator {
-    abstract_declarator(Box<abstract_declarator>),
-    C2(direct_abstract_declaratorC2),
-    const_exp(Box<const_exp>),
-    direct_abstract_declarator1(Box<direct_abstract_declarator>),
-    C5,
-    C6(direct_abstract_declaratorC6),
-    param_type_list(Box<param_type_list>),
-    direct_abstract_declarator2(Box<direct_abstract_declarator>),
-    C9,
+    Paren(Box<abstract_declarator>),
+    Array(DirectAbstractDeclaratorArray),
+    ArrayBase(Box<const_exp>),
+    ArrayUnbound(Box<direct_abstract_declarator>),
+    ArrayUnboundBase,
+    Func(DirectAbstractDeclaratorFunc),
+    FuncBase(Box<param_type_list>),
+    FuncEmpty(Box<direct_abstract_declarator>),
+    FuncEmptyBase,
 }
-pub fn direct_abstract_declarator_abstract_declarator(
+pub fn direct_abstract_declarator_paren(
     _ctx: &Ctx,
     abstract_declarator: abstract_declarator,
 ) -> direct_abstract_declarator {
-    direct_abstract_declarator::abstract_declarator(Box::new(abstract_declarator))
+    direct_abstract_declarator::Paren(Box::new(abstract_declarator))
 }
-pub fn direct_abstract_declarator_c2(
+pub fn direct_abstract_declarator_array(
     _ctx: &Ctx,
     direct_abstract_declarator: direct_abstract_declarator,
     const_exp: const_exp,
 ) -> direct_abstract_declarator {
-    direct_abstract_declarator::C2(direct_abstract_declaratorC2 {
+    direct_abstract_declarator::Array(DirectAbstractDeclaratorArray {
         direct_abstract_declarator: Box::new(direct_abstract_declarator),
         const_exp: Box::new(const_exp),
     })
 }
-pub fn direct_abstract_declarator_const_exp(
+pub fn direct_abstract_declarator_array_base(
     _ctx: &Ctx,
     const_exp: const_exp,
 ) -> direct_abstract_declarator {
-    direct_abstract_declarator::const_exp(Box::new(const_exp))
+    direct_abstract_declarator::ArrayBase(Box::new(const_exp))
 }
-pub fn direct_abstract_declarator_direct_abstract_declarator1(
+pub fn direct_abstract_declarator_array_unbound(
     _ctx: &Ctx,
     direct_abstract_declarator: direct_abstract_declarator,
 ) -> direct_abstract_declarator {
-    direct_abstract_declarator::direct_abstract_declarator1(Box::new(direct_abstract_declarator))
+    direct_abstract_declarator::ArrayUnbound(Box::new(direct_abstract_declarator))
 }
-pub fn direct_abstract_declarator_c5(_ctx: &Ctx) -> direct_abstract_declarator {
-    direct_abstract_declarator::C5
+pub fn direct_abstract_declarator_array_unbound_base(_ctx: &Ctx) -> direct_abstract_declarator {
+    direct_abstract_declarator::ArrayUnboundBase
 }
-pub fn direct_abstract_declarator_c6(
+pub fn direct_abstract_declarator_func(
     _ctx: &Ctx,
     direct_abstract_declarator: direct_abstract_declarator,
     param_type_list: param_type_list,
 ) -> direct_abstract_declarator {
-    direct_abstract_declarator::C6(direct_abstract_declaratorC6 {
+    direct_abstract_declarator::Func(DirectAbstractDeclaratorFunc {
         direct_abstract_declarator: Box::new(direct_abstract_declarator),
         param_type_list,
     })
 }
-pub fn direct_abstract_declarator_param_type_list(
+pub fn direct_abstract_declarator_func_base(
     _ctx: &Ctx,
     param_type_list: param_type_list,
 ) -> direct_abstract_declarator {
-    direct_abstract_declarator::param_type_list(Box::new(param_type_list))
+    direct_abstract_declarator::FuncBase(Box::new(param_type_list))
 }
-pub fn direct_abstract_declarator_direct_abstract_declarator2(
+pub fn direct_abstract_declarator_func_empty(
     _ctx: &Ctx,
     direct_abstract_declarator: direct_abstract_declarator,
 ) -> direct_abstract_declarator {
-    direct_abstract_declarator::direct_abstract_declarator2(Box::new(direct_abstract_declarator))
+    direct_abstract_declarator::FuncEmpty(Box::new(direct_abstract_declarator))
 }
-pub fn direct_abstract_declarator_c9(_ctx: &Ctx) -> direct_abstract_declarator {
-    direct_abstract_declarator::C9
+pub fn direct_abstract_declarator_func_empty_base(_ctx: &Ctx) -> direct_abstract_declarator {
+    direct_abstract_declarator::FuncEmptyBase
 }
 pub type typedef_name = Box<id>;
 pub fn typedef_name_id(_ctx: &Ctx, id: id) -> typedef_name {
@@ -1192,38 +1205,38 @@ pub fn stat_line_directive(_ctx: &Ctx, line_directive: line_directive) -> stat {
     stat::line_directive(Box::new(line_directive))
 }
 #[derive(Debug, Clone)]
-pub struct labeled_statC1 {
+pub struct LabelStat {
     pub id: Box<id>,
     pub stat: Box<stat>,
 }
 #[derive(Debug, Clone)]
-pub struct labeled_statC2 {
+pub struct CaseStat {
     pub const_exp: Box<const_exp>,
     pub stat: Box<stat>,
 }
 #[derive(Debug, Clone)]
 pub enum labeled_stat {
-    C1(labeled_statC1),
-    C2(labeled_statC2),
-    stat(Box<stat>),
+    Label(LabelStat),
+    Case(CaseStat),
+    Default(Box<stat>),
 }
-pub fn labeled_stat_c1(_ctx: &Ctx, id: id, stat: stat) -> labeled_stat {
-    labeled_stat::C1(labeled_statC1 {
+pub fn labeled_stat_label(_ctx: &Ctx, id: id, stat: stat) -> labeled_stat {
+    labeled_stat::Label(LabelStat {
         id: Box::new(id),
         stat: Box::new(stat),
     })
 }
-pub fn labeled_stat_c2(_ctx: &Ctx, const_exp: const_exp, stat: stat) -> labeled_stat {
-    labeled_stat::C2(labeled_statC2 {
+pub fn labeled_stat_case(_ctx: &Ctx, const_exp: const_exp, stat: stat) -> labeled_stat {
+    labeled_stat::Case(CaseStat {
         const_exp: Box::new(const_exp),
         stat: Box::new(stat),
     })
 }
-pub fn labeled_stat_stat(_ctx: &Ctx, stat: stat) -> labeled_stat {
-    labeled_stat::stat(Box::new(stat))
+pub fn labeled_stat_default(_ctx: &Ctx, stat: stat) -> labeled_stat {
+    labeled_stat::Default(Box::new(stat))
 }
 pub type exp_stat = expOpt;
-pub fn exp_stat_exp_opt(_ctx: &Ctx, exp_opt: expOpt) -> exp_stat {
+pub fn exp_stat_exp_stat(_ctx: &Ctx, exp_opt: expOpt) -> exp_stat {
     exp_opt
 }
 pub type expOpt = Option<Box<exp>>;
@@ -1245,7 +1258,7 @@ pub fn block_item_stat(_ctx: &Ctx, stat: stat) -> block_item {
     block_item::stat(stat)
 }
 pub type compound_stat = block_item0;
-pub fn compound_stat_block_item0(_ctx: &Ctx, block_item0: block_item0) -> compound_stat {
+pub fn compound_stat_compound_stat(_ctx: &Ctx, block_item0: block_item0) -> compound_stat {
     block_item0
 }
 pub type block_item1 = Vec<block_item>;
@@ -1268,65 +1281,65 @@ pub fn block_item0_empty(_ctx: &Ctx) -> block_item0 {
     None
 }
 #[derive(Debug, Clone)]
-pub struct selection_statC1 {
+pub struct SelectionIf {
     pub exp: Box<exp>,
     pub stat: Box<stat>,
 }
 #[derive(Debug, Clone)]
-pub struct selection_statC2 {
+pub struct SelectionIfElse {
     pub exp: Box<exp>,
     pub stat_5: Box<stat>,
     pub stat_7: Box<stat>,
 }
 #[derive(Debug, Clone)]
-pub struct selection_statC3 {
+pub struct SelectionSwitch {
     pub exp: Box<exp>,
     pub stat: Box<stat>,
 }
 #[derive(Debug, Clone)]
 pub enum selection_stat {
-    C1(selection_statC1),
-    C2(selection_statC2),
-    C3(selection_statC3),
+    If(SelectionIf),
+    IfElse(SelectionIfElse),
+    Switch(SelectionSwitch),
 }
-pub fn selection_stat_c1(_ctx: &Ctx, exp: exp, stat: stat) -> selection_stat {
-    selection_stat::C1(selection_statC1 {
+pub fn selection_stat_if(_ctx: &Ctx, exp: exp, stat: stat) -> selection_stat {
+    selection_stat::If(SelectionIf {
         exp: Box::new(exp),
         stat: Box::new(stat),
     })
 }
-pub fn selection_stat_c2(_ctx: &Ctx, exp: exp, stat_5: stat, stat_7: stat) -> selection_stat {
-    selection_stat::C2(selection_statC2 {
+pub fn selection_stat_if_else(_ctx: &Ctx, exp: exp, stat_5: stat, stat_7: stat) -> selection_stat {
+    selection_stat::IfElse(SelectionIfElse {
         exp: Box::new(exp),
         stat_5: Box::new(stat_5),
         stat_7: Box::new(stat_7),
     })
 }
-pub fn selection_stat_c3(_ctx: &Ctx, exp: exp, stat: stat) -> selection_stat {
-    selection_stat::C3(selection_statC3 {
+pub fn selection_stat_switch(_ctx: &Ctx, exp: exp, stat: stat) -> selection_stat {
+    selection_stat::Switch(SelectionSwitch {
         exp: Box::new(exp),
         stat: Box::new(stat),
     })
 }
 #[derive(Debug, Clone)]
-pub struct iteration_statC1 {
+pub struct IterationWhile {
     pub exp: Box<exp>,
     pub stat: Box<stat>,
 }
 #[derive(Debug, Clone)]
-pub struct iteration_statC2 {
+pub struct IterationDoWhile {
     pub stat: Box<stat>,
     pub exp: Box<exp>,
 }
 #[derive(Debug, Clone)]
-pub struct iteration_statC3 {
+pub struct IterationFor {
     pub exp_opt_3: Box<expOpt>,
     pub exp_opt_5: Box<expOpt>,
     pub exp_opt_7: Box<expOpt>,
     pub stat: Box<stat>,
 }
 #[derive(Debug, Clone)]
-pub struct iteration_statC4 {
+pub struct IterationForDecl {
     pub decl_body: Box<decl_body>,
     pub exp_opt_5: Box<expOpt>,
     pub exp_opt_7: Box<expOpt>,
@@ -1334,45 +1347,45 @@ pub struct iteration_statC4 {
 }
 #[derive(Debug, Clone)]
 pub enum iteration_stat {
-    C1(iteration_statC1),
-    C2(iteration_statC2),
-    C3(iteration_statC3),
-    C4(iteration_statC4),
+    While(IterationWhile),
+    DoWhile(IterationDoWhile),
+    For(IterationFor),
+    ForDecl(IterationForDecl),
 }
-pub fn iteration_stat_c1(_ctx: &Ctx, exp: exp, stat: stat) -> iteration_stat {
-    iteration_stat::C1(iteration_statC1 {
+pub fn iteration_stat_while(_ctx: &Ctx, exp: exp, stat: stat) -> iteration_stat {
+    iteration_stat::While(IterationWhile {
         exp: Box::new(exp),
         stat: Box::new(stat),
     })
 }
-pub fn iteration_stat_c2(_ctx: &Ctx, stat: stat, exp: exp) -> iteration_stat {
-    iteration_stat::C2(iteration_statC2 {
+pub fn iteration_stat_do_while(_ctx: &Ctx, stat: stat, exp: exp) -> iteration_stat {
+    iteration_stat::DoWhile(IterationDoWhile {
         stat: Box::new(stat),
         exp: Box::new(exp),
     })
 }
-pub fn iteration_stat_c3(
+pub fn iteration_stat_for(
     _ctx: &Ctx,
     exp_opt_3: expOpt,
     exp_opt_5: expOpt,
     exp_opt_7: expOpt,
     stat: stat,
 ) -> iteration_stat {
-    iteration_stat::C3(iteration_statC3 {
+    iteration_stat::For(IterationFor {
         exp_opt_3: Box::new(exp_opt_3),
         exp_opt_5: Box::new(exp_opt_5),
         exp_opt_7: Box::new(exp_opt_7),
         stat: Box::new(stat),
     })
 }
-pub fn iteration_stat_c4(
+pub fn iteration_stat_for_decl(
     _ctx: &Ctx,
     decl_body: decl_body,
     exp_opt_5: expOpt,
     exp_opt_7: expOpt,
     stat: stat,
 ) -> iteration_stat {
-    iteration_stat::C4(iteration_statC4 {
+    iteration_stat::ForDecl(IterationForDecl {
         decl_body: Box::new(decl_body),
         exp_opt_5: Box::new(exp_opt_5),
         exp_opt_7: Box::new(exp_opt_7),
@@ -1381,70 +1394,67 @@ pub fn iteration_stat_c4(
 }
 #[derive(Debug, Clone)]
 pub enum jump_stat {
-    id(Box<id>),
-    C2,
-    C3,
-    exp(Box<exp>),
-    C5,
+    Goto(Box<id>),
+    Continue,
+    Break,
+    Return(Box<exp>),
+    ReturnEmpty,
 }
-pub fn jump_stat_id(_ctx: &Ctx, id: id) -> jump_stat {
-    jump_stat::id(Box::new(id))
+pub fn jump_stat_goto(_ctx: &Ctx, id: id) -> jump_stat {
+    jump_stat::Goto(Box::new(id))
 }
-pub fn jump_stat_c2(_ctx: &Ctx) -> jump_stat {
-    jump_stat::C2
+pub fn jump_stat_continue(_ctx: &Ctx) -> jump_stat {
+    jump_stat::Continue
 }
-pub fn jump_stat_c3(_ctx: &Ctx) -> jump_stat {
-    jump_stat::C3
+pub fn jump_stat_break(_ctx: &Ctx) -> jump_stat {
+    jump_stat::Break
 }
-pub fn jump_stat_exp(_ctx: &Ctx, exp: exp) -> jump_stat {
-    jump_stat::exp(Box::new(exp))
+pub fn jump_stat_return(_ctx: &Ctx, exp: exp) -> jump_stat {
+    jump_stat::Return(Box::new(exp))
 }
-pub fn jump_stat_c5(_ctx: &Ctx) -> jump_stat {
-    jump_stat::C5
+pub fn jump_stat_return_empty(_ctx: &Ctx) -> jump_stat {
+    jump_stat::ReturnEmpty
 }
 #[derive(Debug, Clone)]
-pub struct expC2 {
+pub struct ExpRecursive {
     pub exp: Box<exp>,
     pub assignment_exp: Box<assignment_exp>,
 }
 #[derive(Debug, Clone)]
 pub enum exp {
-    assignment_exp(assignment_exp),
-    C2(expC2),
+    Base(assignment_exp),
+    Recursive(ExpRecursive),
 }
-pub fn exp_assignment_exp(_ctx: &Ctx, assignment_exp: assignment_exp) -> exp {
-    exp::assignment_exp(assignment_exp)
+pub fn exp_base(_ctx: &Ctx, assignment_exp: assignment_exp) -> exp {
+    exp::Base(assignment_exp)
 }
-pub fn exp_c2(_ctx: &Ctx, exp: exp, assignment_exp: assignment_exp) -> exp {
-    exp::C2(expC2 {
+pub fn exp_recursive(_ctx: &Ctx, exp: exp, assignment_exp: assignment_exp) -> exp {
+    exp::Recursive(ExpRecursive {
         exp: Box::new(exp),
         assignment_exp: Box::new(assignment_exp),
     })
 }
 #[derive(Debug, Clone)]
-pub struct assignment_expC2 {
+pub struct AssignmentExpAssign {
     pub unary_exp: Box<unary_exp>,
     pub assignment_operator: assignment_operator,
     pub assignment_exp: Box<assignment_exp>,
 }
 #[derive(Debug, Clone)]
 pub enum assignment_exp {
-    conditional_exp(Box<conditional_exp>),
-    C2(assignment_expC2),
+    Base(Box<conditional_exp>),
+    Assign(AssignmentExpAssign),
 }
-pub fn assignment_exp_conditional_exp(
-    _ctx: &Ctx,
-    conditional_exp: conditional_exp,
-) -> assignment_exp {
-    assignment_exp::conditional_exp(Box::new(conditional_exp))
+pub fn assignment_exp_base(_ctx: &Ctx, conditional_exp: conditional_exp) -> assignment_exp {
+    assignment_exp::Base(Box::new(conditional_exp))
 }
-pub fn assignment_exp_c2(
+pub fn assignment_exp_assign(
     _ctx: &Ctx,
     unary_exp: unary_exp,
     assignment_operator: assignment_operator,
     assignment_exp: assignment_exp,
 ) -> assignment_exp {
-    assignment_exp::C2(assignment_expC2 {
+    assignment_exp::Assign(AssignmentExpAssign {
         unary_exp: Box::new(unary_exp),
         assignment_operator,
         assignment_exp: Box::new(assignment_exp),
@@ -1498,29 +1508,26 @@ pub fn assignment_operator_oraop(_ctx: &Ctx) -> assignment_operator {
     assignment_operator::oraop
 }
 #[derive(Debug, Clone)]
-pub struct conditional_expC2 {
+pub struct ConditionalExpConditional {
     pub logical_or_exp: Box<logical_or_exp>,
     pub exp: Box<exp>,
     pub conditional_exp: Box<conditional_exp>,
 }
 #[derive(Debug, Clone)]
 pub enum conditional_exp {
-    logical_or_exp(logical_or_exp),
-    C2(conditional_expC2),
+    Base(logical_or_exp),
+    Conditional(ConditionalExpConditional),
 }
-pub fn conditional_exp_logical_or_exp(
-    _ctx: &Ctx,
-    logical_or_exp: logical_or_exp,
-) -> conditional_exp {
-    conditional_exp::logical_or_exp(logical_or_exp)
+pub fn conditional_exp_base(_ctx: &Ctx, logical_or_exp: logical_or_exp) -> conditional_exp {
+    conditional_exp::Base(logical_or_exp)
 }
-pub fn conditional_exp_c2(
+pub fn conditional_exp_conditional(
     _ctx: &Ctx,
     logical_or_exp: logical_or_exp,
     exp: exp,
     conditional_exp: conditional_exp,
 ) -> conditional_exp {
-    conditional_exp::C2(conditional_expC2 {
+    conditional_exp::Conditional(ConditionalExpConditional {
         logical_or_exp: Box::new(logical_or_exp),
         exp: Box::new(exp),
         conditional_exp: Box::new(conditional_exp),
@@ -1531,425 +1538,417 @@ pub fn const_exp_conditional_exp(_ctx: &Ctx, conditional_exp: conditional_exp) -
     conditional_exp
 }
 #[derive(Debug, Clone)]
-pub struct logical_or_expC2 {
+pub struct LogicalOrExpOr {
     pub logical_or_exp: Box<logical_or_exp>,
     pub logical_and_exp: Box<logical_and_exp>,
 }
 #[derive(Debug, Clone)]
 pub enum logical_or_exp {
-    logical_and_exp(logical_and_exp),
-    C2(logical_or_expC2),
+    Base(logical_and_exp),
+    Or(LogicalOrExpOr),
 }
-pub fn logical_or_exp_logical_and_exp(
-    _ctx: &Ctx,
-    logical_and_exp: logical_and_exp,
-) -> logical_or_exp {
-    logical_or_exp::logical_and_exp(logical_and_exp)
+pub fn logical_or_exp_base(_ctx: &Ctx, logical_and_exp: logical_and_exp) -> logical_or_exp {
+    logical_or_exp::Base(logical_and_exp)
 }
-pub fn logical_or_exp_c2(
+pub fn logical_or_exp_or(
     _ctx: &Ctx,
     logical_or_exp: logical_or_exp,
     logical_and_exp: logical_and_exp,
 ) -> logical_or_exp {
-    logical_or_exp::C2(logical_or_expC2 {
+    logical_or_exp::Or(LogicalOrExpOr {
         logical_or_exp: Box::new(logical_or_exp),
         logical_and_exp: Box::new(logical_and_exp),
     })
 }
 #[derive(Debug, Clone)]
-pub struct logical_and_expC2 {
+pub struct LogicalAndExpAnd {
     pub logical_and_exp: Box<logical_and_exp>,
     pub inclusive_or_exp: Box<inclusive_or_exp>,
 }
 #[derive(Debug, Clone)]
 pub enum logical_and_exp {
-    inclusive_or_exp(inclusive_or_exp),
-    C2(logical_and_expC2),
+    Base(inclusive_or_exp),
+    And(LogicalAndExpAnd),
 }
-pub fn logical_and_exp_inclusive_or_exp(
-    _ctx: &Ctx,
-    inclusive_or_exp: inclusive_or_exp,
-) -> logical_and_exp {
-    logical_and_exp::inclusive_or_exp(inclusive_or_exp)
+pub fn logical_and_exp_base(_ctx: &Ctx, inclusive_or_exp: inclusive_or_exp) -> logical_and_exp {
+    logical_and_exp::Base(inclusive_or_exp)
 }
-pub fn logical_and_exp_c2(
+pub fn logical_and_exp_and(
     _ctx: &Ctx,
     logical_and_exp: logical_and_exp,
     inclusive_or_exp: inclusive_or_exp,
 ) -> logical_and_exp {
-    logical_and_exp::C2(logical_and_expC2 {
+    logical_and_exp::And(LogicalAndExpAnd {
         logical_and_exp: Box::new(logical_and_exp),
         inclusive_or_exp: Box::new(inclusive_or_exp),
     })
 }
 #[derive(Debug, Clone)]
-pub struct inclusive_or_expC2 {
+pub struct InclusiveOrExpOr {
     pub inclusive_or_exp: Box<inclusive_or_exp>,
     pub exclusive_or_exp: Box<exclusive_or_exp>,
 }
 #[derive(Debug, Clone)]
 pub enum inclusive_or_exp {
-    exclusive_or_exp(exclusive_or_exp),
-    C2(inclusive_or_expC2),
+    Base(exclusive_or_exp),
+    Or(InclusiveOrExpOr),
 }
-pub fn inclusive_or_exp_exclusive_or_exp(
-    _ctx: &Ctx,
-    exclusive_or_exp: exclusive_or_exp,
-) -> inclusive_or_exp {
-    inclusive_or_exp::exclusive_or_exp(exclusive_or_exp)
+pub fn inclusive_or_exp_base(_ctx: &Ctx, exclusive_or_exp: exclusive_or_exp) -> inclusive_or_exp {
+    inclusive_or_exp::Base(exclusive_or_exp)
 }
-pub fn inclusive_or_exp_c2(
+pub fn inclusive_or_exp_or(
     _ctx: &Ctx,
     inclusive_or_exp: inclusive_or_exp,
     exclusive_or_exp: exclusive_or_exp,
 ) -> inclusive_or_exp {
-    inclusive_or_exp::C2(inclusive_or_expC2 {
+    inclusive_or_exp::Or(InclusiveOrExpOr {
         inclusive_or_exp: Box::new(inclusive_or_exp),
         exclusive_or_exp: Box::new(exclusive_or_exp),
     })
 }
 #[derive(Debug, Clone)]
-pub struct exclusive_or_expC2 {
+pub struct ExclusiveOrExpXor {
     pub exclusive_or_exp: Box<exclusive_or_exp>,
     pub and_exp: Box<and_exp>,
 }
 #[derive(Debug, Clone)]
 pub enum exclusive_or_exp {
-    and_exp(and_exp),
-    C2(exclusive_or_expC2),
+    Base(and_exp),
+    Xor(ExclusiveOrExpXor),
 }
-pub fn exclusive_or_exp_and_exp(_ctx: &Ctx, and_exp: and_exp) -> exclusive_or_exp {
-    exclusive_or_exp::and_exp(and_exp)
+pub fn exclusive_or_exp_base(_ctx: &Ctx, and_exp: and_exp) -> exclusive_or_exp {
+    exclusive_or_exp::Base(and_exp)
 }
-pub fn exclusive_or_exp_c2(
+pub fn exclusive_or_exp_xor(
     _ctx: &Ctx,
     exclusive_or_exp: exclusive_or_exp,
     and_exp: and_exp,
 ) -> exclusive_or_exp {
-    exclusive_or_exp::C2(exclusive_or_expC2 {
+    exclusive_or_exp::Xor(ExclusiveOrExpXor {
         exclusive_or_exp: Box::new(exclusive_or_exp),
         and_exp: Box::new(and_exp),
     })
 }
 #[derive(Debug, Clone)]
-pub struct and_expC2 {
+pub struct AndExpAnd {
     pub and_exp: Box<and_exp>,
     pub equality_exp: Box<equality_exp>,
 }
 #[derive(Debug, Clone)]
 pub enum and_exp {
-    equality_exp(equality_exp),
-    C2(and_expC2),
+    Base(equality_exp),
+    And(AndExpAnd),
 }
-pub fn and_exp_equality_exp(_ctx: &Ctx, equality_exp: equality_exp) -> and_exp {
-    and_exp::equality_exp(equality_exp)
+pub fn and_exp_base(_ctx: &Ctx, equality_exp: equality_exp) -> and_exp {
+    and_exp::Base(equality_exp)
 }
-pub fn and_exp_c2(_ctx: &Ctx, and_exp: and_exp, equality_exp: equality_exp) -> and_exp {
-    and_exp::C2(and_expC2 {
+pub fn and_exp_and(_ctx: &Ctx, and_exp: and_exp, equality_exp: equality_exp) -> and_exp {
+    and_exp::And(AndExpAnd {
         and_exp: Box::new(and_exp),
         equality_exp: Box::new(equality_exp),
     })
 }
 #[derive(Debug, Clone)]
-pub struct equality_expC2 {
+pub struct EqualityExpEq {
     pub equality_exp: Box<equality_exp>,
     pub relational_exp: Box<relational_exp>,
 }
 #[derive(Debug, Clone)]
-pub struct equality_expC3 {
+pub struct EqualityExpNeq {
     pub equality_exp: Box<equality_exp>,
     pub relational_exp: Box<relational_exp>,
 }
 #[derive(Debug, Clone)]
 pub enum equality_exp {
-    relational_exp(relational_exp),
-    C2(equality_expC2),
-    C3(equality_expC3),
+    Base(relational_exp),
+    Eq(EqualityExpEq),
+    Neq(EqualityExpNeq),
 }
-pub fn equality_exp_relational_exp(_ctx: &Ctx, relational_exp: relational_exp) -> equality_exp {
-    equality_exp::relational_exp(relational_exp)
+pub fn equality_exp_base(_ctx: &Ctx, relational_exp: relational_exp) -> equality_exp {
+    equality_exp::Base(relational_exp)
 }
-pub fn equality_exp_c2(
+pub fn equality_exp_eq(
     _ctx: &Ctx,
     equality_exp: equality_exp,
     relational_exp: relational_exp,
 ) -> equality_exp {
-    equality_exp::C2(equality_expC2 {
+    equality_exp::Eq(EqualityExpEq {
         equality_exp: Box::new(equality_exp),
         relational_exp: Box::new(relational_exp),
     })
 }
-pub fn equality_exp_c3(
+pub fn equality_exp_neq(
     _ctx: &Ctx,
     equality_exp: equality_exp,
     relational_exp: relational_exp,
 ) -> equality_exp {
-    equality_exp::C3(equality_expC3 {
+    equality_exp::Neq(EqualityExpNeq {
         equality_exp: Box::new(equality_exp),
         relational_exp: Box::new(relational_exp),
     })
 }
 #[derive(Debug, Clone)]
-pub struct relational_expC2 {
+pub struct RelationalExpLt {
     pub relational_exp: Box<relational_exp>,
     pub shift_expression: Box<shift_expression>,
 }
 #[derive(Debug, Clone)]
-pub struct relational_expC3 {
+pub struct RelationalExpGt {
     pub relational_exp: Box<relational_exp>,
     pub shift_expression: Box<shift_expression>,
 }
 #[derive(Debug, Clone)]
-pub struct relational_expC4 {
+pub struct RelationalExpLte {
     pub relational_exp: Box<relational_exp>,
     pub shift_expression: Box<shift_expression>,
 }
 #[derive(Debug, Clone)]
-pub struct relational_expC5 {
+pub struct RelationalExpGte {
     pub relational_exp: Box<relational_exp>,
     pub shift_expression: Box<shift_expression>,
 }
 #[derive(Debug, Clone)]
 pub enum relational_exp {
-    shift_expression(shift_expression),
-    C2(relational_expC2),
-    C3(relational_expC3),
-    C4(relational_expC4),
-    C5(relational_expC5),
+    Base(shift_expression),
+    Lt(RelationalExpLt),
+    Gt(RelationalExpGt),
+    Lte(RelationalExpLte),
+    Gte(RelationalExpGte),
 }
-pub fn relational_exp_shift_expression(
-    _ctx: &Ctx,
-    shift_expression: shift_expression,
-) -> relational_exp {
-    relational_exp::shift_expression(shift_expression)
+pub fn relational_exp_base(_ctx: &Ctx, shift_expression: shift_expression) -> relational_exp {
+    relational_exp::Base(shift_expression)
 }
-pub fn relational_exp_c2(
+pub fn relational_exp_lt(
     _ctx: &Ctx,
     relational_exp: relational_exp,
     shift_expression: shift_expression,
 ) -> relational_exp {
-    relational_exp::C2(relational_expC2 {
+    relational_exp::Lt(RelationalExpLt {
         relational_exp: Box::new(relational_exp),
         shift_expression: Box::new(shift_expression),
     })
 }
-pub fn relational_exp_c3(
+pub fn relational_exp_gt(
     _ctx: &Ctx,
     relational_exp: relational_exp,
     shift_expression: shift_expression,
 ) -> relational_exp {
-    relational_exp::C3(relational_expC3 {
+    relational_exp::Gt(RelationalExpGt {
         relational_exp: Box::new(relational_exp),
         shift_expression: Box::new(shift_expression),
     })
 }
-pub fn relational_exp_c4(
+pub fn relational_exp_lte(
     _ctx: &Ctx,
     relational_exp: relational_exp,
     shift_expression: shift_expression,
 ) -> relational_exp {
-    relational_exp::C4(relational_expC4 {
+    relational_exp::Lte(RelationalExpLte {
         relational_exp: Box::new(relational_exp),
         shift_expression: Box::new(shift_expression),
     })
 }
-pub fn relational_exp_c5(
+pub fn relational_exp_gte(
     _ctx: &Ctx,
     relational_exp: relational_exp,
     shift_expression: shift_expression,
 ) -> relational_exp {
-    relational_exp::C5(relational_expC5 {
+    relational_exp::Gte(RelationalExpGte {
         relational_exp: Box::new(relational_exp),
         shift_expression: Box::new(shift_expression),
     })
 }
 #[derive(Debug, Clone)]
-pub struct shift_expressionC2 {
+pub struct ShiftExpressionLShift {
     pub shift_expression: Box<shift_expression>,
     pub additive_exp: Box<additive_exp>,
 }
 #[derive(Debug, Clone)]
-pub struct shift_expressionC3 {
+pub struct ShiftExpressionRShift {
     pub shift_expression: Box<shift_expression>,
     pub additive_exp: Box<additive_exp>,
 }
 #[derive(Debug, Clone)]
 pub enum shift_expression {
-    additive_exp(additive_exp),
-    C2(shift_expressionC2),
-    C3(shift_expressionC3),
+    Base(additive_exp),
+    LShift(ShiftExpressionLShift),
+    RShift(ShiftExpressionRShift),
 }
-pub fn shift_expression_additive_exp(_ctx: &Ctx, additive_exp: additive_exp) -> shift_expression {
-    shift_expression::additive_exp(additive_exp)
+pub fn shift_expression_base(_ctx: &Ctx, additive_exp: additive_exp) -> shift_expression {
+    shift_expression::Base(additive_exp)
 }
-pub fn shift_expression_c2(
+pub fn shift_expression_lshift(
     _ctx: &Ctx,
     shift_expression: shift_expression,
     additive_exp: additive_exp,
 ) -> shift_expression {
-    shift_expression::C2(shift_expressionC2 {
+    shift_expression::LShift(ShiftExpressionLShift {
         shift_expression: Box::new(shift_expression),
         additive_exp: Box::new(additive_exp),
     })
 }
-pub fn shift_expression_c3(
+pub fn shift_expression_rshift(
     _ctx: &Ctx,
     shift_expression: shift_expression,
     additive_exp: additive_exp,
 ) -> shift_expression {
-    shift_expression::C3(shift_expressionC3 {
+    shift_expression::RShift(ShiftExpressionRShift {
         shift_expression: Box::new(shift_expression),
         additive_exp: Box::new(additive_exp),
     })
 }
 #[derive(Debug, Clone)]
-pub struct additive_expC2 {
+pub struct AdditiveExpAdd {
     pub additive_exp: Box<additive_exp>,
     pub mult_exp: Box<mult_exp>,
 }
 #[derive(Debug, Clone)]
-pub struct additive_expC3 {
+pub struct AdditiveExpSub {
     pub additive_exp: Box<additive_exp>,
     pub mult_exp: Box<mult_exp>,
 }
 #[derive(Debug, Clone)]
 pub enum additive_exp {
-    mult_exp(mult_exp),
-    C2(additive_expC2),
-    C3(additive_expC3),
+    Base(mult_exp),
+    Add(AdditiveExpAdd),
+    Sub(AdditiveExpSub),
 }
-pub fn additive_exp_mult_exp(_ctx: &Ctx, mult_exp: mult_exp) -> additive_exp {
-    additive_exp::mult_exp(mult_exp)
+pub fn additive_exp_base(_ctx: &Ctx, mult_exp: mult_exp) -> additive_exp {
+    additive_exp::Base(mult_exp)
 }
-pub fn additive_exp_c2(
+pub fn additive_exp_add(
     _ctx: &Ctx,
     additive_exp: additive_exp,
     mult_exp: mult_exp,
 ) -> additive_exp {
-    additive_exp::C2(additive_expC2 {
+    additive_exp::Add(AdditiveExpAdd {
         additive_exp: Box::new(additive_exp),
         mult_exp: Box::new(mult_exp),
     })
 }
-pub fn additive_exp_c3(
+pub fn additive_exp_sub(
     _ctx: &Ctx,
     additive_exp: additive_exp,
     mult_exp: mult_exp,
 ) -> additive_exp {
-    additive_exp::C3(additive_expC3 {
+    additive_exp::Sub(AdditiveExpSub {
         additive_exp: Box::new(additive_exp),
         mult_exp: Box::new(mult_exp),
     })
 }
 #[derive(Debug, Clone)]
-pub struct mult_expC2 {
+pub struct MultExpMul {
     pub mult_exp: Box<mult_exp>,
     pub cast_exp: Box<cast_exp>,
 }
 #[derive(Debug, Clone)]
-pub struct mult_expC3 {
+pub struct MultExpDiv {
     pub mult_exp: Box<mult_exp>,
     pub cast_exp: Box<cast_exp>,
 }
 #[derive(Debug, Clone)]
-pub struct mult_expC4 {
+pub struct MultExpMod {
     pub mult_exp: Box<mult_exp>,
     pub cast_exp: Box<cast_exp>,
 }
 #[derive(Debug, Clone)]
 pub enum mult_exp {
-    cast_exp(cast_exp),
-    C2(mult_expC2),
-    C3(mult_expC3),
-    C4(mult_expC4),
+    Base(cast_exp),
+    Mul(MultExpMul),
+    Div(MultExpDiv),
+    Mod(MultExpMod),
 }
-pub fn mult_exp_cast_exp(_ctx: &Ctx, cast_exp: cast_exp) -> mult_exp {
-    mult_exp::cast_exp(cast_exp)
+pub fn mult_exp_base(_ctx: &Ctx, cast_exp: cast_exp) -> mult_exp {
+    mult_exp::Base(cast_exp)
 }
-pub fn mult_exp_c2(_ctx: &Ctx, mult_exp: mult_exp, cast_exp: cast_exp) -> mult_exp {
-    mult_exp::C2(mult_expC2 {
+pub fn mult_exp_mul(_ctx: &Ctx, mult_exp: mult_exp, cast_exp: cast_exp) -> mult_exp {
+    mult_exp::Mul(MultExpMul {
         mult_exp: Box::new(mult_exp),
         cast_exp: Box::new(cast_exp),
     })
 }
-pub fn mult_exp_c3(_ctx: &Ctx, mult_exp: mult_exp, cast_exp: cast_exp) -> mult_exp {
-    mult_exp::C3(mult_expC3 {
+pub fn mult_exp_div(_ctx: &Ctx, mult_exp: mult_exp, cast_exp: cast_exp) -> mult_exp {
+    mult_exp::Div(MultExpDiv {
         mult_exp: Box::new(mult_exp),
         cast_exp: Box::new(cast_exp),
     })
 }
-pub fn mult_exp_c4(_ctx: &Ctx, mult_exp: mult_exp, cast_exp: cast_exp) -> mult_exp {
-    mult_exp::C4(mult_expC4 {
+pub fn mult_exp_mod(_ctx: &Ctx, mult_exp: mult_exp, cast_exp: cast_exp) -> mult_exp {
+    mult_exp::Mod(MultExpMod {
         mult_exp: Box::new(mult_exp),
         cast_exp: Box::new(cast_exp),
     })
 }
 #[derive(Debug, Clone)]
-pub struct cast_expC2 {
+pub struct CastExpCast {
     pub type_name: Box<type_name>,
     pub cast_exp: Box<cast_exp>,
 }
 #[derive(Debug, Clone)]
 pub enum cast_exp {
-    unary_exp(unary_exp),
-    C2(cast_expC2),
+    Base(unary_exp),
+    Cast(CastExpCast),
 }
-pub fn cast_exp_unary_exp(_ctx: &Ctx, unary_exp: unary_exp) -> cast_exp {
-    cast_exp::unary_exp(unary_exp)
+pub fn cast_exp_base(_ctx: &Ctx, unary_exp: unary_exp) -> cast_exp {
+    cast_exp::Base(unary_exp)
 }
-pub fn cast_exp_c2(_ctx: &Ctx, type_name: type_name, cast_exp: cast_exp) -> cast_exp {
-    cast_exp::C2(cast_expC2 {
+pub fn cast_exp_cast(_ctx: &Ctx, type_name: type_name, cast_exp: cast_exp) -> cast_exp {
+    cast_exp::Cast(CastExpCast {
         type_name: Box::new(type_name),
         cast_exp: Box::new(cast_exp),
     })
 }
 #[derive(Debug, Clone)]
-pub struct unary_expC4 {
+pub struct UnaryOpExp {
     pub unary_operator: unary_operator,
     pub cast_exp: Box<cast_exp>,
 }
 #[derive(Debug, Clone)]
-pub struct unary_expC8 {
+pub struct NewExpStruct {
     pub type_name: Box<type_name>,
     pub exp: Box<exp>,
 }
 #[derive(Debug, Clone)]
 pub enum unary_exp {
-    postfix_exp(postfix_exp),
-    unary_exp1(Box<unary_exp>),
-    unary_exp2(Box<unary_exp>),
-    C4(unary_expC4),
-    unary_exp3(Box<unary_exp>),
-    type_name1(type_name),
-    type_name2(Box<type_name>),
-    C8(unary_expC8),
+    Postfix(postfix_exp),
+    Inc(Box<unary_exp>),
+    Dec(Box<unary_exp>),
+    UnaryOp(UnaryOpExp),
+    SizeofExp(Box<unary_exp>),
+    SizeofType(type_name),
+    New(Box<type_name>),
+    NewExp(NewExpStruct),
 }
-pub fn unary_exp_postfix_exp(_ctx: &Ctx, postfix_exp: postfix_exp) -> unary_exp {
-    unary_exp::postfix_exp(postfix_exp)
+pub fn unary_exp_postfix(_ctx: &Ctx, postfix_exp: postfix_exp) -> unary_exp {
+    unary_exp::Postfix(postfix_exp)
 }
-pub fn unary_exp_unary_exp1(_ctx: &Ctx, unary_exp: unary_exp) -> unary_exp {
-    unary_exp::unary_exp1(Box::new(unary_exp))
+pub fn unary_exp_inc(_ctx: &Ctx, unary_exp: unary_exp) -> unary_exp {
+    unary_exp::Inc(Box::new(unary_exp))
 }
-pub fn unary_exp_unary_exp2(_ctx: &Ctx, unary_exp: unary_exp) -> unary_exp {
-    unary_exp::unary_exp2(Box::new(unary_exp))
+pub fn unary_exp_dec(_ctx: &Ctx, unary_exp: unary_exp) -> unary_exp {
+    unary_exp::Dec(Box::new(unary_exp))
 }
-pub fn unary_exp_c4(_ctx: &Ctx, unary_operator: unary_operator, cast_exp: cast_exp) -> unary_exp {
-    unary_exp::C4(unary_expC4 {
+pub fn unary_exp_unary_op(
+    _ctx: &Ctx,
+    unary_operator: unary_operator,
+    cast_exp: cast_exp,
+) -> unary_exp {
+    unary_exp::UnaryOp(UnaryOpExp {
         unary_operator,
         cast_exp: Box::new(cast_exp),
     })
 }
-pub fn unary_exp_unary_exp3(_ctx: &Ctx, unary_exp: unary_exp) -> unary_exp {
-    unary_exp::unary_exp3(Box::new(unary_exp))
+pub fn unary_exp_sizeof_exp(_ctx: &Ctx, unary_exp: unary_exp) -> unary_exp {
+    unary_exp::SizeofExp(Box::new(unary_exp))
 }
-pub fn unary_exp_type_name1(_ctx: &Ctx, type_name: type_name) -> unary_exp {
-    unary_exp::type_name1(type_name)
+pub fn unary_exp_sizeof_type(_ctx: &Ctx, type_name: type_name) -> unary_exp {
+    unary_exp::SizeofType(type_name)
 }
-pub fn unary_exp_type_name2(_ctx: &Ctx, type_name: type_name) -> unary_exp {
-    unary_exp::type_name2(Box::new(type_name))
+pub fn unary_exp_new(_ctx: &Ctx, type_name: type_name) -> unary_exp {
+    unary_exp::New(Box::new(type_name))
 }
-pub fn unary_exp_c8(_ctx: &Ctx, type_name: type_name, exp: exp) -> unary_exp {
-    unary_exp::C8(unary_expC8 {
+pub fn unary_exp_new_exp(_ctx: &Ctx, type_name: type_name, exp: exp) -> unary_exp {
+    unary_exp::NewExp(NewExpStruct {
         type_name: Box::new(type_name),
         exp: Box::new(exp),
     })
@@ -1982,71 +1981,71 @@ pub fn unary_operator_lognotop(_ctx: &Ctx) -> unary_operator {
     unary_operator::lognotop
 }
 #[derive(Debug, Clone)]
-pub struct postfix_expC2 {
+pub struct ArrayPostfix {
     pub postfix_exp: Box<postfix_exp>,
     pub exp: Box<exp>,
 }
 #[derive(Debug, Clone)]
-pub struct postfix_expC3 {
+pub struct CallPostfix {
     pub postfix_exp: Box<postfix_exp>,
     pub assignment_exp0: assignment_exp0,
 }
 #[derive(Debug, Clone)]
-pub struct postfix_expC4 {
+pub struct DotPostfix {
     pub postfix_exp: Box<postfix_exp>,
     pub id: Box<id>,
 }
 #[derive(Debug, Clone)]
-pub struct postfix_expC5 {
+pub struct ArrowPostfix {
     pub postfix_exp: Box<postfix_exp>,
     pub id: Box<id>,
 }
 #[derive(Debug, Clone)]
 pub enum postfix_exp {
-    primary_exp(primary_exp),
-    C2(postfix_expC2),
-    C3(postfix_expC3),
-    C4(postfix_expC4),
-    C5(postfix_expC5),
-    postfix_exp1(Box<postfix_exp>),
-    postfix_exp2(Box<postfix_exp>),
+    Primary(primary_exp),
+    Subscript(ArrayPostfix),
+    Call(CallPostfix),
+    Dot(DotPostfix),
+    Arrow(ArrowPostfix),
+    Inc(Box<postfix_exp>),
+    Dec(Box<postfix_exp>),
 }
-pub fn postfix_exp_primary_exp(_ctx: &Ctx, primary_exp: primary_exp) -> postfix_exp {
-    postfix_exp::primary_exp(primary_exp)
+pub fn postfix_exp_primary(_ctx: &Ctx, primary_exp: primary_exp) -> postfix_exp {
+    postfix_exp::Primary(primary_exp)
 }
-pub fn postfix_exp_c2(_ctx: &Ctx, postfix_exp: postfix_exp, exp: exp) -> postfix_exp {
-    postfix_exp::C2(postfix_expC2 {
+pub fn postfix_exp_subscript(_ctx: &Ctx, postfix_exp: postfix_exp, exp: exp) -> postfix_exp {
+    postfix_exp::Subscript(ArrayPostfix {
         postfix_exp: Box::new(postfix_exp),
         exp: Box::new(exp),
     })
 }
-pub fn postfix_exp_c3(
+pub fn postfix_exp_call(
     _ctx: &Ctx,
     postfix_exp: postfix_exp,
     assignment_exp0: assignment_exp0,
 ) -> postfix_exp {
-    postfix_exp::C3(postfix_expC3 {
+    postfix_exp::Call(CallPostfix {
         postfix_exp: Box::new(postfix_exp),
         assignment_exp0,
     })
 }
-pub fn postfix_exp_c4(_ctx: &Ctx, postfix_exp: postfix_exp, id: id) -> postfix_exp {
-    postfix_exp::C4(postfix_expC4 {
+pub fn postfix_exp_dot(_ctx: &Ctx, postfix_exp: postfix_exp, id: id) -> postfix_exp {
+    postfix_exp::Dot(DotPostfix {
         postfix_exp: Box::new(postfix_exp),
         id: Box::new(id),
     })
 }
-pub fn postfix_exp_c5(_ctx: &Ctx, postfix_exp: postfix_exp, id: id) -> postfix_exp {
-    postfix_exp::C5(postfix_expC5 {
+pub fn postfix_exp_arrow(_ctx: &Ctx, postfix_exp: postfix_exp, id: id) -> postfix_exp {
+    postfix_exp::Arrow(ArrowPostfix {
         postfix_exp: Box::new(postfix_exp),
         id: Box::new(id),
     })
 }
-pub fn postfix_exp_postfix_exp1(_ctx: &Ctx, postfix_exp: postfix_exp) -> postfix_exp {
-    postfix_exp::postfix_exp1(Box::new(postfix_exp))
+pub fn postfix_exp_inc(_ctx: &Ctx, postfix_exp: postfix_exp) -> postfix_exp {
+    postfix_exp::Inc(Box::new(postfix_exp))
 }
-pub fn postfix_exp_postfix_exp2(_ctx: &Ctx, postfix_exp: postfix_exp) -> postfix_exp {
-    postfix_exp::postfix_exp2(Box::new(postfix_exp))
+pub fn postfix_exp_dec(_ctx: &Ctx, postfix_exp: postfix_exp) -> postfix_exp {
+    postfix_exp::Dec(Box::new(postfix_exp))
 }
 pub type assignment_exp1 = Vec<Box<assignment_exp>>;
 pub fn assignment_exp1_c1(
@@ -2074,48 +2073,48 @@ pub fn assignment_exp0_empty(_ctx: &Ctx) -> assignment_exp0 {
     None
 }
 #[derive(Debug, Clone)]
-pub struct primary_expC1 {
+pub struct VarRef {
     pub var_ref: Box<id>,
 }
 #[derive(Debug, Clone)]
 pub enum primary_exp {
-    C1(primary_expC1),
-    cconst(cconst),
-    adj_strings(adj_strings),
-    exp(exp),
+    Id(VarRef),
+    Constant(cconst),
+    Strings(adj_strings),
+    Paren(exp),
 }
-pub fn primary_exp_c1(_ctx: &Ctx, var_ref: id) -> primary_exp {
-    primary_exp::C1(primary_expC1 {
+pub fn primary_exp_id(_ctx: &Ctx, var_ref: id) -> primary_exp {
+    primary_exp::Id(VarRef {
         var_ref: Box::new(var_ref),
     })
 }
-pub fn primary_exp_cconst(_ctx: &Ctx, cconst: cconst) -> primary_exp {
-    primary_exp::cconst(cconst)
+pub fn primary_exp_constant(_ctx: &Ctx, cconst: cconst) -> primary_exp {
+    primary_exp::Constant(cconst)
 }
-pub fn primary_exp_adj_strings(_ctx: &Ctx, adj_strings: adj_strings) -> primary_exp {
-    primary_exp::adj_strings(adj_strings)
+pub fn primary_exp_strings(_ctx: &Ctx, adj_strings: adj_strings) -> primary_exp {
+    primary_exp::Strings(adj_strings)
 }
-pub fn primary_exp_exp(_ctx: &Ctx, exp: exp) -> primary_exp {
-    primary_exp::exp(exp)
+pub fn primary_exp_paren(_ctx: &Ctx, exp: exp) -> primary_exp {
+    primary_exp::Paren(exp)
 }
 #[derive(Debug, Clone)]
 pub enum cconst {
-    int_const(int_const),
-    char_const(char_const),
-    float_const(float_const),
-    hexadecimal(hexadecimal),
+    Int(int_const),
+    Char(char_const),
+    Float(float_const),
+    Hex(hexadecimal),
 }
-pub fn cconst_int_const(_ctx: &Ctx, int_const: int_const) -> cconst {
-    cconst::int_const(int_const)
+pub fn cconst_int(_ctx: &Ctx, int_const: int_const) -> cconst {
+    cconst::Int(int_const)
 }
-pub fn cconst_char_const(_ctx: &Ctx, char_const: char_const) -> cconst {
-    cconst::char_const(char_const)
+pub fn cconst_char(_ctx: &Ctx, char_const: char_const) -> cconst {
+    cconst::Char(char_const)
 }
-pub fn cconst_float_const(_ctx: &Ctx, float_const: float_const) -> cconst {
-    cconst::float_const(float_const)
+pub fn cconst_float(_ctx: &Ctx, float_const: float_const) -> cconst {
+    cconst::Float(float_const)
 }
-pub fn cconst_hexadecimal(_ctx: &Ctx, hexadecimal: hexadecimal) -> cconst {
-    cconst::hexadecimal(hexadecimal)
+pub fn cconst_hex(_ctx: &Ctx, hexadecimal: hexadecimal) -> cconst {
+    cconst::Hex(hexadecimal)
 }
 pub type adj_strings = string1;
 pub fn adj_strings_string1(_ctx: &Ctx, string1: string1) -> adj_strings {
@@ -2134,7 +2133,7 @@ pub struct hexadecimal {
     pub hex_const: hex_const,
     pub integer_suffix_opt_opt: integer_suffix_optOpt,
 }
-pub fn hexadecimal_c1(
+pub fn hexadecimal_hexadecimal(
     _ctx: &Ctx,
     hex_const: hex_const,
     integer_suffix_opt_opt: integer_suffix_optOpt,

@@ -2,42 +2,42 @@
 // https://github.com/typhoon-hil/cparser
 // and adapted for Rustemo.
 
-translation_unit            : external_decls=external_decl+
+translation_unit            : external_decls=external_decl+ {TranslationUnit}
                             ;
 
-external_decl               : function=function_definition
-                            | declaration=decl
-                            | ld=line_directive
+external_decl               : function=function_definition {Function}
+                            | declaration=decl {Declaration}
+                            | ld=line_directive {LineDirective}
                             ;
 
-line_directive              : "#" int_const string line_directive_int?
+line_directive              : "#" int_const string line_directive_int? {LineDirective}
                             ;
 
-line_directive_int          : int_const
-                            | line_directive_int int_const
+line_directive_int          : int_const {Base}
+                            | line_directive_int int_const {Recursive}
                             ;
 
-function_definition         : decl_specs=decl_specs declarator=declarator decl_list=decl_list body=compound_stat
-                            | declarator=declarator decl_list=decl_list body=compound_stat
-                            | decl_specs=decl_specs declarator=declarator body=compound_stat
-                            | declarator=declarator body=compound_stat
+function_definition         : decl_specs=decl_specs declarator=declarator decl_list=decl_list body=compound_stat {Full}
+                            | declarator=declarator decl_list=decl_list body=compound_stat {NoSpecs}
+                            | decl_specs=decl_specs declarator=declarator body=compound_stat {NoDeclList}
+                            | declarator=declarator body=compound_stat {Minimal}
                             ;
 
-decl                        : decl_body ';'
+decl                        : decl_body ';' {Decl}
                             ;
 
-decl_body                   : decl_specs=decl_specs init_decl_list=init_declarator_list?
+decl_body                   : decl_specs=decl_specs init_decl_list=init_declarator_list? {DeclBody}
                             ;
 
 decl_list                   : decl+
                             ;
 
-decl_specs                  : decl_specs decl_spec | decl_spec
+decl_specs                  : decl_specs decl_spec {Recursive} | decl_spec {Base}
                             ;
 
-decl_spec                   : storage_spec=storage_class_spec
-                            | type_spec=type_spec
-                            | type_qual=type_qualifier
+decl_spec                   : storage_spec=storage_class_spec {Storage}
+                            | type_spec=type_spec {Type}
+                            | type_qual=type_qualifier {Qualifier}
                             ;
 
 
@@ -57,9 +57,9 @@ type_spec                   : 'void' | 'char' | 'short' | 'int' | 'long' | 'floa
 type_qualifier              : 'const' | 'volatile'
                             ;
 
-struct_or_union_spec        : struct_type=struct_or_union id=id '{' fields=struct_decl+ '}'
-                            | struct_type=struct_or_union '{' fields=struct_decl+ '}'
-                            | struct_type=struct_or_union id=id
+struct_or_union_spec        : struct_type=struct_or_union id=id '{' fields=struct_decl+ '}' {Long}
+                            | struct_type=struct_or_union '{' fields=struct_decl+ '}' {Anon}
+                            | struct_type=struct_or_union id=id {Short}
                             ;
 
 
@@ -69,84 +69,85 @@ struct_or_union             : 'struct' | 'union' | 'class'  // added class so th
 init_declarator_list        : init_declarator+[comma]
                             ;
 
-init_declarator             : decl=declarator
-                            | decl=declarator '=' init=initializer
+init_declarator             : decl=declarator {Decl}
+                            | decl=declarator '=' init=initializer {Init}
                             ;
 
-struct_decl                 : spec_qualifier_list struct_declarator+[comma] ';'
-                            | line_directive
+struct_decl                 : spec_qualifier_list struct_declarator+[comma] ';' {StructDecl}
+                            | line_directive {LineDirective}
                             ;
 
-spec_qualifier_list         : type_spec spec_qualifier_list
-                            | type_spec
-                            | type_qualifier spec_qualifier_list
-                            | type_qualifier
+spec_qualifier_list         : type_spec spec_qualifier_list {TypeRecursive}
+                            | type_spec {TypeBase}
+                            | type_qualifier spec_qualifier_list {QualRecursive}
+                            | type_qualifier {QualBase}
                             ;
 
-struct_declarator           : declarator
-                            | declarator ':' const_exp
-                            | ':' const_exp
+struct_declarator           : declarator {Field}
+                            | declarator ':' const_exp {BitField}
+                            | ':' const_exp {AnonBitField}
                             ;
 
-enum_spec                   : 'enum' name=id '{' fields=enumerator+[comma] comma? '}'
-                            | 'enum' '{' fields=enumerator+[comma] comma?'}'
-                            | 'enum' name=id
+enum_spec                   : 'enum' name=id '{' fields=enumerator+[comma] comma? '}' {Enum}
+                            | 'enum' '{' fields=enumerator+[comma] comma?'}' {AnonEnum}
+                            | 'enum' name=id {EnumRef}
                             ;
 
-enumerator                  : id
-                            | id '=' const_exp
+enumerator                  : id {Id}
+                            | id '=' const_exp {Init}
                             ;
 
-declarator                  : pointer? dd=direct_declarator
+declarator                  : pointer? dd=direct_declarator {Declarator}
                             ;
 
-direct_declarator           : name=id
-                            | '(' declarator ')'
-                            | array=direct_declarator '[' const_exp ']'
-                            | array=direct_declarator '['     ']'
-                            | fnc_decl=direct_declarator '(' param_type_list ')'
-                            | fnc_decl=direct_declarator '(' id+[comma] ')'
-                            | fnc_decl=direct_declarator '('     ')'
+direct_declarator           : name=id {Id}
+                            | '(' declarator ')' {Paren}
+                            | array=direct_declarator '[' const_exp ']' {Array}
+                            | array=direct_declarator '['     ']' {ArrayUnbound}
+                            | fnc_decl=direct_declarator '(' param_type_list ')' {Func}
+                            | fnc_decl=direct_declarator '(' id+[comma] ')' {FuncId}
+                            | fnc_decl=direct_declarator '('     ')' {FuncEmpty}
                             ;
 
-pointer                     : '*' type_qualifier* pointer?
+pointer                     : '*' type_qualifier* pointer? {Pointer}
                             ;
 
 
-param_type_list             : param_decl+[comma] param_type_list_varargs?
+param_type_list             : param_decl+[comma] param_type_list_varargs? {ParamTypeList}
                             ;
-param_type_list_varargs     : comma ellipsis;
+param_type_list_varargs     : comma ellipsis {Varargs};
 
-param_decl                  : decl_specs param_decl_declarator?
+param_decl                  : decl_specs param_decl_declarator? {ParamDecl}
                             ;
-param_decl_declarator       : declarator | abstract_declarator;
-
-initializer                 : assignment_exp
-                            | '{' initializer_list comma? '}'
+param_decl_declarator       : declarator {Declarator} | abstract_declarator {Abstract}
                             ;
 
-initializer_list            : line_directive? initializer
-                            | initializer_list comma line_directive? initializer
+initializer                 : assignment_exp {Base}
+                            | '{' initializer_list comma? '}' {List}
                             ;
 
-type_name                   : spec_qualifier_list abstract_declarator
-                            | spec_qualifier_list
+initializer_list            : line_directive? initializer {Base}
+                            | initializer_list comma line_directive? initializer {Recursive}
                             ;
 
-abstract_declarator         : pointer
-                            | pointer direct_abstract_declarator
-                            | direct_abstract_declarator
+type_name                   : spec_qualifier_list abstract_declarator {Full}
+                            | spec_qualifier_list {Base}
                             ;
 
-direct_abstract_declarator  : '(' abstract_declarator ')'
-                            | direct_abstract_declarator '[' const_exp ']'
-                            | '[' const_exp ']'
-                            | direct_abstract_declarator '[' ']'
-                            | '[' ']'
-                            | direct_abstract_declarator '(' param_type_list ')'
-                            | '(' param_type_list ')'
-                            | direct_abstract_declarator '('      ')'
-                            | '('    ')'
+abstract_declarator         : pointer {Base}
+                            | pointer direct_abstract_declarator {Recursive}
+                            | direct_abstract_declarator {Direct}
+                            ;
+
+direct_abstract_declarator  : '(' abstract_declarator ')' {Paren}
+                            | direct_abstract_declarator '[' const_exp ']' {Array}
+                            | '[' const_exp ']' {ArrayBase}
+                            | direct_abstract_declarator '[' ']' {ArrayUnbound}
+                            | '[' ']' {ArrayUnboundBase}
+                            | direct_abstract_declarator '(' param_type_list ')' {Func}
+                            | '(' param_type_list ')' {FuncBase}
+                            | direct_abstract_declarator '('      ')' {FuncEmpty}
+                            | '('    ')' {FuncEmptyBase}
                             ;
 
 typedef_name                : id;
@@ -160,157 +161,157 @@ stat                        : labeled_stat
                             | line_directive
                             ;
 
-labeled_stat                : id ':' stat
-                            | 'case' const_exp ':' stat
-                            | 'default' ':' stat
+labeled_stat                : id=id ':' stat=stat {Label}
+                            | 'case' const_exp=const_exp ':' stat=stat {Case}
+                            | 'default' ':' stat=stat {Default}
                             ;
 
-exp_stat                    : exp? ';'
+exp_stat                    : exp? ';' {ExpStat}
                             ;
 
-block_item                  : decl | stat
+block_item                  : decl {Decl} | stat {Stat}
                             ;
 
 //block_item_list             : block_item+
 //                            ;
 
-compound_stat               : '{' block_item* '}'
+compound_stat               : '{' block_item* '}' {CompoundStat}
                             ;
 
 //stat_list                   : stat
 //                            | stat_list stat
 //                            ;
 
-selection_stat              : 'if' '(' exp ')' stat  {shift}  // make 'else' binds to inner if
-                            | 'if' '(' exp ')' stat 'else' stat
-                            | 'switch' '(' exp ')' stat
+selection_stat              : 'if' '(' exp=exp ')' stat=stat  {If, shift}  // make 'else' binds to inner if
+                            | 'if' '(' exp=exp ')' stat_5=stat 'else' stat_7=stat {IfElse}
+                            | 'switch' '(' exp=exp ')' stat=stat {Switch}
                             ;
 
-iteration_stat              : 'while' '(' exp ')' stat
-                            | 'do' stat 'while' '(' exp ')' ';'
-                            | 'for' '(' exp? ';' exp? ';' exp? ')' stat
-                            | 'for' '(' decl_body ';' exp? ';' exp? ')' stat
+iteration_stat              : 'while' '(' exp=exp ')' stat=stat {While}
+                            | 'do' stat=stat 'while' '(' exp=exp ')' ';' {DoWhile}
+                            | 'for' '(' exp_3=exp? ';' exp_5=exp? ';' exp_7=exp? ')' stat=stat {For}
+                            | 'for' '(' decl_body=decl_body ';' exp_5=exp? ';' exp_7=exp? ')' stat=stat {ForDecl}
                             ;
 
-jump_stat                   : 'goto' id ';'
-                            | 'continue' ';'
-                            | 'break' ';'
-                            | 'return' exp ';'
-                            | 'return' ';'
+jump_stat                   : 'goto' id ';' {Goto}
+                            | 'continue' ';' {Continue}
+                            | 'break' ';' {Break}
+                            | 'return' exp ';' {Return}
+                            | 'return' ';' {ReturnEmpty}
                             ;
 
-exp                         : assignment_exp
-                            | exp comma assignment_exp
+exp                         : assignment_exp {Base}
+                            | exp comma assignment_exp {Recursive}
                             ;
 
-assignment_exp              : conditional_exp
-                            | unary_exp assignment_operator assignment_exp
+assignment_exp              : conditional_exp {Base}
+                            | unary_exp assignment_operator assignment_exp {Assign}
                             ;
 
 assignment_operator         : '=' | '*=' | '/=' | '%=' | '+=' | '-=' | '<<='
                             | '>>=' | '&=' | '^=' | '|='
                             ;
 
-conditional_exp             : logical_or_exp
-                            | logical_or_exp '?' exp ':' conditional_exp
+conditional_exp             : logical_or_exp {Base}
+                            | logical_or_exp '?' exp ':' conditional_exp {Conditional}
                             ;
 
 const_exp                   : conditional_exp
                             ;
 
-logical_or_exp              : logical_and_exp
-                            | logical_or_exp '||' logical_and_exp
+logical_or_exp              : logical_and_exp {Base}
+                            | logical_or_exp '||' logical_and_exp {Or}
                             ;
 
-logical_and_exp             : inclusive_or_exp
-                            | logical_and_exp '&&' inclusive_or_exp
+logical_and_exp             : inclusive_or_exp {Base}
+                            | logical_and_exp '&&' inclusive_or_exp {And}
                             ;
 
-inclusive_or_exp            : exclusive_or_exp
-                            | inclusive_or_exp '|' exclusive_or_exp
+inclusive_or_exp            : exclusive_or_exp {Base}
+                            | inclusive_or_exp '|' exclusive_or_exp {Or}
                             ;
 
-exclusive_or_exp            : and_exp
-                            | exclusive_or_exp '^' and_exp
+exclusive_or_exp            : and_exp {Base}
+                            | exclusive_or_exp '^' and_exp {Xor}
                             ;
 
-and_exp                     : equality_exp
-                            | and_exp '&' equality_exp
+and_exp                     : equality_exp {Base}
+                            | and_exp '&' equality_exp {And}
                             ;
 
-equality_exp                : relational_exp
-                            | equality_exp '==' relational_exp
-                            | equality_exp '!=' relational_exp
+equality_exp                : relational_exp {Base}
+                            | equality_exp '==' relational_exp {Eq}
+                            | equality_exp '!=' relational_exp {Neq}
                             ;
 
-relational_exp              : shift_expression
-                            | relational_exp '<' shift_expression
-                            | relational_exp '>' shift_expression
-                            | relational_exp '<=' shift_expression
-                            | relational_exp '>=' shift_expression
+relational_exp              : shift_expression {Base}
+                            | relational_exp '<' shift_expression {Lt}
+                            | relational_exp '>' shift_expression {Gt}
+                            | relational_exp '<=' shift_expression {Lte}
+                            | relational_exp '>=' shift_expression {Gte}
                             ;
 
-shift_expression            : additive_exp
-                            | shift_expression '<<' additive_exp
-                            | shift_expression '>>' additive_exp
+shift_expression            : additive_exp {Base}
+                            | shift_expression '<<' additive_exp {LShift}
+                            | shift_expression '>>' additive_exp {RShift}
                             ;
 
-additive_exp                : mult_exp
-                            | additive_exp '+' mult_exp
-                            | additive_exp '-' mult_exp
+additive_exp                : mult_exp {Base}
+                            | additive_exp '+' mult_exp {Add}
+                            | additive_exp '-' mult_exp {Sub}
                             ;
 
-mult_exp                    : cast_exp
-                            | mult_exp '*' cast_exp
-                            | mult_exp '/' cast_exp
-                            | mult_exp '%' cast_exp
-                            ;
-
-
-cast_exp                    : unary_exp
-                            | '(' type_name ')' cast_exp
+mult_exp                    : cast_exp {Base}
+                            | mult_exp '*' cast_exp {Mul}
+                            | mult_exp '/' cast_exp {Div}
+                            | mult_exp '%' cast_exp {Mod}
                             ;
 
 
-unary_exp                   : postfix_exp
-                            | '++' unary_exp
-                            | '--' unary_exp
-                            | unary_operator cast_exp
-                            | 'sizeof' unary_exp
-                            | 'sizeof' '(' type_name ')'
+cast_exp                    : unary_exp {Base}
+                            | '(' type_name ')' cast_exp {Cast}
+                            ;
+
+
+unary_exp                   : postfix_exp {Postfix}
+                            | '++' unary_exp {Inc}
+                            | '--' unary_exp {Dec}
+                            | unary_operator cast_exp {UnaryOp}
+                            | 'sizeof' unary_exp {SizeofExp}
+                            | 'sizeof' '(' type_name ')' {SizeofType}
                             // support for new operator from C++
-                            | 'new' type_name '(' ')'
-                            | 'new' type_name '(' exp ')'
+                            | 'new' type_name '(' ')' {New}
+                            | 'new' type_name '(' exp ')' {NewExp}
                             ;
 
 unary_operator              : '&' | '*' | '+' | '-' | '~' | '!'
                             ;
 
-postfix_exp                 : primary_exp
-                            | postfix_exp '[' exp ']' // array subscript
-                            | postfix_exp '(' assignment_exp*[comma] ')'
-                            | postfix_exp dot id
-                            | postfix_exp '->' id
-                            | postfix_exp '++'
-                            | postfix_exp '--'
+postfix_exp                 : primary_exp {Primary}
+                            | postfix_exp '[' exp ']' {Subscript} // array subscript
+                            | postfix_exp '(' assignment_exp*[comma] ')' {Call}
+                            | postfix_exp dot id {Dot}
+                            | postfix_exp '->' id {Arrow}
+                            | postfix_exp '++' {Inc}
+                            | postfix_exp '--' {Dec}
                             ;
 
-primary_exp                 : var_ref=id
-                            | cconst
-                            | adj_strings
-                            | '(' exp ')'
+primary_exp                 : var_ref=id {Id}
+                            | cconst {Constant}
+                            | adj_strings {Strings}
+                            | '(' exp ')' {Paren}
                             ;
 
-cconst                      : int_const
-                            | char_const
-                            | float_const
-                            | hexadecimal
+cconst                      : int_const {Int}
+                            | char_const {Char}
+                            | float_const {Float}
+                            | hexadecimal {Hex}
                          // | enumeration_const
                             ;
 
 adj_strings                 : string+;
 
-hexadecimal                 : hex_const integer_suffix_opt?
+hexadecimal                 : hex_const integer_suffix_opt? {Hexadecimal}
                             ;
 
 
