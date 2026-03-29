@@ -16,6 +16,7 @@ let
     ".err"
     ".ast"
     ".json"
+    ".c"
     ".bytes"
     ".calc"
   ];
