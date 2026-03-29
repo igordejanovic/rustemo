@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # [Unreleased]
 
+
+# [0.9.1] - 2026-03-29
+
 ## Added
 - C lang example
 
@@ -204,7 +207,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial release. See the README for the features available in this release.
 
 
-[unreleased]: https://github.com/igordejanovic/rustemo/compare/0.9.0...HEAD
+[unreleased]: https://github.com/igordejanovic/rustemo/compare/0.9.1...HEAD
+[0.9.1]: https://github.com/igordejanovic/rustemo/compare/0.9.0...0.9.1
 [0.9.0]: https://github.com/igordejanovic/rustemo/compare/0.8.0...0.9.0
 [0.8.0]: https://github.com/igordejanovic/rustemo/compare/0.7.1...0.8.0
 [0.7.1]: https://github.com/igordejanovic/rustemo/compare/0.7.0...0.7.1
