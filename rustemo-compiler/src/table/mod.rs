@@ -993,7 +993,7 @@ impl<'g, 's> LRTable<'g, 's> {
             return Err(Error::Error(format!(
                 "First set empty for grammar symbol {:?}.\n\
                  An infinite recursion on the grammar symbol.",
-                &self.grammar.symbol_name(SymbolIndex(idx))
+                self.grammar.symbol_name(SymbolIndex(idx))
             )));
         }
         Ok(())

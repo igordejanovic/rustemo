@@ -218,9 +218,9 @@ where
             if self.value.len() > 50 {
                 format!(
                     "{:?}{}{:?}",
-                    &self.value.slice(0..20),
+                    self.value.slice(0..20),
                     "..<snip>..",
-                    &self.value.slice(self.value.len() - 20..self.value.len())
+                    self.value.slice(self.value.len() - 20..self.value.len())
                 )
             } else {
                 format!("{:?}", self.value)

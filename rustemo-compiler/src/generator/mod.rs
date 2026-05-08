@@ -97,7 +97,7 @@ pub fn generate_parser(
     let table = LRTable::new(&grammar, settings)?;
     if settings.dot {
         let dot_file = grammar_path.with_extension("dot");
-        println!("Writting dot file: {:?}", &dot_file);
+        println!("Writting dot file: {:?}", dot_file);
         fs::write(dot_file, table.to_dot())?;
     }
 
@@ -297,5 +297,5 @@ impl<'g, 's> ParserGenerator<'g, 's> {
 }
 
 fn action_name(nonterminal: &NonTerminal, choice: &Choice) -> String {
-    to_snake_case(format!("{}_{}", nonterminal.name, &choice.name))
+    to_snake_case(format!("{}_{}", nonterminal.name, choice.name))
 }

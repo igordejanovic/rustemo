@@ -401,7 +401,7 @@ impl GrammarBuilder {
             Name::new(
                 format!(
                     "{}{}",
-                    &name,
+                    name,
                     match rep_op {
                         RepetitionOperatorOp::ZeroOrMore => "0",
                         RepetitionOperatorOp::ZeroOrMoreGreedy => "0Greedy",

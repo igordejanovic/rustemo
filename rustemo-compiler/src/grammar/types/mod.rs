@@ -151,7 +151,7 @@ impl SymbolTypes {
                         let struct_type = if production.kind.is_some() {
                             choice_name.clone()
                         } else {
-                            format!("{}{}", &nonterminal.name, choice_name)
+                            format!("{}{}", nonterminal.name, choice_name)
                         };
 
                         Choice {

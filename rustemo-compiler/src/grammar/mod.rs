@@ -305,7 +305,7 @@ pub(crate) fn res_symbol(assign: &ResolvingAssignment) -> SymbolIndex {
     assign
         .symbol
         .index
-        .unwrap_or_else(|| panic!("Unresolved symbol {:?}", &assign.symbol.symbol))
+        .unwrap_or_else(|| panic!("Unresolved symbol {:?}", assign.symbol.symbol))
 }
 
 // This can be used at the moment due to conflict with a blankt impl in the core.
