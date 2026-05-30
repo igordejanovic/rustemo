@@ -20,6 +20,6 @@ fn glr_lexical_ambiguity_most_specific() {
     }
     output_cmp!(
         "src/glr/lexical_ambiguity/most_specific/most_specific.ast",
-        format!("{trees}")
+        &trees
     );
 }

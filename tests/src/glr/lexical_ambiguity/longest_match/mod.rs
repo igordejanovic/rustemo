@@ -20,6 +20,6 @@ fn glr_lexical_ambiguity_longest_match() {
     }
     output_cmp!(
         "src/glr/lexical_ambiguity/longest_match/longest_match.ast",
-        format!("{trees}")
+        &trees
     );
 }

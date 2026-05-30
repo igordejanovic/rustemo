@@ -20,6 +20,6 @@ fn glr_lexical_ambiguity_grammar_order() {
     }
     output_cmp!(
         "src/glr/lexical_ambiguity/grammar_order/grammar_order.ast",
-        format!("{trees}")
+        &trees
     );
 }

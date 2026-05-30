@@ -23,7 +23,7 @@ fn glr_lexical_ambiguity_priorities() {
     }
     output_cmp!(
         "src/glr/lexical_ambiguity/priorities/priorities.ast",
-        format!("{trees}")
+        &trees
     );
 }
 
@@ -38,6 +38,6 @@ fn glr_lexical_ambiguity_priorities_same() {
     }
     output_cmp!(
         "src/glr/lexical_ambiguity/priorities/priorities_same.ast",
-        format!("{trees}")
+        &trees
     );
 }
