@@ -35,7 +35,7 @@ jobs:
         with:
           submodules: true
 
-      - uses: cachix/install-nix-action@v27
+      - uses: cachix/install-nix-action@v31
         with:
           nix_path: nixpkgs=channel:nixos-unstable
       - uses:  DeterminateSystems/magic-nix-cache-action@v6
@@ -44,9 +44,9 @@ jobs:
         run: nix build .#book
 
       - name: Setup Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: 'result/html'
       - name: Deploy to GitHub Pages
