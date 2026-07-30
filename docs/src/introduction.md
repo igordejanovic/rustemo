@@ -29,6 +29,15 @@ There are multiple alternatives to this project. Some of them are listed in the
 section in the README. I advise you to check them also to be able to make an
 informed decision on what approach would suit you best.
 
+## Talk: Introducing Rustemo: A LR/GLR Parser Generator for Rust
+
+- Venue: [LangDev Conference](https://langdevcon.org/), Seville, 17-19 October 2024.
+- Slides: [HTML](https://igor.dejanovic.online/talks/2024-LangDev-rustemo/index.html), [PDF](https://igor.dejanovic.online/talks/2024-LangDev-rustemo/LangDev2024-Rustemo.pdf)
+
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/keiZPAV4Bfw" 
+  title="YouTube video player" frameborder="0" allowfullscreen></iframe>
+
 # Installation and setup
 
 Rustemo uses `cargo` for project management. There are two crates of interest:
