@@ -237,7 +237,7 @@ impl SymbolTypes {
 
         let choices_noe = choices
             .iter()
-            .filter(|c| !matches! {c.kind, ChoiceKind::Empty})
+            .filter(|c| !matches!(c.kind, ChoiceKind::Empty))
             .collect::<Vec<_>>();
 
         match m {
@@ -249,7 +249,7 @@ impl SymbolTypes {
                 no_match: false,
                 ..
             } if single == recurse
-                && matches! { nt.annotation, Some(ref action) if action == "vec" } =>
+                && matches!(nt.annotation, Some(ref action) if action == "vec") =>
             {
                 SymbolTypeKind::Vec {
                     ref_type: single,
@@ -257,7 +257,7 @@ impl SymbolTypes {
                 }
             }
             Match { empty, .. } => {
-                if choices_noe.len() == 1 && !matches! {choices_noe[0].kind, ChoiceKind::Plain} {
+                if choices_noe.len() == 1 && !matches!(choices_noe[0].kind, ChoiceKind::Plain) {
                     // Promote
                     match &choices_noe[0].kind {
                         ChoiceKind::Ref { ref_type, .. } => SymbolTypeKind::Ref {

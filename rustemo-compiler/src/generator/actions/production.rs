@@ -49,8 +49,7 @@ impl<'t> ProductionActionsGenerator<'t> {
 
                     // If this type is Vec and ref type is recursion make it
                     // mutable to support *, +...
-                    if matches! { ty.kind, SymbolTypeKind::Vec{ .. } } && ty.name == field.ref_type
-                    {
+                    if matches!(ty.kind, SymbolTypeKind::Vec { .. }) && ty.name == field.ref_type {
                         fn_args.push(parse_quote! { mut #f_name: #f_type });
                     } else {
                         fn_args.push(parse_quote! { #f_name: #f_type });

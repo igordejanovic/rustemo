@@ -278,7 +278,7 @@ impl GrammarBuilder {
                         // Map all RHS elements to Assignments
                         .map(|assignment| -> Result<ResolvingAssignment> {
                             use rustemo_actions::Assignment::*;
-                            let is_bool = matches! { assignment, BoolAssignment(_) };
+                            let is_bool = matches!(assignment, BoolAssignment(_));
                             match assignment {
                                 PlainAssignment(mut assign) | BoolAssignment(mut assign) => {
                                     self.check_identifier(&assign.name)?;
