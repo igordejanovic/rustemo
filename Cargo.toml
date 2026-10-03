@@ -39,9 +39,9 @@ itertools = { version = "0.10", default-features = false, features = ["use_std"]
 convert_case = { version = "0.5.0", default-features = false }
 clap = { version = "4", features = ["derive"] }
 quote = "1.0.20"
-syn = { version = "1.0.98", features = ["parsing", "full", "printing"] }
+syn = { version = "3", features = ["parsing", "full", "printing"] }
 proc-macro2 = "1.0.43"
-prettyplease = "0.1.18"
+prettyplease = "0.3"
 codesnake = "0.2.1"
 
 # Default string lexer uses regexes and once_cell to init regexes only once.
